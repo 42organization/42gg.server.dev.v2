@@ -1,4 +1,4 @@
-package com.gg.server.global.types.user;
+package com.gg.server.global.domain.user.type;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -9,12 +9,11 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public enum RoleType {
 
-    ADMIN("ROLE_ADMIN", "관리자", 2),
-    USER("ROLE_USER", "일반 사용자", 1);
+    ADMIN("ROLE_ADMIN", "관리자"),
+    USER("ROLE_USER", "일반 사용자");
 
     private final String key;
     private final String displayName;
-    private final Integer value;
 
     public static RoleType of(String key) {
         return Arrays.stream(RoleType.values())

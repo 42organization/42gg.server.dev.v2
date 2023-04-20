@@ -1,4 +1,4 @@
-package com.gg.server.global.security;
+package com.gg.server.global.security.cookie;
 
 
 import org.springframework.util.SerializationUtils;

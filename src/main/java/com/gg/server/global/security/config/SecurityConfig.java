@@ -1,15 +1,17 @@
-package com.gg.server.global.security.config.security;
+package com.gg.server.global.security.config;
 
-import com.gg.server.global.security.TokenAuthenticationFilter;
 import com.gg.server.global.security.config.properties.CorsProperties;
-import com.gg.server.global.security.exception.RestAuthenticationEntryPoint;
 import com.gg.server.global.security.handler.OAuthAuthenticationFailureHandler;
 import com.gg.server.global.security.handler.OAuthAuthenticationSuccessHandler;
 import com.gg.server.global.security.handler.TokenAccessDeniedHandler;
-import com.gg.server.global.security.repository.OAuthAuthorizationRequestBasedOnCookieRepository;
+import com.gg.server.global.security.jwt.TokenAuthenticationFilter;
 import com.gg.server.global.security.service.CustomOAuth2UserService;
+import com.gg.server.global.security.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -28,12 +30,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final TokenAccessDeniedHandler tokenAccessDeniedHandler;
     private final CustomOAuth2UserService oAuth2UserService;
+    private final CustomUserDetailsService userDetailsService;
     private final  OAuthAuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
     private final OAuthAuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     private final CorsProperties corsProperties;
     private final TokenAuthenticationFilter tokenAuthenticationFilter;
 
     private final AuthorizationRequestRepository<OAuth2AuthorizationRequest> authorizationRequestAuthorizationRequestRepository;
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService);
+    }
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
@@ -44,17 +59,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                     .and()
                     .authorizeRequests()
-                        .antMatchers("/login", "/oauth2/authorization/**", "/").permitAll()
-                        .antMatchers("/admin").hasRole("ADMIN")
+                        .antMatchers(HttpMethod.GET, "/admin").hasRole("ADMIN")
+                        .antMatchers("/user").hasRole("USER")
+                    .antMatchers("/login", "/oauth2/authorization/**", "/").permitAll()
                         .anyRequest().authenticated()
                     .and()
                     .csrf().disable()
                     .formLogin().disable()
                     .httpBasic().disable()
-                    .exceptionHandling()
-                    .authenticationEntryPoint(new RestAuthenticationEntryPoint())
-                    .accessDeniedHandler(tokenAccessDeniedHandler)
-                    .and()
                     .oauth2Login()
                     .authorizationEndpoint()
                     .baseUri("/oauth2/authorization")

@@ -1,4 +1,4 @@
-package com.gg.server.global.security.exception;
+package com.gg.server.global.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;

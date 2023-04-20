@@ -1,8 +1,8 @@
-package com.gg.server.domain.user;
+package com.gg.server.global.domain.user;
 
-import com.gg.server.global.types.user.RacketType;
-import com.gg.server.global.types.user.RoleType;
-import com.gg.server.global.types.user.SnsType;
+import com.gg.server.global.domain.user.type.RacketType;
+import com.gg.server.global.domain.user.type.RoleType;
+import com.gg.server.global.domain.user.type.SnsType;
 import com.gg.server.global.utils.BaseTimeEntity;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,41 +19,34 @@ import java.io.Serializable;
 public class User extends BaseTimeEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @NotNull
-    @Setter
     @Column(name = "intra_id")
     private String intraId;
 
-    @Setter
     @Column(name = "e_mail")
     private String eMail;
 
-    @Setter
     @Column(name = "image_uri")
     private String imageUri;
 
-    @Setter
+    @Enumerated(EnumType.STRING)
     @Column(name = "racket_type")
     private RacketType racketType;
 
-    @Setter
     @NotNull
     @Column(name = "status_message")
     private String statusMessage;
 
-    @Setter
     @NotNull
+    @Enumerated(EnumType.STRING)
     @Column(name = "role_type")
     private RoleType roleType;
 
-    @Setter
-    //    @NotNull
     @Column(name = "total_exp")
     private Integer totalExp;
 
-    @Setter
     @Column(name = "sns_noti_opt")
     @Enumerated(EnumType.STRING)
     private SnsType snsNotiOpt;
@@ -69,5 +62,9 @@ public class User extends BaseTimeEntity implements Serializable {
         this.roleType = roleType;
         this.totalExp = totalExp;
         this.snsNotiOpt = snsNotiOpt;
+    }
+
+    public void imageUpdate(String imageUri) {
+        this.imageUri = imageUri;
     }
 }

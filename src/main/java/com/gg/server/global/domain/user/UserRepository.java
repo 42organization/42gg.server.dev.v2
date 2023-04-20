@@ -1,6 +1,6 @@
-package com.gg.server.domain.user;
+package com.gg.server.global.domain.user;
 
-import com.gg.server.global.types.user.RoleType;
+import com.gg.server.global.domain.user.type.RoleType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,7 +12,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-public interface UserRepository extends JpaRepository<User, Integer> {
+public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByIntraId(String intraId);
     List<User> findByIntraIdContains(String intraId);
     @Query(nativeQuery = false, value = "select u from User as u where u.intraId like %:partial%")
@@ -25,5 +25,5 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Transactional
     @Modifying
     @Query("UPDATE User u SET u.imageUri = :imageUri WHERE u.id = :id")
-    void updateUserImageUri(@Param("id") Integer id, @Param("imageUri") String imageUri);
+    void updateUserImageUri(@Param("id") Long id, @Param("imageUri") String imageUri);
 }

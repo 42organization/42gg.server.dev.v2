@@ -1,4 +1,4 @@
-package com.gg.server.global.security.exception;
+package com.gg.server.global.exception;
 
 public class TokenValidFailedException extends RuntimeException {
     public TokenValidFailedException() {

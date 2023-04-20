@@ -1,7 +1,6 @@
-package com.gg.server.global.types.user;
+package com.gg.server.global.domain.user.type;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.gg.server.global.types.Constant;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -9,11 +8,11 @@ import java.util.Locale;
 
 @Getter
 @RequiredArgsConstructor
-public enum RacketType implements Constant {
-    PENHOLDER("penholder"),
-    SHAKEHAND("shakehand"),
-    DUAL("dual"),
-    NONE("none");
+public enum RacketType {
+    PENHOLDER("PENHOLDER"),
+    SHAKEHAND("SHAKEHAND"),
+    DUAL("DUAL"),
+    NONE("NONE");
 
     private final String code;
 

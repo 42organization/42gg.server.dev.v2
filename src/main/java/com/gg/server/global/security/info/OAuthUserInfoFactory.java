@@ -3,7 +3,6 @@ package com.gg.server.global.security.info;
 import java.util.Map;
 
 import com.gg.server.global.security.info.impl.FortyTwoOAuthUserInfo;
-import com.gg.server.global.types.security.ProviderType;
 
 public class OAuthUserInfoFactory {
     public static OAuthUserInfo getOAuth2UserInfo(ProviderType providerType, Map<String, Object> attributes) {

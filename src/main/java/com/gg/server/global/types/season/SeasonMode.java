@@ -1,7 +1,6 @@
 package com.gg.server.global.types.season;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.gg.server.global.types.Constant;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -9,7 +8,7 @@ import java.util.Locale;
 
 @Getter
 @RequiredArgsConstructor
-public enum SeasonMode implements Constant {
+public enum SeasonMode {
     BOTH(0,"both"), NORMAL(1,"normal"), RANK(2,"rank");
     // 모드는 3가지가 있음.
     // type 형태이기 때문에 global 안에 type 도메인 안에 넣었음

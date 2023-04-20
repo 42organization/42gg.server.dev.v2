@@ -1,7 +1,7 @@
 package com.gg.server.global.utils;
 
-import com.gg.server.domain.user.User;
-import com.gg.server.domain.user.UserRepository;
+import com.gg.server.global.domain.user.User;
+import com.gg.server.global.domain.user.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -36,9 +36,9 @@ public class AsyncNewUserImageUploader {
         }
         userRepository.findByIntraId(intraId).ifPresent(user -> {
             if (s3ImageUrl == null) {
-                user.setImageUri(defaultImageUrl);
+                user.imageUpdate(defaultImageUrl);
             } else {
-                user.setImageUri(s3ImageUrl);
+                user.imageUpdate(s3ImageUrl);
             }
             userRepository.save(user);
         });

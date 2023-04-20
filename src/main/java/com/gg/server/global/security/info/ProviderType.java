@@ -1,4 +1,4 @@
-package com.gg.server.global.types.security;
+package com.gg.server.global.security.info;
 
 import lombok.Getter;
 

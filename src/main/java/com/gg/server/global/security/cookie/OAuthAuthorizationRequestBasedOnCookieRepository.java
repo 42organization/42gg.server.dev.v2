@@ -1,7 +1,6 @@
-package com.gg.server.global.security.repository;
+package com.gg.server.global.security.cookie;
 
 
-import com.gg.server.global.security.CookieUtil;
 import com.nimbusds.oauth2.sdk.util.StringUtils;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;

@@ -1,7 +1,6 @@
-package com.gg.server.global.types.user;
+package com.gg.server.global.domain.user.type;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.gg.server.global.types.Constant;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -10,7 +9,7 @@ import java.util.Locale;
 
 @Getter
 @RequiredArgsConstructor
-public enum SnsType implements Constant {
+public enum SnsType {
 
     NONE(0, "NONE"),
     SLACK(1, "SLACK"),
