@@ -40,6 +40,19 @@ public class AuthTokenProvider {
                 .compact();
     }
 
+    public String createToken(Long userId) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() +
+                appProperties.getAuth().getTokenExpiry());
+        System.out.println("expiryDate: " + expiryDate);
+        return Jwts.builder()
+                .setSubject(Long.toString(userId))
+                .setIssuedAt(new Date())
+                .setExpiration(expiryDate)
+                .signWith(key)
+                .compact();
+    }
+
     public Claims getTokenClaims(String token) {
         try {
             return Jwts.parserBuilder()
