@@ -1,13 +1,12 @@
-package com.gg.server.global.domain.user;
+package com.gg.server.user;
 
-import com.gg.server.global.domain.user.type.RacketType;
-import com.gg.server.global.domain.user.type.RoleType;
-import com.gg.server.global.domain.user.type.SnsType;
+import com.gg.server.user.type.RacketType;
+import com.gg.server.user.type.RoleType;
+import com.gg.server.user.type.SnsType;
 import com.gg.server.global.utils.BaseTimeEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

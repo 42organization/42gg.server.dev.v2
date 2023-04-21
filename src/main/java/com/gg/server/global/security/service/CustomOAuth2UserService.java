@@ -1,13 +1,13 @@
 package com.gg.server.global.security.service;
 
-import com.gg.server.global.domain.user.User;
-import com.gg.server.global.domain.user.UserRepository;
+import com.gg.server.user.User;
+import com.gg.server.user.UserRepository;
 import com.gg.server.global.security.info.OAuthUserInfo;
 import com.gg.server.global.security.info.OAuthUserInfoFactory;
 import com.gg.server.global.security.info.ProviderType;
-import com.gg.server.global.domain.user.type.RacketType;
-import com.gg.server.global.domain.user.type.RoleType;
-import com.gg.server.global.domain.user.type.SnsType;
+import com.gg.server.user.type.RacketType;
+import com.gg.server.user.type.RoleType;
+import com.gg.server.user.type.SnsType;
 import com.gg.server.global.utils.AsyncNewUserImageUploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

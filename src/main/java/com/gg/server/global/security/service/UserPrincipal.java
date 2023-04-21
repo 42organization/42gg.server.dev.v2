@@ -1,7 +1,7 @@
 package com.gg.server.global.security.service;
 
-import com.gg.server.global.domain.user.User;
-import com.gg.server.global.domain.user.type.RoleType;
+import com.gg.server.user.User;
+import com.gg.server.user.type.RoleType;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
