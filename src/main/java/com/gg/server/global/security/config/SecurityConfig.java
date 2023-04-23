@@ -2,7 +2,7 @@ package com.gg.server.global.security.config;
 
 import com.gg.server.global.security.config.properties.CorsProperties;
 import com.gg.server.global.security.handler.OAuthAuthenticationSuccessHandler;
-import com.gg.server.global.security.jwt.TokenAuthenticationFilter;
+import com.gg.server.global.security.jwt.utils.TokenAuthenticationFilter;
 import com.gg.server.global.security.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -50,7 +50,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .authorizeRequests()
                         .antMatchers(HttpMethod.GET, "/admin").hasRole("ADMIN")
                         .antMatchers("/user").hasRole("USER")
-                    .antMatchers("/login", "/oauth2/authorization/**", "/").permitAll()
+                    .antMatchers("/login", "/oauth2/authorization/**", "/",
+                            "/pingpong/user/accesstoken").permitAll()
                         .anyRequest().authenticated()
                     .and()
                     .csrf().disable()

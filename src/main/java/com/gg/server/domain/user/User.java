@@ -1,9 +1,10 @@
-package com.gg.server.user;
+package com.gg.server.domain.user;
 
-import com.gg.server.user.type.RacketType;
-import com.gg.server.user.type.RoleType;
-import com.gg.server.user.type.SnsType;
+import com.gg.server.domain.user.type.RacketType;
+import com.gg.server.domain.user.type.RoleType;
+import com.gg.server.domain.user.type.SnsType;
 import com.gg.server.global.utils.BaseTimeEntity;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ import java.io.Serializable;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseTimeEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

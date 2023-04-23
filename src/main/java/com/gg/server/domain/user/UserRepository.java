@@ -1,6 +1,6 @@
-package com.gg.server.user;
+package com.gg.server.domain.user;
 
-import com.gg.server.user.type.RoleType;
+import com.gg.server.domain.user.type.RoleType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,7 +1,7 @@
 package com.gg.server.global.utils;
 
-import com.gg.server.user.User;
-import com.gg.server.user.UserRepository;
+import com.gg.server.domain.user.User;
+import com.gg.server.domain.user.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;

@@ -1,7 +1,7 @@
-package com.gg.server.global.security.jwt;
+package com.gg.server.global.security.jwt.utils;
 
 import com.gg.server.global.security.config.properties.AppProperties;
-import com.gg.server.global.security.service.UserPrincipal;
+import com.gg.server.global.security.UserPrincipal;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -80,16 +80,11 @@ public class AuthTokenProvider {
         return Long.parseLong(claims.getSubject());
     }
 
-    public String refreshToken(Authentication authentication) {
-        System.out.print("token provider: ");
-        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-
+    public String refreshToken() {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() +
                 appProperties.getAuth().getRefreshTokenExpiry());
-        System.out.println("expiryDate: " + expiryDate);
         return Jwts.builder()
-                .setSubject(Long.toString(userPrincipal.getId()))
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
                 .signWith(key)

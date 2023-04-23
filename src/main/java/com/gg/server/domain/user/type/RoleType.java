@@ -1,4 +1,4 @@
-package com.gg.server.user.type;
+package com.gg.server.domain.user.type;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
