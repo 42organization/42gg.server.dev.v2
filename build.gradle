@@ -6,7 +6,7 @@ plugins {
 }
 
 springBoot {
-	mainClass = "io.pp.arcade.Application"
+	mainClass = "com.gg.server.Application"
 }
 
 group = 'io.42pp'

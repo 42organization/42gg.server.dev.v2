@@ -1,32 +1,35 @@
 package com.gg.server.domain.user.controller;
 
+import com.gg.server.domain.user.service.UserService;
 import com.gg.server.global.security.jwt.exception.TokenNotValidException;
-import com.gg.server.global.security.jwt.service.TokenService;
+import com.gg.server.global.security.jwt.repository.JwtRedisRepository;
+import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
+import com.gg.server.global.security.jwt.utils.TokenHeaders;
 import lombok.RequiredArgsConstructor;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
 
-
 @RestController
 @RequiredArgsConstructor
 public class UserController {
-    private final TokenService tokenService;
 
-    @GetMapping("/pingpong/user/accesstoken")
-    public ResponseEntity generateNewAccessToken(@RequestParam String refreshToken) {
-        try{
-            String accessToken = tokenService.generateNewAccessToken(refreshToken);
-            Map<String, String> resp = new HashMap<>();
-            resp.put("access_token", accessToken);
-            return new ResponseEntity(resp, HttpStatus.OK);
-        } catch (TokenNotValidException e){
+    private final UserService userService;
+    @PostMapping("/pingpong/user/accesstoken")
+    public ResponseEntity generateAccessToken(@RequestParam String refreshToken) {
+        try {
+            String accessToken = userService.regenerate(refreshToken);
+            Map<String, String> result = new HashMap<>();
+            result.put(TokenHeaders.ACCESS_TOKEN, accessToken);
+            return new ResponseEntity(result, HttpStatus.OK);
+        } catch (TokenNotValidException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }

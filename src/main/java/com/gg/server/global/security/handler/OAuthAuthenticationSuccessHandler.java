@@ -3,7 +3,7 @@ package com.gg.server.global.security.handler;
 import com.gg.server.global.security.UserPrincipal;
 import com.gg.server.global.security.cookie.CookieUtil;
 import com.gg.server.global.security.config.properties.AppProperties;
-import com.gg.server.global.security.jwt.service.TokenService;
+import com.gg.server.global.security.jwt.repository.JwtRedisRepository;
 import com.gg.server.global.security.jwt.utils.TokenHeaders;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.global.utils.ApplicationYmlRead;
@@ -21,7 +21,7 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
-    private final TokenService refreshTokenService;
+    private final JwtRedisRepository jwtRedisRepository;
 
     private final AuthTokenProvider tokenProvider;
     private final AppProperties appProperties;
@@ -29,9 +29,8 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                        Authentication authentication) throws IOException, ServletException {
+                                        Authentication authentication) throws IOException {
         String targetUrl = determineTargetUrl(request, response, authentication);
-        System.out.println("Authentication success!!!");
 
         if (response.isCommitted()) {
             logger.debug("Response has already been committed. Unable to redirect to " + targetUrl);
@@ -54,7 +53,7 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
         CookieUtil.addCookie(response, TokenHeaders.ACCESS_TOKEN, accessToken, (int) (accessTokenExpiry / 1000));
 
         UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
-        refreshTokenService.saveRefreshToken(principal.getId(), refreshToken);
+        jwtRedisRepository.addRefToken(refreshToken, principal.getId().toString(), refreshTokenExpiry);
         return UriComponentsBuilder.fromUriString(applicationYmlRead.getFrontUrl())
                 .queryParam("token", accessToken)
                 .build().toUriString();

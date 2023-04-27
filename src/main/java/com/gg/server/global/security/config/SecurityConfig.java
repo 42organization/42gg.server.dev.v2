@@ -3,6 +3,7 @@ package com.gg.server.global.security.config;
 import com.gg.server.global.security.config.properties.CorsProperties;
 import com.gg.server.global.security.handler.OAuthAuthenticationSuccessHandler;
 import com.gg.server.global.security.jwt.utils.TokenAuthenticationFilter;
+import com.gg.server.global.security.repository.OAuthAuthorizationRequestBasedOnCookieRepository;
 import com.gg.server.global.security.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -27,6 +28,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final OAuthAuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     private final CorsProperties corsProperties;
     private final TokenAuthenticationFilter tokenAuthenticationFilter;
+    private final OAuthAuthorizationRequestBasedOnCookieRepository oAuth2AuthorizationRequestBasedOnCookieRepository;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -61,6 +63,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .authenticationEntryPoint(new RestAuthenticationEntryPoint())
                     .and()
                     .oauth2Login()
+                    .authorizationEndpoint()
+                    .baseUri("/oauth2/authorization")
+                    .authorizationRequestRepository(oAuth2AuthorizationRequestBasedOnCookieRepository)
+                    .and()
                     .successHandler(oAuth2AuthenticationSuccessHandler);
 
             http.addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
