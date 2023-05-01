@@ -15,18 +15,18 @@ import javax.validation.constraints.NotNull;
 public class Noti extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private User user;
 
     @NotNull
-    @Column(name = "noti_type")
+    @Column(name = "noti_type", length = 10)
     @Enumerated(EnumType.STRING)
     private NotiType type;
 
-    @Column(name = "message")
+    @Column(name = "message", length = 255)
     private String message;
 
     @Setter

@@ -1,5 +1,7 @@
 package com.gg.server.domain.announcement;
 
+import com.gg.server.global.utils.BaseTimeEntity;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,50 +10,27 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Entity
-@NoArgsConstructor
-public class Announcement {
+public class Announcement extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
+    private Long id;
     @NotNull
-    @Column(name = "content", length=10000)
+    @Column(name = "content", length=1000)
     private String content;
-
     @NotNull
-    @Column(name = "is_del")
-    private Boolean isDel;
-
-    @NotNull
-    @Column(name = "creator_intra_id")
+    @Column(name = "creator_intra_id", length = 30)
     private String creatorIntraId;
-
-
-    @Column(name = "deleter_intra_id")
+    @Column(name = "deleter_intra_id", length = 30)
     private String deleterIntraId;
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
-    @NotNull
-    @Column(name = "created_time")
-    private LocalDateTime createdTime;
-
-    @Column(name = "deleted_time")
-    private LocalDateTime deletedTime;
-
-    @Builder
-    Announcement(String content, String creatorIntraId, LocalDateTime createdTime) {
-        this.content = content;
-        this.creatorIntraId = creatorIntraId;
-        this.deleterIntraId = null;
-        this.createdTime = createdTime;
-        this.deletedTime = null;
-        this.isDel = false;
-    }
-
-    public void update(String deleterIntraId, LocalDateTime deletedTime) {
+    public void update(String deleterIntraId, LocalDateTime deletedAt) {
         this.deleterIntraId = deleterIntraId;
-        this.deletedTime = deletedTime;
-        this.isDel = true;
+        this.deletedAt = deletedAt;
     }
 }
