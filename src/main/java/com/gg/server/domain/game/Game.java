@@ -24,10 +24,12 @@ public class Game {
     private Season season;
 
     @NotNull
-    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", length = 10)
     private StatusType status;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     @Column(name = "mode")
     private Mode mode;
 
