@@ -8,6 +8,7 @@ src/main/resources/application.yml
 src/main/resources/application-local.yml
 src/main/resources/application-main.yml
 src/main/resources/application-test.yml
+.DS_Store
 
 ### STS ###
 .apt_generated

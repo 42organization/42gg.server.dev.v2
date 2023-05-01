@@ -75,7 +75,6 @@ public class AuthTokenProvider {
     }
 
     public Long getUserIdFromToken(String token) {
-        log.info("getUserIdFromToken : " + token);
         Claims claims = getTokenClaims(token);
         return Long.parseLong(claims.getSubject());
     }
