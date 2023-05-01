@@ -17,7 +17,7 @@ public class Season {
     private Long id;
 
     @NotNull
-    @Column(name = "season_name")
+    @Column(name = "season_name", length = 20)
     private String seasonName;
 
     @NotNull

@@ -22,7 +22,8 @@ public class Feedback extends BaseTimeEntity {
     private User user;
 
     @NotNull
-    @Column(name = "category")
+    @Enumerated(EnumType.STRING)
+    @Column(name = "category", length = 15)
     private FeedbackType category;
 
     @NotNull
