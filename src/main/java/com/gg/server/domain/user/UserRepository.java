@@ -16,8 +16,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByIntraId(String intraId);
     User getUserByIntraId(String IntraId);
 
-    @Transactional
-    @Modifying
-    @Query("UPDATE User u SET u.imageUri = :imageUri WHERE u.id = :id")
-    void updateUserImageUri(@Param("id") Long id, @Param("imageUri") String imageUri);
 }
