@@ -1,6 +1,7 @@
 package com.gg.server.global.security.info.impl;
 
 
+import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.global.security.info.OAuthUserInfo;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -33,5 +34,10 @@ public class FortyTwoOAuthUserInfo extends OAuthUserInfo {
             return defaultImageUrl;
         }
         return image.get("link").toString();
+    }
+
+    @Override
+    public RoleType getRoleType() {
+        return RoleType.USER;
     }
 }

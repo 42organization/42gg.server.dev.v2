@@ -1,5 +1,6 @@
 package com.gg.server.global.security.info;
 
+import com.gg.server.domain.user.type.RoleType;
 import java.util.Map;
 
 public abstract class OAuthUserInfo {
@@ -18,4 +19,6 @@ public abstract class OAuthUserInfo {
     public abstract String getEmail();
 
     public abstract String getImageUrl();
+
+    public abstract RoleType getRoleType();
 }
