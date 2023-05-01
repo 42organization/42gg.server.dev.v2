@@ -16,7 +16,9 @@ public class KakaoOAuthUserInfo extends OAuthUserInfo {
     @Override
     public String getIntraId() {
         Map<String, Object> properties = (Map<String, Object>) attributes.get("properties");
-        return properties.get("nickname").toString();
+        String nickName = "[GUEST]" + properties.get("nickname").toString();
+        return nickName;
+//        return properties.get("nickname").toString();
     }
 
     @Override
