@@ -62,7 +62,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private User createUser(OAuthUserInfo userInfo) {
         User user = User.builder()
                 .intraId(userInfo.getIntraId())
-                .roleType(RoleType.USER)
+                .roleType(userInfo.getRoleType())
                 .imageUri(userInfo.getImageUrl())
                 .snsNotiOpt(SnsType.EMAIL)
                 .statusMessage("")

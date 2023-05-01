@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum ProviderType {
-    FORTYTWO("42");
+    FORTYTWO("42"), KAKAO("KAKAO");
 
     private String key;
 
