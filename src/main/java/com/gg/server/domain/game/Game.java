@@ -20,7 +20,7 @@ public class Game {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "season_id", insertable = false, updatable = false)
+    @JoinColumn(name = "season_id")
     private Season season;
 
     @NotNull
@@ -34,7 +34,7 @@ public class Game {
     private Mode mode;
 
     @NotNull
-    @Column(name = "start_time", insertable = false, updatable = false)
+    @Column(name = "start_time")
     private LocalDateTime startTime;
 
     @Column(name = "end_time")

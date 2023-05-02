@@ -19,12 +19,12 @@ public class PChange extends BaseTimeEntity {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "game_id", insertable = false, updatable = false)
+    @JoinColumn(name = "game_id")
     private Game game;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @NotNull

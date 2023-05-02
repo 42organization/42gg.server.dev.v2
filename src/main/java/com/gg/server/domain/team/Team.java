@@ -21,19 +21,8 @@ public class Team {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "game_id", insertable = false, updatable = false)
+    @JoinColumn(name = "game_id")
     private Game game;
-
-    @ManyToMany
-    @JoinTable(
-            name = "team_user",
-            joinColumns = @JoinColumn(name = "team_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private List<User> users = new ArrayList<>();
-
-    @NotNull
-    @Column(name = "team_ppp")
-    private Integer teamPpp;
 
     @Column(name = "score")
     private Integer score;

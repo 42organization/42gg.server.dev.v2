@@ -9,11 +9,10 @@ import java.util.Locale;
 @Getter
 @RequiredArgsConstructor
 public enum StatusType {
-    LIVE(0, "live"),
-    WAIT(1, "wait"),
-    END(2, "end");
+    LIVE("live"),
+    WAIT("wait"),
+    END("end");
 
-    private final Integer value;
     private final String code;
 
     @JsonCreator
