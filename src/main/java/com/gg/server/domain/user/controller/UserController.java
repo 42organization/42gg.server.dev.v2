@@ -10,6 +10,7 @@ import com.gg.server.global.security.jwt.repository.JwtRedisRepository;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.global.security.jwt.utils.TokenHeaders;
 import com.gg.server.global.utils.argumentresolver.Login;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -41,7 +42,7 @@ public class UserController {
     }
 
     @GetMapping("users")
-    UserNormalDetailResponseDto getUserNormalDetail(@Login User user){
+    UserNormalDetailResponseDto getUserNormalDetail(@Parameter(hidden = true) @Login User user){
         Boolean isAdmin = user.getRoleType() == RoleType.ADMIN;
         return new UserNormalDetailResponseDto(user.getIntraId(), user.getImageUri(), isAdmin);
     }
