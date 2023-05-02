@@ -1,4 +1,4 @@
-package com.gg.server.domain.noti;
+package com.gg.server.domain.noti.data;
 
 import com.gg.server.domain.user.User;
 import com.gg.server.global.types.NotiType;

@@ -86,6 +86,8 @@ dependencies {
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 	implementation 'org.springframework:spring-test:5.3.20'
 	implementation "com.amazonaws:aws-java-sdk-s3:1.12.281"
+
+	testImplementation 'org.springframework.security:spring-security-test'
 }
 
 test {

@@ -7,13 +7,9 @@ import com.gg.server.domain.user.dto.UserSearchResponseDto;
 import com.gg.server.domain.user.service.UserService;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.global.security.jwt.exception.TokenNotValidException;
-import com.gg.server.global.security.jwt.repository.JwtRedisRepository;
-import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.global.security.jwt.utils.TokenHeaders;
 import com.gg.server.global.utils.argumentresolver.Login;
 import lombok.RequiredArgsConstructor;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,10 +43,10 @@ public class UserController {
         return new UserNormalDetailResponseDto(user.getIntraId(), user.getImageUri(), isAdmin);
     }
 
-//    @GetMapping("users/live")
-//    UserLiveResponseDto getUserLiveDetail(@Login User user) {
-//
-//    }
+    @GetMapping("users/live")
+    UserLiveResponseDto getUserLiveDetail(@Login User user) {
+        return userService.getUserLiveDetail(user);
+    }
 
     @GetMapping("users/searches")
     UserSearchResponseDto searchUsers(@RequestParam String q){

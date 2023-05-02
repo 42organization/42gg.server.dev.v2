@@ -1,8 +1,8 @@
-package com.gg.server.domain.game;
+package com.gg.server.domain.game.data;
 
-import com.gg.server.domain.season.Season;
-import com.gg.server.global.types.Mode;
-import com.gg.server.global.types.StatusType;
+import com.gg.server.domain.season.data.Season;
+import com.gg.server.domain.game.type.Mode;
+import com.gg.server.domain.game.type.StatusType;
 import lombok.*;
 
 import javax.persistence.*;
@@ -39,4 +39,12 @@ public class Game {
 
     @Column(name = "end_time")
     private LocalDateTime endTime;
+
+    public Game(Season season, StatusType status, Mode mode, LocalDateTime startTime, LocalDateTime endTime) {
+        this.season = season;
+        this.status = status;
+        this.mode = mode;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
 }

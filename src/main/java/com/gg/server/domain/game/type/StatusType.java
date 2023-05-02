@@ -1,4 +1,4 @@
-package com.gg.server.global.types;
+package com.gg.server.domain.game.type;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
@@ -9,6 +9,8 @@ import java.util.Locale;
 @Getter
 @RequiredArgsConstructor
 public enum StatusType {
+
+    BEFORE("before"),
     LIVE("live"),
     WAIT("wait"),
     END("end");
