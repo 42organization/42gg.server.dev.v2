@@ -29,7 +29,6 @@ public class Noti extends BaseTimeEntity {
     @Column(name = "message", length = 255)
     private String message;
 
-    @Setter
     @NotNull
     @Column(name = "is_checked")
     private Boolean isChecked;
@@ -45,6 +44,10 @@ public class Noti extends BaseTimeEntity {
         this.user = user;
         this.type = type;
         this.message = message;
+        this.isChecked = isChecked;
+    }
+
+    public void modifyIsChecked(Boolean isChecked) {
         this.isChecked = isChecked;
     }
 }

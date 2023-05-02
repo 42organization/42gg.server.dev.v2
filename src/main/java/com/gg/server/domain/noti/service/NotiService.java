@@ -7,7 +7,9 @@ import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,19 +18,53 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class NotiService {
     private final NotiRepository notiRepository;
-
     private final UserRepository userRepository;
-    public List<NotiDto> findNotCheckedNotiByUser(UserDto userDto)
-    {
-        User user = userRepository.findById(userDto.getId()).orElse(null); // 에러코드!
-        List<Noti> notis = notiRepository.findByUserAndIsCheckedFalse(user);
 
-        List<NotiDto> notiDtos = notis.stream()
-                .map(noti -> {
-                    NotiDto notiDto = NotiDto.from(noti);
-                    return notiDto;
-                })
-                .collect(Collectors.toList());
-        return notiDtos;
+    @Transactional(readOnly = true)
+    public List<NotiDto> findNotiByUser(UserDto userDto) {
+        User user = userRepository.findById(userDto.getId()).orElse(null); //.orElseThrow(() -> new BusinessException("E0001")); 에러코드!
+        List<Noti> notiList = notiRepository.findAllByUserOrderByIdDesc(user);
+        List<NotiDto> notiDtoList = notiList.stream().map(NotiDto::from).collect(Collectors.toList());
+        return notiDtoList;
     }
+
+    @Transactional
+    public NotiDto findNotiByIdAndUser(UserDto userDto, Long notiId) {
+        User user = userRepository.findById(userDto.getId()).orElse(null); //.orElseThrow(() -> new BusinessException("E0001")); 에러코드!
+        Noti noti = notiRepository.findByIdAndUser(notiId, user);
+        return NotiDto.from(noti);
+    }
+
+    @Transactional
+    public void modifyNotiCheckedByUser(UserDto userDto) {
+        User user = userRepository.findById(userDto.getId()).orElse(null); //.orElseThrow(() -> new BusinessException("E0001")); 에러코드!
+        List<Noti> notis = notiRepository.findAllByUser(user);
+        notis.forEach(noti -> {noti.modifyIsChecked(true);});
+    }
+
+    @Transactional
+    public void removeNotiById(Long notiId) {
+        notiRepository.deleteById(notiId);
+    }
+
+    @Transactional
+    public void removeAllNotisByUser(UserDto userDto) {
+        User user = userRepository.findById(userDto.getId()).orElse(null); //.orElseThrow(() -> new BusinessException("E0001")); 에러코드!
+        notiRepository.deleteAllByUser(user);
+    }
+
+//    @Transactional(readOnly = true)
+//    public List<NotiDto> findNotCheckedNotiByUser(UserDto userDto)
+//    {
+//        User user = userRepository.findById(userDto.getId()).orElse(null); // 에러코드!
+//        List<Noti> notis = notiRepository.findByUserAndIsCheckedFalse(user);
+//
+//        List<NotiDto> notiDtos = notis.stream()
+//                .map(noti -> {
+//                    NotiDto notiDto = NotiDto.from(noti);
+//                    return notiDto;
+//                })
+//                .collect(Collectors.toList());
+//        return notiDtos;
+//    }
 }
