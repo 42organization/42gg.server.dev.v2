@@ -51,9 +51,9 @@ public class AsyncNewUserImageUploader {
         entityManager.lock(user, LockModeType.PESSIMISTIC_WRITE);
         String s3ImageUrl = userImageHandler.updateAndGetS3ImageUri(multipartFile, user);
         if (s3ImageUrl == null) {
-            userRepository.updateUserImageUri(user.getId(), defaultImageUrl);
+            user.imageUpdate(defaultImageUrl);
         } else {
-            userRepository.updateUserImageUri(user.getId(), s3ImageUrl);
+            user.imageUpdate(s3ImageUrl);
         }
         entityManager.lock(user, LockModeType.NONE);
         entityManager.flush();
