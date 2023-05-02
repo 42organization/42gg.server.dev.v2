@@ -52,19 +52,4 @@ public class NotiService {
         User user = userRepository.findById(userDto.getId()).orElse(null); //.orElseThrow(() -> new BusinessException("E0001")); 에러코드!
         notiRepository.deleteAllByUser(user);
     }
-
-//    @Transactional(readOnly = true)
-//    public List<NotiDto> findNotCheckedNotiByUser(UserDto userDto)
-//    {
-//        User user = userRepository.findById(userDto.getId()).orElse(null); // 에러코드!
-//        List<Noti> notis = notiRepository.findByUserAndIsCheckedFalse(user);
-//
-//        List<NotiDto> notiDtos = notis.stream()
-//                .map(noti -> {
-//                    NotiDto notiDto = NotiDto.from(noti);
-//                    return notiDto;
-//                })
-//                .collect(Collectors.toList());
-//        return notiDtos;
-//    }
 }
