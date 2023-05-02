@@ -17,7 +17,6 @@ public class SeasonAdminController {
 
     @GetMapping(value = "/seasons")
     public SeasonListAdminResponseDto rankSeasonList() {
-        System.out.println("11111111111");
         List<SeasonAdminDto> seasons = seasonAdminService.findAllSeasons();
 
         SeasonListAdminResponseDto responseDto = SeasonListAdminResponseDto.builder()
