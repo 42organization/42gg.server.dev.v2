@@ -30,12 +30,6 @@ public class NotiController {
         notiService.modifyNotiCheckedByUser(UserDto.from(user));
     }
 
-    @DeleteMapping(value = "/notifications/{notiId}")
-    public void notiRemoveOne(@Login User user, @PathVariable Long notiId) {
-        notiService.findNotiByIdAndUser(UserDto.from(user), notiId);
-        notiService.removeNotiById(notiId);
-    }
-
     @DeleteMapping(value = "/notifications")
     public void notiRemoveAll(@Login User user) {
         notiService.removeAllNotisByUser(UserDto.from(user));
