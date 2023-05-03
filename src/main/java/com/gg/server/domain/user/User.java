@@ -1,6 +1,5 @@
 package com.gg.server.domain.user;
 
-import com.gg.server.domain.team.Team;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
@@ -13,8 +12,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -39,10 +36,6 @@ public class User extends BaseTimeEntity implements Serializable {
     private RacketType racketType;
 
     @NotNull
-    @Column(name = "status_message")
-    private String statusMessage;
-
-    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "role_type")
     private RoleType roleType;
@@ -56,12 +49,11 @@ public class User extends BaseTimeEntity implements Serializable {
 
     @Builder
     public User(String intraId, String eMail, String imageUri, RacketType racketType,
-                String statusMessage, RoleType roleType, Integer totalExp, SnsType snsNotiOpt) {
+                RoleType roleType, Integer totalExp, SnsType snsNotiOpt) {
         this.intraId = intraId;
         this.eMail = eMail;
         this.imageUri = imageUri;
         this.racketType = racketType;
-        this.statusMessage = statusMessage;
         this.roleType = roleType;
         this.totalExp = totalExp;
         this.snsNotiOpt = snsNotiOpt;
