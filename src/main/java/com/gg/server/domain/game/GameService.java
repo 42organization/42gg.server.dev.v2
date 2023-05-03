@@ -5,9 +5,9 @@ import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.dto.GameListResDto;
 import com.gg.server.domain.game.dto.GameTeamUser;
 import com.gg.server.domain.game.dto.NormalGameResDto;
+import com.gg.server.domain.game.type.Mode;
+import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.team.data.TeamRepository;
-import com.gg.server.global.types.Mode;
-import com.gg.server.global.types.StatusType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -42,6 +42,6 @@ public class GameService {
                 break;
             }
         }
-        return new GameListResDto(gamelist, games.getSize() <= pageSize);
+        return new GameListResDto(gamelist, games.isLast());
     }
 }
