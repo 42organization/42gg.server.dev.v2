@@ -1,6 +1,6 @@
 package com.gg.server.domain.game.data;
 
-import com.gg.server.domain.teamuser.data.TeamUser;
+import com.gg.server.domain.team.data.TeamUser;
 import lombok.RequiredArgsConstructor;
 
 import javax.persistence.EntityManager;
