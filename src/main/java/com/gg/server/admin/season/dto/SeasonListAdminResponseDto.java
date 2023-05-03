@@ -1,12 +1,17 @@
 package com.gg.server.admin.season.dto;
 
-import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Getter
-@Builder
+@NoArgsConstructor
 public class SeasonListAdminResponseDto {
     List<SeasonAdminDto> seasonList;
+
+    public SeasonListAdminResponseDto(List<SeasonAdminDto> seasonList) {
+        this.seasonList = seasonList;
+    }
+
 }

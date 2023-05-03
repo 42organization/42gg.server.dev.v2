@@ -1,16 +1,14 @@
 package com.gg.server.admin.season.dto;
 
-import com.gg.server.domain.season.Season;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import com.gg.server.domain.season.data.Season;
+import lombok.*;
+
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class SeasonAdminDto {
 
     private Long seasonId;

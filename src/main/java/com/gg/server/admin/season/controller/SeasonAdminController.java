@@ -20,10 +20,7 @@ public class SeasonAdminController {
     public SeasonListAdminResponseDto rankSeasonList() {
         List<SeasonAdminDto> seasons = seasonAdminService.findAllSeasons();
 
-        SeasonListAdminResponseDto responseDto = SeasonListAdminResponseDto.builder()
-                .seasonList(seasons)
-                .build();
-        return responseDto;
+        return new SeasonListAdminResponseDto(seasons);
     }
 
 }

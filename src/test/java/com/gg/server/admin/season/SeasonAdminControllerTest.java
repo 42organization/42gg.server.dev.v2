@@ -1,20 +1,20 @@
 package com.gg.server.admin.season;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gg.server.admin.season.controller.SeasonAdminController;
 import com.gg.server.admin.season.dto.SeasonAdminDto;
 import com.gg.server.admin.season.dto.SeasonListAdminResponseDto;
-import com.gg.server.admin.season.repository.SeasonAdminRepository;
-import com.gg.server.domain.season.Season;
+import com.gg.server.admin.season.data.SeasonAdminRepository;
 
+import com.gg.server.domain.season.data.Season;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
+import com.gg.server.utils.TestDataUtils;
+import com.google.common.net.HttpHeaders;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RequiredArgsConstructor
@@ -42,6 +41,9 @@ class SeasonAdminControllerTest {
 
     @Autowired
     AuthTokenProvider tokenProvider;
+
+    @Autowired
+    TestDataUtils testDataUtils;
 
     SeasonListAdminResponseDto responseDto;
 
@@ -71,9 +73,7 @@ class SeasonAdminControllerTest {
             SeasonAdminDto dto = new SeasonAdminDto(season);
             dtoList.add(dto);
         }
-        responseDto = SeasonListAdminResponseDto.builder()
-                .seasonList(dtoList)
-                .build();
+        responseDto = new SeasonListAdminResponseDto(dtoList);
     }
 
     @Test
@@ -83,13 +83,24 @@ class SeasonAdminControllerTest {
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
 
-        String contentAsString = mockMvc.perform(MockMvcRequestBuilders.get("/pingpong/admin/seasons"))
+        String contentAsString = mockMvc.perform(MockMvcRequestBuilders.get("/pingpong/admin/seasons")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
         SeasonListAdminResponseDto seasonListAdminResponseDto = objectMapper.readValue(contentAsString, SeasonListAdminResponseDto.class);
-        assertThat(seasonListAdminResponseDto.getSeasonList()).isEqualTo(responseDto.getSeasonList());
+        assertThat(seasonListAdminResponseDto.getSeasonList().size()).isEqualTo(responseDto.getSeasonList().size());
+        assertThat(seasonListAdminResponseDto.getSeasonList().get(0).getSeasonName()).isEqualTo(responseDto.getSeasonList().get(0).getSeasonName());
+        assertThat(seasonListAdminResponseDto.getSeasonList().get(0).getStartTime()).isEqualTo(responseDto.getSeasonList().get(0).getStartTime());
+        assertThat(seasonListAdminResponseDto.getSeasonList().get(0).getEndTime()).isEqualTo(responseDto.getSeasonList().get(0).getEndTime());
+        assertThat(seasonListAdminResponseDto.getSeasonList().get(0).getStartPpp()).isEqualTo(responseDto.getSeasonList().get(0).getStartPpp());
+        assertThat(seasonListAdminResponseDto.getSeasonList().get(0).getPppGap()).isEqualTo(responseDto.getSeasonList().get(0).getPppGap());
 
+        assertThat(seasonListAdminResponseDto.getSeasonList().get(1).getSeasonName()).isEqualTo(responseDto.getSeasonList().get(1).getSeasonName());
+        assertThat(seasonListAdminResponseDto.getSeasonList().get(1).getStartTime()).isEqualTo(responseDto.getSeasonList().get(1).getStartTime());
+        assertThat(seasonListAdminResponseDto.getSeasonList().get(1).getEndTime()).isEqualTo(responseDto.getSeasonList().get(1).getEndTime());
+        assertThat(seasonListAdminResponseDto.getSeasonList().get(1).getStartPpp()).isEqualTo(responseDto.getSeasonList().get(1).getStartPpp());
+        assertThat(seasonListAdminResponseDto.getSeasonList().get(1).getPppGap()).isEqualTo(responseDto.getSeasonList().get(1).getPppGap());
     }
 
 
