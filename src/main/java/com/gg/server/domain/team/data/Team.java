@@ -1,14 +1,10 @@
-package com.gg.server.domain.team;
+package com.gg.server.domain.team.data;
 
-import com.gg.server.domain.game.Game;
-import com.gg.server.domain.season.Season;
-import com.gg.server.domain.user.User;
+import com.gg.server.domain.game.data.Game;
 import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,4 +25,10 @@ public class Team {
 
     @Column(name = "win")
     private Boolean win;
+
+    public Team(Game game, Integer score, Boolean win) {
+        this.game = game;
+        this.score = score;
+        this.win = win;
+    }
 }
