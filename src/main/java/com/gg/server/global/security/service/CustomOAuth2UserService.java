@@ -65,7 +65,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .roleType(userInfo.getRoleType())
                 .imageUri(userInfo.getImageUrl())
                 .snsNotiOpt(SnsType.EMAIL)
-                .statusMessage("")
                 .racketType(RacketType.NONE)
                 .totalExp(0)
                 .eMail(userInfo.getEmail())

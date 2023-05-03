@@ -1,4 +1,4 @@
-package com.gg.server.global.types;
+package com.gg.server.domain.noti.type;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
