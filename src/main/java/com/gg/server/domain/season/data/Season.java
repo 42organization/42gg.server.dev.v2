@@ -1,4 +1,4 @@
-package com.gg.server.domain.season;
+package com.gg.server.domain.season.data;
 
 import lombok.*;
 
@@ -37,4 +37,11 @@ public class Season {
     @Column(name = "ppp_gap")
     private Integer pppGap;
 
+    public Season(String seasonName, LocalDateTime startTime, LocalDateTime endTime, Integer startPpp, Integer pppGap) {
+        this.seasonName = seasonName;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.startPpp = startPpp;
+        this.pppGap = pppGap;
+    }
 }

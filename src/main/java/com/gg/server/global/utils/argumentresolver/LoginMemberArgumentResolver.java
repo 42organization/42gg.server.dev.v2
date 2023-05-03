@@ -2,7 +2,7 @@ package com.gg.server.global.utils.argumentresolver;
 
 import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.UserRepository;
-import com.gg.server.domain.user.service.UserService;
+import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.global.utils.HeaderUtil;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         boolean hasLoginAnnotation = parameter.hasParameterAnnotation(Login.class);
-        boolean hasUserType = User.class.isAssignableFrom(parameter.getParameterType());
+        boolean hasUserType = UserDto.class.isAssignableFrom(parameter.getParameterType());
         return hasLoginAnnotation && hasUserType;
     }
 
@@ -33,6 +33,7 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
         String accessToken = HeaderUtil.getAccessToken(request);
         Long loginUserId = tokenProvider.getUserIdFromToken(accessToken);
         User user = userRepository.findById(loginUserId).orElseThrow();
-        return user;
+        UserDto userDto = UserDto.from(user);
+        return userDto;
     }
 }

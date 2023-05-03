@@ -87,6 +87,8 @@ dependencies {
 	implementation 'org.springframework:spring-test:5.3.20'
 	implementation "com.amazonaws:aws-java-sdk-s3:1.12.281"
 
+	testImplementation 'org.springframework.security:spring-security-test'
+
 	/* spring doc */
 	implementation 'org.springdoc:springdoc-openapi-ui:1.6.6'
 
