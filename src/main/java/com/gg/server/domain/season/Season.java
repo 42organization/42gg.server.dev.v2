@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Getter
+@Builder
 public class Season {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

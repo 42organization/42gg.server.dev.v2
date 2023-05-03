@@ -1,6 +1,7 @@
-package com.gg.server.admin.season;
+package com.gg.server.admin.season.service;
 
 import com.gg.server.admin.season.dto.SeasonAdminDto;
+import com.gg.server.admin.season.repository.SeasonAdminRepository;
 import com.gg.server.domain.season.Season;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

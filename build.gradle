@@ -89,6 +89,7 @@ dependencies {
 
 	/* spring doc */
 	implementation 'org.springdoc:springdoc-openapi-ui:1.6.6'
+
 }
 
 test {

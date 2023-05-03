@@ -1,5 +1,6 @@
-package com.gg.server.admin.season;
+package com.gg.server.admin.season.controller;
 
+import com.gg.server.admin.season.service.SeasonAdminService;
 import com.gg.server.admin.season.dto.SeasonAdminDto;
 import com.gg.server.admin.season.dto.SeasonListAdminResponseDto;
 import lombok.AllArgsConstructor;
