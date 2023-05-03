@@ -4,12 +4,14 @@ import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.team.dto.TeamUserInfoDto;
 import com.gg.server.domain.team.dto.TeamUserListDto;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@NoArgsConstructor
 public class NormalGameResDto {
     private Long gameId;
     private String status;
