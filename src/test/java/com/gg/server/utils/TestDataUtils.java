@@ -75,6 +75,21 @@ public class TestDataUtils {
         return user;
     }
 
+    public User createNewUser(String intraId, String email, String imageUrl, RacketType racketType,
+                              SnsType snsType, RoleType roleType){
+        User user = User.builder()
+                .eMail(email)
+                .intraId(intraId)
+                .imageUri(imageUrl)
+                .racketType(racketType)
+                .snsNotiOpt(snsType)
+                .roleType(roleType)
+                .totalExp(1000)
+                .build();
+        userRepository.save(user);
+        return user;
+    }
+
     public void addMockDataUserLiveApi(String event, int notiCnt, String currentMatchMode, Long userId) {
         User curUser = userRepository.findById(userId).get();
         for (int i = 0; i < notiCnt; i++) {
