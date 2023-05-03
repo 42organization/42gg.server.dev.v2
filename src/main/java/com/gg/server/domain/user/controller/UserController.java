@@ -1,6 +1,8 @@
 package com.gg.server.domain.user.controller;
 
 import com.gg.server.domain.user.User;
+import com.gg.server.domain.user.dto.UserDto;
+import com.gg.server.domain.user.dto.UserLiveResponseDto;
 import com.gg.server.domain.user.dto.UserNormalDetailResponseDto;
 import com.gg.server.domain.user.dto.UserSearchResponseDto;
 import com.gg.server.domain.user.service.UserService;
@@ -38,13 +40,13 @@ public class UserController {
     }
 
     @GetMapping("users")
-    UserNormalDetailResponseDto getUserNormalDetail(@Parameter(hidden = true) @Login User user){
+    UserNormalDetailResponseDto getUserNormalDetail(@Parameter(hidden = true) @Login UserDto user){
         Boolean isAdmin = user.getRoleType() == RoleType.ADMIN;
         return new UserNormalDetailResponseDto(user.getIntraId(), user.getImageUri(), isAdmin);
     }
 
     @GetMapping("users/live")
-    UserLiveResponseDto getUserLiveDetail(@Login User user) {
+    UserLiveResponseDto getUserLiveDetail(@Login UserDto user) {
         return userService.getUserLiveDetail(user);
     }
 
