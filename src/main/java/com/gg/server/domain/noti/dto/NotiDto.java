@@ -1,9 +1,8 @@
 package com.gg.server.domain.noti.dto;
 
-import com.gg.server.domain.noti.Noti;
+import com.gg.server.domain.noti.data.Noti;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.domain.noti.type.NotiType;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
