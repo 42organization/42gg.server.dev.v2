@@ -1,6 +1,7 @@
 package com.gg.server.domain.user.controller;
 
 import com.gg.server.domain.user.User;
+import com.gg.server.domain.user.dto.UserLiveResponseDto;
 import com.gg.server.domain.user.dto.UserNormalDetailResponseDto;
 import com.gg.server.domain.user.dto.UserSearchResponseDto;
 import com.gg.server.domain.user.service.UserService;
