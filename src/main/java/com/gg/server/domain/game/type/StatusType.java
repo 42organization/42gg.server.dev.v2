@@ -10,10 +10,10 @@ import java.util.Locale;
 @RequiredArgsConstructor
 public enum StatusType {
 
-    BEFORE("before"),
-    LIVE("live"),
-    WAIT("wait"),
-    END("end");
+    BEFORE("before"), // 게임 시작 전
+    LIVE("live"), // 게임 진행 중
+    WAIT("wait"), // 게임 끝나고 점수입력 기다리는 상태
+    END("end"); // 게임이 끝나고 점수입력도 완료
 
     private final String code;
 

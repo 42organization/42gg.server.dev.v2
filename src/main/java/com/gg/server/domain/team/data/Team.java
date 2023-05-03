@@ -17,6 +17,7 @@ public class Team {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "game_id")
     private Game game;
 
     @Column(name = "score")
