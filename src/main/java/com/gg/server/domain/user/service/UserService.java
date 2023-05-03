@@ -6,6 +6,7 @@ import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.noti.data.NotiRepository;
 import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.UserRepository;
+import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.domain.user.dto.UserLiveResponseDto;
 import com.gg.server.global.security.jwt.exception.TokenNotValidException;
 import com.gg.server.global.security.jwt.repository.JwtRedisRepository;
@@ -66,7 +67,7 @@ public class UserService {
      *     - null -> 매칭이 안잡혔을 때
      */
     @Transactional(readOnly = true)
-    public UserLiveResponseDto getUserLiveDetail(User user) {
+    public UserLiveResponseDto getUserLiveDetail(UserDto user) {
         int notiCnt = notiRepository.countNotCheckedNotiByUser(user.getId());
         String event = null;
         String currentMatchMode = null;

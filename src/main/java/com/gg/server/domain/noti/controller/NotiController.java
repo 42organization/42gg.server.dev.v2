@@ -20,18 +20,18 @@ public class NotiController {
     private final NotiService notiService;
 
     @GetMapping(value = "/notifications")
-    public NotiResponseDto notiFindByUser(@Login User user) {
-        List<NotiDto> notiDtos = notiService.findNotiByUser(UserDto.from(user));
+    public NotiResponseDto notiFindByUser(@Login UserDto user) {
+        List<NotiDto> notiDtos = notiService.findNotiByUser(user);
         return new NotiResponseDto(notiDtos);
     }
 
     @PutMapping(value = "/notifications/check")
-    public void checkNotiByUser(@Login User user) {
-        notiService.modifyNotiCheckedByUser(UserDto.from(user));
+    public void checkNotiByUser(@Login UserDto user) {
+        notiService.modifyNotiCheckedByUser(user);
     }
 
     @DeleteMapping(value = "/notifications")
-    public void notiRemoveAll(@Login User user) {
-        notiService.removeAllNotisByUser(UserDto.from(user));
+    public void notiRemoveAll(@Login UserDto user) {
+        notiService.removeAllNotisByUser(user);
     }
 }

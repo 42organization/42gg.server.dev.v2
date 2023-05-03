@@ -4,6 +4,7 @@ import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.noti.data.Noti;
 import com.gg.server.domain.noti.data.NotiRepository;
+import com.gg.server.domain.noti.type.NotiType;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.data.SeasonRepository;
 import com.gg.server.domain.team.data.Team;
@@ -17,7 +18,6 @@ import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.domain.game.type.Mode;
-import com.gg.server.global.types.NotiType;
 import com.gg.server.domain.game.type.StatusType;
 import org.springframework.stereotype.Component;
 
@@ -54,7 +54,6 @@ public class TestDataUtils {
                 .racketType(RacketType.PENHOLDER)
                 .snsNotiOpt(SnsType.NONE)
                 .roleType(RoleType.USER)
-                .statusMessage("")
                 .totalExp(1000)
                 .build();
         userRepository.save(user);
@@ -70,7 +69,6 @@ public class TestDataUtils {
                 .racketType(RacketType.PENHOLDER)
                 .snsNotiOpt(SnsType.NONE)
                 .roleType(RoleType.USER)
-                .statusMessage("")
                 .totalExp(1000)
                 .build();
         userRepository.save(user);
