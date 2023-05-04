@@ -50,9 +50,26 @@ public class GameControllerTest {
 
     @Test
     public void 일반게임목록조회() throws Exception {
-//        GameListResDto result = gameService.normalGameList(0, 10);
         //given
         String url = "/pingpong/games/normal?count=0&pageSize=10";
+        GameListResDto expect = gameService.normalGameList(0, 10);
+        //when
+        String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println(contentAsString);
+        GameListResDto result = objectMapper.readValue(contentAsString, GameListResDto.class);
+        //then
+        System.out.println(result.getGames().size() +", " + result.getIsLast());
+        System.out.println(expect.getGames().size() + ", " + expect.getIsLast());
+        assertThat(result.getGames().size()).isEqualTo(expect.getGames().size());
+        assertThat(result.getIsLast()).isEqualTo(expect.getIsLast());
+    }
+
+    @Test
+    public void 랭크게임목록조회() throws Exception {
+        //given
+        String url = "/pingpong/games/rank?count=0&pageSize=10&seasonId=3";
         GameListResDto expect = gameService.normalGameList(0, 10);
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
