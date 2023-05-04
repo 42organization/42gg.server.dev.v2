@@ -16,4 +16,9 @@ public class GameController {
     GameListResDto normalGameList(@RequestParam int count, @RequestParam int pageSize) {
         return gameService.normalGameList(count, pageSize);
     }
+
+    @GetMapping("/rank")
+    GameListResDto rankGameList(@RequestParam int count, @RequestParam int pageSize, @RequestParam Long seasonId) {
+        return gameService.rankGameList(count, pageSize, seasonId);
+    }
 }

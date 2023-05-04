@@ -8,10 +8,10 @@ import java.util.*;
 @Getter
 @NoArgsConstructor
 public class GameListResDto {
-    private List<NormalGameResDto> games;
+    private List<GameResultResDto> games;
     Boolean isLast;
 
-    public GameListResDto(List<NormalGameResDto> games, Boolean isLast) {
+    public GameListResDto(List<GameResultResDto> games, Boolean isLast) {
         this.games = games;
         this.isLast = isLast;
     }

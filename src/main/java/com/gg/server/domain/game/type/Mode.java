@@ -9,9 +9,7 @@ import java.util.Locale;
 @Getter
 @RequiredArgsConstructor
 public enum Mode {
-    NORMAL(0,"normal"), RANK(1,"rank");
-
-    private final Integer value;
+    NORMAL("NORMAL"), RANK("RANK");
     private final String code;
 
     @JsonCreator(mode = JsonCreator.Mode.DELEGATING)

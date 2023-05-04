@@ -4,7 +4,7 @@ import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.dto.GameListResDto;
 import com.gg.server.domain.game.dto.GameTeamUser;
-import com.gg.server.domain.game.dto.NormalGameResDto;
+import com.gg.server.domain.game.dto.GameResultResDto;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.team.data.TeamRepository;
@@ -28,20 +28,19 @@ public class GameService {
     @Transactional(readOnly = true)
     public GameListResDto normalGameList(int count, int pageSize) {
         Pageable pageable = PageRequest.of(count, pageSize, Sort.by(Sort.Direction.DESC, "startTime"));
-        List<StatusType> statusList = new ArrayList<>();
-        statusList.add(StatusType.END);
-        Slice<Game> games = gameRepository.findAllByModeAndStatusIsInOrderByStartTimeDesc(Mode.NORMAL, statusList,pageable);
-        List<NormalGameResDto> gamelist = new ArrayList<>();
+        Slice<Game> games = gameRepository.findAllByModeAndStatus(Mode.NORMAL, StatusType.END, pageable);
+        return new GameListResDto(getGameResultList(games), games.isLast());
+    }
+
+    @Transactional(readOnly = true)
+    public GameListResDto rankGameList(int count, int pageSize, Long seasonId) {
+        Pageable pageable = PageRequest.of(count, pageSize, Sort.by(Sort.Direction.DESC, "startTime"));
+        Slice<Game> games = gameRepository.findAllByModeAndStatusAndSeasonId(Mode.RANK, StatusType.END, seasonId, pageable);
+        return new GameListResDto(getGameResultList(games), games.isLast());
+    }
+
+    private List<GameResultResDto> getGameResultList(Slice<Game> games) {
         List<GameTeamUser> teamViews = gameRepository.findTeamsByGameIsIn(games.stream().map(Game::getId).collect(Collectors.toList()));
-        int i = 0;
-        for (Game game: games) {
-            NormalGameResDto dto = new NormalGameResDto(game);
-            dto.setTeamList(teamViews.get(i++));
-            gamelist.add(dto);
-            if (i >= pageSize) {
-                break;
-            }
-        }
-        return new GameListResDto(gamelist, games.isLast());
+        return teamViews.stream().map(GameResultResDto::new).collect(Collectors.toList());
     }
 }
