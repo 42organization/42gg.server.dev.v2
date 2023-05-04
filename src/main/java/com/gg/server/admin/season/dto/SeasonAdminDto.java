@@ -20,22 +20,23 @@ public class SeasonAdminDto {
     private Integer status;
 
     public SeasonAdminDto(Season season) {
-        Integer status;
-        LocalDateTime now = LocalDateTime.now();
-
-        if (now.isAfter(season.getEndTime()))
-            status = 0; //SEASON_PAST
-        else if (now.isAfter(season.getStartTime()) && now.isBefore((season.getEndTime())))
-            status = 1; //SEASON_CURRENT
-        else
-            status = 2; //SEASON_FUTUER
-
         this.seasonId = season.getId();
         this.seasonName = season.getSeasonName();
         this.startTime = season.getStartTime();
         this.endTime = season.getEndTime();
         this.startPpp = season.getStartPpp();
         this.pppGap = season.getPppGap();
-        this.status = status;
+        this.status = setSeasonStatus(season);
+    }
+
+    private Integer setSeasonStatus(Season season) {
+        LocalDateTime now = LocalDateTime.now();
+
+        if (now.isAfter(season.getEndTime()))
+            return 0; //SEASON_PAST
+        else if (now.isAfter(season.getStartTime()) && now.isBefore((season.getEndTime())))
+            return 1; //SEASON_CURRENT
+        else
+            return 2; //SEASON_FUTUER
     }
 }
