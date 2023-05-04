@@ -26,7 +26,7 @@ public enum Option {
             else if (e.code.toUpperCase(Locale.ROOT).equals(code.toUpperCase(Locale.ROOT)))
                 return e;
         }
-        throw new IllegalArgumentException("Invalid value: " + code);
+        return null;
     }
 
 }

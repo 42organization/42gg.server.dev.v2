@@ -4,6 +4,8 @@ import com.gg.server.domain.match.dto.MatchRequestDto;
 import com.gg.server.domain.match.service.MatchRedisService;
 import com.gg.server.domain.match.type.Option;
 import com.gg.server.domain.user.dto.UserDto;
+import com.gg.server.global.exception.ErrorCode;
+import com.gg.server.global.exception.custom.InvalidParameterException;
 import com.gg.server.global.utils.argumentresolver.Login;
 import io.swagger.v3.oas.annotations.Parameter;
 import java.time.LocalDateTime;
@@ -31,7 +33,12 @@ public class MatchController {
         //rank - 관련해서 따로 정해야할 필요가 있음
         //user가 rank에 없을 시 season ppp 초기값 넣을 필요가 있음
         //3회 이상 매칭 잡을 시 예외 처리
-        //rank, normal, both 아닌 다른 mode 들어오면 IllegalArgumentException
+        if (matchRedisService.isUserMatch(user.getIntraId(), matchRequestDto.getStartTime())) {
+            throw new InvalidParameterException("match is already enrolled", ErrorCode.VALID_FAILED);
+        }
+        if (matchRedisService.countUserMatch(user.getIntraId()) >= 3L) {
+            throw new InvalidParameterException("enroll already three times", ErrorCode.VALID_FAILED);
+        }
         matchRedisService.makeMatch(user.getIntraId(), 1000, matchRequestDto.getOption(), matchRequestDto.getStartTime());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
@@ -39,6 +46,9 @@ public class MatchController {
     public ResponseEntity deleteUserMatch(@RequestParam("startTime")
                                               @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") LocalDateTime startTime,
                                           @Parameter(hidden = true) @Login UserDto user) {
+        if (!matchRedisService.isUserMatch(user.getIntraId(), startTime)) {
+            throw new InvalidParameterException("match is not enrolled", ErrorCode.VALID_FAILED);
+        }
         matchRedisService.cancelMatch(user.getIntraId(), startTime);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
