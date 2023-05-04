@@ -16,15 +16,15 @@ public class GameController {
 
     @GetMapping
     GameListResDto allGameList(@ModelAttribute @Valid GameListReqDto gameReq) {
-        return gameService.allGameList(gameReq.getCount(), gameReq.getPageSize());
+        return gameService.allGameList(gameReq.getPageNum(), gameReq.getPageSize());
     }
     @GetMapping("/normal")
     GameListResDto normalGameList(@ModelAttribute @Valid GameListReqDto gameReq) {
-        return gameService.normalGameList(gameReq.getCount(), gameReq.getPageSize());
+        return gameService.normalGameList(gameReq.getPageNum(), gameReq.getPageSize());
     }
 
     @GetMapping("/rank")
     GameListResDto rankGameList(@ModelAttribute @Valid RankGameListReqDto gameReq) {
-        return gameService.rankGameList(gameReq.getCount(), gameReq.getPageSize(), gameReq.getSeasonId());
+        return gameService.rankGameList(gameReq.getPageNum(), gameReq.getPageSize(), gameReq.getSeasonId());
     }
 }

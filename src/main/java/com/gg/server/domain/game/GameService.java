@@ -26,22 +26,22 @@ public class GameService {
     private final TeamRepository teamRepository;
 
     @Transactional(readOnly = true)
-    public GameListResDto normalGameList(int count, int pageSize) {
-        Pageable pageable = PageRequest.of(count, pageSize, Sort.by(Sort.Direction.DESC, "startTime"));
+    public GameListResDto normalGameList(int pageNum, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Direction.DESC, "startTime"));
         Slice<Game> games = gameRepository.findAllByModeAndStatus(Mode.NORMAL, StatusType.END, pageable);
         return new GameListResDto(getGameResultList(games), games.isLast());
     }
 
     @Transactional(readOnly = true)
-    public GameListResDto rankGameList(int count, int pageSize, Long seasonId) {
-        Pageable pageable = PageRequest.of(count, pageSize, Sort.by(Sort.Direction.DESC, "startTime"));
+    public GameListResDto rankGameList(int pageNum, int pageSize, Long seasonId) {
+        Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Direction.DESC, "startTime"));
         Slice<Game> games = gameRepository.findAllByModeAndStatusAndSeasonId(Mode.RANK, StatusType.END, seasonId, pageable);
         return new GameListResDto(getGameResultList(games), games.isLast());
     }
 
     @Transactional(readOnly = true)
-    public GameListResDto allGameList(int count, int pageSize) {
-        Pageable pageable = PageRequest.of(count, pageSize, Sort.by(Sort.Direction.DESC, "startTime"));
+    public GameListResDto allGameList(int pageNum, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Direction.DESC, "startTime"));
         Slice<Game> games = gameRepository.findAllByAndStatus(StatusType.END, pageable);
         return new GameListResDto(getGameResultList(games), games.isLast());
     }

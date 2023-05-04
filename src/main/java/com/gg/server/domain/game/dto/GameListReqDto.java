@@ -11,14 +11,14 @@ import javax.validation.constraints.PositiveOrZero;
 @Getter
 public class GameListReqDto {
     @PositiveOrZero
-    @NotNull(message = "count 는 필수 값입니다.")
-    Integer count;
+    @NotNull(message = "pageNum 은 필수 값입니다.")
+    Integer pageNum;
     @Positive
     @NotNull(message = "pageSize 는 필수 값입니다.")
     Integer pageSize;
 
-    public GameListReqDto(Integer count, Integer pageSize) {
-        this.count = count;
+    public GameListReqDto(Integer pageNum, Integer pageSize) {
+        this.pageNum = pageNum;
         this.pageSize = pageSize;
     }
 }
