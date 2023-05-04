@@ -109,4 +109,19 @@ public class GameControllerTest {
         assertThat(result.getGames().size()).isEqualTo(expect.getGames().size());
         assertThat(result.getIsLast()).isEqualTo(expect.getIsLast());
     }
+
+    @Test
+    void 게임목록조회에러테스트() throws Exception {
+        String url = "/pingpong/games?pageNum=0&pageSize=10&status=live";
+        mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isBadRequest())
+                .andReturn().getResponse().getContentAsString();
+    }
+    @Test
+    void 게임목록조회에러테스트2() throws Exception {
+        String url = "/pingpong/games?pageNum=0&pageSize=10&status=2";
+        mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isBadRequest())
+                .andReturn().getResponse().getContentAsString();
+    }
 }
