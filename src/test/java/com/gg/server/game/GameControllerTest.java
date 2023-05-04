@@ -38,7 +38,6 @@ public class GameControllerTest {
     private MockMvc mockMvc;
     @Autowired
     ObjectMapper objectMapper;
-
     @Autowired
     AuthTokenProvider tokenProvider;
     private String accessToken;
@@ -51,7 +50,7 @@ public class GameControllerTest {
     @Test
     public void 일반게임목록조회() throws Exception {
         //given
-        String url = "/pingpong/games/normal?count=0&pageSize=10";
+        String url = "/pingpong/games/normal?pageNum=0&pageSize=10";
         GameListResDto expect = gameService.normalGameList(0, 10);
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
@@ -69,7 +68,7 @@ public class GameControllerTest {
     @Test
     public void 랭크게임목록조회() throws Exception {
         //given
-        String url = "/pingpong/games/rank?count=0&pageSize=10&seasonId=3";
+        String url = "/pingpong/games/rank?pageNum=0&pageSize=10&seasonId=3";
         GameListResDto expect = gameService.normalGameList(0, 10);
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
@@ -87,7 +86,7 @@ public class GameControllerTest {
     @Test
     public void 랭크게임목록error조회() throws Exception {
         //given
-        String url = "/pingpong/games/rank?count=0&pageSize=0";
+        String url = "/pingpong/games/rank?pageNum=0&pageSize=0";
         //then
         mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().is4xxClientError())
@@ -96,7 +95,7 @@ public class GameControllerTest {
     @Test
     public void 전체게임목록조회() throws Exception {
         //given
-        String url = "/pingpong/games?count=0&pageSize=10";
+        String url = "/pingpong/games?pageNum=0&pageSize=10";
         GameListResDto expect = gameService.allGameList(0, 10, null);
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
