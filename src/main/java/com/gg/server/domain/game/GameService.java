@@ -40,9 +40,14 @@ public class GameService {
     }
 
     @Transactional(readOnly = true)
-    public GameListResDto allGameList(int pageNum, int pageSize) {
+    public GameListResDto allGameList(int pageNum, int pageSize, StatusType status) {
         Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Direction.DESC, "startTime"));
-        Slice<Game> games = gameRepository.findAllByAndStatus(StatusType.END, pageable);
+        Slice<Game> games;
+        if (status != null) {
+            games = gameRepository.findAllByAndStatusIn(Arrays.asList(StatusType.END, StatusType.LIVE), pageable);
+        } else {
+            games = gameRepository.findAllByAndStatus(StatusType.END, pageable);
+        }
         return new GameListResDto(getGameResultList(games), games.isLast());
     }
 

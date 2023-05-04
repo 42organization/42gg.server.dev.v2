@@ -1,13 +1,13 @@
-package com.gg.server.domain.game.dto;
+package com.gg.server.domain.game.dto.req;
 
-import lombok.AllArgsConstructor;
+import com.gg.server.domain.game.dto.req.NormalGameListReqDto;
 import lombok.Getter;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
 @Getter
-public class RankGameListReqDto extends GameListReqDto {
+public class RankGameListReqDto extends NormalGameListReqDto {
     @Positive
     @NotNull(message = "seasonId 는 필수 값입니다.")
     private Long seasonId;

@@ -1,8 +1,9 @@
 package com.gg.server.domain.game;
 
-import com.gg.server.domain.game.dto.GameListReqDto;
+import com.gg.server.domain.game.dto.req.GameListReqDto;
+import com.gg.server.domain.game.dto.req.NormalGameListReqDto;
 import com.gg.server.domain.game.dto.GameListResDto;
-import com.gg.server.domain.game.dto.RankGameListReqDto;
+import com.gg.server.domain.game.dto.req.RankGameListReqDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,10 +17,13 @@ public class GameController {
 
     @GetMapping
     GameListResDto allGameList(@ModelAttribute @Valid GameListReqDto gameReq) {
-        return gameService.allGameList(gameReq.getPageNum(), gameReq.getPageSize());
+        if (gameReq.getStatus() != null && !gameReq.getStatus().name().equals("LIVE")) {
+            // 예외처리
+        }
+        return gameService.allGameList(gameReq.getPageNum(), gameReq.getPageSize(), gameReq.getStatus());
     }
     @GetMapping("/normal")
-    GameListResDto normalGameList(@ModelAttribute @Valid GameListReqDto gameReq) {
+    GameListResDto normalGameList(@ModelAttribute @Valid NormalGameListReqDto gameReq) {
         return gameService.normalGameList(gameReq.getPageNum(), gameReq.getPageSize());
     }
 

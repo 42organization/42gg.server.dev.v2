@@ -1,23 +1,21 @@
-package com.gg.server.domain.game.dto;
+package com.gg.server.domain.game.dto.req;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 
 @Getter
-public class GameListReqDto {
+public class NormalGameListReqDto {
     @PositiveOrZero
     @NotNull(message = "pageNum 은 필수 값입니다.")
-    Integer pageNum;
+    private Integer pageNum;
     @Positive
     @NotNull(message = "pageSize 는 필수 값입니다.")
-    Integer pageSize;
+    private Integer pageSize;
 
-    public GameListReqDto(Integer pageNum, Integer pageSize) {
+    public NormalGameListReqDto(Integer pageNum, Integer pageSize) {
         this.pageNum = pageNum;
         this.pageSize = pageSize;
     }

@@ -97,7 +97,7 @@ public class GameControllerTest {
     public void 전체게임목록조회() throws Exception {
         //given
         String url = "/pingpong/games?count=0&pageSize=10";
-        GameListResDto expect = gameService.allGameList(0, 10);
+        GameListResDto expect = gameService.allGameList(0, 10, null);
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())
