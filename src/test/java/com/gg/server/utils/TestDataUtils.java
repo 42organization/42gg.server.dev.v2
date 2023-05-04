@@ -9,8 +9,8 @@ import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.data.SeasonRepository;
 import com.gg.server.domain.team.data.Team;
 import com.gg.server.domain.team.data.TeamRepository;
-import com.gg.server.domain.teamuser.data.TeamUser;
-import com.gg.server.domain.teamuser.data.TeamUserRepository;
+import com.gg.server.domain.team.data.TeamUser;
+import com.gg.server.domain.team.data.TeamUserRepository;
 import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.UserRepository;
 import com.gg.server.domain.user.type.RacketType;
@@ -69,6 +69,21 @@ public class TestDataUtils {
                 .racketType(RacketType.PENHOLDER)
                 .snsNotiOpt(SnsType.NONE)
                 .roleType(RoleType.USER)
+                .totalExp(1000)
+                .build();
+        userRepository.save(user);
+        return user;
+    }
+
+    public User createNewUser(String intraId, String email, String imageUrl, RacketType racketType,
+                              SnsType snsType, RoleType roleType){
+        User user = User.builder()
+                .eMail(email)
+                .intraId(intraId)
+                .imageUri(imageUrl)
+                .racketType(racketType)
+                .snsNotiOpt(snsType)
+                .roleType(roleType)
                 .totalExp(1000)
                 .build();
         userRepository.save(user);
