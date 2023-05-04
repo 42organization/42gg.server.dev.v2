@@ -22,7 +22,6 @@ public class RedisMatchTimeRepository {
 
         ListOperations<String, RedisMatchUser> listOperations = redisTemplate.opsForList();
         return listOperations.range(MatchKey.TIME.getCode() + matchTime, 0, - 1);
-        //0, -1 idx 확인
     }
 
     public void setMatchTimeWithExpiry(LocalDateTime startTime) {

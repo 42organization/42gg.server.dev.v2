@@ -1,6 +1,7 @@
 package com.gg.server.domain.match.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.gg.server.domain.match.type.Option;
 import java.time.LocalDateTime;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -17,5 +18,5 @@ public class MatchRequestDto {
     private LocalDateTime startTime;
     @NotNull
     @JsonProperty("mode")
-    private String option;
+    private Option option;
 }

@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import java.time.LocalDateTime;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,18 +32,13 @@ public class MatchController {
         //user가 rank에 없을 시 season ppp 초기값 넣을 필요가 있음
         //3회 이상 매칭 잡을 시 예외 처리
         //rank, normal, both 아닌 다른 mode 들어오면 IllegalArgumentException
-        try {
-            Option option = Option.getEnumValue(matchRequestDto.getOption());
-            //rank 부분 결정 안되서 ppp hard coding
-            matchRedisService.makeMatch(user.getIntraId(), 1000, option, matchRequestDto.getStartTime());
-            return ResponseEntity.status(HttpStatus.OK).build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        matchRedisService.makeMatch(user.getIntraId(), 1000, matchRequestDto.getOption(), matchRequestDto.getStartTime());
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
     @DeleteMapping("match")
-    public ResponseEntity deleteUserMatch(@RequestParam("startTime") String timeData, @Parameter(hidden = true) @Login UserDto user) {
-        LocalDateTime startTime = LocalDateTime.parse(timeData);
+    public ResponseEntity deleteUserMatch(@RequestParam("startTime")
+                                              @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") LocalDateTime startTime,
+                                          @Parameter(hidden = true) @Login UserDto user) {
         matchRedisService.cancelMatch(user.getIntraId(), startTime);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
