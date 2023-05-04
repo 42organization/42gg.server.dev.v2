@@ -8,7 +8,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum Option {
     //match에서는 Both를 써서 자료형 따로 만듬
-    BOTH(0,"both"), NORMAL(1,"normal"), RANK(2,"rank");
+    BOTH(0,"both"),
+    NORMAL(1,"normal"),
+    RANK(2,"rank");
+
     // 모드는 3가지가 있음.
 
     private final Integer value;
@@ -23,6 +26,7 @@ public enum Option {
             else if (e.code.toUpperCase(Locale.ROOT).equals(code.toUpperCase(Locale.ROOT)))
                 return e;
         }
-        return null;
+        throw new IllegalArgumentException("Invalid value: " + code);
     }
+
 }

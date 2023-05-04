@@ -1,4 +1,4 @@
-package com.gg.server.domain.match;
+package com.gg.server.domain.match.data;
 
 import com.gg.server.domain.match.type.Option;
 import javax.persistence.Id;
@@ -11,12 +11,12 @@ import org.springframework.data.redis.core.RedisHash;
 @NoArgsConstructor
 public class RedisMatchUser {
     @Id
-    private String id;
+    private String nickName;
     private Integer ppp;
     private String option;//normal, both, rank
 
-    public RedisMatchUser(String id, Integer ppp, Option option) {
-        this.id = id;
+    public RedisMatchUser(String nickName, Integer ppp, Option option) {
+        this.nickName = nickName;
         this.ppp = ppp;
         this.option = option.getCode();
     }

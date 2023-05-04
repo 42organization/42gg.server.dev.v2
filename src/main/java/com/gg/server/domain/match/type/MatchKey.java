@@ -8,8 +8,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum MatchKey {
-    MATCH_USER("MATCH:USER"),
-    MATCH_TIME("MATCH:TIME");
+    USER("MATCH:USER:"),
+    TIME("MATCH:TIME:");
     private final String code;
     @JsonCreator
     public static MatchKey getEnumFromValue(String value) {

@@ -1,4 +1,4 @@
-package com.gg.server.domain.match;
+package com.gg.server.domain.match.data;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
