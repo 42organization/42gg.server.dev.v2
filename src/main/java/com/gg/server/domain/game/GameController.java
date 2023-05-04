@@ -1,24 +1,30 @@
 package com.gg.server.domain.game;
 
+import com.gg.server.domain.game.dto.GameListReqDto;
 import com.gg.server.domain.game.dto.GameListResDto;
+import com.gg.server.domain.game.dto.RankGameListReqDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/pingpong/games")
 public class GameController {
     private final GameService gameService;
+
+    @GetMapping("/")
+    GameListResDto allGameList(@ModelAttribute @Valid GameListReqDto gameReq) {
+        return gameService.allGameList(gameReq.getCount(), gameReq.getPageSize());
+    }
     @GetMapping("/normal")
-    GameListResDto normalGameList(@RequestParam int count, @RequestParam int pageSize) {
-        return gameService.normalGameList(count, pageSize);
+    GameListResDto normalGameList(@ModelAttribute @Valid GameListReqDto gameReq) {
+        return gameService.normalGameList(gameReq.getCount(), gameReq.getPageSize());
     }
 
     @GetMapping("/rank")
-    GameListResDto rankGameList(@RequestParam int count, @RequestParam int pageSize, @RequestParam Long seasonId) {
-        return gameService.rankGameList(count, pageSize, seasonId);
+    GameListResDto rankGameList(@ModelAttribute @Valid RankGameListReqDto gameReq) {
+        return gameService.rankGameList(gameReq.getCount(), gameReq.getPageSize(), gameReq.getSeasonId());
     }
 }

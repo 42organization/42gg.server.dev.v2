@@ -39,6 +39,13 @@ public class GameService {
         return new GameListResDto(getGameResultList(games), games.isLast());
     }
 
+    @Transactional(readOnly = true)
+    public GameListResDto allGameList(int count, int pageSize) {
+        Pageable pageable = PageRequest.of(count, pageSize, Sort.by(Sort.Direction.DESC, "startTime"));
+        Slice<Game> games = gameRepository.findAllByAndStatus(StatusType.END, pageable);
+        return new GameListResDto(getGameResultList(games), games.isLast());
+    }
+
     private List<GameResultResDto> getGameResultList(Slice<Game> games) {
         List<GameTeamUser> teamViews = gameRepository.findTeamsByGameIsIn(games.stream().map(Game::getId).collect(Collectors.toList()));
         return teamViews.stream().map(GameResultResDto::new).collect(Collectors.toList());

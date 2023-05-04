@@ -14,6 +14,7 @@ import java.util.List;
 
 public interface GameRepository extends JpaRepository<Game, Long>, GameRepositoryCustom{
     Slice<Game> findAllByModeAndStatus(Mode mode, StatusType status, Pageable pageable);
+    Slice<Game> findAllByAndStatus(StatusType status, Pageable pageable);
     Slice<Game> findAllByModeAndStatusAndSeasonId(Mode mode, StatusType status, Long season, Pageable pageable);
     @Query(value = "select t1.gameId, t1.startTime, t1.status, t1.intraId t1IntraId, t1.image t1Image, t1.total_exp t1Exp, " +
             "t2.intraId t2IntraId, t2.image t2Image, t2.total_exp t2Exp " +
