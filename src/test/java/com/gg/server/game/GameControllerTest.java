@@ -83,4 +83,31 @@ public class GameControllerTest {
         assertThat(result.getGames().size()).isEqualTo(expect.getGames().size());
         assertThat(result.getIsLast()).isEqualTo(expect.getIsLast());
     }
+
+    @Test
+    public void 랭크게임목록error조회() throws Exception {
+        //given
+        String url = "/pingpong/games/rank?count=0&pageSize=0";
+        //then
+        mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().is4xxClientError())
+                .andReturn().getResponse().getContentAsString();
+    }
+    @Test
+    public void 전체게임목록조회() throws Exception {
+        //given
+        String url = "/pingpong/games?count=0&pageSize=10";
+        GameListResDto expect = gameService.allGameList(0, 10);
+        //when
+        String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println(contentAsString);
+        GameListResDto result = objectMapper.readValue(contentAsString, GameListResDto.class);
+        //then
+        System.out.println(result.getGames().size() +", " + result.getIsLast());
+        System.out.println(expect.getGames().size() + ", " + expect.getIsLast());
+        assertThat(result.getGames().size()).isEqualTo(expect.getGames().size());
+        assertThat(result.getIsLast()).isEqualTo(expect.getIsLast());
+    }
 }
