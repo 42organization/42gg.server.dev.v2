@@ -17,9 +17,6 @@ public class GameController {
 
     @GetMapping
     GameListResDto allGameList(@ModelAttribute @Valid GameListReqDto gameReq) {
-        if (gameReq.getStatus() != null && !gameReq.getStatus().name().equals("LIVE")) {
-            // 예외처리
-        }
         return gameService.allGameList(gameReq.getPageNum(), gameReq.getPageSize(), gameReq.getStatus());
     }
     @GetMapping("/normal")
