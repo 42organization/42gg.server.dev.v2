@@ -1,4 +1,4 @@
-package com.gg.server.global.types;
+package com.gg.server.domain.game.type;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
@@ -9,9 +9,7 @@ import java.util.Locale;
 @Getter
 @RequiredArgsConstructor
 public enum Mode {
-    BOTH(0,"both"), NORMAL(1,"normal"), RANK(2,"rank");
-    // 모드는 3가지가 있음.
-    // type 형태이기 때문에 global 안에 type 도메인 안에 넣었음
+    NORMAL(0,"normal"), RANK(1,"rank");
 
     private final Integer value;
     private final String code;
