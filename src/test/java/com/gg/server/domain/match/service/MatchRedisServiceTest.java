@@ -89,6 +89,18 @@ class MatchRedisServiceTest {
         Assertions.assertThat(before -1).isEqualTo(after);
     }
 
+    @DisplayName("경기 등록 취소 후 다시 경기 등록")
+    @Test
+    void cancelAndRetryMatch() {
+        Long before = redisMatchUserRepository.countMatchTime("yuikim");
+        matchRedisService.cancelMatch("yuikim", startTimes.get(0));
+        Long afterCancel = redisMatchUserRepository.countMatchTime("yuikim");
+        matchRedisService.makeMatch("yuikim", ppps.get(3), options.get(3), startTimes.get(0));
+        Long afterMakeMatch = redisMatchUserRepository.countMatchTime("yuikim");
+        Assertions.assertThat(before - 1).isEqualTo(afterCancel);
+        Assertions.assertThat(afterMakeMatch).isEqualTo(afterCancel + 1);
+
+    }
     @DisplayName("키 만료기한 확인")
     @Test
     void checkExpiry() {
