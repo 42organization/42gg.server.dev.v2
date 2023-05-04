@@ -7,6 +7,7 @@ import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.utils.argumentresolver.Login;
 import io.swagger.v3.oas.annotations.Parameter;
 import java.time.LocalDateTime;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class MatchController {
 
     //redis 객체 따로 만들기 - option
     @PostMapping("match")
-    public ResponseEntity createUserMatch(@RequestBody MatchRequestDto matchRequestDto, @Parameter(hidden = true) @Login UserDto user) {
+    public ResponseEntity createUserMatch(@RequestBody @Valid MatchRequestDto matchRequestDto, @Parameter(hidden = true) @Login UserDto user) {
         //rank - 관련해서 따로 정해야할 필요가 있음
         //user가 rank에 없을 시 season ppp 초기값 넣을 필요가 있음
         //3회 이상 매칭 잡을 시 예외 처리
