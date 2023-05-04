@@ -1,4 +1,4 @@
-package com.gg.server.domain.pchange;
+package com.gg.server.domain.pchange.data;
 
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.user.User;

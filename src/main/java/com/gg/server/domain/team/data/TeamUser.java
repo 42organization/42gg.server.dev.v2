@@ -1,4 +1,4 @@
-package com.gg.server.domain.teamuser.data;
+package com.gg.server.domain.team.data;
 
 import com.gg.server.domain.team.data.Team;
 import com.gg.server.domain.user.User;

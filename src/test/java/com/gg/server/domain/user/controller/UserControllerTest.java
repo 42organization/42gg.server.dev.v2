@@ -8,7 +8,6 @@ import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
 import com.gg.server.domain.user.dto.UserLiveResponseDto;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
@@ -20,6 +19,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.lang.reflect.Array;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;

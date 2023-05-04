@@ -1,10 +1,6 @@
 package com.gg.server.domain.user.controller;
 
-import com.gg.server.domain.user.User;
-import com.gg.server.domain.user.dto.UserDto;
-import com.gg.server.domain.user.dto.UserLiveResponseDto;
-import com.gg.server.domain.user.dto.UserNormalDetailResponseDto;
-import com.gg.server.domain.user.dto.UserSearchResponseDto;
+import com.gg.server.domain.user.dto.*;
 import com.gg.server.domain.user.service.UserService;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.global.security.jwt.exception.TokenNotValidException;
@@ -22,12 +18,12 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/pingpong/")
+@RequestMapping("/pingpong/users/")
 public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("users/accesstoken")
+    @PostMapping("accesstoken")
     public ResponseEntity generateAccessToken(@RequestParam String refreshToken) {
         try {
             String accessToken = userService.regenerate(refreshToken);
@@ -39,22 +35,32 @@ public class UserController {
         }
     }
 
-    @GetMapping("users")
+    @GetMapping
     UserNormalDetailResponseDto getUserNormalDetail(@Parameter(hidden = true) @Login UserDto user){
         Boolean isAdmin = user.getRoleType() == RoleType.ADMIN;
         return new UserNormalDetailResponseDto(user.getIntraId(), user.getImageUri(), isAdmin);
     }
 
-    @GetMapping("users/live")
-    UserLiveResponseDto getUserLiveDetail(@Login UserDto user) {
+    @GetMapping("live")
+    UserLiveResponseDto getUserLiveDetail(@Parameter(hidden = true) @Login UserDto user) {
         return userService.getUserLiveDetail(user);
     }
 
-    @GetMapping("users/searches")
-    UserSearchResponseDto searchUsers(@RequestParam String q){
-        List<String> intraIds = userService.findByPartofIntraId(q);
+    @GetMapping("searches")
+    UserSearchResponseDto searchUsers(@RequestParam String inquiringString){
+        List<String> intraIds = userService.findByPartOfIntraId(inquiringString);
         return new UserSearchResponseDto(intraIds);
     }
 
+    @GetMapping("{targetUserId}/detail")
+    public UserDetailResponseDto getUserDetail(@PathVariable String targetUserId){
+        return userService.getUserDetail(targetUserId);
+    }
+
+    @PutMapping("detail")
+    public void doModifyUser (@RequestBody UserModifyRequestDto userModifyRequestDto, @Parameter(hidden = true) @Login UserDto userDto) {
+        userService.updateUser(userModifyRequestDto.getRacketType(), userModifyRequestDto.getStatusMessage(),
+                userModifyRequestDto.getSnsNotiOpt(), userDto.getId());
+    }
 
 }
