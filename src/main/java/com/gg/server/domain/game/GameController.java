@@ -14,7 +14,7 @@ import javax.validation.Valid;
 public class GameController {
     private final GameService gameService;
 
-    @GetMapping("/")
+    @GetMapping
     GameListResDto allGameList(@ModelAttribute @Valid GameListReqDto gameReq) {
         return gameService.allGameList(gameReq.getCount(), gameReq.getPageSize());
     }
