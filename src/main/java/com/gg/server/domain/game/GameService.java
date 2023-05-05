@@ -75,9 +75,15 @@ public class GameService {
             return false;
         }
         // user 가 게임한 팀, 상대 팀 id
-        if (!updateScore(game, scoreDto))
+        if (!updateScore(game, scoreDto)) {
             return false;
+        }
         return true;
+    }
+
+    private void setTeamScore(TeamUser tu, int teamScore, Boolean isWin) {
+        tu.getTeam().inputScore(teamScore);
+        tu.getTeam().setWin(isWin);
     }
 
     private Boolean updateScore(Game game, RankResultReqDto scoreDto) {
@@ -85,21 +91,21 @@ public class GameService {
         Boolean check = false;
         for (TeamUser team : teams) {
             if (team.getTeam().getId().equals(scoreDto.getMyTeamId())) {
-                if (team.getTeam().getScore() == -1) {
-                    team.getTeam().inputScore(scoreDto.getMyTeamScore());
+                // my team id
+                if (team.getTeam().getScore() == -1 || team.getTeam().getScore() != scoreDto.getMyTeamScore()) {
+                    // 점수 입력한적 없으면 || 점수 입력 있는데 다른 점수이면 값 update
+                    setTeamScore(team, scoreDto.getMyTeamScore(), scoreDto.getMyTeamScore() > scoreDto.getEnemyTeamScore());
                     check = false;
                 }
-                else if (team.getTeam().getScore() == scoreDto.getMyTeamScore())
+                else // 점수 입력 있는데 같은 점수
                     check = true;
-                else return false;
             } else if (team.getTeam().getId().equals(scoreDto.getEnemyTeamId())) {
-                if (team.getTeam().getScore() == -1) {
-                    team.getTeam().inputScore(scoreDto.getEnemyTeamScore());
+                if (team.getTeam().getScore() == -1 || team.getTeam().getScore() != scoreDto.getEnemyTeamScore()) {
+                    setTeamScore(team, scoreDto.getEnemyTeamScore(), scoreDto.getMyTeamScore() < scoreDto.getEnemyTeamScore());
                     check = false;
                 }
-                else if (team.getTeam().getScore() == scoreDto.getEnemyTeamScore())
+                else
                     check = true;
-                else return false;
             }
         }
         if (check)

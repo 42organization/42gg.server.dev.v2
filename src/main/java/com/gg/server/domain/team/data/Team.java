@@ -35,4 +35,8 @@ public class Team {
     public void inputScore(int score) {
         this.score = score;
     }
+
+    public void setWin(Boolean win) {
+        this.win = win;
+    }
 }
