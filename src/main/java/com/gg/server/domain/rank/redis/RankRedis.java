@@ -12,7 +12,6 @@ import java.io.Serializable;
 @RedisHash("rank")
 @Getter
 @AllArgsConstructor
-@NoArgsConstructor
 public class RankRedis implements Serializable {
 
     private Long userId;
