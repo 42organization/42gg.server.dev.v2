@@ -57,6 +57,16 @@ public class UserController {
         return userService.getUserDetail(targetUserId);
     }
 
+    @GetMapping("{targetUserId}/rank")
+    public UserRankResponseDto getUserRank(@PathVariable String targetUserId){
+        return userService.getUserRankDetail(targetUserId);
+    }
+
+    @GetMapping("{userId}/historics")
+    public UserHistoryResponseDto getUserHistory(@PathVariable Long userId) {
+        return userService.getUserHistory(userId);
+    }
+
     @PutMapping("detail")
     public void doModifyUser (@RequestBody UserModifyRequestDto userModifyRequestDto, @Parameter(hidden = true) @Login UserDto userDto) {
         userService.updateUser(userModifyRequestDto.getRacketType(), userModifyRequestDto.getStatusMessage(),
