@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -110,7 +111,7 @@ public class UserService {
                 .level(ExpLevelCalculator.getLevel(targetUser.getTotalExp()))
                 .currentExp(currentExp)
                 .maxExp(maxExp)
-                .snsNotiOpt(targetUser.getSnsNotiOpt())
+                .snsNotiOpt(targetUser.getSnsNotiOpt().getCode())
                 .build();
         return responseDto;
     }
@@ -166,6 +167,7 @@ public class UserService {
                 .orElseThrow(() -> new NoSuchElementException("현재 시즌이 없습니다."));
         List<PChange> pChanges = pChangeRepository.findPChangesHistory(userId, currentSeason.getId());
         List<UserHistoryData> historyData = pChanges.stream().map(UserHistoryData::new).collect(Collectors.toList());
+        Collections.reverse(historyData);
         return new UserHistoryResponseDto(historyData);
     }
 
@@ -177,11 +179,12 @@ public class UserService {
         String hashKey = RedisKeyManager.getHashKey(currentSeason.getId());
         User user = userRepository.findByIntraId(targetUserIntraId)
                 .orElseThrow(()->new NoSuchElementException("검색된 유저가 없습니다."));
-        Long userRanking = rankRedisRepository.getScoreInZSet(ZSetKey,user.getId());
+        Long userRanking = rankRedisRepository.getRankInZSet(ZSetKey,user.getId()) + 1;
         if (userRanking == null)
             return null;
         RankRedis userRank = rankRedisRepository.findRankByUserId(hashKey, user.getId());
-        double winRate = (userRank.getWins() * 10000 / (userRank.getWins() + userRank.getLosses()) / 100);
+        double winRate = (userRank.getWins() + userRank.getLosses()) == 0 ? 0 :
+                (double)(userRank.getWins() * 10000 / (userRank.getWins() + userRank.getLosses())) / 100;
         return new UserRankResponseDto(userRanking.intValue(), userRank.getPpp(), userRank.getWins(), userRank.getLosses(), winRate);
     }
 }

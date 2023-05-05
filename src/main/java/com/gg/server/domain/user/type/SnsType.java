@@ -19,24 +19,11 @@ public enum SnsType {
     private final Integer value;
     private final String code;
 
-    public static SnsType of(Integer code) {
+    public static SnsType of(String code) {
         return Arrays.stream(SnsType.values())
                 .filter(snsType-> snsType.getCode().equals(code))
                 .findAny()
                 .orElse(SLACK);
-    }
-
-    @JsonCreator
-    public static SnsType getEnumFromCode(String code) {
-        for(SnsType e : values()) {
-            if(e.code.equals(code)) {
-                return e;
-            }
-            else if (e.code.toUpperCase(Locale.ROOT).equals(code.toUpperCase(Locale.ROOT))) {
-                return e;
-            }
-        }
-        return null;
     }
 
 }

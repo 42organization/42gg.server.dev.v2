@@ -1,7 +1,6 @@
 package com.gg.server.domain.pchange.data;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -16,6 +15,8 @@ public class PChangeRepositoryImpl implements PChangeRepositoryCustom{
         String sql = "select p from PChange p join fetch p.game g join g.season s where p.user.id = " +
                 ":user_id and s.id = :season_id order by p.createdAt desc";
         return em.createQuery(sql, PChange.class)
+                .setParameter("user_id", userId)
+                .setParameter("season_id", seasonId)
                 .setFirstResult(0)
                 .setMaxResults(10)
                 .getResultList();

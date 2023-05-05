@@ -18,12 +18,12 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/pingpong/users/")
+@RequestMapping("/pingpong/users")
 public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("accesstoken")
+    @PostMapping("/accesstoken")
     public ResponseEntity generateAccessToken(@RequestParam String refreshToken) {
         try {
             String accessToken = userService.regenerate(refreshToken);
@@ -41,33 +41,33 @@ public class UserController {
         return new UserNormalDetailResponseDto(user.getIntraId(), user.getImageUri(), isAdmin);
     }
 
-    @GetMapping("live")
+    @GetMapping("/live")
     UserLiveResponseDto getUserLiveDetail(@Parameter(hidden = true) @Login UserDto user) {
         return userService.getUserLiveDetail(user);
     }
 
-    @GetMapping("searches")
+    @GetMapping("/searches")
     UserSearchResponseDto searchUsers(@RequestParam String inquiringString){
         List<String> intraIds = userService.findByPartOfIntraId(inquiringString);
         return new UserSearchResponseDto(intraIds);
     }
 
-    @GetMapping("{targetUserId}/detail")
+    @GetMapping("/{targetUserId}/detail")
     public UserDetailResponseDto getUserDetail(@PathVariable String targetUserId){
         return userService.getUserDetail(targetUserId);
     }
 
-    @GetMapping("{targetUserId}/rank")
+    @GetMapping("/{targetUserId}/rank")
     public UserRankResponseDto getUserRank(@PathVariable String targetUserId){
         return userService.getUserRankDetail(targetUserId);
     }
 
-    @GetMapping("{userId}/historics")
+    @GetMapping("/{userId}/historics")
     public UserHistoryResponseDto getUserHistory(@PathVariable Long userId) {
         return userService.getUserHistory(userId);
     }
 
-    @PutMapping("detail")
+    @PutMapping("/detail")
     public void doModifyUser (@RequestBody UserModifyRequestDto userModifyRequestDto, @Parameter(hidden = true) @Login UserDto userDto) {
         userService.updateUser(userModifyRequestDto.getRacketType(), userModifyRequestDto.getStatusMessage(),
                 userModifyRequestDto.getSnsNotiOpt(), userDto.getId());
