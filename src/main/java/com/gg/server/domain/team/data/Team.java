@@ -31,4 +31,8 @@ public class Team {
         this.score = score;
         this.win = win;
     }
+
+    public void inputScore(int score) {
+        this.score = score;
+    }
 }

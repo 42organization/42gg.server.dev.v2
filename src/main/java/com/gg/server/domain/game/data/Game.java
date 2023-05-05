@@ -59,4 +59,18 @@ public class Game {
                 ", endTime=" + endTime +
                 '}';
     }
+
+    public void updateStatus() {
+        if (status == StatusType.BEFORE) {
+            this.status = StatusType.LIVE;
+        } else if (status == StatusType.LIVE) {
+            this.status = StatusType.WAIT;
+        } else if (status == StatusType.WAIT) {
+            if (mode == Mode.RANK)
+                this.status = StatusType.CHECK;
+            else this.status = StatusType.END;
+        } else {
+            this.status = StatusType.END;
+        }
+    }
 }
