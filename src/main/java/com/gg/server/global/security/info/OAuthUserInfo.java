@@ -21,4 +21,6 @@ public abstract class OAuthUserInfo {
     public abstract String getImageUrl();
 
     public abstract RoleType getRoleType();
+
+    public abstract Long getKakaoId();
 }
