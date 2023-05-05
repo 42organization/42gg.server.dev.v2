@@ -3,8 +3,11 @@ package com.gg.server.domain.match.data;
 import com.gg.server.domain.match.type.MatchKey;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -36,5 +39,14 @@ public class RedisMatchTimeRepository {
 
     public void deleteMatchUser(String matchTime, RedisMatchUser matchUser) {
         redisTemplate.opsForList().remove(MatchKey.TIME.getCode() + matchTime,0, matchUser);
+    }
+
+    public Set<LocalDateTime> getAllEnrolledStartTimes() {
+        Set<String> keys = redisTemplate.keys(MatchKey.TIME.getCode());
+        DateTimeFormatter format = DateTimeFormatter.ofPattern(MatchKey.TIME.getCode() + "yyyy-MM-dd'T'HH:mm:ss");
+        return keys.stream().map(str -> LocalDateTime.parse(str, format)).collect(Collectors.toSet());
+//        List<LocalDateTime> startTimes = keys.stream().map(str -> LocalDateTime.parse(str, format))
+//                .sorted().collect(Collectors.toList());
+//        return startTimes;
     }
 }

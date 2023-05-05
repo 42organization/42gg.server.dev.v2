@@ -7,5 +7,5 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class MatchStatusResponseListDto {
-    private List<MatchStatusResponseDto> matchBoards;
+    private List<List<MatchStatusDto>> matchBoards;
 }

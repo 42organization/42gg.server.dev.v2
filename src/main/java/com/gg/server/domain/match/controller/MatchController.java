@@ -1,6 +1,7 @@
 package com.gg.server.domain.match.controller;
 
 import com.gg.server.domain.match.dto.MatchRequestDto;
+import com.gg.server.domain.match.dto.MatchStatusResponseListDto;
 import com.gg.server.domain.match.service.MatchRedisService;
 import com.gg.server.domain.match.type.Option;
 import com.gg.server.domain.user.dto.UserDto;
@@ -15,6 +16,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,11 +55,8 @@ public class MatchController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-//    @GetMapping("match")
-//    public MatchStatusResponseListDto getMatchBoards(@RequestParam(name="mode") String mode, @Login User user) {
-////        MatchStatusResponseDto matchStatusResponseDto = new MatchStatusResponseDto();
-////        MatchStatusResponseListDto matchBoards = new MatchStatusResponseListDto(List.of(matchStatusResponseDto));
-////        return matchBoards;
-//        return null;
-//    }
+    @GetMapping("match/time/scope")
+    public MatchStatusResponseListDto getMatchTimeScope(@Parameter(hidden = true) @Login UserDto user){
+        return null;
+    }
 }
