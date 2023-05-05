@@ -39,7 +39,7 @@ public class GameController {
         return gameService.rankGameList(gameReq.getPageNum(), gameReq.getPageSize(), gameReq.getSeasonId());
     }
 
-    @PostMapping("/result/rank")
+    @PostMapping("/rank")
     ResponseEntity createRankResult(@Valid @RequestBody RankResultReqDto reqDto) {
         if (!gameService.createRankResult(reqDto)) {
             return new ResponseEntity(HttpStatus.CONFLICT);
