@@ -13,7 +13,6 @@ public enum StatusType {
     BEFORE("before", "게임 시작 전"),
     LIVE("live", "게임 진행 중"),
     WAIT("wait", "게임 끝나고 점수입력 기다리는 상태"),
-    CHECK("check", "점수입력 받아서 상대방 확인 대기 중"),
     END("end", "게임이 끝나고 점수입력도 완료");
 
     private final String code;

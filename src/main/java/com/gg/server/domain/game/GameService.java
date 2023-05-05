@@ -75,25 +75,35 @@ public class GameService {
             return false;
         }
         // user 가 게임한 팀, 상대 팀 id
-        if (!updateScore(game.getId(), scoreDto))
+        if (!updateScore(game, scoreDto))
             return false;
-        game.updateStatus();
         return true;
     }
 
-    private Boolean updateScore(Long gameId, RankResultReqDto scoreDto) {
-        List<TeamUser> teams = teamUserRepository.findAllByGameIdAndTeamId(gameId);
+    private Boolean updateScore(Game game, RankResultReqDto scoreDto) {
+        List<TeamUser> teams = teamUserRepository.findAllByGameIdAndTeamId(game.getId());
+        Boolean check = false;
         for (TeamUser team : teams) {
             if (team.getTeam().getId().equals(scoreDto.getMyTeamId())) {
-                if (team.getTeam().getScore() == -1)
+                if (team.getTeam().getScore() == -1) {
                     team.getTeam().inputScore(scoreDto.getMyTeamScore());
+                    check = false;
+                }
+                else if (team.getTeam().getScore() == scoreDto.getMyTeamScore())
+                    check = true;
                 else return false;
             } else if (team.getTeam().getId().equals(scoreDto.getEnemyTeamId())) {
-                if (team.getTeam().getScore() == -1)
+                if (team.getTeam().getScore() == -1) {
                     team.getTeam().inputScore(scoreDto.getEnemyTeamScore());
+                    check = false;
+                }
+                else if (team.getTeam().getScore() == scoreDto.getEnemyTeamScore())
+                    check = true;
                 else return false;
             }
         }
+        if (check)
+            game.updateStatus();
         return true;
     }
 }

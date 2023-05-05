@@ -46,6 +46,4 @@ public class GameController {
         }
         return new ResponseEntity(HttpStatus.CREATED);
     }
-//    @PostMapping("/result/rank/check")
-//    ResponseEntity checkRankResult(@Valid @Re)
 }
