@@ -88,28 +88,30 @@ public class GameService {
 
     private Boolean updateScore(Game game, RankResultReqDto scoreDto) {
         List<TeamUser> teams = teamUserRepository.findAllByGameIdAndTeamId(game.getId());
-        Boolean check = false;
+        Boolean check1 = false, check2 = false;
         for (TeamUser team : teams) {
             if (team.getTeam().getId().equals(scoreDto.getMyTeamId())) {
                 // my team id
                 if (team.getTeam().getScore() == -1 || team.getTeam().getScore() != scoreDto.getMyTeamScore()) {
                     // 점수 입력한적 없으면 || 점수 입력 있는데 다른 점수이면 값 update
                     setTeamScore(team, scoreDto.getMyTeamScore(), scoreDto.getMyTeamScore() > scoreDto.getEnemyTeamScore());
-                    check = false;
+                    check1 = false;
                 }
                 else // 점수 입력 있는데 같은 점수
-                    check = true;
+                    check1 = true;
             } else if (team.getTeam().getId().equals(scoreDto.getEnemyTeamId())) {
                 if (team.getTeam().getScore() == -1 || team.getTeam().getScore() != scoreDto.getEnemyTeamScore()) {
                     setTeamScore(team, scoreDto.getEnemyTeamScore(), scoreDto.getMyTeamScore() < scoreDto.getEnemyTeamScore());
-                    check = false;
+                    check2 = false;
                 }
                 else
-                    check = true;
+                    check2 = true;
             }
         }
-        if (check)
+        if (check1 && check2) {
             game.updateStatus();
+
+        }
         return true;
     }
 }
