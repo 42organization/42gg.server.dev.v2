@@ -40,4 +40,9 @@ public class FortyTwoOAuthUserInfo extends OAuthUserInfo {
     public RoleType getRoleType() {
         return RoleType.USER;
     }
+
+    @Override
+    public Long getKakaoId() {
+        return null;
+    }
 }
