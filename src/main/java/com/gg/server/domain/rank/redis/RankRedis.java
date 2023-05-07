@@ -20,7 +20,7 @@ public class RankRedis implements Serializable {
     private int wins;
     private int losses;
     private String statusMessage;
-
+    
     public void updateRank(int ppp, int wins, int losses) {
         this.ppp = ppp;
         this.wins = wins;
