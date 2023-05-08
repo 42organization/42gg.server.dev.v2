@@ -1,4 +1,4 @@
-package com.gg.server.domain.pchange;
+package com.gg.server.domain.pchange.data;
 
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.user.User;
@@ -30,4 +30,10 @@ public class PChange extends BaseTimeEntity {
     @NotNull
     @Column(name = "ppp_result")
     private  Integer pppResult;
+
+    public PChange(Game game, User user, Integer pppResult) {
+        this.game = game;
+        this.user = user;
+        this.pppResult = pppResult;
+    }
 }

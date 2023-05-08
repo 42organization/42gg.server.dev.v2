@@ -91,8 +91,8 @@ public class RankRedisRepository {
      *
      *   ZSET에서 user의 ppp를 가져오는 메서드
      */
-    public int getScoreInZSet(String key, Long userId) {
-        return zSetOps.score(key, userId.toString()).intValue();
+    public Long getScoreInZSet(String key, Long userId) {
+        return zSetOps.score(key, userId.toString()).longValue();
     }
 
     /**

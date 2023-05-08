@@ -37,7 +37,7 @@ class RankRedisRepositoryTest {
         redisRepository.addToZSet(zSetKey, userId, ppp);
 
         //then
-        int scoreInZSet = redisRepository.getScoreInZSet(zSetKey, userId);
+        Long scoreInZSet = redisRepository.getScoreInZSet(zSetKey, userId);
         Assertions.assertThat(scoreInZSet).isEqualTo(ppp);
     }
 
@@ -53,7 +53,7 @@ class RankRedisRepositoryTest {
         redisRepository.incrementScoreInZSet(zSetKey, userId, incrementPpp);
 
         //then
-        int scoreInZSet = redisRepository.getScoreInZSet(zSetKey, userId);
+        Long scoreInZSet = redisRepository.getScoreInZSet(zSetKey, userId);
         Assertions.assertThat(scoreInZSet).isEqualTo(ppp + incrementPpp);
     }
 
@@ -69,7 +69,7 @@ class RankRedisRepositoryTest {
         redisRepository.decrementScoreInZSet(zSetKey, userId, decrementPpp);
 
         //then
-        int scoreInZSet = redisRepository.getScoreInZSet(zSetKey, userId);
+        Long scoreInZSet = redisRepository.getScoreInZSet(zSetKey, userId);
         Assertions.assertThat(scoreInZSet).isEqualTo(ppp - decrementPpp);
     }
 
@@ -101,7 +101,7 @@ class RankRedisRepositoryTest {
         redisRepository.addToZSet(zSetKey, userId, ppp);
 
         //when
-        int scoreInZSet = redisRepository.getScoreInZSet(zSetKey, userId);
+        Long scoreInZSet = redisRepository.getScoreInZSet(zSetKey, userId);
 
         //then
         Assertions.assertThat(scoreInZSet).isEqualTo(ppp);
@@ -154,11 +154,10 @@ class RankRedisRepositoryTest {
         //given
         Long userId = 1L;
         int ppp = 100;
-        int rank = 2;
         int win = 3;
         int lose = 4;
         String statusMessage = "statusMessage";
-        RankRedis ranking = new RankRedis(userId, ppp, rank, win, lose, statusMessage);
+        RankRedis ranking = new RankRedis(userId, ppp, win, lose, statusMessage);
 
         //when
         redisRepository.addRankData(hashKey, userId, ranking);
@@ -167,7 +166,6 @@ class RankRedisRepositoryTest {
         //then
         Assertions.assertThat(findRanking.getUserId()).isEqualTo(userId);
         Assertions.assertThat(findRanking.getPpp()).isEqualTo(ppp);
-        Assertions.assertThat(findRanking.getRanking()).isEqualTo(rank);
         Assertions.assertThat(findRanking.getWins()).isEqualTo(win);
         Assertions.assertThat(findRanking.getLosses()).isEqualTo(lose);
         Assertions.assertThat(findRanking.getStatusMessage()).isEqualTo(statusMessage);
@@ -180,27 +178,24 @@ class RankRedisRepositoryTest {
         //given
         Long userId = 1L;
         int ppp = 100;
-        int rank = 2;
         int win = 3;
         int lose = 4;
         String statusMessage = "statusMessage";
-        RankRedis ranking = new RankRedis(userId, ppp, rank, win, lose, statusMessage);
+        RankRedis ranking = new RankRedis(userId, ppp, win, lose, statusMessage);
         redisRepository.addRankData(hashKey, userId, ranking);
 
         //when
         int newPpp = 200;
-        int newRank = 1;
         int newWin = 4;
         int newLose = 5;
         String newStatusMessage = "newStatusMessage";
-        RankRedis newRanking = new RankRedis(userId, newPpp, newRank, newWin, newLose, newStatusMessage);
+        RankRedis newRanking = new RankRedis(userId, newPpp, newWin, newLose, newStatusMessage);
 
         redisRepository.updateRankData(hashKey, userId, newRanking);
         //then
         RankRedis findRanking = redisRepository.findRankByUserId(hashKey, userId);
         Assertions.assertThat(findRanking.getUserId()).isEqualTo(userId);
         Assertions.assertThat(findRanking.getPpp()).isEqualTo(newPpp);
-        Assertions.assertThat(findRanking.getRanking()).isEqualTo(newRank);
         Assertions.assertThat(findRanking.getWins()).isEqualTo(newWin);
         Assertions.assertThat(findRanking.getLosses()).isEqualTo(newLose);
         Assertions.assertThat(findRanking.getStatusMessage()).isEqualTo(newStatusMessage);
@@ -213,11 +208,10 @@ class RankRedisRepositoryTest {
         //given
         Long userId = 3L;
         int ppp = 100;
-        int rank = 2;
         int win = 3;
         int lose = 4;
         String statusMessage = "statusMessage";
-        RankRedis ranking = new RankRedis(userId, ppp, rank, win, lose, statusMessage);
+        RankRedis ranking = new RankRedis(userId, ppp, win, lose, statusMessage);
         redisRepository.addRankData(hashKey, userId, ranking);
 
         //when
@@ -240,10 +234,10 @@ class RankRedisRepositoryTest {
         int ppp3 = 300;
         int ppp4 = 400;
 
-        RankRedis rank1 = new RankRedis(userId, ppp, 3, 0, 0, "statusMessage");
-        RankRedis rank2 = new RankRedis(userId2, ppp2, 2, 0, 0, "statusMessage");
-        RankRedis rank3 = new RankRedis(userId3, ppp3, 1, 0, 0, "statusMessage");
-        RankRedis rank4 = new RankRedis(userId4, ppp4, 4, 0, 0, "statusMessage");
+        RankRedis rank1 = new RankRedis(userId, ppp,  0, 0, "statusMessage");
+        RankRedis rank2 = new RankRedis(userId2, ppp2,  0, 0, "statusMessage");
+        RankRedis rank3 = new RankRedis(userId3, ppp3,  0, 0, "statusMessage");
+        RankRedis rank4 = new RankRedis(userId4, ppp4,  0, 0, "statusMessage");
         redisRepository.addRankData(hashKey, userId, rank1);
         redisRepository.addRankData(hashKey, userId2, rank2);
         redisRepository.addRankData(hashKey, userId3, rank3);
