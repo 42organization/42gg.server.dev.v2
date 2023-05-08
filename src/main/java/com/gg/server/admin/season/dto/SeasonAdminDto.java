@@ -17,7 +17,7 @@ public class SeasonAdminDto {
     private LocalDateTime endTime;
     private Integer startPpp;
     private Integer pppGap;
-    private Integer status;
+    private String status;
 
     public SeasonAdminDto(Season season) {
         this.seasonId = season.getId();
@@ -29,14 +29,14 @@ public class SeasonAdminDto {
         this.status = setSeasonStatus(season);
     }
 
-    private Integer setSeasonStatus(Season season) {
+    private String setSeasonStatus(Season season) {
         LocalDateTime now = LocalDateTime.now();
 
         if (now.isAfter(season.getEndTime()))
-            return 0; //SEASON_PAST
+            return "PAST"; //SEASON_PAST
         else if (now.isAfter(season.getStartTime()) && now.isBefore((season.getEndTime())))
-            return 1; //SEASON_CURRENT
+            return "CURRENT"; //SEASON_CURRENT
         else
-            return 2; //SEASON_FUTUER
+            return "FUTUER"; //SEASON_FUTUER
     }
 }
