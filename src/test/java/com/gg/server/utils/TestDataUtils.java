@@ -5,6 +5,11 @@ import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.noti.data.Noti;
 import com.gg.server.domain.noti.data.NotiRepository;
 import com.gg.server.domain.noti.type.NotiType;
+import com.gg.server.domain.pchange.data.PChange;
+import com.gg.server.domain.pchange.data.PChangeRepository;
+import com.gg.server.domain.rank.redis.RankRedis;
+import com.gg.server.domain.rank.redis.RankRedisRepository;
+import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.data.SeasonRepository;
 import com.gg.server.domain.team.data.Team;
@@ -19,32 +24,25 @@ import com.gg.server.domain.user.type.SnsType;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class TestDataUtils {
-    private UserRepository userRepository;
-    private AuthTokenProvider tokenProvider;
-    private NotiRepository notiRepository;
-    private SeasonRepository seasonRepository;
-    private GameRepository gameRepository;
-    private TeamUserRepository teamUserRepository;
-    private TeamRepository teamRepository;
-
-    public TestDataUtils(UserRepository userRepository, AuthTokenProvider tokenProvider, NotiRepository notiRepository,
-                         SeasonRepository seasonRepository, GameRepository gameRepository, TeamUserRepository teamUserRepository, TeamRepository teamRepository) {
-        this.userRepository = userRepository;
-        this.tokenProvider = tokenProvider;
-        this.notiRepository = notiRepository;
-        this.seasonRepository = seasonRepository;
-        this.gameRepository = gameRepository;
-        this.teamUserRepository = teamUserRepository;
-        this.teamRepository = teamRepository;
-    }
-
+    private final UserRepository userRepository;
+    private final AuthTokenProvider tokenProvider;
+    private final NotiRepository notiRepository;
+    private final SeasonRepository seasonRepository;
+    private final GameRepository gameRepository;
+    private final TeamUserRepository teamUserRepository;
+    private final TeamRepository teamRepository;
+    private final RankRedisRepository redisRepository;
+    private final PChangeRepository pChangeRepository;
 
     public String getLoginAccessToken() {
         User user = User.builder()
@@ -84,7 +82,7 @@ public class TestDataUtils {
                 .racketType(racketType)
                 .snsNotiOpt(snsType)
                 .roleType(roleType)
-                .totalExp(1000)
+                .totalExp(0)
                 .build();
         userRepository.save(user);
         return user;
@@ -98,7 +96,7 @@ public class TestDataUtils {
         }
         LocalDateTime startTime, endTime;
         Season season = createSeason();
-        Mode mode = (currentMatchMode == "rank")? Mode.RANK : Mode.NORMAL;
+        Mode mode = (currentMatchMode == "RANK")? Mode.RANK : Mode.NORMAL;
         createGame(curUser, LocalDateTime.now().minusMinutes(100), LocalDateTime.now().minusMinutes(85), season, mode);
         createGame(curUser, LocalDateTime.now().minusMinutes(50), LocalDateTime.now().minusMinutes(35), season, mode);
         LocalDateTime now = LocalDateTime.now();
@@ -135,11 +133,39 @@ public class TestDataUtils {
     }
 
 
-    private Season createSeason(){
+    public Season createSeason(){
         LocalDateTime startTime = LocalDateTime.now();
         LocalDateTime endTime = startTime.plusMonths(1);
         Season season = new Season("name", startTime, endTime, 1000, 300);
         seasonRepository.save(season);
         return season;
+    }
+
+    public void createUserRank(User newUser, String statusMessage, Season season) {
+        String zSetKey = RedisKeyManager.getZSetKey(season.getId());
+        String hashKey = RedisKeyManager.getHashKey(season.getId());
+        redisRepository.addToZSet(zSetKey, newUser.getId(), season.getStartPpp());
+        redisRepository.addRankData(hashKey, newUser.getId(),
+                new RankRedis(newUser.getId(), season.getStartPpp(), 0, 0, statusMessage));
+    }
+
+    public void createMockMatch(User newUser, Season season, LocalDateTime startTime, LocalDateTime endTime) {
+        Game game = new Game(season, StatusType.END, Mode.RANK, startTime, endTime);
+        gameRepository.save(game);
+        Team myTeam = new Team(game, 0, false);
+        TeamUser teamUser = new TeamUser(myTeam, newUser);
+        Team enemyTeam = new Team(game, 0, false);
+        User enemyUser = createNewUser();
+        TeamUser enemyTeamUser = new TeamUser(enemyTeam, enemyUser);
+        teamRepository.save(myTeam);
+        teamRepository.save(enemyTeam);
+        teamUserRepository.save(teamUser);
+        teamUserRepository.save(enemyTeamUser);
+
+        PChange pChange1 = new PChange(game, newUser, 1100);
+        PChange pChange2 = new PChange(game, enemyUser, 900);
+
+        pChangeRepository.save(pChange1);
+        pChangeRepository.save(pChange2);
     }
 }
