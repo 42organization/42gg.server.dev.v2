@@ -1,5 +1,6 @@
 package com.gg.server.global.exception;
 
+import com.gg.server.global.exception.custom.BusinessException;
 import com.gg.server.global.exception.custom.InvalidParameterException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -49,5 +50,11 @@ public class GlobalExceptionHandler {
         log.error("handleException", ex);
         ErrorResponse response = new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERR);
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    @ExceptionHandler({BusinessException.class})
+    public ResponseEntity<ErrorResponse> businessException(BusinessException ex) {
+        log.error("Business Exception", ex);
+        ErrorResponse response = new ErrorResponse(ErrorCode.BAD_REQUEST);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }

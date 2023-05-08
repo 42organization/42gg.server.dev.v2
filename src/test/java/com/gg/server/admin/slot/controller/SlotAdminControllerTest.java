@@ -1,7 +1,7 @@
 package com.gg.server.admin.slot.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gg.server.admin.slot.data.SlotManagementRepository;
+import com.gg.server.admin.slot.data.adminSlotManagementRepository;
 import com.gg.server.admin.slot.dto.SlotAdminDto;
 import com.gg.server.domain.slotmanagement.SlotManagement;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
@@ -16,8 +16,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,7 +40,7 @@ class SlotAdminControllerTest {
     AuthTokenProvider tokenProvider;
 
     @Autowired
-    SlotManagementRepository slotManagementRepository;
+    adminSlotManagementRepository adminSlotManagementRepository;
 
     @BeforeEach
     void setUp() {
@@ -53,7 +51,7 @@ class SlotAdminControllerTest {
                 .gameInterval(15)
                 .build();
 
-        slotManagementRepository.save(test);
+        adminSlotManagementRepository.save(test);
     }
 
     @Test

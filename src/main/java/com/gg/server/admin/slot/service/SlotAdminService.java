@@ -1,6 +1,6 @@
 package com.gg.server.admin.slot.service;
 
-import com.gg.server.admin.slot.data.SlotManagementRepository;
+import com.gg.server.admin.slot.data.adminSlotManagementRepository;
 import com.gg.server.admin.slot.dto.SlotAdminDto;
 import com.gg.server.domain.slotmanagement.SlotManagement;
 import lombok.RequiredArgsConstructor;
@@ -11,11 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @RequiredArgsConstructor
 public class SlotAdminService {
-    private final SlotManagementRepository slotManagementRepository;
+    private final adminSlotManagementRepository adminSlotManagementRepository;
 
     @Transactional(readOnly = true)
     public SlotAdminDto getSlotSetting() {
-        SlotManagement slotManagement = slotManagementRepository.findFirstByOrderByCreatedAtDesc();
+        SlotManagement slotManagement = adminSlotManagementRepository.findFirstByOrderByCreatedAtDesc();
         if (slotManagement == null) {
             return null;
         }
@@ -30,6 +30,6 @@ public class SlotAdminService {
                 .gameInterval(interval)
                 .openMinute(openMinute)
                 .build();
-        slotManagementRepository.save(slotManagement);
+        adminSlotManagementRepository.save(slotManagement);
     }
 }
