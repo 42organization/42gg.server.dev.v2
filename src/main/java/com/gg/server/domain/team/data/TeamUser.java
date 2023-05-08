@@ -1,17 +1,18 @@
-package com.gg.server.domain.teamuser.data;
+package com.gg.server.domain.team.data;
 
-import com.gg.server.domain.team.data.Team;
 import com.gg.server.domain.user.User;
 import groovyjarjarantlr4.v4.runtime.misc.NotNull;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TeamUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -9,4 +9,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByIntraId(String intraId);
     User getUserByIntraId(String IntraId);
     Page<User> findByIntraIdContains(Pageable pageable, String intraId);
+    Optional<User> findByKakaoId(Long kakaoId);
 }
