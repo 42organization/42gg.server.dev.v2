@@ -140,7 +140,7 @@ public class UserService {
         String hashKey = RedisKeyManager.getHashKey(currentSeason.getId());
 
         RankRedis userRank = rankRedisRepository.findRankByUserId(hashKey, userId);
-        userRank.updateStatusMessage(statusMessage);
+        userRank.setStatusMessage(statusMessage);
         rankRedisRepository.updateRankData(hashKey, user.getId(), userRank);
     }
 
