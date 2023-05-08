@@ -1,6 +1,6 @@
 package com.gg.server.global.exception;
 
-import com.gg.server.global.exception.custom.InvalidParameterException;
+import com.gg.server.global.exception.custom.CustomRuntimeException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,8 +31,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({InvalidParameterException.class})
-    public ResponseEntity<ErrorResponse> validException(InvalidParameterException ex) {
+    @ExceptionHandler({CustomRuntimeException.class})
+    public ResponseEntity<ErrorResponse> validException(CustomRuntimeException ex) {
         log.error("valid exception", ex);
         ErrorResponse response = new ErrorResponse(ex.getErrorCode());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
@@ -50,4 +50,5 @@ public class GlobalExceptionHandler {
         ErrorResponse response = new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERR);
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
 }
