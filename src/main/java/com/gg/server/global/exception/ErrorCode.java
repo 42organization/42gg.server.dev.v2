@@ -14,7 +14,8 @@ public enum ErrorCode {
     //400 잘못된 요청 코드
     BAD_REQUEST(400, "COMMON-ERR-400", "BAD REQUEST"),
     VALID_FAILED(400, "GAME-ERR-400" , "Valid Test Failed."),
-    BAD_ARGU(400, "ARGUMENT-ERR-400", "잘못된 argument 입니다.")
+    BAD_ARGU(400, "ARGUMENT-ERR-400", "잘못된 argument 입니다."),
+    SN001(400, "SN001", "요청하신 값은 현 null 입니다")
     ;
     private int status;
     private String errCode;
