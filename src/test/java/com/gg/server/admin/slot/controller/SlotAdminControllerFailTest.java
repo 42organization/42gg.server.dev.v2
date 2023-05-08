@@ -37,7 +37,7 @@ public class SlotAdminControllerFailTest {
     AuthTokenProvider tokenProvider;
 
     @Autowired
-    com.gg.server.admin.slot.data.adminSlotManagementRepository adminSlotManagementRepository;
+    adminSlotManagementRepository adminSlotManagementRepository;
 
     @Test
     @DisplayName("[Get]/pingpong/admin/slot")
@@ -48,8 +48,7 @@ public class SlotAdminControllerFailTest {
         String contentAsString = mockMvc.perform(get("/pingpong/admin/slot").header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString();
-        System.out.println("1111111111111");
+
         System.out.println(contentAsString);
-        System.out.println("2222222222222");
     }
 }

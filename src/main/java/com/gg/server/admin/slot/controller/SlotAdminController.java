@@ -2,6 +2,7 @@ package com.gg.server.admin.slot.controller;
 
 import com.gg.server.admin.slot.dto.SlotAdminDto;
 import com.gg.server.admin.slot.service.SlotAdminService;
+import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpResponse;
@@ -21,7 +22,7 @@ public class SlotAdminController {
     public SlotAdminDto getSlotSetting(HttpResponse httpResponse) {
         SlotAdminDto responseDto = slotAdminService.getSlotSetting();
         if (responseDto == null) {
-            throw new BusinessException("SN001");//널값인 경우
+            throw new BusinessException(ErrorCode.SN001);//널값인 경우
         }
         return responseDto;
     }
