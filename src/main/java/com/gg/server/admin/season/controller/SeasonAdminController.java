@@ -1,5 +1,7 @@
 package com.gg.server.admin.season.controller;
 
+import com.gg.server.admin.rank.service.RankAdminService;
+import com.gg.server.admin.rank.service.RankRedisAdminService;
 import com.gg.server.admin.season.dto.SeasonCreateRequestDto;
 import com.gg.server.admin.season.service.SeasonAdminService;
 import com.gg.server.admin.season.dto.SeasonAdminDto;
@@ -16,6 +18,8 @@ import java.util.List;
 @AllArgsConstructor
 public class SeasonAdminController {
     private final SeasonAdminService seasonAdminService;
+    private final RankRedisAdminService rankRedisAdminService;
+    private final RankAdminService rankAdminService;
 
     @GetMapping(value = "/seasons")
     public SeasonListAdminResponseDto rankSeasonList() {
@@ -26,36 +30,36 @@ public class SeasonAdminController {
 
     @PostMapping(value = "/season")
     public void createSeason(@Valid @RequestBody SeasonCreateRequestDto seasonCreateReqeustDto) {
-        Integer seasonId = seasonAdminService.createSeason(seasonCreateReqeustDto);
-        SeasonDto seasonDto = seasonAdminService.findSeasonById(seasonId);
-        if ((seasonDto.getSeasonMode() == Mode.BOTH || seasonDto.getSeasonMode() == Mode.RANK)
-                && LocalDateTime.now().isBefore(seasonDto.getStartTime())) {
+        Long seasonId = seasonAdminService.createSeason(seasonCreateReqeustDto);
+
+        SeasonAdminDto seasonDto = seasonAdminService.findSeasonById(seasonId);
+        if (LocalDateTime.now().isBefore(seasonDto.getStartTime())) {
             rankAdminService.addAllUserRankByNewSeason(seasonDto, seasonDto.getStartPpp());
-            RankRedisAdminService.addAllUserRankByNewSeason(seasonDto, seasonDto.getStartPpp());
+            rankRedisAdminService.addAllUserRankByNewSeason(seasonDto, seasonDto.getStartPpp());
         }
     }
 
-    @DeleteMapping(value = "/season/{seasonId}")
-    public void deleteSeason(Integer seasonId) {
-        SeasonDto seasonDto = seasonAdminService.findSeasonById(seasonId);
-        seasonAdminService.deleteSeason(seasonId);
-        if ((seasonDto.getSeasonMode() == Mode.BOTH || seasonDto.getSeasonMode() == Mode.RANK)
-                && LocalDateTime.now().isBefore(seasonDto.getStartTime())) {
-            rankAdminService.deleteAllUserRankBySeason(seasonDto);
-            RankRedisAdminService.deleteSeasonRankBySeasonId(seasonDto.getId());
-        }
-    }
-
-    @PutMapping(value = "/season/{seasonId}")
-    public void updateSeason(Integer seasonId, SeasonUpdateRequestDto seasonUpdateRequestDto) {
-        seasonAdminService.updateSeason(seasonId, seasonUpdateRequestDto);
-        SeasonDto seasonDto = seasonAdminService.findSeasonById(seasonId);
-        if ((seasonDto.getSeasonMode() == Mode.BOTH || seasonDto.getSeasonMode() == Mode.RANK)
-                && LocalDateTime.now().isBefore(seasonDto.getStartTime())) {
-            rankAdminService.deleteAllUserRankBySeason(seasonDto);
-            rankAdminService.addAllUserRankByNewSeason(seasonDto, seasonDto.getStartPpp());
-            RankRedisAdminService.deleteSeasonRankBySeasonId(seasonDto.getId());
-            RankRedisAdminService.addAllUserRankByNewSeason(seasonDto, seasonDto.getStartPpp());
-        }
-    }
+//    @DeleteMapping(value = "/season/{seasonId}")
+//    public void deleteSeason(Integer seasonId) {
+//        SeasonDto seasonDto = seasonAdminService.findSeasonById(seasonId);
+//        seasonAdminService.deleteSeason(seasonId);
+//        if ((seasonDto.getSeasonMode() == Mode.BOTH || seasonDto.getSeasonMode() == Mode.RANK)
+//                && LocalDateTime.now().isBefore(seasonDto.getStartTime())) {
+//            rankAdminService.deleteAllUserRankBySeason(seasonDto);
+//            RankRedisAdminService.deleteSeasonRankBySeasonId(seasonDto.getId());
+//        }
+//    }
+//
+//    @PutMapping(value = "/season/{seasonId}")
+//    public void updateSeason(Integer seasonId, SeasonUpdateRequestDto seasonUpdateRequestDto) {
+//        seasonAdminService.updateSeason(seasonId, seasonUpdateRequestDto);
+//        SeasonDto seasonDto = seasonAdminService.findSeasonById(seasonId);
+//        if ((seasonDto.getSeasonMode() == Mode.BOTH || seasonDto.getSeasonMode() == Mode.RANK)
+//                && LocalDateTime.now().isBefore(seasonDto.getStartTime())) {
+//            rankAdminService.deleteAllUserRankBySeason(seasonDto);
+//            rankAdminService.addAllUserRankByNewSeason(seasonDto, seasonDto.getStartPpp());
+//            RankRedisAdminService.deleteSeasonRankBySeasonId(seasonDto.getId());
+//            RankRedisAdminService.addAllUserRankByNewSeason(seasonDto, seasonDto.getStartPpp());
+//        }
+//    }
 }

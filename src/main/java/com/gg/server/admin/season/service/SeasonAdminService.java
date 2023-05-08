@@ -29,13 +29,6 @@ public class SeasonAdminService {
     }
 
     @Transactional
-    public SeasonAdminDto findSeasonById(Long seasonId) {
-        Season season = seasonAdminRepository.findById(seasonId).orElse(null);
-//        if (season == null)
-//            throw new BusinessException("E0001", "주어진 시즌을 찾을 수 없습니다.");
-        return new SeasonAdminDto(season);
-    }
-    @Transactional
     public Long createSeason(SeasonCreateRequestDto createDto) {
         Season newSeason = Season.builder()
                 .seasonName(createDto.getSeasonName())
@@ -49,36 +42,44 @@ public class SeasonAdminService {
     }
 
     @Transactional
-    public void deleteSeason(Long seasonId) {
-        Season season = seasonAdminRepository.findById(seasonId).orElse(null);
-        //if (season == null)
-//            throw new BusinessException("E0001", "존재하지 않은 시즌입니다.");
-        detach(season);
-        seasonAdminRepository.delete(season);
+    public SeasonAdminDto findSeasonById(Long seasonId) {
+        Season season = seasonAdminRepository.findById(seasonId).orElseThrow(()-> throw AdminException());
+
+        return SeasonAdminDto.from(season);
     }
-    @Transactional
-    public void updateSeason(Long seasonId, SeasonUpdateRequestDto updateDto) {
-        Season season = seasonAdminRepository.findById(seasonId).orElse(null);
-        //if (season == null)
-//            throw new BusinessException("E0001", "존재하지 않은 시즌입니다.");
-        if (LocalDateTime.now().isBefore(season.getEndTime())) {
-            season.setPppGap(updateDto.getPppGap());
-        }
-        if (LocalDateTime.now().isBefore(season.getStartTime())) {
-            detach(season);
-            season.setSeasonName(updateDto.getSeasonName());
-            season.setSeasonMode(updateDto.getSeasonMode());
-            season.setStartTime(updateDto.getStartTime());
-            season.setStartPpp(updateDto.getStartPpp());
-            insert(season);
-            seasonAdminRepository.save(season);
-            checkSeasonAtDB(updateDto.getSeasonMode());
-        }
-    }
+
+
+//    @Transactional
+//    public void deleteSeason(Long seasonId) {
+//        Season season = seasonAdminRepository.findById(seasonId).orElse(null);
+//        //if (season == null)
+////            throw new BusinessException("E0001", "존재하지 않은 시즌입니다.");
+//        detach(season);
+//        seasonAdminRepository.delete(season);
+//    }
+//    @Transactional
+//    public void updateSeason(Long seasonId, SeasonUpdateRequestDto updateDto) {
+//        Season season = seasonAdminRepository.findById(seasonId).orElse(null);
+//        //if (season == null)
+////            throw new BusinessException("E0001", "존재하지 않은 시즌입니다.");
+//        if (LocalDateTime.now().isBefore(season.getEndTime())) {
+//            season.setPppGap(updateDto.getPppGap());
+//        }
+//        if (LocalDateTime.now().isBefore(season.getStartTime())) {
+//            detach(season);
+//            season.setSeasonName(updateDto.getSeasonName());
+//            season.setSeasonMode(updateDto.getSeasonMode());
+//            season.setStartTime(updateDto.getStartTime());
+//            season.setStartPpp(updateDto.getStartPpp());
+//            insert(season);
+//            seasonAdminRepository.save(season);
+//            checkSeasonAtDB(updateDto.getSeasonMode());
+//        }
+//    }
 
     private void insert(Season season)
     {
-        List<Season> beforeSeasons = seasonAdminRepository.findBeforeSeasons(season.getSeasonMode(), season.getStartTime());
+        List<Season> beforeSeasons = seasonAdminRepository.findBeforeSeasons(season.getStartTime());
         Season beforeSeason;
         if (beforeSeasons.isEmpty())
             beforeSeason = null;
