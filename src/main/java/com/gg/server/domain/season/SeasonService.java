@@ -21,8 +21,8 @@ public class SeasonService {
         return seasonRepository.findAll().stream().map(SeasonResDto::new).collect(Collectors.toList());
     }
 
-    public CurSeason getCurSeason() {
-        return new CurSeason(seasonRepository.findByStartTimeGreaterThanEqualAndEndTimeLessThanEqual(LocalDateTime.now())
-                .orElseThrow(() -> new NotExistException("현재 시즌이 존재하지 않습니다.", ErrorCode.NOT_FOUND)));
-    }
+//    public CurSeason getCurSeason() {
+//        return new CurSeason(seasonRepository.findByStartTimeGreaterThanEqualAndEndTimeLessThanEqual(LocalDateTime.now())
+//                .orElseThrow(() -> new NotExistException("현재 시즌이 존재하지 않습니다.", ErrorCode.NOT_FOUND)));
+//    }
 }
