@@ -66,4 +66,8 @@ public class User extends BaseTimeEntity implements Serializable {
     public void imageUpdate(String imageUri) {
         this.imageUri = imageUri;
     }
+
+    public void addExp(int plus) {
+        this.totalExp += plus;
+    }
 }
