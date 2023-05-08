@@ -161,7 +161,7 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("/{targetId}/rank")
+    @DisplayName("/{targetId}/rank?season={seasonId}")
     public void userRankDetail () throws Exception
     {
         //given
@@ -171,7 +171,7 @@ class UserControllerTest {
         testDataUtils.createUserRank(newUser, "statusMessage", season);
 
         //when
-        String url = "/pingpong/users/" + newUser.getIntraId() + "/rank";
+        String url = "/pingpong/users/" + newUser.getIntraId() + "/rank?season=" + season.getId();
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
         UserRankResponseDto responseDto = objectMapper.readValue(contentAsString, UserRankResponseDto.class);
@@ -185,7 +185,7 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("/{userId}/historics")
+    @DisplayName("/{userId}/historics?season={seasonId}")
     public void getUserHistory () throws Exception
     {
         //given
@@ -205,7 +205,7 @@ class UserControllerTest {
         LocalDateTime endTime2 = startTime2.plusMinutes(15);
         testDataUtils.createMockMatch(newUser, season, startTime2, endTime2);
 
-        String url = "/pingpong/users/" + newUser.getId() + "/historics";
+        String url = "/pingpong/users/" + newUser.getId() + "/historics?season=" + season.getId();
 
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))

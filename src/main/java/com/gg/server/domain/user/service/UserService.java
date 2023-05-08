@@ -152,6 +152,8 @@ public class UserService {
     /**
      *
      * @param userId
+     * @param seasonId
+     * seasonId == 0 -> current season, else -> 해당 Id를 가진 season의 데이터
      *
      * 기존 쿼리
      * @Query(nativeQuery = true, value = "SELECT * FROM pchange " +
@@ -162,21 +164,40 @@ public class UserService {
      * @return 유저의 최근 10개의 랭크 경기 기록
      */
     @Transactional(readOnly = true)
-    public UserHistoryResponseDto getUserHistory(Long userId) {
-        Season currentSeason = seasonRepository.findCurrentSeason(LocalDateTime.now())
-                .orElseThrow(() -> new NoSuchElementException("현재 시즌이 없습니다."));
-        List<PChange> pChanges = pChangeRepository.findPChangesHistory(userId, currentSeason.getId());
+    public UserHistoryResponseDto getUserHistory(Long userId, Long seasonId) {
+        Season season;
+        if (seasonId == 0){
+            season = seasonRepository.findCurrentSeason(LocalDateTime.now())
+                    .orElseThrow(() -> new NoSuchElementException("해당 시즌이 없습니다."));
+        }else{
+            season = seasonRepository.findById(seasonId)
+                    .orElseThrow(() -> new NoSuchElementException("현재 시즌이 없습니다."));
+        }
+        List<PChange> pChanges = pChangeRepository.findPChangesHistory(userId, season.getId());
         List<UserHistoryData> historyData = pChanges.stream().map(UserHistoryData::new).collect(Collectors.toList());
         Collections.reverse(historyData);
         return new UserHistoryResponseDto(historyData);
     }
 
+    /**
+     *
+     * @param targetUserIntraId
+     * @param seasonId
+     * seasonId == 0 -> current season, else -> 해당 Id를 가진 season의 데이터
+     * @return
+     */
     @Transactional(readOnly = true)
-    public UserRankResponseDto getUserRankDetail(String targetUserIntraId) {
-        Season currentSeason = seasonRepository.findCurrentSeason(LocalDateTime.now())
-                .orElseThrow(() -> new NoSuchElementException("현재 시즌이 없습니다."));
-        String ZSetKey = RedisKeyManager.getZSetKey(currentSeason.getId());
-        String hashKey = RedisKeyManager.getHashKey(currentSeason.getId());
+    public UserRankResponseDto getUserRankDetail(String targetUserIntraId, Long seasonId) {
+        Season season;
+        if (seasonId == 0){
+            season = seasonRepository.findCurrentSeason(LocalDateTime.now())
+                    .orElseThrow(() -> new NoSuchElementException("해당 시즌이 없습니다."));
+        }else{
+            season = seasonRepository.findById(seasonId)
+                    .orElseThrow(() -> new NoSuchElementException("현재 시즌이 없습니다."));
+        }
+        String ZSetKey = RedisKeyManager.getZSetKey(season.getId());
+        String hashKey = RedisKeyManager.getHashKey(season.getId());
         User user = userRepository.findByIntraId(targetUserIntraId)
                 .orElseThrow(()->new NoSuchElementException("검색된 유저가 없습니다."));
         Long userRanking = rankRedisRepository.getRankInZSet(ZSetKey,user.getId()) + 1;

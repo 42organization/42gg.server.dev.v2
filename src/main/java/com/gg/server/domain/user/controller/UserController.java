@@ -58,13 +58,13 @@ public class UserController {
     }
 
     @GetMapping("/{targetUserId}/rank")
-    public UserRankResponseDto getUserRank(@PathVariable String targetUserId){
-        return userService.getUserRankDetail(targetUserId);
+    public UserRankResponseDto getUserRank(@PathVariable String targetUserId, Long season){
+        return userService.getUserRankDetail(targetUserId, season);
     }
 
     @GetMapping("/{userId}/historics")
-    public UserHistoryResponseDto getUserHistory(@PathVariable Long userId) {
-        return userService.getUserHistory(userId);
+    public UserHistoryResponseDto getUserHistory(@PathVariable Long userId, Long season) {
+        return userService.getUserHistory(userId, season);
     }
 
     @PutMapping("/detail")
