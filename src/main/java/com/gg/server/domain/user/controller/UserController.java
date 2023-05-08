@@ -24,15 +24,9 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/accesstoken")
-    public ResponseEntity generateAccessToken(@RequestParam String refreshToken) {
-        try {
-            String accessToken = userService.regenerate(refreshToken);
-            Map<String, String> result = new HashMap<>();
-            result.put(TokenHeaders.ACCESS_TOKEN, accessToken);
-            return new ResponseEntity(result, HttpStatus.OK);
-        } catch (TokenNotValidException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+    public UserAccessTokenDto generateAccessToken(@RequestParam String refreshToken) {
+        String accessToken = userService.regenerate(refreshToken);
+        return new UserAccessTokenDto(accessToken);
     }
 
     @GetMapping
