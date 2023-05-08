@@ -125,12 +125,17 @@ public class GameService {
     void updateRankRedis(List<TeamUser> list, Long seasonId) {
         // 단식 -> 2명 기준
         String key = RedisKeyManager.getHashKey(seasonId);
+        String zsetKey = RedisKeyManager.getZSetKey(seasonId);
         RankRedis myTeam = rankRedisRepository.findRankByUserId(key, list.get(0).getUser().getId());
         RankRedis enemyTeam = rankRedisRepository.findRankByUserId(key, list.get(1).getUser().getId());
         updatePPP(list.get(0), myTeam, enemyTeam, list.get(1).getTeam().getScore());
         updatePPP(list.get(1), enemyTeam, myTeam, list.get(0).getTeam().getScore());
         rankRedisRepository.updateRankData(key, list.get(0).getUser().getId(), myTeam);
+        rankRedisRepository.deleteFromZSet(zsetKey, list.get(0).getUser().getId());
+        rankRedisRepository.addToZSet(zsetKey, list.get(0).getUser().getId(), myTeam.getPpp());
         rankRedisRepository.updateRankData(key, list.get(1).getUser().getId(), enemyTeam);
+        rankRedisRepository.deleteFromZSet(zsetKey, list.get(1).getUser().getId());
+        rankRedisRepository.addToZSet(zsetKey, list.get(1).getUser().getId(), enemyTeam.getPpp());
     }
 
     void updatePPP(TeamUser teamuser, RankRedis myTeam, RankRedis enemyTeam, int enemyScore) {
