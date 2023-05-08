@@ -30,7 +30,7 @@ public class Game {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "mode")
+    @Column(name = "mode", length = 10)
     private Mode mode;
 
     @NotNull
@@ -46,5 +46,27 @@ public class Game {
         this.mode = mode;
         this.startTime = startTime;
         this.endTime = endTime;
+    }
+
+    @Override
+    public String toString() {
+        return "Game{" +
+                "id=" + id +
+                ", season=" + season +
+                ", status=" + status +
+                ", mode=" + mode +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                '}';
+    }
+
+    public void updateStatus() {
+        if (status == StatusType.BEFORE) {
+            this.status = StatusType.LIVE;
+        } else if (status == StatusType.LIVE && mode == Mode.RANK) {
+            this.status = StatusType.WAIT;
+        } else {
+            this.status = StatusType.END;
+        }
     }
 }

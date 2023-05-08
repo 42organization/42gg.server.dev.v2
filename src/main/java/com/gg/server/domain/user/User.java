@@ -47,9 +47,12 @@ public class User extends BaseTimeEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     private SnsType snsNotiOpt;
 
+    @Column(name = "kakao_id")
+    private Long kakaoId;
+
     @Builder
     public User(String intraId, String eMail, String imageUri, RacketType racketType,
-                RoleType roleType, Integer totalExp, SnsType snsNotiOpt) {
+                RoleType roleType, Integer totalExp, SnsType snsNotiOpt, Long kakaoId) {
         this.intraId = intraId;
         this.eMail = eMail;
         this.imageUri = imageUri;
@@ -57,9 +60,14 @@ public class User extends BaseTimeEntity implements Serializable {
         this.roleType = roleType;
         this.totalExp = totalExp;
         this.snsNotiOpt = snsNotiOpt;
+        this.kakaoId = kakaoId;
     }
 
     public void imageUpdate(String imageUri) {
         this.imageUri = imageUri;
+    }
+
+    public void addExp(int plus) {
+        this.totalExp += plus;
     }
 }

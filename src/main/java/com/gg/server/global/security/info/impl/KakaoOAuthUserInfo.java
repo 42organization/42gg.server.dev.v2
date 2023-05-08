@@ -18,7 +18,6 @@ public class KakaoOAuthUserInfo extends OAuthUserInfo {
         Map<String, Object> properties = (Map<String, Object>) attributes.get("properties");
         String nickName = "[GUEST]" + properties.get("nickname").toString();
         return nickName;
-//        return properties.get("nickname").toString();
     }
 
     @Override
@@ -36,5 +35,10 @@ public class KakaoOAuthUserInfo extends OAuthUserInfo {
     @Override
     public RoleType getRoleType() {
         return RoleType.GUEST;
+    }
+
+    @Override
+    public Long getKakaoId() {
+        return (Long) attributes.get("id");
     }
 }

@@ -46,10 +46,15 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private OAuth2User process(OAuth2UserRequest userRequest, OAuth2User user) {
         ProviderType providerType = ProviderType.keyOf(userRequest.getClientRegistration().getRegistrationId().toUpperCase());
-
+        User savedUser;
         OAuthUserInfo userInfo = OAuthUserInfoFactory.getOAuth2UserInfo(providerType, user.getAttributes());
-        User savedUser = userRepository.findByIntraId(userInfo.getIntraId())
-                .orElse(null);
+        if (providerType.equals(ProviderType.FORTYTWO)) {
+            savedUser = userRepository.findByIntraId(userInfo.getIntraId())
+                    .orElse(null);
+        } else {
+            savedUser = userRepository.findByKakaoId(userInfo.getKakaoId())
+                    .orElse(null);
+        }
         if (savedUser == null) {
             savedUser = createUser(userInfo);
             if (userInfo.getImageUrl().startsWith("https://cdn.intra.42.fr/")) {
@@ -64,6 +69,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .intraId(userInfo.getIntraId())
                 .roleType(userInfo.getRoleType())
                 .imageUri(userInfo.getImageUrl())
+                .kakaoId(userInfo.getKakaoId())
                 .snsNotiOpt(SnsType.EMAIL)
                 .racketType(RacketType.NONE)
                 .totalExp(0)
