@@ -12,17 +12,20 @@ import javax.validation.constraints.PositiveOrZero;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SlotAdminDto {
-    @NotNull
-    @PositiveOrZero
+    @NotNull(message="Nothing pastSlotTime")
+    @PositiveOrZero(message="plz. Positive Or Zero")
     private Integer pastSlotTime;
-    @NotNull
-    @PositiveOrZero
+
+    @NotNull(message="Nothing futureSlotTime")
+    @PositiveOrZero(message="plz. Positive Or Zero")
     private Integer futureSlotTime;
-    @NotNull
-    @PositiveOrZero
+
+    @NotNull(message="Nothing interval")
+    @PositiveOrZero(message="plz. Positive Or Zero")
     private Integer interval;
-    @NotNull
-    @PositiveOrZero
+
+    @NotNull(message="Nothing openMinute")
+    @PositiveOrZero(message="plz. Positive Or Zero")
     private Integer openMinute;
 
     public SlotAdminDto(SlotManagement slotManagement) {

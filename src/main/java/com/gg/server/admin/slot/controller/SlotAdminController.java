@@ -21,9 +21,7 @@ public class SlotAdminController {
     @GetMapping
     public SlotAdminDto getSlotSetting(HttpResponse httpResponse) {
         SlotAdminDto responseDto = slotAdminService.getSlotSetting();
-        if (responseDto == null) {
-            throw new BusinessException(ErrorCode.SN001);//널값인 경우
-        }
+
         return responseDto;
     }
 
