@@ -1,6 +1,5 @@
 package com.gg.server.global.exception;
 
-import com.gg.server.global.exception.custom.BusinessException;
 import com.gg.server.global.exception.custom.CustomRuntimeException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

@@ -2,11 +2,8 @@ package com.gg.server.admin.slot.controller;
 
 import com.gg.server.admin.slot.dto.SlotAdminDto;
 import com.gg.server.admin.slot.service.SlotAdminService;
-import com.gg.server.global.exception.ErrorCode;
-import com.gg.server.global.exception.custom.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

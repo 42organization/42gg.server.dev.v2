@@ -43,7 +43,7 @@ public class SlotAdminControllerFailTest {
     adminSlotManagementRepository adminSlotManagementRepository;
 
     @Test
-    @DisplayName("[Get]/pingpong/admin/slot")
+    @DisplayName("fail[Get]/pingpong/admin/slot")
     void failGetSlotSetting() throws Exception {
         String accessToken = testDataUtils.getLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
