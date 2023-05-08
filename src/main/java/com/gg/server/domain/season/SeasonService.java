@@ -1,10 +1,14 @@
 package com.gg.server.domain.season;
 
 import com.gg.server.domain.season.data.SeasonRepository;
+import com.gg.server.domain.season.dto.CurSeason;
 import com.gg.server.domain.season.dto.SeasonResDto;
+import com.gg.server.global.exception.ErrorCode;
+import com.gg.server.global.exception.custom.NotExistException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,5 +19,10 @@ public class SeasonService {
 
     public List<SeasonResDto> seasonList() {
         return seasonRepository.findAll().stream().map(SeasonResDto::new).collect(Collectors.toList());
+    }
+
+    public CurSeason getCurSeason() {
+        return new CurSeason(seasonRepository.findByStartTimeGreaterThanEqualAndEndTimeLessThanEqual(LocalDateTime.now())
+                .orElseThrow(() -> new NotExistException("현재 시즌이 존재하지 않습니다.", ErrorCode.NOT_FOUND)));
     }
 }

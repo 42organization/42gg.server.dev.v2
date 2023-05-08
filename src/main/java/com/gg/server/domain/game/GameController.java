@@ -1,10 +1,7 @@
 package com.gg.server.domain.game;
 
-import com.gg.server.domain.game.dto.req.GameListReqDto;
-import com.gg.server.domain.game.dto.req.NormalGameListReqDto;
+import com.gg.server.domain.game.dto.req.*;
 import com.gg.server.domain.game.dto.GameListResDto;
-import com.gg.server.domain.game.dto.req.RankGameListReqDto;
-import com.gg.server.domain.game.dto.req.RankResultReqDto;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.InvalidParameterException;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +41,12 @@ public class GameController {
         if (!gameService.createRankResult(reqDto)) {
             return new ResponseEntity(HttpStatus.CONFLICT);
         }
+        return new ResponseEntity(HttpStatus.CREATED);
+    }
+
+    @PostMapping("/normal")
+    ResponseEntity createNormalResult(@Valid @RequestBody NormalResultReqDto reqDto) {
+        gameService.normalExpResult(reqDto);
         return new ResponseEntity(HttpStatus.CREATED);
     }
 }
