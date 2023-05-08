@@ -74,7 +74,7 @@ public class GameService {
     }
 
     @Transactional
-    public Boolean createRankResult(RankResultReqDto scoreDto) {
+    public synchronized Boolean createRankResult(RankResultReqDto scoreDto) {
         // rank 점수 입력받기
         if (scoreDto.getMyTeamScore() + scoreDto.getEnemyTeamScore() > 3) {
             throw new InvalidParameterException("점수를 잘못 입력했습니다.", ErrorCode.VALID_FAILED);
