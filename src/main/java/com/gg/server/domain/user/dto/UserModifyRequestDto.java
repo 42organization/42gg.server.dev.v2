@@ -10,9 +10,9 @@ import javax.validation.constraints.Pattern;
 @Getter
 @AllArgsConstructor
 public class UserModifyRequestDto {
-        @Pattern(regexp = "(PENHOLDER|SHAKEHAND|DUAL|NONE)", message = "Invalid value for field 'value'")
+        @Pattern(regexp = "(PENHOLDER|SHAKEHAND|DUAL|NONE)", message = "Invalid value for field 'racketType'")
         private String racketType;
         private String statusMessage;
-        @Pattern(regexp = "(SLACK|NONE|EMAIL|BOTH)", message = "Invalid value for field 'value'")
+        @Pattern(regexp = "(SLACK|NONE|EMAIL|BOTH)", message = "Invalid value for field 'snsNotiOpt'")
         private String snsNotiOpt;
 }

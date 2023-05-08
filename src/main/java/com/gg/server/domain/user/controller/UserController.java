@@ -53,12 +53,12 @@ public class UserController {
     }
 
     @GetMapping("/{targetUserId}/rank")
-    public UserRankResponseDto getUserRank(@PathVariable String targetUserId, Long season){
+    public UserRankResponseDto getUserRank(@PathVariable String targetUserId, @RequestParam Long season){
         return userService.getUserRankDetail(targetUserId, season);
     }
 
     @GetMapping("/{userId}/historics")
-    public UserHistoryResponseDto getUserHistory(@PathVariable Long userId, Long season) {
+    public UserHistoryResponseDto getUserHistory(@PathVariable Long userId, @RequestParam Long season) {
         return userService.getUserHistory(userId, season);
     }
 
