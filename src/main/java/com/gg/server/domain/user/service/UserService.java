@@ -140,10 +140,9 @@ public class UserService {
         String hashKey = RedisKeyManager.getHashKey(currentSeason.getId());
 
         RankRedis userRank = rankRedisRepository.findRankByUserId(hashKey, userId);
-        if (userRank == null) {
-            userRank = new RankRedis(userId, currentSeason.getStartPpp(), 0, 0, statusMessage);
-            rankRedisRepository.addRankData(hashKey, user.getId(), userRank);
-        }else{
+        if (userRank == null)
+            throw new NoSuchElementException("Redis에 저장된 유저의 랭크 정보가 없습니다.");
+        else{
             userRank.updateStatusMessage(statusMessage);
             rankRedisRepository.updateRankData(hashKey, user.getId(), userRank);
         }
