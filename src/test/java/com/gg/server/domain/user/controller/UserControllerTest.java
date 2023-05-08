@@ -111,11 +111,12 @@ class UserControllerTest {
         String intraId[] = {"intraId", "2intra2", "2intra", "aaaa", "bbbb"};
         String email = "email";
         String imageUrl = "imageUrl";
+        User user = null;
         for (String intra : intraId) {
-            testDataUtils.createNewUser(intra, email, imageUrl, RacketType.PENHOLDER,
+            user = testDataUtils.createNewUser(intra, email, imageUrl, RacketType.PENHOLDER,
                     SnsType.BOTH, RoleType.ADMIN);
         }
-        String accessToken = tokenProvider.createToken(1L);
+        String accessToken = tokenProvider.createToken(user.getId());
         String keyWord = "intra";
         String url = "/pingpong/users/searches?inquiringString=" + keyWord;
 

@@ -171,7 +171,7 @@ public class UserService {
         return new UserHistoryResponseDto(historyData);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public UserRankResponseDto getUserRankDetail(String targetUserIntraId) {
         Season currentSeason = seasonRepository.findCurrentSeason(LocalDateTime.now())
                 .orElseThrow(() -> new NoSuchElementException("현재 시즌이 없습니다."));
