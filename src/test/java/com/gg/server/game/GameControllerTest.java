@@ -25,6 +25,7 @@ import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpHeaders;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,17 +67,34 @@ public class GameControllerTest {
     @Autowired
     AuthTokenProvider tokenProvider;
     private String accessToken;
+    private Season season;
 
     @BeforeEach
-    public void init() {
-        accessToken = testDataUtils.getLoginAccessToken();
+    void init() {
+        season = seasonRepository.save(new Season("test season", LocalDateTime.of(2023, 5, 14, 0, 0), LocalDateTime.of(2999, 12, 31, 23, 59),
+                1000, 100));
+        User user1 = testDataUtils.createNewUser("test1", "test1@email", "null1", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
+        accessToken = tokenProvider.createToken(user1.getId());
+        User user2 = testDataUtils.createNewUser("test2", "test2@email", "null1", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
+        for (int i = 0; i < 10; i++) {
+            Game game = gameRepository.save(new Game(season, StatusType.END, Mode.RANK, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
+            Team team1 = teamRepository.save(new Team(game, 1, false));
+            Team team2 = teamRepository.save(new Team(game, 2, true));
+            teamUserRepository.save(new TeamUser(team1, user1));
+            teamUserRepository.save(new TeamUser(team2, user2));
+            game = gameRepository.save(new Game(season, StatusType.END, Mode.NORMAL, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
+            team1 = teamRepository.save(new Team(game, 0, false));
+            team2 = teamRepository.save(new Team(game, 0, false));
+            teamUserRepository.save(new TeamUser(team1, user1));
+            teamUserRepository.save(new TeamUser(team2, user2));
+        }
     }
 
     @Test
     @Transactional
     public void 일반게임목록조회() throws Exception {
         //given
-        String url = "/pingpong/games/normal?pageNum=0&pageSize=10";
+        String url = "/pingpong/games/normal?pageNum=1&pageSize=10";
         GameListResDto expect = gameService.normalGameList(0, 10);
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
@@ -86,8 +104,9 @@ public class GameControllerTest {
         GameListResDto result = objectMapper.readValue(contentAsString, GameListResDto.class);
         //then
         System.out.println(result.getGames().size() +", " + result.getIsLast());
-        System.out.println(expect.getGames().size() + ", " + expect.getIsLast());
+        System.out.println(expect.getGames());
         assertThat(result.getGames().size()).isEqualTo(expect.getGames().size());
+        assertThat(result.getGames().get(0).getGameId().equals(expect.getGames().get(0).getGameId()));
         assertThat(result.getIsLast()).isEqualTo(expect.getIsLast());
     }
 
@@ -95,8 +114,8 @@ public class GameControllerTest {
     @Transactional
     public void 랭크게임목록조회() throws Exception {
         //given
-        String url = "/pingpong/games/rank?pageNum=0&pageSize=10&seasonId=3";
-        GameListResDto expect = gameService.normalGameList(0, 10);
+        String url = "/pingpong/games/rank?pageNum=1&pageSize=10&seasonId=" + season.getId();
+        GameListResDto expect = gameService.rankGameList(0, 10, season.getId());
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())
@@ -107,6 +126,7 @@ public class GameControllerTest {
         System.out.println(result.getGames().size() +", " + result.getIsLast());
         System.out.println(expect.getGames().size() + ", " + expect.getIsLast());
         assertThat(result.getGames().size()).isEqualTo(expect.getGames().size());
+        assertThat(result.getGames().get(0).getGameId().equals(expect.getGames().get(0).getGameId()));
         assertThat(result.getIsLast()).isEqualTo(expect.getIsLast());
     }
 
@@ -114,7 +134,7 @@ public class GameControllerTest {
     @Transactional
     public void 랭크게임목록error조회() throws Exception {
         //given
-        String url = "/pingpong/games/rank?pageNum=0&pageSize=0";
+        String url = "/pingpong/games/rank?pageNum=1&pageSize=0";
         //then
         mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().is4xxClientError())
@@ -124,7 +144,7 @@ public class GameControllerTest {
     @Transactional
     public void 전체게임목록조회() throws Exception {
         //given
-        String url = "/pingpong/games?pageNum=0&pageSize=10";
+        String url = "/pingpong/games?pageNum=1&pageSize=10";
         GameListResDto expect = gameService.allGameList(0, 10, null);
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
@@ -136,13 +156,14 @@ public class GameControllerTest {
         System.out.println(result.getGames().size() +", " + result.getIsLast());
         System.out.println(expect.getGames().size() + ", " + expect.getIsLast());
         assertThat(result.getGames().size()).isEqualTo(expect.getGames().size());
+        assertThat(result.getGames().get(result.getGames().size() - 1).getGameId().equals(expect.getGames().get(expect.getGames().size() - 1).getGameId()));
         assertThat(result.getIsLast()).isEqualTo(expect.getIsLast());
     }
 
     @Test
     @Transactional
     void 게임목록조회에러테스트() throws Exception {
-        String url = "/pingpong/games?pageNum=0&pageSize=10&status=live";
+        String url = "/pingpong/games?pageNum=1&pageSize=10&status=live";
         mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString();
@@ -150,7 +171,7 @@ public class GameControllerTest {
     @Test
     @Transactional
     void 게임목록조회에러테스트2() throws Exception {
-        String url = "/pingpong/games?pageNum=0&pageSize=10&status=2";
+        String url = "/pingpong/games?pageNum=1&pageSize=10&status=2";
         mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString();
@@ -160,10 +181,6 @@ public class GameControllerTest {
     @Transactional
     void 랭크게임결과입력테스트() throws Exception {
         String url = "/pingpong/games/rank";
-        // season 추가
-        Season season = seasonRepository.save(new Season("test season", LocalDateTime.of(2023, 5, 14, 0, 0), LocalDateTime.of(2999, 12, 31, 23, 59),
-                1000, 100));
-//        System.out.println("season: " + season);
         Game game = gameRepository.save(new Game(season, StatusType.WAIT, Mode.RANK, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
         Team team1 = teamRepository.save(new Team(game, -1, false));
         Team team2 = teamRepository.save(new Team(game, -1, false));
@@ -171,8 +188,8 @@ public class GameControllerTest {
         String ac1 = tokenProvider.createToken(user1.getId());
         User user2 = testDataUtils.createNewUser("test2", "test2@email", "null1", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
         String ac2 = tokenProvider.createToken(user2.getId());
-        TeamUser tu1 = teamUserRepository.save(new TeamUser(team1, user1));
-        TeamUser tu2 = teamUserRepository.save(new TeamUser(team2, user2));
+        teamUserRepository.save(new TeamUser(team1, user1));
+        teamUserRepository.save(new TeamUser(team2, user2));
         String content = objectMapper.writeValueAsString(new RankResultReqDto(game.getId(), team1.getId(), 1, team2.getId(), 2));
         rankRedisRepository.addRankData(RedisKeyManager.getHashKey(season.getId()), user1.getId(),
                 new RankRedis(user1.getId(), user1.getIntraId(), season.getStartPpp(), 0, 0,  "test user1"));
