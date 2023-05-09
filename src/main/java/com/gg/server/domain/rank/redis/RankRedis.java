@@ -37,7 +37,8 @@ public class RankRedis implements Serializable {
     public static RankRedis from(UserDto user, Integer ppp) {
         RankRedis rankRedis = RankRedis.builder()
                 .userId(user.getId())
-                .ppp(ppp)
+                .intraId(user.getIntraId())
+                .ppp(-1)
                 .wins(0)
                 .losses(0)
                 .statusMessage("")

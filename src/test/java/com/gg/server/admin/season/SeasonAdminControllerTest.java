@@ -164,7 +164,7 @@ class SeasonAdminControllerTest {
 
         if (rankRedisRepository.findRankByUserId(redisHashKey, userId) == null)
             throw new AdminException("해당 시즌이 없습니다", ErrorCode.BAD_REQUEST);
-
+        System.out.println(rankRedisRepository.findRankByUserId(redisHashKey, userId).getIntraId());
     }
 
 
