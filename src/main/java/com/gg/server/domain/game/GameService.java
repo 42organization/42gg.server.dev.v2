@@ -104,10 +104,8 @@ public class GameService {
             gamePerDay = teamUserRepository.findByDateAndUser(LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), 0, 0),
                     teamUsers.get(1).getUser().getId());
             teamUsers.get(1).getUser().addExp(ExpLevelCalculator.getExpPerGame() + (ExpLevelCalculator.getExpBonus() * gamePerDay));
-        } else {
-            throw new InvalidParameterException("팀이 잘못되었거나 이미 입력되었습니다.", ErrorCode.VALID_FAILED);
+            game.updateStatus();
         }
-        game.updateStatus();
         return true;
     }
     private void setTeamScore(TeamUser tu, int teamScore, Boolean isWin) {
