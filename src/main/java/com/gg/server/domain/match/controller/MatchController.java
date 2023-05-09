@@ -56,7 +56,7 @@ public class MatchController {
     }
 
     @GetMapping("match/time/scope")
-    public MatchStatusResponseListDto getMatchTimeScope(@RequestParam Option option,
+    public MatchStatusResponseListDto getMatchTimeScope(@RequestParam("mode") Option option,
             @Parameter(hidden = true) @Login UserDto user){
         return matchRedisService.getAllMatchStatus(user.getId(), option);
     }

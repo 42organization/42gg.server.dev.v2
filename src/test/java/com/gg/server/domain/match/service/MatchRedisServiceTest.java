@@ -81,6 +81,12 @@ class MatchRedisServiceTest {
         List<LocalDateTime> slotTimes = matchTestSetting.getTestSlotTimes(slotManagement.getGameInterval());
         this.slotTimes = slotTimes;
     }
+    @AfterEach
+    void clear() {
+        RedisConnection connection = redisConnectionFactory.getConnection();
+        connection.flushDb();
+        connection.close();
+    }
 
     @DisplayName("매칭 가능 상대가 없는 경우 큐에 들어감")
     @Test
