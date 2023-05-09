@@ -1,6 +1,8 @@
 package com.gg.server.domain.rank.controller;
 
+import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.rank.dto.ExpRankPageResponseDto;
+import com.gg.server.domain.rank.dto.RankPageResponseDto;
 import com.gg.server.domain.rank.service.RankService;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.utils.argumentresolver.Login;
@@ -20,5 +22,20 @@ public class RankController {
     @GetMapping("/vip")
     public ExpRankPageResponseDto getExpRankPage(Pageable pageRequest, @Parameter(hidden = true) @Login UserDto user) {
         return rankService.getExpRankPage(pageRequest.getPageNumber(), pageRequest.getPageSize(), user);
+    }
+
+    /**
+     *
+     * @param pageRequest
+     * @param user
+     * @param season
+     * @param gameType
+     *
+     *  gameType는 single로 고정되어 오고있는데 현재 rank게임은 single만 구현되어있어서 사용 안하기로
+     */
+    @GetMapping("/ranks/{gameType}")
+    public RankPageResponseDto getRankPage(Pageable pageRequest, @Parameter(hidden = true) @Login UserDto user,
+                                           Long season,  String gameType){
+        return rankService.getRankPage(pageRequest.getPageNumber(), pageRequest.getPageSize(), user, season);
     }
 }
