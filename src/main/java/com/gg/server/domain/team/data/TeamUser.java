@@ -2,10 +2,7 @@ package com.gg.server.domain.team.data;
 
 import com.gg.server.domain.user.User;
 import groovyjarjarantlr4.v4.runtime.misc.NotNull;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -13,6 +10,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Entity
 @Getter
+@ToString
 public class TeamUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
