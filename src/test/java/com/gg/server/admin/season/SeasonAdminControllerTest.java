@@ -11,7 +11,7 @@ import com.gg.server.admin.season.data.SeasonAdminRepository;
 import com.gg.server.admin.season.dto.SeasonUpdateRequestDto;
 import com.gg.server.admin.season.service.SeasonAdminService;
 import com.gg.server.admin.slot.dto.SlotAdminDto;
-import com.gg.server.domain.rank.Rank;
+import com.gg.server.domain.rank.data.Rank;
 import com.gg.server.domain.rank.data.RankRepository;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
@@ -28,22 +28,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.constraints.Future;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.contentOf;
-import static org.assertj.core.api.InstanceOfAssertFactories.OPTIONAL;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RequiredArgsConstructor
@@ -161,7 +155,7 @@ class SeasonAdminControllerTest {
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
-        dbSeasonId = rankRepository.findFirstByOrderByCreatedAtDesc().get().getSeasonId();
+        dbSeasonId = rankRepository.findFirstByOrderByCreatedAtDesc().get().getSeason().getId();
         String redisZSetKey = RedisKeyManager.getZSetKey(dbSeasonId);
         String redisHashKey = RedisKeyManager.getHashKey(dbSeasonId);
 

@@ -7,6 +7,8 @@ import com.gg.server.domain.noti.data.NotiRepository;
 import com.gg.server.domain.noti.type.NotiType;
 import com.gg.server.domain.pchange.data.PChange;
 import com.gg.server.domain.pchange.data.PChangeRepository;
+import com.gg.server.domain.rank.data.Rank;
+import com.gg.server.domain.rank.data.RankRepository;
 import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
@@ -43,6 +45,7 @@ public class TestDataUtils {
     private final TeamRepository teamRepository;
     private final RankRedisRepository redisRepository;
     private final PChangeRepository pChangeRepository;
+    private final RankRepository rankRepository;
 
     public String getLoginAccessToken() {
         User user = User.builder()
@@ -83,6 +86,21 @@ public class TestDataUtils {
                 .snsNotiOpt(snsType)
                 .roleType(roleType)
                 .totalExp(0)
+                .build();
+        userRepository.save(user);
+        return user;
+    }
+
+    public User createNewUser(int totalExp){
+        String randomId = UUID.randomUUID().toString();
+        User user = User.builder()
+                .eMail("email")
+                .intraId(randomId)
+                .imageUri("image")
+                .racketType(RacketType.PENHOLDER)
+                .snsNotiOpt(SnsType.NONE)
+                .roleType(RoleType.USER)
+                .totalExp(totalExp)
                 .build();
         userRepository.save(user);
         return user;
@@ -147,6 +165,16 @@ public class TestDataUtils {
         redisRepository.addToZSet(zSetKey, newUser.getId(), season.getStartPpp());
         redisRepository.addRankData(hashKey, newUser.getId(),
                 new RankRedis(newUser.getId(), season.getStartPpp(), 0, 0, statusMessage));
+        Rank userRank = Rank.builder()
+                        .user(newUser)
+                        .season(season)
+                        .ranking(0)
+                        .ppp(season.getStartPpp())
+                        .wins(0)
+                        .losses(0)
+                        .statusMessage(statusMessage)
+                        .build();
+        rankRepository.save(userRank);
     }
 
     public void createMockMatch(User newUser, Season season, LocalDateTime startTime, LocalDateTime endTime) {

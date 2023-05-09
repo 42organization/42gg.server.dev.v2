@@ -8,12 +8,14 @@ import com.gg.server.admin.season.service.SeasonAdminService;
 import com.gg.server.admin.season.dto.SeasonAdminDto;
 import com.gg.server.admin.season.dto.SeasonListAdminResponseDto;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping(value = "/pingpong/admin")
 @AllArgsConstructor
@@ -44,6 +46,7 @@ public class SeasonAdminController {
     public void deleteSeason(@PathVariable Long seasonId) {
         SeasonAdminDto seasonDto = seasonAdminService.findSeasonById(seasonId);
         seasonAdminService.deleteSeason(seasonId);
+
         if (LocalDateTime.now().isBefore(seasonDto.getStartTime())) {
             rankAdminService.deleteAllUserRankBySeason(seasonDto);
             rankRedisAdminService.deleteSeasonRankBySeasonId(seasonDto.getSeasonId());
