@@ -7,14 +7,15 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum MatchStatus {
+public enum SlotStatus {
     OPEN("open"),
     CLOSE("close"),
-    MYTABLE("mytable");
+    MYTABLE("mytable"),
+    MATCH("match");
     private final String code;
     @JsonCreator
-    public static MatchStatus getEnumFromValue(String value) {
-        for (MatchStatus e : values()) {
+    public static SlotStatus getEnumFromValue(String value) {
+        for (SlotStatus e : values()) {
             if(e.code.equals(value)) {
                 return e;
             }

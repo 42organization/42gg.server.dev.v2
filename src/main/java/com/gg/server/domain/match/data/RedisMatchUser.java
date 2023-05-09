@@ -11,12 +11,12 @@ import org.springframework.data.redis.core.RedisHash;
 @NoArgsConstructor
 public class RedisMatchUser {
     @Id
-    private String nickName;
+    private Long userId;
     private Integer ppp;
     private String option;//normal, both, rank
 
-    public RedisMatchUser(String nickName, Integer ppp, Option option) {
-        this.nickName = nickName;
+    public RedisMatchUser(Long userId, Integer ppp, Option option) {
+        this.userId = userId;
         this.ppp = ppp;
         this.option = option.getCode();
     }

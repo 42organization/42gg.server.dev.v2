@@ -12,6 +12,13 @@ public class MatchStatusDto {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private String status;
-    private Integer normalCount;
-    private Integer rankCount;
+
+    @Override
+    public String toString() {
+        return "MatchStatusDto{" +
+                "startTime = " + startTime +
+                "endTime = " + endTime +
+                "status = " + status +
+                "}";
+    }
 }

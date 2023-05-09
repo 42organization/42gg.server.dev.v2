@@ -4,6 +4,10 @@ import com.gg.server.domain.match.dto.MatchRequestDto;
 import com.gg.server.domain.match.dto.MatchStatusResponseListDto;
 import com.gg.server.domain.match.service.MatchRedisService;
 import com.gg.server.domain.match.type.Option;
+import com.gg.server.domain.rank.redis.RankRedis;
+import com.gg.server.domain.rank.redis.RankRedisService;
+import com.gg.server.domain.season.SeasonService;
+import com.gg.server.domain.season.dto.SeasonResDto;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.InvalidParameterException;
@@ -28,35 +32,32 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/pingpong/")
 public class MatchController {
     private final MatchRedisService matchRedisService;
-
-    //redis 객체 따로 만들기 - option
     @PostMapping("match")
     public ResponseEntity createUserMatch(@RequestBody @Valid MatchRequestDto matchRequestDto, @Parameter(hidden = true) @Login UserDto user) {
-        //rank - 관련해서 따로 정해야할 필요가 있음
-        //user가 rank에 없을 시 season ppp 초기값 넣을 필요가 있음
         //3회 이상 매칭 잡을 시 예외 처리
-        if (matchRedisService.isUserMatch(user.getIntraId(), matchRequestDto.getStartTime())) {
+        if (matchRedisService.isUserMatch(user.getId(), matchRequestDto.getStartTime())) {
             throw new InvalidParameterException("match is already enrolled", ErrorCode.VALID_FAILED);
         }
-        if (matchRedisService.countUserMatch(user.getIntraId()) >= 3L) {
+        if (matchRedisService.countUserMatch(user.getId()) >= 3L) {
             throw new InvalidParameterException("enroll already three times", ErrorCode.VALID_FAILED);
         }
-        matchRedisService.makeMatch(user.getIntraId(), 1000, matchRequestDto.getOption(), matchRequestDto.getStartTime());
+        matchRedisService.makeMatch(user.getId(), matchRequestDto.getOption(), matchRequestDto.getStartTime());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
     @DeleteMapping("match")
     public ResponseEntity deleteUserMatch(@RequestParam("startTime")
                                               @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") LocalDateTime startTime,
                                           @Parameter(hidden = true) @Login UserDto user) {
-        if (!matchRedisService.isUserMatch(user.getIntraId(), startTime)) {
+        if (!matchRedisService.isUserMatch(user.getId(), startTime)) {
             throw new InvalidParameterException("match is not enrolled", ErrorCode.VALID_FAILED);
         }
-        matchRedisService.cancelMatch(user.getIntraId(), startTime);
+        matchRedisService.cancelMatch(user.getId(), startTime);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @GetMapping("match/time/scope")
-    public MatchStatusResponseListDto getMatchTimeScope(@Parameter(hidden = true) @Login UserDto user){
-        return null;
+    public MatchStatusResponseListDto getMatchTimeScope(@RequestParam Option option,
+            @Parameter(hidden = true) @Login UserDto user){
+        return matchRedisService.getAllMatchStatus(user.getId(), option);
     }
 }
