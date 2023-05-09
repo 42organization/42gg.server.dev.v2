@@ -15,15 +15,18 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SeasonUpdateRequestDto {
-    @NotNull
+    @NotNull(message = "plz. seasonName")
     private String seasonName;
-    @NotNull
-    @Future
+
+    @NotNull(message = "plz. startTime")
+    @Future(message = "불가능한 예약시점입니다.")
     @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
     private LocalDateTime startTime;
-    @NotNull
+
+    @NotNull(message = "plz. startPpp")
     private Integer startPpp;
-    @NotNull
+
+    @NotNull(message = "plz. pppGap")
     private Integer pppGap;
 
 }
