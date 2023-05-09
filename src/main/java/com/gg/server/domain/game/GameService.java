@@ -92,11 +92,11 @@ public class GameService {
         return updateScore(game, scoreDto, game.getSeason().getId(), userId);
     }
 
-    public Boolean normalExpResult(NormalResultReqDto normalResultReqDto) {
+    public synchronized Boolean normalExpResult(NormalResultReqDto normalResultReqDto) {
         Game game = gameRepository.findById(normalResultReqDto.getGameId())
                 .orElseThrow(() -> new NotExistException("존재하지 않는 게임 id 입니다.", ErrorCode.NOT_FOUND));
         List<TeamUser> teamUsers = teamUserRepository.findAllByGameId(game.getId());
-        if (teamUsers.size() == 2) {
+        if (teamUsers.size() == 2 && game.getStatus() == StatusType.LIVE) {
             LocalDateTime now = LocalDateTime.now();
             int gamePerDay = teamUserRepository.findByDateAndUser(LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), 0, 0),
                     teamUsers.get(0).getUser().getId());
@@ -104,6 +104,8 @@ public class GameService {
             gamePerDay = teamUserRepository.findByDateAndUser(LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), 0, 0),
                     teamUsers.get(1).getUser().getId());
             teamUsers.get(1).getUser().addExp(ExpLevelCalculator.getExpPerGame() + (ExpLevelCalculator.getExpBonus() * gamePerDay));
+        } else {
+            throw new InvalidParameterException("팀이 잘못되었거나 이미 입력되었습니다.", ErrorCode.VALID_FAILED);
         }
         game.updateStatus();
         return true;
