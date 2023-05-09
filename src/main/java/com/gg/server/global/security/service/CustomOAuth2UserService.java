@@ -7,7 +7,6 @@ import com.gg.server.global.security.info.OAuthUserInfo;
 import com.gg.server.global.security.info.OAuthUserInfoFactory;
 import com.gg.server.global.security.info.ProviderType;
 import com.gg.server.domain.user.type.RacketType;
-import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
 import com.gg.server.global.utils.AsyncNewUserImageUploader;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,6 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-
 
 @Service
 @RequiredArgsConstructor

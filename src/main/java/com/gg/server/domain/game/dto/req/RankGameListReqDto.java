@@ -1,6 +1,5 @@
 package com.gg.server.domain.game.dto.req;
 
-import com.gg.server.domain.game.dto.req.NormalGameListReqDto;
 import lombok.Getter;
 
 import javax.validation.constraints.NotNull;

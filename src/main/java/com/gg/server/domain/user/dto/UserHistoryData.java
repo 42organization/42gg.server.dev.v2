@@ -1,6 +1,5 @@
 package com.gg.server.domain.user.dto;
 
-
 import com.gg.server.domain.pchange.data.PChange;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

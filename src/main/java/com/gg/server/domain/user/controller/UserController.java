@@ -3,19 +3,13 @@ package com.gg.server.domain.user.controller;
 import com.gg.server.domain.user.dto.*;
 import com.gg.server.domain.user.service.UserService;
 import com.gg.server.domain.user.type.RoleType;
-import com.gg.server.global.security.jwt.exception.TokenNotValidException;
-import com.gg.server.global.security.jwt.utils.TokenHeaders;
 import com.gg.server.global.utils.argumentresolver.Login;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor

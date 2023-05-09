@@ -3,14 +3,11 @@ package com.gg.server.domain.noti.controller;
 import com.gg.server.domain.noti.dto.NotiDto;
 import com.gg.server.domain.noti.dto.NotiResponseDto;
 import com.gg.server.domain.noti.service.NotiService;
-import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.utils.argumentresolver.Login;
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController

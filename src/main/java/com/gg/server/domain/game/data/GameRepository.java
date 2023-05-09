@@ -2,7 +2,6 @@ package com.gg.server.domain.game.data;
 
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
-import com.gg.server.domain.season.data.Season;
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.gg.server.domain.game.dto.GameTeamUser;
 import org.springframework.data.domain.Pageable;

@@ -1,8 +1,5 @@
 package com.gg.server.domain.user.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.gg.server.domain.user.type.SnsType;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;

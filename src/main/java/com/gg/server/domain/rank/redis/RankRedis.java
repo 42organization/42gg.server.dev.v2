@@ -2,12 +2,9 @@ package com.gg.server.domain.rank.redis;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
 import java.io.Serializable;
-
 
 @RedisHash("rank")
 @Getter

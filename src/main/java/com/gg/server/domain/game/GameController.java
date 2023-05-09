@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import org.springframework.validation.BindException;
 
 @RestController
 @RequiredArgsConstructor
