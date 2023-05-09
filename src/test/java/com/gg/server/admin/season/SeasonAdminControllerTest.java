@@ -1,11 +1,23 @@
 package com.gg.server.admin.season;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gg.server.admin.rank.service.RankAdminService;
+import com.gg.server.admin.rank.service.RankRedisAdminService;
 import com.gg.server.admin.season.dto.SeasonAdminDto;
+import com.gg.server.admin.season.dto.SeasonCreateRequestDto;
 import com.gg.server.admin.season.dto.SeasonListAdminResponseDto;
 import com.gg.server.admin.season.data.SeasonAdminRepository;
 
+import com.gg.server.admin.season.dto.SeasonUpdateRequestDto;
+import com.gg.server.admin.season.service.SeasonAdminService;
+import com.gg.server.admin.slot.dto.SlotAdminDto;
+import com.gg.server.domain.rank.Rank;
+import com.gg.server.domain.rank.data.RankRepository;
+import com.gg.server.domain.rank.redis.RankRedisRepository;
+import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.Season;
+import com.gg.server.global.exception.ErrorCode;
+import com.gg.server.global.exception.custom.AdminException;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import com.google.common.net.HttpHeaders;
@@ -16,19 +28,28 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.Future;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.contentOf;
+import static org.assertj.core.api.InstanceOfAssertFactories.OPTIONAL;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RequiredArgsConstructor
 @SpringBootTest
 @AutoConfigureMockMvc
+@Transactional
 class SeasonAdminControllerTest {
     @Autowired
     MockMvc mockMvc;
@@ -45,7 +66,23 @@ class SeasonAdminControllerTest {
     @Autowired
     TestDataUtils testDataUtils;
 
+    @Autowired
+    RankRepository rankRepository;
+
+    @Autowired
+    RankRedisRepository rankRedisRepository;
+
+    @Autowired
+    SeasonAdminService seasonAdminService;
+
+    @Autowired
+    RankAdminService rankAdminService;
+
+    @Autowired
+    RankRedisAdminService rankRedisAdminService;
+
     SeasonListAdminResponseDto responseDto;
+    Long dbSeasonId;
 
     @BeforeEach
     void setUp() {
@@ -103,11 +140,110 @@ class SeasonAdminControllerTest {
         assertThat(seasonListAdminResponseDto.getSeasonList().get(1).getPppGap()).isEqualTo(responseDto.getSeasonList().get(1).getPppGap());
     }
 
+    @Test
+    @DisplayName("[POST]/pingpong/admin/season")
+    void createSeasons() throws Exception {
+        String accessToken = testDataUtils.getLoginAccessToken();
+        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+
+        SeasonCreateRequestDto seasonCreateReqeustDto = SeasonCreateRequestDto.builder()
+                .seasonName("redis1")
+                .startTime(LocalDateTime.now().plusDays(1))
+                .startPpp(1000)
+                .pppGap(500)
+                .build();
+        String content = objectMapper.writeValueAsString(seasonCreateReqeustDto);
+
+        String contentAsString = mockMvc.perform(MockMvcRequestBuilders.post("/pingpong/admin/season")
+                .content(content)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        dbSeasonId = rankRepository.findFirstByOrderByCreatedAtDesc().get().getSeasonId();
+        String redisZSetKey = RedisKeyManager.getZSetKey(dbSeasonId);
+        String redisHashKey = RedisKeyManager.getHashKey(dbSeasonId);
+
+        if (rankRedisRepository.getRankInZSet(redisZSetKey, userId) == null)
+            throw new AdminException("해당 시즌이 없습니다", ErrorCode.BAD_REQUEST);
+
+        if (rankRedisRepository.findRankByUserId(redisHashKey, userId) == null)
+            throw new AdminException("해당 시즌이 없습니다", ErrorCode.BAD_REQUEST);
+
+    }
 
 
+    @Test
+    @DisplayName("[Delete]/pingpong/admin/season/{seasonId}")
+    void deleteSeasons() throws Exception {
+        String accessToken = testDataUtils.getLoginAccessToken();
+        Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
+        SeasonCreateRequestDto seasonCreateReqeustDto = SeasonCreateRequestDto.builder()
+                .seasonName("redis1")
+                .startTime(LocalDateTime.now().plusDays(1))
+                .startPpp(1000)
+                .pppGap(500)
+                .build();
+        Long seasonId = seasonAdminService.createSeason(seasonCreateReqeustDto);
+        SeasonAdminDto seasonAdminDto = seasonAdminService.findSeasonById(seasonId);
+        if (LocalDateTime.now().isBefore(seasonAdminDto.getStartTime())) {
+            rankAdminService.addAllUserRankByNewSeason(seasonAdminDto);
+            rankRedisAdminService.addAllUserRankByNewSeason(seasonAdminDto);
+        }
+        dbSeasonId = seasonId;
 
-    //@AfterEach
-    //void tearDown() {
-    //}
+        String contentAsString = mockMvc.perform(MockMvcRequestBuilders.delete("/pingpong/admin/season/" + dbSeasonId)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        String redisZSetKey = RedisKeyManager.getZSetKey(dbSeasonId);
+        String redisHashKey = RedisKeyManager.getHashKey(dbSeasonId);
+
+        if (rankRedisRepository.getRankInZSet(redisZSetKey, userId) != null)
+            throw new AdminException("해당 시즌이 없어야 합니다", ErrorCode.BAD_REQUEST);
+
+        if (rankRedisRepository.findRankByUserId(redisHashKey, userId) != null)
+            throw new AdminException("해당 시즌이 없어야 합니다", ErrorCode.BAD_REQUEST);
+    }
+
+    @Test
+    @DisplayName("[Put]/pingpong/admin/season/{seasonId}")
+    void updateSeasons() throws Exception {
+        String accessToken = testDataUtils.getLoginAccessToken();
+        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+
+        SeasonCreateRequestDto seasonCreateReqeustDto = SeasonCreateRequestDto.builder()
+                .seasonName("redis1")
+                .startTime(LocalDateTime.now().plusDays(1))
+                .startPpp(1000)
+                .pppGap(500)
+                .build();
+        Long seasonId = seasonAdminService.createSeason(seasonCreateReqeustDto);
+        SeasonAdminDto seasonAdminDto = seasonAdminService.findSeasonById(seasonId);
+        if (LocalDateTime.now().isBefore(seasonAdminDto.getStartTime())) {
+            rankAdminService.addAllUserRankByNewSeason(seasonAdminDto);
+            rankRedisAdminService.addAllUserRankByNewSeason(seasonAdminDto);
+        }
+        dbSeasonId = seasonId;
+        SeasonUpdateRequestDto seasonUpdateRequestDto = SeasonUpdateRequestDto.builder()
+                .seasonName("putSeasonTestName")
+                .startTime(LocalDateTime.now().plusDays(1))
+                .startPpp(1000)
+                .pppGap(500)
+                .build();
+        String content = objectMapper.writeValueAsString(seasonUpdateRequestDto);
+
+        String contentAsString = mockMvc.perform(MockMvcRequestBuilders.put("/pingpong/admin/season/" + dbSeasonId)
+                .content(content)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        assertThat(seasonAdminRepository.findById(dbSeasonId).get().getSeasonName())
+                .isEqualTo(seasonUpdateRequestDto.getSeasonName());
+    }
 }

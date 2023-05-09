@@ -118,27 +118,4 @@ public class SeasonAdminService {
                 beforeSeason.setEndTime(LocalDateTime.of(9999, 12, 31, 23, 59, 59));
         }
     }
-
-//    private boolean isOverlap(Season season1, Season season2) {
-//        LocalDateTime start1 = season1.getStartTime();
-//        LocalDateTime end1 = season1.getEndTime();
-//        LocalDateTime start2 = season2.getStartTime();
-//        LocalDateTime end2 = season2.getEndTime();
-//
-//        if (start1.isEqual(end1) || start2.isEqual(end2)) {
-//            return false;
-//        }
-//        // 첫 번째 기간이 두 번째 기간의 이전에 끝날 때
-//        if (end1.isBefore(start2)) {
-//            return false;
-//        }
-//
-//        // 첫 번째 기간이 두 번째 기간의 이후에 시작할 때
-//        if (start1.isAfter(end2)) {
-//            return false;
-//        }
-//
-//        // 나머지 경우에는 두 기간이 겹칩니다.
-//        return true;
-//    }
 }

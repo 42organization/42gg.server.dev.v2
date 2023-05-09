@@ -2,6 +2,7 @@ package com.gg.server.domain.rank;
 
 import com.gg.server.domain.user.User;
 import com.gg.server.global.utils.BaseTimeEntity;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,7 @@ import java.io.Serializable;
 @Getter
 @Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name="ranks")
 public class Rank extends BaseTimeEntity implements Serializable {
     @Id

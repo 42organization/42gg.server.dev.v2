@@ -17,5 +17,4 @@ public interface SeasonAdminRepository extends JpaRepository<Season, Long> {
     @Query("SELECT e FROM Season e WHERE e.startTime < :targetTime ORDER BY e.startTime DESC")
     List<Season> findBeforeSeasons(@Param("targetTime") LocalDateTime targetTime);
 
-    Page<Season> findAllByOrderByIdDesc(Pageable pageable);
 }
