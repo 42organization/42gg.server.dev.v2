@@ -28,6 +28,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -59,8 +60,9 @@ public class MatchRedisService {
         }
         return false;
     }
-    public synchronized void makeMatch(Long userId, Option option, LocalDateTime startTime) {
-        Season currentSeason = seasonRepository.findCurrentSeason(LocalDateTime.now()).get();
+    public void makeMatch(Long userId, Option option, LocalDateTime startTime) {
+        Season currentSeason = seasonRepository.findCurrentSeason(LocalDateTime.now())
+                .orElseThrow(() -> new NoSuchElementException("현재 시즌이 없습니다."));
         RankRedis rank = rankRedisRepository
                 .findRankByUserId(RedisKeyManager.getHashKey(currentSeason.getId()), userId);
         RedisMatchTime matchTime = new RedisMatchTime(startTime);
@@ -112,8 +114,8 @@ public class MatchRedisService {
 
     public MatchStatusResponseListDto getAllMatchStatus(Long userId, Option option) {
         SlotManagement slotManagement = slotManagementRepository.findFirstByOrderByCreatedAtDesc();
-        LocalDateTime now = LocalDateTime.now();
-        Season currentSeason = seasonRepository.findCurrentSeason(now).get();
+        Season currentSeason = seasonRepository.findCurrentSeason(LocalDateTime.now())
+                .orElseThrow(() -> new NoSuchElementException("현재 시즌이 없습니다."));
         RankRedis user = rankRedisRepository.
                 findRankByUserId(RedisKeyManager.getHashKey(currentSeason.getId()), userId);
         HashMap <LocalDateTime, MatchStatusDto> slots = new HashMap<LocalDateTime, MatchStatusDto>();
