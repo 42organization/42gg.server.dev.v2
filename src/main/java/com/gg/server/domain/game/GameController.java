@@ -49,7 +49,8 @@ public class GameController {
 
     @PostMapping("/normal")
     ResponseEntity createNormalResult(@Valid @RequestBody NormalResultReqDto reqDto) {
-        gameService.normalExpResult(reqDto);
-        return new ResponseEntity(HttpStatus.CREATED);
+        if (gameService.normalExpResult(reqDto))
+            return new ResponseEntity(HttpStatus.CREATED);
+        return new ResponseEntity(HttpStatus.ACCEPTED);
     }
 }

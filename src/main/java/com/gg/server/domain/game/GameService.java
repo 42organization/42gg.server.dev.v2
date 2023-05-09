@@ -105,8 +105,11 @@ public class GameService {
                     teamUsers.get(1).getUser().getId());
             teamUsers.get(1).getUser().addExp(ExpLevelCalculator.getExpPerGame() + (ExpLevelCalculator.getExpBonus() * gamePerDay));
             game.updateStatus();
+            return true;
+        } else if (teamUsers.size() != 2) {
+            throw new InvalidParameterException("team 이 잘못되었습니다.", ErrorCode.VALID_FAILED);
         }
-        return true;
+        return false;
     }
     private void setTeamScore(TeamUser tu, int teamScore, Boolean isWin) {
         tu.getTeam().inputScore(teamScore);
