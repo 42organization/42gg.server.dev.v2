@@ -174,11 +174,10 @@ public class GameControllerTest {
         TeamUser tu1 = teamUserRepository.save(new TeamUser(team1, user1));
         TeamUser tu2 = teamUserRepository.save(new TeamUser(team2, user2));
         String content = objectMapper.writeValueAsString(new RankResultReqDto(game.getId(), team1.getId(), 1, team2.getId(), 2));
-
         rankRedisRepository.addRankData(RedisKeyManager.getHashKey(season.getId()), user1.getId(),
-                new RankRedis(user1.getId(), "aa", season.getStartPpp(), 0, 0,  "test user1"));
+                new RankRedis(user1.getId(), user1.getIntraId(), season.getStartPpp(), 0, 0,  "test user1"));
         rankRedisRepository.addRankData(RedisKeyManager.getHashKey(season.getId()), user2.getId(),
-                new RankRedis(user2.getId(), "aa", season.getStartPpp(), 0, 0,  "test user1"));
+                new RankRedis(user2.getId(), user2.getIntraId(), season.getStartPpp(), 0, 0,  "test user2"));
         // then
         mockMvc.perform(post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + ac1)
                         .contentType(MediaType.APPLICATION_JSON)

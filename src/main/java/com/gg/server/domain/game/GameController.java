@@ -22,21 +22,21 @@ public class GameController {
     private final GameService gameService;
 
     @GetMapping
-    GameListResDto allGameList(@ModelAttribute @Valid GameListReqDto gameReq) throws BindException {
+    GameListResDto allGameList(@ModelAttribute @Valid GameListReqDto gameReq) {
         if (gameReq.getStatus() != null && !gameReq.getStatus().name().equals("LIVE")) {
             throw new InvalidParameterException("status not valid", ErrorCode.VALID_FAILED);
         }
-        return gameService.allGameList(gameReq.getPageNum(), gameReq.getPageSize(), gameReq.getStatus());
+        return gameService.allGameList(gameReq.getPageNum() - 1, gameReq.getPageSize(), gameReq.getStatus());
     }
 
     @GetMapping("/normal")
     GameListResDto normalGameList(@ModelAttribute @Valid NormalGameListReqDto gameReq) {
-        return gameService.normalGameList(gameReq.getPageNum(), gameReq.getPageSize());
+        return gameService.normalGameList(gameReq.getPageNum() - 1, gameReq.getPageSize());
     }
 
     @GetMapping("/rank")
     GameListResDto rankGameList(@ModelAttribute @Valid RankGameListReqDto gameReq) {
-        return gameService.rankGameList(gameReq.getPageNum(), gameReq.getPageSize(), gameReq.getSeasonId());
+        return gameService.rankGameList(gameReq.getPageNum() - 1, gameReq.getPageSize(), gameReq.getSeasonId());
     }
 
     @PostMapping("/rank")
