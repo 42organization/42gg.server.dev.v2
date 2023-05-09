@@ -88,6 +88,21 @@ public class TestDataUtils {
         return user;
     }
 
+    public User createNewUser(int totalExp){
+        String randomId = UUID.randomUUID().toString();
+        User user = User.builder()
+                .eMail("email")
+                .intraId(randomId)
+                .imageUri("image")
+                .racketType(RacketType.PENHOLDER)
+                .snsNotiOpt(SnsType.NONE)
+                .roleType(RoleType.USER)
+                .totalExp(totalExp)
+                .build();
+        userRepository.save(user);
+        return user;
+    }
+
     public void addMockDataUserLiveApi(String event, int notiCnt, String currentMatchMode, Long userId) {
         User curUser = userRepository.findById(userId).get();
         for (int i = 0; i < notiCnt; i++) {

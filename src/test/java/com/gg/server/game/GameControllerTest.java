@@ -176,9 +176,9 @@ public class GameControllerTest {
         String content = objectMapper.writeValueAsString(new RankResultReqDto(game.getId(), team1.getId(), 1, team2.getId(), 2));
 
         rankRedisRepository.addRankData(RedisKeyManager.getHashKey(season.getId()), user1.getId(),
-                new RankRedis(user1.getId(), season.getStartPpp(), 1, 0, 0, "test user1"));
+                new RankRedis(user1.getId(), season.getStartPpp(), 0, 0,  "test user1"));
         rankRedisRepository.addRankData(RedisKeyManager.getHashKey(season.getId()), user2.getId(),
-                new RankRedis(user2.getId(), season.getStartPpp(), 1, 0, 0, "test user1"));
+                new RankRedis(user2.getId(), season.getStartPpp(), 0, 0,  "test user1"));
         // then
         mockMvc.perform(post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + ac1)
                         .contentType(MediaType.APPLICATION_JSON)
