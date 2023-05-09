@@ -169,6 +169,14 @@ public class RankRedisRepository {
         return hashOps.multiGet(key, userIdsStr).stream().map(RankRedis.class::cast).collect(Collectors.toList());
     }
 
+    public Long countTotalRank(String hashKey) {
+        return hashOps.size(hashKey);
+    }
+
+    public void deleteAll(){
+        redisTemplate.delete(redisTemplate.keys("*"));
+        hashRedisTemplate.delete(hashRedisTemplate.keys("*"));
+    }
     public void deleteZSetKey(String key) {
         redisTemplate.delete(key);
     }
@@ -176,4 +184,5 @@ public class RankRedisRepository {
     public void deleteHashKey(String key) {
         hashRedisTemplate.delete(key);
     }
+
 }

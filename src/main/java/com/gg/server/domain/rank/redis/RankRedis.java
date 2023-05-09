@@ -15,6 +15,7 @@ import java.io.Serializable;
 public class RankRedis implements Serializable {
 
     private Long userId;
+    private String intraId;
     private int ppp;
     private int wins;
     private int losses;
