@@ -3,6 +3,7 @@ package com.gg.server.admin.season.controller;
 import com.gg.server.admin.rank.service.RankAdminService;
 import com.gg.server.admin.rank.service.RankRedisAdminService;
 import com.gg.server.admin.season.dto.SeasonCreateRequestDto;
+import com.gg.server.admin.season.dto.SeasonUpdateRequestDto;
 import com.gg.server.admin.season.service.SeasonAdminService;
 import com.gg.server.admin.season.dto.SeasonAdminDto;
 import com.gg.server.admin.season.dto.SeasonListAdminResponseDto;
@@ -49,16 +50,15 @@ public class SeasonAdminController {
         }
     }
 
-//    @PutMapping(value = "/season/{seasonId}")
-//    public void updateSeason(Integer seasonId, SeasonUpdateRequestDto seasonUpdateRequestDto) {
-//        seasonAdminService.updateSeason(seasonId, seasonUpdateRequestDto);
-//        SeasonDto seasonDto = seasonAdminService.findSeasonById(seasonId);
-//        if ((seasonDto.getSeasonMode() == Mode.BOTH || seasonDto.getSeasonMode() == Mode.RANK)
-//                && LocalDateTime.now().isBefore(seasonDto.getStartTime())) {
-//            rankAdminService.deleteAllUserRankBySeason(seasonDto);
-//            rankAdminService.addAllUserRankByNewSeason(seasonDto, seasonDto.getStartPpp());
-//            RankRedisAdminService.deleteSeasonRankBySeasonId(seasonDto.getId());
-//            RankRedisAdminService.addAllUserRankByNewSeason(seasonDto, seasonDto.getStartPpp());
-//        }
-//    }
+    @PutMapping(value = "/season/{seasonId}")
+    public void updateSeason(@PathVariable Long seasonId, @RequestBody SeasonUpdateRequestDto seasonUpdateRequestDto) {
+        seasonAdminService.updateSeason(seasonId, seasonUpdateRequestDto);
+        SeasonAdminDto seasonAdminDto = seasonAdminService.findSeasonById(seasonId);
+        if (LocalDateTime.now().isBefore(seasonAdminDto.getStartTime())) {
+            rankAdminService.deleteAllUserRankBySeason(seasonAdminDto);
+            rankAdminService.addAllUserRankByNewSeason(seasonAdminDto);
+            rankRedisAdminService.deleteSeasonRankBySeasonId(seasonAdminDto.getSeasonId());
+            rankRedisAdminService.addAllUserRankByNewSeason(seasonAdminDto);
+        }
+    }
 }

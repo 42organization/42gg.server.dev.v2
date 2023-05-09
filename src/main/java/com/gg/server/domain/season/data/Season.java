@@ -17,10 +17,12 @@ public class Season {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Setter
     @NotNull
     @Column(name = "season_name", length = 20)
     private String seasonName;
 
+    @Setter
     @NotNull
     @Column(name = "start_time")
     private LocalDateTime startTime;
@@ -30,10 +32,12 @@ public class Season {
     @Column(name = "end_time")
     private LocalDateTime endTime;
 
+    @Setter
     @NotNull
     @Column(name = "start_ppp")
     private Integer startPpp;
 
+    @Setter
     @NotNull
     @Column(name = "ppp_gap")
     private Integer pppGap;
