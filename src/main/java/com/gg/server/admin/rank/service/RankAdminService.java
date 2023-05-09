@@ -34,4 +34,11 @@ public class RankAdminService {
         });
         rankRepository.saveAll(ranks);
     }
+
+    @Transactional
+    public void deleteAllUserRankBySeason(SeasonAdminDto seasonAdminDto) {
+        if (LocalDateTime.now().isAfter(seasonAdminDto.getStartTime()))
+            throw new AdminException("현재시간 이전의 시즌을 생성 할 수 없습니다.", ErrorCode.BAD_REQUEST);
+        rankRepository.deleteAllBySeasonId(seasonAdminDto.getSeasonId());
+    }
 }

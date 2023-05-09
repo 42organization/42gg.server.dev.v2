@@ -35,4 +35,13 @@ public class RankRedisAdminService {
         });
     }
 
+    @Transactional
+    public void deleteSeasonRankBySeasonId(Long seasonId) {
+        String redisZSetKey = RedisKeyManager.getZSetKey(seasonId);
+        String redisHashKey = RedisKeyManager.getHashKey(seasonId);
+
+        rankRedisRepository.deleteZSetKey(redisZSetKey);
+        rankRedisRepository.deleteHashKey(redisHashKey);
+    }
+
 }

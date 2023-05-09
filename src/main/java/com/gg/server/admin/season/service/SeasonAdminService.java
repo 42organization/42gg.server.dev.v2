@@ -51,14 +51,13 @@ public class SeasonAdminService {
     }
 
 
-//    @Transactional
-//    public void deleteSeason(Long seasonId) {
-//        Season season = seasonAdminRepository.findById(seasonId).orElse(null);
-//        //if (season == null)
-////            throw new BusinessException("E0001", "존재하지 않은 시즌입니다.");
-//        detach(season);
-//        seasonAdminRepository.delete(season);
-//    }
+    @Transactional
+    public void deleteSeason(Long seasonId) {
+        Season season = seasonAdminRepository.findById(seasonId)
+                .orElseThrow(() -> new AdminException("존재하지 않는 시즌입니다.", ErrorCode.BAD_REQUEST));
+        detach(season);
+        seasonAdminRepository.delete(season);
+    }
 //    @Transactional
 //    public void updateSeason(Long seasonId, SeasonUpdateRequestDto updateDto) {
 //        Season season = seasonAdminRepository.findById(seasonId).orElse(null);
@@ -103,24 +102,24 @@ public class SeasonAdminService {
             season.setEndTime(LocalDateTime.of(9999, 12, 31, 23, 59, 59));
     }
 
-//    private void detach(Season season)
-//    {
-//        List<Season> beforeSeasons = seasonAdminRepository.findBeforeSeasons(season.getSeasonMode(), season.getStartTime());
-//        Season beforeSeason = beforeSeasons.isEmpty() ? null : beforeSeasons.get(0);
-//        List<Season> afterSeasons = seasonAdminRepository.findAfterSeasons(season.getSeasonMode(), season.getStartTime());
-//        Season afterSeason = afterSeasons.isEmpty() ? null : afterSeasons.get(0);
-//
-//        if ((LocalDateTime.now().isAfter(season.getStartTime()) && LocalDateTime.now().isBefore(season.getEndTime()))
-//                || season.getEndTime().isBefore(LocalDateTime.now()))
-//            throw new BusinessException("E0001", "과거나 현재시즌은 수정/삭제가 불가합니다.");
-//        if (beforeSeason != null) {
-//            if (afterSeason != null)
-//                beforeSeason.setEndTime(afterSeason.getStartTime().minusSeconds(1));
-//            else
-//                beforeSeason.setEndTime(LocalDateTime.of(9999, 12, 31, 23, 59, 59));
-//        }
-//    }
-//
+    private void detach(Season season)
+    {
+        List<Season> beforeSeasons = seasonAdminRepository.findBeforeSeasons(season.getStartTime());
+        Season beforeSeason = beforeSeasons.isEmpty() ? null : beforeSeasons.get(0);
+        List<Season> afterSeasons = seasonAdminRepository.findAfterSeasons(season.getStartTime());
+        Season afterSeason = afterSeasons.isEmpty() ? null : afterSeasons.get(0);
+
+        if ((LocalDateTime.now().isAfter(season.getStartTime()) && LocalDateTime.now().isBefore(season.getEndTime()))
+                || season.getEndTime().isBefore(LocalDateTime.now()))
+            throw new AdminException("과거나 현재시즌은 수정/삭제가 불가합니다.", ErrorCode.BAD_REQUEST);
+        if (beforeSeason != null) {
+            if (afterSeason != null)
+                beforeSeason.setEndTime(afterSeason.getStartTime().minusSeconds(1));
+            else
+                beforeSeason.setEndTime(LocalDateTime.of(9999, 12, 31, 23, 59, 59));
+        }
+    }
+
 //    private boolean isOverlap(Season season1, Season season2) {
 //        LocalDateTime start1 = season1.getStartTime();
 //        LocalDateTime end1 = season1.getEndTime();

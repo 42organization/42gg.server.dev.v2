@@ -39,17 +39,16 @@ public class SeasonAdminController {
         }
     }
 
-//    @DeleteMapping(value = "/season/{seasonId}")
-//    public void deleteSeason(Integer seasonId) {
-//        SeasonDto seasonDto = seasonAdminService.findSeasonById(seasonId);
-//        seasonAdminService.deleteSeason(seasonId);
-//        if ((seasonDto.getSeasonMode() == Mode.BOTH || seasonDto.getSeasonMode() == Mode.RANK)
-//                && LocalDateTime.now().isBefore(seasonDto.getStartTime())) {
-//            rankAdminService.deleteAllUserRankBySeason(seasonDto);
-//            RankRedisAdminService.deleteSeasonRankBySeasonId(seasonDto.getId());
-//        }
-//    }
-//
+    @DeleteMapping(value = "/season/{seasonId}")
+    public void deleteSeason(@PathVariable Long seasonId) {
+        SeasonAdminDto seasonDto = seasonAdminService.findSeasonById(seasonId);
+        seasonAdminService.deleteSeason(seasonId);
+        if (LocalDateTime.now().isBefore(seasonDto.getStartTime())) {
+            rankAdminService.deleteAllUserRankBySeason(seasonDto);
+            rankRedisAdminService.deleteSeasonRankBySeasonId(seasonDto.getSeasonId());
+        }
+    }
+
 //    @PutMapping(value = "/season/{seasonId}")
 //    public void updateSeason(Integer seasonId, SeasonUpdateRequestDto seasonUpdateRequestDto) {
 //        seasonAdminService.updateSeason(seasonId, seasonUpdateRequestDto);
