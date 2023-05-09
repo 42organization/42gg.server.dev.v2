@@ -1,6 +1,8 @@
 package com.gg.server.domain.rank.redis;
 
+import com.gg.server.domain.user.dto.UserDto;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -11,6 +13,7 @@ import java.io.Serializable;
 
 @RedisHash("rank")
 @Getter
+@Builder
 @AllArgsConstructor
 public class RankRedis implements Serializable {
 
@@ -29,4 +32,16 @@ public class RankRedis implements Serializable {
     public void setStatusMessage(String msg) {
         this.statusMessage = msg;
     }
+
+    public static RankRedis from(UserDto user, Integer ppp) {
+        RankRedis rankRedis = RankRedis.builder()
+                .userId(user.getId())
+                .ppp(ppp)
+                .wins(0)
+                .losses(0)
+                .statusMessage("")
+                .build();
+        return rankRedis;
+    }
+
 }

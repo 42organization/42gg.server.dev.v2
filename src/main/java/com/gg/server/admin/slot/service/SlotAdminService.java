@@ -18,7 +18,7 @@ public class SlotAdminService {
     @Transactional(readOnly = true)
     public SlotAdminDto getSlotSetting() {
         SlotManagement slotManagement = adminSlotManagementRepository.findFirstByOrderByCreatedAtDesc()
-                .orElseThrow(() -> new AdminException("현재 시즌DB값이 null입니다.", ErrorCode.SN001));
+                .orElseThrow(() -> new AdminException("현재 슬롯DB값이 null입니다.", ErrorCode.SN001));
 
         return new SlotAdminDto(slotManagement);
     }

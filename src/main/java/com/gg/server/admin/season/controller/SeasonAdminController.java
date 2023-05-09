@@ -32,10 +32,10 @@ public class SeasonAdminController {
     public void createSeason(@Valid @RequestBody SeasonCreateRequestDto seasonCreateReqeustDto) {
         Long seasonId = seasonAdminService.createSeason(seasonCreateReqeustDto);
 
-        SeasonAdminDto seasonDto = seasonAdminService.findSeasonById(seasonId);
-        if (LocalDateTime.now().isBefore(seasonDto.getStartTime())) {
-            rankAdminService.addAllUserRankByNewSeason(seasonDto, seasonDto.getStartPpp());
-            rankRedisAdminService.addAllUserRankByNewSeason(seasonDto, seasonDto.getStartPpp());
+        SeasonAdminDto seasonAdminDto = seasonAdminService.findSeasonById(seasonId);
+        if (LocalDateTime.now().isBefore(seasonAdminDto.getStartTime())) {
+            rankAdminService.addAllUserRankByNewSeason(seasonAdminDto);
+            rankRedisAdminService.addAllUserRankByNewSeason(seasonAdminDto);
         }
     }
 

@@ -12,6 +12,7 @@ import java.io.Serializable;
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor
 @Table(name="ranks")
 public class Rank extends BaseTimeEntity implements Serializable {
@@ -25,7 +26,7 @@ public class Rank extends BaseTimeEntity implements Serializable {
 
     @NotNull
     @Column(name = "season_id")
-    private Integer seasonId;
+    private Long seasonId;
 
     @NotNull
     @Column(name = "ppp")
@@ -44,4 +45,16 @@ public class Rank extends BaseTimeEntity implements Serializable {
 
     @Column(name = "status_message", length = 30)
     private String statusMessage;
+
+    public static Rank from (User user, Long seasonId, Integer ppp){
+        return Rank.builder()
+                .user(user)
+                .ppp(ppp)
+                .seasonId(seasonId)
+                .ranking(-1)
+                .wins(0)
+                .losses(0)
+                .statusMessage("")
+                .build();
+    }
 }
