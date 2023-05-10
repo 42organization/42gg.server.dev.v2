@@ -152,7 +152,7 @@ class SeasonAdminControllerTest {
                 .content(content)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
 
         dbSeasonId = rankRepository.findFirstByOrderByCreatedAtDesc().get().getSeason().getId();
@@ -187,7 +187,7 @@ class SeasonAdminControllerTest {
 
         String contentAsString = mockMvc.perform(MockMvcRequestBuilders.delete("/pingpong/admin/season/" + dbSeasonId)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
-                .andExpect(status().isOk())
+                .andExpect(status().isNoContent())
                 .andReturn().getResponse().getContentAsString();
 
         String redisHashKey = RedisKeyManager.getHashKey(dbSeasonId);
@@ -227,7 +227,7 @@ class SeasonAdminControllerTest {
                 .content(content)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
-                .andExpect(status().isOk())
+                .andExpect(status().isNoContent())
                 .andReturn().getResponse().getContentAsString();
 
         assertThat(seasonAdminRepository.findById(dbSeasonId).get().getSeasonName())

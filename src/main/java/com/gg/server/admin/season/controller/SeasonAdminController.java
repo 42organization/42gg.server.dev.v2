@@ -9,6 +9,8 @@ import com.gg.server.admin.season.dto.SeasonAdminDto;
 import com.gg.server.admin.season.dto.SeasonListAdminResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -32,7 +34,7 @@ public class SeasonAdminController {
     }
 
     @PostMapping(value = "/season")
-    public void createSeason(@Valid @RequestBody SeasonCreateRequestDto seasonCreateReqeustDto) {
+    public ResponseEntity createSeason(@Valid @RequestBody SeasonCreateRequestDto seasonCreateReqeustDto) {
         Long seasonId = seasonAdminService.createSeason(seasonCreateReqeustDto);
 
         SeasonAdminDto seasonAdminDto = seasonAdminService.findSeasonById(seasonId);
@@ -40,10 +42,11 @@ public class SeasonAdminController {
             rankAdminService.addAllUserRankByNewSeason(seasonAdminDto);
             rankRedisAdminService.addAllUserRankByNewSeason(seasonAdminDto);
         }
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 
     @DeleteMapping(value = "/season/{seasonId}")
-    public void deleteSeason(@PathVariable Long seasonId) {
+    public ResponseEntity deleteSeason(@PathVariable Long seasonId) {
         SeasonAdminDto seasonDto = seasonAdminService.findSeasonById(seasonId);
         seasonAdminService.deleteSeason(seasonId);
 
@@ -51,10 +54,11 @@ public class SeasonAdminController {
             rankAdminService.deleteAllUserRankBySeason(seasonDto);
             rankRedisAdminService.deleteSeasonRankBySeasonId(seasonDto.getSeasonId());
         }
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     @PutMapping(value = "/season/{seasonId}")
-    public void updateSeason(@PathVariable Long seasonId, @RequestBody SeasonUpdateRequestDto seasonUpdateRequestDto) {
+    public ResponseEntity updateSeason(@PathVariable Long seasonId, @RequestBody SeasonUpdateRequestDto seasonUpdateRequestDto) {
         seasonAdminService.updateSeason(seasonId, seasonUpdateRequestDto);
         SeasonAdminDto seasonAdminDto = seasonAdminService.findSeasonById(seasonId);
         if (LocalDateTime.now().isBefore(seasonAdminDto.getStartTime())) {
@@ -63,5 +67,6 @@ public class SeasonAdminController {
             rankRedisAdminService.deleteSeasonRankBySeasonId(seasonAdminDto.getSeasonId());
             rankRedisAdminService.addAllUserRankByNewSeason(seasonAdminDto);
         }
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 }
