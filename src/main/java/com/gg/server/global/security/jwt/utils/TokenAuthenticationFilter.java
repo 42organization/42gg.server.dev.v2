@@ -2,7 +2,6 @@ package com.gg.server.global.security.jwt.utils;
 
 import com.gg.server.global.security.config.properties.AppProperties;
 import com.gg.server.global.security.cookie.CookieUtil;
-import com.gg.server.global.security.jwt.repository.JwtRedisRepository;
 import com.gg.server.global.security.service.CustomUserDetailsService;
 import com.gg.server.global.utils.HeaderUtil;
 import lombok.RequiredArgsConstructor;
@@ -18,11 +17,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
