@@ -7,6 +7,8 @@ import com.gg.server.domain.game.dto.GameTeamUser;
 import com.gg.server.domain.game.dto.GameResultResDto;
 import com.gg.server.domain.game.dto.req.NormalResultReqDto;
 import com.gg.server.domain.game.dto.req.RankResultReqDto;
+import com.gg.server.domain.rank.data.Rank;
+import com.gg.server.domain.rank.data.RankRepository;
 import com.gg.server.domain.rank.redis.RankRedisService;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
@@ -36,6 +38,7 @@ public class GameService {
     private final GameRepository gameRepository;
     private final TeamUserRepository teamUserRepository;
     private final RankRedisService rankRedisService;
+    private final RankRepository rankRepository;
     @Transactional(readOnly = true)
     public GameListResDto normalGameList(int pageNum, int pageSize) {
         Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Direction.DESC, "startTime"));
@@ -127,6 +130,7 @@ public class GameService {
                     && enemyTeam.getTeam().getScore() == scoreDto.getEnemyTeamScore()) {
                 game.updateStatus();
                 rankRedisService.updateRankRedis(teams, seasonId, game);
+
             } else {
                 setTeamScore(myTeam, scoreDto.getMyTeamScore(), scoreDto.getMyTeamScore() > scoreDto.getEnemyTeamScore());
                 setTeamScore(enemyTeam, scoreDto.getEnemyTeamScore(), scoreDto.getMyTeamScore() < scoreDto.getEnemyTeamScore());

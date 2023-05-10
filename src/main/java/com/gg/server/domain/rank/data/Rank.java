@@ -62,4 +62,8 @@ public class Rank extends BaseTimeEntity implements Serializable {
     public void setStatusMessage(String statusMessage) {
         this.statusMessage = statusMessage;
     }
+
+    public void updatePpp(Integer changePpp) {
+        this.ppp += changePpp;
+    }
 }
