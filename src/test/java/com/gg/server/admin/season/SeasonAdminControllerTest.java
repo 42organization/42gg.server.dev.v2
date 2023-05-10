@@ -156,11 +156,8 @@ class SeasonAdminControllerTest {
                 .andReturn().getResponse().getContentAsString();
 
         dbSeasonId = rankRepository.findFirstByOrderByCreatedAtDesc().get().getSeason().getId();
-        String redisZSetKey = RedisKeyManager.getZSetKey(dbSeasonId);
         String redisHashKey = RedisKeyManager.getHashKey(dbSeasonId);
 
-        if (rankRedisRepository.getRankInZSet(redisZSetKey, userId) == null)
-            throw new AdminException("해당 시즌이 없습니다", ErrorCode.BAD_REQUEST);
 
         if (rankRedisRepository.findRankByUserId(redisHashKey, userId) == null)
             throw new AdminException("해당 시즌이 없습니다", ErrorCode.BAD_REQUEST);
@@ -193,11 +190,7 @@ class SeasonAdminControllerTest {
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
-        String redisZSetKey = RedisKeyManager.getZSetKey(dbSeasonId);
         String redisHashKey = RedisKeyManager.getHashKey(dbSeasonId);
-
-        if (rankRedisRepository.getRankInZSet(redisZSetKey, userId) != null)
-            throw new AdminException("해당 시즌이 없어야 합니다", ErrorCode.BAD_REQUEST);
 
         if (rankRedisRepository.findRankByUserId(redisHashKey, userId) != null)
             throw new AdminException("해당 시즌이 없어야 합니다", ErrorCode.BAD_REQUEST);

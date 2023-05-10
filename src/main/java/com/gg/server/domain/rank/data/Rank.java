@@ -56,7 +56,6 @@ public class Rank extends BaseTimeEntity implements Serializable {
                 .user(user)
                 .ppp(ppp)
                 .season(season)
-                .ranking(-1)
                 .wins(0)
                 .losses(0)
                 .statusMessage("")

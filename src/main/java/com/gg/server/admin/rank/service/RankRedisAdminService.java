@@ -23,24 +23,20 @@ public class RankRedisAdminService {
     public void addAllUserRankByNewSeason(SeasonAdminDto seasonAdminDto) {
         List<User> users = userRepository.findAll();
 
-        String redisZSetKey = RedisKeyManager.getZSetKey(seasonAdminDto.getSeasonId());
         String redisHashKey = RedisKeyManager.getHashKey(seasonAdminDto.getSeasonId());
 
         users.forEach(user -> {
             UserDto userDto = UserDto.from(user);
             RankRedis userRank = RankRedis.from(userDto, seasonAdminDto.getStartPpp());
 
-            rankRedisRepository.addToZSet(redisZSetKey, user.getId(), seasonAdminDto.getStartPpp());
             rankRedisRepository.addRankData(redisHashKey, user.getId(), userRank);
         });
     }
 
     @Transactional
     public void deleteSeasonRankBySeasonId(Long seasonId) {
-        String redisZSetKey = RedisKeyManager.getZSetKey(seasonId);
         String redisHashKey = RedisKeyManager.getHashKey(seasonId);
 
-        rankRedisRepository.deleteZSetKey(redisZSetKey);
         rankRedisRepository.deleteHashKey(redisHashKey);
     }
 

@@ -26,7 +26,6 @@ public class RankAdminService {
     private final RankRepository rankRepository;
     private final UserAdminRepository userAdminRepository;
     private final SeasonRepository seasonRepository;
-    private final SeasonAdminRepository seasonAdminRepository;
 
     @Transactional
     public void addAllUserRankByNewSeason(SeasonAdminDto seasonAdminDto) {
