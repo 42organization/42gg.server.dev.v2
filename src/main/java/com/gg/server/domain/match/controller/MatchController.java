@@ -42,7 +42,7 @@ public class MatchController {
             throw new InvalidParameterException("enroll already three times", ErrorCode.VALID_FAILED);
         }
         matchRedisService.makeMatch(user.getId(), matchRequestDto.getOption(), matchRequestDto.getStartTime());
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
     @DeleteMapping("match")
     public ResponseEntity deleteUserMatch(@RequestParam("startTime")
@@ -52,7 +52,7 @@ public class MatchController {
             throw new InvalidParameterException("match is not enrolled", ErrorCode.VALID_FAILED);
         }
         matchRedisService.cancelMatch(user.getId(), startTime);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @GetMapping("match/time/scope")
