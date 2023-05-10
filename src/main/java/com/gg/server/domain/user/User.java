@@ -22,28 +22,28 @@ public class User extends BaseTimeEntity implements Serializable {
     private Long id;
 
     @NotNull
-    @Column(name = "intra_id")
+    @Column(name = "intra_id", length = 30)
     private String intraId;
 
-    @Column(name = "e_mail")
+    @Column(name = "e_mail", length = 60)
     private String eMail;
 
     @Column(name = "image_uri")
     private String imageUri;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "racket_type")
+    @Column(name = "racket_type", length = 10)
     private RacketType racketType;
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "role_type")
+    @Column(name = "role_type", length = 10)
     private RoleType roleType;
 
     @Column(name = "total_exp")
     private Integer totalExp;
 
-    @Column(name = "sns_noti_opt")
+    @Column(name = "sns_noti_opt", length = 10)
     @Enumerated(EnumType.STRING)
     private SnsType snsNotiOpt;
 
