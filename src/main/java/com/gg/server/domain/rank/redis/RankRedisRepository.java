@@ -170,7 +170,7 @@ public class RankRedisRepository {
     }
 
     public Long countTotalRank(String hashKey) {
-        return hashOps.size(hashKey);
+        return zSetOps.size(hashKey);
     }
 
     public void deleteAll(){

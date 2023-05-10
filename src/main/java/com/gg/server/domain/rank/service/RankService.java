@@ -92,8 +92,8 @@ public class RankService {
     }
 
     private int calcTotalPage(Season season, int pageSize) {
-        String hashKey = RedisKeyManager.getHashKey(season.getId());
-        Long totalUserCount = redisRepository.countTotalRank(hashKey);
+        String zSetKey = RedisKeyManager.getZSetKey(season.getId());
+        Long totalUserCount = redisRepository.countTotalRank(zSetKey);
         return (int) Math.ceil((double) totalUserCount / pageSize);
     }
 
