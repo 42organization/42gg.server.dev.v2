@@ -70,7 +70,7 @@ public class GameService {
     public synchronized Boolean createRankResult(RankResultReqDto scoreDto, Long userId) {
         log.info("create Rank Result");
         // rank 점수 입력받기
-        if (scoreDto.getMyTeamScore() + scoreDto.getEnemyTeamScore() > 3) {
+        if (scoreDto.getMyTeamScore() + scoreDto.getEnemyTeamScore() > 3 || scoreDto.getMyTeamScore() == scoreDto.getEnemyTeamScore()) {
             throw new InvalidParameterException("점수를 잘못 입력했습니다.", ErrorCode.VALID_FAILED);
         }
         // 현재 게임 id
