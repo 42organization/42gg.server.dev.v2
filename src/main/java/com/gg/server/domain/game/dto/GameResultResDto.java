@@ -1,5 +1,6 @@
 package com.gg.server.domain.game.dto;
 
+import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.team.dto.TeamUserInfoDto;
 import com.gg.server.domain.team.dto.TeamUserListDto;
 import com.gg.server.global.utils.ExpLevelCalculator;
@@ -14,6 +15,7 @@ import java.util.Arrays;
 public class GameResultResDto {
     private Long gameId;
     private String status;
+    private Mode mode;
     private LocalDateTime time;
     private TeamUserListDto team1;
     private TeamUserListDto team2;
@@ -22,6 +24,7 @@ public class GameResultResDto {
         this.gameId = game.getGameId();
         this.status = game.getStatus().name();//name -> 대문자
         this.time = game.getStartTime();
+        this.mode = game.getMode();
 
         team1 = new TeamUserListDto(Arrays.asList(TeamUserInfoDto.builder()
                 .intraId(game.getT1IntraId())

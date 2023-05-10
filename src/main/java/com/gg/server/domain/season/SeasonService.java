@@ -1,14 +1,10 @@
 package com.gg.server.domain.season;
 
 import com.gg.server.domain.season.data.SeasonRepository;
-import com.gg.server.domain.season.dto.CurSeason;
 import com.gg.server.domain.season.dto.SeasonResDto;
-import com.gg.server.global.exception.ErrorCode;
-import com.gg.server.global.exception.custom.NotExistException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 

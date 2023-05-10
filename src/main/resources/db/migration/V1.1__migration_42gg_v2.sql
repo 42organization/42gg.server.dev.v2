@@ -1,5 +1,3 @@
-use MAIN;
-
 ### delete key ###
 alter table current_match drop foreign key FK4qtnfmeqkj0iy1qeghm6ywb6n;
 alter table current_match drop foreign key FKl53dqtyiaemmm1tqdsdj55ng2;

@@ -6,7 +6,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
