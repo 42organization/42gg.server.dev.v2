@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.redis.core.RedisHash;
 
-@RedisHash("matchUser")
 @Getter
 @NoArgsConstructor
 public class RedisMatchUser {

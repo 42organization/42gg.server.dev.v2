@@ -40,11 +40,11 @@ public class RedisMatchTimeRepository {
         redisTemplate.opsForList().remove(MatchKey.TIME.getCode() + startTime.toString(),0, matchUser);
     }
 
-   public Optional<Set<LocalDateTime>> getAllEnrolledStartTimes() {
+   public Set<LocalDateTime> getAllEnrolledStartTimes() {
         Set<String> keys = redisTemplate.keys(MatchKey.TIME.getCode() + "*");
        Integer prefixIdx = MatchKey.TIME.getCode().length();
-       Optional<Set<LocalDateTime>> times = keys.stream().map(str -> LocalDateTime.parse(str.substring(prefixIdx)))
-                .collect(Collectors.collectingAndThen(Collectors.toSet(), Optional::ofNullable));
+       Set<LocalDateTime> times = keys.stream().map(str -> LocalDateTime.parse(str.substring(prefixIdx)))
+               .collect(Collectors.toSet());
         return times;
     }
 

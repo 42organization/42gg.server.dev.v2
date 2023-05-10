@@ -166,9 +166,9 @@ public class MatchRedisService {
     private void groupEnrolledSlots(HashMap<LocalDateTime, MatchStatusDto> slots, SlotManagement slotManagement,
                                     Option option, Season season, RankRedis user) {
 
-        Optional<Set<LocalDateTime>> enrolledSlots = redisMatchTimeRepository.getAllEnrolledStartTimes();
-        if (enrolledSlots.isPresent()) {
-            Set<LocalDateTime> times = enrolledSlots.get().stream().filter(e -> !slots.containsKey(e))
+        Set<LocalDateTime> enrolledSlots = redisMatchTimeRepository.getAllEnrolledStartTimes();
+        if (enrolledSlots.size() != 0) {
+            Set<LocalDateTime> times = enrolledSlots.stream().filter(e -> !slots.containsKey(e))
                     .collect(Collectors.toSet());
             Integer interval = slotManagement.getGameInterval();
             times.stream().forEach(e -> getMatchStatusDto(e, getEnemyStatus(e, user, option, season), interval));
@@ -181,10 +181,10 @@ public class MatchRedisService {
         LocalDateTime standardTime = LocalDateTime.of(
                 now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour(), 0);
         LocalDateTime maxTime = standardTime.plusHours(slotManagement.getFutureSlotTime());
-        Optional<List<Game>> games = gameRepository.findAllBetween(now, maxTime);
-        if (games.isPresent()) {
+        List<Game> games = gameRepository.findAllBetween(now, maxTime);
+        if (games.size() != 0) {
             Integer interval = slotManagement.getGameInterval();
-            games.get().stream().forEach(e -> slots.put(e.getStartTime(),
+            games.stream().forEach(e -> slots.put(e.getStartTime(),
                     getMatchStatusDto(e.getStartTime(), SlotStatus.CLOSE, interval)));
             Optional<Game> myGame = gameRepository.findByUserInSlots(now, maxTime, user.getUserId());
             myGame.ifPresent(game -> slots.put(game.getStartTime(),
