@@ -1,6 +1,7 @@
 package com.gg.server.domain.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gg.server.domain.rank.data.RankRepository;
 import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
@@ -15,6 +16,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
@@ -59,6 +61,9 @@ class UserControllerTest {
 
     @Autowired
     RankRedisRepository redisRepository;
+
+    @Autowired
+    RankRepository rankRepository;
 
     @Test
     @DisplayName("live")
@@ -223,6 +228,7 @@ class UserControllerTest {
 
     @Test
     @DisplayName("/detail")
+    @Rollback(value = false)
     public void  updateUser() throws Exception
     {
         //given
@@ -232,6 +238,8 @@ class UserControllerTest {
         String imageUrl = "imageUrl";
         User newUser = testDataUtils.createNewUser(intraId, email, imageUrl, RacketType.PENHOLDER,
                 SnsType.BOTH, RoleType.ADMIN);
+        String statusMessage = "statusMessage";
+        testDataUtils.createUserRank(newUser, statusMessage, season);
         String accessToken = tokenProvider.createToken(newUser.getId());
         String url = "/pingpong/users/detail";
 
@@ -247,6 +255,11 @@ class UserControllerTest {
         //then
         String hashKey = RedisKeyManager.getHashKey(season.getId());
         RankRedis rank = redisRepository.findRankByUserId(hashKey, newUser.getId());
+        rankRepository.findByUserIdAndSeasonId(newUser.getId(), season.getId()).ifPresentOrElse(rank1 -> {
+            Assertions.assertThat(rank1.getStatusMessage()).isEqualTo(newStatusMessage);
+        }, () -> {
+            Assertions.fail("랭크 업데이트 실패");
+        });
         userRepository.findById(newUser.getId()).ifPresentOrElse(user -> {
             Assertions.assertThat(user.getRacketType()).isEqualTo(RacketType.valueOf(newRacketType));
             Assertions.assertThat(user.getSnsNotiOpt()).isEqualTo(SnsType.valueOf(newSnsType));

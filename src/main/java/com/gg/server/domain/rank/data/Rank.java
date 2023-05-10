@@ -1,5 +1,6 @@
-package com.gg.server.domain.rank;
+package com.gg.server.domain.rank.data;
 
+import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.user.User;
 import com.gg.server.global.utils.BaseTimeEntity;
 import lombok.Builder;
@@ -24,8 +25,9 @@ public class Rank extends BaseTimeEntity implements Serializable {
     private User user;
 
     @NotNull
-    @Column(name = "season_id")
-    private Integer seasonId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "season_id")
+    private Season season;
 
     @NotNull
     @Column(name = "ppp")
@@ -44,4 +46,20 @@ public class Rank extends BaseTimeEntity implements Serializable {
 
     @Column(name = "status_message", length = 30)
     private String statusMessage;
+
+    @Builder
+    public Rank(User user, Season season, Integer ppp, Integer ranking, Integer wins,
+                Integer losses, String statusMessage) {
+        this.user = user;
+        this.season = season;
+        this.ppp = ppp;
+        this.ranking = ranking;
+        this.wins = wins;
+        this.losses = losses;
+        this.statusMessage = statusMessage;
+    }
+
+    public void setStatusMessage(String statusMessage) {
+        this.statusMessage = statusMessage;
+    }
 }

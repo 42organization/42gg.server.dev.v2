@@ -6,6 +6,8 @@ import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.noti.data.NotiRepository;
 import com.gg.server.domain.pchange.data.PChange;
 import com.gg.server.domain.pchange.data.PChangeRepository;
+import com.gg.server.domain.rank.data.Rank;
+import com.gg.server.domain.rank.data.RankRepository;
 import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
@@ -47,6 +49,7 @@ public class UserService {
     private final RankRedisRepository rankRedisRepository;
     private final SeasonRepository seasonRepository;
     private final PChangeRepository pChangeRepository;
+    private final RankRepository rankRepository;
 
     public String regenerate(String refreshToken) {
         Long userId = jwtRedisRepository.getUserIdByRefToken(refreshToken);
@@ -133,7 +136,14 @@ public class UserService {
         Season currentSeason = seasonRepository.findCurrentSeason(LocalDateTime.now())
                 .orElseThrow(() -> new NoSuchElementException("현재 시즌이 없습니다."));
         updateRedisRankStatusMessage(statusMessage, userId, user, currentSeason);
+        updateRankTable(userId, statusMessage, currentSeason.getId());
         user.update(RacketType.valueOf(racketType), SnsType.valueOf(snsNotiOpt));
+    }
+
+    private void updateRankTable(Long userId, String statusMessage, Long seasonId) {
+        Rank rank = rankRepository.findByUserIdAndSeasonId(userId, seasonId)
+                .orElseThrow(() -> new NoSuchElementException("랭크 테이블에 없는 유저입니다."));
+        rank.setStatusMessage(statusMessage);
     }
 
     private void updateRedisRankStatusMessage(String statusMessage, Long userId, User user, Season currentSeason) {
