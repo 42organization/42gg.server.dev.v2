@@ -45,7 +45,7 @@ public class Rank extends BaseTimeEntity implements Serializable {
     private String statusMessage;
 
     @Builder
-    public Rank(User user, Season season, Integer ppp, Integer ranking, Integer wins,
+    public Rank(User user, Season season, Integer ppp, Integer wins,
                 Integer losses, String statusMessage) {
         this.user = user;
         this.season = season;
