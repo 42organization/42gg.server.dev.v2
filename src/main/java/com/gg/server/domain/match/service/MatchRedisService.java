@@ -216,7 +216,7 @@ public class MatchRedisService {
 
 
     private MatchStatusDto getMatchStatusDto(LocalDateTime startTime, SlotStatus status, Integer interval) {
-        return MatchStatusDto.builder().status(status.getCode())
+        return MatchStatusDto.builder().status(status)
                 .startTime(startTime)
                 .endTime(startTime.plusMinutes(interval))
                 .build();
