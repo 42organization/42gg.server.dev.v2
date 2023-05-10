@@ -2,7 +2,6 @@ package com.gg.server.global.security.jwt.repository;
 
 import com.gg.server.global.security.jwt.exception.TokenNotValidException;
 import lombok.AllArgsConstructor;
-import ognl.Token;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 

@@ -4,12 +4,9 @@ import com.gg.server.domain.user.dto.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
 import java.io.Serializable;
-
 
 @RedisHash("rank")
 @Getter
@@ -24,8 +21,8 @@ public class RankRedis implements Serializable {
     private int losses;
     private String statusMessage;
 
-    public void updateRank(int ppp, int wins, int losses) {
-        this.ppp = ppp;
+    public void updateRank(int changePpp, int wins, int losses) {
+        this.ppp += changePpp;
         this.wins = wins;
         this.losses = losses;
     }

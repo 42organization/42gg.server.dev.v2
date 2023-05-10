@@ -4,11 +4,10 @@ import lombok.Getter;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 
 @Getter
 public class NormalGameListReqDto {
-    @PositiveOrZero
+    @Positive
     @NotNull(message = "pageNum 은 필수 값입니다.")
     private Integer pageNum;
     @Positive

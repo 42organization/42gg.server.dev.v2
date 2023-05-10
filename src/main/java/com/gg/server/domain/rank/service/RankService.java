@@ -1,6 +1,5 @@
 package com.gg.server.domain.rank.service;
 
-import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.rank.dto.ExpRankDto;
 import com.gg.server.domain.rank.dto.ExpRankPageResponseDto;
 import com.gg.server.domain.rank.dto.RankDto;
@@ -30,7 +29,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class RankService {
-
     private final UserRepository userRepository;
     private final RankRedisRepository redisRepository;
     private final SeasonRepository seasonRepository;
@@ -78,7 +76,7 @@ public class RankService {
 
         int startRank = (pageNum - 1) * pageSize;
         int endRank = startRank + pageSize - 1;
-        List<RankDto> rankList = createRankList(curUser, startRank, endRank, season);
+        List<RankDto> rankList = createRankList(startRank, endRank, season);
         return new RankPageResponseDto(myRank, currentPage, totalPage, rankList);
     }
 
@@ -97,7 +95,7 @@ public class RankService {
         return (int) Math.ceil((double) totalUserCount / pageSize);
     }
 
-    private List<RankDto> createRankList(UserDto curUser, int startRank, int endRank, Season season) {
+    private List<RankDto> createRankList(int startRank, int endRank, Season season) {
         String zSetKey = RedisKeyManager.getZSetKey(season.getId());
         String hashKey = RedisKeyManager.getHashKey(season.getId());
 
