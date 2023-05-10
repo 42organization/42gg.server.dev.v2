@@ -130,7 +130,6 @@ public class GameService {
                     && enemyTeam.getTeam().getScore() == scoreDto.getEnemyTeamScore()) {
                 game.updateStatus();
                 rankRedisService.updateRankRedis(teams, seasonId, game);
-
             } else {
                 setTeamScore(myTeam, scoreDto.getMyTeamScore(), scoreDto.getMyTeamScore() > scoreDto.getEnemyTeamScore());
                 setTeamScore(enemyTeam, scoreDto.getEnemyTeamScore(), scoreDto.getMyTeamScore() < scoreDto.getEnemyTeamScore());
