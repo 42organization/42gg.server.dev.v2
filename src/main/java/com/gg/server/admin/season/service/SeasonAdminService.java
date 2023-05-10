@@ -1,5 +1,7 @@
 package com.gg.server.admin.season.service;
 
+import com.gg.server.admin.rank.service.RankAdminService;
+import com.gg.server.admin.rank.service.RankRedisAdminService;
 import com.gg.server.admin.season.dto.SeasonAdminDto;
 import com.gg.server.admin.season.data.SeasonAdminRepository;
 import com.gg.server.admin.season.dto.SeasonCreateRequestDto;
@@ -19,6 +21,8 @@ import java.util.List;
 @AllArgsConstructor
 public class SeasonAdminService {
     private final SeasonAdminRepository seasonAdminRepository;
+    private final RankRedisAdminService rankRedisAdminService;
+    private final RankAdminService rankAdminService;
 
     public List<SeasonAdminDto> findAllSeasons() {
         List<Season> seasons =  seasonAdminRepository.findAll();
@@ -31,7 +35,7 @@ public class SeasonAdminService {
     }
 
     @Transactional
-    public Long createSeason(SeasonCreateRequestDto createDto) {
+    public void createSeason(SeasonCreateRequestDto createDto) {
         Season newSeason = Season.builder()
                 .seasonName(createDto.getSeasonName())
                 .startTime(createDto.getStartTime())
@@ -40,7 +44,15 @@ public class SeasonAdminService {
                 .build();
         insert(newSeason);
         seasonAdminRepository.save(newSeason);
-        return (newSeason.getId());
+
+        Long seasonId = newSeason.getId();
+
+        SeasonAdminDto seasonAdminDto = findSeasonById(seasonId);
+
+        if (LocalDateTime.now().isBefore(seasonAdminDto.getStartTime())) {
+            rankAdminService.addAllUserRankByNewSeason(seasonAdminDto);
+            rankRedisAdminService.addAllUserRankByNewSeason(seasonAdminDto);
+        }
     }
 
     @Transactional
@@ -53,10 +65,17 @@ public class SeasonAdminService {
 
     @Transactional
     public void deleteSeason(Long seasonId) {
-        Season season = seasonAdminRepository.findById(seasonId)
+        SeasonAdminDto seasonDto = findSeasonById(seasonId);
+
+        Season season = seasonAdminRepository.findById(seasonDto.getSeasonId())
                 .orElseThrow(() -> new AdminException("존재하지 않는 시즌입니다.", ErrorCode.BAD_REQUEST));
         detach(season);
         seasonAdminRepository.delete(season);
+
+        if (LocalDateTime.now().isBefore(seasonDto.getStartTime())) {
+            rankAdminService.deleteAllUserRankBySeason(seasonDto);
+            rankRedisAdminService.deleteSeasonRankBySeasonId(seasonDto.getSeasonId());
+        }
     }
 
     @Transactional
@@ -74,6 +93,14 @@ public class SeasonAdminService {
             season.setStartPpp(updateDto.getStartPpp());
             insert(season);
             seasonAdminRepository.save(season);
+        }
+
+        SeasonAdminDto seasonAdminDto = findSeasonById(seasonId);
+        if (LocalDateTime.now().isBefore(seasonAdminDto.getStartTime())) {
+            rankAdminService.deleteAllUserRankBySeason(seasonAdminDto);
+            rankAdminService.addAllUserRankByNewSeason(seasonAdminDto);
+            rankRedisAdminService.deleteSeasonRankBySeasonId(seasonAdminDto.getSeasonId());
+            rankRedisAdminService.addAllUserRankByNewSeason(seasonAdminDto);
         }
     }
 

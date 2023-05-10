@@ -10,8 +10,6 @@ import com.gg.server.admin.season.data.SeasonAdminRepository;
 
 import com.gg.server.admin.season.dto.SeasonUpdateRequestDto;
 import com.gg.server.admin.season.service.SeasonAdminService;
-import com.gg.server.admin.slot.dto.SlotAdminDto;
-import com.gg.server.domain.rank.data.Rank;
 import com.gg.server.domain.rank.data.RankRepository;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
@@ -171,13 +169,15 @@ class SeasonAdminControllerTest {
         String accessToken = testDataUtils.getLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
-        SeasonCreateRequestDto seasonCreateReqeustDto = SeasonCreateRequestDto.builder()
+        Season newSeason = Season.builder()
                 .seasonName("redis1")
                 .startTime(LocalDateTime.now().plusDays(1))
                 .startPpp(1000)
                 .pppGap(500)
                 .build();
-        Long seasonId = seasonAdminService.createSeason(seasonCreateReqeustDto);
+        seasonAdminRepository.save(newSeason);
+        Long seasonId = newSeason.getId();
+
         SeasonAdminDto seasonAdminDto = seasonAdminService.findSeasonById(seasonId);
         if (LocalDateTime.now().isBefore(seasonAdminDto.getStartTime())) {
             rankAdminService.addAllUserRankByNewSeason(seasonAdminDto);
@@ -202,13 +202,15 @@ class SeasonAdminControllerTest {
         String accessToken = testDataUtils.getLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
-        SeasonCreateRequestDto seasonCreateReqeustDto = SeasonCreateRequestDto.builder()
+        Season newSeason = Season.builder()
                 .seasonName("redis1")
                 .startTime(LocalDateTime.now().plusDays(1))
                 .startPpp(1000)
                 .pppGap(500)
                 .build();
-        Long seasonId = seasonAdminService.createSeason(seasonCreateReqeustDto);
+        seasonAdminRepository.save(newSeason);
+        Long seasonId = newSeason.getId();
+
         SeasonAdminDto seasonAdminDto = seasonAdminService.findSeasonById(seasonId);
         if (LocalDateTime.now().isBefore(seasonAdminDto.getStartTime())) {
             rankAdminService.addAllUserRankByNewSeason(seasonAdminDto);
