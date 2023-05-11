@@ -26,11 +26,12 @@ public class NotiController {
     @PutMapping(value = "/notifications/check")
     public ResponseEntity checkNotiByUser(@Login UserDto user) {
         notiService.modifyNotiCheckedByUser(user);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(204).build();
     }
 
     @DeleteMapping(value = "/notifications")
-    public void notiRemoveAll(@Login UserDto user) {
+    public ResponseEntity notiRemoveAll(@Login UserDto user) {
         notiService.removeAllNotisByUser(user);
+        return ResponseEntity.status(204).build();
     }
 }

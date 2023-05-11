@@ -27,8 +27,7 @@ import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RequiredArgsConstructor
@@ -52,7 +51,7 @@ class NotiControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
-    @DisplayName("pingpong/notifications")
+    @DisplayName("GET /pingpong/notifications")
     @Transactional
     public void NotiFindByUserTest() throws Exception {
         //given
@@ -73,7 +72,7 @@ class NotiControllerTest {
     }
 
     @Test
-    @DisplayName("/pingpong/notifications/check")
+    @DisplayName("PUT /pingpong/notifications/check")
     @Transactional
     public void checkNotiByUserTest() throws Exception{
         //given
@@ -89,7 +88,7 @@ class NotiControllerTest {
         notiRepository.save(new Noti(user, NotiType.CANCELEDBYTIME, "canceledbytime", false));
         //when
         String contentAsString = mockMvc.perform(put(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
-                .andExpect(status().isOk())
+                .andExpect(status().is2xxSuccessful())
                 .andReturn().getResponse().getContentAsString();
 
         //then
@@ -97,5 +96,31 @@ class NotiControllerTest {
         for (Noti noti : notiList) {
             assertThat(noti.getIsChecked()).isTrue();
         }
+    }
+
+    @Test
+    @DisplayName("DELETE /notifications")
+    @Transactional
+    public void notiRemoveAll() throws Exception {
+        //given
+        String accessToken = testDataUtils.getLoginAccessToken();
+        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+        String url = "/pingpong/notifications";
+        User user = userRepository.findById(userId).get();
+
+        notiRepository.save(new Noti(user, NotiType.ANNOUNCE, "announce", false));
+        notiRepository.save(new Noti(user, NotiType.MATCHED, "matched", false));
+        notiRepository.save(new Noti(user, NotiType.IMMINENT, "imminent", true));
+        notiRepository.save(new Noti(user, NotiType.CANCELEDBYMAN, "canceledbyman", false));
+        notiRepository.save(new Noti(user, NotiType.CANCELEDBYTIME, "canceledbytime", false));
+
+        //when
+        String contentAsString = mockMvc.perform(delete(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn().getResponse().getContentAsString();
+
+        //then
+        List<Noti> notiList = notiRepository.findByUser(user);
+        assertThat(notiList.size()).isEqualTo(0);
     }
 }
