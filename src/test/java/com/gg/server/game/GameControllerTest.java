@@ -184,17 +184,17 @@ public class GameControllerTest {
         Game game = gameRepository.save(new Game(season, StatusType.WAIT, Mode.RANK, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
         Team team1 = teamRepository.save(new Team(game, -1, false));
         Team team2 = teamRepository.save(new Team(game, -1, false));
-        User user1 = testDataUtils.createNewUser("test1", "test1@email", "null1", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
+        User user1 = testDataUtils.createNewUser("test3", "test3@email", "null1", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
         String ac1 = tokenProvider.createToken(user1.getId());
-        User user2 = testDataUtils.createNewUser("test2", "test2@email", "null1", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
+        User user2 = testDataUtils.createNewUser("test4", "test4@email", "null1", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
         String ac2 = tokenProvider.createToken(user2.getId());
         teamUserRepository.save(new TeamUser(team1, user1));
         teamUserRepository.save(new TeamUser(team2, user2));
         String content = objectMapper.writeValueAsString(new RankResultReqDto(game.getId(), team1.getId(), 1, team2.getId(), 2));
         rankRedisRepository.addRankData(RedisKeyManager.getHashKey(season.getId()), user1.getId(),
-                new RankRedis(user1.getId(), user1.getIntraId(), season.getStartPpp(), 0, 0,  "test user1"));
+                new RankRedis(user1.getId(), user1.getIntraId(), season.getStartPpp(), 0, 0,  "test user3"));
         rankRedisRepository.addRankData(RedisKeyManager.getHashKey(season.getId()), user2.getId(),
-                new RankRedis(user2.getId(), user2.getIntraId(), season.getStartPpp(), 0, 0,  "test user2"));
+                new RankRedis(user2.getId(), user2.getIntraId(), season.getStartPpp(), 0, 0,  "test user4"));
         // then
         mockMvc.perform(post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + ac1)
                         .contentType(MediaType.APPLICATION_JSON)
