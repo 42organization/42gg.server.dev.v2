@@ -219,7 +219,6 @@ class MatchRedisServiceTest {
 
     }
 
-
     @DisplayName("슬롯 조회 : 게임 생성 전 내 테이블로 인식")
     @Test
     void readMyTableBeforeMakingGame() {

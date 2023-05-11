@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Getter
 @Builder
@@ -46,5 +47,22 @@ public class NotiDto {
                 ", message='" + message + '\'' +
                 ", creatdDate=" + creatdAt +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof NotiDto)) {
+            return false;
+        }
+        NotiDto other = (NotiDto) o;
+        return Objects.equals(id, other.id)
+                && Objects.equals(user, other.user)
+                && Objects.equals(type, other.type)
+                && Objects.equals(isChecked, other.isChecked)
+                && Objects.equals(message, other.message)
+                && Objects.equals(creatdAt, other.creatdAt);
     }
 }
