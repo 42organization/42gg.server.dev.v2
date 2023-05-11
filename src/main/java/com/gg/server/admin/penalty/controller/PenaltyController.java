@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("pingpong/admin/")
+@RequestMapping("/pingpong/admin/")
 public class PenaltyController {
     private final PenaltyService penaltyService;
 
