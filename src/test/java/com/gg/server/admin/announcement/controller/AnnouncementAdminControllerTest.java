@@ -1,5 +1,6 @@
 package com.gg.server.admin.announcement.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.announcement.data.AnnouncementAdminRepository;
 import com.gg.server.admin.announcement.dto.AnnouncementAdminListResponseDto;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,18 +49,22 @@ class AnnouncementAdminControllerTest {
         String accessToken = testDataUtils.getLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
-        Integer currentPage = 3;
-        Integer pageSize = 10;
+        Integer currentPage = 2;
+        Integer pageSize = 5;//페이지 사이즈 크기가 실제 디비 정보보다 큰지 확인할 것
 
-        String url = "/pingpong/admin/announcement?page?=" + currentPage + "&size?=" + pageSize;
+        String url = "/pingpong/admin/announcement?page=" + currentPage + "&size=" + pageSize;
 
         String contentAsString = mockMvc.perform(get(url)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
+
+        System.out.println(contentAsString);
+        //ResponseEntity<AnnouncementAdminListResponseDto> announceListDtoResponse = objectMapper
+        //        .readValue(contentAsString, new TypeReference<ResponseEntity<AnnouncementAdminListResponseDto>>() {});
+        //AnnouncementAdminListResponseDto announceListDto = announceListDtoResponse.getBody();
         AnnouncementAdminListResponseDto announceListDto = objectMapper.readValue(contentAsString, AnnouncementAdminListResponseDto.class);
 
-        System.out.println("11111111111");
         System.out.println(announceListDto.getAnnouncementList());
         assertThat(announceListDto.getCurrentPage()).isEqualTo(currentPage);
         assertThat(announceListDto.getAnnouncementList().size()).isEqualTo(pageSize);
