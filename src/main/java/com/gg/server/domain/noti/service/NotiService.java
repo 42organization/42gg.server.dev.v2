@@ -24,7 +24,7 @@ public class NotiService {
 
     @Transactional(readOnly = true)
     public List<NotiDto> findNotiByUser(UserDto userDto) {
-        User user = userRepository.findById(userDto.getId()).orElse(null);
+        User user = userRepository.findById(userDto.getId()).orElseThrow(() -> new UsernameNotFoundException("User" + userDto.getId()));
         List<Noti> notiList = notiRepository.findAllByUserOrderByIdDesc(user);
         List<NotiDto> notiDtoList = notiList.stream().map(NotiDto::from).collect(Collectors.toList());
         return notiDtoList;
@@ -32,14 +32,14 @@ public class NotiService {
 
     @Transactional
     public NotiDto findNotiByIdAndUser(UserDto userDto, Long notiId) {
-        User user = userRepository.findById(userDto.getId()).orElse(null);
+        User user = userRepository.findById(userDto.getId()).orElseThrow(() -> new UsernameNotFoundException("User" + userDto.getId()));
         Noti noti = notiRepository.findByIdAndUser(notiId, user).orElseThrow(() -> new NotExistException("요청한 알림을 찾을 수 없습니다.", ErrorCode.NOT_FOUND));
         return NotiDto.from(noti);
     }
 
     @Transactional
     public void modifyNotiCheckedByUser(UserDto userDto) {
-        User user = userRepository.findById(userDto.getId()).orElse(null);
+        User user = userRepository.findById(userDto.getId()).orElseThrow(() -> new UsernameNotFoundException("User" + userDto.getId()));
         List<Noti> notis = notiRepository.findAllByUser(user);
         notis.forEach(noti -> {noti.modifyIsChecked(true);});
     }
@@ -51,7 +51,7 @@ public class NotiService {
 
     @Transactional
     public void removeAllNotisByUser(UserDto userDto) {
-        User user = userRepository.findById(userDto.getId()).orElse(null);
+        User user = userRepository.findById(userDto.getId()).orElseThrow(() -> new UsernameNotFoundException("User" + userDto.getId()));
         notiRepository.deleteAllByUser(user);
     }
 }
