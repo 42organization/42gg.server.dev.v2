@@ -1,16 +1,12 @@
 package com.gg.server.admin.penalty.controller;
 
-import com.gg.server.admin.penalty.data.RedisPenaltyUser;
 import com.gg.server.admin.penalty.dto.PenaltyListResponseDto;
 import com.gg.server.admin.penalty.dto.PenaltyRequestDto;
-import com.gg.server.admin.penalty.dto.PenaltyUserResponseDto;
 import com.gg.server.admin.penalty.service.PenaltyService;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.InvalidParameterException;
-import java.util.NoSuchElementException;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.apache.http.HttpResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
