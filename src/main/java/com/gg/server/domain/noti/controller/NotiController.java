@@ -6,6 +6,7 @@ import com.gg.server.domain.noti.service.NotiService;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.utils.argumentresolver.Login;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,8 +24,9 @@ public class NotiController {
     }
 
     @PutMapping(value = "/notifications/check")
-    public void checkNotiByUser(@Login UserDto user) {
+    public ResponseEntity checkNotiByUser(@Login UserDto user) {
         notiService.modifyNotiCheckedByUser(user);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping(value = "/notifications")
