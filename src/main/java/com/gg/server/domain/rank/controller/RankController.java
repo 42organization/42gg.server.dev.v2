@@ -1,6 +1,5 @@
 package com.gg.server.domain.rank.controller;
 
-import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.rank.dto.ExpRankPageResponseDto;
 import com.gg.server.domain.rank.dto.RankPageResponseDto;
 import com.gg.server.domain.rank.service.RankService;

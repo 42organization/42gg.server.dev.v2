@@ -169,8 +169,8 @@ public class RankRedisRepository {
         return hashOps.multiGet(key, userIdsStr).stream().map(RankRedis.class::cast).collect(Collectors.toList());
     }
 
-    public Long countTotalRank(String hashKey) {
-        return hashOps.size(hashKey);
+    public Long countTotalRank(String zSetKey) {
+        return zSetOps.size(zSetKey);
     }
 
     public void deleteAll(){

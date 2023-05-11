@@ -7,8 +7,6 @@ import com.gg.server.domain.user.type.SnsType;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.Objects;
-
 @Getter
 @Builder
 public class UserDto {

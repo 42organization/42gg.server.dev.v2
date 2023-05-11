@@ -7,15 +7,11 @@ import com.gg.server.domain.game.dto.GameTeamUser;
 import com.gg.server.domain.game.dto.GameResultResDto;
 import com.gg.server.domain.game.dto.req.NormalResultReqDto;
 import com.gg.server.domain.game.dto.req.RankResultReqDto;
-import com.gg.server.domain.season.dto.CurSeason;
-import com.gg.server.domain.team.data.Team;
-import com.gg.server.domain.team.data.TeamRepository;
-import com.gg.server.global.utils.EloRating;
+import com.gg.server.domain.rank.data.Rank;
+import com.gg.server.domain.rank.data.RankRepository;
+import com.gg.server.domain.rank.redis.RankRedisService;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
-import com.gg.server.domain.rank.redis.RankRedis;
-import com.gg.server.domain.rank.redis.RankRedisRepository;
-import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.team.data.TeamUserRepository;
 import com.gg.server.global.exception.ErrorCode;
@@ -40,9 +36,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class GameService {
     private final GameRepository gameRepository;
-    private final RankRedisRepository rankRedisRepository;
     private final TeamUserRepository teamUserRepository;
-    private final TeamRepository teamRepository;
+    private final RankRedisService rankRedisService;
+    private final RankRepository rankRepository;
     @Transactional(readOnly = true)
     public GameListResDto normalGameList(int pageNum, int pageSize) {
         Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Direction.DESC, "startTime"));
@@ -74,9 +70,10 @@ public class GameService {
     }
 
     @Transactional
-    public Boolean createRankResult(RankResultReqDto scoreDto) {
+    public synchronized Boolean createRankResult(RankResultReqDto scoreDto, Long userId) {
+        log.info("create Rank Result");
         // rank 점수 입력받기
-        if (scoreDto.getMyTeamScore() + scoreDto.getEnemyTeamScore() > 3) {
+        if (scoreDto.getMyTeamScore() + scoreDto.getEnemyTeamScore() > 3 || scoreDto.getMyTeamScore() == scoreDto.getEnemyTeamScore()) {
             throw new InvalidParameterException("점수를 잘못 입력했습니다.", ErrorCode.VALID_FAILED);
         }
         // 현재 게임 id
@@ -85,18 +82,15 @@ public class GameService {
         if (game.getStatus() != StatusType.WAIT) {
             return false;
         }
-        // user 가 게임한 팀, 상대 팀 id
-        if (!updateScore(game, scoreDto, new CurSeason(game.getSeason()))) {
-            return false;
-        }
-        return true;
+        log.info("update score");
+        return updateScore(game, scoreDto, game.getSeason().getId(), userId);
     }
 
-    public Boolean normalExpResult(NormalResultReqDto normalResultReqDto) {
+    public synchronized Boolean normalExpResult(NormalResultReqDto normalResultReqDto) {
         Game game = gameRepository.findById(normalResultReqDto.getGameId())
                 .orElseThrow(() -> new NotExistException("존재하지 않는 게임 id 입니다.", ErrorCode.NOT_FOUND));
         List<TeamUser> teamUsers = teamUserRepository.findAllByGameId(game.getId());
-        if (teamUsers.size() == 2) {
+        if (teamUsers.size() == 2 && game.getStatus() == StatusType.LIVE) {
             LocalDateTime now = LocalDateTime.now();
             int gamePerDay = teamUserRepository.findByDateAndUser(LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), 0, 0),
                     teamUsers.get(0).getUser().getId());
@@ -104,68 +98,43 @@ public class GameService {
             gamePerDay = teamUserRepository.findByDateAndUser(LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), 0, 0),
                     teamUsers.get(1).getUser().getId());
             teamUsers.get(1).getUser().addExp(ExpLevelCalculator.getExpPerGame() + (ExpLevelCalculator.getExpBonus() * gamePerDay));
+            game.updateStatus();
+            return true;
+        } else if (teamUsers.size() != 2) {
+            throw new InvalidParameterException("team 이 잘못되었습니다.", ErrorCode.VALID_FAILED);
         }
-        game.updateStatus();
-        return true;
+        return false;
     }
     private void setTeamScore(TeamUser tu, int teamScore, Boolean isWin) {
         tu.getTeam().inputScore(teamScore);
         tu.getTeam().setWin(isWin);
     }
 
-    private Boolean updateScore(Game game, RankResultReqDto scoreDto, CurSeason season) {
-        List<TeamUser> teams = teamUserRepository.findAllByGameId(game.getId());
-        Boolean check1 = false, check2 = false;
-        for (TeamUser team : teams) {
-            if (team.getTeam().getId().equals(scoreDto.getMyTeamId())) {
-                // my team id
-                if (team.getTeam().getScore() == -1 || team.getTeam().getScore() != scoreDto.getMyTeamScore()) {
-                    // 점수 입력한적 없으면 || 점수 입력 있는데 다른 점수이면 값 update
-                    setTeamScore(team, scoreDto.getMyTeamScore(), scoreDto.getMyTeamScore() > scoreDto.getEnemyTeamScore());
-                    check1 = false;
-                }
-                else // 점수 입력 있는데 같은 점수
-                    check1 = true;
-            } else if (team.getTeam().getId().equals(scoreDto.getEnemyTeamId())) {
-                if (team.getTeam().getScore() == -1 || team.getTeam().getScore() != scoreDto.getEnemyTeamScore()) {
-                    setTeamScore(team, scoreDto.getEnemyTeamScore(), scoreDto.getMyTeamScore() < scoreDto.getEnemyTeamScore());
-                    check2 = false;
-                }
-                else
-                    check2 = true;
-            } else {
-                check1 = false;
-                check2 = false;
+    private TeamUser findTeamId(Long teamId, List<TeamUser> teamUsers) {
+        for (TeamUser tu :
+                teamUsers) {
+            if (tu.getTeam().getId().equals(teamId)) {
+                return tu;
             }
         }
-        if (check1 && check2) {
-            game.updateStatus();
-            updateRankRedis(teams, season);
+        return null;
+    }
+    private Boolean updateScore(Game game, RankResultReqDto scoreDto, Long seasonId, Long userId) {
+        List<TeamUser> teams = teamUserRepository.findAllByGameId(game.getId());
+        TeamUser myTeam = findTeamId(scoreDto.getMyTeamId(), teams);
+        TeamUser enemyTeam = findTeamId(scoreDto.getEnemyTeamId(), teams);
+        if (myTeam == null || enemyTeam == null || !myTeam.getUser().getId().equals(userId)) {
+            throw new NotExistException("잘못된 team Id 입니다.", ErrorCode.NOT_FOUND);
+        } else {
+            if (myTeam.getTeam().getScore() == scoreDto.getMyTeamScore()
+                    && enemyTeam.getTeam().getScore() == scoreDto.getEnemyTeamScore()) {
+                game.updateStatus();
+                rankRedisService.updateRankRedis(teams, seasonId, game);
+            } else {
+                setTeamScore(myTeam, scoreDto.getMyTeamScore(), scoreDto.getMyTeamScore() > scoreDto.getEnemyTeamScore());
+                setTeamScore(enemyTeam, scoreDto.getEnemyTeamScore(), scoreDto.getMyTeamScore() < scoreDto.getEnemyTeamScore());
+            }
+            return true;
         }
-        return true;
-    }
-
-    void updateRankRedis(List<TeamUser> list, CurSeason season) {
-        // 단식 -> 2명 기준
-        String key = RedisKeyManager.getHashKey(season.getId());
-        String zsetKey = RedisKeyManager.getZSetKey(season.getId());
-        RankRedis myTeam = rankRedisRepository.findRankByUserId(key, list.get(0).getUser().getId());
-        RankRedis enemyTeam = rankRedisRepository.findRankByUserId(key, list.get(1).getUser().getId());
-        updatePPP(list.get(0), myTeam, enemyTeam, list.get(1).getTeam().getScore());
-        updatePPP(list.get(1), enemyTeam, myTeam, list.get(0).getTeam().getScore());
-        rankRedisRepository.updateRankData(key, list.get(0).getUser().getId(), myTeam);
-        rankRedisRepository.deleteFromZSet(zsetKey, list.get(0).getUser().getId());
-        rankRedisRepository.addToZSet(zsetKey, list.get(0).getUser().getId(), myTeam.getPpp());
-        rankRedisRepository.updateRankData(key, list.get(1).getUser().getId(), enemyTeam);
-        rankRedisRepository.deleteFromZSet(zsetKey, list.get(1).getUser().getId());
-        rankRedisRepository.addToZSet(zsetKey, list.get(1).getUser().getId(), enemyTeam.getPpp());
-    }
-
-    void updatePPP(TeamUser teamuser, RankRedis myTeam, RankRedis enemyTeam, int enemyScore) {
-        int win = teamuser.getTeam().getWin() ? myTeam.getWins() + 1 : myTeam.getWins();
-        int losses = !teamuser.getTeam().getWin() ? myTeam.getLosses() + 1: myTeam.getLosses();
-        myTeam.updateRank(EloRating.pppChange(myTeam.getPpp(), enemyTeam.getPpp(),
-                        teamuser.getTeam().getWin(), Math.abs(teamuser.getTeam().getScore() - enemyScore) == 2),
-                win, losses);
     }
 }

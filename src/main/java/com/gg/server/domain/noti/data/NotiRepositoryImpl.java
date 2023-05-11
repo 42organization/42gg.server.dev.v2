@@ -1,6 +1,5 @@
 package com.gg.server.domain.noti.data;
 
-import com.gg.server.domain.user.User;
 import lombok.RequiredArgsConstructor;
 
 import javax.persistence.EntityManager;
