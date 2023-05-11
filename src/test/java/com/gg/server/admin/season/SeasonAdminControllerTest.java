@@ -117,6 +117,7 @@ class SeasonAdminControllerTest {
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
+        System.out.println(contentAsString);
         SeasonListAdminResponseDto seasonListAdminResponseDto = objectMapper.readValue(contentAsString, SeasonListAdminResponseDto.class);
         System.out.println(seasonListAdminResponseDto.getSeasonList().size());
         System.out.println(seasonListAdminResponseDto.getSeasonList().get(1).getSeasonName() + " : " + responseDto.getSeasonList().get(1).getSeasonName());

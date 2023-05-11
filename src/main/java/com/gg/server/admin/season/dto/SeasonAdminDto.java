@@ -1,5 +1,6 @@
 package com.gg.server.admin.season.dto;
 
+import com.gg.server.admin.season.type.SeasonStatus;
 import com.gg.server.domain.season.data.Season;
 import lombok.*;
 
@@ -26,17 +27,17 @@ public class SeasonAdminDto {
         this.endTime = season.getEndTime();
         this.startPpp = season.getStartPpp();
         this.pppGap = season.getPppGap();
-        this.status = setSeasonStatus(season);
+        this.status = getSeasonStatus(season);
     }
 
-    private String setSeasonStatus(Season season) {
+    public String getSeasonStatus(Season season) {
         LocalDateTime now = LocalDateTime.now();
 
         if (now.isAfter(season.getEndTime()))
-            return "PAST"; //SEASON_PAST
+            return SeasonStatus.SEASON_PAST.getSesonstauts();
         else if (now.isAfter(season.getStartTime()) && now.isBefore((season.getEndTime())))
-            return "CURRENT"; //SEASON_CURRENT
+            return SeasonStatus.SEASON_CURRENT.getSesonstauts();
         else
-            return "FUTUER"; //SEASON_FUTUER
+            return SeasonStatus.SEASON_FUTUER.getSesonstauts();
     }
 }
