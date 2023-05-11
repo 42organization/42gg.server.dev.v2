@@ -92,7 +92,7 @@ public class TestDataUtils {
     }
 
     public User createNewUser(int totalExp){
-        String randomId = UUID.randomUUID().toString();
+        String randomId = UUID.randomUUID().toString().substring(0, 30);
         User user = User.builder()
                 .eMail("email")
                 .intraId(randomId)
