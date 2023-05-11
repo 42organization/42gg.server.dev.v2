@@ -59,13 +59,11 @@ class AnnouncementAdminControllerTest {
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
-        System.out.println(contentAsString);
         //ResponseEntity<AnnouncementAdminListResponseDto> announceListDtoResponse = objectMapper
         //        .readValue(contentAsString, new TypeReference<ResponseEntity<AnnouncementAdminListResponseDto>>() {});
         //AnnouncementAdminListResponseDto announceListDto = announceListDtoResponse.getBody();
         AnnouncementAdminListResponseDto announceListDto = objectMapper.readValue(contentAsString, AnnouncementAdminListResponseDto.class);
 
-        System.out.println(announceListDto.getAnnouncementList());
         assertThat(announceListDto.getCurrentPage()).isEqualTo(currentPage);
         assertThat(announceListDto.getAnnouncementList().size()).isEqualTo(pageSize);
     }

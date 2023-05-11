@@ -23,12 +23,14 @@ public class AnnouncementAdminController {
     private final AnnouncementAdminService announcementAdminService;
 
     @GetMapping("/announcement")
-    public AnnouncementAdminListResponseDto getAnnouncementList(
+    public ResponseEntity<AnnouncementAdminListResponseDto> getAnnouncementList(
             @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "5") int size) {
         if (page < 1 || size < 1)
             throw new AdminException("요청한 페이징 불가", ErrorCode.BAD_REQUEST);
         Pageable pageable = PageRequest.of(page - 1, size,
                 Sort.by("createdAt").descending());
-        return announcementAdminService.findAllAnnouncement(pageable);
+
+        return ResponseEntity.ok()
+                .body(announcementAdminService.findAllAnnouncement(pageable));
     }
 }
