@@ -38,6 +38,6 @@ public class SeasonAdminDto {
         else if (now.isAfter(season.getStartTime()) && now.isBefore((season.getEndTime())))
             return SeasonStatus.SEASON_CURRENT.getSesonstauts();
         else
-            return SeasonStatus.SEASON_FUTUER.getSesonstauts();
+            return SeasonStatus.SEASON_FUTURE.getSesonstauts();
     }
 }

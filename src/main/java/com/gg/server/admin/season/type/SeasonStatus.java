@@ -10,7 +10,7 @@ public enum SeasonStatus {
 
     SEASON_PAST("PAST"),
     SEASON_CURRENT("CURRENT"),
-    SEASON_FUTUER("FUTUER");
+    SEASON_FUTURE("FUTURE");
 
     private final String Sesonstauts;
 
