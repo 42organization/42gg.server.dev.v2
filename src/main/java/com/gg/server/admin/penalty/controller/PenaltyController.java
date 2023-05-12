@@ -6,6 +6,7 @@ import com.gg.server.admin.penalty.service.PenaltyService;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.InvalidParameterException;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,14 +32,10 @@ public class PenaltyController {
     }
 
     @GetMapping("penalty/users")
-    public PenaltyListResponseDto getAllPenaltyUser(String q, @RequestParam Integer page,
-                                                    @RequestParam(defaultValue = "10") Integer size) {
-        if (page < 1 || size < 1) {
-            throw new InvalidParameterException("parmeters not valid", ErrorCode.VALID_FAILED);
-        }
-        if (q == null) {
+    public PenaltyListResponseDto getAllPenaltyUser(String q, @RequestParam @Min(1) Integer page,
+                                                    @RequestParam(defaultValue = "10") @Min(1) Integer size) {
+        if (q == null)
             return penaltyService.getAllPenaltyUser(page, size);
-        }
         return penaltyService.searchPenaltyUser(q, page, size);
     }
 
