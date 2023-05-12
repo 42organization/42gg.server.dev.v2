@@ -1,14 +1,9 @@
 package com.gg.server.admin.announcement.controller;
 
 import com.gg.server.admin.announcement.dto.AnnouncementAdminAddDto;
-import com.gg.server.admin.announcement.dto.AnnouncementAdminDto;
 import com.gg.server.admin.announcement.dto.AnnouncementAdminListResponseDto;
 import com.gg.server.admin.announcement.service.AnnouncementAdminService;
-import com.gg.server.global.exception.ErrorCode;
-import com.gg.server.global.exception.custom.AdminException;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpStatus;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;

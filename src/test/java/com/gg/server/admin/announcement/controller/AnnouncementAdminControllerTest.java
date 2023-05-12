@@ -114,6 +114,7 @@ class AnnouncementAdminControllerTest {
 
         AnnouncementAdminAddDto addDto = AnnouncementAdminAddDto.builder()
                 .content("하나하나둘둘")
+                .creatorIntraId(null)
                 .build();
 
         String content = objectMapper.writeValueAsString(addDto);
