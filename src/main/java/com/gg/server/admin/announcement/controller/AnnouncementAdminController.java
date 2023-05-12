@@ -10,23 +10,24 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.constraints.Min;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("pingpong/admin")
-@Slf4j
+@Validated
 public class AnnouncementAdminController {
     private final AnnouncementAdminService announcementAdminService;
 
     @GetMapping("/announcement")
     public ResponseEntity<AnnouncementAdminListResponseDto> getAnnouncementList(
-            @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "5") int size) {
-        if (page < 1 || size < 1)
-            throw new AdminException("요청한 페이징 불가", ErrorCode.BAD_REQUEST);
+            @RequestParam(defaultValue = "1") @Min(1) int page, @RequestParam(defaultValue = "5") @Min(1) int size) {
         Pageable pageable = PageRequest.of(page - 1, size,
                 Sort.by("createdAt").descending());
 
