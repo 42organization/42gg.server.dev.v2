@@ -10,6 +10,7 @@ import javax.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@Validated
 @RequestMapping("/pingpong/admin/")
 public class PenaltyController {
     private final PenaltyService penaltyService;
@@ -36,7 +38,7 @@ public class PenaltyController {
                                                     @RequestParam(defaultValue = "10") @Min(1) Integer size) {
         if (q == null)
             return penaltyService.getAllPenaltyUser(page - 1, size);
-        return penaltyService.searchPenaltyUser(q, page -1, size);
+        return penaltyService.searchPenaltyUser(q, page - 1, size);
     }
 
     @DeleteMapping("penalty/users/{intraId}")
