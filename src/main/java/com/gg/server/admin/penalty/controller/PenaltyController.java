@@ -37,8 +37,8 @@ public class PenaltyController {
     public PenaltyListResponseDto getAllPenaltyUser(String q, @RequestParam @Min(1) Integer page,
                                                     @RequestParam(defaultValue = "10") @Min(1) Integer size) {
         if (q == null)
-            return penaltyService.getAllPenaltyUser(page, size);
-        return penaltyService.searchPenaltyUser(q, page, size);
+            return penaltyService.getAllPenaltyUser(page - 1, size);
+        return penaltyService.searchPenaltyUser(q, page - 1, size);
     }
 
     @DeleteMapping("penalty/users/{intraId}")
