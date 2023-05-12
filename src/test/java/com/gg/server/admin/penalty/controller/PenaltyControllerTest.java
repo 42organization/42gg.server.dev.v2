@@ -1,6 +1,7 @@
 package com.gg.server.admin.penalty.controller;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -9,15 +10,24 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.penalty.data.RedisPenaltyUser;
 import com.gg.server.admin.penalty.data.RedisPenaltyUserRepository;
+import com.gg.server.admin.penalty.dto.PenaltyListResponseDto;
 import com.gg.server.admin.penalty.dto.PenaltyRequestDto;
+import com.gg.server.admin.penalty.service.PenaltyService;
 import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.UserRepository;
+import com.gg.server.domain.user.dto.UserHistoryResponseDto;
 import com.gg.server.domain.user.dto.UserModifyRequestDto;
+import com.gg.server.domain.user.type.RacketType;
+import com.gg.server.domain.user.type.RoleType;
+import com.gg.server.domain.user.type.SnsType;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import java.net.http.HttpClient;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import org.apache.http.HttpHeaders;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
@@ -52,6 +62,8 @@ class PenaltyControllerTest {
     AuthTokenProvider tokenProvider;
     @Autowired
     RedisConnectionFactory redisConnectionFactory;
+    @Autowired
+    PenaltyService penaltyService;
 
     private final String headUrl= "/pingpong/admin/";
     @AfterEach
@@ -122,4 +134,81 @@ class PenaltyControllerTest {
                 .andExpect(status().is4xxClientError());
     }
 
+    @Test
+    @DisplayName("GET pagination 유효성 검사")
+    public void checkPagination() throws Exception {
+        List<User> users = new ArrayList<User>();
+        String accessToken = testDataUtils.getLoginAccessToken();
+        tokenProvider.getUserIdFromToken(accessToken);
+        //penalty user 20명 넣고 테스트
+        for(int i = 0; i < 20; i++) {
+            User newUser = testDataUtils.createNewUser();
+            users.add(newUser);
+            penaltyService.givePenalty(newUser.getIntraId(), 3, "test" + String.valueOf(i));
+        }
+        List<Integer> sizeCounts = new ArrayList<Integer>();
+        Integer totalPages = -1;
+        for (int i = 1; i <= 3; i++) {
+            String url = "/pingpong/admin/penalty/users?page=" + String.valueOf(i);
+            String contentAsString = mockMvc.perform(
+                            get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                    .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+            PenaltyListResponseDto penaltyListResponseDto = objectMapper.readValue(contentAsString,
+                    PenaltyListResponseDto.class);
+            sizeCounts.add(penaltyListResponseDto.getPenaltyList().size());
+            totalPages = penaltyListResponseDto.getTotalPage();
+        }
+        Assertions.assertThat(sizeCounts).isEqualTo(List.of(10, 10, 0));
+        Assertions.assertThat(totalPages).isEqualTo(2);
+    }
+    @Test
+    @DisplayName("GET parameter 유효성 검사")
+    public void checkInputException() throws Exception {
+        String accessToken = testDataUtils.getLoginAccessToken();
+        tokenProvider.getUserIdFromToken(accessToken);
+        String url = "/pingpong/admin/penalty/users?page=-1";
+        String contentAsString = mockMvc.perform(
+                        get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
+        String url2 = "/pingpong/admin/penalty/users?page=2&size=0";
+        String contentAsString2 = mockMvc.perform(
+                        get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
+    }
+
+    @Test
+    @DisplayName("GET pagination keyword 유효성 검사")
+    public void checkPaginationWithKeyword() throws Exception {
+        List<User> users = new ArrayList<User>();
+        String accessToken = testDataUtils.getLoginAccessToken();
+        tokenProvider.getUserIdFromToken(accessToken);
+        //penalty user 40명 넣고 테스트
+        //그중 20명만 intraId에 test포함
+        for(int i = 0; i < 20; i++) {
+            String intraId = UUID.randomUUID().toString().substring(0, 4) + "test" + UUID.randomUUID().toString().substring(0, 4);
+            User newUser = testDataUtils.createNewUser(intraId, "test", "test", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
+            users.add(newUser);
+            penaltyService.givePenalty(newUser.getIntraId(), 3, "test" + String.valueOf(i));
+        }
+        for(int i = 0; i < 20; i++) {
+            String intraId = "dummy" + String.valueOf(i);
+            User newUser = testDataUtils.createNewUser(intraId, "test", "test", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
+            users.add(newUser);
+            penaltyService.givePenalty(newUser.getIntraId(), 3, "test" + String.valueOf(i));
+        }
+        List<Integer> sizeCounts = new ArrayList<Integer>();
+        Integer totalPages = -1;
+        for (int i = 1; i <= 3; i++) {
+            String url = "/pingpong/admin/penalty/users?q=test&page=" + String.valueOf(i);
+            String contentAsString = mockMvc.perform(
+                            get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                    .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+            PenaltyListResponseDto penaltyListResponseDto = objectMapper.readValue(contentAsString,
+                    PenaltyListResponseDto.class);
+            sizeCounts.add(penaltyListResponseDto.getPenaltyList().size());
+            totalPages = penaltyListResponseDto.getTotalPage();
+        }
+        Assertions.assertThat(sizeCounts).isEqualTo(List.of(10, 10, 0));
+        Assertions.assertThat(totalPages).isEqualTo(2);
+    }
 }
