@@ -36,9 +36,10 @@ public class PenaltyController {
         if (page < 1 || size < 1) {
             throw new InvalidParameterException("parmeters not valid", ErrorCode.VALID_FAILED);
         }
-        if (q == null)
-            return penaltyService.getAllPenaltyUser(page - 1, size);
-        return penaltyService.searchPenaltyUser(q, page -1, size);
+        if (q == null) {
+            return penaltyService.getAllPenaltyUser(page, size);
+        }
+        return penaltyService.searchPenaltyUser(q, page, size);
     }
 
     @DeleteMapping("penalty/users/{intraId}")
