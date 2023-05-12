@@ -42,3 +42,7 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### pem key ###
+42gg.pem
+pingping.pem

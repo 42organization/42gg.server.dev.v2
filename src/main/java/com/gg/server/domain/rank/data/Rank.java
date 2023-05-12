@@ -3,6 +3,7 @@ package com.gg.server.domain.rank.data;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.user.User;
 import com.gg.server.global.utils.BaseTimeEntity;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,9 @@ import java.io.Serializable;
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name="ranks")
 public class Rank extends BaseTimeEntity implements Serializable {
     @Id
@@ -43,6 +46,18 @@ public class Rank extends BaseTimeEntity implements Serializable {
 
     @Column(name = "status_message", length = 30)
     private String statusMessage;
+
+
+    public static Rank from (User user, Season season, Integer ppp) {
+        return Rank.builder()
+                .user(user)
+                .ppp(ppp)
+                .season(season)
+                .wins(0)
+                .losses(0)
+                .statusMessage("")
+                .build();
+    }
 
     @Builder
     public Rank(User user, Season season, Integer ppp, Integer wins,
