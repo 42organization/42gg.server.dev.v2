@@ -8,6 +8,8 @@ import com.gg.server.domain.game.dto.GameListResDto;
 import com.gg.server.domain.game.dto.req.RankResultReqDto;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
+import com.gg.server.domain.rank.data.Rank;
+import com.gg.server.domain.rank.data.RankRepository;
 import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
@@ -25,7 +27,6 @@ import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpHeaders;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,16 +67,20 @@ public class GameControllerTest {
     ObjectMapper objectMapper;
     @Autowired
     AuthTokenProvider tokenProvider;
+    @Autowired
+    RankRepository rankRepository;
     private String accessToken;
     private Season season;
+    private User user1;
+    private User user2;
 
     @BeforeEach
     void init() {
         season = seasonRepository.save(new Season("test season", LocalDateTime.of(2023, 5, 14, 0, 0), LocalDateTime.of(2999, 12, 31, 23, 59),
                 1000, 100));
-        User user1 = testDataUtils.createNewUser("test1", "test1@email", "null1", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
+        user1 = testDataUtils.createNewUser("test1", "test1@email", "null1", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
         accessToken = tokenProvider.createToken(user1.getId());
-        User user2 = testDataUtils.createNewUser("test2", "test2@email", "null1", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
+        user2 = testDataUtils.createNewUser("test2", "test2@email", "null1", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
         for (int i = 0; i < 10; i++) {
             Game game = gameRepository.save(new Game(season, StatusType.END, Mode.RANK, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
             Team team1 = teamRepository.save(new Team(game, 1, false));
@@ -184,23 +189,27 @@ public class GameControllerTest {
         Game game = gameRepository.save(new Game(season, StatusType.WAIT, Mode.RANK, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
         Team team1 = teamRepository.save(new Team(game, -1, false));
         Team team2 = teamRepository.save(new Team(game, -1, false));
-        User user1 = testDataUtils.createNewUser("test3", "test3@email", "null1", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
+//        User user1 = testDataUtils.createNewUser("test3", "test3@email", "null1", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
         String ac1 = tokenProvider.createToken(user1.getId());
-        User user2 = testDataUtils.createNewUser("test4", "test4@email", "null1", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
+//        User user2 = testDataUtils.createNewUser("test4", "test4@email", "null1", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
         String ac2 = tokenProvider.createToken(user2.getId());
         teamUserRepository.save(new TeamUser(team1, user1));
         teamUserRepository.save(new TeamUser(team2, user2));
+        rankRepository.save(new Rank(user1, season, season.getStartPpp(), 0, 0, ""));
+        rankRepository.save(new Rank(user2, season, season.getStartPpp(), 0, 0, ""));
         String content = objectMapper.writeValueAsString(new RankResultReqDto(game.getId(), team1.getId(), 1, team2.getId(), 2));
         rankRedisRepository.addRankData(RedisKeyManager.getHashKey(season.getId()), user1.getId(),
                 new RankRedis(user1.getId(), user1.getIntraId(), season.getStartPpp(), 0, 0,  "test user3"));
         rankRedisRepository.addRankData(RedisKeyManager.getHashKey(season.getId()), user2.getId(),
                 new RankRedis(user2.getId(), user2.getIntraId(), season.getStartPpp(), 0, 0,  "test user4"));
         // then
+        System.out.println("=======================");
         mockMvc.perform(post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + ac1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content))
                 .andExpect(status().isCreated())
                 .andReturn().getResponse();
+        System.out.println("=======================");
         content = objectMapper.writeValueAsString(new RankResultReqDto(game.getId(), team2.getId(), 2, team1.getId(), 1));
         mockMvc.perform(post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + ac2)
                         .contentType(MediaType.APPLICATION_JSON)
