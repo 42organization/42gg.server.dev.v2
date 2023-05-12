@@ -3,10 +3,9 @@ package com.gg.server.admin.penalty.controller;
 import com.gg.server.admin.penalty.dto.PenaltyListResponseDto;
 import com.gg.server.admin.penalty.dto.PenaltyRequestDto;
 import com.gg.server.admin.penalty.service.PenaltyService;
-import com.gg.server.global.exception.ErrorCode;
-import com.gg.server.global.exception.custom.InvalidParameterException;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +41,8 @@ public class PenaltyController {
     }
 
     @DeleteMapping("penalty/users/{intraId}")
-    public void releasePenaltyUser(@PathVariable String intraId) {
+    public ResponseEntity releasePenaltyUser(@PathVariable @Size(max = 30) String intraId) {
         penaltyService.releasePenaltyUser(intraId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

@@ -51,6 +51,8 @@ public class PenaltyService {
     }
 
     public void releasePenaltyUser(String intraId) {
+        redisPenaltyUserRepository.findByIntraId(intraId).orElseThrow(()
+            -> new InvalidParameterException("user not found", ErrorCode.BAD_REQUEST));
         redisPenaltyUserRepository.deletePenaltyUser(intraId);
     }
 
