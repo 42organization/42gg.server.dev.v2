@@ -17,12 +17,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class PenaltyService {
     private final RedisPenaltyUserRepository redisPenaltyUserRepository;
     private final UserRepository userRepository;
 
+    @Transactional(readOnly = true)
     public void givePenalty(String intraId, Integer penaltyTime, String reason) {
         userRepository.findByIntraId(intraId).orElseThrow(() ->
                 new InvalidParameterException("user not found", ErrorCode.BAD_REQUEST));
