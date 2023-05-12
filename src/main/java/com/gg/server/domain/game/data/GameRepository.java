@@ -31,4 +31,16 @@ public interface GameRepository extends JpaRepository<Game, Long>, GameRepositor
             + "AND g.id = t.game.id AND t.id = tu.team.id AND tu.user.id = :userId")
     Optional<Game> findByUserInSlots(@Param("startTime")LocalDateTime startTime, @Param("endTime") LocalDateTime endTime, @Param("userId") Long userId);
 
+    @Query(value = "select gameId " +
+            "from v_teamuser " +
+            "where intraId = :intra and status in (:status) order by startTime desc", nativeQuery = true)
+    Slice<Long> findGamesByUser(@Param("intra") String intra, @Param("status") List<String> status, Pageable pageable);
+    @Query(value = "select gameId " +
+            "from v_teamuser " +
+            "where intraId = :intra and mode in (:mode) and status=:status", nativeQuery = true)
+    Slice<Long> findGamesByUserAndMode(@Param("intra") String intra, @Param("mode") String mode, @Param("status") String status, Pageable pageable);
+    @Query(value = "select gameId " +
+            "from v_teamuser " +
+            "where intraId = :intra and mode in (:mode) and seasonId = :seasonId and status=:status", nativeQuery = true)
+    Slice<Long> findGamesByUserAndModeAndSeason(@Param("intra") String intra, @Param("mode") String mode, @Param("seasonId") Long seasonId, @Param("status") String status, Pageable pageable);
 }

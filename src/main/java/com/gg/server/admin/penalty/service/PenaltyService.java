@@ -46,11 +46,13 @@ public class PenaltyService {
         List<PenaltyUserResponseDto> penaltyUserResponseDtos = penaltyUsers.stream()
                 .map(PenaltyUserResponseDto::new).collect(Collectors.toList());
         Integer totalPages = (penaltyUserResponseDtos.size() - 1) / size + 1;
-        List<PenaltyUserResponseDto> pagedUserDtos = paging(size, page, penaltyUserResponseDtos);
-        return new PenaltyListResponseDto(pagedUserDtos, page, totalPages);
+        List<PenaltyUserResponseDto> pagedUserDtos = paging(size, page + 1, penaltyUserResponseDtos);
+        return new PenaltyListResponseDto(pagedUserDtos, page + 1, totalPages);
     }
 
     public void releasePenaltyUser(String intraId) {
+        redisPenaltyUserRepository.findByIntraId(intraId).orElseThrow(()
+            -> new InvalidParameterException("user not found", ErrorCode.BAD_REQUEST));
         redisPenaltyUserRepository.deletePenaltyUser(intraId);
     }
 
@@ -59,8 +61,8 @@ public class PenaltyService {
         List<PenaltyUserResponseDto> penaltyUserResponseDtos =
                 penaltyUsers.stream().map(PenaltyUserResponseDto::new).collect(Collectors.toList());
         Integer totalPages = (penaltyUserResponseDtos.size() - 1) / size + 1;
-        List<PenaltyUserResponseDto> pagedUserDtos = paging(size, page, penaltyUserResponseDtos);
-        return new PenaltyListResponseDto(pagedUserDtos, page, totalPages);
+        List<PenaltyUserResponseDto> pagedUserDtos = paging(size, page + 1, penaltyUserResponseDtos);
+        return new PenaltyListResponseDto(pagedUserDtos, page + 1, totalPages);
     }
     private List<PenaltyUserResponseDto> paging(Integer size, Integer page,
                                                 List<PenaltyUserResponseDto> penaltyUserResponseDtos) {

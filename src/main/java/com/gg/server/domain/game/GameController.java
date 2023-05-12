@@ -25,17 +25,17 @@ public class GameController {
         if (gameReq.getStatus() != null && !gameReq.getStatus().name().equals("LIVE")) {
             throw new InvalidParameterException("status not valid", ErrorCode.VALID_FAILED);
         }
-        return gameService.allGameList(gameReq.getPageNum() - 1, gameReq.getPageSize(), gameReq.getStatus());
+        return gameService.allGameList(gameReq.getPageNum() - 1, gameReq.getPageSize(), gameReq.getStatus(), gameReq.getNickname());
     }
 
     @GetMapping("/normal")
     GameListResDto normalGameList(@ModelAttribute @Valid NormalGameListReqDto gameReq) {
-        return gameService.normalGameList(gameReq.getPageNum() - 1, gameReq.getPageSize());
+        return gameService.normalGameList(gameReq.getPageNum() - 1, gameReq.getPageSize(), gameReq.getNickname());
     }
 
     @GetMapping("/rank")
     GameListResDto rankGameList(@ModelAttribute @Valid RankGameListReqDto gameReq) {
-        return gameService.rankGameList(gameReq.getPageNum() - 1, gameReq.getPageSize(), gameReq.getSeasonId());
+        return gameService.rankGameList(gameReq.getPageNum() - 1, gameReq.getPageSize(), gameReq.getSeasonId(), gameReq.getNickname());
     }
 
     @PostMapping("/rank")
