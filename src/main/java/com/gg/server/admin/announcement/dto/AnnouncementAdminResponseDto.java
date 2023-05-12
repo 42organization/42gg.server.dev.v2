@@ -11,14 +11,14 @@ import java.time.LocalDateTime;
 public class AnnouncementAdminResponseDto {
     private String creatorIntraId;
     private String deleterIntraId;
-    private String conten;
+    private String content;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private LocalDateTime deletedAt;
 
     public AnnouncementAdminResponseDto(Announcement announcementAdmin)
     {
-        this.conten = announcementAdmin.getContent();
+        this.content = announcementAdmin.getContent();
         this.creatorIntraId = announcementAdmin.getCreatorIntraId();
         this.deleterIntraId = announcementAdmin.getDeleterIntraId();
         this.createdAt = announcementAdmin.getCreatedAt();
