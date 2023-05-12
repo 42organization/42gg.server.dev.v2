@@ -38,34 +38,55 @@ public class GameService {
     private final GameRepository gameRepository;
     private final TeamUserRepository teamUserRepository;
     private final RankRedisService rankRedisService;
-    private final RankRepository rankRepository;
     @Transactional(readOnly = true)
-    public GameListResDto normalGameList(int pageNum, int pageSize) {
+    public GameListResDto normalGameList(int pageNum, int pageSize, String intra) {
         Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Direction.DESC, "startTime"));
-        Slice<Game> games = gameRepository.findAllByModeAndStatus(Mode.NORMAL, StatusType.END, pageable);
-        return new GameListResDto(getGameResultList(games), games.isLast());
-    }
-
-    @Transactional(readOnly = true)
-    public GameListResDto rankGameList(int pageNum, int pageSize, Long seasonId) {
-        Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Direction.DESC, "startTime"));
-        Slice<Game> games = gameRepository.findAllByModeAndStatusAndSeasonId(Mode.RANK, StatusType.END, seasonId, pageable);
-        return new GameListResDto(getGameResultList(games), games.isLast());
-    }
-
-    @Transactional(readOnly = true)
-    public GameListResDto allGameList(int pageNum, int pageSize, StatusType status) {
-        Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Direction.DESC, "startTime"));
-        Slice<Game> games;
-        if (status != null) {
-            games = gameRepository.findAllByAndStatusIn(Arrays.asList(StatusType.END, StatusType.LIVE), pageable);
+        if (intra == null) {
+            Slice<Game> games = gameRepository.findAllByModeAndStatus(Mode.NORMAL, StatusType.END, pageable);
+            return new GameListResDto(getGameResultList(games.getContent().stream().map(Game::getId).collect(Collectors.toList())), games.isLast());
         } else {
-            games = gameRepository.findAllByAndStatus(StatusType.END, pageable);
+            Slice<Long> games = gameRepository.findGamesByUserAndMode(intra, Mode.NORMAL.name(), StatusType.END.name(), pageable);
+            return new GameListResDto(getGameResultList(games.getContent()), games.isLast());
         }
-        return new GameListResDto(getGameResultList(games), games.isLast());
     }
-    private List<GameResultResDto> getGameResultList(Slice<Game> games) {
-        List<GameTeamUser> teamViews = gameRepository.findTeamsByGameIsIn(games.stream().map(Game::getId).collect(Collectors.toList()));
+
+    @Transactional(readOnly = true)
+    public GameListResDto rankGameList(int pageNum, int pageSize, Long seasonId, String intra) {
+        Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Direction.DESC, "startTime"));
+        if (intra == null) {
+            Slice<Game> games = gameRepository.findAllByModeAndStatusAndSeasonId(Mode.RANK, StatusType.END, seasonId, pageable);
+            return new GameListResDto(getGameResultList(games.getContent().stream().map(Game::getId).collect(Collectors.toList())), games.isLast());
+        } else {
+            Slice<Long> games = gameRepository.findGamesByUserAndModeAndSeason(intra, Mode.RANK.name(), seasonId, StatusType.END.name(), pageable);
+            return new GameListResDto(getGameResultList(games.getContent()), games.isLast());
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public GameListResDto allGameList(int pageNum, int pageSize, StatusType status, String intra) {
+        Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Direction.DESC, "startTime"));
+        if (intra == null) {
+            Slice<Game> games;
+            if (status != null) {
+                games = gameRepository.findAllByAndStatusIn(Arrays.asList(StatusType.END, StatusType.LIVE), pageable);
+            } else {
+                games = gameRepository.findAllByAndStatus(StatusType.END, pageable);
+            }
+            return new GameListResDto(getGameResultList(games.getContent().stream().map(Game::getId).collect(Collectors.toList())), games.isLast());
+        } else {
+            return allGameListUser(pageNum, pageSize, intra, status);
+        }
+    }
+    public GameListResDto allGameListUser(int pageNum, int pageSize, String intra, StatusType status) {
+        Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Direction.DESC, "startTime"));
+        List<String> statusTypes = Arrays.asList(StatusType.END.name());
+        if (status == StatusType.LIVE)
+            statusTypes.add(StatusType.LIVE.name());
+        Slice<Long> games = gameRepository.findGamesByUser(intra, statusTypes, pageable);
+        return new GameListResDto(getGameResultList(games.getContent()), games.isLast());
+    }
+    private List<GameResultResDto> getGameResultList(List<Long> games) {
+        List<GameTeamUser> teamViews = gameRepository.findTeamsByGameIsIn(games);
         return teamViews.stream().map(GameResultResDto::new).collect(Collectors.toList());
     }
 

@@ -6,8 +6,8 @@ import lombok.Getter;
 @Getter
 public class GameListReqDto extends NormalGameListReqDto {
     private StatusType status;
-    public GameListReqDto(Integer pageNum, Integer pageSize, StatusType status) {
-        super(pageNum, pageSize);
+    public GameListReqDto(Integer pageNum, Integer pageSize, String nickname, StatusType status) {
+        super(pageNum, pageSize, nickname);
         this.status = status;
     }
 }
