@@ -100,7 +100,27 @@ public class GameControllerTest {
     public void 일반게임목록조회() throws Exception {
         //given
         String url = "/pingpong/games/normal?pageNum=1&pageSize=10";
-        GameListResDto expect = gameService.normalGameList(0, 10);
+        GameListResDto expect = gameService.normalGameList(0, 10, null);
+        //when
+        String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println(contentAsString);
+        GameListResDto result = objectMapper.readValue(contentAsString, GameListResDto.class);
+        //then
+        System.out.println(result.getGames().size() +", " + result.getIsLast());
+        System.out.println(expect.getGames());
+        assertThat(result.getGames().size()).isEqualTo(expect.getGames().size());
+        assertThat(result.getGames().get(0).getGameId().equals(expect.getGames().get(0).getGameId()));
+        assertThat(result.getIsLast()).isEqualTo(expect.getIsLast());
+    }
+
+    @Test
+    @Transactional
+    public void user일반게임목록조회() throws Exception {
+        //given
+        String url = "/pingpong/games/normal?pageNum=1&pageSize=10&nickname=test1";
+        GameListResDto expect = gameService.normalGameList(0, 10, "test1");
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())
@@ -120,7 +140,27 @@ public class GameControllerTest {
     public void 랭크게임목록조회() throws Exception {
         //given
         String url = "/pingpong/games/rank?pageNum=1&pageSize=10&seasonId=" + season.getId();
-        GameListResDto expect = gameService.rankGameList(0, 10, season.getId());
+        GameListResDto expect = gameService.rankGameList(0, 10, season.getId(), null);
+        //when
+        String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println(contentAsString);
+        GameListResDto result = objectMapper.readValue(contentAsString, GameListResDto.class);
+        //then
+        System.out.println(result.getGames().size() +", " + result.getIsLast());
+        System.out.println(expect.getGames().size() + ", " + expect.getIsLast());
+        assertThat(result.getGames().size()).isEqualTo(expect.getGames().size());
+        assertThat(result.getGames().get(0).getGameId().equals(expect.getGames().get(0).getGameId()));
+        assertThat(result.getIsLast()).isEqualTo(expect.getIsLast());
+    }
+
+    @Test
+    @Transactional
+    public void user랭크게임목록조회() throws Exception {
+        //given
+        String url = "/pingpong/games/rank?pageNum=1&pageSize=10&seasonId=" + season.getId() + "&nickname=" + "test1";
+        GameListResDto expect = gameService.rankGameList(0, 10, season.getId(), "test1");
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())
@@ -150,7 +190,27 @@ public class GameControllerTest {
     public void 전체게임목록조회() throws Exception {
         //given
         String url = "/pingpong/games?pageNum=1&pageSize=10";
-        GameListResDto expect = gameService.allGameList(0, 10, null);
+        GameListResDto expect = gameService.allGameList(0, 10, null, null);
+        //when
+        String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println(contentAsString);
+        GameListResDto result = objectMapper.readValue(contentAsString, GameListResDto.class);
+        //then
+        System.out.println(result.getGames().size() +", " + result.getIsLast());
+        System.out.println(expect.getGames().size() + ", " + expect.getIsLast());
+        assertThat(result.getGames().size()).isEqualTo(expect.getGames().size());
+        assertThat(result.getGames().get(result.getGames().size() - 1).getGameId().equals(expect.getGames().get(expect.getGames().size() - 1).getGameId()));
+        assertThat(result.getIsLast()).isEqualTo(expect.getIsLast());
+    }
+
+    @Test
+    @Transactional
+    public void user전체게임목록조회() throws Exception {
+        //given
+        String url = "/pingpong/games?pageNum=1&pageSize=10&nickname=test1";
+        GameListResDto expect = gameService.allGameList(0, 10, null, "test1");
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())

@@ -11,8 +11,8 @@ public class RankGameListReqDto extends NormalGameListReqDto {
     @NotNull(message = "seasonId 는 필수 값입니다.")
     private Long seasonId;
 
-    public RankGameListReqDto(Integer pageNum, Integer pageSize, Long seasonId) {
-        super(pageNum, pageSize);
+    public RankGameListReqDto(Integer pageNum, Integer pageSize, String nickname, Long seasonId) {
+        super(pageNum, pageSize, nickname);
         this.seasonId = seasonId;
     }
 }

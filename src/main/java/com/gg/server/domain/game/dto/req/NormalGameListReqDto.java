@@ -14,8 +14,11 @@ public class NormalGameListReqDto {
     @NotNull(message = "pageSize 는 필수 값입니다.")
     private Integer pageSize;
 
-    public NormalGameListReqDto(Integer pageNum, Integer pageSize) {
+    private String nickname;
+
+    public NormalGameListReqDto(Integer pageNum, Integer pageSize, String nickname) {
         this.pageNum = pageNum;
         this.pageSize = pageSize;
+        this.nickname = nickname;
     }
 }
