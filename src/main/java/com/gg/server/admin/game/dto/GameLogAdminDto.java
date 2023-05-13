@@ -27,7 +27,9 @@ public class GameLogAdminDto {
         this.slotTime = game.getEndTime() == null ? null :
                 String.valueOf(Duration.between(game.getStartTime().toLocalTime(), game.getEndTime().toLocalTime()).toMinutes());
         this.mode = game.getMode().getCode();
-        this.team1 = gameTeamAdminDtoList.get(0);
-        this.team2 = gameTeamAdminDtoList.get(1);
+        if (gameTeamAdminDtoList.size() > 1) {
+            this.team1 = gameTeamAdminDtoList.get(0);
+            this.team2 = gameTeamAdminDtoList.get(1);
+        }
     }
 }

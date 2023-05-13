@@ -5,6 +5,7 @@ import com.gg.server.admin.game.service.GameAdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.Size;
 
@@ -16,18 +17,17 @@ public class GameAdminController {
     private final GameAdminService gameAdminService;
     @GetMapping
     public GameLogListAdminResponseDto gameFindBySeasonId(@RequestParam(value = "season", required = false)
-                                                          int seasonId,
+                                                          Long seasonId,
                                                           @RequestParam(value = "page")
                                                           @Size(min=1)
                                                           int page,
                                                           @RequestParam(defaultValue = "20")
                                                           @Size(min=1)
                                                           int size) {
-        Pageable pageable = PageRequest.of(page - 1, size);
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("startTime").descending());
         if (seasonId == 0)
             return gameAdminService.findAllGamesByAdmin(pageable);
         else
-            return new GameLogListAdminResponseDto();
-//            return gameAdminService.findGamesBySeasonId(seasonId, pageable);
+            return gameAdminService.findGamesBySeasonId(seasonId, pageable);
     }
 }
