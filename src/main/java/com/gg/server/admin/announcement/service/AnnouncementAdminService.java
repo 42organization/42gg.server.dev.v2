@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
-@Transactional
 public class AnnouncementAdminService {
     private final AnnouncementAdminRepository announcementAdminRepository;
 
@@ -29,6 +28,7 @@ public class AnnouncementAdminService {
                 responseDtos.getTotalPages(), responseDtos.getNumber() + 1);
     }
 
+    @Transactional
     public ResponseEntity addAnnouncement(AnnouncementAdminAddDto addDto){
         if (findAnnouncementExist() == true)
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
@@ -42,8 +42,7 @@ public class AnnouncementAdminService {
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
-    @Transactional(readOnly = true)
-    public Boolean findAnnouncementExist() {
+    private Boolean findAnnouncementExist() {
         Announcement announcement = announcementAdminRepository.findFirstByOrderByIdDesc();
         if (announcement == null)
             return false;
