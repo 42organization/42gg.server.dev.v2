@@ -22,8 +22,8 @@ public class MatchStatusDto {
         this.startTime = game.getStartTime();
         this.endTime = game.getEndTime();
         this.isMatched = true;
-        this.myTeam = List.of(myIntraId, enemyIntraId);
-        this.enemyTeam = List.of();
+        this.myTeam = List.of(myIntraId);
+        this.enemyTeam = List.of(enemyIntraId);
 
     }
 

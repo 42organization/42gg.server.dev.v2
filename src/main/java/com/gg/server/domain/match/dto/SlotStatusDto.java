@@ -12,14 +12,20 @@ import lombok.Getter;
 public class SlotStatusDto {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private SlotStatus status;
+    private String status;
+
+    public SlotStatusDto(LocalDateTime startTime, LocalDateTime endTime, SlotStatus status) {
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.status = status.getCode();
+    }
 
     @Override
     public String toString() {
         return "SlotStatusDto{" +
                 "startTime = " + startTime +
                 "endTime = " + endTime +
-                "status = " + status.getCode() +
+                "status = " + status +
                 "}";
     }
 }
