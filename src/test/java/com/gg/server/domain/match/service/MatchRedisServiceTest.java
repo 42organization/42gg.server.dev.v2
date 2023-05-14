@@ -8,6 +8,8 @@ import com.gg.server.domain.match.data.RedisMatchUser;
 import com.gg.server.domain.match.data.RedisMatchUserRepository;
 import com.gg.server.domain.match.dto.MatchStatusDto;
 import com.gg.server.domain.match.dto.MatchStatusResponseListDto;
+import com.gg.server.domain.match.dto.SlotStatusDto;
+import com.gg.server.domain.match.dto.SlotStatusResponseListDto;
 import com.gg.server.domain.match.type.MatchKey;
 import com.gg.server.domain.match.type.Option;
 import com.gg.server.domain.match.type.SlotStatus;
@@ -17,6 +19,7 @@ import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.slotmanagement.SlotManagement;
 import com.gg.server.domain.user.User;
+import com.gg.server.domain.user.dto.UserDto;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -203,9 +206,9 @@ class MatchRedisServiceTest {
         matchRedisService.makeMatch(users.get(0).getId(), Option.NORMAL, this.slotTimes.get(1));
         matchRedisService.makeMatch(users.get(0).getId(), Option.NORMAL, this.slotTimes.get(2));
         matchRedisService.makeMatch(users.get(1).getId(), Option.NORMAL, this.slotTimes.get(0));
-        MatchStatusResponseListDto slotStatusList = matchRedisService.getAllMatchStatus(users.get(0).getId(),
+        SlotStatusResponseListDto slotStatusList = matchRedisService.getAllMatchStatus(users.get(0).getId(),
                 Option.NORMAL);
-        for (MatchStatusDto dto : slotStatusList.getMatchBoards()) {
+        for (SlotStatusDto dto : slotStatusList.getMatchBoards()) {
             if (dto.getStartTime().equals(slotTimes.get(0))) {
                 Assertions.assertThat(dto.getStatus()).isEqualTo(SlotStatus.MYTABLE.getCode());
             }
@@ -227,9 +230,9 @@ class MatchRedisServiceTest {
         }
         matchRedisService.makeMatch(users.get(1).getId(), Option.NORMAL, slotTimes.get(3));
         matchRedisService.makeMatch(users.get(2).getId(), Option.NORMAL, slotTimes.get(3));
-        MatchStatusResponseListDto slotStatusList = matchRedisService.getAllMatchStatus(users.get(0).getId(),
+        SlotStatusResponseListDto slotStatusList = matchRedisService.getAllMatchStatus(users.get(0).getId(),
                 Option.NORMAL);
-        for (MatchStatusDto dto : slotStatusList.getMatchBoards()) {
+        for (SlotStatusDto dto : slotStatusList.getMatchBoards()) {
             if (dto.getStartTime().equals(slotTimes.get(0))) {
                 Assertions.assertThat(dto.getStatus()).isEqualTo(SlotStatus.MYTABLE.getCode());
             }
@@ -244,5 +247,41 @@ class MatchRedisServiceTest {
             }
         }
 
+    }
+    @DisplayName("current Match 조회 : user가 등록한 슬롯이 매칭되었을 때")
+    @Test
+    void readCurrentMatchAfterMakingGameEntity() {
+        //게임생성
+        matchRedisService.makeMatch(users.get(1).getId(), Option.NORMAL, slotTimes.get(3));
+        matchRedisService.makeMatch(users.get(2).getId(), Option.NORMAL, slotTimes.get(3));
+        UserDto userDto = UserDto.from(users.get(1));
+        MatchStatusResponseListDto currentMatch = matchRedisService.getCurrentMatch(userDto);
+        //user의 current match 확인
+        List<MatchStatusDto> match = currentMatch.getMatch();
+        Assertions.assertThat(match.size()).isEqualTo(1);
+        Assertions.assertThat(match.get(0).getMyTeam().get(0)).isEqualTo(users.get(1).getIntraId());
+        Assertions.assertThat(match.get(0).getEnemyTeam().get(0)).isEqualTo(users.get(2).getIntraId());
+        Assertions.assertThat(match.get(0).getStartTime()).isEqualTo(slotTimes.get(3));
+        Assertions.assertThat(match.get(0).getIsMatched()).isEqualTo(true);
+    }
+
+    @DisplayName("current Match 조회 : user가 등록한 슬롯이 매칭되지 않았을 때")
+    @Test
+    void readCurrentMatchBeforeMakingGameEntity() {
+        //유저 슬롯 4개 등록 시도
+        for (int i = 0; i < 4; i++) {
+            matchRedisService.makeMatch(users.get(1).getId(), Option.NORMAL, slotTimes.get(i));
+        }
+        UserDto userDto = UserDto.from(users.get(1));
+        MatchStatusResponseListDto currentMatch = matchRedisService.getCurrentMatch(userDto);
+        List<MatchStatusDto> match = currentMatch.getMatch();
+        //user current match 확인
+        Assertions.assertThat(match.size()).isEqualTo(3);
+        for (int i = 0; i < 3; i++) {
+            Assertions.assertThat(match.get(i).getMyTeam().size()).isEqualTo(0);
+            Assertions.assertThat(match.get(i).getEnemyTeam().size()).isEqualTo(0);
+            Assertions.assertThat(match.get(i).getStartTime()).isEqualTo(slotTimes.get(i));
+            Assertions.assertThat(match.get(i).getIsMatched()).isEqualTo(false);
+        }
     }
 }
