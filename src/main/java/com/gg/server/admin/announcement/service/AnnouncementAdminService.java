@@ -4,6 +4,7 @@ import com.gg.server.admin.announcement.data.AnnouncementAdminRepository;
 import com.gg.server.admin.announcement.dto.AnnouncementAdminAddDto;
 import com.gg.server.admin.announcement.dto.AnnouncementAdminListResponseDto;
 import com.gg.server.admin.announcement.dto.AnnouncementAdminResponseDto;
+import com.gg.server.admin.announcement.dto.AnnouncementAdminUpdateDto;
 import com.gg.server.domain.announcement.Announcement;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
@@ -40,6 +43,17 @@ public class AnnouncementAdminService {
         announcementAdminRepository.save(announcementAdmin);
 
         return new ResponseEntity(HttpStatus.CREATED);
+    }
+
+    @Transactional
+    public ResponseEntity modifyAnnouncementIsDel(AnnouncementAdminUpdateDto updateDto) {
+        if (findAnnouncementExist() == false)
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+
+        Announcement announcement = announcementAdminRepository.findFirstByOrderByIdDesc();
+        announcement.update(updateDto.getDeleterIntraId(), LocalDateTime.now());
+
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     private Boolean findAnnouncementExist() {

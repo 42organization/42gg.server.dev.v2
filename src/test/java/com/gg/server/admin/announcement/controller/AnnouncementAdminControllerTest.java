@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.announcement.data.AnnouncementAdminRepository;
 import com.gg.server.admin.announcement.dto.AnnouncementAdminAddDto;
 import com.gg.server.admin.announcement.dto.AnnouncementAdminListResponseDto;
+import com.gg.server.admin.announcement.dto.AnnouncementAdminUpdateDto;
 import com.gg.server.admin.season.dto.SeasonCreateRequestDto;
 import com.gg.server.admin.slot.dto.SlotAdminDto;
 import com.gg.server.domain.announcement.Announcement;
@@ -127,6 +128,40 @@ class AnnouncementAdminControllerTest {
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString();
 
+    }
+
+    @Test
+    @DisplayName("[Put]/pingpong/admin/announcement")
+    void putAnnouncement() throws Exception {
+        String accessToken = testDataUtils.getLoginAccessToken();
+        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+
+        //공지사항 1개 정책 때문에 기존 공지사항 지울 것
+//        Announcement delDto = announcementAdminRepository.findFirstByOrderByIdDesc();
+//        announcementAdminRepository.delete(delDto);
+        //공지사항 없으면 만들어 주는 과정 넣어 줄것
+
+        AnnouncementAdminUpdateDto updateDto = AnnouncementAdminUpdateDto.builder()
+                .deleterIntraId("deleterTestId")
+                .build();
+
+        String content = objectMapper.writeValueAsString(updateDto);
+        String url = "/pingpong/admin/announcement";
+
+        String contentAsString = mockMvc.perform(put(url)
+                .content(content)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isNoContent())
+                .andReturn().getResponse().getContentAsString();
+
+        Announcement result = announcementAdminRepository.findFirstByOrderByIdDesc();
+
+        assertThat(result.getDeleterIntraId()).isEqualTo(updateDto.getDeleterIntraId());
+        assertThat(result.getDeletedAt()).isNotNull();
+        System.out.println(result.getId());
+        System.out.println(result.getDeleterIntraId());
+        System.out.println(result.getDeletedAt());
     }
 
 }
