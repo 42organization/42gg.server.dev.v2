@@ -6,6 +6,8 @@ import com.gg.server.admin.announcement.dto.AnnouncementAdminListResponseDto;
 import com.gg.server.admin.announcement.dto.AnnouncementAdminResponseDto;
 import com.gg.server.admin.announcement.dto.AnnouncementAdminUpdateDto;
 import com.gg.server.domain.announcement.Announcement;
+import com.gg.server.global.exception.ErrorCode;
+import com.gg.server.global.exception.custom.AdminException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -37,7 +39,7 @@ public class AnnouncementAdminService {
     @Transactional
     public ResponseEntity addAnnouncement(AnnouncementAdminAddDto addDto){
         if (findAnnouncementExist() == true)
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            throw new AdminException("유효 공지가 있습니다.", ErrorCode.BAD_REQUEST);
 
         Announcement announcementAdmin = Announcement.builder()
                 .content(addDto.getContent())
@@ -51,7 +53,7 @@ public class AnnouncementAdminService {
     @Transactional
     public ResponseEntity modifyAnnouncementIsDel(AnnouncementAdminUpdateDto updateDto) {
         if (findAnnouncementExist() == false)
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            throw new AdminException("유효 공지가 없습니다.", ErrorCode.BAD_REQUEST);
 
         Announcement announcement = announcementAdminRepository.findFirstByOrderByIdDesc();
         announcement.update(updateDto.getDeleterIntraId(), LocalDateTime.now());
