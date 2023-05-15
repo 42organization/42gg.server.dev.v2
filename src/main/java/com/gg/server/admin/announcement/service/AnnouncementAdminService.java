@@ -37,7 +37,7 @@ public class AnnouncementAdminService {
     }
 
     @Transactional
-    public ResponseEntity addAnnouncement(AnnouncementAdminAddDto addDto){
+    public void addAnnouncement(AnnouncementAdminAddDto addDto){
         if (findAnnouncementExist() == true)
             throw new AdminException("유효 공지가 있습니다.", ErrorCode.BAD_REQUEST);
 
@@ -46,19 +46,15 @@ public class AnnouncementAdminService {
                 .creatorIntraId(addDto.getCreatorIntraId())
                 .build();
         announcementAdminRepository.save(announcementAdmin);
-
-        return new ResponseEntity(HttpStatus.CREATED);
     }
 
     @Transactional
-    public ResponseEntity modifyAnnouncementIsDel(AnnouncementAdminUpdateDto updateDto) {
+    public void modifyAnnouncementIsDel(AnnouncementAdminUpdateDto updateDto) {
         if (findAnnouncementExist() == false)
             throw new AdminException("유효 공지가 없습니다.", ErrorCode.BAD_REQUEST);
 
         Announcement announcement = announcementAdminRepository.findFirstByOrderByIdDesc();
         announcement.update(updateDto.getDeleterIntraId(), LocalDateTime.now());
-
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     private Boolean findAnnouncementExist() {

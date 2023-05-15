@@ -6,10 +6,10 @@ import com.gg.server.admin.announcement.dto.AnnouncementAdminUpdateDto;
 import com.gg.server.admin.announcement.service.AnnouncementAdminService;
 import lombok.AllArgsConstructor;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -34,13 +34,15 @@ public class AnnouncementAdminController {
 
     @PostMapping("/announcement")
     public ResponseEntity addaAnnouncement(@Valid @RequestBody AnnouncementAdminAddDto addDto){
+        announcementAdminService.addAnnouncement(addDto);
 
-        return announcementAdminService.addAnnouncement(addDto);
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 
     @PutMapping("/announcement")
     public ResponseEntity announcementModify(@Valid @RequestBody AnnouncementAdminUpdateDto updateDto) {
+        announcementAdminService.modifyAnnouncementIsDel(updateDto);
 
-        return announcementAdminService.modifyAnnouncementIsDel(updateDto);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 }
