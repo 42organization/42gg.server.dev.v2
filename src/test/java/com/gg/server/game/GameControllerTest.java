@@ -33,6 +33,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -126,7 +129,8 @@ public class GameControllerTest {
     public void 일반게임목록조회() throws Exception {
         //given
         String url = "/pingpong/games/normal?pageNum=1&pageSize=10";
-        GameListResDto expect = gameService.normalGameList(0, 10, null);
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startTime"));
+        GameListResDto expect = gameService.normalGameList(pageable, null);
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())
@@ -146,7 +150,8 @@ public class GameControllerTest {
     public void user일반게임목록조회() throws Exception {
         //given
         String url = "/pingpong/games/normal?pageNum=1&pageSize=10&nickname=test1";
-        GameListResDto expect = gameService.normalGameList(0, 10, "test1");
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startTime"));
+        GameListResDto expect = gameService.normalGameList(pageable, "test1");
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())
@@ -166,7 +171,8 @@ public class GameControllerTest {
     public void 랭크게임목록조회() throws Exception {
         //given
         String url = "/pingpong/games/rank?pageNum=1&pageSize=10&seasonId=" + season.getId();
-        GameListResDto expect = gameService.rankGameList(0, 10, season.getId(), null);
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startTime"));
+        GameListResDto expect = gameService.rankGameList(pageable, season.getId(), null);
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())
@@ -186,7 +192,8 @@ public class GameControllerTest {
     public void user랭크게임목록조회() throws Exception {
         //given
         String url = "/pingpong/games/rank?pageNum=1&pageSize=10&seasonId=" + season.getId() + "&nickname=" + "test1";
-        GameListResDto expect = gameService.rankGameList(0, 10, season.getId(), "test1");
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startTime"));
+        GameListResDto expect = gameService.rankGameList(pageable, season.getId(), "test1");
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())
@@ -216,7 +223,8 @@ public class GameControllerTest {
     public void 전체게임목록조회() throws Exception {
         //given
         String url = "/pingpong/games?pageNum=1&pageSize=10";
-        GameListResDto expect = gameService.allGameList(0, 10, null, null);
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startTime"));
+        GameListResDto expect = gameService.allGameList(pageable, null, null);
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())
@@ -236,7 +244,8 @@ public class GameControllerTest {
     public void user전체게임목록조회() throws Exception {
         //given
         String url = "/pingpong/games?pageNum=1&pageSize=10&nickname=test1";
-        GameListResDto expect = gameService.allGameList(0, 10, null, "test1");
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startTime"));
+        GameListResDto expect = gameService.allGameList(pageable, null, "test1");
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())

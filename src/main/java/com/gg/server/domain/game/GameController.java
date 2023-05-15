@@ -9,6 +9,9 @@ import com.gg.server.global.exception.custom.InvalidParameterException;
 import com.gg.server.global.utils.argumentresolver.Login;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,17 +29,20 @@ public class GameController {
         if (gameReq.getStatus() != null && !gameReq.getStatus().name().equals("LIVE")) {
             throw new InvalidParameterException("status not valid", ErrorCode.VALID_FAILED);
         }
-        return gameService.allGameList(gameReq.getPageNum() - 1, gameReq.getPageSize(), gameReq.getStatus(), gameReq.getNickname());
+        Pageable pageable = PageRequest.of(gameReq.getPageNum() - 1, gameReq.getPageSize(), Sort.by(Sort.Direction.DESC, "startTime"));
+        return gameService.allGameList(pageable, gameReq.getStatus(), gameReq.getNickname());
     }
 
     @GetMapping("/normal")
     GameListResDto normalGameList(@ModelAttribute @Valid NormalGameListReqDto gameReq) {
-        return gameService.normalGameList(gameReq.getPageNum() - 1, gameReq.getPageSize(), gameReq.getNickname());
+        Pageable pageable = PageRequest.of(gameReq.getPageNum() - 1, gameReq.getPageSize(), Sort.by(Sort.Direction.DESC, "startTime"));
+        return gameService.normalGameList(pageable, gameReq.getNickname());
     }
 
     @GetMapping("/rank")
     GameListResDto rankGameList(@ModelAttribute @Valid RankGameListReqDto gameReq) {
-        return gameService.rankGameList(gameReq.getPageNum() - 1, gameReq.getPageSize(), gameReq.getSeasonId(), gameReq.getNickname());
+        Pageable pageable = PageRequest.of(gameReq.getPageNum() - 1, gameReq.getPageSize(), Sort.by(Sort.Direction.DESC, "startTime"));
+        return gameService.rankGameList(pageable, gameReq.getSeasonId(), gameReq.getNickname());
     }
 
     @GetMapping("/{gameId}")
