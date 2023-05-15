@@ -2,9 +2,7 @@ package com.gg.server.domain.game;
 
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
-import com.gg.server.domain.game.dto.GameListResDto;
-import com.gg.server.domain.game.dto.GameTeamUser;
-import com.gg.server.domain.game.dto.GameResultResDto;
+import com.gg.server.domain.game.dto.*;
 import com.gg.server.domain.game.dto.req.NormalResultReqDto;
 import com.gg.server.domain.game.dto.req.RankResultReqDto;
 import com.gg.server.domain.rank.data.Rank;
@@ -76,6 +74,12 @@ public class GameService {
         } else {
             return allGameListUser(pageNum, pageSize, intra, status);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public GameTeamInfo getUserGameInfo(Long gameId, Long userId) {
+        List<GameTeamUserInfo> infos = gameRepository.findTeamGameUser(gameId);
+        return new GameTeamInfo(infos, userId);
     }
     public GameListResDto allGameListUser(int pageNum, int pageSize, String intra, StatusType status) {
         Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Direction.DESC, "startTime"));
@@ -157,5 +161,10 @@ public class GameService {
             }
             return true;
         }
+    }
+
+    public Game findByGameId(Long gameId) {
+        return gameRepository.findById(gameId)
+                .orElseThrow(() -> new NotExistException("존재하지 않는 게임 id 입니다.", ErrorCode.NOT_FOUND));
     }
 }

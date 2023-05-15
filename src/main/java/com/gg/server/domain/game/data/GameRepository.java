@@ -1,5 +1,6 @@
 package com.gg.server.domain.game.data;
 
+import com.gg.server.domain.game.dto.GameTeamUserInfo;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.season.data.Season;
@@ -24,6 +25,10 @@ public interface GameRepository extends JpaRepository<Game, Long>, GameRepositor
             "from v_teamuser t1, v_teamuser t2 " +
             "where t1.gameId IN (:games) and t1.teamId <t2.teamId and t1.gameId=t2.gameId order by t1.startTime desc;", nativeQuery = true)
     List<GameTeamUser> findTeamsByGameIsIn(@Param("games") List<Long> games);
+
+    @Query(value = "SELECT teamId, gameId, score, startTime, status, mode, userId, intraId, image, total_exp exp" +
+            " FROM v_teamuser where gameId = :gameId", nativeQuery = true)
+    List<GameTeamUserInfo> findTeamGameUser(Long gameId);
     Optional<Game> findByStartTime(LocalDateTime startTime);
     @Query(value = "select g from Game g where g.startTime > :startTime and g.startTime < :endTime")
     List<Game> findAllBetween(@Param("startTime")LocalDateTime startTime, @Param("endTime") LocalDateTime endTime);
