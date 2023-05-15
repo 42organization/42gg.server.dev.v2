@@ -9,13 +9,10 @@ import com.gg.server.domain.announcement.Announcement;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.AdminException;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,8 +24,7 @@ public class AnnouncementAdminService {
     private final AnnouncementAdminRepository announcementAdminRepository;
 
     @Transactional(readOnly = true)
-    public AnnouncementAdminListResponseDto findAllAnnouncement(int page, int size) {
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("createdAt").descending());
+    public AnnouncementAdminListResponseDto findAllAnnouncement(Pageable pageable) {
         Page<Announcement> allAnnouncements = announcementAdminRepository.findAll(pageable);
         Page<AnnouncementAdminResponseDto> responseDtos = allAnnouncements.map(AnnouncementAdminResponseDto::new);
 

@@ -28,8 +28,10 @@ public class AnnouncementAdminController {
     public ResponseEntity<AnnouncementAdminListResponseDto> getAnnouncementList(
             @RequestParam(defaultValue = "1") @Min(1) int page, @RequestParam(defaultValue = "5") @Min(1) int size) {
 
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("createdAt").descending());
+
         return ResponseEntity.ok()
-                .body(announcementAdminService.findAllAnnouncement(page, size));
+                .body(announcementAdminService.findAllAnnouncement(pageable));
     }
 
     @PostMapping("/announcement")
