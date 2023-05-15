@@ -1,5 +1,6 @@
 package com.gg.server.domain.game;
 
+import com.gg.server.domain.game.dto.GameTeamInfo;
 import com.gg.server.domain.game.dto.req.*;
 import com.gg.server.domain.game.dto.GameListResDto;
 import com.gg.server.domain.user.dto.UserDto;
@@ -36,6 +37,11 @@ public class GameController {
     @GetMapping("/rank")
     GameListResDto rankGameList(@ModelAttribute @Valid RankGameListReqDto gameReq) {
         return gameService.rankGameList(gameReq.getPageNum() - 1, gameReq.getPageSize(), gameReq.getSeasonId(), gameReq.getNickname());
+    }
+
+    @GetMapping("/{gameId}")
+    GameTeamInfo getGameInfo(@PathVariable Long gameId, @Parameter(hidden = true) @Login UserDto userDto) {
+        return gameService.getUserGameInfo(gameId, userDto.getId());
     }
 
     @PostMapping("/rank")
