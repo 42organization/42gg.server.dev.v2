@@ -1,7 +1,8 @@
 package com.gg.server.game;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gg.server.domain.game.GameService;
+import com.gg.server.domain.game.service.GameFindService;
+import com.gg.server.domain.game.service.GameService;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.dto.GameListResDto;
@@ -65,6 +66,8 @@ public class GameControllerTest {
     TestDataUtils testDataUtils;
     @Autowired
     GameService gameService;
+    @Autowired
+    GameFindService gameFindService;
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -130,7 +133,7 @@ public class GameControllerTest {
         //given
         String url = "/pingpong/games/normal?pageNum=1&pageSize=10";
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startTime"));
-        GameListResDto expect = gameService.normalGameList(pageable, null);
+        GameListResDto expect = gameFindService.getNormalGameList(pageable);
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())
@@ -151,7 +154,7 @@ public class GameControllerTest {
         //given
         String url = "/pingpong/games/normal?pageNum=1&pageSize=10&nickname=test1";
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startTime"));
-        GameListResDto expect = gameService.normalGameList(pageable, "test1");
+        GameListResDto expect = gameFindService.normalGameListByIntra(pageable, "test1");
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())
@@ -172,7 +175,7 @@ public class GameControllerTest {
         //given
         String url = "/pingpong/games/rank?pageNum=1&pageSize=10&seasonId=" + season.getId();
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startTime"));
-        GameListResDto expect = gameService.rankGameList(pageable, season.getId(), null);
+        GameListResDto expect = gameFindService.rankGameList(pageable, season.getId());
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())
@@ -193,7 +196,7 @@ public class GameControllerTest {
         //given
         String url = "/pingpong/games/rank?pageNum=1&pageSize=10&seasonId=" + season.getId() + "&nickname=" + "test1";
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startTime"));
-        GameListResDto expect = gameService.rankGameList(pageable, season.getId(), "test1");
+        GameListResDto expect = gameFindService.rankGameListByIntra(pageable, season.getId(), "test1");
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())
@@ -224,7 +227,7 @@ public class GameControllerTest {
         //given
         String url = "/pingpong/games?pageNum=1&pageSize=10";
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startTime"));
-        GameListResDto expect = gameService.allGameList(pageable, null, null);
+        GameListResDto expect = gameFindService.allGameList(pageable, null);
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())
@@ -245,7 +248,7 @@ public class GameControllerTest {
         //given
         String url = "/pingpong/games?pageNum=1&pageSize=10&nickname=test1";
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startTime"));
-        GameListResDto expect = gameService.allGameList(pageable, null, "test1");
+        GameListResDto expect = gameFindService.allGameListUser(pageable, "test1", null);
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())

@@ -1,4 +1,4 @@
-package com.gg.server.domain.game;
+package com.gg.server.domain.game.service;
 
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
@@ -6,7 +6,6 @@ import com.gg.server.domain.game.dto.*;
 import com.gg.server.domain.game.dto.req.NormalResultReqDto;
 import com.gg.server.domain.game.dto.req.RankResultReqDto;
 import com.gg.server.domain.rank.redis.RankRedisService;
-import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.team.data.TeamUserRepository;
@@ -16,14 +15,11 @@ import com.gg.server.global.exception.custom.NotExistException;
 import com.gg.server.global.utils.ExpLevelCalculator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,94 +28,48 @@ public class GameService {
     private final GameRepository gameRepository;
     private final TeamUserRepository teamUserRepository;
     private final RankRedisService rankRedisService;
-    @Transactional(readOnly = true)
-    public GameListResDto normalGameList(Pageable pageable, String intra) {
-        if (intra == null) {
-            Slice<Game> games = gameRepository.findAllByModeAndStatus(Mode.NORMAL, StatusType.END, pageable);
-            return new GameListResDto(getGameResultList(games.getContent().stream().map(Game::getId).collect(Collectors.toList())), games.isLast());
-        } else {
-            Slice<Long> games = gameRepository.findGamesByUserAndMode(intra, Mode.NORMAL.name(), StatusType.END.name(), pageable);
-            return new GameListResDto(getGameResultList(games.getContent()), games.isLast());
-        }
-    }
-
-    @Transactional(readOnly = true)
-    public GameListResDto rankGameList(Pageable pageable, Long seasonId, String intra) {
-        if (intra == null) {
-            Slice<Game> games = gameRepository.findAllByModeAndStatusAndSeasonId(Mode.RANK, StatusType.END, seasonId, pageable);
-            return new GameListResDto(getGameResultList(games.getContent().stream().map(Game::getId).collect(Collectors.toList())), games.isLast());
-        } else {
-            Slice<Long> games = gameRepository.findGamesByUserAndModeAndSeason(intra, Mode.RANK.name(), seasonId, StatusType.END.name(), pageable);
-            return new GameListResDto(getGameResultList(games.getContent()), games.isLast());
-        }
-    }
-
-    @Transactional(readOnly = true)
-    public GameListResDto allGameList(Pageable pageable, StatusType status, String intra) {
-        if (intra == null) {
-            Slice<Game> games;
-            if (status != null) {
-                games = gameRepository.findAllByAndStatusIn(Arrays.asList(StatusType.END, StatusType.LIVE), pageable);
-            } else {
-                games = gameRepository.findAllByAndStatus(StatusType.END, pageable);
-            }
-            return new GameListResDto(getGameResultList(games.getContent().stream().map(Game::getId).collect(Collectors.toList())), games.isLast());
-        } else {
-            return allGameListUser(pageable, intra, status);
-        }
-    }
 
     @Transactional(readOnly = true)
     public GameTeamInfo getUserGameInfo(Long gameId, Long userId) {
         List<GameTeamUserInfo> infos = gameRepository.findTeamGameUser(gameId);
         return new GameTeamInfo(infos, userId);
     }
-    public GameListResDto allGameListUser(Pageable pageable, String intra, StatusType status) {
-        List<String> statusTypes = Arrays.asList(StatusType.END.name());
-        if (status == StatusType.LIVE)
-            statusTypes.add(StatusType.LIVE.name());
-        Slice<Long> games = gameRepository.findGamesByUser(intra, statusTypes, pageable);
-        return new GameListResDto(getGameResultList(games.getContent()), games.isLast());
-    }
-    private List<GameResultResDto> getGameResultList(List<Long> games) {
-        List<GameTeamUser> teamViews = gameRepository.findTeamsByGameIsIn(games);
-        return teamViews.stream().map(GameResultResDto::new).collect(Collectors.toList());
-    }
 
     @Transactional
     public synchronized Boolean createRankResult(RankResultReqDto scoreDto, Long userId) {
         log.info("create Rank Result");
-        // rank 점수 입력받기
-        if (scoreDto.getMyTeamScore() + scoreDto.getEnemyTeamScore() > 3 || scoreDto.getMyTeamScore() == scoreDto.getEnemyTeamScore()) {
-            throw new InvalidParameterException("점수를 잘못 입력했습니다.", ErrorCode.VALID_FAILED);
-        }
         // 현재 게임 id
         Game game = findByGameId(scoreDto.getGameId());
         if (game.getStatus() != StatusType.WAIT) {
             return false;
         }
-        log.info("update score");
         return updateScore(game, scoreDto, game.getSeason().getId(), userId);
     }
 
+    @Transactional
     public synchronized Boolean normalExpResult(NormalResultReqDto normalResultReqDto) {
         Game game = findByGameId(normalResultReqDto.getGameId());
         List<TeamUser> teamUsers = teamUserRepository.findAllByGameId(game.getId());
         if (teamUsers.size() == 2 && game.getStatus() == StatusType.LIVE) {
-            LocalDateTime now = LocalDateTime.now();
-            int gamePerDay = teamUserRepository.findByDateAndUser(LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), 0, 0),
-                    teamUsers.get(0).getUser().getId());
-            teamUsers.get(0).getUser().addExp(ExpLevelCalculator.getExpPerGame() + (ExpLevelCalculator.getExpBonus() * gamePerDay));
-            gamePerDay = teamUserRepository.findByDateAndUser(LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), 0, 0),
-                    teamUsers.get(1).getUser().getId());
-            teamUsers.get(1).getUser().addExp(ExpLevelCalculator.getExpPerGame() + (ExpLevelCalculator.getExpBonus() * gamePerDay));
-            game.updateStatus();
+            expUpdate(game, teamUsers);
             return true;
         } else if (teamUsers.size() != 2) {
             throw new InvalidParameterException("team 이 잘못되었습니다.", ErrorCode.VALID_FAILED);
         }
         return false;
     }
+
+    private void expUpdate(Game game, List<TeamUser> teamUsers) {
+        LocalDateTime now = LocalDateTime.now();
+        int gamePerDay = teamUserRepository.findByDateAndUser(LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), 0, 0),
+                teamUsers.get(0).getUser().getId());
+        teamUsers.get(0).getUser().addExp(ExpLevelCalculator.getExpPerGame() + (ExpLevelCalculator.getExpBonus() * gamePerDay));
+        gamePerDay = teamUserRepository.findByDateAndUser(LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), 0, 0),
+                teamUsers.get(1).getUser().getId());
+        teamUsers.get(1).getUser().addExp(ExpLevelCalculator.getExpPerGame() + (ExpLevelCalculator.getExpBonus() * gamePerDay));
+        game.updateStatus();
+    }
+
     private void setTeamScore(TeamUser tu, int teamScore, Boolean isWin) {
         tu.getTeam().inputScore(teamScore);
         tu.getTeam().setWin(isWin);
@@ -135,6 +85,7 @@ public class GameService {
         return null;
     }
     private Boolean updateScore(Game game, RankResultReqDto scoreDto, Long seasonId, Long userId) {
+        log.info("update score");
         List<TeamUser> teams = teamUserRepository.findAllByGameId(game.getId());
         TeamUser myTeam = findTeamId(scoreDto.getMyTeamId(), teams);
         TeamUser enemyTeam = findTeamId(scoreDto.getEnemyTeamId(), teams);

@@ -3,6 +3,8 @@ package com.gg.server.domain.game;
 import com.gg.server.domain.game.dto.GameTeamInfo;
 import com.gg.server.domain.game.dto.req.*;
 import com.gg.server.domain.game.dto.GameListResDto;
+import com.gg.server.domain.game.service.GameFindService;
+import com.gg.server.domain.game.service.GameService;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.InvalidParameterException;
@@ -23,6 +25,7 @@ import javax.validation.Valid;
 @RequestMapping("/pingpong/games")
 public class GameController {
     private final GameService gameService;
+    private final GameFindService gameFindService;
 
     @GetMapping
     GameListResDto allGameList(@ModelAttribute @Valid GameListReqDto gameReq) {
@@ -30,19 +33,28 @@ public class GameController {
             throw new InvalidParameterException("status not valid", ErrorCode.VALID_FAILED);
         }
         Pageable pageable = PageRequest.of(gameReq.getPageNum() - 1, gameReq.getPageSize(), Sort.by(Sort.Direction.DESC, "startTime"));
-        return gameService.allGameList(pageable, gameReq.getStatus(), gameReq.getNickname());
+        if (gameReq.getNickname() != null) {
+            return gameFindService.allGameListUser(pageable, gameReq.getNickname(), gameReq.getStatus());
+        }
+        return gameFindService.allGameList(pageable, gameReq.getStatus());
     }
 
     @GetMapping("/normal")
     GameListResDto normalGameList(@ModelAttribute @Valid NormalGameListReqDto gameReq) {
         Pageable pageable = PageRequest.of(gameReq.getPageNum() - 1, gameReq.getPageSize(), Sort.by(Sort.Direction.DESC, "startTime"));
-        return gameService.normalGameList(pageable, gameReq.getNickname());
+        if (gameReq.getNickname() == null) {
+            return gameFindService.getNormalGameList(pageable);
+        }
+        return gameFindService.normalGameListByIntra(pageable, gameReq.getNickname());
     }
 
     @GetMapping("/rank")
     GameListResDto rankGameList(@ModelAttribute @Valid RankGameListReqDto gameReq) {
         Pageable pageable = PageRequest.of(gameReq.getPageNum() - 1, gameReq.getPageSize(), Sort.by(Sort.Direction.DESC, "startTime"));
-        return gameService.rankGameList(pageable, gameReq.getSeasonId(), gameReq.getNickname());
+        if (gameReq.getNickname() == null) {
+            return gameFindService.rankGameList(pageable, gameReq.getSeasonId());
+        }
+        return gameFindService.rankGameListByIntra(pageable, gameReq.getSeasonId(), gameReq.getNickname());
     }
 
     @GetMapping("/{gameId}")
@@ -52,6 +64,9 @@ public class GameController {
 
     @PostMapping("/rank")
     ResponseEntity createRankResult(@Valid @RequestBody RankResultReqDto reqDto, @Parameter(hidden = true) @Login UserDto user) {
+        if (reqDto.getMyTeamScore() + reqDto.getEnemyTeamScore() > 3 || reqDto.getMyTeamScore() == reqDto.getEnemyTeamScore()) {
+            throw new InvalidParameterException("점수를 잘못 입력했습니다.", ErrorCode.VALID_FAILED);
+        }
         if (!gameService.createRankResult(reqDto, user.getId())) {
             return new ResponseEntity(HttpStatus.CONFLICT);
         }
