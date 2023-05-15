@@ -1,21 +1,20 @@
 package com.gg.server.admin.announcement.controller;
 
+import com.gg.server.admin.announcement.dto.AnnouncementAdminAddDto;
 import com.gg.server.admin.announcement.dto.AnnouncementAdminListResponseDto;
+import com.gg.server.admin.announcement.dto.AnnouncementAdminUpdateDto;
 import com.gg.server.admin.announcement.service.AnnouncementAdminService;
-import com.gg.server.global.exception.ErrorCode;
-import com.gg.server.global.exception.custom.AdminException;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
 @RestController
@@ -28,10 +27,20 @@ public class AnnouncementAdminController {
     @GetMapping("/announcement")
     public ResponseEntity<AnnouncementAdminListResponseDto> getAnnouncementList(
             @RequestParam(defaultValue = "1") @Min(1) int page, @RequestParam(defaultValue = "5") @Min(1) int size) {
-        Pageable pageable = PageRequest.of(page - 1, size,
-                Sort.by("createdAt").descending());
 
         return ResponseEntity.ok()
-                .body(announcementAdminService.findAllAnnouncement(pageable));
+                .body(announcementAdminService.findAllAnnouncement(page, size));
+    }
+
+    @PostMapping("/announcement")
+    public ResponseEntity addaAnnouncement(@Valid @RequestBody AnnouncementAdminAddDto addDto){
+
+        return announcementAdminService.addAnnouncement(addDto);
+    }
+
+    @PutMapping("/announcement")
+    public ResponseEntity announcementModify(@Valid @RequestBody AnnouncementAdminUpdateDto updateDto) {
+
+        return announcementAdminService.modifyAnnouncementIsDel(updateDto);
     }
 }
