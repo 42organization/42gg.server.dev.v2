@@ -20,8 +20,7 @@ public class NotiAdminService {
     private final UserAdminRepository userAdminRepository;
 
     @Transactional
-    public void sendAnnounceNotiToUser(SendNotiAdminRequestDto sendNotiAdminRequestDto) {
-        String intraId = sendNotiAdminRequestDto.getIntraId();
+    public void sendAnnounceNotiToUser(SendNotiAdminRequestDto sendNotiAdminRequestDto, String intraId) {
         String message = sendNotiAdminRequestDto.getMessage();
 
         User user = userAdminRepository.findByIntraId(intraId)

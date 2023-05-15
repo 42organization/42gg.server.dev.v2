@@ -15,9 +15,6 @@ import java.util.Objects;
 public class SendNotiAdminRequestDto {
 
     @NotNull
-    @Size(max=20)
-    private String intraId;
-    @NotNull
     @Size(max=255)
     private String message;
 
@@ -30,7 +27,6 @@ public class SendNotiAdminRequestDto {
             return false;
         }
         SendNotiAdminRequestDto other = (SendNotiAdminRequestDto) o;
-        return Objects.equals(intraId, other.intraId)
-                && Objects.equals(message, other.message);
+        return Objects.equals(message, other.message);
     }
 }

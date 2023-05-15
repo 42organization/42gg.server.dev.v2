@@ -60,19 +60,20 @@ class NotiAdminControllerTest {
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
         User user = userRepository.findById(userId).get();
         String url = "/pingpong/admin/notifications/" + user.getIntraId();
+        String wrongUrl = "/pingpong/admin/notifications/" + UUID.randomUUID().toString().substring(0, 30);
         String expectedMessage = "test 알림 message ";
 
         //when
             //201 성공
         mockMvc.perform(post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new SendNotiAdminRequestDto(user.getIntraId(), expectedMessage))))
+                        .content(objectMapper.writeValueAsString(new SendNotiAdminRequestDto(expectedMessage))))
                 .andExpect(status().isCreated());
 
             //400 존재하지 않는 intraId
-        mockMvc.perform(post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+        mockMvc.perform(post(wrongUrl).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new SendNotiAdminRequestDto(UUID.randomUUID().toString().substring(0, 30), expectedMessage))))
+                        .content(objectMapper.writeValueAsString(new SendNotiAdminRequestDto(expectedMessage))))
                 .andExpect(status().isBadRequest());
 
         //then

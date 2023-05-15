@@ -16,10 +16,7 @@ public class NotiAdminController {
     private final NotiAdminService notiAdminService;
     @PostMapping("/{intraId}")
     public ResponseEntity sendNotiToUser(@PathVariable String intraId, @RequestBody SendNotiAdminRequestDto sendNotiAdminRequestDto) {
-        if (!intraId.equals(sendNotiAdminRequestDto.getIntraId()))
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-
-        notiAdminService.sendAnnounceNotiToUser(sendNotiAdminRequestDto);
+        notiAdminService.sendAnnounceNotiToUser(sendNotiAdminRequestDto, intraId);
         return new ResponseEntity(HttpStatus.CREATED);
     }
 }
