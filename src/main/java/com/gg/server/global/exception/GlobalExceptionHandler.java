@@ -1,6 +1,7 @@
 package com.gg.server.global.exception;
 
 import com.gg.server.global.exception.custom.CustomRuntimeException;
+import com.gg.server.global.security.jwt.exception.TokenNotValidException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +9,8 @@ import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+
+import java.util.NoSuchElementException;
 
 @Slf4j
 @ControllerAdvice
@@ -49,6 +52,20 @@ public class GlobalExceptionHandler {
         log.error("handleException", ex);
         ErrorResponse response = new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERR);
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<ErrorResponse> handleNoSuchElementException(NoSuchElementException ex) {
+        log.error("handleNoSuchElementException", ex);
+        ErrorResponse response = new ErrorResponse(ErrorCode.BAD_REQUEST);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(TokenNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleTokenNotValidException(TokenNotValidException ex) {
+        log.error("handleTokenNotValidException", ex);
+        ErrorResponse response = new ErrorResponse(ErrorCode.UNAUTHORIZED);
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
 
 }
