@@ -42,21 +42,22 @@ public class SlotAdminControllerFailTest {
     @Autowired
     adminSlotManagementRepository adminSlotManagementRepository;
 
+//이거 테스트 할려면 디비 내용 모두 지워야 함
+//    @Test
+//    @DisplayName("fail[Get]/pingpong/admin/slot-management")
+//    void failGetSlotSetting() throws Exception {
+//        String accessToken = testDataUtils.getLoginAccessToken();
+//        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+//
+//        String contentAsString = mockMvc.perform(get("/pingpong/admin/slot-management").header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+//                .andExpect(status().isBadRequest())
+//                .andReturn().getResponse().getContentAsString();
+//
+//        System.out.println(contentAsString);
+//    }
+
     @Test
-    @DisplayName("fail[Get]/pingpong/admin/slot")
-    void failGetSlotSetting() throws Exception {
-        String accessToken = testDataUtils.getLoginAccessToken();
-        Long userId = tokenProvider.getUserIdFromToken(accessToken);
-
-        String contentAsString = mockMvc.perform(get("/pingpong/admin/slot").header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
-                .andExpect(status().isBadRequest())
-                .andReturn().getResponse().getContentAsString();
-
-        System.out.println(contentAsString);
-    }
-
-    @Test
-    @DisplayName("fail[Put]/pingpong/admin/slot")
+    @DisplayName("fail[Put]/pingpong/admin/slot-management")
     void failModifySlotSetting() throws Exception {
         String accessToken = testDataUtils.getLoginAccessToken();
         SlotManagement test = SlotManagement.builder()
@@ -67,7 +68,7 @@ public class SlotAdminControllerFailTest {
                 .build();
         String content = objectMapper.writeValueAsString(new SlotAdminDto(test));
 
-        String contentAsString = mockMvc.perform(put("/pingpong/admin/slot")
+        String contentAsString = mockMvc.perform(put("/pingpong/admin/slot-management")
                 .content(content)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))

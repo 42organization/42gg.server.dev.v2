@@ -55,12 +55,12 @@ class SlotAdminControllerTest {
     }
 
     @Test
-    @DisplayName("[Get]/pingpong/admin/slot")
+    @DisplayName("[Get]/pingpong/admin/slot-management")
     void getSlotSetting() throws Exception {
         String accessToken = testDataUtils.getLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
-        String contentAsString = mockMvc.perform(get("/pingpong/admin/slot").header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+        String contentAsString = mockMvc.perform(get("/pingpong/admin/slot-management").header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
         SlotAdminDto slotAdminDto = objectMapper.readValue(contentAsString, SlotAdminDto.class);
@@ -72,7 +72,7 @@ class SlotAdminControllerTest {
     }
 
     @Test
-    @DisplayName("[Put]/pingpong/admin/slot")
+    @DisplayName("[Put]/pingpong/admin/slot-management")
     void modifySlotSetting() throws Exception {
         String accessToken = testDataUtils.getLoginAccessToken();
         SlotManagement test = SlotManagement.builder()
@@ -83,31 +83,11 @@ class SlotAdminControllerTest {
                 .build();
         String content = objectMapper.writeValueAsString(new SlotAdminDto(test));
 
-        String contentAsString = mockMvc.perform(put("/pingpong/admin/slot")
+        String contentAsString = mockMvc.perform(put("/pingpong/admin/slot-management")
                 .content(content)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString();
-    }
-
-    @Test
-    @DisplayName("fail[Put]/pingpong/admin/slot")
-    void failModifySlotSetting() throws Exception {
-        String accessToken = testDataUtils.getLoginAccessToken();
-        SlotManagement test = SlotManagement.builder()
-                .pastSlotTime(4)
-                .futureSlotTime(1)
-                .openMinute(null)
-                .gameInterval(20)
-                .build();
-        String content = objectMapper.writeValueAsString(new SlotAdminDto(test));
-
-        String contentAsString = mockMvc.perform(put("/pingpong/admin/slot")
-                .content(content)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
-                .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString();
     }
 

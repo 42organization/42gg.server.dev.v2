@@ -11,12 +11,12 @@ import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/pingpong/admin/slot")
+@RequestMapping("/pingpong/admin/slot-management")
 public class SlotAdminController {
     private final SlotAdminService slotAdminService;
 
     @GetMapping
-    public SlotAdminDto getSlotSetting(HttpResponse httpResponse) {
+    public SlotAdminDto getSlotSetting() {
         SlotAdminDto responseDto = slotAdminService.getSlotSetting();
 
         return responseDto;

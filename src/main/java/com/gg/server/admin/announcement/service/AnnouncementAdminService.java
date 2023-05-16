@@ -4,10 +4,8 @@ import com.gg.server.admin.announcement.data.AnnouncementAdminRepository;
 import com.gg.server.admin.announcement.dto.AnnouncementAdminAddDto;
 import com.gg.server.admin.announcement.dto.AnnouncementAdminListResponseDto;
 import com.gg.server.admin.announcement.dto.AnnouncementAdminResponseDto;
-import com.gg.server.admin.announcement.dto.AnnouncementAdminUpdateDto;
 import com.gg.server.domain.announcement.Announcement;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -49,12 +47,12 @@ public class AnnouncementAdminService {
     }
 
     @Transactional
-    public ResponseEntity modifyAnnouncementIsDel(AnnouncementAdminUpdateDto updateDto) {
+    public ResponseEntity modifyAnnouncementIsDel(String deleterIntraId) {
         if (findAnnouncementExist() == false)
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
 
         Announcement announcement = announcementAdminRepository.findFirstByOrderByIdDesc();
-        announcement.update(updateDto.getDeleterIntraId(), LocalDateTime.now());
+        announcement.update(deleterIntraId, LocalDateTime.now());
 
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
