@@ -60,6 +60,7 @@ public class GameFindService {
         List<GameTeamUser> teamViews = gameRepository.findTeamsByGameIsIn(games);
         return teamViews.stream().map(GameResultResDto::new).collect(Collectors.toList());
     }
+    @Transactional(readOnly = true)
     public GameListResDto allGameListUser(Pageable pageable, String intra, StatusType status) {
         List<String> statusTypes = Arrays.asList(StatusType.END.name());
         if (status == StatusType.LIVE)
