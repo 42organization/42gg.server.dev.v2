@@ -6,14 +6,13 @@ import com.gg.server.admin.announcement.dto.AnnouncementAdminListResponseDto;
 import com.gg.server.admin.announcement.dto.AnnouncementAdminResponseDto;
 import com.gg.server.admin.announcement.dto.AnnouncementAdminUpdateDto;
 import com.gg.server.domain.announcement.Announcement;
+import com.gg.server.global.exception.ErrorCode;
+import com.gg.server.global.exception.custom.AdminException;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,8 +24,7 @@ public class AnnouncementAdminService {
     private final AnnouncementAdminRepository announcementAdminRepository;
 
     @Transactional(readOnly = true)
-    public AnnouncementAdminListResponseDto findAllAnnouncement(int page, int size) {
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("createdAt").descending());
+    public AnnouncementAdminListResponseDto findAllAnnouncement(Pageable pageable) {
         Page<Announcement> allAnnouncements = announcementAdminRepository.findAll(pageable);
         Page<AnnouncementAdminResponseDto> responseDtos = allAnnouncements.map(AnnouncementAdminResponseDto::new);
 
@@ -35,28 +33,24 @@ public class AnnouncementAdminService {
     }
 
     @Transactional
-    public ResponseEntity addAnnouncement(AnnouncementAdminAddDto addDto){
+    public void addAnnouncement(AnnouncementAdminAddDto addDto){
         if (findAnnouncementExist() == true)
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            throw new AdminException("유효 공지가 있습니다.", ErrorCode.BAD_REQUEST);
 
         Announcement announcementAdmin = Announcement.builder()
                 .content(addDto.getContent())
                 .creatorIntraId(addDto.getCreatorIntraId())
                 .build();
         announcementAdminRepository.save(announcementAdmin);
-
-        return new ResponseEntity(HttpStatus.CREATED);
     }
 
     @Transactional
-    public ResponseEntity modifyAnnouncementIsDel(AnnouncementAdminUpdateDto updateDto) {
+    public void modifyAnnouncementIsDel(AnnouncementAdminUpdateDto updateDto) {
         if (findAnnouncementExist() == false)
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            throw new AdminException("유효 공지가 없습니다.", ErrorCode.BAD_REQUEST);
 
         Announcement announcement = announcementAdminRepository.findFirstByOrderByIdDesc();
         announcement.update(updateDto.getDeleterIntraId(), LocalDateTime.now());
-
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     private Boolean findAnnouncementExist() {
