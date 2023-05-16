@@ -185,4 +185,7 @@ public class RankRedisRepository {
         hashRedisTemplate.delete(key);
     }
 
+    public Boolean isEmpty(String hashKey) {
+        return hashOps.size(hashKey) == 0;
+    }
 }
