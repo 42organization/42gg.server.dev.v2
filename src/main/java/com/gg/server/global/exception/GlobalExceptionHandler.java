@@ -54,18 +54,4 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<ErrorResponse> handleNoSuchElementException(NoSuchElementException ex) {
-        log.error("handleNoSuchElementException", ex);
-        ErrorResponse response = new ErrorResponse(ErrorCode.BAD_REQUEST);
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(TokenNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleTokenNotValidException(TokenNotValidException ex) {
-        log.error("handleTokenNotValidException", ex);
-        ErrorResponse response = new ErrorResponse(ErrorCode.UNAUTHORIZED);
-        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-    }
-
 }
