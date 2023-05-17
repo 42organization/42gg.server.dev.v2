@@ -17,13 +17,13 @@ import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class RedisUploadService {
     private final RankRedisRepository redisRepository;
     private final SeasonRepository seasonRepository;
     private final RankRepository rankRepository;
 
     @PostConstruct
+    @Transactional
     public void uploadRedis() {
         Season currentSeason = seasonRepository.findCurrentSeason(LocalDateTime.now())
                 .orElseThrow(() -> new NoSuchElementException("현재 시즌이 없습니다."));
