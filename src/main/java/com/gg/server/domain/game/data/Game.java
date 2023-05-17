@@ -63,7 +63,7 @@ public class Game {
     public void updateStatus() {
         if (status == StatusType.BEFORE) {
             this.status = StatusType.LIVE;
-        } else if (status == StatusType.LIVE && mode == Mode.RANK) {
+        } else if (status == StatusType.LIVE) {
             this.status = StatusType.WAIT;
         } else {
             this.status = StatusType.END;
