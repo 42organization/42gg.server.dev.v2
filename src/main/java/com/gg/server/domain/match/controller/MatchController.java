@@ -58,7 +58,7 @@ public class MatchController {
         return matchRedisService.getAllMatchStatus(user.getId(), option);
     }
 
-    @GetMapping("match/current")
+    @GetMapping("match")
     public MatchStatusResponseListDto getCurrentMatch(@Parameter(hidden = true) @Login UserDto user) {
         return matchRedisService.getCurrentMatch(user);
     }

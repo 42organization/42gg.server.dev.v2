@@ -125,10 +125,6 @@ public class MatchRedisService {
         dtos.add(new MatchStatusDto(game, myIntraId, enemyIntraId));
         return dtos;
     }
-    private List<MatchStatusDto> getEnrolledListDto(Set<RedisMatchTime> enrolledSlots, Integer interval) {
-        List<MatchStatusDto> dtos = new ArrayList<MatchStatusDto>();
-        return dtos;
-    }
 
 
     //게임 생성 전 매칭 취소
