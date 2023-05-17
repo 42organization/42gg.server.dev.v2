@@ -1,13 +1,9 @@
 package com.gg.server.admin.announcement.controller;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.announcement.data.AnnouncementAdminRepository;
 import com.gg.server.admin.announcement.dto.AnnouncementAdminAddDto;
 import com.gg.server.admin.announcement.dto.AnnouncementAdminListResponseDto;
-import com.gg.server.admin.announcement.dto.AnnouncementAdminUpdateDto;
-import com.gg.server.admin.season.dto.SeasonCreateRequestDto;
-import com.gg.server.admin.slot.dto.SlotAdminDto;
 import com.gg.server.domain.announcement.Announcement;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
@@ -19,16 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -141,23 +131,17 @@ class AnnouncementAdminControllerTest {
 //        announcementAdminRepository.delete(delDto);
         //공지사항 없으면 만들어 주는 과정 넣어 줄것
 
-        AnnouncementAdminUpdateDto updateDto = AnnouncementAdminUpdateDto.builder()
-                .deleterIntraId("deleterTestId")
-                .build();
 
-        String content = objectMapper.writeValueAsString(updateDto);
-        String url = "/pingpong/admin/announcement";
+        String url = "/pingpong/admin/announcement/";
 
-        String contentAsString = mockMvc.perform(put(url)
-                .content(content)
-                .contentType(MediaType.APPLICATION_JSON)
+        String contentAsString = mockMvc.perform(delete(url + "deleterTestId")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isNoContent())
                 .andReturn().getResponse().getContentAsString();
 
         Announcement result = announcementAdminRepository.findFirstByOrderByIdDesc();
 
-        assertThat(result.getDeleterIntraId()).isEqualTo(updateDto.getDeleterIntraId());
+        assertThat(result.getDeleterIntraId()).isEqualTo("deleterTestId");
         assertThat(result.getDeletedAt()).isNotNull();
         System.out.println(result.getId());
         System.out.println(result.getDeleterIntraId());

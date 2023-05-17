@@ -4,15 +4,12 @@ import com.gg.server.admin.announcement.data.AnnouncementAdminRepository;
 import com.gg.server.admin.announcement.dto.AnnouncementAdminAddDto;
 import com.gg.server.admin.announcement.dto.AnnouncementAdminListResponseDto;
 import com.gg.server.admin.announcement.dto.AnnouncementAdminResponseDto;
-import com.gg.server.admin.announcement.dto.AnnouncementAdminUpdateDto;
 import com.gg.server.domain.announcement.Announcement;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.AdminException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,12 +42,12 @@ public class AnnouncementAdminService {
     }
 
     @Transactional
-    public void modifyAnnouncementIsDel(AnnouncementAdminUpdateDto updateDto) {
+    public void modifyAnnouncementIsDel(String deleterIntraId) {
         if (findAnnouncementExist() == false)
             throw new AdminException("유효 공지가 없습니다.", ErrorCode.BAD_REQUEST);
 
         Announcement announcement = announcementAdminRepository.findFirstByOrderByIdDesc();
-        announcement.update(updateDto.getDeleterIntraId(), LocalDateTime.now());
+        announcement.update(deleterIntraId, LocalDateTime.now());
     }
 
     private Boolean findAnnouncementExist() {

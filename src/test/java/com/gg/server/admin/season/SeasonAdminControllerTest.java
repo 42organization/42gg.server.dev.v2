@@ -130,7 +130,7 @@ class SeasonAdminControllerTest {
     }
 
     @Test
-    @DisplayName("[POST]/pingpong/admin/season")
+    @DisplayName("[POST]/pingpong/admin/seasons")
     void createSeasons() throws Exception {
         String accessToken = testDataUtils.getLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
@@ -143,7 +143,7 @@ class SeasonAdminControllerTest {
                 .build();
         String content = objectMapper.writeValueAsString(seasonCreateReqeustDto);
 
-        String contentAsString = mockMvc.perform(MockMvcRequestBuilders.post("/pingpong/admin/season")
+        String contentAsString = mockMvc.perform(MockMvcRequestBuilders.post("/pingpong/admin/seasons")
                 .content(content)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
@@ -183,7 +183,7 @@ class SeasonAdminControllerTest {
         }
         dbSeasonId = seasonId;
 
-        String contentAsString = mockMvc.perform(MockMvcRequestBuilders.delete("/pingpong/admin/season/" + dbSeasonId)
+        String contentAsString = mockMvc.perform(MockMvcRequestBuilders.delete("/pingpong/admin/seasons/" + dbSeasonId)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isNoContent())
                 .andReturn().getResponse().getContentAsString();
@@ -195,7 +195,7 @@ class SeasonAdminControllerTest {
     }
 
     @Test
-    @DisplayName("[Put]/pingpong/admin/season/{seasonId}")
+    @DisplayName("[Put]/pingpong/admin/seasons/{seasonId}")
     void updateSeasons() throws Exception {
         String accessToken = testDataUtils.getLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
@@ -224,7 +224,7 @@ class SeasonAdminControllerTest {
                 .build();
         String content = objectMapper.writeValueAsString(seasonUpdateRequestDto);
 
-        String contentAsString = mockMvc.perform(MockMvcRequestBuilders.put("/pingpong/admin/season/" + dbSeasonId)
+        String contentAsString = mockMvc.perform(MockMvcRequestBuilders.put("/pingpong/admin/seasons/" + dbSeasonId)
                 .content(content)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
