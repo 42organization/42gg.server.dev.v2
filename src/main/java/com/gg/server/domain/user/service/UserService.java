@@ -131,12 +131,12 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUser(String racketType, String statusMessage, String snsNotiOpt, Long userId) {
-        User user = userRepository.findById(userId).orElseThrow();
+    public void updateUser(String racketType, String statusMessage, String snsNotiOpt, String intraId) {
+        User user = userRepository.findByIntraId(intraId).orElseThrow();
         Season currentSeason = seasonRepository.findCurrentSeason(LocalDateTime.now())
                 .orElseThrow(() -> new NoSuchElementException("현재 시즌이 없습니다."));
-        updateRedisRankStatusMessage(statusMessage, userId, user, currentSeason);
-        updateRankTable(userId, statusMessage, currentSeason.getId());
+        updateRedisRankStatusMessage(statusMessage, user, currentSeason);
+        updateRankTable(user.getId(), statusMessage, currentSeason.getId());
         user.update(RacketType.valueOf(racketType), SnsType.valueOf(snsNotiOpt));
     }
 
@@ -146,17 +146,17 @@ public class UserService {
         rank.setStatusMessage(statusMessage);
     }
 
-    private void updateRedisRankStatusMessage(String statusMessage, Long userId, User user, Season currentSeason) {
+    private void updateRedisRankStatusMessage(String statusMessage, User user, Season currentSeason) {
         String hashKey = RedisKeyManager.getHashKey(currentSeason.getId());
 
-        RankRedis userRank = rankRedisRepository.findRankByUserId(hashKey, userId);
+        RankRedis userRank = rankRedisRepository.findRankByUserId(hashKey, user.getId());
         userRank.setStatusMessage(statusMessage);
         rankRedisRepository.updateRankData(hashKey, user.getId(), userRank);
     }
 
     /**
      *
-     * @param userId
+     * @param intraId
      * @param seasonId
      * seasonId == 0 -> current season, else -> 해당 Id를 가진 season의 데이터
      *
@@ -169,7 +169,7 @@ public class UserService {
      * @return 유저의 최근 10개의 랭크 경기 기록
      */
     @Transactional(readOnly = true)
-    public UserHistoryResponseDto getUserHistory(Long userId, Long seasonId) {
+    public UserHistoryResponseDto getUserHistory(String intraId, Long seasonId) {
         Season season;
         if (seasonId == 0){
             season = seasonRepository.findCurrentSeason(LocalDateTime.now())
@@ -178,7 +178,7 @@ public class UserService {
             season = seasonRepository.findById(seasonId)
                     .orElseThrow(() -> new NoSuchElementException("현재 시즌이 없습니다."));
         }
-        List<PChange> pChanges = pChangeRepository.findPChangesHistory(userId, season.getId());
+        List<PChange> pChanges = pChangeRepository.findPChangesHistory(intraId, season.getId());
         List<UserHistoryData> historyData = pChanges.stream().map(UserHistoryData::new).collect(Collectors.toList());
         Collections.reverse(historyData);
         return new UserHistoryResponseDto(historyData);
