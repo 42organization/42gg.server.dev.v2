@@ -50,5 +50,5 @@ public interface GameRepository extends JpaRepository<Game, Long>, GameRepositor
     Slice<Long> findGamesByUserAndModeAndSeason(@Param("intra") String intra, @Param("mode") String mode, @Param("seasonId") Long seasonId, @Param("status") String status, Pageable pageable);
 
     List<Game> findAllByStatusAndStartTimeLessThanEqual(StatusType status, LocalDateTime startTime);
-    Optional<Game> findByStatusAndEndTimeLessThanEqual(StatusType status, LocalDateTime endTime);
+    List<Game> findAllByStatusAndEndTimeLessThanEqual(StatusType status, LocalDateTime endTime);
 }

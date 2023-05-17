@@ -23,8 +23,7 @@ public class GameStatusService {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime startTime = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), now.getMinute());
         List<Game> game = gameRepository.findAllByStatusAndStartTimeLessThanEqual(StatusType.BEFORE, startTime);
-        for (Game g :
-                game) {
+        for (Game g : game) {
             g.updateStatus();
         }
     }
@@ -34,7 +33,9 @@ public class GameStatusService {
         // game before 중에 현재 시작 시간인 경우 LIVE로 update
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime endTime = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), now.getMinute() + 1);
-        Optional<Game> game = gameRepository.findByStatusAndEndTimeLessThanEqual(StatusType.LIVE, endTime);
-        game.ifPresent(Game::updateStatus);
+        List<Game> game = gameRepository.findAllByStatusAndEndTimeLessThanEqual(StatusType.LIVE, endTime);
+        for (Game g : game) {
+            g.updateStatus();
+        }
     }
 }
