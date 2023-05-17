@@ -1,5 +1,7 @@
 package com.gg.server.domain.rank.redis;
 
+import com.gg.server.domain.rank.data.Rank;
+import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.dto.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,6 +41,18 @@ public class RankRedis implements Serializable {
                 .wins(0)
                 .losses(0)
                 .statusMessage("")
+                .build();
+        return rankRedis;
+    }
+
+    public static RankRedis from(Rank rank){
+        RankRedis rankRedis = RankRedis.builder()
+                .userId(rank.getUser().getId())
+                .intraId(rank.getUser().getIntraId())
+                .ppp(rank.getPpp())
+                .wins(rank.getWins())
+                .losses(rank.getLosses())
+                .statusMessage(rank.getStatusMessage())
                 .build();
         return rankRedis;
     }

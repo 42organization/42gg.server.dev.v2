@@ -1,7 +1,15 @@
 package com.gg.server.global.security.service;
 
+import com.gg.server.domain.rank.data.Rank;
+import com.gg.server.domain.rank.data.RankRepository;
+import com.gg.server.domain.rank.redis.RankRedis;
+import com.gg.server.domain.rank.redis.RankRedisRepository;
+import com.gg.server.domain.rank.redis.RedisKeyManager;
+import com.gg.server.domain.season.data.Season;
+import com.gg.server.domain.season.data.SeasonRepository;
 import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.UserRepository;
+import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.security.UserPrincipal;
 import com.gg.server.global.security.info.OAuthUserInfo;
 import com.gg.server.global.security.info.OAuthUserInfoFactory;
@@ -18,12 +26,20 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final UserRepository userRepository;
     private final AsyncNewUserImageUploader asyncNewUserImageUploader;
+    private final RankRepository rankRepository;
+    private final SeasonRepository seasonRepository;
+    private final RankRedisRepository rankRedisRepository;
 
     @Value("${info.image.defaultUrl}")
     private String defaultImageUrl;
@@ -55,11 +71,23 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         }
         if (savedUser == null) {
             savedUser = createUser(userInfo);
+            if (providerType.equals(ProviderType.FORTYTWO))
+                createUserRank(savedUser);
             if (userInfo.getImageUrl().startsWith("https://cdn.intra.42.fr/")) {
                 asyncNewUserImageUploader.upload(userInfo.getIntraId(), userInfo.getImageUrl());
             }
         }
         return UserPrincipal.create(savedUser, user.getAttributes());
+    }
+
+    private void createUserRank(User savedUser) {
+        Season currentSeason = seasonRepository.findCurrentSeason(LocalDateTime.now())
+                .orElseThrow(() -> new NoSuchElementException("현재 시즌이 없습니다."));
+        Rank userRank = Rank.from(savedUser, currentSeason, currentSeason.getStartPpp());
+        rankRepository.save(userRank);
+        RankRedis rankRedis = RankRedis.from(UserDto.from(savedUser), currentSeason.getStartPpp());
+        String hashKey = RedisKeyManager.getHashKey(currentSeason.getId());
+        rankRedisRepository.addRankData(hashKey, savedUser.getId(), rankRedis);
     }
 
     private User createUser(OAuthUserInfo userInfo) {

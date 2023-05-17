@@ -1,5 +1,6 @@
 package com.gg.server.domain.game.data;
 
+import com.gg.server.domain.game.dto.GameTeamUserInfo;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.season.data.Season;
@@ -24,6 +25,10 @@ public interface GameRepository extends JpaRepository<Game, Long>, GameRepositor
             "from v_teamuser t1, v_teamuser t2 " +
             "where t1.gameId IN (:games) and t1.teamId <t2.teamId and t1.gameId=t2.gameId order by t1.startTime desc;", nativeQuery = true)
     List<GameTeamUser> findTeamsByGameIsIn(@Param("games") List<Long> games);
+
+    @Query(value = "SELECT teamId, gameId, score, startTime, status, mode, userId, intraId, image, total_exp exp" +
+            " FROM v_teamuser where gameId = :gameId", nativeQuery = true)
+    List<GameTeamUserInfo> findTeamGameUser(Long gameId);
     Optional<Game> findByStartTime(LocalDateTime startTime);
     @Query(value = "select g from Game g where g.startTime > :startTime and g.startTime < :endTime")
     List<Game> findAllBetween(@Param("startTime")LocalDateTime startTime, @Param("endTime") LocalDateTime endTime);
@@ -33,4 +38,17 @@ public interface GameRepository extends JpaRepository<Game, Long>, GameRepositor
     @Query(value = "SELECT g FROM Game g, Team t, TeamUser tu WHERE g.status = :status AND g.id = t.game.id"
             + " AND t.id = tu.team.id AND tu.user.id = :userId")
     Optional<Game> findByStatusTypeAndUserId(@Param("status") StatusType status, @Param("userId") Long userId);
+
+    @Query(value = "select gameId " +
+            "from v_teamuser " +
+            "where intraId = :intra and status in (:status) order by startTime desc", nativeQuery = true)
+    Slice<Long> findGamesByUser(@Param("intra") String intra, @Param("status") List<String> status, Pageable pageable);
+    @Query(value = "select gameId " +
+            "from v_teamuser " +
+            "where intraId = :intra and mode in (:mode) and status=:status", nativeQuery = true)
+    Slice<Long> findGamesByUserAndMode(@Param("intra") String intra, @Param("mode") String mode, @Param("status") String status, Pageable pageable);
+    @Query(value = "select gameId " +
+            "from v_teamuser " +
+            "where intraId = :intra and mode in (:mode) and seasonId = :seasonId and status=:status", nativeQuery = true)
+    Slice<Long> findGamesByUserAndModeAndSeason(@Param("intra") String intra, @Param("mode") String mode, @Param("seasonId") Long seasonId, @Param("status") String status, Pageable pageable);
 }
