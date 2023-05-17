@@ -4,13 +4,13 @@ import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.match.data.RedisMatchTime;
 import java.time.LocalDateTime;
 import java.util.List;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MatchStatusDto {
     private LocalDateTime startTime;
     private LocalDateTime endTime;

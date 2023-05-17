@@ -1,12 +1,12 @@
 package com.gg.server.domain.match.dto;
 
 import java.util.List;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class MatchStatusResponseListDto {
     private List<MatchStatusDto> match;
@@ -16,5 +16,9 @@ public class MatchStatusResponseListDto {
         return "MatchStatusResponseListDto{" +
                 "match=" + match +
                 '}';
+    }
+
+    public MatchStatusResponseListDto(List<MatchStatusDto> match) {
+        this.match = match;
     }
 }

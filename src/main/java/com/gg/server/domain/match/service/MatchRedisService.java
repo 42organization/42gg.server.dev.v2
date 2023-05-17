@@ -184,9 +184,7 @@ public class MatchRedisService {
             SlotStatusDto dto = slots.getOrDefault(time, getMatchStatusDto(time, SlotStatus.OPEN, interval));
             matchBoards.add(dto);
         }
-        return SlotStatusResponseListDto.builder()
-                .matchBoards(matchBoards)
-                .build();
+        return new SlotStatusResponseListDto(matchBoards);
     }
     private void groupPastSlots(HashMap<LocalDateTime, SlotStatusDto> slots, SlotManagement slotManagement) {
         LocalDateTime now = LocalDateTime.now();

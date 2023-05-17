@@ -1,13 +1,14 @@
 package com.gg.server.domain.match.dto;
 
 import java.util.List;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@Builder
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SlotStatusResponseListDto {
     private List<SlotStatusDto> matchBoards;
 
@@ -16,5 +17,9 @@ public class SlotStatusResponseListDto {
         return "MatchStatusResponseListDto{" +
                 "matchBoards=" + matchBoards +
                 '}';
+    }
+
+    public SlotStatusResponseListDto(List<SlotStatusDto> matchBoards) {
+        this.matchBoards = matchBoards;
     }
 }
