@@ -3,6 +3,7 @@ package com.gg.server.domain.noti.service;
 import com.gg.server.domain.noti.data.Noti;
 import com.gg.server.domain.noti.data.NotiRepository;
 import com.gg.server.domain.noti.dto.NotiDto;
+import com.gg.server.domain.noti.dto.NotiResponseDto;
 import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
@@ -23,11 +24,11 @@ public class NotiService {
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
-    public List<NotiDto> findNotiByUser(UserDto userDto) {
+    public List<NotiResponseDto> findNotiByUser(UserDto userDto) {
         User user = userRepository.findById(userDto.getId()).orElseThrow(() -> new UsernameNotFoundException("User" + userDto.getId()));
         List<Noti> notiList = notiRepository.findAllByUserOrderByIdDesc(user);
-        List<NotiDto> notiDtoList = notiList.stream().map(NotiDto::from).collect(Collectors.toList());
-        return notiDtoList;
+        List<NotiResponseDto> notiResponseDtoList = notiList.stream().map(NotiResponseDto::from).collect(Collectors.toList());
+        return notiResponseDtoList;
     }
 
     @Transactional
