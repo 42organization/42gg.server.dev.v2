@@ -92,23 +92,19 @@ public class MatchRedisService {
 
     public MatchStatusResponseListDto getCurrentMatch(UserDto userDto) {
         SlotManagement slotManagement = slotManagementRepository.findFirstByOrderByCreatedAtDesc();
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime standard = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth()
-                , now.getHour(), 0);
-        Optional<Game> myGame = gameRepository.findByUserInSlots(
-                standard.minusHours(slotManagement.getPastSlotTime()),
-                standard.plusHours(slotManagement.getFutureSlotTime()), userDto.getId());
+        Optional<Game> myGame = gameRepository.findByStatusTypeAndUserId(StatusType.BEFORE, userDto.getId());
         if (myGame.isPresent()) {
             List<Team> teams = teamRepository.findAllBy(myGame.get().getId());
             TeamUser teamUser1 = teamUserRepository.findByTeam(teams.get(0).getId());
             TeamUser teamUser2 = teamUserRepository.findByTeam(teams.get(1).getId());
-            if (teamUser1.getUser().getId() == userDto.getId()) {
-                userDto.getIntraId();
-                User enemyUser = userRepository.findById(teamUser2.getUser().getId()).orElseThrow();
+            if (teamUser1.getUser().getId().equals(userDto.getId())) {
+                User enemyUser = userRepository.findById(teamUser2.getUser().getId())
+                        .orElseThrow(() -> new NoSuchElementException("유저가 없습니다."));
                 return new MatchStatusResponseListDto(getMatchedListDto(myGame.get(), userDto.getIntraId(),
                         enemyUser.getIntraId()));
             }
-            User enemyUser = userRepository.findById(teamUser1.getUser().getId()).orElseThrow();
+            User enemyUser = userRepository.findById(teamUser1.getUser().getId())
+                    .orElseThrow(() -> new NoSuchElementException("유저가 없습니다."));
             return new MatchStatusResponseListDto(getMatchedListDto(myGame.get(), userDto.getIntraId(),
                     enemyUser.getIntraId()));
         }
