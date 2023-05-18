@@ -17,7 +17,9 @@ public enum ErrorCode {
     BAD_ARGU(400, "ARGUMENT-ERR-400", "잘못된 argument 입니다."),
 
     UNAUTHORIZED(401, "COMMON-ERR-401", "UNAUTHORIZED"),
-    SN001(400, "SN001", "요청하신 값은 현 null 입니다")
+    SN001(400, "SN001", "요청하신 값은 현 null 입니다"),
+
+    FB_NOT_FOUND(404, "FB100", "FB NOT FOUND")
 
     ;
     private int status;

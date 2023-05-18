@@ -2,8 +2,11 @@ package com.gg.server.admin.feedback.service;
 
 import com.gg.server.admin.feedback.data.FeedbackAdminRepository;
 import com.gg.server.admin.feedback.dto.FeedbackAdminResponseDto;
+import com.gg.server.admin.feedback.dto.FeedbackIsSolvedResponseDto;
 import com.gg.server.admin.feedback.dto.FeedbackListAdminResponseDto;
 import com.gg.server.domain.feedback.data.Feedback;
+import com.gg.server.domain.feedback.exception.FeedbackNotFoundException;
+import com.gg.server.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,4 +28,15 @@ public class FeedbackAdminService {
         return responseDto;
     }
 
+    @Transactional
+    public FeedbackIsSolvedResponseDto toggleFeedbackIsSolvedByAdmin(Long feedbackId){
+        Feedback feedback = feedbackAdminRepository.findById(feedbackId).orElseThrow(() -> new FeedbackNotFoundException(ErrorCode.FB_NOT_FOUND));
+        if (feedback.getIsSolved() == true){
+            feedback.setIsSolved(false);
+        }else {
+            feedback.setIsSolved(true);
+        }
+        FeedbackIsSolvedResponseDto responseDto = new FeedbackIsSolvedResponseDto(feedback.getIsSolved());
+        return responseDto;
+    }
 }
