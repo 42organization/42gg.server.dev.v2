@@ -1,4 +1,4 @@
-package com.gg.server.game;
+package com.gg.server.game.service;
 
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
@@ -16,6 +16,7 @@ import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
+import com.gg.server.global.scheduler.GameStatusScheduler;
 import com.gg.server.utils.TestDataUtils;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeAll;
@@ -57,8 +58,8 @@ public class GameServiceTest {
     void init() {
         season = seasonRepository.save(new Season("test season", LocalDateTime.of(2023, 5, 14, 0, 0), LocalDateTime.of(2999, 12, 31, 23, 59),
                 1000, 100));
-        user1 = testDataUtils.createNewUser("test2", "test2@email", "null1", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
-        user2 = testDataUtils.createNewUser("test3", "test3@email", "null1", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
+        user1 = testDataUtils.createNewUser("test2", "dudtjs0920@naver.com", "null1", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
+        user2 = testDataUtils.createNewUser("test3", "dudtjs0920@naver.com", "null1", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime startTime = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), now.getMinute());
         game1 = gameRepository.save(new Game(season, StatusType.BEFORE, Mode.RANK, startTime, startTime.plusMinutes(15)));
@@ -82,5 +83,23 @@ public class GameServiceTest {
     void gameLIVE상태변경테스트() throws Exception{
         gameStatusService.updateLiveToWaitStatus();
         assertThat(liveGame.getStatus()).isEqualTo(StatusType.WAIT);
+    }
+
+    @Test
+    @Transactional
+    void game5분전알림테스트() throws Exception{
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime startTime = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), now.getMinute());
+        System.out.println(startTime.plusMinutes(5));
+        Game game = gameRepository.save(new Game(season, StatusType.BEFORE, Mode.RANK, startTime.plusMinutes(5), startTime.plusMinutes(20)));
+        Team team1 = teamRepository.save(new Team(game, 0, false));
+        Team team2 = teamRepository.save(new Team(game, 0, true));
+        teamUserRepository.save(new TeamUser(team1, user1));
+        teamUserRepository.save(new TeamUser(team2, user2));
+        gameRepository.flush();
+        teamRepository.flush();
+        teamUserRepository.flush();
+        System.out.println("==============");
+        gameStatusService.imminentGame();
     }
 }
