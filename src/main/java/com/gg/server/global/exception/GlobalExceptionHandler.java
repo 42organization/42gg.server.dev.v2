@@ -1,7 +1,7 @@
 package com.gg.server.global.exception;
 
+import com.amazonaws.AmazonServiceException;
 import com.gg.server.global.exception.custom.CustomRuntimeException;
-import com.gg.server.global.security.jwt.exception.TokenNotValidException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,8 +9,6 @@ import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-
-import java.util.NoSuchElementException;
 
 @Slf4j
 @ControllerAdvice
@@ -32,6 +30,13 @@ public class GlobalExceptionHandler {
         ec.setMessage(ex.getMessage());
         ErrorResponse response = new ErrorResponse(ec);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AmazonServiceException.class)
+    protected ResponseEntity<ErrorResponse> httpRequestMethodNotSupportedExceptionHandle(AmazonServiceException ex) {
+        log.error("AmazonServiceException", ex);
+        ErrorResponse response = new ErrorResponse(ErrorCode.AWS_S3_ERR);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getStatusCode()));
     }
 
     @ExceptionHandler({CustomRuntimeException.class})
