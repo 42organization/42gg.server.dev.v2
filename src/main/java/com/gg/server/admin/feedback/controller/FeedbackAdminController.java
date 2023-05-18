@@ -3,13 +3,10 @@ package com.gg.server.admin.feedback.controller;
 import com.gg.server.admin.feedback.dto.FeedbackIsSolvedResponseDto;
 import com.gg.server.admin.feedback.dto.FeedbackListAdminResponseDto;
 import com.gg.server.admin.feedback.service.FeedbackAdminService;
-import com.gg.server.domain.feedback.data.FeedbackRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.http.HttpResponse;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -39,4 +36,12 @@ public class FeedbackAdminController {
                 .body(feedbackAdminService.toggleFeedbackIsSolvedByAdmin(id));
     }
 
+    @GetMapping("/users")
+    public FeedbackListAdminResponseDto feedbackFindByIntraId(@RequestParam String intraId,
+                                                              @RequestParam(defaultValue = "1") @Min(1) int page,
+                                                              @RequestParam(defaultValue = "5") @Min(1) int size) {
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("intra_id").and(Sort.by("createdAt")));
+
+        return feedbackAdminService.findByPartsOfIntraId(intraId, pageable);
+    }
 }
