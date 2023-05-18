@@ -25,6 +25,7 @@ public enum ErrorCode {
 
     //rank
     RANK_NOT_FOUND(404, "RK100", "RANK NOT FOUND"),
+    REDIS_RANK_NOT_FOUND(404, "RK101", "REDIS RANK NOT FOUND"),
 
     //authentication
     UNAUTHORIZED(401, "AU000", "UNAUTHORIZED"),
@@ -32,6 +33,7 @@ public enum ErrorCode {
     //common
     INTERNAL_SERVER_ERR(500, "CM000","INTERNAL SERVER ERROR"),
     PAGE_NOT_FOUND(404, "CM001", "PAGE NOT FOUND"),
+
 
     ;
     private int status;
