@@ -136,11 +136,11 @@ public class UserService {
         Season currentSeason = seasonRepository.findCurrentSeason(LocalDateTime.now())
                 .orElseThrow(() -> new NoSuchElementException("현재 시즌이 없습니다."));
         updateRedisRankStatusMessage(statusMessage, user, currentSeason);
-        updateRankTable(user.getId(), statusMessage, currentSeason.getId());
-        user.update(RacketType.valueOf(racketType), SnsType.valueOf(snsNotiOpt));
+        updateRankTableStatusMessage(user.getId(), statusMessage, currentSeason.getId());
+        user.updateTypes(RacketType.valueOf(racketType), SnsType.valueOf(snsNotiOpt));
     }
 
-    private void updateRankTable(Long userId, String statusMessage, Long seasonId) {
+    private void updateRankTableStatusMessage(Long userId, String statusMessage, Long seasonId) {
         Rank rank = rankRepository.findByUserIdAndSeasonId(userId, seasonId)
                 .orElseThrow(() -> new NoSuchElementException("랭크 테이블에 없는 유저입니다."));
         rank.setStatusMessage(statusMessage);

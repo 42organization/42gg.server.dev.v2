@@ -67,7 +67,7 @@ public class User extends BaseTimeEntity implements Serializable {
         this.imageUri = imageUri;
     }
 
-    public void update(RacketType racketType, SnsType snsType) {
+    public void updateTypes(RacketType racketType, SnsType snsType) {
         this.racketType = racketType;
         this.snsNotiOpt = snsType;
     }
