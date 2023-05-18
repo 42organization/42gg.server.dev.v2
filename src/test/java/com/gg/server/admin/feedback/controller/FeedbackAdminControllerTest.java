@@ -2,7 +2,12 @@ package com.gg.server.admin.feedback.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.announcement.dto.AnnouncementAdminListResponseDto;
+import com.gg.server.admin.feedback.data.FeedbackAdminRepository;
+import com.gg.server.admin.feedback.dto.FeedbackIsSolvedResponseDto;
 import com.gg.server.admin.feedback.dto.FeedbackListAdminResponseDto;
+import com.gg.server.domain.feedback.data.Feedback;
+import com.gg.server.domain.feedback.type.FeedbackType;
+import com.gg.server.domain.user.UserRepository;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RequiredArgsConstructor
@@ -37,9 +42,14 @@ class FeedbackAdminControllerTest {
     @Autowired
     AuthTokenProvider tokenProvider;
 
+    @Autowired
+    FeedbackAdminRepository feedbackAdminRepository;
+    @Autowired
+    UserRepository userRepository;
+
     @Test
     @DisplayName("[Get]/pingpong/admin/feedback")
-    void getAnnouncementList() throws Exception {
+    void getFeedback() throws Exception {
         String accessToken = testDataUtils.getLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
@@ -60,5 +70,32 @@ class FeedbackAdminControllerTest {
         System.out.println(result.getFeedbackList().get(0).getId());
         System.out.println(result.getFeedbackList().get(0).getContent());
 
+    }
+
+    @Test
+    @DisplayName("[Patch]pingpong/admin/feedback/{id}")
+    void patchFeedback() throws Exception {
+        String accessToken = testDataUtils.getLoginAccessToken();
+        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+
+        //Id 44는 개발자가 만든 본섭?? 테스트 피드백이다.
+        Feedback feedback = Feedback.builder()
+                .category(FeedbackType.ETC)
+                .content("test1234")
+                .user(userRepository.findById(userId).get())
+                .build();
+        feedbackAdminRepository.save(feedback);
+
+        String url = "/pingpong/admin/feedback/" + feedback.getId().toString();
+        Boolean status = feedback.getIsSolved();
+
+        String contentAsString = mockMvc.perform(patch(url)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+
+        FeedbackIsSolvedResponseDto result = objectMapper.readValue(contentAsString, FeedbackIsSolvedResponseDto.class);
+        assertThat(result.getIsSolved()).isNotEqualTo(status);
     }
 }
