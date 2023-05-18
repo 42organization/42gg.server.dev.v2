@@ -1,7 +1,7 @@
 package com.gg.server.global.exception;
 
+import com.gg.server.global.exception.custom.AuthenticationException;
 import com.gg.server.global.exception.custom.CustomRuntimeException;
-import com.gg.server.global.security.jwt.exception.TokenNotValidException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,17 +41,24 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErrorResponse> authenticationException(AuthenticationException ex) {
+        log.error("authentication exception", ex);
+        ErrorResponse response = new ErrorResponse(ex.getErrorCode());
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+    }
+
     @ExceptionHandler({RuntimeException.class})
     public ResponseEntity<ErrorResponse> runtimeException(RuntimeException ex) {
         log.error("Runtime error", ex);
-        ErrorResponse response = new ErrorResponse(ErrorCode.BAD_REQUEST);
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        ErrorResponse response = new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERR);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception ex) {
         log.error("handleException", ex);
         ErrorResponse response = new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERR);
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 
 }

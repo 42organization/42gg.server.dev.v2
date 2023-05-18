@@ -9,9 +9,12 @@ import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.data.SeasonRepository;
+import com.gg.server.domain.season.exception.SeasonNotFoundException;
 import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
+import com.gg.server.global.exception.ErrorCode;
+import com.gg.server.global.exception.custom.PageNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -39,11 +42,11 @@ public class RankService {
         Long myRank = curUser.getTotalExp() == 0 ? -1 : userRepository.findExpRankingByIntraId(curUser.getIntraId());
         Page<User> users = userRepository.findAll(pageRequest);
         if(pageNum > users.getTotalPages())
-            throw new RuntimeException("페이지가 존재하지 않습니다.");
+            throw new PageNotFoundException("페이지가 존재하지 않습니다.", ErrorCode.PAGE_NOT_FOUND);
 
         List<Long> userIds = users.getContent().stream().map(user -> user.getId()).collect(Collectors.toList());
         Season curSeason = seasonRepository.findCurrentSeason(LocalDateTime.now())
-                .orElseThrow(() -> new NoSuchElementException("현재 시즌이 없습니다."));
+                .orElseThrow(() -> new SeasonNotFoundException("현재 시즌이 없습니다.", ErrorCode.SEASON_NOT_FOUND));
         String hashKey = RedisKeyManager.getHashKey(curSeason.getId());
         List<RankRedis> ranks = redisRepository.findRanksByUserIds(hashKey, userIds);
 
@@ -63,16 +66,16 @@ public class RankService {
         Season season;
         if (seasonId == null || seasonId == 0) {
             season = seasonRepository.findCurrentSeason(LocalDateTime.now())
-                    .orElseThrow(() -> new NoSuchElementException("현재 시즌이 없습니다."));
+                    .orElseThrow(() -> new SeasonNotFoundException("현재 시즌이 없습니다.", ErrorCode.SEASON_NOT_FOUND));
         } else {
             season = seasonRepository.findById(seasonId)
-                    .orElseThrow(() -> new NoSuchElementException("해당 시즌이 없습니다."));
+                    .orElseThrow(() -> new SeasonNotFoundException("해당 시즌이 없습니다. season id = " + seasonId , ErrorCode.SEASON_NOT_FOUND));
         }
 
         int currentPage = pageNum;
         int totalPage = calcTotalPage(season, pageSize);
         if (pageNum > totalPage)
-            throw new RuntimeException("페이지가 존재하지 않습니다.");
+            throw new PageNotFoundException("페이지가 존재하지 않습니다.", ErrorCode.PAGE_NOT_FOUND);
         int myRank = findMyRank(curUser, season);
 
         int startRank = (pageNum - 1) * pageSize;

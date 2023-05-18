@@ -8,17 +8,21 @@ import com.gg.server.domain.pchange.data.PChange;
 import com.gg.server.domain.pchange.data.PChangeRepository;
 import com.gg.server.domain.rank.data.Rank;
 import com.gg.server.domain.rank.data.RankRepository;
+import com.gg.server.domain.rank.exception.RankNotFoundException;
 import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.data.SeasonRepository;
+import com.gg.server.domain.season.exception.SeasonNotFoundException;
 import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.UserRepository;
 import com.gg.server.domain.user.dto.*;
+import com.gg.server.domain.user.exception.TokenNotValidException;
+import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.SnsType;
-import com.gg.server.global.security.jwt.exception.TokenNotValidException;
+import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.security.jwt.repository.JwtRedisRepository;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.global.utils.ExpLevelCalculator;
@@ -54,7 +58,7 @@ public class UserService {
     public String regenerate(String refreshToken) {
         Long userId = jwtRedisRepository.getUserIdByRefToken(refreshToken);
         if (tokenProvider.getTokenClaims(refreshToken) == null)
-            throw new TokenNotValidException();
+            throw new TokenNotValidException("Authentication error", ErrorCode.UNAUTHORIZED);
         return tokenProvider.createToken(userId);
     }
 
@@ -102,7 +106,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserDetailResponseDto getUserDetail(String targetUserIntraId) {
         User targetUser = userRepository.findByIntraId(targetUserIntraId)
-                .orElseThrow(()->new NoSuchElementException("검색된 유저가 없습니다."));
+                .orElseThrow(()->new UserNotFoundException("검색된 유저가 없습니다.", ErrorCode.USER_NOT_FOUND));
         int currentExp = ExpLevelCalculator.getCurrentLevelMyExp(targetUser.getTotalExp());
         int maxExp = ExpLevelCalculator.getLevelMaxExp(ExpLevelCalculator.getLevel(targetUser.getTotalExp()));
         String statusMessage = getUserStatusMessage(targetUser);
@@ -121,7 +125,7 @@ public class UserService {
 
     private String getUserStatusMessage(User targetUser) {
         Season currentSeason = seasonRepository.findCurrentSeason(LocalDateTime.now())
-                .orElseThrow(() -> new NoSuchElementException("현재 시즌이 없습니다."));
+                .orElseThrow(() -> new SeasonNotFoundException("현재 시즌이 없습니다.", ErrorCode.SEASON_NOT_FOUND));
         String hashKey = RedisKeyManager.getHashKey(currentSeason.getId());
         RankRedis userRank = rankRedisRepository.findRankByUserId(hashKey, targetUser.getId());
         if (userRank == null)
@@ -134,7 +138,7 @@ public class UserService {
     public void updateUser(String racketType, String statusMessage, String snsNotiOpt, String intraId) {
         User user = userRepository.findByIntraId(intraId).orElseThrow();
         Season currentSeason = seasonRepository.findCurrentSeason(LocalDateTime.now())
-                .orElseThrow(() -> new NoSuchElementException("현재 시즌이 없습니다."));
+                .orElseThrow(() -> new SeasonNotFoundException("현재 시즌이 없습니다.", ErrorCode.SEASON_NOT_FOUND));
         updateRedisRankStatusMessage(statusMessage, user, currentSeason);
         updateRankTableStatusMessage(user.getId(), statusMessage, currentSeason.getId());
         user.updateTypes(RacketType.valueOf(racketType), SnsType.valueOf(snsNotiOpt));
@@ -142,7 +146,7 @@ public class UserService {
 
     private void updateRankTableStatusMessage(Long userId, String statusMessage, Long seasonId) {
         Rank rank = rankRepository.findByUserIdAndSeasonId(userId, seasonId)
-                .orElseThrow(() -> new NoSuchElementException("랭크 테이블에 없는 유저입니다."));
+                .orElseThrow(() -> new RankNotFoundException("랭크 테이블에 없는 유저입니다.", ErrorCode.RANK_NOT_FOUND));
         rank.setStatusMessage(statusMessage);
     }
 
@@ -173,10 +177,10 @@ public class UserService {
         Season season;
         if (seasonId == 0){
             season = seasonRepository.findCurrentSeason(LocalDateTime.now())
-                    .orElseThrow(() -> new NoSuchElementException("해당 시즌이 없습니다."));
+                    .orElseThrow(() ->  new SeasonNotFoundException("현재 시즌이 없습니다.", ErrorCode.SEASON_NOT_FOUND));
         }else{
             season = seasonRepository.findById(seasonId)
-                    .orElseThrow(() -> new NoSuchElementException("현재 시즌이 없습니다."));
+                    .orElseThrow(() ->  new SeasonNotFoundException("해당 시즌이 없습니다.season id = " + seasonId, ErrorCode.SEASON_NOT_FOUND));
         }
         List<PChange> pChanges = pChangeRepository.findPChangesHistory(intraId, season.getId());
         List<UserHistoryData> historyData = pChanges.stream().map(UserHistoryData::new).collect(Collectors.toList());
@@ -196,15 +200,15 @@ public class UserService {
         Season season;
         if (seasonId == 0){
             season = seasonRepository.findCurrentSeason(LocalDateTime.now())
-                    .orElseThrow(() -> new NoSuchElementException("해당 시즌이 없습니다."));
+                    .orElseThrow(() -> new SeasonNotFoundException("현재 시즌이 없습니다.", ErrorCode.SEASON_NOT_FOUND));
         }else{
             season = seasonRepository.findById(seasonId)
-                    .orElseThrow(() -> new NoSuchElementException("현재 시즌이 없습니다."));
+                    .orElseThrow(() -> new SeasonNotFoundException("해당 시즌이 없습니다.season id = " + seasonId, ErrorCode.SEASON_NOT_FOUND));
         }
         String ZSetKey = RedisKeyManager.getZSetKey(season.getId());
         String hashKey = RedisKeyManager.getHashKey(season.getId());
         User user = userRepository.findByIntraId(targetUserIntraId)
-                .orElseThrow(()->new NoSuchElementException("검색된 유저가 없습니다."));
+                .orElseThrow(()-> new UserNotFoundException("해당 유저가 없습니다. intraId = " + targetUserIntraId, ErrorCode.USER_NOT_FOUND));
         Long userRanking = rankRedisRepository.getRankInZSet(ZSetKey,user.getId()) + 1;
         if (userRanking == null)
             return null;
