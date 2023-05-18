@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class RankController {
 
     private final RankService rankService;
-    @GetMapping("/vip")
+    @GetMapping("/exp")
     public ExpRankPageResponseDto getExpRankPage(Pageable pageRequest, @Parameter(hidden = true) @Login UserDto user) {
         return rankService.getExpRankPage(pageRequest.getPageNumber(), pageRequest.getPageSize(), user);
     }

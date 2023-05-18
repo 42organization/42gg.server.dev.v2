@@ -43,7 +43,7 @@ class RankControllerTest {
     AuthTokenProvider tokenProvider;
 
     @Test
-    @DisplayName("/vip")
+    @DisplayName("/exp")
     void getExpRankPage() throws Exception {
 
         // given
@@ -63,7 +63,7 @@ class RankControllerTest {
         testDataUtils.createUserRank(user3, "4", season);
 
         int page = 1;
-        String url = "/pingpong/vip?page=" + page + "&size=-1";
+        String url = "/pingpong/exp?page=" + page + "&size=-1";
         String accessToken = tokenProvider.createToken(myUser.getId());
 
         //when
