@@ -92,8 +92,8 @@ public class GameService {
         if (myTeam == null || enemyTeam == null || !myTeam.getUser().getId().equals(userId)) {
             throw new NotExistException("잘못된 team Id 입니다.", ErrorCode.NOT_FOUND);
         } else {
-            if (myTeam.getTeam().getScore() == scoreDto.getMyTeamScore()
-                    && enemyTeam.getTeam().getScore() == scoreDto.getEnemyTeamScore()) {
+            if (myTeam.getTeam().getScore().equals(scoreDto.getMyTeamScore())
+                    && enemyTeam.getTeam().getScore().equals(scoreDto.getEnemyTeamScore())) {
                 game.updateStatus();
                 rankRedisService.updateRankRedis(teams, seasonId, game);
             } else {
