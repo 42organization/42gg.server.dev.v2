@@ -3,18 +3,18 @@ package com.gg.server.domain.noti.service.sns;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.domain.noti.data.Noti;
+import com.gg.server.domain.noti.dto.UserNotiDto;
 import com.gg.server.domain.noti.exception.SlackJsonParseException;
 import com.gg.server.domain.noti.exception.SlackSendException;
 import com.gg.server.domain.noti.exception.SlackUserGetFailedException;
 import com.gg.server.domain.noti.service.NotiService;
-import com.gg.server.domain.user.dto.UserDto;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -24,9 +24,9 @@ import java.util.Map;
 
 import static com.gg.server.domain.noti.service.sns.SlackbotUtils.*;
 
-@Service
+@Component
 @Slf4j
-public class SlackbotService implements SnsSender{
+public class SlackbotService {
     @Value("${slack.xoxbToken}")
     private String authenticationToken;
 
@@ -84,7 +84,7 @@ public class SlackbotService implements SnsSender{
     }
 
     @Async("asyncExecutor")
-    public void send(UserDto user, Noti noti) {
+    public void send(UserNotiDto user, Noti noti) {
         try {
             startSendNoti(user.getIntraId(), noti);
         } catch (SlackSendException e) {

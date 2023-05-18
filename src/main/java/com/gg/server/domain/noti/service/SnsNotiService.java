@@ -1,29 +1,28 @@
 package com.gg.server.domain.noti.service;
 
 import com.gg.server.domain.noti.data.Noti;
-import com.gg.server.domain.noti.service.sns.MailSender;
+import com.gg.server.domain.noti.dto.UserNotiDto;
+import com.gg.server.domain.noti.service.sns.NotiMailSender;
 import com.gg.server.domain.noti.service.sns.SlackbotService;
-import com.gg.server.domain.noti.service.sns.SnsSender;
-import com.gg.server.domain.user.User;
-import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.domain.user.type.SnsType;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class SnsNotiService {
-    private final SnsSender notiMailSender;
-    private final SnsSender slackbotService;
+    private final NotiMailSender notiMailSender;
+    private final SlackbotService slackbotService;
 
-    public SnsNotiService(MailSender notiMailSender, SlackbotService slackbotService) {
+    public SnsNotiService(NotiMailSender notiMailSender, SlackbotService slackbotService) {
         this.notiMailSender = notiMailSender;
         this.slackbotService = slackbotService;
     }
 
-    public void sendSnsNotification(Noti noti, UserDto user) {
+    @Transactional(readOnly = true)
+    public void sendSnsNotification(Noti noti, UserNotiDto user) {
+        log.info("Send Sns Noti");
         SnsType userSnsNotiOpt = user.getSnsNotiOpt();
         if (userSnsNotiOpt == SnsType.NONE)
             return;

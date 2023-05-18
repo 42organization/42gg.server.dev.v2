@@ -24,6 +24,8 @@ public class GameStatusScheduler extends AbstractScheduler{
             gameStatusService.updateBeforeToLiveStatus();
             // LIVE -> WAIT
             gameStatusService.updateLiveToWaitStatus();
+            // imminent Noti
+            gameStatusService.imminentGame();
         };
     }
 }
