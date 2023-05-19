@@ -1,7 +1,7 @@
-package com.gg.server.domain.feedback;
+package com.gg.server.domain.feedback.data;
 
 import com.gg.server.domain.user.User;
-import com.gg.server.global.types.FeedbackType;
+import com.gg.server.domain.feedback.type.FeedbackType;
 import com.gg.server.global.utils.BaseTimeEntity;
 import lombok.*;
 
@@ -9,7 +9,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Getter
 public class Feedback extends BaseTimeEntity {
@@ -34,4 +33,12 @@ public class Feedback extends BaseTimeEntity {
     @NotNull
     @Column(name = "is_solved")
     private Boolean isSolved;
+
+    @Builder
+    public Feedback(User user, FeedbackType category, String content) {
+        this.user = user;
+        this.category = category;
+        this.content = content;
+        this.isSolved = false;
+    }
 }

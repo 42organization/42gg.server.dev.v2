@@ -2,14 +2,13 @@ package com.gg.server.admin.announcement.controller;
 
 import com.gg.server.admin.announcement.dto.AnnouncementAdminAddDto;
 import com.gg.server.admin.announcement.dto.AnnouncementAdminListResponseDto;
-import com.gg.server.admin.announcement.dto.AnnouncementAdminUpdateDto;
 import com.gg.server.admin.announcement.service.AnnouncementAdminService;
 import lombok.AllArgsConstructor;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -28,19 +27,24 @@ public class AnnouncementAdminController {
     public ResponseEntity<AnnouncementAdminListResponseDto> getAnnouncementList(
             @RequestParam(defaultValue = "1") @Min(1) int page, @RequestParam(defaultValue = "5") @Min(1) int size) {
 
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("createdAt").descending());
+
         return ResponseEntity.ok()
-                .body(announcementAdminService.findAllAnnouncement(page, size));
+                .body(announcementAdminService.findAllAnnouncement(pageable));
     }
 
     @PostMapping("/announcement")
     public ResponseEntity addaAnnouncement(@Valid @RequestBody AnnouncementAdminAddDto addDto){
+        announcementAdminService.addAnnouncement(addDto);
 
-        return announcementAdminService.addAnnouncement(addDto);
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 
-    @PutMapping("/announcement")
-    public ResponseEntity announcementModify(@Valid @RequestBody AnnouncementAdminUpdateDto updateDto) {
 
-        return announcementAdminService.modifyAnnouncementIsDel(updateDto);
+    @DeleteMapping("/announcement/{deleterIntraId}")
+    public ResponseEntity announcementModify(@PathVariable String deleterIntraId) {
+        announcementAdminService.modifyAnnouncementIsDel(deleterIntraId);
+
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 }

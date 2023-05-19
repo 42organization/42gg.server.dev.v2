@@ -18,6 +18,7 @@ import com.gg.server.domain.user.UserRepository;
 import com.gg.server.domain.user.dto.*;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.SnsType;
+import com.gg.server.global.exception.custom.NotExistException;
 import com.gg.server.global.security.jwt.exception.TokenNotValidException;
 import com.gg.server.global.security.jwt.repository.JwtRedisRepository;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
@@ -27,6 +28,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -131,32 +133,32 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUser(String racketType, String statusMessage, String snsNotiOpt, Long userId) {
-        User user = userRepository.findById(userId).orElseThrow();
+    public void updateUser(String racketType, String statusMessage, String snsNotiOpt, String intraId) {
+        User user = userRepository.findByIntraId(intraId).orElseThrow();
         Season currentSeason = seasonRepository.findCurrentSeason(LocalDateTime.now())
                 .orElseThrow(() -> new NoSuchElementException("현재 시즌이 없습니다."));
-        updateRedisRankStatusMessage(statusMessage, userId, user, currentSeason);
-        updateRankTable(userId, statusMessage, currentSeason.getId());
-        user.update(RacketType.valueOf(racketType), SnsType.valueOf(snsNotiOpt));
+        updateRedisRankStatusMessage(statusMessage, user, currentSeason);
+        updateRankTableStatusMessage(user.getId(), statusMessage, currentSeason.getId());
+        user.updateTypes(RacketType.valueOf(racketType), SnsType.valueOf(snsNotiOpt));
     }
 
-    private void updateRankTable(Long userId, String statusMessage, Long seasonId) {
+    private void updateRankTableStatusMessage(Long userId, String statusMessage, Long seasonId) {
         Rank rank = rankRepository.findByUserIdAndSeasonId(userId, seasonId)
                 .orElseThrow(() -> new NoSuchElementException("랭크 테이블에 없는 유저입니다."));
         rank.setStatusMessage(statusMessage);
     }
 
-    private void updateRedisRankStatusMessage(String statusMessage, Long userId, User user, Season currentSeason) {
+    private void updateRedisRankStatusMessage(String statusMessage, User user, Season currentSeason) {
         String hashKey = RedisKeyManager.getHashKey(currentSeason.getId());
 
-        RankRedis userRank = rankRedisRepository.findRankByUserId(hashKey, userId);
+        RankRedis userRank = rankRedisRepository.findRankByUserId(hashKey, user.getId());
         userRank.setStatusMessage(statusMessage);
         rankRedisRepository.updateRankData(hashKey, user.getId(), userRank);
     }
 
     /**
      *
-     * @param userId
+     * @param intraId
      * @param seasonId
      * seasonId == 0 -> current season, else -> 해당 Id를 가진 season의 데이터
      *
@@ -169,7 +171,7 @@ public class UserService {
      * @return 유저의 최근 10개의 랭크 경기 기록
      */
     @Transactional(readOnly = true)
-    public UserHistoryResponseDto getUserHistory(Long userId, Long seasonId) {
+    public UserHistoryResponseDto getUserHistory(String intraId, Long seasonId) {
         Season season;
         if (seasonId == 0){
             season = seasonRepository.findCurrentSeason(LocalDateTime.now())
@@ -178,7 +180,7 @@ public class UserService {
             season = seasonRepository.findById(seasonId)
                     .orElseThrow(() -> new NoSuchElementException("현재 시즌이 없습니다."));
         }
-        List<PChange> pChanges = pChangeRepository.findPChangesHistory(userId, season.getId());
+        List<PChange> pChanges = pChangeRepository.findPChangesHistory(intraId, season.getId());
         List<UserHistoryData> historyData = pChanges.stream().map(UserHistoryData::new).collect(Collectors.toList());
         Collections.reverse(historyData);
         return new UserHistoryResponseDto(historyData);
@@ -212,5 +214,9 @@ public class UserService {
         double winRate = (userRank.getWins() + userRank.getLosses()) == 0 ? 0 :
                 (double)(userRank.getWins() * 10000 / (userRank.getWins() + userRank.getLosses())) / 100;
         return new UserRankResponseDto(userRanking.intValue(), userRank.getPpp(), userRank.getWins(), userRank.getLosses(), winRate);
+    }
+
+    public User getUser(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User" + userId));
     }
 }

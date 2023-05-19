@@ -27,12 +27,12 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class RankService {
     private final UserRepository userRepository;
     private final RankRedisRepository redisRepository;
     private final SeasonRepository seasonRepository;
 
+    @Transactional(readOnly = true)
     public ExpRankPageResponseDto getExpRankPage(int pageNum, int pageSize, UserDto curUser) {
         PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize, Sort.by("totalExp").descending());
 
@@ -58,6 +58,7 @@ public class RankService {
         return new ExpRankPageResponseDto(myRank.intValue(), pageNum, users.getTotalPages(), expRankDtos);
     }
 
+    @Transactional(readOnly = true)
     public RankPageResponseDto getRankPage(int pageNum, int pageSize, UserDto curUser, Long seasonId) {
         Season season;
         if (seasonId == null || seasonId == 0) {
