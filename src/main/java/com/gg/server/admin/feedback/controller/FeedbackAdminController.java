@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -35,4 +34,12 @@ public class FeedbackAdminController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
+    @GetMapping("/users")
+    public FeedbackListAdminResponseDto feedbackFindByIntraId(@RequestParam String intraId,
+                                                              @RequestParam(defaultValue = "1") @Min(1) int page,
+                                                              @RequestParam(defaultValue = "5") @Min(1) int size) {
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("intra_id").and(Sort.by("createdAt")));
+
+        return feedbackAdminService.findByPartsOfIntraId(intraId, pageable);
+    }
 }

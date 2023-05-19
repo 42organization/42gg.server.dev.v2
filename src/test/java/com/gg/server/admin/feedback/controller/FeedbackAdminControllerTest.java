@@ -5,6 +5,7 @@ import com.gg.server.admin.feedback.data.FeedbackAdminRepository;
 import com.gg.server.admin.feedback.dto.FeedbackListAdminResponseDto;
 import com.gg.server.domain.feedback.data.Feedback;
 import com.gg.server.domain.feedback.type.FeedbackType;
+import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.UserRepository;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
@@ -75,7 +76,6 @@ class FeedbackAdminControllerTest {
         String accessToken = testDataUtils.getLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
-        //Id 44는 개발자가 만든 본섭?? 테스트 피드백이다.
         Feedback feedback = Feedback.builder()
                 .category(FeedbackType.ETC)
                 .content("test1234")
@@ -92,5 +92,39 @@ class FeedbackAdminControllerTest {
                 .andReturn().getResponse().getContentAsString();
 
 
+    }
+
+    @Test
+    @DisplayName("[get]pingpong/admin/feedback/users?intraId=${intraId}&page=${pageNumber}&size={size}")
+    void findFeedbackByIntraId() throws Exception {
+        String accessToken = testDataUtils.getLoginAccessToken();
+        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+
+        User user = userRepository.findById(userId).get();
+
+        Feedback feedback = Feedback.builder()
+                .category(FeedbackType.ETC)
+                .content("test1234")
+                .user(user)
+                .build();
+        feedbackAdminRepository.save(feedback);
+
+        Integer currentPage = 1;
+        Integer pageSize = 5;//페이지 사이즈 크기가 실제 디비 정보보다 큰지 확인할 것
+
+        String url = "/pingpong/admin/feedback/users?intraId=" + user.getIntraId() + "&page=" + currentPage + "&size=" + pageSize;
+        Boolean status = feedback.getIsSolved();
+
+        String contentAsString = mockMvc.perform(get(url)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+
+        FeedbackListAdminResponseDto result = objectMapper.readValue(contentAsString, FeedbackListAdminResponseDto.class);
+        assertThat(result.getCurrentPage()).isEqualTo(1);
+        System.out.println(result.getFeedbackList().get(0).getId());
+        System.out.println(result.getFeedbackList().get(0).getContent());
+        System.out.println(result.getFeedbackList().get(0).getIntraId());
     }
 }
