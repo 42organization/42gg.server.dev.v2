@@ -14,7 +14,6 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Setter
 public class GameLogAdminRequestDto {
     private Long seasonId;
     @NotNull
