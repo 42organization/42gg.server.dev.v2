@@ -18,6 +18,7 @@ import com.gg.server.domain.user.UserRepository;
 import com.gg.server.domain.user.dto.*;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.SnsType;
+import com.gg.server.global.exception.custom.NotExistException;
 import com.gg.server.global.security.jwt.exception.TokenNotValidException;
 import com.gg.server.global.security.jwt.repository.JwtRedisRepository;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
@@ -27,6 +28,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -212,5 +214,9 @@ public class UserService {
         double winRate = (userRank.getWins() + userRank.getLosses()) == 0 ? 0 :
                 (double)(userRank.getWins() * 10000 / (userRank.getWins() + userRank.getLosses())) / 100;
         return new UserRankResponseDto(userRanking.intValue(), userRank.getPpp(), userRank.getWins(), userRank.getLosses(), winRate);
+    }
+
+    public User getUser(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User" + userId));
     }
 }

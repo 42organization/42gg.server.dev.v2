@@ -50,7 +50,7 @@ public class GameService {
     public synchronized Boolean normalExpResult(NormalResultReqDto normalResultReqDto) {
         Game game = findByGameId(normalResultReqDto.getGameId());
         List<TeamUser> teamUsers = teamUserRepository.findAllByGameId(game.getId());
-        if (teamUsers.size() == 2 && game.getStatus() == StatusType.LIVE) {
+        if (teamUsers.size() == 2 && game.getStatus() == StatusType.WAIT) {
             expUpdate(game, teamUsers);
             return true;
         } else if (teamUsers.size() != 2) {

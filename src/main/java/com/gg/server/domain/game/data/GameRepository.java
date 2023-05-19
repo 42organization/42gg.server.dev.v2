@@ -51,4 +51,7 @@ public interface GameRepository extends JpaRepository<Game, Long>, GameRepositor
             "from v_teamuser " +
             "where intraId = :intra and mode in (:mode) and seasonId = :seasonId and status=:status", nativeQuery = true)
     Slice<Long> findGamesByUserAndModeAndSeason(@Param("intra") String intra, @Param("mode") String mode, @Param("seasonId") Long seasonId, @Param("status") String status, Pageable pageable);
+
+    List<Game> findAllByStatusAndStartTimeLessThanEqual(StatusType status, LocalDateTime startTime);
+    List<Game> findAllByStatusAndEndTimeLessThanEqual(StatusType status, LocalDateTime endTime);
 }
