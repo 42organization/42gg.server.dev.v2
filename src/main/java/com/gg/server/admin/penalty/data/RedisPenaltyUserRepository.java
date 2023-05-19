@@ -1,6 +1,7 @@
 package com.gg.server.admin.penalty.data;
 
 import com.gg.server.admin.penalty.type.PenaltyKey;
+import com.gg.server.domain.penalty.data.RedisPenaltyUser;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;

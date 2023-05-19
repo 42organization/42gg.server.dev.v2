@@ -1,6 +1,6 @@
 package com.gg.server.admin.penalty.service;
 
-import com.gg.server.admin.penalty.data.RedisPenaltyUser;
+import com.gg.server.domain.penalty.data.RedisPenaltyUser;
 import com.gg.server.admin.penalty.data.RedisPenaltyUserRepository;
 import com.gg.server.admin.penalty.dto.PenaltyListResponseDto;
 import com.gg.server.admin.penalty.dto.PenaltyUserResponseDto;
