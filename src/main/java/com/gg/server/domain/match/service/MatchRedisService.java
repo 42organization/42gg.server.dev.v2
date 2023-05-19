@@ -10,6 +10,8 @@ import com.gg.server.domain.match.data.RedisMatchTimeRepository;
 import com.gg.server.domain.match.data.RedisMatchUserRepository;
 import com.gg.server.domain.match.dto.MatchStatusDto;
 import com.gg.server.domain.match.dto.MatchStatusResponseListDto;
+import com.gg.server.domain.match.dto.SlotStatusDto;
+import com.gg.server.domain.match.dto.SlotStatusResponseListDto;
 import com.gg.server.domain.match.type.SlotStatus;
 import com.gg.server.domain.match.type.Option;
 import com.gg.server.domain.rank.redis.RankRedis;
@@ -23,7 +25,9 @@ import com.gg.server.domain.team.data.Team;
 import com.gg.server.domain.team.data.TeamRepository;
 import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.team.data.TeamUserRepository;
+import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.UserRepository;
+import com.gg.server.domain.user.dto.UserDto;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -86,6 +90,39 @@ public class MatchRedisService {
         cancelEnrolledSlots(enemy.get(), matchUser);
     }
 
+    public MatchStatusResponseListDto getCurrentMatch(UserDto userDto) {
+        SlotManagement slotManagement = slotManagementRepository.findFirstByOrderByCreatedAtDesc();
+        Optional<Game> myGame = gameRepository.findByStatusTypeAndUserId(StatusType.BEFORE, userDto.getId());
+        if (myGame.isPresent()) {
+            List<Team> teams = teamRepository.findAllBy(myGame.get().getId());
+            TeamUser teamUser1 = teamUserRepository.findByTeam(teams.get(0).getId());
+            TeamUser teamUser2 = teamUserRepository.findByTeam(teams.get(1).getId());
+            if (teamUser1.getUser().getId().equals(userDto.getId())) {
+                User enemyUser = userRepository.findById(teamUser2.getUser().getId())
+                        .orElseThrow(() -> new NoSuchElementException("유저가 없습니다."));
+                return new MatchStatusResponseListDto(getMatchedListDto(myGame.get(), userDto.getIntraId(),
+                        enemyUser.getIntraId()));
+            }
+            User enemyUser = userRepository.findById(teamUser1.getUser().getId())
+                    .orElseThrow(() -> new NoSuchElementException("유저가 없습니다."));
+            return new MatchStatusResponseListDto(getMatchedListDto(myGame.get(), userDto.getIntraId(),
+                    enemyUser.getIntraId()));
+        }
+        Set<RedisMatchTime> enrolledSlots = redisMatchUserRepository.getAllMatchTime(userDto.getId());
+        List<MatchStatusDto> dtos = enrolledSlots.stream()
+                .map(e -> new MatchStatusDto(e, slotManagement.getGameInterval()))
+                .collect(Collectors.toList());
+        return new MatchStatusResponseListDto(dtos);
+    }
+
+
+    private List<MatchStatusDto> getMatchedListDto(Game game, String myIntraId, String enemyIntraId) {
+        List<MatchStatusDto> dtos = new ArrayList<MatchStatusDto>();
+        dtos.add(new MatchStatusDto(game, myIntraId, enemyIntraId));
+        return dtos;
+    }
+
+
     //게임 생성 전 매칭 취소
     public void cancelMatch(Long userId, LocalDateTime startTime) {
         //취소 패널티는 게임이 만들어진 후 고려
@@ -112,13 +149,13 @@ public class MatchRedisService {
         }
     }
 
-    public MatchStatusResponseListDto getAllMatchStatus(Long userId, Option option) {
+    public SlotStatusResponseListDto getAllMatchStatus(Long userId, Option option) {
         SlotManagement slotManagement = slotManagementRepository.findFirstByOrderByCreatedAtDesc();
         Season currentSeason = seasonRepository.findCurrentSeason(LocalDateTime.now())
                 .orElseThrow(() -> new NoSuchElementException("현재 시즌이 없습니다."));
         RankRedis user = rankRedisRepository.
                 findRankByUserId(RedisKeyManager.getHashKey(currentSeason.getId()), userId);
-        HashMap <LocalDateTime, MatchStatusDto> slots = new HashMap<LocalDateTime, MatchStatusDto>();
+        HashMap <LocalDateTime, SlotStatusDto> slots = new HashMap<LocalDateTime, SlotStatusDto>();
         groupPastSlots(slots, slotManagement);
         groupMatchedSlots(slots, slotManagement, user);
         groupMySlots(slots, slotManagement, user);
@@ -126,9 +163,9 @@ public class MatchRedisService {
         return getResponseDto(slots, slotManagement);
     }
 
-    private MatchStatusResponseListDto getResponseDto(HashMap<LocalDateTime, MatchStatusDto> slots,
-                                                      SlotManagement slotManagement) {
-        List<MatchStatusDto> matchBoards = new ArrayList<MatchStatusDto>();
+    private SlotStatusResponseListDto getResponseDto(HashMap<LocalDateTime, SlotStatusDto> slots,
+                                                     SlotManagement slotManagement) {
+        List<SlotStatusDto> matchBoards = new ArrayList<SlotStatusDto>();
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime standardTime = LocalDateTime.of(
                 now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour(), 0);
@@ -136,14 +173,12 @@ public class MatchRedisService {
         LocalDateTime maxTime = standardTime.plusHours(slotManagement.getFutureSlotTime());
         Integer interval = slotManagement.getGameInterval();
         for (LocalDateTime time = minTime ; time.isBefore(maxTime) ; time = time.plusMinutes(interval)) {
-            MatchStatusDto dto = slots.getOrDefault(time, getMatchStatusDto(time, SlotStatus.OPEN, interval));
+            SlotStatusDto dto = slots.getOrDefault(time, getMatchStatusDto(time, SlotStatus.OPEN, interval));
             matchBoards.add(dto);
         }
-        return MatchStatusResponseListDto.builder()
-                .matchBoards(matchBoards)
-                .build();
+        return new SlotStatusResponseListDto(matchBoards);
     }
-    private void groupPastSlots(HashMap<LocalDateTime, MatchStatusDto> slots, SlotManagement slotManagement) {
+    private void groupPastSlots(HashMap<LocalDateTime, SlotStatusDto> slots, SlotManagement slotManagement) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime standardTime = LocalDateTime.of(
                 now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour(), 0);
@@ -154,7 +189,7 @@ public class MatchRedisService {
         }
     }
 
-    private void groupMySlots(HashMap<LocalDateTime, MatchStatusDto> slots, SlotManagement slotManagement, RankRedis user) {
+    private void groupMySlots(HashMap<LocalDateTime, SlotStatusDto> slots, SlotManagement slotManagement, RankRedis user) {
         Integer interval = slotManagement.getGameInterval();
         Set<RedisMatchTime> allMatchTime = redisMatchUserRepository.getAllMatchTime(user.getUserId());
         for (RedisMatchTime matchTime : allMatchTime) {
@@ -163,7 +198,7 @@ public class MatchRedisService {
         }
     }
 
-    private void groupEnrolledSlots(HashMap<LocalDateTime, MatchStatusDto> slots, SlotManagement slotManagement,
+    private void groupEnrolledSlots(HashMap<LocalDateTime, SlotStatusDto> slots, SlotManagement slotManagement,
                                     Option option, Season season, RankRedis user) {
 
         Set<LocalDateTime> enrolledSlots = redisMatchTimeRepository.getAllEnrolledStartTimes();
@@ -175,7 +210,7 @@ public class MatchRedisService {
         }
     }
 
-    private void groupMatchedSlots(HashMap<LocalDateTime, MatchStatusDto> slots,
+    private void groupMatchedSlots(HashMap<LocalDateTime, SlotStatusDto> slots,
                                    SlotManagement slotManagement, RankRedis user) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime standardTime = LocalDateTime.of(
@@ -215,11 +250,8 @@ public class MatchRedisService {
     }
 
 
-    private MatchStatusDto getMatchStatusDto(LocalDateTime startTime, SlotStatus status, Integer interval) {
-        return MatchStatusDto.builder().status(status)
-                .startTime(startTime)
-                .endTime(startTime.plusMinutes(interval))
-                .build();
+    private SlotStatusDto getMatchStatusDto(LocalDateTime startTime, SlotStatus status, Integer interval) {
+        return new SlotStatusDto(startTime, startTime.plusMinutes(interval), status);
     }
 
 

@@ -6,16 +6,6 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum ErrorCode {
-    // error code 등록
-    //404
-    NOT_FOUND(404, "COMMON-ERR-404", "NOT FOUND"),
-    //500
-    //400 잘못된 요청 코드
-    BAD_REQUEST(400, "COMMON-ERR-400", "BAD REQUEST"),
-    VALID_FAILED(400, "GAME-ERR-400" , "Valid Test Failed."),
-    BAD_ARGU(400, "ARGUMENT-ERR-400", "잘못된 argument 입니다."),
-
-    SN001(400, "SN001", "요청하신 값은 현 null 입니다"),
 
     //user
     USER_NOT_FOUND(404, "UR100", "USER NOT FOUND"),
@@ -30,11 +20,23 @@ public enum ErrorCode {
     //authentication
     UNAUTHORIZED(401, "AU000", "UNAUTHORIZED"),
 
-    //common
-    INTERNAL_SERVER_ERR(500, "CM000","INTERNAL SERVER ERROR"),
-    PAGE_NOT_FOUND(404, "CM001", "PAGE NOT FOUND"),
 
+    /** Common **/
+    INTERNAL_SERVER_ERR(500, "CM001","INTERNAL SERVER ERROR"),
+    NOT_FOUND(404, "CM002", "NOT FOUND"),
+    BAD_REQUEST(400, "CM003", "BAD REQUEST"),
+    PAGE_NOT_FOUND(404, "CM004", "PAGE NOT FOUND"),
+    METHOD_NOT_ALLOWED(405, "CM005", "METHOD NOT ALLOWED"),
+    VALID_FAILED(400, "GAME-ERR-400" , "Valid Test Failed."),
+    SN001(400, "SN001", "요청하신 값은 현 null 입니다"),
+    AWS_S3_ERR(500, "CL001", "AWS S3 Error"),
+    AWS_SERVER_ERR(500, "CL002", "AWS Error"),
 
+    // SENDER
+    SLACK_USER_NOT_FOUND(404, "SL001", "fail to get slack user info"),
+    SLACK_CH_NOT_FOUND(404, "SL002", "fail to get user dm channel id"),
+    SLACK_JSON_PARSE_ERR(400, "SL002", "json parse error"),
+    SLACK_SEND_FAIL(400, "SL003","fail to send notification" )
     ;
     private int status;
     private String errCode;

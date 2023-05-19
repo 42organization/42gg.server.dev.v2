@@ -16,7 +16,7 @@ import com.gg.server.global.security.info.OAuthUserInfoFactory;
 import com.gg.server.global.security.info.ProviderType;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.SnsType;
-import com.gg.server.global.utils.AsyncNewUserImageUploader;
+import com.gg.server.global.utils.aws.AsyncNewUserImageUploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
