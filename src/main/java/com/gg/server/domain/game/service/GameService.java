@@ -5,6 +5,7 @@ import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.dto.*;
 import com.gg.server.domain.game.dto.req.NormalResultReqDto;
 import com.gg.server.domain.game.dto.req.RankResultReqDto;
+import com.gg.server.domain.pchange.service.PChangeService;
 import com.gg.server.domain.rank.redis.RankRedisService;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.team.data.TeamUser;
@@ -28,6 +29,7 @@ public class GameService {
     private final GameRepository gameRepository;
     private final TeamUserRepository teamUserRepository;
     private final RankRedisService rankRedisService;
+    private final PChangeService pChangeService;
 
     @Transactional(readOnly = true)
     public GameTeamInfo getUserGameInfo(Long gameId, Long userId) {
@@ -51,7 +53,9 @@ public class GameService {
         Game game = findByGameId(normalResultReqDto.getGameId());
         List<TeamUser> teamUsers = teamUserRepository.findAllByGameId(game.getId());
         if (teamUsers.size() == 2 && game.getStatus() == StatusType.WAIT) {
-            expUpdate(game, teamUsers);
+            expUpdates(game, teamUsers);
+            pChangeService.addPChange(game, teamUsers.get(0).getUser(), null);
+            pChangeService.addPChange(game, teamUsers.get(1).getUser(), null);
             return true;
         } else if (teamUsers.size() != 2) {
             throw new InvalidParameterException("team 이 잘못되었습니다.", ErrorCode.VALID_FAILED);
@@ -59,14 +63,18 @@ public class GameService {
         return false;
     }
 
-    private void expUpdate(Game game, List<TeamUser> teamUsers) {
+    private void expUpdates(Game game, List<TeamUser> teamUsers) {
         LocalDateTime time = getDateTime(game.getStartTime());
-        Integer gamePerDay = teamUserRepository.findByDateAndUser(time, teamUsers.get(0).getUser().getId());
-        System.out.println(gamePerDay);
-        teamUsers.get(0).getUser().addExp(ExpLevelCalculator.getExpPerGame() + (ExpLevelCalculator.getExpBonus() * gamePerDay));
-        gamePerDay = teamUserRepository.findByDateAndUser(time, teamUsers.get(1).getUser().getId());
-        teamUsers.get(1).getUser().addExp(ExpLevelCalculator.getExpPerGame() + (ExpLevelCalculator.getExpBonus() * gamePerDay));
+        for (TeamUser tu :
+                teamUsers) {
+            expUpdate(tu, time);
+        }
         game.updateStatus();
+    }
+
+    private void expUpdate(TeamUser teamUser, LocalDateTime time) {
+        Integer gamePerDay = teamUserRepository.findByDateAndUser(time, teamUser.getUser().getId());
+        teamUser.getUser().addExp(ExpLevelCalculator.getExpPerGame() + (ExpLevelCalculator.getExpBonus() * gamePerDay));
     }
 
     private static LocalDateTime getDateTime(LocalDateTime gameTime) {
@@ -97,7 +105,7 @@ public class GameService {
         } else {
             if (myTeam.getTeam().getScore().equals(scoreDto.getMyTeamScore())
                     && enemyTeam.getTeam().getScore().equals(scoreDto.getEnemyTeamScore())) {
-                expUpdate(game, teams);
+                expUpdates(game, teams);
                 rankRedisService.updateRankRedis(teams, seasonId, game);
             } else {
                 setTeamScore(myTeam, scoreDto.getMyTeamScore(), scoreDto.getMyTeamScore() > scoreDto.getEnemyTeamScore());
