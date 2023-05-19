@@ -24,8 +24,7 @@ public enum ErrorCode {
     SLACK_USER_NOT_FOUND(404, "SL001", "fail to get slack user info"),
     SLACK_CH_NOT_FOUND(404, "SL002", "fail to get user dm channel id"),
     SLACK_JSON_PARSE_ERR(400, "SL002", "json parse error"),
-    SLACK_SEND_FAIL(400, "SL003","fail to send notification" )
-
+    SLACK_SEND_FAIL(400, "SL003","fail to send notification" ),
     ;
     private int status;
     private String errCode;
