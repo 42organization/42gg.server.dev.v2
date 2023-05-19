@@ -85,6 +85,7 @@ public class SlackbotService {
 
     @Async("asyncExecutor")
     public void send(UserNotiDto user, Noti noti) {
+        log.info("slack alarm send");
         try {
             startSendNoti(user.getIntraId(), noti);
         } catch (SlackSendException e) {

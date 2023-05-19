@@ -52,7 +52,7 @@ public class GameStatusService {
         List<GameUser> games = teamRepository.findAllByStartTimeEquals(getTime(5));
         for (GameUser gu :
                 games) {
-            Noti noti = notiService.createNoti(userService.getUser(gu.getUserId()), notiService.notiMsg(NotiType.IMMINENT), NotiType.IMMINENT);
+            Noti noti = notiService.createNoti(userService.getUser(gu.getUserId()), null, NotiType.IMMINENT);
             snsNotiService.sendSnsNotification(noti, new UserNotiDto(gu));
         }
     }
