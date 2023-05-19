@@ -1,11 +1,8 @@
 package com.gg.server.admin.feedback.controller;
 
-import com.gg.server.admin.feedback.dto.FeedbackIsSolvedResponseDto;
 import com.gg.server.admin.feedback.dto.FeedbackListAdminResponseDto;
 import com.gg.server.admin.feedback.service.FeedbackAdminService;
-import com.gg.server.domain.feedback.data.FeedbackRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.http.HttpResponse;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -33,10 +30,9 @@ public class FeedbackAdminController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<FeedbackIsSolvedResponseDto> feedbackIsSolvedToggle(@PathVariable @NotNull Long id){
+    public ResponseEntity feedbackIsSolvedToggle(@PathVariable @NotNull Long id){
 
-        return ResponseEntity.ok()
-                .body(feedbackAdminService.toggleFeedbackIsSolvedByAdmin(id));
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
 }

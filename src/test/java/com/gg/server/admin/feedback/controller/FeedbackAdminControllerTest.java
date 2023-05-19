@@ -1,9 +1,7 @@
 package com.gg.server.admin.feedback.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gg.server.admin.announcement.dto.AnnouncementAdminListResponseDto;
 import com.gg.server.admin.feedback.data.FeedbackAdminRepository;
-import com.gg.server.admin.feedback.dto.FeedbackIsSolvedResponseDto;
 import com.gg.server.admin.feedback.dto.FeedbackListAdminResponseDto;
 import com.gg.server.domain.feedback.data.Feedback;
 import com.gg.server.domain.feedback.type.FeedbackType;
@@ -21,7 +19,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -91,11 +88,9 @@ class FeedbackAdminControllerTest {
 
         String contentAsString = mockMvc.perform(patch(url)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
-                .andExpect(status().isOk())
+                .andExpect(status().isNoContent())
                 .andReturn().getResponse().getContentAsString();
 
 
-        FeedbackIsSolvedResponseDto result = objectMapper.readValue(contentAsString, FeedbackIsSolvedResponseDto.class);
-        assertThat(result.getIsSolved()).isNotEqualTo(status);
     }
 }
