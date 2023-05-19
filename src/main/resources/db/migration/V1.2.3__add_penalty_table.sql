@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS `penalty`;
 
-CREATE TABLE `MAIN`.`penalty` (
+CREATE TABLE `penalty` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `user_id` BIGINT NOT NULL,
   `penalty_type` VARCHAR(20) NOT NULL,
