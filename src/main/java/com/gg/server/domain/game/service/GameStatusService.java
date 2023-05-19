@@ -50,11 +50,8 @@ public class GameStatusService {
     @Transactional
     public void imminentGame() {
         List<GameUser> games = teamRepository.findAllByStartTimeEquals(getTime(5));
-        System.out.println(getTime(5));
-        System.out.println(games.size());
         for (GameUser gu :
                 games) {
-            System.out.println(gu.getEmail());
             Noti noti = notiService.createNoti(userService.getUser(gu.getUserId()), notiService.notiMsg(NotiType.IMMINENT), NotiType.IMMINENT);
             snsNotiService.sendSnsNotification(noti, new UserNotiDto(gu));
         }

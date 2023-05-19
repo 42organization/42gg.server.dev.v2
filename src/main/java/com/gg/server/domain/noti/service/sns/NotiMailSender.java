@@ -19,7 +19,6 @@ import javax.mail.internet.MimeMessage;
 public class NotiMailSender {
     private final JavaMailSender javaMailSender;
     private final AsyncMailSender asyncMailSender;
-    private final NotiService notiService;
 
     public void send(UserNotiDto user, Noti noti) {
         MimeMessage message = javaMailSender.createMimeMessage();
@@ -27,7 +26,7 @@ public class NotiMailSender {
         try {
             helper.setSubject("핑퐁요정🧚으로부터 도착한 편지");
             helper.setTo(user.getEmail());
-            helper.setText(notiService.getMessage(noti));
+            helper.setText(noti.getMessage());
         } catch (MessagingException e) {
             log.error("MessagingException message = {}", e.getMessage());
         }
