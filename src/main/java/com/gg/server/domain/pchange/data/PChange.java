@@ -39,5 +39,6 @@ public class PChange extends BaseTimeEntity {
         this.game = game;
         this.user = user;
         this.pppResult = pppResult;
+        this.exp = user.getTotalExp();
     }
 }

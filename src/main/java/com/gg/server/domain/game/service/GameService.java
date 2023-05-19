@@ -97,8 +97,8 @@ public class GameService {
         } else {
             if (myTeam.getTeam().getScore().equals(scoreDto.getMyTeamScore())
                     && enemyTeam.getTeam().getScore().equals(scoreDto.getEnemyTeamScore())) {
-                rankRedisService.updateRankRedis(teams, seasonId, game);
                 expUpdate(game, teams);
+                rankRedisService.updateRankRedis(teams, seasonId, game);
             } else {
                 setTeamScore(myTeam, scoreDto.getMyTeamScore(), scoreDto.getMyTeamScore() > scoreDto.getEnemyTeamScore());
                 setTeamScore(enemyTeam, scoreDto.getEnemyTeamScore(), scoreDto.getMyTeamScore() < scoreDto.getEnemyTeamScore());
