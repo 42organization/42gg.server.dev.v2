@@ -65,7 +65,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({RuntimeException.class})
     public ResponseEntity<ErrorResponse> runtimeException(RuntimeException ex) {
         log.error("Runtime error", ex);
-        ErrorResponse response = new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERR);
+        ErrorResponse response = new ErrorResponse(ErrorCode.BAD_REQUEST);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
