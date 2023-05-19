@@ -40,7 +40,7 @@ public class FeedbackAdminService {
         return responseDto;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public FeedbackListAdminResponseDto findByPartsOfIntraId(String intraId, Pageable pageable) {
         Page<Feedback> feedbacks = feedbackAdminRepository.findFeedbacksByUserIntraId(intraId, pageable);
         Page<FeedbackAdminResponseDto> feedbackAdminResponseDtos = feedbacks.map(FeedbackAdminResponseDto::new);
