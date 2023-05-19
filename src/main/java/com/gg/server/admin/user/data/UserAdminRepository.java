@@ -12,4 +12,6 @@ public interface UserAdminRepository extends JpaRepository<User, Long> {
     User getUserByIntraId(String IntraId);
     Page<User> findByIntraIdContains(Pageable pageable, String intraId);
     Optional<User> findByKakaoId(Long kakaoId);
+
+    Page<User> findAll(Pageable pageable);
 }

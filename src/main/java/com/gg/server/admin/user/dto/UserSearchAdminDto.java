@@ -2,10 +2,12 @@ package com.gg.server.admin.user.dto;
 
 import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.type.RoleType;
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class UserSearchAdminDto {
     private Long id;
     private String intraId;

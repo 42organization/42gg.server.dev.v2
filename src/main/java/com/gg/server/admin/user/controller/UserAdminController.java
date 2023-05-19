@@ -21,10 +21,10 @@ public class UserAdminController {
     private final UserAdminService userAdminService;
 
     @GetMapping
-    public UserSearchAdminResponseDto userAll(@RequestParam @Min(1) int page,
+    public UserSearchAdminResponseDto userSearchAll(@RequestParam @Min(1) int page,
                                               @RequestParam(defaultValue = "20") int size,
                                               @RequestParam(required = false) String intraId) {
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("user.intraId").ascending());
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("intraId").ascending());
         if (intraId == null)
             return userAdminService.searchAll(pageable);
         else
