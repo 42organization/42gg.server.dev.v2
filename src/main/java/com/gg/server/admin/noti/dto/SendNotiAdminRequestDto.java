@@ -15,6 +15,9 @@ import java.util.Objects;
 public class SendNotiAdminRequestDto {
 
     @NotNull
+    private String intraId;
+
+    @NotNull
     @Size(max=255)
     private String message;
 

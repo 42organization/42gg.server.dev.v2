@@ -1,6 +1,7 @@
 package com.gg.server.domain.noti.controller;
 
 import com.gg.server.domain.noti.dto.NotiDto;
+import com.gg.server.domain.noti.dto.NotiListResponseDto;
 import com.gg.server.domain.noti.dto.NotiResponseDto;
 import com.gg.server.domain.noti.service.NotiService;
 import com.gg.server.domain.user.dto.UserDto;
@@ -13,23 +14,23 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping(value = "/pingpong")
+@RequestMapping(value = "/pingpong/notifications")
 public class NotiController {
     private final NotiService notiService;
 
-    @GetMapping(value = "/notifications")
-    public NotiResponseDto notiFindByUser(@Login UserDto user) {
-        List<NotiDto> notiDtos = notiService.findNotiByUser(user);
-        return new NotiResponseDto(notiDtos);
+    @GetMapping
+    public NotiListResponseDto notiFindByUser(@Login UserDto user) {
+        List<NotiResponseDto> notiResponseDtoList = notiService.findNotiByUser(user);
+        return new NotiListResponseDto(notiResponseDtoList);
     }
 
-    @PutMapping(value = "/notifications/check")
+    @PutMapping(value = "/check")
     public ResponseEntity checkNotiByUser(@Login UserDto user) {
         notiService.modifyNotiCheckedByUser(user);
         return ResponseEntity.status(204).build();
     }
 
-    @DeleteMapping(value = "/notifications")
+    @DeleteMapping
     public ResponseEntity notiRemoveAll(@Login UserDto user) {
         notiService.removeAllNotisByUser(user);
         return ResponseEntity.status(204).build();
