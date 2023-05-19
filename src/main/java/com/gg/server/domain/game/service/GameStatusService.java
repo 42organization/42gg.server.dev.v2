@@ -59,7 +59,7 @@ public class GameStatusService {
     private LocalDateTime getTime(int plusMiniute) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime endTime = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(),
-                now.getHour(), now.getMinute());
+                now.getHour(), now.getMinute(), 1);
         return endTime.plusMinutes(plusMiniute);
     }
 }
