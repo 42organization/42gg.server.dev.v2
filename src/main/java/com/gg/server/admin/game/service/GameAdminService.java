@@ -31,13 +31,13 @@ public class GameAdminService {
     private final TeamUserAdminRepository teamUserAdminRepository;
     private final SeasonAdminRepository seasonAdminRepository;
 
-    @Transactional
+    @Transactional(readOnly = true)
     public GameLogListAdminResponseDto findAllGamesByAdmin(Pageable pageable) {
         Page<Game> gamePage = gameAdminRepository.findAll(pageable); //모든 게임 정보 가져오기
         return createGameLogAdminDto(gamePage);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public GameLogListAdminResponseDto findGamesBySeasonId(Long seasonId, Pageable pageable){
         Season season = seasonAdminRepository.findById(seasonId).orElseThrow(()-> new AdminException("해당 시즌id가 없습니다", ErrorCode.SN001));
         Page<Game> games = gameAdminRepository.findBySeason(pageable, season);   //시즌 id로 게임들 찾아오기
@@ -45,7 +45,7 @@ public class GameAdminService {
     }
 
 
-    @Transactional
+    @Transactional(readOnly = true)
     public GameLogListAdminResponseDto createGameLogAdminDto(Page<Game> gamePage){
         List<Game> gameList = gamePage.getContent();
 
