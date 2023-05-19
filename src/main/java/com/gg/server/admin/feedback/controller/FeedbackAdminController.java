@@ -31,7 +31,7 @@ public class FeedbackAdminController {
 
     @PatchMapping("/{id}")
     public ResponseEntity feedbackIsSolvedToggle(@PathVariable @NotNull Long id){
-
+        feedbackAdminService.toggleFeedbackIsSolvedByAdmin(id);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 

@@ -29,7 +29,7 @@ public class FeedbackAdminService {
 
     @Transactional
     public void toggleFeedbackIsSolvedByAdmin(Long feedbackId){
-        Feedback feedback = feedbackAdminRepository.findById(feedbackId).orElseThrow(() -> new FeedbackNotFoundException(ErrorCode.FB_NOT_FOUND));
+        Feedback feedback = feedbackAdminRepository.findById(feedbackId).orElseThrow(() -> new FeedbackNotFoundException());
         if (feedback.getIsSolved() == true){
             feedback.setIsSolved(false);
         }else {
