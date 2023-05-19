@@ -4,16 +4,22 @@ import com.gg.server.admin.game.dto.GameLogAdminRequestDto;
 import com.gg.server.admin.game.dto.GameLogListAdminResponseDto;
 import com.gg.server.admin.game.service.GameAdminService;
 import lombok.RequiredArgsConstructor;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/pingpong/admin/games")
+@Validated
 public class GameAdminController {
 
     private final GameAdminService gameAdminService;
@@ -28,5 +34,14 @@ public class GameAdminController {
             return gameAdminService.findAllGamesByAdmin(pageable);
         else
             return gameAdminService.findGamesBySeasonId(seasonId, pageable);
+    }
+
+    @GetMapping("/users")
+    public GameLogListAdminResponseDto gameFindByIntraId(@RequestParam @NotNull String intraId,
+                                                         @RequestParam(defaultValue = "1") @Min(1) int page,
+                                                         @RequestParam(defaultValue = "5") @Min(1) int size) {
+
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return gameAdminService.findGamesByIntraId(intraId, pageable);
     }
 }
