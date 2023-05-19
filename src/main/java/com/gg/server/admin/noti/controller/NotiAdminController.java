@@ -24,13 +24,13 @@ public class NotiAdminController {
     @GetMapping
     public ResponseEntity<NotiResponseDto> getAllNoti(@RequestParam @Size(min=1, max=30) int page,
                                                              @RequestParam(defaultValue = "20") int size,
-                                                             @RequestParam(required = false) String q) {
+                                                             @RequestParam(required = false) String intraId) {
         Pageable pageable = PageRequest.of(page - 1, size,
                 Sort.by("createdAt").descending().and(Sort.by("user.intraId").ascending()));
-        if (q == null)
+        if (intraId == null)
             return new ResponseEntity(notiAdminService.getAllNoti(pageable), HttpStatus.OK);
         else
-            return new ResponseEntity(notiAdminService.getFilteredNotifications(pageable, q), HttpStatus.OK);
+            return new ResponseEntity(notiAdminService.getFilteredNotifications(pageable, intraId), HttpStatus.OK);
     }
     @PostMapping
     public ResponseEntity sendNotiToUser(@RequestBody SendNotiAdminRequestDto sendNotiAdminRequestDto) {
