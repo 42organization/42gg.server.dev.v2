@@ -60,15 +60,17 @@ public class GameService {
     }
 
     private void expUpdate(Game game, List<TeamUser> teamUsers) {
-        LocalDateTime now = LocalDateTime.now();
-        int gamePerDay = teamUserRepository.findByDateAndUser(LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), 0, 0),
-                teamUsers.get(0).getUser().getId());
-        // pchange 추가
+        LocalDateTime time = getDateTime(game.getStartTime());
+        Integer gamePerDay = teamUserRepository.findByDateAndUser(time, teamUsers.get(0).getUser().getId());
+        System.out.println(gamePerDay);
         teamUsers.get(0).getUser().addExp(ExpLevelCalculator.getExpPerGame() + (ExpLevelCalculator.getExpBonus() * gamePerDay));
-        gamePerDay = teamUserRepository.findByDateAndUser(LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), 0, 0),
-                teamUsers.get(1).getUser().getId());
+        gamePerDay = teamUserRepository.findByDateAndUser(time, teamUsers.get(1).getUser().getId());
         teamUsers.get(1).getUser().addExp(ExpLevelCalculator.getExpPerGame() + (ExpLevelCalculator.getExpBonus() * gamePerDay));
         game.updateStatus();
+    }
+
+    private static LocalDateTime getDateTime(LocalDateTime gameTime) {
+        return LocalDateTime.of(gameTime.getYear(), gameTime.getMonthValue(), gameTime.getDayOfMonth(), 0, 0);
     }
 
     private void setTeamScore(TeamUser tu, int teamScore, Boolean isWin) {
