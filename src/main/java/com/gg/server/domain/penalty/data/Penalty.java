@@ -1,13 +1,11 @@
 package com.gg.server.domain.penalty.data;
 
-import com.gg.server.domain.noti.type.NotiType;
-import com.gg.server.domain.penalty.data.Type.PenaltyType;
+import com.gg.server.domain.penalty.type.PenaltyType;
 import com.gg.server.domain.user.User;
 import com.gg.server.global.utils.BaseTimeEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.tomcat.jni.Local;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

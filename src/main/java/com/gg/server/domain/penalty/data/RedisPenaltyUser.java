@@ -1,4 +1,4 @@
-package com.gg.server.admin.penalty.data;
+package com.gg.server.domain.penalty.data;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
