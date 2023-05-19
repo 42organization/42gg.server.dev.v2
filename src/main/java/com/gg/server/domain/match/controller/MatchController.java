@@ -2,12 +2,9 @@ package com.gg.server.domain.match.controller;
 
 import com.gg.server.domain.match.dto.MatchRequestDto;
 import com.gg.server.domain.match.dto.MatchStatusResponseListDto;
+import com.gg.server.domain.match.dto.SlotStatusResponseListDto;
 import com.gg.server.domain.match.service.MatchRedisService;
 import com.gg.server.domain.match.type.Option;
-import com.gg.server.domain.rank.redis.RankRedis;
-import com.gg.server.domain.rank.redis.RankRedisService;
-import com.gg.server.domain.season.SeasonService;
-import com.gg.server.domain.season.dto.SeasonResDto;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.InvalidParameterException;
@@ -56,8 +53,14 @@ public class MatchController {
     }
 
     @GetMapping("match/time/scope")
-    public MatchStatusResponseListDto getMatchTimeScope(@RequestParam("mode") Option option,
-            @Parameter(hidden = true) @Login UserDto user){
+    public SlotStatusResponseListDto getMatchTimeScope(@RequestParam("mode") Option option,
+                                                       @Parameter(hidden = true) @Login UserDto user){
         return matchRedisService.getAllMatchStatus(user.getId(), option);
     }
+
+    @GetMapping("match")
+    public MatchStatusResponseListDto getCurrentMatch(@Parameter(hidden = true) @Login UserDto user) {
+        return matchRedisService.getCurrentMatch(user);
+    }
+
 }

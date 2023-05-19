@@ -3,6 +3,8 @@ package com.gg.server.domain.noti.service;
 import com.gg.server.domain.noti.data.Noti;
 import com.gg.server.domain.noti.data.NotiRepository;
 import com.gg.server.domain.noti.dto.NotiDto;
+import com.gg.server.domain.noti.dto.UserNotiDto;
+import com.gg.server.domain.noti.type.NotiType;
 import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
@@ -53,5 +55,24 @@ public class NotiService {
     public void removeAllNotisByUser(UserDto userDto) {
         User user = userRepository.findById(userDto.getId()).orElseThrow(() -> new UsernameNotFoundException("User" + userDto.getId()));
         notiRepository.deleteAllByUser(user);
+    }
+
+    public Noti createNoti(User user, String msg, NotiType notiType) {
+        return notiRepository.save(new Noti(user, notiType, msg, false));
+    }
+
+    public String getMessage(Noti noti) {
+        String message;
+        if (noti.getType() != NotiType.ANNOUNCE) {
+            message = notiMsg(noti.getType());
+        } else {
+            message = "🧚: \"새로운 알림이 도착했핑.\"\n" + "🧚: \"" + noti.getType().getMessage() + "\"\n\n공지사항: "
+                    + noti.getMessage() + "\n\n 🏓42GG와 함께하는 행복한 탁구생활🏓" + "\n$$지금 즉시 접속$$ ----> https://42gg.kr";
+        }
+        return message;
+    }
+    public String notiMsg(NotiType notiType) {
+        return "🧚: \"새로운 알림이 도착했핑.\"\n" + "🧚: \"" + notiType.getMessage() + "\"\n\n 🏓42GG와 함께하는 행복한 탁구생활🏓" +
+                "\n$$지금 즉시 접속$$ ----> https://42gg.kr";
     }
 }
