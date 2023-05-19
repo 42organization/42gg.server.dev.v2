@@ -14,6 +14,13 @@ public enum ErrorCode {
     UNAUTHORIZED(401, "CM004", "UNAUTHORIZED"),
     METHOD_NOT_ALLOWED(405, "CM005", "METHOD NOT ALLOWED"),
     VALID_FAILED(400, "GAME-ERR-400" , "Valid Test Failed."),
+    BAD_ARGU(400, "ARGUMENT-ERR-400", "잘못된 argument 입니다."),
+
+    UNAUTHORIZED(401, "COMMON-ERR-401", "UNAUTHORIZED"),
+    SN001(400, "SN001", "요청하신 값은 현 null 입니다"),
+
+    FB_NOT_FOUND(404, "FB100", "FB NOT FOUND"),
+
     SN001(400, "SN001", "요청하신 값은 현 null 입니다"),
     AWS_S3_ERR(500, "CL001", "AWS S3 Error"),
     AWS_SERVER_ERR(500, "CL002", "AWS Error"),
@@ -22,6 +29,7 @@ public enum ErrorCode {
     SLACK_CH_NOT_FOUND(404, "SL002", "fail to get user dm channel id"),
     SLACK_JSON_PARSE_ERR(400, "SL002", "json parse error"),
     SLACK_SEND_FAIL(400, "SL003","fail to send notification" )
+
     ;
     private int status;
     private String errCode;
