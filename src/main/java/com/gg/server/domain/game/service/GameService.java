@@ -63,6 +63,7 @@ public class GameService {
         LocalDateTime now = LocalDateTime.now();
         int gamePerDay = teamUserRepository.findByDateAndUser(LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), 0, 0),
                 teamUsers.get(0).getUser().getId());
+        // pchange 추가
         teamUsers.get(0).getUser().addExp(ExpLevelCalculator.getExpPerGame() + (ExpLevelCalculator.getExpBonus() * gamePerDay));
         gamePerDay = teamUserRepository.findByDateAndUser(LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), 0, 0),
                 teamUsers.get(1).getUser().getId());
@@ -94,8 +95,8 @@ public class GameService {
         } else {
             if (myTeam.getTeam().getScore().equals(scoreDto.getMyTeamScore())
                     && enemyTeam.getTeam().getScore().equals(scoreDto.getEnemyTeamScore())) {
-                game.updateStatus();
                 rankRedisService.updateRankRedis(teams, seasonId, game);
+                expUpdate(game, teams);
             } else {
                 setTeamScore(myTeam, scoreDto.getMyTeamScore(), scoreDto.getMyTeamScore() > scoreDto.getEnemyTeamScore());
                 setTeamScore(enemyTeam, scoreDto.getEnemyTeamScore(), scoreDto.getMyTeamScore() < scoreDto.getEnemyTeamScore());
