@@ -6,26 +6,17 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@Builder
 public class UserSearchAdminDto {
     private Long id;
     private String intraId;
     private String statusMessage;
     private RoleType roleType;
 
-    public static UserSearchAdminDto from(User user, String statusMessage) {
-        UserSearchAdminDto userSearchResponseDto;
-        if (user == null) {
-            userSearchResponseDto = null;
-        } else {
-            userSearchResponseDto = UserSearchAdminDto.builder()
-                    .id(user.getId())
-                    .intraId(user.getIntraId())
-                    .statusMessage(statusMessage)
-                    .roleType(user.getRoleType())
-                    .build();
-        }
-        return userSearchResponseDto;
+    public UserSearchAdminDto (User user, String statusMessage) {
+        this.id = user.getId();
+        this.intraId = user.getIntraId();
+        this.statusMessage = statusMessage;
+        this.roleType = user.getRoleType();
     }
 
     @Override
