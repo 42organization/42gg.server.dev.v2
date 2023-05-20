@@ -17,6 +17,10 @@ public enum ErrorCode {
     BAD_ARGU(400, "ARGUMENT-ERR-400", "잘못된 argument 입니다."),
     SN001(400, "SN001", "요청하신 값은 현 null 입니다"),
     FB_NOT_FOUND(404, "FB100", "FB NOT FOUND"),
+    /**
+     * PChange
+     **/
+    PC_NOT_FOUND(404, "PC100", "PChange 가 존재하지 않습니다."),
     AWS_S3_ERR(500, "CL001", "AWS S3 Error"),
     AWS_SERVER_ERR(500, "CL002", "AWS Error"),
     // SENDER

@@ -5,6 +5,6 @@ import java.util.List;
 public interface PChangeRepositoryCustom {
 
     List<PChange> findPChangesHistory(String intraId, Long seasonId);
-    List<PChange> findExpHistory(String intraId, Long gameId);
-    List<PChange> findPPPHistory(String intraId, Long gameId);
+    List<PChange> findExpHistory(Long userId, Long gameId);
+    List<PChange> findPPPHistory(Long userId, Long gameId, Long seasonId);
 }

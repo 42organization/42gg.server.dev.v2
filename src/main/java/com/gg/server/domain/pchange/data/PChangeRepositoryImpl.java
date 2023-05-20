@@ -23,11 +23,12 @@ public class PChangeRepositoryImpl implements PChangeRepositoryCustom{
     }
 
     @Override
-    public List<PChange> findExpHistory(String intraId, Long gameId) {
-        String sql = "select p from PChange p join fetch p.game g join g.season s where p.user.intraId = " +
-                ":intra_id and p.id <= (select p2.id from PChange p2 where p2.game.id = :gameId) order by p.createdAt desc";
+    public List<PChange> findExpHistory(Long userId, Long gameId) {
+        System.out.println("userid: " + userId + ", gameId: " + gameId);
+        String sql = "select p from PChange p join fetch p.game g where p.user.id = " +
+                ":userId and p.id <= (select p2.id from PChange p2 where p2.game.id = :gameId and p2.user.id = :userId) order by p.createdAt desc";
         return em.createQuery(sql, PChange.class)
-                .setParameter("intra_id", intraId)
+                .setParameter("userId", userId)
                 .setParameter("gameId", gameId)
                 .setFirstResult(0)
                 .setMaxResults(2)
@@ -35,14 +36,15 @@ public class PChangeRepositoryImpl implements PChangeRepositoryCustom{
     }
 
     @Override
-    public List<PChange> findPPPHistory(String intraId, Long gameId) {
-        String sql = "select p from PChange p join fetch p.game g join g.season s where p.user.intraId = " +
-                ":intra_id and p.id <= (select p2.id from PChange p2 where p2.game.id = :gameId) " +
-                "and g.mode = 'RANK'" +
+    public List<PChange> findPPPHistory(Long userId, Long gameId, Long seasonId) {
+        String sql = "select p from PChange p join fetch p.game g join g.season s where p.user.id = " +
+                ":userId and p.id <= (select p2.id from PChange p2 where p2.game.id = :gameId and p2.user.id =:userId) " +
+                "and p.game.mode = 'RANK' and s.id = :season_id " +
                 " order by p.createdAt desc";
         return em.createQuery(sql, PChange.class)
-                .setParameter("intra_id", intraId)
+                .setParameter("userId", userId)
                 .setParameter("gameId", gameId)
+                .setParameter("season_id", seasonId)
                 .setFirstResult(0)
                 .setMaxResults(2)
                 .getResultList();
