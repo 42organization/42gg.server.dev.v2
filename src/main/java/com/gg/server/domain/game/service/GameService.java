@@ -6,11 +6,11 @@ import com.gg.server.domain.game.dto.*;
 import com.gg.server.domain.game.dto.req.NormalResultReqDto;
 import com.gg.server.domain.game.dto.req.RankResultReqDto;
 import com.gg.server.domain.pchange.data.PChange;
+import com.gg.server.domain.pchange.data.PChangeRepository;
 import com.gg.server.domain.pchange.service.PChangeService;
 import com.gg.server.domain.rank.redis.RankRedisService;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.season.data.Season;
-import com.gg.server.domain.season.data.SeasonRepository;
 import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.team.data.TeamUserRepository;
 import com.gg.server.global.exception.ErrorCode;
@@ -33,6 +33,7 @@ public class GameService {
     private final TeamUserRepository teamUserRepository;
     private final RankRedisService rankRedisService;
     private final PChangeService pChangeService;
+    private final PChangeRepository pChangeRepository;
 
     @Transactional(readOnly = true)
     public GameTeamInfo getUserGameInfo(Long gameId, Long userId) {
