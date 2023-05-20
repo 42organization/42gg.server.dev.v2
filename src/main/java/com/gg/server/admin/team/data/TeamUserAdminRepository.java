@@ -11,5 +11,5 @@ import java.util.List;
 
 public interface TeamUserAdminRepository extends JpaRepository<TeamUser, Long> {
     @Query("SELECT tu.user FROM TeamUser tu WHERE tu.team.id = :teamId")
-    List<User> findUsersByTeamId(Long teamId);
+    List<User> findUsersByTeamId(@Param("teamId") Long teamId);
 }

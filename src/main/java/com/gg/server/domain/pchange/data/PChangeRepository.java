@@ -11,6 +11,6 @@ public interface PChangeRepository extends JpaRepository<PChange, Long> , PChang
     @Query(value = "SELECT pc FROM PChange pc join fetch pc.user WHERE pc.user.intraId LIKE %:intraId% order by pc.user.intraId asc, pc.id desc")
     List<PChange> findPChangesByUser_IntraId(@Param("intraId") String intraId);
 
-    @Query(value = "SELECT pc FROM PChange pc join fetch pc.user WHERE pc.user.id = :userId order by pc.id desc")
+    @Query(value = "SELECT pc FROM PChange pc join fetch pc.user WHERE pc.user.id =:userId order by pc.id desc")
     List<PChange> findAllByUserId(@Param("userId") Long userId);
 }

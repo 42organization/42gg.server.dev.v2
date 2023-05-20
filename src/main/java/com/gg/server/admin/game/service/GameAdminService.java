@@ -18,6 +18,7 @@ import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.AdminException;
 import com.gg.server.global.exception.custom.NotExistException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -59,7 +60,6 @@ public class GameAdminService {
         List<GameLogAdminDto> gameLogAdminDtoList = new ArrayList<>();
         for (Game game : gameList) {
             List<GameTeamAdminDto> gameTeamAdminDtoList = new ArrayList<>();
-
             List<Team> teamList = teamAdminRepository.findAllByGame(game);
             for (Team team : teamList) {
                 List<User> userList = teamUserAdminRepository.findUsersByTeamId(team.getId());
@@ -73,18 +73,15 @@ public class GameAdminService {
     @Transactional(readOnly = true)
     public GameLogListAdminResponseDto findGamesByIntraId(String intraId, Pageable pageable){
         User user = userAdminRepository.findByIntraId(intraId).orElseThrow(() -> new UsernameNotFoundException("User" + intraId));
-
         List<PChange> pChangeList = pChangeRepository.findAllByUserId(user.getId());
         List<Game> gameList = new ArrayList<>();
 
-        for(PChange pChange : pChangeList) {
+        for(PChange pChange : pChangeList)
             gameList.add(pChange.getGame());
-        }
 
         int start = (int)pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), gameList.size());
         Page<Game> games = new PageImpl<>(gameList.subList(start, end), pageable, gameList.size());
-
         return createGameLogAdminDto(games);
     }
 }
