@@ -6,7 +6,6 @@ import com.gg.server.domain.game.dto.*;
 import com.gg.server.domain.game.dto.req.NormalResultReqDto;
 import com.gg.server.domain.game.dto.req.RankResultReqDto;
 import com.gg.server.domain.pchange.data.PChange;
-import com.gg.server.domain.pchange.data.PChangeRepository;
 import com.gg.server.domain.pchange.service.PChangeService;
 import com.gg.server.domain.rank.redis.RankRedisService;
 import com.gg.server.domain.game.type.StatusType;
@@ -33,7 +32,6 @@ public class GameService {
     private final TeamUserRepository teamUserRepository;
     private final RankRedisService rankRedisService;
     private final PChangeService pChangeService;
-    private final PChangeRepository pChangeRepository;
 
     @Transactional(readOnly = true)
     public GameTeamInfo getUserGameInfo(Long gameId, Long userId) {
@@ -67,7 +65,7 @@ public class GameService {
         return false;
     }
 
-    private void expUpdates(Game game, List<TeamUser> teamUsers) {
+    public void expUpdates(Game game, List<TeamUser> teamUsers) {
         LocalDateTime time = getDateTime(game.getStartTime());
         for (TeamUser tu :
                 teamUsers) {
