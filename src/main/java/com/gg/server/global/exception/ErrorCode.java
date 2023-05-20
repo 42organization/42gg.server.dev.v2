@@ -16,7 +16,6 @@ public enum ErrorCode {
     VALID_FAILED(400, "GAME-ERR-400" , "Valid Test Failed."),
     BAD_ARGU(400, "ARGUMENT-ERR-400", "잘못된 argument 입니다."),
     SN001(400, "SN001", "요청하신 값은 현 null 입니다"),
-
     FB_NOT_FOUND(404, "FB100", "FB NOT FOUND"),
     AWS_S3_ERR(500, "CL001", "AWS S3 Error"),
     AWS_SERVER_ERR(500, "CL002", "AWS Error"),
