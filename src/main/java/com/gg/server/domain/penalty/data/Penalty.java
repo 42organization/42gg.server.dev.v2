@@ -39,5 +39,17 @@ public class Penalty extends BaseTimeEntity {
 
     @NotNull
     @Column(name = "penalty_time")
-    private Integer penalty_time;
+    private Integer penaltyTime;
+
+    public Penalty(User user, PenaltyType type, String message, LocalDateTime startTime, Integer penalty_time) {
+        this.user = user;
+        this.type = type;
+        this.message = message;
+        this.startTime = startTime;
+        this.penaltyTime = penalty_time;
+    }
+
+    public void updateStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
 }
