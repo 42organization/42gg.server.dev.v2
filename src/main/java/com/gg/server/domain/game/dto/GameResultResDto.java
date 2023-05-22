@@ -30,7 +30,7 @@ public class GameResultResDto {
         team1 = new TeamUserListDto(Arrays.asList(
                 new TeamUserInfoDto(game.getT1IntraId(), game.getT1Image(), game.getT1Exp())));
         team2 = new TeamUserListDto(Arrays.asList(
-                new TeamUserInfoDto(game.getT1IntraId(), game.getT1Image(), game.getT1Exp())));
+                new TeamUserInfoDto(game.getT2IntraId(), game.getT2Image(), game.getT2Exp())));
     }
 
     @Override
