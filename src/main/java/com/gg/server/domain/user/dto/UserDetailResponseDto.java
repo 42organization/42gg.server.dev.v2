@@ -23,7 +23,7 @@ public class UserDetailResponseDto {
         this.userImageUri = user.getImageUri();
         this.racketType = user.getRacketType().getCode();
         this.statusMessage = statusMessage;
-        this.snsNotiOpt = SnsType.of(user.getSnsNotiOpt().getCode());
+        this.snsNotiOpt = user.getSnsNotiOpt();
         calculateExpAndLevel(user);
     }
 
