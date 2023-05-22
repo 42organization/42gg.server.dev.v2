@@ -1,10 +1,12 @@
 package com.gg.server.game;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gg.server.domain.game.GameService;
+import com.gg.server.domain.game.service.GameFindService;
+import com.gg.server.domain.game.service.GameService;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.dto.GameListResDto;
+import com.gg.server.domain.game.dto.GameTeamInfo;
 import com.gg.server.domain.game.dto.req.RankResultReqDto;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
@@ -32,6 +34,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,6 +67,8 @@ public class GameControllerTest {
     @Autowired
     GameService gameService;
     @Autowired
+    GameFindService gameFindService;
+    @Autowired
     private MockMvc mockMvc;
     @Autowired
     ObjectMapper objectMapper;
@@ -73,6 +80,7 @@ public class GameControllerTest {
     private Season season;
     private User user1;
     private User user2;
+    private Game game1;
 
     @BeforeEach
     void init() {
@@ -93,6 +101,30 @@ public class GameControllerTest {
             teamUserRepository.save(new TeamUser(team1, user1));
             teamUserRepository.save(new TeamUser(team2, user2));
         }
+        game1 = gameRepository.save(new Game(season, StatusType.WAIT, Mode.RANK, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
+        Team team1 = teamRepository.save(new Team(game1, 1, false));
+        Team team2 = teamRepository.save(new Team(game1, 2, true));
+        teamUserRepository.save(new TeamUser(team1, user1));
+        teamUserRepository.save(new TeamUser(team2, user2));
+    }
+
+    @Test
+    @Transactional
+    void 유저게임정보조회테스트() throws Exception {
+        //given
+        String url = "/pingpong/games/" + game1.getId().toString();
+        GameTeamInfo expect = gameService.getUserGameInfo(game1.getId(), user1.getId());
+        // when
+        String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        GameTeamInfo result = objectMapper.readValue(contentAsString, GameTeamInfo.class);
+        System.out.println("expect: " + expect);
+        System.out.println("result: " + result);
+        assertThat(result.getGameId()).isEqualTo(expect.getGameId());
+        assertThat(result.getStartTime()).isEqualTo(expect.getStartTime());
+        assertThat(result.getMatchTeamsInfo().getMyTeam().getTeamId()).isEqualTo(expect.getMatchTeamsInfo().getMyTeam().getTeamId());
+        assertThat(result.getMatchTeamsInfo().getEnemyTeam().getTeamId()).isEqualTo(expect.getMatchTeamsInfo().getEnemyTeam().getTeamId());
     }
 
     @Test
@@ -100,7 +132,8 @@ public class GameControllerTest {
     public void 일반게임목록조회() throws Exception {
         //given
         String url = "/pingpong/games/normal?pageNum=1&pageSize=10";
-        GameListResDto expect = gameService.normalGameList(0, 10, null);
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startTime"));
+        GameListResDto expect = gameFindService.getNormalGameList(pageable);
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())
@@ -120,7 +153,8 @@ public class GameControllerTest {
     public void user일반게임목록조회() throws Exception {
         //given
         String url = "/pingpong/games/normal?pageNum=1&pageSize=10&nickname=test1";
-        GameListResDto expect = gameService.normalGameList(0, 10, "test1");
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startTime"));
+        GameListResDto expect = gameFindService.normalGameListByIntra(pageable, "test1");
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())
@@ -140,7 +174,8 @@ public class GameControllerTest {
     public void 랭크게임목록조회() throws Exception {
         //given
         String url = "/pingpong/games/rank?pageNum=1&pageSize=10&seasonId=" + season.getId();
-        GameListResDto expect = gameService.rankGameList(0, 10, season.getId(), null);
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startTime"));
+        GameListResDto expect = gameFindService.rankGameList(pageable, season.getId());
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())
@@ -160,7 +195,8 @@ public class GameControllerTest {
     public void user랭크게임목록조회() throws Exception {
         //given
         String url = "/pingpong/games/rank?pageNum=1&pageSize=10&seasonId=" + season.getId() + "&nickname=" + "test1";
-        GameListResDto expect = gameService.rankGameList(0, 10, season.getId(), "test1");
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startTime"));
+        GameListResDto expect = gameFindService.rankGameListByIntra(pageable, season.getId(), "test1");
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())
@@ -190,7 +226,8 @@ public class GameControllerTest {
     public void 전체게임목록조회() throws Exception {
         //given
         String url = "/pingpong/games?pageNum=1&pageSize=10";
-        GameListResDto expect = gameService.allGameList(0, 10, null, null);
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startTime"));
+        GameListResDto expect = gameFindService.allGameList(pageable, null);
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())
@@ -210,7 +247,8 @@ public class GameControllerTest {
     public void user전체게임목록조회() throws Exception {
         //given
         String url = "/pingpong/games?pageNum=1&pageSize=10&nickname=test1";
-        GameListResDto expect = gameService.allGameList(0, 10, null, "test1");
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startTime"));
+        GameListResDto expect = gameFindService.allGameListUser(pageable, "test1", null);
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())
@@ -257,11 +295,17 @@ public class GameControllerTest {
         teamUserRepository.save(new TeamUser(team2, user2));
         rankRepository.save(new Rank(user1, season, season.getStartPpp(), 0, 0, ""));
         rankRepository.save(new Rank(user2, season, season.getStartPpp(), 0, 0, ""));
+        teamUserRepository.flush();
+        rankRepository.flush();
+        gameRepository.flush();
+        teamRepository.flush();
         String content = objectMapper.writeValueAsString(new RankResultReqDto(game.getId(), team1.getId(), 1, team2.getId(), 2));
         rankRedisRepository.addRankData(RedisKeyManager.getHashKey(season.getId()), user1.getId(),
                 new RankRedis(user1.getId(), user1.getIntraId(), season.getStartPpp(), 0, 0,  "test user3"));
         rankRedisRepository.addRankData(RedisKeyManager.getHashKey(season.getId()), user2.getId(),
                 new RankRedis(user2.getId(), user2.getIntraId(), season.getStartPpp(), 0, 0,  "test user4"));
+        System.out.println(user1.getTotalExp());
+        System.out.println(user2.getTotalExp());
         // then
         System.out.println("=======================");
         mockMvc.perform(post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + ac1)
@@ -276,5 +320,7 @@ public class GameControllerTest {
                         .content(content))
                 .andExpect(status().isCreated())
                 .andReturn().getResponse();
+        System.out.println(user1.getTotalExp());
+        System.out.println(user2.getTotalExp());
     }
 }

@@ -8,7 +8,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -25,17 +27,10 @@ public class GameResultResDto {
         this.status = game.getStatus().name();//name -> 대문자
         this.time = game.getStartTime();
         this.mode = game.getMode();
-
-        team1 = new TeamUserListDto(Arrays.asList(TeamUserInfoDto.builder()
-                .intraId(game.getT1IntraId())
-                .userImageUri(game.getT1Image())
-                .level(ExpLevelCalculator.getLevel(game.getT1Exp()))
-                .build()));
-        team2 = new TeamUserListDto(Arrays.asList(TeamUserInfoDto.builder()
-                .intraId(game.getT2IntraId())
-                .userImageUri(game.getT2Image())
-                .level(ExpLevelCalculator.getLevel(game.getT2Exp()))
-                .build()));
+        team1 = new TeamUserListDto(Arrays.asList(
+                new TeamUserInfoDto(game.getT1IntraId(), game.getT1Image(), game.getT1Exp())));
+        team2 = new TeamUserListDto(Arrays.asList(
+                new TeamUserInfoDto(game.getT1IntraId(), game.getT1Image(), game.getT1Exp())));
     }
 
     @Override

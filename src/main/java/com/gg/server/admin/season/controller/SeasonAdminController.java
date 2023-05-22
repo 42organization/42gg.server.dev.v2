@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-@Slf4j
 @RestController
 @RequestMapping(value = "/pingpong/admin")
 @AllArgsConstructor
@@ -28,21 +27,21 @@ public class SeasonAdminController {
         return new SeasonListAdminResponseDto(seasons);
     }
 
-    @PostMapping(value = "/season")
+    @PostMapping(value = "/seasons")
     public ResponseEntity createSeason(@Valid @RequestBody SeasonCreateRequestDto seasonCreateReqeustDto) {
         seasonAdminService.createSeason(seasonCreateReqeustDto);
 
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
-    @DeleteMapping(value = "/season/{seasonId}")
+    @DeleteMapping(value = "/seasons/{seasonId}")
     public ResponseEntity deleteSeason(@PathVariable Long seasonId) {
         seasonAdminService.deleteSeason(seasonId);
 
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-    @PutMapping(value = "/season/{seasonId}")
+    @PutMapping(value = "/seasons/{seasonId}")
     public ResponseEntity updateSeason(@PathVariable Long seasonId, @RequestBody SeasonUpdateRequestDto seasonUpdateRequestDto) {
         seasonAdminService.updateSeason(seasonId, seasonUpdateRequestDto);
 

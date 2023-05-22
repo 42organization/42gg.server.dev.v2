@@ -6,6 +6,7 @@ import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.Season;
+import com.gg.server.domain.season.data.SeasonRepository;
 import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.UserRepository;
 import com.gg.server.domain.user.dto.*;
@@ -13,7 +14,6 @@ import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.Rollback;
@@ -26,7 +26,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -34,11 +33,9 @@ import java.util.Comparator;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RequiredArgsConstructor
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
@@ -64,6 +61,10 @@ class UserControllerTest {
 
     @Autowired
     RankRepository rankRepository;
+
+    @Autowired
+    SeasonRepository seasonRepository;
+
 
     @Test
     @DisplayName("live")
@@ -109,7 +110,7 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("searches?inquiringString=${IntraId}")
+    @DisplayName("searches?intraId=${IntraId}")
     public void searchUser() throws Exception
     {
         //given
@@ -123,7 +124,7 @@ class UserControllerTest {
         }
         String accessToken = tokenProvider.createToken(user.getId());
         String keyWord = "intra";
-        String url = "/pingpong/users/searches?inquiringString=" + keyWord;
+        String url = "/pingpong/users/searches?intraId=" + keyWord;
 
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
@@ -136,7 +137,7 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("{targetId}/detail")
+    @DisplayName("[GET] {targetId}")
     public void getUserDetail () throws Exception
     {
         //given
@@ -149,7 +150,7 @@ class UserControllerTest {
                 SnsType.BOTH, RoleType.ADMIN);
         String accessToken = tokenProvider.createToken(newUser.getId());
         testDataUtils.createUserRank(newUser, statusMessage, season);
-        String url = "/pingpong/users/" + newUser.getIntraId() + "/detail";
+        String url = "/pingpong/users/" + newUser.getIntraId();
 
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
@@ -166,7 +167,7 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("/{targetId}/rank?season={seasonId}")
+    @DisplayName("/{intraId}/rank?season={seasonId}")
     public void userRankDetail () throws Exception
     {
         //given
@@ -190,7 +191,7 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("/{userId}/historics?season={seasonId}")
+    @DisplayName("/{intraId}/historics?season={seasonId}")
     public void getUserHistory () throws Exception
     {
         //given
@@ -210,7 +211,7 @@ class UserControllerTest {
         LocalDateTime endTime2 = startTime2.plusMinutes(15);
         testDataUtils.createMockMatch(newUser, season, startTime2, endTime2);
 
-        String url = "/pingpong/users/" + newUser.getId() + "/historics?season=" + season.getId();
+        String url = "/pingpong/users/" + newUser.getIntraId() + "/historics?season=" + season.getId();
 
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
@@ -227,8 +228,7 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("/detail")
-    @Rollback(value = false)
+    @DisplayName("[put] {intraId}")
     public void  updateUser() throws Exception
     {
         //given
@@ -241,7 +241,7 @@ class UserControllerTest {
         String statusMessage = "statusMessage";
         testDataUtils.createUserRank(newUser, statusMessage, season);
         String accessToken = tokenProvider.createToken(newUser.getId());
-        String url = "/pingpong/users/detail";
+        String url = "/pingpong/users/" + newUser.getIntraId();
 
         String newStatusMessage = "newStatusMessage";
         String newRacketType = "SHAKEHAND";

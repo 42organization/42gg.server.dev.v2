@@ -3,6 +3,7 @@ package com.gg.server.domain.noti.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.domain.noti.data.Noti;
 import com.gg.server.domain.noti.data.NotiRepository;
+import com.gg.server.domain.noti.dto.NotiListResponseDto;
 import com.gg.server.domain.noti.dto.NotiResponseDto;
 import com.gg.server.domain.noti.service.NotiService;
 import com.gg.server.domain.noti.type.NotiType;
@@ -60,12 +61,12 @@ class NotiControllerTest {
         String url = "/pingpong/notifications";
 
         UserDto userDto = UserDto.from(userRepository.getById(userId));
-        NotiResponseDto expectedResponse = new NotiResponseDto(notiService.findNotiByUser(userDto));
+        NotiListResponseDto expectedResponse = new NotiListResponseDto(notiService.findNotiByUser(userDto));
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
-        NotiResponseDto actureResponse= objectMapper.readValue(contentAsString, NotiResponseDto.class);
+        NotiListResponseDto actureResponse= objectMapper.readValue(contentAsString, NotiListResponseDto.class);
 
         //then
         assertThat(actureResponse).isEqualTo(expectedResponse);

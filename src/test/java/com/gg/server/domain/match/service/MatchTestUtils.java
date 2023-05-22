@@ -20,6 +20,7 @@ import com.gg.server.domain.user.type.SnsType;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -78,6 +79,10 @@ public class MatchTestUtils {
         return sampleSlots;
     }
     public Season makeTestSeason(Integer pppGap) {
+        Optional<Season> currentSeason = seasonRepository.findCurrentSeason(LocalDateTime.now());
+        if (currentSeason.isPresent()) {
+            return currentSeason.get();
+        }
         Season season = new Season(
                 "test",
                 LocalDateTime.now().minusDays(1),
