@@ -295,11 +295,17 @@ public class GameControllerTest {
         teamUserRepository.save(new TeamUser(team2, user2));
         rankRepository.save(new Rank(user1, season, season.getStartPpp(), 0, 0, ""));
         rankRepository.save(new Rank(user2, season, season.getStartPpp(), 0, 0, ""));
+        teamUserRepository.flush();
+        rankRepository.flush();
+        gameRepository.flush();
+        teamRepository.flush();
         String content = objectMapper.writeValueAsString(new RankResultReqDto(game.getId(), team1.getId(), 1, team2.getId(), 2));
         rankRedisRepository.addRankData(RedisKeyManager.getHashKey(season.getId()), user1.getId(),
                 new RankRedis(user1.getId(), user1.getIntraId(), season.getStartPpp(), 0, 0,  "test user3"));
         rankRedisRepository.addRankData(RedisKeyManager.getHashKey(season.getId()), user2.getId(),
                 new RankRedis(user2.getId(), user2.getIntraId(), season.getStartPpp(), 0, 0,  "test user4"));
+        System.out.println(user1.getTotalExp());
+        System.out.println(user2.getTotalExp());
         // then
         System.out.println("=======================");
         mockMvc.perform(post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + ac1)
@@ -314,5 +320,7 @@ public class GameControllerTest {
                         .content(content))
                 .andExpect(status().isCreated())
                 .andReturn().getResponse();
+        System.out.println(user1.getTotalExp());
+        System.out.println(user2.getTotalExp());
     }
 }
