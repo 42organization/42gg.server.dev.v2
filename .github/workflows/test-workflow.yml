@@ -14,7 +14,6 @@ env:
   DOCKER_USER: ${{ secrets.DOCKER_USER }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
   IMAGE_NAME: wken5577/test-server
-  LAST_VERSION_TAG : ${{ secrets.LAST_VERSION_TAG }}
   
 permissions:
   contents: read
@@ -39,7 +38,7 @@ jobs:
         cd ./src/main/resources
         touch ./application.yml
         touch ./application-test.yml
-        echo "${{ secrets.APPLICATION_YML }}" | base64 -d > application.yml
+        echo "${{ secrets.YML_ACTIVE_TEST }}" | base64 -d > application.yml
         echo "${{ secrets.APPLICATION_TEST_YML }}" | base64 -d > application-test.yml
       shell: bash
       
@@ -51,12 +50,6 @@ jobs:
     
     - name: Build with Gradle
       run: ./gradlew bootWar
-
-    - name: Store latest image as new tag
-      run: |
-        docker pull ${{ env.IMAGE_NAME }}:latest
-        docker tag ${{ env.IMAGE_NAME }}:latest ${{ env.IMAGE_NAME }}:${{ env.LAST_VERSION_TAG }}
-        docker push ${{ env.IMAGE_NAME }}:${{ env.LAST_VERSION_TAG }}
 
     - name: build new docker image as latest tag
       run: |

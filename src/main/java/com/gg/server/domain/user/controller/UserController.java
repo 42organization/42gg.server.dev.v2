@@ -36,30 +36,30 @@ public class UserController {
     }
 
     @GetMapping("/searches")
-    UserSearchResponseDto searchUsers(@RequestParam String inquiringString){
-        List<String> intraIds = userService.findByPartOfIntraId(inquiringString);
+    UserSearchResponseDto searchUsers(@RequestParam String intraId){
+        List<String> intraIds = userService.findByPartOfIntraId(intraId);
         return new UserSearchResponseDto(intraIds);
     }
 
-    @GetMapping("/{targetUserId}/detail")
-    public UserDetailResponseDto getUserDetail(@PathVariable String targetUserId){
-        return userService.getUserDetail(targetUserId);
+    @GetMapping("/{intraId}")
+    public UserDetailResponseDto getUserDetail(@PathVariable String intraId){
+        return userService.getUserDetail(intraId);
     }
 
-    @GetMapping("/{targetUserId}/rank")
-    public UserRankResponseDto getUserRank(@PathVariable String targetUserId, @RequestParam Long season){
-        return userService.getUserRankDetail(targetUserId, season);
+    @GetMapping("/{intraId}/rank")
+    public UserRankResponseDto getUserRank(@PathVariable String intraId, @RequestParam Long season){
+        return userService.getUserRankDetail(intraId, season);
     }
 
-    @GetMapping("/{userId}/historics")
-    public UserHistoryResponseDto getUserHistory(@PathVariable Long userId, @RequestParam Long season) {
-        return userService.getUserHistory(userId, season);
+    @GetMapping("/{intraId}/historics")
+    public UserHistoryResponseDto getUserHistory(@PathVariable String intraId, @RequestParam Long season) {
+        return userService.getUserHistory(intraId, season);
     }
 
-    @PutMapping("/detail")
-    public void doModifyUser (@Valid @RequestBody UserModifyRequestDto userModifyRequestDto, @Parameter(hidden = true) @Login UserDto userDto) {
+    @PutMapping("{intraId}")
+    public void doModifyUser (@Valid @RequestBody UserModifyRequestDto userModifyRequestDto, @PathVariable String intraId) {
         userService.updateUser(userModifyRequestDto.getRacketType(), userModifyRequestDto.getStatusMessage(),
-                userModifyRequestDto.getSnsNotiOpt(), userDto.getId());
+                userModifyRequestDto.getSnsNotiOpt(), intraId);
     }
 
 }

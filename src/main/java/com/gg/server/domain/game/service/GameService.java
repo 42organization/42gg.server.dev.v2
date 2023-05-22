@@ -5,6 +5,7 @@ import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.dto.*;
 import com.gg.server.domain.game.dto.req.NormalResultReqDto;
 import com.gg.server.domain.game.dto.req.RankResultReqDto;
+import com.gg.server.domain.pchange.service.PChangeService;
 import com.gg.server.domain.rank.redis.RankRedisService;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.team.data.TeamUser;
@@ -28,6 +29,7 @@ public class GameService {
     private final GameRepository gameRepository;
     private final TeamUserRepository teamUserRepository;
     private final RankRedisService rankRedisService;
+    private final PChangeService pChangeService;
 
     @Transactional(readOnly = true)
     public GameTeamInfo getUserGameInfo(Long gameId, Long userId) {
@@ -50,8 +52,10 @@ public class GameService {
     public synchronized Boolean normalExpResult(NormalResultReqDto normalResultReqDto) {
         Game game = findByGameId(normalResultReqDto.getGameId());
         List<TeamUser> teamUsers = teamUserRepository.findAllByGameId(game.getId());
-        if (teamUsers.size() == 2 && game.getStatus() == StatusType.LIVE) {
-            expUpdate(game, teamUsers);
+        if (teamUsers.size() == 2 && game.getStatus() == StatusType.WAIT) {
+            expUpdates(game, teamUsers);
+            pChangeService.addPChange(game, teamUsers.get(0).getUser(), null);
+            pChangeService.addPChange(game, teamUsers.get(1).getUser(), null);
             return true;
         } else if (teamUsers.size() != 2) {
             throw new InvalidParameterException("team 이 잘못되었습니다.", ErrorCode.VALID_FAILED);
@@ -59,15 +63,22 @@ public class GameService {
         return false;
     }
 
-    private void expUpdate(Game game, List<TeamUser> teamUsers) {
-        LocalDateTime now = LocalDateTime.now();
-        int gamePerDay = teamUserRepository.findByDateAndUser(LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), 0, 0),
-                teamUsers.get(0).getUser().getId());
-        teamUsers.get(0).getUser().addExp(ExpLevelCalculator.getExpPerGame() + (ExpLevelCalculator.getExpBonus() * gamePerDay));
-        gamePerDay = teamUserRepository.findByDateAndUser(LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), 0, 0),
-                teamUsers.get(1).getUser().getId());
-        teamUsers.get(1).getUser().addExp(ExpLevelCalculator.getExpPerGame() + (ExpLevelCalculator.getExpBonus() * gamePerDay));
+    private void expUpdates(Game game, List<TeamUser> teamUsers) {
+        LocalDateTime time = getDateTime(game.getStartTime());
+        for (TeamUser tu :
+                teamUsers) {
+            expUpdate(tu, time);
+        }
         game.updateStatus();
+    }
+
+    private void expUpdate(TeamUser teamUser, LocalDateTime time) {
+        Integer gamePerDay = teamUserRepository.findByDateAndUser(time, teamUser.getUser().getId());
+        teamUser.getUser().addExp(ExpLevelCalculator.getExpPerGame() + (ExpLevelCalculator.getExpBonus() * gamePerDay));
+    }
+
+    private static LocalDateTime getDateTime(LocalDateTime gameTime) {
+        return LocalDateTime.of(gameTime.getYear(), gameTime.getMonthValue(), gameTime.getDayOfMonth(), 0, 0);
     }
 
     private void setTeamScore(TeamUser tu, int teamScore, Boolean isWin) {
@@ -92,9 +103,9 @@ public class GameService {
         if (myTeam == null || enemyTeam == null || !myTeam.getUser().getId().equals(userId)) {
             throw new NotExistException("잘못된 team Id 입니다.", ErrorCode.NOT_FOUND);
         } else {
-            if (myTeam.getTeam().getScore() == scoreDto.getMyTeamScore()
-                    && enemyTeam.getTeam().getScore() == scoreDto.getEnemyTeamScore()) {
-                game.updateStatus();
+            if (myTeam.getTeam().getScore().equals(scoreDto.getMyTeamScore())
+                    && enemyTeam.getTeam().getScore().equals(scoreDto.getEnemyTeamScore())) {
+                expUpdates(game, teams);
                 rankRedisService.updateRankRedis(teams, seasonId, game);
             } else {
                 setTeamScore(myTeam, scoreDto.getMyTeamScore(), scoreDto.getMyTeamScore() > scoreDto.getEnemyTeamScore());

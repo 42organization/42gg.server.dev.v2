@@ -4,10 +4,7 @@ import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
 import com.gg.server.global.utils.BaseTimeEntity;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -67,7 +64,7 @@ public class User extends BaseTimeEntity implements Serializable {
         this.imageUri = imageUri;
     }
 
-    public void update(RacketType racketType, SnsType snsType) {
+    public void updateTypes(RacketType racketType, SnsType snsType) {
         this.racketType = racketType;
         this.snsNotiOpt = snsType;
     }

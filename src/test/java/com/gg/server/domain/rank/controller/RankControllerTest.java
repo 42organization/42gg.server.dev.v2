@@ -1,10 +1,13 @@
 package com.gg.server.domain.rank.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gg.server.Application;
 import com.gg.server.domain.rank.dto.ExpRankPageResponseDto;
 import com.gg.server.domain.rank.dto.RankDto;
 import com.gg.server.domain.rank.dto.RankPageResponseDto;
+import com.gg.server.domain.rank.service.RedisUploadService;
 import com.gg.server.domain.season.data.Season;
+import com.gg.server.domain.season.data.SeasonRepository;
 import com.gg.server.domain.user.User;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
@@ -13,14 +16,15 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
+
 
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -42,8 +46,11 @@ class RankControllerTest {
     @Autowired
     AuthTokenProvider tokenProvider;
 
+    @Autowired
+    SeasonRepository seasonRepository;
+
     @Test
-    @DisplayName("/vip")
+    @DisplayName("/exp")
     void getExpRankPage() throws Exception {
 
         // given
@@ -63,7 +70,7 @@ class RankControllerTest {
         testDataUtils.createUserRank(user3, "4", season);
 
         int page = 1;
-        String url = "/pingpong/vip?page=" + page + "&size=-1";
+        String url = "/pingpong/exp?page=" + page + "&size=-1";
         String accessToken = tokenProvider.createToken(myUser.getId());
 
         //when
@@ -82,7 +89,6 @@ class RankControllerTest {
 
     @Test
     @DisplayName("/pingpong/ranks/{gameType}")
-    @Rollback(value = false)
     public void getRankPage () throws Exception
     {
         //given

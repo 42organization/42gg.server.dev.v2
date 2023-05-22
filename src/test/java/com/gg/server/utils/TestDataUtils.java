@@ -118,11 +118,11 @@ public class TestDataUtils {
         createGame(curUser, LocalDateTime.now().minusMinutes(100), LocalDateTime.now().minusMinutes(85), season, mode);
         createGame(curUser, LocalDateTime.now().minusMinutes(50), LocalDateTime.now().minusMinutes(35), season, mode);
         LocalDateTime now = LocalDateTime.now();
-        if (event == "match"){
+        if (event.equals("match")){
             startTime = now.plusMinutes(10);
             endTime = startTime.plusMinutes(15);
             createGame(curUser, startTime, endTime, season, mode);
-        }else if (event == "game"){
+        }else if (event.equals("game")){
             startTime = now.minusMinutes(5);
             endTime = startTime.plusMinutes(15);
             createGame(curUser, startTime, endTime, season, mode);

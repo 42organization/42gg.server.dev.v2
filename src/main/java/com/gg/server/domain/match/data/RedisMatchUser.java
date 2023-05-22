@@ -2,12 +2,13 @@ package com.gg.server.domain.match.data;
 
 import com.gg.server.domain.match.type.Option;
 import javax.persistence.Id;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.redis.core.RedisHash;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RedisMatchUser {
     @Id
     private Long userId;

@@ -42,18 +42,18 @@ ALTER TABLE user MODIFY id BIGINT NOT NULL AUTO_INCREMENT;
 SET SQL_SAFE_UPDATES=0;
 alter table team add column game_id BIGINT;
 UPDATE team t
-INNER JOIN game g ON g.slot_id = t.slot_id
-SET t.game_id = g.id;
+  INNER JOIN game g ON g.slot_id = t.slot_id
+  SET t.game_id = g.id;
 
 DELETE FROM team
 WHERE slot_id NOT IN (
   SELECT slot_id FROM game);
 
 ALTER TABLE team
-ADD CONSTRAINT fk_team_game_game_id
-FOREIGN KEY (game_id) REFERENCES game(id)
-ON UPDATE CASCADE
-ON DELETE CASCADE;
+  ADD CONSTRAINT fk_team_game_game_id
+    FOREIGN KEY (game_id) REFERENCES game(id)
+      ON UPDATE CASCADE
+      ON DELETE CASCADE;
 
 alter table team modify score INT;
 alter table team modify game_id BIGINT not null;
@@ -82,16 +82,16 @@ ALTER TABLE feedback CHANGE user_id intra_id VARCHAR(100);
 alter table feedback add column user_id BIGINT;
 
 UPDATE feedback f
-INNER JOIN user u
+  INNER JOIN user u
 ON f.intra_id = u.intra_id
-SET f.user_id = u.id;
+  SET f.user_id = u.id;
 
 alter table feedback drop intra_id;
 
 alter table feedback
-add constraint fk_feedback_user_user_id
-foreign key (user_id) REFERENCES user(id)
-ON UPDATE CASCADE;
+  add constraint fk_feedback_user_user_id
+    foreign key (user_id) REFERENCES user(id)
+      ON UPDATE CASCADE;
 
 ALTER TABLE feedback CHANGE category enum_category INT;
 alter table feedback add column category VARCHAR(15) not null;
@@ -101,7 +101,7 @@ update feedback set category="COMPLAINT" where enum_category=2;
 update feedback set category="CHEERS" where enum_category=3;
 update feedback set category="OPINION" where enum_category=4;
 update feedback set category="ETC" where enum_category=5;
-alter table feedback drop enum_category; 
+alter table feedback drop enum_category;
 SET SQL_SAFE_UPDATES=1;
 ####
 
@@ -113,9 +113,9 @@ alter table game add column end_time DATETIME;
 alter table game change season season_id bigint not null;
 
 alter table game
-add constraint fk_game_season_season_id
-foreign key (season_id) REFERENCES season(id)
-ON UPDATE CASCADE;
+  add constraint fk_game_season_season_id
+    foreign key (season_id) REFERENCES season(id)
+      ON UPDATE CASCADE;
 
 ALTER TABLE game CHANGE status enum_status INT;
 alter table game add column status VARCHAR(10) not null;
@@ -131,8 +131,8 @@ update game set mode="RANK" where enum_mode=2;
 alter table game drop column enum_mode;
 
 UPDATE game g
-INNER JOIN slot s ON g.slot_id = s.id
-SET g.start_time = s.time, g.end_time = s.end_time;
+  INNER JOIN slot s ON g.slot_id = s.id
+  SET g.start_time = s.time, g.end_time = s.end_time;
 
 alter table game modify start_time DATETIME not null;
 
@@ -150,14 +150,14 @@ ALTER TABLE noti CHANGE user_id intra_id VARCHAR(100);
 alter table noti add column user_id BIGINT;
 
 UPDATE noti n
-INNER JOIN user u
+  INNER JOIN user u
 ON n.intra_id = u.intra_id
-SET n.user_id = u.id;
+  SET n.user_id = u.id;
 
 alter table noti
-add constraint fk_noti_user_user_id
-foreign key (user_id) REFERENCES user(id)
-ON UPDATE CASCADE;
+  add constraint fk_noti_user_user_id
+    foreign key (user_id) REFERENCES user(id)
+      ON UPDATE CASCADE;
 
 ALTER TABLE noti CHANGE noti_type enum_noti_type INT;
 alter table noti add column noti_type VARCHAR(15) not null;
@@ -179,20 +179,20 @@ ALTER TABLE pchange CHANGE user_id intra_id VARCHAR(100);
 alter table pchange add column user_id BIGINT;
 
 UPDATE pchange p
-INNER JOIN user u
+  INNER JOIN user u
 ON p.intra_id = u.intra_id
-SET p.user_id = u.id;
+  SET p.user_id = u.id;
 
 alter table pchange modify game_id bigint not null;
 alter table pchange
-add constraint fk_pchange_user_user_id
-foreign key (user_id) REFERENCES user(id)
-ON UPDATE CASCADE;
+  add constraint fk_pchange_user_user_id
+    foreign key (user_id) REFERENCES user(id)
+      ON UPDATE CASCADE;
 
 alter table pchange
-add constraint fk_pchange_game_game_id
-foreign key (game_id) REFERENCES game(id)
-ON UPDATE CASCADE;
+  add constraint fk_pchange_game_game_id
+    foreign key (game_id) REFERENCES game(id)
+      ON UPDATE CASCADE;
 
 alter table pchange modify user_id BIGINT not null;
 alter table pchange modify game_id BIGINT not null;
@@ -200,7 +200,7 @@ alter table pchange modify game_id BIGINT not null;
 alter table pchange drop intra_id;
 alter table pchange drop ppp_change;
 alter table pchange drop exp_change;
-alter table pchange drop exp_result;
+alter table pchange change exp_result exp INT not null;
 SET SQL_SAFE_UPDATES=1;
 ####
 
@@ -210,21 +210,21 @@ ALTER TABLE ranks CHANGE user_id intra_id VARCHAR(100);
 alter table ranks add column user_id BIGINT;
 
 UPDATE ranks r
-INNER JOIN user u
+  INNER JOIN user u
 ON r.intra_id = u.intra_id
-SET r.user_id = u.id;
+  SET r.user_id = u.id;
 
 alter table ranks modify user_id bigint not null;
 alter table ranks
-add constraint fk_ranks_user_user_id
-foreign key (user_id) REFERENCES user(id)
-ON UPDATE CASCADE;
+  add constraint fk_ranks_user_user_id
+    foreign key (user_id) REFERENCES user(id)
+      ON UPDATE CASCADE;
 
 alter table ranks modify season_id bigint not null;
 alter table ranks
-add constraint fk_ranks_season_season_id
-foreign key (season_id) REFERENCES season(id)
-ON UPDATE CASCADE;
+  add constraint fk_ranks_season_season_id
+    foreign key (season_id) REFERENCES season(id)
+      ON UPDATE CASCADE;
 
 alter table ranks drop intra_id;
 alter table ranks drop game_type;
