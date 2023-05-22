@@ -32,7 +32,7 @@ public class GameController {
         if (gameReq.getStatus() != null && !gameReq.getStatus().name().equals("LIVE")) {
             throw new InvalidParameterException("status not valid", ErrorCode.VALID_FAILED);
         }
-        Pageable pageable = PageRequest.of(gameReq.getPageNum() - 1, gameReq.getPageSize(), Sort.by(Sort.Direction.DESC, "startTime"));
+        Pageable pageable = PageRequest.of(gameReq.getPage() - 1, gameReq.getSize(), Sort.by(Sort.Direction.DESC, "startTime"));
         if (gameReq.getIntraId() != null) {
             return gameFindService.allGameListUser(pageable, gameReq.getIntraId(), gameReq.getStatus());
         }
@@ -41,7 +41,7 @@ public class GameController {
 
     @GetMapping("/normal")
     GameListResDto normalGameList(@ModelAttribute @Valid NormalGameListReqDto gameReq) {
-        Pageable pageable = PageRequest.of(gameReq.getPageNum() - 1, gameReq.getPageSize(), Sort.by(Sort.Direction.DESC, "startTime"));
+        Pageable pageable = PageRequest.of(gameReq.getPage() - 1, gameReq.getSize(), Sort.by(Sort.Direction.DESC, "startTime"));
         if (gameReq.getIntraId() == null) {
             return gameFindService.getNormalGameList(pageable);
         }
@@ -50,7 +50,7 @@ public class GameController {
 
     @GetMapping("/rank")
     GameListResDto rankGameList(@ModelAttribute @Valid RankGameListReqDto gameReq) {
-        Pageable pageable = PageRequest.of(gameReq.getPageNum() - 1, gameReq.getPageSize(), Sort.by(Sort.Direction.DESC, "startTime"));
+        Pageable pageable = PageRequest.of(gameReq.getPage() - 1, gameReq.getSize(), Sort.by(Sort.Direction.DESC, "startTime"));
         if (gameReq.getIntraId() == null) {
             return gameFindService.rankGameList(pageable, gameReq.getSeasonId());
         }
