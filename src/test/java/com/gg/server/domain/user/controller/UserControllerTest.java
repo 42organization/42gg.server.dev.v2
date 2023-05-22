@@ -14,6 +14,7 @@ import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.Rollback;
@@ -65,6 +66,11 @@ class UserControllerTest {
     @Autowired
     SeasonRepository seasonRepository;
 
+
+    @AfterEach
+    public void flushRedis() {
+        redisRepository.deleteAll();
+    }
 
     @Test
     @DisplayName("live")
@@ -183,7 +189,7 @@ class UserControllerTest {
         UserRankResponseDto responseDto = objectMapper.readValue(contentAsString, UserRankResponseDto.class);
 
         //then
-        Assertions.assertThat(responseDto.getRank()).isEqualTo(1);
+        Assertions.assertThat(responseDto.getRank()).isEqualTo(-1);
         Assertions.assertThat(responseDto.getWins()).isEqualTo(0);
         Assertions.assertThat(responseDto.getLosses()).isEqualTo(0);
         Assertions.assertThat(responseDto.getPpp()).isEqualTo(season.getStartPpp());

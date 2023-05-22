@@ -1,11 +1,11 @@
 package com.gg.server.domain.user.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import com.gg.server.domain.user.User;
+import com.gg.server.global.utils.ExpLevelCalculator;
+import lombok.*;
 
 @Getter
-@ToString
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserDetailResponseDto {
     private String intraId;
     private String userImageUri;
@@ -17,17 +17,20 @@ public class UserDetailResponseDto {
     private Double expRate;
     private String snsNotiOpt;
 
-    @Builder
-    public UserDetailResponseDto(String intraId, String userImageUri, String racketType, String statusMessage, Integer level,
-                                 Integer currentExp, Integer maxExp, String snsNotiOpt) {
-        this.intraId = intraId;
-        this.userImageUri = userImageUri;
-        this.racketType = racketType;
+    public UserDetailResponseDto(User user, String statusMessage) {
+        this.intraId = user.getIntraId();
+        this.userImageUri = user.getImageUri();
+        this.racketType = user.getRacketType().getCode();
         this.statusMessage = statusMessage;
-        this.level = level;
-        this.currentExp = currentExp;
-        this.maxExp = maxExp;
-        this.expRate = (double)(currentExp * 10000 / maxExp) / 100;
-        this.snsNotiOpt = snsNotiOpt;
+        this.snsNotiOpt = user.getSnsNotiOpt().getCode();
+        calculateExpAndLevel(user);
     }
+
+    private void calculateExpAndLevel(User user) {
+        this.currentExp = ExpLevelCalculator.getCurrentLevelMyExp(user.getTotalExp());
+        this.maxExp = ExpLevelCalculator.getLevelMaxExp(ExpLevelCalculator.getLevel(user.getTotalExp()));
+        this.level = ExpLevelCalculator.getLevel(user.getTotalExp());
+        this.expRate = (double)(currentExp * 10000 / maxExp) / 100;
+    }
+
 }
