@@ -1,6 +1,7 @@
 package com.gg.server.admin.penalty.controller;
 
 import com.gg.server.admin.penalty.dto.PenaltyListResponseDto;
+import com.gg.server.admin.penalty.dto.PenaltyParamDto;
 import com.gg.server.admin.penalty.dto.PenaltyRequestDto;
 import com.gg.server.admin.penalty.service.PenaltyService;
 import javax.validation.Valid;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,20 +31,19 @@ import org.springframework.web.bind.annotation.RestController;
 public class PenaltyController {
     private final PenaltyService penaltyService;
 
-    @PostMapping("users/{intraId}/penalty")
-    public ResponseEntity givePenaltyToUser(@PathVariable String intraId, @RequestBody @Valid PenaltyRequestDto requestDto) {
-        penaltyService.givePenalty(intraId, requestDto.getPenaltyTime(), requestDto.getReason());
+    @PostMapping("penalty")
+    public ResponseEntity givePenaltyToUser(@RequestBody @Valid PenaltyRequestDto requestDto) {
+        penaltyService.givePenalty(requestDto.getIntraId(), requestDto.getPenaltyTime(), requestDto.getReason());
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping("penalty/users")
-    public PenaltyListResponseDto getAllPenaltyUser(@RequestParam(required = false) String intraId, @RequestParam @Min(1) Integer page,
-                                                    @RequestParam(defaultValue = "10") @Min(1) Integer size, @RequestParam Boolean current) {
-        Pageable pageable = PageRequest.of(page - 1, size,
+    @GetMapping("penalty")
+    public PenaltyListResponseDto getAllPenaltyUser(@ModelAttribute @Valid PenaltyParamDto paramDto) {
+        Pageable pageable = PageRequest.of(paramDto.getPage() - 1, paramDto.getSize(),
                 Sort.by("startTime").descending());
-        if (intraId == null)
-            return penaltyService.getAllPenaltyUser(pageable, current);
-        return penaltyService.searchPenaltyUser(pageable, intraId, current);
+        if (paramDto.getIntraId() == null)
+            return penaltyService.getAllPenaltyUser(pageable, paramDto.getCurrent());
+        return penaltyService.searchPenaltyUser(pageable, paramDto.getIntraId(), paramDto.getCurrent());
     }
 
     @DeleteMapping("penalty/{penaltyId}")

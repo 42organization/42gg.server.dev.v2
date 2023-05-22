@@ -1,29 +1,24 @@
 package com.gg.server.admin.penalty.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gg.server.admin.penalty.data.RedisPenaltyUser;
+import com.gg.server.domain.penalty.data.RedisPenaltyUser;
 import com.gg.server.admin.penalty.data.RedisPenaltyUserRepository;
 import com.gg.server.admin.penalty.dto.PenaltyListResponseDto;
 import com.gg.server.admin.penalty.dto.PenaltyRequestDto;
 import com.gg.server.admin.penalty.service.PenaltyService;
 import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.UserRepository;
-import com.gg.server.domain.user.dto.UserHistoryResponseDto;
-import com.gg.server.domain.user.dto.UserModifyRequestDto;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
-import java.net.http.HttpClient;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
