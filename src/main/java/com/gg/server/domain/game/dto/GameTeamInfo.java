@@ -4,11 +4,9 @@ import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.team.dto.MatchTeamsInfoDto;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.GameDBException;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.apache.commons.lang3.ObjectUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,7 +22,6 @@ public class GameTeamInfo {
     private MatchTeamsInfoDto matchTeamsInfo;
 
     public GameTeamInfo(List<GameTeamUserInfo> infos, Long userId) {
-        System.out.println(infos);
         this.mode = infos.get(0).getMode();
         this.gameId = infos.get(0).getGameId();
         this.startTime = infos.get(0).getStartTime();
