@@ -30,8 +30,7 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-@SpringBootTest(classes = Application.class)
-@EnableAutoConfiguration(exclude = RedisUploadService.class)
+@SpringBootTest
 @Transactional
 @AutoConfigureMockMvc
 class RankControllerTest {
