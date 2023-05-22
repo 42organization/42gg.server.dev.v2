@@ -40,4 +40,9 @@ public class RankRedisAdminService {
         rankRedisRepository.deleteHashKey(redisHashKey);
     }
 
+    public void updateRankUser(String hashKey, String zsetKey, Long userId, RankRedis userRank) {
+        rankRedisRepository.updateRankData(hashKey, userId, userRank);
+        rankRedisRepository.deleteFromZSet(zsetKey, userId);
+        rankRedisRepository.addToZSet(zsetKey, userId, userRank.getPpp());
+    }
 }

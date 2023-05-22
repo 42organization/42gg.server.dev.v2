@@ -44,7 +44,7 @@ public class RankRedisService {
     }
 
     @Transactional
-    void updatePPP(TeamUser teamuser, RankRedis myTeam, int enemyScore, Integer myPPP, Integer enemyPPP, Long seasonId) {
+    public void updatePPP(TeamUser teamuser, RankRedis myTeam, int enemyScore, Integer myPPP, Integer enemyPPP, Long seasonId) {
         int win = teamuser.getTeam().getWin() ? myTeam.getWins() + 1 : myTeam.getWins();
         int losses = !teamuser.getTeam().getWin() ? myTeam.getLosses() + 1: myTeam.getLosses();
         // rank table 수정

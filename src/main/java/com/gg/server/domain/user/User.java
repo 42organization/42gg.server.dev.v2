@@ -1,5 +1,6 @@
 package com.gg.server.domain.user;
 
+import com.gg.server.admin.user.dto.UserUpdateAdminRequestDto;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
@@ -60,6 +61,15 @@ public class User extends BaseTimeEntity implements Serializable {
         this.kakaoId = kakaoId;
     }
 
+    public void modifyUserDetail(UserUpdateAdminRequestDto updateReq) {
+        this.eMail = updateReq.getEmail();
+        this.racketType = updateReq.getRacketType();
+        this.roleType = updateReq.getRoleType();
+    }
+    public void updateEMail(String eMail) {
+        this.eMail = eMail;
+    }
+
     public void imageUpdate(String imageUri) {
         this.imageUri = imageUri;
     }
@@ -67,6 +77,10 @@ public class User extends BaseTimeEntity implements Serializable {
     public void updateTypes(RacketType racketType, SnsType snsType) {
         this.racketType = racketType;
         this.snsNotiOpt = snsType;
+    }
+
+    public void updateRoleType(RoleType roleType) {
+        this.roleType = roleType;
     }
     public void addExp(int plus) {
         this.totalExp += plus;
