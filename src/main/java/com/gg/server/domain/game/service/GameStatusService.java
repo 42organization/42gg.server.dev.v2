@@ -3,6 +3,7 @@ package com.gg.server.domain.game.service;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.dto.GameTeamUserInfo;
+import com.gg.server.domain.game.exception.GameDataException;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.noti.data.Noti;
 import com.gg.server.domain.noti.dto.UserNotiDto;
@@ -13,6 +14,7 @@ import com.gg.server.domain.team.data.TeamRepository;
 import com.gg.server.domain.team.dto.GameUser;
 import com.gg.server.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class GameStatusService {
 
     private final GameRepository gameRepository;
@@ -50,16 +53,23 @@ public class GameStatusService {
     @Transactional
     public void imminentGame() {
         List<GameUser> games = teamRepository.findAllByStartTimeEquals(getTime(5));
-        for (GameUser gu :
-                games) {
-            Noti noti = notiService.createNoti(userService.getUser(gu.getUserId()), null, NotiType.IMMINENT);
-            snsNotiService.sendSnsNotification(noti, new UserNotiDto(gu));
+        if (games.size() > 2) {
+            log.error("imminet game size is not 2 -> size:", games.size(), getTime(5));
+            throw new GameDataException();
         }
+        notiProcess(games.get(0), games.get(1).getUserId());
+        notiProcess(games.get(1), games.get(0).getUserId());
     }
+
+    private void notiProcess(GameUser game, Long enemyId) {
+        Noti noti = notiService.createNoti(userService.getUser(game.getUserId()), enemyId.toString(), NotiType.IMMINENT);
+        snsNotiService.sendSnsNotification(noti, new UserNotiDto(game));
+    }
+
     private LocalDateTime getTime(int plusMiniute) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime endTime = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(),
-                now.getHour(), now.getMinute());
+                now.getHour(), now.getMinute(), 1);
         return endTime.plusMinutes(plusMiniute);
     }
 }

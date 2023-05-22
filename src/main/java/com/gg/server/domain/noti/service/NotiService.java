@@ -4,7 +4,6 @@ import com.gg.server.domain.noti.data.Noti;
 import com.gg.server.domain.noti.data.NotiRepository;
 import com.gg.server.domain.noti.dto.NotiDto;
 import com.gg.server.domain.noti.dto.NotiResponseDto;
-import com.gg.server.domain.noti.dto.UserNotiDto;
 import com.gg.server.domain.noti.type.NotiType;
 import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.UserRepository;
