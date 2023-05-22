@@ -10,7 +10,6 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
-@ToString
 public class PageRequestDto {
 
     @Min(value = 1, message = "page must be greater than 0")
