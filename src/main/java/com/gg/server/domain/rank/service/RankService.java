@@ -8,11 +8,14 @@ import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.Season;
-import com.gg.server.domain.season.data.SeasonRepository;
+import com.gg.server.domain.season.service.SeasonFindService;
 import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
+import com.gg.server.global.exception.ErrorCode;
+import com.gg.server.global.exception.custom.PageNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -22,15 +25,15 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
+@Configuration
 @RequiredArgsConstructor
 public class RankService {
     private final UserRepository userRepository;
     private final RankRedisRepository redisRepository;
-    private final SeasonRepository seasonRepository;
+    private final SeasonFindService seasonFindService;
 
     @Transactional(readOnly = true)
     public ExpRankPageResponseDto getExpRankPage(int pageNum, int pageSize, UserDto curUser) {
@@ -39,11 +42,11 @@ public class RankService {
         Long myRank = curUser.getTotalExp() == 0 ? -1 : userRepository.findExpRankingByIntraId(curUser.getIntraId());
         Page<User> users = userRepository.findAll(pageRequest);
         if(pageNum > users.getTotalPages())
-            throw new RuntimeException("페이지가 존재하지 않습니다.");
+            throw new PageNotFoundException("페이지가 존재하지 않습니다.", ErrorCode.PAGE_NOT_FOUND);
 
         List<Long> userIds = users.getContent().stream().map(user -> user.getId()).collect(Collectors.toList());
-        Season curSeason = seasonRepository.findCurrentSeason(LocalDateTime.now())
-                .orElseThrow(() -> new NoSuchElementException("현재 시즌이 없습니다."));
+        Season curSeason = seasonFindService.findCurrentSeason(LocalDateTime.now());
+
         String hashKey = RedisKeyManager.getHashKey(curSeason.getId());
         List<RankRedis> ranks = redisRepository.findRanksByUserIds(hashKey, userIds);
 
@@ -62,17 +65,14 @@ public class RankService {
     public RankPageResponseDto getRankPage(int pageNum, int pageSize, UserDto curUser, Long seasonId) {
         Season season;
         if (seasonId == null || seasonId == 0) {
-            season = seasonRepository.findCurrentSeason(LocalDateTime.now())
-                    .orElseThrow(() -> new NoSuchElementException("현재 시즌이 없습니다."));
+            season = seasonFindService.findCurrentSeason(LocalDateTime.now());
         } else {
-            season = seasonRepository.findById(seasonId)
-                    .orElseThrow(() -> new NoSuchElementException("해당 시즌이 없습니다."));
+            season = seasonFindService.findSeasonById(seasonId);
         }
-
         int currentPage = pageNum;
         int totalPage = calcTotalPage(season, pageSize);
         if (pageNum > totalPage)
-            throw new RuntimeException("페이지가 존재하지 않습니다.");
+            throw new PageNotFoundException("페이지가 존재하지 않습니다.", ErrorCode.PAGE_NOT_FOUND);
         int myRank = findMyRank(curUser, season);
 
         int startRank = (pageNum - 1) * pageSize;
