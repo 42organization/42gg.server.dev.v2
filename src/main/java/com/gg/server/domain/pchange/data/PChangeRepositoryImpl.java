@@ -20,6 +20,7 @@ public class PChangeRepositoryImpl implements PChangeRepositoryCustom{
                 .setFirstResult(0)
                 .setMaxResults(10)
                 .getResultList();
+        return resultList;
     }
 
     @Override

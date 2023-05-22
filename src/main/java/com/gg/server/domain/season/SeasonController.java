@@ -1,6 +1,7 @@
 package com.gg.server.domain.season;
 
 import com.gg.server.domain.season.dto.SeasonListResDto;
+import com.gg.server.domain.season.service.SeasonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -6,13 +6,26 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum ErrorCode {
-    // error code 등록
+
+    //user
+    USER_NOT_FOUND(404, "UR100", "USER NOT FOUND"),
+
+    //season
+    SEASON_NOT_FOUND(404, "SE100", "SEASON NOT FOUND"),
+
+    //rank
+    RANK_NOT_FOUND(404, "RK100", "RANK NOT FOUND"),
+    REDIS_RANK_NOT_FOUND(404, "RK101", "REDIS RANK NOT FOUND"),
+
+
+
     /** Common **/
     INTERNAL_SERVER_ERR(500, "CM001","INTERNAL SERVER ERROR"),
     NOT_FOUND(404, "CM002", "NOT FOUND"),
     BAD_REQUEST(400, "CM003", "BAD REQUEST"),
     UNAUTHORIZED(401, "CM004", "UNAUTHORIZED"),
     METHOD_NOT_ALLOWED(405, "CM005", "METHOD NOT ALLOWED"),
+    PAGE_NOT_FOUND(404, "CM006", "PAGE NOT FOUND"),
     VALID_FAILED(400, "GAME-ERR-400" , "Valid Test Failed."),
     BAD_ARGU(400, "ARGUMENT-ERR-400", "잘못된 argument 입니다."),
     SN001(400, "SN001", "요청하신 값은 현 null 입니다"),
@@ -23,6 +36,7 @@ public enum ErrorCode {
     PC_NOT_FOUND(404, "PC100", "PChange 가 존재하지 않습니다."),
     AWS_S3_ERR(500, "CL001", "AWS S3 Error"),
     AWS_SERVER_ERR(500, "CL002", "AWS Error"),
+
     // SENDER
     SLACK_USER_NOT_FOUND(404, "SL001", "fail to get slack user info"),
     SLACK_CH_NOT_FOUND(404, "SL002", "fail to get user dm channel id"),

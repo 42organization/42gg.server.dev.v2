@@ -1,6 +1,7 @@
 package com.gg.server.global.security.jwt.repository;
 
-import com.gg.server.global.security.jwt.exception.TokenNotValidException;
+import com.gg.server.domain.user.exception.TokenNotValidException;
+import com.gg.server.global.exception.ErrorCode;
 import lombok.AllArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -19,7 +20,7 @@ public class JwtRedisRepository {
     public Long getUserIdByRefToken(String refreshToken){
         String userId = redisTemplate.opsForValue().get(refreshToken);
         if (userId == null)
-            throw new TokenNotValidException();
+            throw new TokenNotValidException("Authentication error", ErrorCode.UNAUTHORIZED);
         return Long.valueOf(userId);
     }
 
