@@ -1,5 +1,6 @@
 package com.gg.server.global.exception;
 
+import com.gg.server.global.exception.custom.AuthenticationException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.SdkClientException;
 import com.gg.server.global.exception.custom.CustomRuntimeException;
@@ -41,6 +42,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErrorResponse> authenticationException(AuthenticationException ex) {
+        log.error("authentication exception", ex);
+        ErrorResponse response = new ErrorResponse(ex.getErrorCode());
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+    }
     @ExceptionHandler(AmazonServiceException.class)
     protected ResponseEntity<ErrorResponse> httpRequestMethodNotSupportedExceptionHandle(AmazonServiceException ex) {
         log.error("AmazonServiceException", ex);
@@ -59,7 +66,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> runtimeException(RuntimeException ex) {
         log.error("Runtime error", ex);
         ErrorResponse response = new ErrorResponse(ErrorCode.BAD_REQUEST);
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     protected ResponseEntity<ErrorResponse> httpRequestMethodNotSupportedExceptionHandle(HttpRequestMethodNotSupportedException ex) {
@@ -71,7 +78,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleException(Exception ex) {
         log.error("처리되지 않은 에러입니다.", ex);
         ErrorResponse response = new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERR);
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 
 }

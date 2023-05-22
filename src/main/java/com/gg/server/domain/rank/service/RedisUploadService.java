@@ -1,19 +1,19 @@
 package com.gg.server.domain.rank.service;
 
-import com.gg.server.domain.rank.data.Rank;
 import com.gg.server.domain.rank.data.RankRepository;
 import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.data.SeasonRepository;
+import com.gg.server.domain.season.exception.SeasonNotFoundException;
+import com.gg.server.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +26,7 @@ public class RedisUploadService {
     @Transactional
     public void uploadRedis() {
         Season currentSeason = seasonRepository.findCurrentSeason(LocalDateTime.now())
-                .orElseThrow(() -> new NoSuchElementException("현재 시즌이 없습니다."));
+                .orElseThrow(() -> new SeasonNotFoundException("현재 시즌이 없습니다.", ErrorCode.SEASON_NOT_FOUND));
         String hashKey = RedisKeyManager.getHashKey(currentSeason.getId());
         if(redisRepository.isEmpty(hashKey))
             upload();

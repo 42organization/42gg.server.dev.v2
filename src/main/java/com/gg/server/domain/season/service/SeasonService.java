@@ -1,4 +1,4 @@
-package com.gg.server.domain.season;
+package com.gg.server.domain.season.service;
 
 import com.gg.server.domain.season.data.SeasonRepository;
 import com.gg.server.domain.season.dto.SeasonResDto;

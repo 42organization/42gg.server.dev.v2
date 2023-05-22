@@ -1,11 +1,14 @@
 package com.gg.server.domain.rank.redis;
 
+import com.gg.server.domain.rank.exception.RedisDataNotFoundException;
+import com.gg.server.global.exception.ErrorCode;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Repository
@@ -80,7 +83,10 @@ public class RankRedisRepository {
      *  ZSET에서 user의 순위(rank)를 조회하는 메서드 ppp가 높은순
      */
     public Long getRankInZSet(String key, Long userId) {
-        return zSetOps.reverseRank(key, userId.toString());
+        Long result = zSetOps.reverseRank(key, userId.toString());
+        if(result == null)
+            throw new RedisDataNotFoundException("Redis에 데이터가 없습니다.", ErrorCode.REDIS_RANK_NOT_FOUND);
+        return result;
     }
 
 
@@ -92,7 +98,10 @@ public class RankRedisRepository {
      *   ZSET에서 user의 ppp를 가져오는 메서드
      */
     public Long getScoreInZSet(String key, Long userId) {
-        return zSetOps.score(key, userId.toString()).longValue();
+        Double result = zSetOps.score(key, userId.toString());
+        if(result == null)
+            throw new RedisDataNotFoundException("Redis에 데이터가 없습니다.", ErrorCode.REDIS_RANK_NOT_FOUND);
+        return result.longValue();
     }
 
     /**
@@ -105,7 +114,10 @@ public class RankRedisRepository {
      *  startRank -> 0부터 시작
      */
     public List<Long> getUserIdsByRangeFromZSet(String key, long startRank, long endRank) {
-        return zSetOps.reverseRange(key, startRank, endRank).stream()
+        Set<String> result = zSetOps.reverseRange(key, startRank, endRank);
+        if (result == null)
+            throw new RedisDataNotFoundException("Redis에 데이터가 없습니다.", ErrorCode.REDIS_RANK_NOT_FOUND);
+        return result.stream()
                 .map(Long::parseLong).collect(Collectors.toList());
     }
 
@@ -130,7 +142,10 @@ public class RankRedisRepository {
      * 해당 유저의 rank데이터를 조회하는 메소드
      */
     public RankRedis findRankByUserId(String key, Long userId) {
-        return RankRedis.class.cast(hashOps.get(key, userId.toString()));
+        Object result = hashOps.get(key, userId.toString());
+        if (result == null)
+            throw new RedisDataNotFoundException("Redis에 데이터가 없습니다.", ErrorCode.REDIS_RANK_NOT_FOUND);
+        return RankRedis.class.cast(result);
     }
 
     /**
@@ -166,11 +181,17 @@ public class RankRedisRepository {
      */
     public List<RankRedis> findRanksByUserIds(String key, List<Long> userIds) {
         List<String> userIdsStr = userIds.stream().map(String::valueOf).collect(Collectors.toList());
-        return hashOps.multiGet(key, userIdsStr).stream().map(RankRedis.class::cast).collect(Collectors.toList());
+        List<Object> objects = hashOps.multiGet(key, userIdsStr);
+        if(objects == null)
+            throw new RedisDataNotFoundException("Redis에 데이터가 없습니다.", ErrorCode.REDIS_RANK_NOT_FOUND);
+        return objects.stream().map(RankRedis.class::cast).collect(Collectors.toList());
     }
 
     public Long countTotalRank(String zSetKey) {
-        return zSetOps.size(zSetKey);
+        Long result = zSetOps.size(zSetKey);
+        if(result == null)
+            throw new RedisDataNotFoundException("Redis에 데이터가 없습니다.", ErrorCode.REDIS_RANK_NOT_FOUND);
+        return result;
     }
 
     public void deleteAll(){

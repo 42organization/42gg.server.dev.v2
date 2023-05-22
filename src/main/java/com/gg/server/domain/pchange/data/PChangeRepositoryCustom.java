@@ -4,5 +4,5 @@ import java.util.List;
 
 public interface PChangeRepositoryCustom {
 
-    List<PChange> findPChangesHistory(String intraId, Long seasonId);
+    List<PChange> findPChangesHistory( String intraId, Long seasonId);
 }

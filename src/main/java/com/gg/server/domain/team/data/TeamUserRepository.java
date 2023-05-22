@@ -13,8 +13,8 @@ public interface TeamUserRepository extends JpaRepository<TeamUser, Long> {
     List<TeamUser> findAllByGameId(Long gid);
 
     @Query(value = "select count(*) from game, team, team_user " +
-            "where game.start_time >= :today and game.start_time <= :today and team_user.team_id = team.id and team_user.user_id = :userId " +
-            "and team.game_id = game.id", nativeQuery = true)
+            "where game.start_time >= :today and team_user.team_id = team.id and team_user.user_id = :userId " +
+            "and team.game_id = game.id and game.status = 'END'", nativeQuery = true)
     Integer findByDateAndUser(LocalDateTime today, Long userId);
     @Query("select t from TeamUser  t where t.team.id = :teamId")
     TeamUser findByTeam(@Param("teamId") Long teamId);
