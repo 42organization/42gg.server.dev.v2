@@ -120,12 +120,12 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUser(String racketType, String statusMessage, String snsNotiOpt, String intraId) {
+    public void updateUser(RacketType racketType, String statusMessage, SnsType snsNotiOpt, String intraId) {
         User user = userFindService.findByIntraId(intraId);
         Season currentSeason = seasonFindService.findCurrentSeason(LocalDateTime.now());
         updateRedisRankStatusMessage(statusMessage, user, currentSeason);
         updateRankTableStatusMessage(user.getId(), statusMessage, currentSeason.getId());
-        user.updateTypes(RacketType.valueOf(racketType), SnsType.valueOf(snsNotiOpt));
+        user.updateTypes(racketType, snsNotiOpt);
     }
 
     private void updateRankTableStatusMessage(Long userId, String statusMessage, Long seasonId) {

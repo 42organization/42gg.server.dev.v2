@@ -250,8 +250,8 @@ class UserControllerTest {
         String url = "/pingpong/users/" + newUser.getIntraId();
 
         String newStatusMessage = "newStatusMessage";
-        String newRacketType = "SHAKEHAND";
-        String newSnsType = "SLACK";
+        RacketType newRacketType = RacketType.SHAKEHAND;
+        SnsType newSnsType = SnsType.SLACK;
 
         //when
         mockMvc.perform(put(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
@@ -267,8 +267,8 @@ class UserControllerTest {
             Assertions.fail("랭크 업데이트 실패");
         });
         userRepository.findById(newUser.getId()).ifPresentOrElse(user -> {
-            Assertions.assertThat(user.getRacketType()).isEqualTo(RacketType.valueOf(newRacketType));
-            Assertions.assertThat(user.getSnsNotiOpt()).isEqualTo(SnsType.valueOf(newSnsType));
+            Assertions.assertThat(user.getRacketType()).isEqualTo((newRacketType));
+            Assertions.assertThat(user.getSnsNotiOpt()).isEqualTo(newSnsType);
             Assertions.assertThat(rank.getStatusMessage()).isEqualTo(newStatusMessage);
         }, () -> {
             Assertions.fail("유저 업데이트 실패");

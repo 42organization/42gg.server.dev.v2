@@ -1,6 +1,7 @@
 package com.gg.server.domain.user.dto;
 
 import com.gg.server.domain.user.User;
+import com.gg.server.domain.user.type.SnsType;
 import com.gg.server.global.utils.ExpLevelCalculator;
 import lombok.*;
 
@@ -15,14 +16,14 @@ public class UserDetailResponseDto {
     private Integer currentExp;
     private Integer maxExp;
     private Double expRate;
-    private String snsNotiOpt;
+    private SnsType snsNotiOpt;
 
     public UserDetailResponseDto(User user, String statusMessage) {
         this.intraId = user.getIntraId();
         this.userImageUri = user.getImageUri();
         this.racketType = user.getRacketType().getCode();
         this.statusMessage = statusMessage;
-        this.snsNotiOpt = user.getSnsNotiOpt().getCode();
+        this.snsNotiOpt = SnsType.of(user.getSnsNotiOpt().getCode());
         calculateExpAndLevel(user);
     }
 
