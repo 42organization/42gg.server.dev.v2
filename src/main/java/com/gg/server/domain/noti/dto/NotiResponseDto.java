@@ -47,7 +47,7 @@ public class NotiResponseDto {
                 ", type=" + type +
                 ", isChecked=" + isChecked +
                 ", message='" + message + '\'' +
-                ", creatdDate=" + createdAt +
+                ", createdDate=" + createdAt +
                 '}';
     }
 
