@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS `penalty`;
 
 CREATE TABLE `penalty` (
-  `id` INT NOT NULL AUTO_INCREMENT,
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
   `user_id` BIGINT NOT NULL,
   `penalty_type` VARCHAR(20) NOT NULL,
   `message` VARCHAR(100) NULL,
@@ -13,6 +13,6 @@ CREATE TABLE `penalty` (
   INDEX `fk_penalty_user_user_id_idx` (`user_id` ASC) VISIBLE,
   CONSTRAINT `fk_penalty_user_user_id`
     FOREIGN KEY (`user_id`)
-    REFERENCES `MAIN`.`user` (`id`)
+    REFERENCES user (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
