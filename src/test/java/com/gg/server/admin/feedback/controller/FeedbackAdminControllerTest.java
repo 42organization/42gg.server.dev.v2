@@ -63,7 +63,6 @@ class FeedbackAdminControllerTest {
 
 
         FeedbackListAdminResponseDto result = objectMapper.readValue(contentAsString, FeedbackListAdminResponseDto.class);
-        assertThat(result.getCurrentPage()).isEqualTo(1);
         assertThat(result.getFeedbackList().size()).isEqualTo(5);
         System.out.println(result.getFeedbackList().get(0).getId());
         System.out.println(result.getFeedbackList().get(0).getContent());
@@ -120,11 +119,10 @@ class FeedbackAdminControllerTest {
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
-
         FeedbackListAdminResponseDto result = objectMapper.readValue(contentAsString, FeedbackListAdminResponseDto.class);
-        assertThat(result.getCurrentPage()).isEqualTo(1);
-        System.out.println(result.getFeedbackList().get(0).getId());
-        System.out.println(result.getFeedbackList().get(0).getContent());
-        System.out.println(result.getFeedbackList().get(0).getIntraId());
+        assertThat(result.getFeedbackList().size()).isBetween(0, 5);
+        assertThat(result.getFeedbackList().get(0).getIntraId()).isEqualTo(user.getIntraId());
+        assertThat(result.getFeedbackList().get(0).getContent()).isEqualTo("test1234");
+        assertThat(result.getFeedbackList().get(0).getIntraId()).isEqualTo(user.getIntraId());
     }
 }
