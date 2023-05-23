@@ -12,6 +12,7 @@ import com.gg.server.domain.season.service.SeasonFindService;
 import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
+import com.gg.server.global.dto.PageRequestDto;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.PageNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -36,12 +37,11 @@ public class RankService {
     private final SeasonFindService seasonFindService;
 
     @Transactional(readOnly = true)
-    public ExpRankPageResponseDto getExpRankPage(int pageNum, int pageSize, UserDto curUser) {
-        PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize, Sort.by("totalExp").descending());
+    public ExpRankPageResponseDto getExpRankPage(PageRequest pageRequest, UserDto curUser) {
 
         Long myRank = curUser.getTotalExp() == 0 ? -1 : userRepository.findExpRankingByIntraId(curUser.getIntraId());
         Page<User> users = userRepository.findAll(pageRequest);
-        if(pageNum > users.getTotalPages())
+        if(pageRequest.getPageNumber() + 1 > users.getTotalPages())
             throw new PageNotFoundException("페이지가 존재하지 않습니다.", ErrorCode.PAGE_NOT_FOUND);
 
         List<Long> userIds = users.getContent().stream().map(user -> user.getId()).collect(Collectors.toList());
@@ -58,27 +58,26 @@ public class RankService {
             expRankDtos.add(ExpRankDto.from(user, startRank + i, rank.getStatusMessage()));
         }
 
-        return new ExpRankPageResponseDto(myRank.intValue(), pageNum, users.getTotalPages(), expRankDtos);
+        return new ExpRankPageResponseDto(myRank.intValue(), pageRequest.getPageNumber() + 1, users.getTotalPages(), expRankDtos);
     }
 
     @Transactional(readOnly = true)
-    public RankPageResponseDto getRankPage(int pageNum, int pageSize, UserDto curUser, Long seasonId) {
+    public RankPageResponseDto getRankPage(PageRequest pageRequest, UserDto curUser, Long seasonId) {
         Season season;
         if (seasonId == null || seasonId == 0) {
             season = seasonFindService.findCurrentSeason(LocalDateTime.now());
         } else {
             season = seasonFindService.findSeasonById(seasonId);
         }
-        int currentPage = pageNum;
-        int totalPage = calcTotalPage(season, pageSize);
-        if (pageNum > totalPage)
+        int totalPage = calcTotalPage(season, pageRequest.getPageSize());
+        if (pageRequest.getPageNumber() + 1 > totalPage)
             throw new PageNotFoundException("페이지가 존재하지 않습니다.", ErrorCode.PAGE_NOT_FOUND);
         int myRank = findMyRank(curUser, season);
 
-        int startRank = (pageNum - 1) * pageSize;
-        int endRank = startRank + pageSize - 1;
+        int startRank = pageRequest.getPageNumber() * pageRequest.getPageSize();
+        int endRank = startRank + pageRequest.getPageSize() - 1;
         List<RankDto> rankList = createRankList(startRank, endRank, season);
-        return new RankPageResponseDto(myRank, currentPage, totalPage, rankList);
+        return new RankPageResponseDto(myRank, pageRequest.getPageNumber() + 1, totalPage, rankList);
     }
 
     private int findMyRank(UserDto curUser, Season season) {
