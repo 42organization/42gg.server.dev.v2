@@ -21,7 +21,7 @@ public class NotiResponseDto {
     private NotiType type;
     private Boolean isChecked;
     private String message;
-    private LocalDateTime creatdAt;
+    private LocalDateTime createdAt;
 
     static public NotiResponseDto from (Noti noti)
     {
@@ -34,7 +34,7 @@ public class NotiResponseDto {
                     .type(noti.getType())
                     .isChecked(noti.getIsChecked())
                     .message(noti.getMessage())
-                    .creatdAt(noti.getCreatedAt())
+                    .createdAt(noti.getCreatedAt())
                     .build();
         }
         return notiResponseDto;
@@ -47,7 +47,7 @@ public class NotiResponseDto {
                 ", type=" + type +
                 ", isChecked=" + isChecked +
                 ", message='" + message + '\'' +
-                ", creatdDate=" + creatdAt +
+                ", createdDate=" + createdAt +
                 '}';
     }
 
@@ -64,6 +64,6 @@ public class NotiResponseDto {
                 && Objects.equals(type, other.type)
                 && Objects.equals(isChecked, other.isChecked)
                 && Objects.equals(message, other.message)
-                && Objects.equals(creatdAt, other.creatdAt);
+                && Objects.equals(createdAt, other.createdAt);
     }
 }
