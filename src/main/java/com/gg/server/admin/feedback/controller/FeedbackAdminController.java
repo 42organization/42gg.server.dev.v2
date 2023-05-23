@@ -1,7 +1,9 @@
 package com.gg.server.admin.feedback.controller;
 
+import com.gg.server.admin.feedback.dto.FeedbackAdminPageRequestDto;
 import com.gg.server.admin.feedback.dto.FeedbackListAdminResponseDto;
 import com.gg.server.admin.feedback.service.FeedbackAdminService;
+import com.gg.server.global.dto.PageRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
@@ -22,10 +25,9 @@ public class FeedbackAdminController {
     private final FeedbackAdminService feedbackAdminService;
 
     @GetMapping
-    public FeedbackListAdminResponseDto feedbackAll(
-            @RequestParam(defaultValue = "1") @Min(1) int page, @RequestParam(defaultValue = "5") @Min(1) int size) {
+    public FeedbackListAdminResponseDto feedbackAll(@ModelAttribute @Valid PageRequestDto req) {
 
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("isSolved").and(Sort.by("createdAt")));
+        Pageable pageable = PageRequest.of(req.getPage() - 1, req.getSize(), Sort.by("isSolved").and(Sort.by("createdAt")));
         return feedbackAdminService.findAllFeedback(pageable);
     }
 
@@ -36,11 +38,10 @@ public class FeedbackAdminController {
     }
 
     @GetMapping("/users")
-    public FeedbackListAdminResponseDto feedbackFindByIntraId(@RequestParam String intraId,
-                                                              @RequestParam(defaultValue = "1") @Min(1) int page,
-                                                              @RequestParam(defaultValue = "5") @Min(1) int size) {
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("intra_id").and(Sort.by("createdAt")));
+    public FeedbackListAdminResponseDto feedbackFindByIntraId(@ModelAttribute @Valid FeedbackAdminPageRequestDto req) {
 
-        return feedbackAdminService.findByPartsOfIntraId(intraId, pageable);
+        Pageable pageable = PageRequest.of(req.getPage() - 1, req.getSize(), Sort.by("intra_id").and(Sort.by("createdAt")));
+
+        return feedbackAdminService.findByPartsOfIntraId(req.getIntraId(), pageable);
     }
 }
