@@ -1,6 +1,8 @@
 package com.gg.server.domain.game;
 
+import com.gg.server.domain.game.dto.ExpChangeResultResDto;
 import com.gg.server.domain.game.dto.GameTeamInfo;
+import com.gg.server.domain.game.dto.PPPChangeResultResDto;
 import com.gg.server.domain.game.dto.req.*;
 import com.gg.server.domain.game.dto.GameListResDto;
 import com.gg.server.domain.game.service.GameFindService;
@@ -78,5 +80,15 @@ public class GameController {
         if (gameService.normalExpResult(reqDto))
             return new ResponseEntity(HttpStatus.CREATED);
         return new ResponseEntity(HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping("/{gameId}/result/normal")
+    ExpChangeResultResDto getNormalExpChange(@PathVariable Long gameId, @Parameter(hidden = true) @Login UserDto user) {
+        return gameService.expChangeResult(gameId, user.getId());
+    }
+
+    @GetMapping("/{gameId}/result/rank")
+    PPPChangeResultResDto getRankPPPChange(@PathVariable Long gameId, @Parameter(hidden = true) @Login UserDto user) {
+        return gameService.pppChangeResult(gameId, user.getId());
     }
 }
