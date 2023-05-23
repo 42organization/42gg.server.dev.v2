@@ -8,6 +8,7 @@ import com.gg.server.domain.game.dto.req.RankResultReqDto;
 import com.gg.server.domain.game.exception.GameNotExistException;
 import com.gg.server.domain.game.exception.ScoreNotMatchedException;
 import com.gg.server.domain.pchange.data.PChange;
+import com.gg.server.domain.pchange.exception.PChangeNotExistException;
 import com.gg.server.domain.pchange.service.PChangeService;
 import com.gg.server.domain.rank.redis.RankRedisService;
 import com.gg.server.domain.game.type.StatusType;
@@ -71,7 +72,30 @@ public class GameService {
         return false;
     }
 
-    private void expUpdates(Game game, List<TeamUser> teamUsers) {
+    @Transactional(readOnly = true)
+    public ExpChangeResultResDto expChangeResult(Long gameId, Long userId) {
+        List<PChange> pChanges = pChangeService.findExpChangeHistory(gameId, userId);
+        if (pChanges.size() == 1) {
+            return new ExpChangeResultResDto(0, pChanges.get(0).getExp());
+        } else {
+            log.info("before:", pChanges.get(1).getExp(), ", after: ", pChanges.get(0).getExp());
+            return new ExpChangeResultResDto(pChanges.get(1).getExp(), pChanges.get(0).getExp());
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public PPPChangeResultResDto pppChangeResult(Long gameId, Long userId) throws PChangeNotExistException {
+        Season season = findByGameId(gameId).getSeason();
+        List<PChange> pChanges = pChangeService.findPPPChangeHistory(gameId, userId, season.getId());
+        if (pChanges.size() == 1) {
+            return new PPPChangeResultResDto(0, pChanges.get(0).getExp(), season.getStartPpp(), pChanges.get(0).getPppResult());
+        } else {
+            log.info("before:", pChanges.get(1).getExp(), ", after: ", pChanges.get(0).getExp());
+            return new PPPChangeResultResDto(pChanges.get(1).getExp(), pChanges.get(0).getExp(), pChanges.get(1).getPppResult(), pChanges.get(0).getPppResult());
+        }
+    }
+
+    public void expUpdates(Game game, List<TeamUser> teamUsers) {
         LocalDateTime time = getToday(game.getStartTime());
         for (TeamUser tu :
                 teamUsers) {
@@ -82,25 +106,7 @@ public class GameService {
         }
         game.updateStatus();
     }
-    public ExpChangeResultResDto expChangeResult(Long gameId, Long userId) {
-        List<PChange> pChanges = pChangeService.findExpChangeHistory(gameId, userId);
-        if (pChanges.size() == 1) {
-            return new ExpChangeResultResDto(0, pChanges.get(0).getExp());
-        } else {
-            log.info("before:", pChanges.get(1).getExp(), ", after: ", pChanges.get(0).getExp());
-            return new ExpChangeResultResDto(pChanges.get(1).getExp(), pChanges.get(0).getExp());
-        }
-    }
-    public PPPChangeResultResDto pppChangeResult(Long gameId, Long userId) {
-        Season season = findByGameId(gameId).getSeason();
-        List<PChange> pChanges = pChangeService.findPPPChangeHistory(gameId, userId, season.getId());
-        if (pChanges.size() == 1) {
-            return new PPPChangeResultResDto(0, pChanges.get(0).getExp(), season.getStartPpp(), pChanges.get(0).getPppResult());
-        } else {
-            log.info("before:", pChanges.get(1).getExp(), ", after: ", pChanges.get(0).getExp());
-            return new PPPChangeResultResDto(pChanges.get(1).getExp(), pChanges.get(0).getExp(), pChanges.get(1).getPppResult(), pChanges.get(0).getPppResult());
-        }
-    }
+
     private void expUpdate(TeamUser teamUser, LocalDateTime time) {
         Integer gamePerDay = teamUserRepository.findByDateAndUser(time, teamUser.getUser().getId());
         teamUser.getUser().addExp(ExpLevelCalculator.getExpPerGame() + (ExpLevelCalculator.getExpBonus() * gamePerDay));
