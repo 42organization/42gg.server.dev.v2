@@ -1,12 +1,12 @@
 package com.gg.server.domain.game.dto;
 
+import com.gg.server.domain.game.exception.GameDataConsistencyException;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.team.dto.MatchTeamsInfoDto;
-import com.gg.server.global.exception.ErrorCode;
-import com.gg.server.global.exception.custom.GameDBException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,6 +14,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @ToString
+@Slf4j
 public class GameTeamInfo {
     private Mode mode;
     private Long gameId;
@@ -32,7 +33,8 @@ public class GameTeamInfo {
                 this.isScoreExist = true;
             }
             if (!this.mode.equals(info.getMode()) || !this.gameId.equals(info.getGameId()) || !this.startTime.equals(info.getStartTime())) {
-                throw new GameDBException("DB 정보 오류", ErrorCode.INTERNAL_SERVER_ERR);
+                log.error("data error: gid 1: ", infos.get(0).getGameId(), ", gid 2:", infos.get(1).getGameId());
+                throw new GameDataConsistencyException();
             }
             if (info.getUserId().equals(userId))
                 myTeamId = info.getTeamId();

@@ -2,8 +2,7 @@ package com.gg.server.domain.game.service;
 
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
-import com.gg.server.domain.game.dto.GameTeamUserInfo;
-import com.gg.server.domain.game.exception.GameDataException;
+import com.gg.server.domain.game.exception.GameDataConsistencyException;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.noti.data.Noti;
 import com.gg.server.domain.noti.dto.UserNotiDto;
@@ -55,7 +54,7 @@ public class GameStatusService {
         List<GameUser> games = teamRepository.findAllByStartTimeEquals(getTime(5));
         if (games.size() > 2) {
             log.error("imminent game size is not 2 -> size: " + games.size() + ", check time: " + getTime(5));
-            throw new GameDataException();
+            throw new GameDataConsistencyException();
         } else if (games.isEmpty()) {
             log.info("시작 5분 전인 게임이 존재하지 않습니다.");
             return;
