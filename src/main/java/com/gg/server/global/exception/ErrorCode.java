@@ -17,6 +17,9 @@ public enum ErrorCode {
     RANK_NOT_FOUND(404, "RK100", "RANK NOT FOUND"),
     REDIS_RANK_NOT_FOUND(404, "RK101", "REDIS RANK NOT FOUND"),
 
+    /** team **/
+    TEAM_ID_NOT_MATCH(400, "TM201", "TEAM id 가 일치하지 않습니다."),
+
     /** game **/
     GAME_DB_NOT_VALID(500, "GM201", "GAME DB NOT CONSISTENCY"),
 
