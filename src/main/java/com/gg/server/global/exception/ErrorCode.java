@@ -10,8 +10,17 @@ public enum ErrorCode {
     //user
     USER_NOT_FOUND(404, "UR100", "USER NOT FOUND"),
 
+    //announcement
+    AN_NOT_FOUND(404, "AN100", "ANNOUNCEMENT NOT FOUND"),
+    AN_DUP(409, "AN300", "ANNOUNCEMENT DUPLICATION"),
+
     //season
     SEASON_NOT_FOUND(404, "SE100", "SEASON NOT FOUND"),
+    SEASON_FORBIDDEN(403, "SE500", "SEASON FORBIDDEN ERROR"),
+    SEASON_TIME_BEFORE(403, "SE501", "SEASON TIME BEFORE"),
+
+    //slotmanagement
+    SM_NOT_FOUND(404, "SM100", "SM NOT FOUND"),
 
     //rank
     RANK_NOT_FOUND(404, "RK100", "RANK NOT FOUND"),
@@ -22,7 +31,6 @@ public enum ErrorCode {
 
     /** game **/
     GAME_DB_NOT_VALID(500, "GM201", "GAME DB NOT CONSISTENCY"),
-
     SCORE_NOT_MATCHED(400, "GM202", "score 입력이 기존과 다릅니다."),
     GAME_NOT_FOUND(404, "GM101", "GAME 이 존재하지 않습니다."),
 
@@ -36,8 +44,9 @@ public enum ErrorCode {
     VALID_FAILED(400, "GAME-ERR-400" , "Valid Test Failed."),
     BAD_ARGU(400, "ARGUMENT-ERR-400", "잘못된 argument 입니다."),
 
-    SN001(400, "SN001", "요청하신 값은 현 null 입니다"),
+    //Feedback
     FB_NOT_FOUND(404, "FB100", "FB NOT FOUND"),
+
     /**
      * PChange
      **/

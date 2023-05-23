@@ -1,9 +1,8 @@
-package com.gg.server.admin.slot.controller;
+package com.gg.server.admin.slotmanagement.controller;
 
-import com.gg.server.admin.slot.dto.SlotAdminDto;
-import com.gg.server.admin.slot.service.SlotAdminService;
+import com.gg.server.admin.slotmanagement.dto.SlotAdminDto;
+import com.gg.server.admin.slotmanagement.service.SlotAdminService;
 import lombok.RequiredArgsConstructor;
-import org.apache.http.HttpResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

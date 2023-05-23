@@ -7,8 +7,10 @@ import com.gg.server.admin.season.data.SeasonAdminRepository;
 import com.gg.server.admin.season.dto.SeasonCreateRequestDto;
 import com.gg.server.admin.season.dto.SeasonUpdateRequestDto;
 import com.gg.server.domain.season.data.Season;
+import com.gg.server.domain.season.exception.SeasonForbiddenException;
+import com.gg.server.domain.season.exception.SeasonNotFoundException;
+import com.gg.server.domain.season.exception.SeasonTimeBeforeException;
 import com.gg.server.global.exception.ErrorCode;
-import com.gg.server.global.exception.custom.AdminException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,7 +59,7 @@ public class SeasonAdminService {
 
     @Transactional
     public SeasonAdminDto findSeasonById(Long seasonId) {
-        Season season = seasonAdminRepository.findById(seasonId).orElseThrow(()-> new AdminException("해당 시즌id가 없습니다", ErrorCode.SN001));
+        Season season = seasonAdminRepository.findById(seasonId).orElseThrow(()-> new SeasonNotFoundException());
 
         return new SeasonAdminDto(season);
     }
@@ -68,7 +70,7 @@ public class SeasonAdminService {
         SeasonAdminDto seasonDto = findSeasonById(seasonId);
 
         Season season = seasonAdminRepository.findById(seasonDto.getSeasonId())
-                .orElseThrow(() -> new AdminException("존재하지 않는 시즌입니다.", ErrorCode.BAD_REQUEST));
+                .orElseThrow(() -> new SeasonNotFoundException());
         detach(season);
         seasonAdminRepository.delete(season);
 
@@ -81,7 +83,7 @@ public class SeasonAdminService {
     @Transactional
     public void updateSeason(Long seasonId, SeasonUpdateRequestDto updateDto) {
         Season season = seasonAdminRepository.findById(seasonId)
-                .orElseThrow(() -> new AdminException("존재하지 않은 시즌입니다.", ErrorCode.BAD_REQUEST));
+                .orElseThrow(() -> new SeasonNotFoundException());
 
         if (LocalDateTime.now().isBefore(season.getEndTime())) {
             season.setPppGap(updateDto.getPppGap());
@@ -116,10 +118,10 @@ public class SeasonAdminService {
         Season afterSeason = afterSeasons.isEmpty() ? null : afterSeasons.get(0);
 
         if (LocalDateTime.now().plusMinutes(1).isAfter(season.getStartTime()))
-            throw new AdminException("현재시간 이전의 시즌을 생성 할 수 없습니다.", ErrorCode.BAD_REQUEST);
+            throw new SeasonTimeBeforeException();
         if (beforeSeason != null) {
             if (beforeSeason.getStartTime().plusDays(1).isAfter(season.getStartTime()))
-                throw new AdminException("이전시즌이 너무 빨리 끝납니다.", ErrorCode.BAD_REQUEST);
+                throw new SeasonForbiddenException();
             beforeSeason.setEndTime(season.getStartTime().minusSeconds(1));
         }
         if (afterSeason != null)
@@ -137,7 +139,7 @@ public class SeasonAdminService {
 
         if ((LocalDateTime.now().isAfter(season.getStartTime()) && LocalDateTime.now().isBefore(season.getEndTime()))
                 || season.getEndTime().isBefore(LocalDateTime.now()))
-            throw new AdminException("과거나 현재시즌은 수정/삭제가 불가합니다.", ErrorCode.BAD_REQUEST);
+            throw new SeasonForbiddenException();
         if (beforeSeason != null) {
             if (afterSeason != null)
                 beforeSeason.setEndTime(afterSeason.getStartTime().minusSeconds(1));

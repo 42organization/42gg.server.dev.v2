@@ -1,4 +1,4 @@
-package com.gg.server.admin.slot.dto;
+package com.gg.server.admin.slotmanagement.dto;
 
 import com.gg.server.domain.slotmanagement.SlotManagement;
 import lombok.AllArgsConstructor;
