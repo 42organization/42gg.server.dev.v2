@@ -20,6 +20,7 @@ import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.global.exception.ErrorCode;
+import com.gg.server.global.utils.aws.AsyncNewUserImageUploader;
 import lombok.AllArgsConstructor;
 import org.apache.tomcat.jni.Local;
 import org.springframework.data.domain.Page;
@@ -46,6 +47,7 @@ public class UserAdminService {
     private final RankRepository rankRepository;
     private final RankRedisRepository rankRedisRepository;
     private final RankRedisAdminService rankRedisAdminService;
+    private final AsyncNewUserImageUploader asyncNewUserImageUploader;
 
     @Transactional(readOnly = true)
     public UserSearchAdminResponseDto searchAll(Pageable pageable) {
@@ -78,12 +80,12 @@ public class UserAdminService {
     @Transactional
     public void updateUserDetail(String intraId,
                                  UserUpdateAdminRequestDto userUpdateAdminRequestDto,
-                                 MultipartFile userImageFile) {
+                                 MultipartFile userImageFile) throws IOException{
         Season currSeason = seasonAdminRepository.findCurrentSeason(LocalDateTime.now()).orElseThrow(() -> new SeasonNotFoundException("못찾음", ErrorCode.SEASON_NOT_FOUND));//에러코드 수정 필요
         User user = userAdminRepository.findByIntraId(intraId).orElseThrow(() -> new NotFoundException("못찾음"));//에러코드 수정 필요
 
         user.modifyUserDetail(userUpdateAdminRequestDto);
-
+        asyncNewUserImageUploader.update(intraId, userImageFile);
         updateUserRank(user.getId(), currSeason.getId(), userUpdateAdminRequestDto);
     }
 
@@ -92,9 +94,7 @@ public class UserAdminService {
         RankRedis userCurrRankRedis = rankRedisRepository.findRankByUserId(RedisKeyManager.getHashKey(currSeasonId),
                 userId);
 
-        if (updateReq.getWins() + updateReq.getLosses() < 1
-                && userCurrRankRedis.getPpp() != updateReq.getPpp())
-            throw new RankUpdateException();userCurrRank.modifyUserRank(updateReq);
+        userCurrRank.modifyUserRank(updateReq);
         userCurrRank.setStatusMessage(updateReq.getStatusMessage());
 
         userCurrRankRedis.updateRank(updateReq.getPpp(),

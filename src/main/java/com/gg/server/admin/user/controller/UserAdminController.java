@@ -9,6 +9,7 @@ import com.gg.server.domain.user.exception.UserImageLargeException;
 import com.gg.server.domain.user.exception.UserImageTypeException;
 import com.gg.server.global.dto.PageRequestDto;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -18,10 +19,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @RestController
 @AllArgsConstructor
 @RequestMapping(value = "/pingpong/admin/users")
+@Slf4j
 public class UserAdminController {
 
     private final UserAdminService userAdminService;
@@ -46,7 +49,7 @@ public class UserAdminController {
     @PutMapping("/{intraId}")
     public ResponseEntity userUpdateDetail(@PathVariable String intraId,
                                            @RequestPart UserUpdateAdminRequestDto updateRequestDto,
-                                           @RequestPart(required = false) MultipartFile multipartFile) {
+                                           @RequestPart(required = false) MultipartFile multipartFile) throws IOException {
         if (multipartFile != null) {
             if (multipartFile.getSize() > 50000) {
                 throw new UserImageLargeException();

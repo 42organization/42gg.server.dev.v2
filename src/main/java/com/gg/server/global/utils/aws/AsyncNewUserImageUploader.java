@@ -46,7 +46,7 @@ public class AsyncNewUserImageUploader {
     }
 
     @Transactional
-    @Async("asyncExecutor")
+//    @Async("asyncExecutor")
     public void update(String intraId, MultipartFile multipartFile) throws IOException {
         User user =  userRepository.getUserByIntraId(intraId);
         entityManager.lock(user, LockModeType.PESSIMISTIC_WRITE);
