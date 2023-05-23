@@ -4,7 +4,7 @@ import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.NotExistException;
 
 public class UserNotFoundException extends NotExistException {
-    public UserNotFoundException(String message, ErrorCode errorCode) {
-        super(message, errorCode);
+    public UserNotFoundException() {
+        super("해당 유저가 없습니다.", ErrorCode.USER_NOT_FOUND);
     }
 }

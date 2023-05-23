@@ -15,13 +15,11 @@ public class UserFindService {
 
     @Transactional(readOnly = true)
     public User findUserById(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() ->
-                new UserNotFoundException("해당 유저가 없습니다. user id = " + userId, ErrorCode.USER_NOT_FOUND));
+        return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
     }
 
     @Transactional(readOnly = true)
     public User findByIntraId(String intraId){
-        return userRepository.findByIntraId(intraId).orElseThrow(() ->
-                new UserNotFoundException("해당 유저가 없습니다. intra id = " + intraId, ErrorCode.USER_NOT_FOUND));
+        return userRepository.findByIntraId(intraId).orElseThrow(() -> new UserNotFoundException());
     }
 }
