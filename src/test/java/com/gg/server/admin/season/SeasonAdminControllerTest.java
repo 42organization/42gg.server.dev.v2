@@ -14,6 +14,8 @@ import com.gg.server.domain.rank.data.RankRepository;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.Season;
+import com.gg.server.domain.season.exception.SeasonForbiddenException;
+import com.gg.server.domain.season.exception.SeasonNotFoundException;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
@@ -154,7 +156,7 @@ class SeasonAdminControllerTest {
 
 
         if (rankRedisRepository.findRankByUserId(redisHashKey, userId) == null)
-            throw new AdminException("해당 시즌이 없습니다", ErrorCode.BAD_REQUEST);
+            throw new SeasonNotFoundException();
         System.out.println(rankRedisRepository.findRankByUserId(redisHashKey, userId).getIntraId());
     }
 
@@ -190,7 +192,7 @@ class SeasonAdminControllerTest {
         String redisHashKey = RedisKeyManager.getHashKey(dbSeasonId);
 
         if (rankRedisRepository.findRankByUserId(redisHashKey, userId) != null)
-            throw new AdminException("해당 시즌이 없어야 합니다", ErrorCode.BAD_REQUEST);
+            throw new SeasonForbiddenException();
     }
 
     @Test
