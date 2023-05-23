@@ -11,6 +11,7 @@ import com.gg.server.admin.user.data.UserAdminRepository;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.pchange.data.PChange;
 import com.gg.server.domain.pchange.data.PChangeRepository;
+
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.team.data.Team;
 import com.gg.server.domain.user.User;
@@ -18,7 +19,6 @@ import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.AdminException;
 import com.gg.server.global.exception.custom.NotExistException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -39,13 +40,14 @@ public class GameAdminService {
     private final UserAdminRepository userAdminRepository;
     private final PChangeRepository pChangeRepository;
 
-    @Transactional
+    @Transactional(readOnly = true)
     public GameLogListAdminResponseDto findAllGamesByAdmin(Pageable pageable) {
         Page<Game> gamePage = gameAdminRepository.findAll(pageable); //모든 게임 정보 가져오기
         return createGameLogAdminDto(gamePage);
     }
 
-    @Transactional
+
+    @Transactional(readOnly = true)
     public GameLogListAdminResponseDto findGamesBySeasonId(Long seasonId, Pageable pageable){
         Season season = seasonAdminRepository.findById(seasonId).orElseThrow(()-> new AdminException("해당 시즌id가 없습니다", ErrorCode.SN001));
         Page<Game> games = gameAdminRepository.findBySeason(pageable, season);   //시즌 id로 게임들 찾아오기
@@ -53,7 +55,7 @@ public class GameAdminService {
     }
 
 
-    @Transactional
+    @Transactional(readOnly = true)
     public GameLogListAdminResponseDto createGameLogAdminDto(Page<Game> gamePage){
         List<Game> gameList = gamePage.getContent();
 

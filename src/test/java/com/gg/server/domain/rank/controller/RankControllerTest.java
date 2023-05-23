@@ -5,6 +5,7 @@ import com.gg.server.Application;
 import com.gg.server.domain.rank.dto.ExpRankPageResponseDto;
 import com.gg.server.domain.rank.dto.RankDto;
 import com.gg.server.domain.rank.dto.RankPageResponseDto;
+import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.service.RedisUploadService;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.data.SeasonRepository;
@@ -12,7 +13,10 @@ import com.gg.server.domain.user.User;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import org.apache.http.HttpHeaders;
+import org.aspectj.lang.annotation.After;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +53,19 @@ class RankControllerTest {
     @Autowired
     SeasonRepository seasonRepository;
 
+    @Autowired
+    RankRedisRepository redisRepository;
+
+    @BeforeEach
+    public void flushRedis(){
+        redisRepository.deleteAll();
+    }
+
+    @AfterEach
+    public void flushRedisAfter(){
+        redisRepository.deleteAll();
+    }
+
     @Test
     @DisplayName("/exp")
     void getExpRankPage() throws Exception {
@@ -70,7 +87,8 @@ class RankControllerTest {
         testDataUtils.createUserRank(user3, "4", season);
 
         int page = 1;
-        String url = "/pingpong/exp?page=" + page + "&size=-1";
+        int size = 3;
+        String url = "/pingpong/exp?page=" + page + "&size=" + size;
         String accessToken = tokenProvider.createToken(myUser.getId());
 
         //when
@@ -83,8 +101,8 @@ class RankControllerTest {
         //then
         Assertions.assertThat(response.getMyRank()).isEqualTo(4);
         Assertions.assertThat(response.getCurrentPage()).isEqualTo(page);
-        Assertions.assertThat(response.getTotalPage()).isEqualTo(1);
-        Assertions.assertThat(response.getRankList().size()).isEqualTo(4);
+        Assertions.assertThat(response.getTotalPage()).isEqualTo(2);
+        Assertions.assertThat(response.getRankList().size()).isEqualTo(3);
     }
 
     @Test
