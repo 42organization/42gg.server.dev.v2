@@ -12,5 +12,4 @@ import java.util.List;
 public class AnnouncementAdminListResponseDto {
     private List<AnnouncementAdminResponseDto> announcementList;
     private int totalPage;
-    private int currentPage;
 }
