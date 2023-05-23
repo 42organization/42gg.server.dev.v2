@@ -129,6 +129,4 @@ class UserAdminControllerTest {
         Assertions.assertThat(actureResponse.getRoleType()).isEqualTo(expectedResponse.getRoleType());
         Assertions.assertThat(actureResponse.getExp()).isEqualTo(expectedResponse.getExp());
     }
-
-//    성
 }
