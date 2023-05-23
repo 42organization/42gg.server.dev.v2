@@ -1,4 +1,4 @@
-package com.gg.server.admin.slot.data;
+package com.gg.server.admin.slotmanagement.data;
 
 import com.gg.server.domain.slotmanagement.SlotManagement;
 import org.springframework.data.jpa.repository.JpaRepository;
