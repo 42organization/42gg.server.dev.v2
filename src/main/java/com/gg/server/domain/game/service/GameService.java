@@ -35,6 +35,9 @@ public class GameService {
     @Transactional(readOnly = true)
     public GameTeamInfo getUserGameInfo(Long gameId, Long userId) {
         List<GameTeamUserInfo> infos = gameRepository.findTeamGameUser(gameId);
+        if (infos.size() == 0) {
+            throw new GameNotExistException();
+        }
         return new GameTeamInfo(infos, userId);
     }
 
@@ -108,9 +111,12 @@ public class GameService {
                     && enemyTeam.getTeam().getScore().equals(scoreDto.getEnemyTeamScore())) {
                 expUpdates(game, teams);
                 rankRedisService.updateRankRedis(teams, seasonId, game);
-            } else {
+            } else if (myTeam.getTeam().getScore().equals(0) && enemyTeam.getTeam().getScore().equals(0)){
                 setTeamScore(myTeam, scoreDto.getMyTeamScore(), scoreDto.getMyTeamScore() > scoreDto.getEnemyTeamScore());
                 setTeamScore(enemyTeam, scoreDto.getEnemyTeamScore(), scoreDto.getMyTeamScore() < scoreDto.getEnemyTeamScore());
+            } else {
+                // score 가 일치하지 않다는 에러
+                // team score 초기화
             }
             return true;
         }

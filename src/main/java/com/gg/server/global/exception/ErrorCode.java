@@ -22,6 +22,7 @@ public enum ErrorCode {
 
     /** game **/
     GAME_DB_NOT_VALID(500, "GM201", "GAME DB NOT CONSISTENCY"),
+    GAME_NOT_FOUND(404, "GM101", "GAME 이 존재하지 않습니다."),
 
     /** Common **/
     INTERNAL_SERVER_ERR(500, "CM001","INTERNAL SERVER ERROR"),

@@ -2,6 +2,7 @@ package com.gg.server.domain.game.dto;
 
 import com.gg.server.domain.game.exception.GameDataConsistencyException;
 import com.gg.server.domain.game.type.Mode;
+import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.team.dto.MatchTeamsInfoDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,7 @@ public class GameTeamInfo {
     private Mode mode;
     private Long gameId;
     private LocalDateTime startTime;
+    private StatusType status;
     private Boolean isScoreExist;
     private MatchTeamsInfoDto matchTeamsInfo;
 
@@ -26,13 +28,15 @@ public class GameTeamInfo {
         this.mode = infos.get(0).getMode();
         this.gameId = infos.get(0).getGameId();
         this.startTime = infos.get(0).getStartTime();
+        this.status = infos.get(0).getStatus();
         Long myTeamId = null;
         for (GameTeamUserInfo info :
                 infos) {
             if (info.getScore() != 0) {
                 this.isScoreExist = true;
             }
-            if (!this.mode.equals(info.getMode()) || !this.gameId.equals(info.getGameId()) || !this.startTime.equals(info.getStartTime())) {
+            if (!this.mode.equals(info.getMode()) || !this.gameId.equals(info.getGameId())
+                    || !this.startTime.equals(info.getStartTime()) || !this.status.equals(info.getStatus())) {
                 log.error("data error: gid 1: ", infos.get(0).getGameId(), ", gid 2:", infos.get(1).getGameId());
                 throw new GameDataConsistencyException();
             }

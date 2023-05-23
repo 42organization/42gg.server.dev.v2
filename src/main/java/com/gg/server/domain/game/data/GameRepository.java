@@ -3,7 +3,6 @@ package com.gg.server.domain.game.data;
 import com.gg.server.domain.game.dto.GameTeamUserInfo;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
-import com.gg.server.domain.season.data.Season;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -38,7 +37,6 @@ public interface GameRepository extends JpaRepository<Game, Long>, GameRepositor
     @Query(value = "SELECT g FROM Game g, Team t, TeamUser tu WHERE g.status = :status AND g.id = t.game.id"
             + " AND t.id = tu.team.id AND tu.user.id = :userId")
     Optional<Game> findByStatusTypeAndUserId(@Param("status") StatusType status, @Param("userId") Long userId);
-
     @Query(value = "select gameId " +
             "from v_teamuser " +
             "where intraId = :intra and status in (:status) order by startTime desc", nativeQuery = true)

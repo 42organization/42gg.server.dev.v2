@@ -41,7 +41,7 @@ public class GameStatusService {
 
     @Transactional
     public void updateLiveToWaitStatus() {
-        // game before 중에 현재 시작 시간인 경우 LIVE로 update
+        // game live 중에 현재 시작 시간인 경우 wait 로 update
         LocalDateTime endTime = getTime(1);
         List<Game> game = gameRepository.findAllByStatusAndEndTimeLessThanEqual(StatusType.LIVE, endTime);
         for (Game g : game) {
