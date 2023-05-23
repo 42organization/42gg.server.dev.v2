@@ -85,7 +85,7 @@ public class RankRedisRepository {
     public Long getRankInZSet(String key, Long userId) {
         Long result = zSetOps.reverseRank(key, userId.toString());
         if(result == null)
-            throw new RedisDataNotFoundException("Redis에 데이터가 없습니다.", ErrorCode.REDIS_RANK_NOT_FOUND);
+            throw new RedisDataNotFoundException();
         return result;
     }
 
@@ -100,7 +100,7 @@ public class RankRedisRepository {
     public Long getScoreInZSet(String key, Long userId) {
         Double result = zSetOps.score(key, userId.toString());
         if(result == null)
-            throw new RedisDataNotFoundException("Redis에 데이터가 없습니다.", ErrorCode.REDIS_RANK_NOT_FOUND);
+            throw new RedisDataNotFoundException();
         return result.longValue();
     }
 
@@ -116,7 +116,7 @@ public class RankRedisRepository {
     public List<Long> getUserIdsByRangeFromZSet(String key, long startRank, long endRank) {
         Set<String> result = zSetOps.reverseRange(key, startRank, endRank);
         if (result == null)
-            throw new RedisDataNotFoundException("Redis에 데이터가 없습니다.", ErrorCode.REDIS_RANK_NOT_FOUND);
+            throw new RedisDataNotFoundException();
         return result.stream()
                 .map(Long::parseLong).collect(Collectors.toList());
     }
@@ -144,7 +144,7 @@ public class RankRedisRepository {
     public RankRedis findRankByUserId(String key, Long userId) {
         Object result = hashOps.get(key, userId.toString());
         if (result == null)
-            throw new RedisDataNotFoundException("Redis에 데이터가 없습니다.", ErrorCode.REDIS_RANK_NOT_FOUND);
+            throw new RedisDataNotFoundException();
         return RankRedis.class.cast(result);
     }
 
@@ -183,14 +183,14 @@ public class RankRedisRepository {
         List<String> userIdsStr = userIds.stream().map(String::valueOf).collect(Collectors.toList());
         List<Object> objects = hashOps.multiGet(key, userIdsStr);
         if(objects == null)
-            throw new RedisDataNotFoundException("Redis에 데이터가 없습니다.", ErrorCode.REDIS_RANK_NOT_FOUND);
+            throw new RedisDataNotFoundException();
         return objects.stream().map(RankRedis.class::cast).collect(Collectors.toList());
     }
 
     public Long countTotalRank(String zSetKey) {
         Long result = zSetOps.size(zSetKey);
         if(result == null)
-            throw new RedisDataNotFoundException("Redis에 데이터가 없습니다.", ErrorCode.REDIS_RANK_NOT_FOUND);
+            throw new RedisDataNotFoundException();
         return result;
     }
 

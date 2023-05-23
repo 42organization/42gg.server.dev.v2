@@ -57,7 +57,7 @@ public class UserService {
     public String regenerate(String refreshToken) {
         Long userId = jwtRedisRepository.getUserIdByRefToken(refreshToken);
         if (tokenProvider.getTokenClaims(refreshToken) == null)
-            throw new TokenNotValidException("Authentication error", ErrorCode.UNAUTHORIZED);
+            throw new TokenNotValidException();
         return tokenProvider.createToken(userId);
     }
 
