@@ -3,6 +3,7 @@ package com.gg.server.admin.user.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.noti.dto.SendNotiAdminRequestDto;
 import com.gg.server.admin.user.data.UserAdminRepository;
+import com.gg.server.admin.user.dto.UserDetailAdminResponseDto;
 import com.gg.server.admin.user.dto.UserSearchAdminDto;
 import com.gg.server.admin.user.dto.UserSearchAdminResponseDto;
 import com.gg.server.admin.user.service.UserAdminService;
@@ -95,5 +96,37 @@ class UserAdminControllerTest {
         for (int i = 0; i < userList1.size(); i++) {
             Assertions.assertThat(userList2.get(i).getIntraId()).isEqualTo(actureUserList2.get(i).getIntraId());
         }
+    }
+
+    @Test
+    @DisplayName("GET /pingpong/admin/users/{intraId}")
+    @Transactional
+    public void userGetDetailTest() throws Exception{
+        //given
+        String accessToken = testDataUtils.getLoginAccessToken();
+        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+        User user = userRepository.findByIntraId("nheo").get();
+        String url = "/pingpong/admin/users/" + user.getIntraId();
+        UserDetailAdminResponseDto expectedResponse = userAdminService.getUserDetailByIntraId(user.getIntraId());
+
+        //when
+        //200 성공
+        String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        UserDetailAdminResponseDto actureResponse = objectMapper.readValue(contentAsString, UserDetailAdminResponseDto.class);
+
+        //then
+        Assertions.assertThat(actureResponse.getUserId()).isEqualTo(expectedResponse.getUserId());
+        Assertions.assertThat(actureResponse.getIntraId()).isEqualTo(expectedResponse.getIntraId());
+        Assertions.assertThat(actureResponse.getUserImageUri()).isEqualTo(expectedResponse.getUserImageUri());
+        Assertions.assertThat(actureResponse.getRacketType()).isEqualTo(expectedResponse.getRacketType());
+//        Assertions.assertThat(actureResponse.getStatusMessage()).isEqualTo(expecxtedResponse.getStatusMessage());
+        Assertions.assertThat(actureResponse.getWins()).isEqualTo(expectedResponse.getWins());
+        Assertions.assertThat(actureResponse.getLosses()).isEqualTo(expectedResponse.getLosses());
+        Assertions.assertThat(actureResponse.getPpp()).isEqualTo(expectedResponse.getPpp());
+        Assertions.assertThat(actureResponse.getEmail()).isEqualTo(expectedResponse.getEmail());
+        Assertions.assertThat(actureResponse.getRoleType()).isEqualTo(expectedResponse.getRoleType());
+        Assertions.assertThat(actureResponse.getExp()).isEqualTo(expectedResponse.getExp());
     }
 }
