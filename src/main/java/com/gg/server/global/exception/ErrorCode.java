@@ -22,6 +22,8 @@ public enum ErrorCode {
 
     /** game **/
     GAME_DB_NOT_VALID(500, "GM201", "GAME DB NOT CONSISTENCY"),
+
+    SCORE_NOT_MATCHED(400, "GM202", "score 입력이 기존과 다릅니다."),
     GAME_NOT_FOUND(404, "GM101", "GAME 이 존재하지 않습니다."),
 
     /** Common **/

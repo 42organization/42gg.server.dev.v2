@@ -6,6 +6,7 @@ import com.gg.server.domain.game.dto.*;
 import com.gg.server.domain.game.dto.req.NormalResultReqDto;
 import com.gg.server.domain.game.dto.req.RankResultReqDto;
 import com.gg.server.domain.game.exception.GameNotExistException;
+import com.gg.server.domain.game.exception.ScoreNotMatchedException;
 import com.gg.server.domain.pchange.service.PChangeService;
 import com.gg.server.domain.rank.redis.RankRedisService;
 import com.gg.server.domain.game.type.StatusType;
@@ -115,8 +116,11 @@ public class GameService {
                 setTeamScore(myTeam, scoreDto.getMyTeamScore(), scoreDto.getMyTeamScore() > scoreDto.getEnemyTeamScore());
                 setTeamScore(enemyTeam, scoreDto.getEnemyTeamScore(), scoreDto.getMyTeamScore() < scoreDto.getEnemyTeamScore());
             } else {
-                // score 가 일치하지 않다는 에러
                 // team score 초기화
+                setTeamScore(myTeam, scoreDto.getMyTeamScore(), scoreDto.getMyTeamScore() > scoreDto.getEnemyTeamScore());
+                setTeamScore(enemyTeam, scoreDto.getEnemyTeamScore(), scoreDto.getMyTeamScore() < scoreDto.getEnemyTeamScore());
+                // score 가 일치하지 않다는 에러
+                throw new ScoreNotMatchedException();
             }
             return true;
         }
