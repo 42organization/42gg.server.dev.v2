@@ -87,7 +87,8 @@ class RankControllerTest {
         testDataUtils.createUserRank(user3, "4", season);
 
         int page = 1;
-        String url = "/pingpong/exp?page=" + page + "&size=-1";
+        int size = 3;
+        String url = "/pingpong/exp?page=" + page + "&size=" + size;
         String accessToken = tokenProvider.createToken(myUser.getId());
 
         //when
@@ -100,8 +101,8 @@ class RankControllerTest {
         //then
         Assertions.assertThat(response.getMyRank()).isEqualTo(4);
         Assertions.assertThat(response.getCurrentPage()).isEqualTo(page);
-        Assertions.assertThat(response.getTotalPage()).isEqualTo(1);
-        Assertions.assertThat(response.getRankList().size()).isEqualTo(4);
+        Assertions.assertThat(response.getTotalPage()).isEqualTo(2);
+        Assertions.assertThat(response.getRankList().size()).isEqualTo(3);
     }
 
     @Test
