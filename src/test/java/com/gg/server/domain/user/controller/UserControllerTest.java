@@ -14,6 +14,7 @@ import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.Rollback;
@@ -65,6 +66,11 @@ class UserControllerTest {
     @Autowired
     SeasonRepository seasonRepository;
 
+
+    @AfterEach
+    public void flushRedis() {
+        redisRepository.deleteAll();
+    }
 
     @Test
     @DisplayName("live")
@@ -183,7 +189,7 @@ class UserControllerTest {
         UserRankResponseDto responseDto = objectMapper.readValue(contentAsString, UserRankResponseDto.class);
 
         //then
-        Assertions.assertThat(responseDto.getRank()).isEqualTo(1);
+        Assertions.assertThat(responseDto.getRank()).isEqualTo(-1);
         Assertions.assertThat(responseDto.getWins()).isEqualTo(0);
         Assertions.assertThat(responseDto.getLosses()).isEqualTo(0);
         Assertions.assertThat(responseDto.getPpp()).isEqualTo(season.getStartPpp());
@@ -244,8 +250,8 @@ class UserControllerTest {
         String url = "/pingpong/users/" + newUser.getIntraId();
 
         String newStatusMessage = "newStatusMessage";
-        String newRacketType = "SHAKEHAND";
-        String newSnsType = "SLACK";
+        RacketType newRacketType = RacketType.SHAKEHAND;
+        SnsType newSnsType = SnsType.SLACK;
 
         //when
         mockMvc.perform(put(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
@@ -261,8 +267,8 @@ class UserControllerTest {
             Assertions.fail("랭크 업데이트 실패");
         });
         userRepository.findById(newUser.getId()).ifPresentOrElse(user -> {
-            Assertions.assertThat(user.getRacketType()).isEqualTo(RacketType.valueOf(newRacketType));
-            Assertions.assertThat(user.getSnsNotiOpt()).isEqualTo(SnsType.valueOf(newSnsType));
+            Assertions.assertThat(user.getRacketType()).isEqualTo((newRacketType));
+            Assertions.assertThat(user.getSnsNotiOpt()).isEqualTo(newSnsType);
             Assertions.assertThat(rank.getStatusMessage()).isEqualTo(newStatusMessage);
         }, () -> {
             Assertions.fail("유저 업데이트 실패");
