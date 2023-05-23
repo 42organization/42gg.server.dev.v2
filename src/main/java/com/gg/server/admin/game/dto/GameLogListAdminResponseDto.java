@@ -12,6 +12,4 @@ import java.util.List;
 public class GameLogListAdminResponseDto {
     private List<GameLogAdminDto> gameLogList;
     private int totalPage;
-    private int currentPage;
-
 }

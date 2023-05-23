@@ -25,8 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 @Service
 @RequiredArgsConstructor
 public class GameAdminService {
@@ -67,7 +65,7 @@ public class GameAdminService {
             }
             gameLogAdminDtoList.add(new GameLogAdminDto(game, gameTeamAdminDtoList));
         }
-        return new GameLogListAdminResponseDto(gameLogAdminDtoList, gamePage.getTotalPages(), gamePage.getNumber() + 1);
+        return new GameLogListAdminResponseDto(gameLogAdminDtoList, gamePage.getTotalPages());
     }
 
     @Transactional(readOnly = true)
