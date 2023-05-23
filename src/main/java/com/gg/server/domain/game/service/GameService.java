@@ -47,7 +47,7 @@ public class GameService {
         log.info("create Rank Result");
         // 현재 게임 id
         Game game = findByGameId(scoreDto.getGameId());
-        if (game.getStatus() != StatusType.WAIT) {
+        if (game.getStatus() != StatusType.WAIT && game.getStatus() != StatusType.LIVE) {
             return false;
         }
         return updateScore(game, scoreDto, game.getSeason().getId(), userId);
@@ -57,7 +57,8 @@ public class GameService {
     public synchronized Boolean normalExpResult(NormalResultReqDto normalResultReqDto) {
         Game game = findByGameId(normalResultReqDto.getGameId());
         List<TeamUser> teamUsers = teamUserRepository.findAllByGameId(game.getId());
-        if (teamUsers.size() == 2 && game.getStatus() == StatusType.WAIT) {
+        if (teamUsers.size() == 2 &&
+                (game.getStatus() == StatusType.WAIT || game.getStatus() == StatusType.LIVE)) {
             expUpdates(game, teamUsers);
             pChangeService.addPChange(game, teamUsers.get(0).getUser(), null);
             pChangeService.addPChange(game, teamUsers.get(1).getUser(), null);
@@ -73,6 +74,9 @@ public class GameService {
         for (TeamUser tu :
                 teamUsers) {
             expUpdate(tu, time);
+        }
+        if (game.getStatus() == StatusType.LIVE) {
+            game.updateStatus();
         }
         game.updateStatus();
     }
