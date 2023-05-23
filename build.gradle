@@ -68,10 +68,6 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	compileOnly 'org.projectlombok:lombok'
 
-	/* thymeleaf */
-	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-
 	/* SHA256 */
 	implementation 'com.google.guava:guava:31.0.1-jre'
 

@@ -54,11 +54,15 @@ public class GameStatusService {
     public void imminentGame() {
         List<GameUser> games = teamRepository.findAllByStartTimeEquals(getTime(5));
         if (games.size() > 2) {
-            log.error("imminet game size is not 2 -> size:", games.size(), getTime(5));
+            log.error("imminent game size is not 2 -> size: " + games.size() + ", check time: " + getTime(5));
             throw new GameDataException();
+        } else if (games.isEmpty()) {
+            log.info("시작 5분 전인 게임이 존재하지 않습니다.");
+            return;
+        } else {
+            notiProcess(games.get(0), games.get(1).getUserId());
+            notiProcess(games.get(1), games.get(0).getUserId());
         }
-        notiProcess(games.get(0), games.get(1).getUserId());
-        notiProcess(games.get(1), games.get(0).getUserId());
     }
 
     private void notiProcess(GameUser game, Long enemyId) {

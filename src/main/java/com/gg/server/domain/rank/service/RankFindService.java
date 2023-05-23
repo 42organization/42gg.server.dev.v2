@@ -15,7 +15,6 @@ public class RankFindService {
 
     @Transactional(readOnly = true)
     public Rank findByUserIdAndSeasonId(Long userId, Long seasonId){
-        return  rankRepository.findByUserIdAndSeasonId(userId, seasonId)
-                .orElseThrow(() -> new RankNotFoundException("랭크 테이블에 없는 유저입니다.", ErrorCode.RANK_NOT_FOUND));
+        return  rankRepository.findByUserIdAndSeasonId(userId, seasonId).orElseThrow(() -> new RankNotFoundException());
     }
 }

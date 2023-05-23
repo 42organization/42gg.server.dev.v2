@@ -18,7 +18,7 @@ public class NotiAdminDto {
     private NotiType type;
     private Boolean isChecked;
     private String message;
-    private LocalDateTime creatdAt;
+    private LocalDateTime createdAt;
 
     public NotiAdminDto(Noti noti)
     {
@@ -28,7 +28,7 @@ public class NotiAdminDto {
             this.type = noti.getType();
             this.isChecked = noti.getIsChecked();
             this.message = noti.getMessage();
-            this.creatdAt = noti.getCreatedAt();
+            this.createdAt = noti.getCreatedAt();
         }
     }
 
@@ -40,7 +40,7 @@ public class NotiAdminDto {
                 ", type=" + type +
                 ", isChecked=" + isChecked +
                 ", message='" + message + '\'' +
-                ", creatdDate=" + creatdAt +
+                ", creatdDate=" + createdAt +
                 '}';
     }
 
@@ -58,6 +58,6 @@ public class NotiAdminDto {
                 && Objects.equals(type, other.type)
                 && Objects.equals(isChecked, other.isChecked)
                 && Objects.equals(message, other.message)
-                && Objects.equals(creatdAt, other.creatdAt);
+                && Objects.equals(createdAt, other.createdAt);
     }
 }

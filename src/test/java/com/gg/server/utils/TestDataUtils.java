@@ -162,7 +162,6 @@ public class TestDataUtils {
     public void createUserRank(User newUser, String statusMessage, Season season) {
         String zSetKey = RedisKeyManager.getZSetKey(season.getId());
         String hashKey = RedisKeyManager.getHashKey(season.getId());
-        redisRepository.addToZSet(zSetKey, newUser.getId(), season.getStartPpp());
         redisRepository.addRankData(hashKey, newUser.getId(),
                 new RankRedis(newUser.getId(), "aa", season.getStartPpp(), 0, 0, statusMessage));
         Rank userRank = Rank.builder()

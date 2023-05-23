@@ -4,7 +4,7 @@ import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.NotExistException;
 
 public class RankNotFoundException extends NotExistException {
-    public RankNotFoundException(String message, ErrorCode errorCode) {
-        super(message, errorCode);
+    public RankNotFoundException() {
+        super("랭크 테이블에 없는 유저입니다.", ErrorCode.RANK_NOT_FOUND);
     }
 }

@@ -18,13 +18,11 @@ public class SeasonFindService {
 
     @Transactional(readOnly = true)
     public Season findCurrentSeason(LocalDateTime now){
-        return seasonRepository.findCurrentSeason(LocalDateTime.now())
-                .orElseThrow(() -> new SeasonNotFoundException("현재 시즌이 없습니다.", ErrorCode.SEASON_NOT_FOUND));
+        return seasonRepository.findCurrentSeason(now).orElseThrow(() -> new SeasonNotFoundException());
     }
 
     @Transactional(readOnly = true)
     public Season findSeasonById(Long seasonId){
-        return seasonRepository.findById(seasonId)
-                .orElseThrow(() -> new SeasonNotFoundException("해당 시즌이 없습니다. season id = " + seasonId, ErrorCode.SEASON_NOT_FOUND));
+        return seasonRepository.findById(seasonId).orElseThrow(() -> new SeasonNotFoundException());
     }
 }
