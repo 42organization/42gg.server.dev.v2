@@ -6,7 +6,7 @@ CREATE TABLE `penalty` (
   `penalty_type` VARCHAR(20) NOT NULL,
   `message` VARCHAR(100) NULL,
   `start_time` DATETIME NOT NULL,
-  `penalty_time` DATETIME NOT NULL,
+  `penalty_time` INT NOT NULL,
   `created_at` DATETIME NOT NULL,
   `modified_at` DATETIME NOT NULL,
   PRIMARY KEY (`id`),
