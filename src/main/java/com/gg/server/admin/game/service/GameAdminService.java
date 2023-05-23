@@ -9,15 +9,13 @@ import com.gg.server.admin.team.data.TeamAdminRepository;
 import com.gg.server.admin.team.data.TeamUserAdminRepository;
 import com.gg.server.admin.user.data.UserAdminRepository;
 import com.gg.server.domain.game.data.Game;
+import com.gg.server.domain.game.exception.GameNotFoundException;
 import com.gg.server.domain.pchange.data.PChange;
 import com.gg.server.domain.pchange.data.PChangeRepository;
 
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.team.data.Team;
 import com.gg.server.domain.user.User;
-import com.gg.server.global.exception.ErrorCode;
-import com.gg.server.global.exception.custom.AdminException;
-import com.gg.server.global.exception.custom.NotExistException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -26,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -49,7 +46,7 @@ public class GameAdminService {
 
     @Transactional(readOnly = true)
     public GameLogListAdminResponseDto findGamesBySeasonId(Long seasonId, Pageable pageable){
-        Season season = seasonAdminRepository.findById(seasonId).orElseThrow(()-> new AdminException("해당 시즌id가 없습니다", ErrorCode.SN001));
+        Season season = seasonAdminRepository.findById(seasonId).orElseThrow(()-> new GameNotFoundException());
         Page<Game> games = gameAdminRepository.findBySeason(pageable, season);   //시즌 id로 게임들 찾아오기
         return createGameLogAdminDto(games);
     }
