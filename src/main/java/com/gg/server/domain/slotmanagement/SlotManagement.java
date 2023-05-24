@@ -14,7 +14,6 @@ import javax.validation.constraints.NotNull;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class SlotManagement extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,6 +35,15 @@ public class SlotManagement extends BaseTimeEntity {
     @Column(name = "game_interval")
     private Integer gameInterval;
 
+    @Builder
+    public SlotManagement(Integer pastSlotTime, Integer futureSlotTime, Integer openMinute, Integer gameInterval) {
+        this.pastSlotTime = pastSlotTime;
+        this.futureSlotTime = futureSlotTime;
+        this.openMinute = openMinute;
+        this.gameInterval = gameInterval;
+    }
+
+    @Builder
     public SlotManagement(SlotAdminDto requestDto) {
         this.pastSlotTime = requestDto.getPastSlotTime();
         this.futureSlotTime = requestDto.getFutureSlotTime();

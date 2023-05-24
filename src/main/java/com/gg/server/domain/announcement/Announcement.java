@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Entity
-@Builder
 public class Announcement extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +29,12 @@ public class Announcement extends BaseTimeEntity {
     private String deleterIntraId;
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
+    @Builder
+    public Announcement(String content, String creatorIntraId){
+        this.content = content;
+        this.creatorIntraId = creatorIntraId;
+    }
 
     public void update(String deleterIntraId, LocalDateTime deletedAt) {
         this.deleterIntraId = deleterIntraId;

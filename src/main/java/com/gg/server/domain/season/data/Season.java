@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Getter
-@Builder
 public class Season {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,6 +41,7 @@ public class Season {
     @Column(name = "ppp_gap")
     private Integer pppGap;
 
+    @Builder
     public Season(String seasonName, LocalDateTime startTime, LocalDateTime endTime, Integer startPpp, Integer pppGap) {
         this.seasonName = seasonName;
         this.startTime = startTime;
@@ -50,6 +50,7 @@ public class Season {
         this.pppGap = pppGap;
     }
 
+    @Builder
     public Season(SeasonCreateRequestDto createDto) {
         this.seasonName = createDto.getSeasonName();
         this.startTime = createDto.getStartTime();
