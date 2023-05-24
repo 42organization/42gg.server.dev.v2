@@ -6,14 +6,14 @@ import com.gg.server.domain.penalty.data.RedisPenaltyUser;
 import com.gg.server.admin.penalty.data.RedisPenaltyUserRepository;
 import com.gg.server.admin.penalty.dto.PenaltyListResponseDto;
 import com.gg.server.admin.penalty.dto.PenaltyUserResponseDto;
+import com.gg.server.domain.penalty.exception.PenaltyExpiredException;
+import com.gg.server.domain.penalty.exception.PenaltyNotFoundException;
+import com.gg.server.domain.penalty.exception.RedisPenaltyUserNotFoundException;
 import com.gg.server.domain.penalty.type.PenaltyType;
 import com.gg.server.domain.user.User;
-import com.gg.server.domain.user.UserRepository;
-import com.gg.server.global.exception.ErrorCode;
-import com.gg.server.global.exception.custom.InvalidParameterException;
+import com.gg.server.domain.user.service.UserFindService;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,13 +25,12 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class PenaltyService {
     private final RedisPenaltyUserRepository redisPenaltyUserRepository;
-    private final UserRepository userRepository;
+    private final UserFindService userFindService;
     private final PenaltyAdminRepository penaltyRepository;
 
     @Transactional
     public void givePenalty(String intraId, Integer penaltyTime, String reason) {
-        User user = userRepository.findByIntraId(intraId).orElseThrow(() ->
-                new InvalidParameterException("user not found", ErrorCode.BAD_REQUEST));
+        User user = userFindService.findByIntraId(intraId);
         Optional<RedisPenaltyUser> redisPenaltyUser = redisPenaltyUserRepository.findByIntraId(intraId);
         LocalDateTime releaseTime;
         RedisPenaltyUser penaltyUser;
@@ -69,10 +68,13 @@ public class PenaltyService {
     @Transactional
     public void deletePenalty(Long penaltyId) {
         Penalty penalty = penaltyRepository.findById(penaltyId).orElseThrow(()
-        -> new NoSuchElementException());
+        -> new PenaltyNotFoundException());
+        if (penalty.getStartTime().plusHours(penalty.getPenaltyTime()).isBefore(LocalDateTime.now())) {
+            throw new PenaltyExpiredException();
+        }
         RedisPenaltyUser penaltyUser = redisPenaltyUserRepository
                 .findByIntraId(penalty.getUser().getIntraId()).orElseThrow(()
-                -> new InvalidParameterException("user not found", ErrorCode.BAD_REQUEST));
+                -> new RedisPenaltyUserNotFoundException());
         redisPenaltyUserRepository.deletePenaltyInUser(penaltyUser,
                 penalty.getPenaltyTime());//redis 시간 줄여주기
         //뒤에 있는 penalty 시간 당겨주기
