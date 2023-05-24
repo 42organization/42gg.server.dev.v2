@@ -9,7 +9,8 @@ import com.gg.server.domain.noti.dto.UserNotiDto;
 import com.gg.server.domain.noti.service.NotiService;
 import com.gg.server.domain.noti.service.SnsNotiService;
 import com.gg.server.domain.noti.type.NotiType;
-import com.gg.server.domain.team.data.TeamRepository;
+import com.gg.server.domain.slotmanagement.SlotManagement;
+import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
 import com.gg.server.domain.team.dto.GameUser;
 import com.gg.server.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +28,8 @@ public class GameStatusService {
     private final GameRepository gameRepository;
     private final SnsNotiService snsNotiService;
     private final NotiService notiService;
-    private final TeamRepository teamRepository;
     private final UserService userService;
+    private final SlotManagementRepository slotManagementRepository;
 
     @Transactional
     public void updateBeforeToLiveStatus() {
@@ -51,21 +52,22 @@ public class GameStatusService {
 
     @Transactional
     public void imminentGame() {
-        List<GameUser> games = teamRepository.findAllByStartTimeEquals(getTime(5));
+        SlotManagement slotManagement = slotManagementRepository.findFirstByOrderByCreatedAtDesc();
+        List<GameUser> games = gameRepository.findAllByStartTimeLessThanEqual(getTime(slotManagement.getOpenMinute()));
         if (games.size() > 2) {
-            log.error("imminent game size is not 2 -> size: " + games.size() + ", check time: " + getTime(5));
+            log.error("imminent game size is not 2 -> size: " + games.size() + ", check time: " + getTime(slotManagement.getOpenMinute()));
             throw new GameDataConsistencyException();
         } else if (games.isEmpty()) {
-            log.info("시작 5분 전인 게임이 존재하지 않습니다.");
+            log.info("시작 " + slotManagement.getOpenMinute() + "분 전인 게임이 존재하지 않습니다.");
             return;
         } else {
-            notiProcess(games.get(0), games.get(1).getIntraId());
-            notiProcess(games.get(1), games.get(0).getIntraId());
+            notiProcess(games.get(0), games.get(1).getIntraId(), slotManagement.getOpenMinute());
+            notiProcess(games.get(1), games.get(0).getIntraId(), slotManagement.getOpenMinute());
         }
     }
 
-    private void notiProcess(GameUser game, String enemyIntra) {
-        Noti noti = notiService.createImminentNoti(userService.getUser(game.getUserId()), enemyIntra, NotiType.IMMINENT);
+    private void notiProcess(GameUser game, String enemyIntra, Integer gameOpenMinute) {
+        Noti noti = notiService.createImminentNoti(userService.getUser(game.getUserId()), enemyIntra, NotiType.IMMINENT, gameOpenMinute);
         snsNotiService.sendSnsNotification(noti, new UserNotiDto(game));
     }
 

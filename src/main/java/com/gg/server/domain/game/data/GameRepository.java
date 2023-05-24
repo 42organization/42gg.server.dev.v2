@@ -5,6 +5,8 @@ import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
 import java.time.LocalDateTime;
 import java.util.Optional;
+
+import com.gg.server.domain.team.dto.GameUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.gg.server.domain.game.dto.GameTeamUser;
 import org.springframework.data.domain.Pageable;
@@ -52,4 +54,11 @@ public interface GameRepository extends JpaRepository<Game, Long>, GameRepositor
 
     List<Game> findAllByStatusAndStartTimeLessThanEqual(StatusType status, LocalDateTime startTime);
     List<Game> findAllByStatusAndEndTimeLessThanEqual(StatusType status, LocalDateTime endTime);
+
+    @Query(value = "SELECT u.id userId, u.e_mail email, u.intra_id intraId, u.sns_noti_opt snsNotiOpt, g.id gameId " +
+            "FROM " +
+            "(SELECT id, status FROM game where start_time<=:time) g, " +
+            "team t, team_user tu, user u " +
+            "WHERE g.id=t.game_id AND t.id = tu.team_id AND tu.user_id=u.id AND g.status = 'BEFORE'", nativeQuery = true)
+    List<GameUser> findAllByStartTimeLessThanEqual(@Param("time") LocalDateTime time);
 }
