@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class AnnouncementAdminAddDto {
     @NotNull(message = "plz. content")
     private String content;

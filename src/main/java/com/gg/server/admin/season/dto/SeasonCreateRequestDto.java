@@ -10,7 +10,6 @@ import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
-@Builder
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -29,7 +28,6 @@ public class SeasonCreateRequestDto {
     @NotNull(message = "plz. pppGap")
     private Integer pppGap;
 
-    @Override
     public String toString() {
         return "SeasonCreateRequestAdminDto{" + '\'' +
                 "seasonName=" + seasonName + '\'' +

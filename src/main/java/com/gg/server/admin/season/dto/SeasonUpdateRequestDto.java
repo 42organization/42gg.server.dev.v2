@@ -10,7 +10,6 @@ import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
-@Builder
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor

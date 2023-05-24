@@ -75,10 +75,7 @@ class AnnouncementAdminControllerTest {
         Announcement delDto = announcementAdminRepository.findFirstByOrderByIdDesc();
         announcementAdminRepository.delete(delDto);
 
-        AnnouncementAdminAddDto addDto = AnnouncementAdminAddDto.builder()
-                .content("하나하나둘둘")
-                .creatorIntraId("testId")
-                .build();
+        AnnouncementAdminAddDto addDto = new AnnouncementAdminAddDto("하나하나둘둘", "testId");
 
         String content = objectMapper.writeValueAsString(addDto);
         String url = "/pingpong/admin/announcement";
@@ -103,10 +100,7 @@ class AnnouncementAdminControllerTest {
         String accessToken = testDataUtils.getLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
-        AnnouncementAdminAddDto addDto = AnnouncementAdminAddDto.builder()
-                .content("하나하나둘둘")
-                .creatorIntraId(null)
-                .build();
+        AnnouncementAdminAddDto addDto = new AnnouncementAdminAddDto("하나하나둘둘", null);
 
         String content = objectMapper.writeValueAsString(addDto);
         String url = "/pingpong/admin/announcement";
