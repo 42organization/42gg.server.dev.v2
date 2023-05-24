@@ -9,6 +9,7 @@ import com.gg.server.admin.team.data.TeamAdminRepository;
 import com.gg.server.admin.team.data.TeamUserAdminRepository;
 import com.gg.server.admin.user.data.UserAdminRepository;
 import com.gg.server.domain.game.data.Game;
+import com.gg.server.domain.game.exception.GameNotFoundException;
 import com.gg.server.domain.pchange.data.PChange;
 import com.gg.server.domain.pchange.data.PChangeRepository;
 
