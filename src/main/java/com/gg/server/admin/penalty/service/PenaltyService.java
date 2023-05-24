@@ -12,7 +12,6 @@ import com.gg.server.domain.user.UserRepository;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.InvalidParameterException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -36,22 +35,25 @@ public class PenaltyService {
         Optional<RedisPenaltyUser> redisPenaltyUser = redisPenaltyUserRepository.findByIntraId(intraId);
         LocalDateTime releaseTime;
         RedisPenaltyUser penaltyUser;
+        Penalty penalty;
         LocalDateTime now = LocalDateTime.now();
         if (redisPenaltyUser.isPresent()) {
             releaseTime = redisPenaltyUser.get().getReleaseTime().plusHours(penaltyTime);
             penaltyUser = new RedisPenaltyUser(intraId, redisPenaltyUser.get().getPenaltyTime() + penaltyTime,
                     releaseTime, redisPenaltyUser.get().getStartTime(), reason);
+            penalty = new Penalty(user, PenaltyType.NOSHOW, reason, redisPenaltyUser.get().getReleaseTime(), penaltyTime);
         } else {
             releaseTime = now.plusHours(penaltyTime);
             penaltyUser = new RedisPenaltyUser(intraId, penaltyTime, releaseTime, now, reason);
+            penalty = new Penalty(user, PenaltyType.NOSHOW, reason, now, penaltyTime);
         }
-        Penalty penalty = new Penalty(user, PenaltyType.NOSHOW, reason, now, penaltyTime);
         penaltyRepository.save(penalty);
         redisPenaltyUserRepository.addPenaltyUser(penaltyUser, releaseTime);
     }
 
 
-    public PenaltyListResponseDto getAllPenaltyUser(Pageable pageable, Boolean current) {
+    @Transactional(readOnly = true)
+    public PenaltyListResponseDto getAllPenalties(Pageable pageable, Boolean current) {
         Page<Penalty> allPenalties;
         if (current) {
             allPenalties = penaltyRepository.findAllCurrent(pageable, LocalDateTime.now());
@@ -63,6 +65,8 @@ public class PenaltyService {
                 responseDtos.getTotalPages());
     }
 
+
+    @Transactional
     public void deletePenalty(Long penaltyId) {
         Penalty penalty = penaltyRepository.findById(penaltyId).orElseThrow(()
         -> new NoSuchElementException());
@@ -76,12 +80,13 @@ public class PenaltyService {
         penaltyRepository.delete(penalty);
     }
 
-    public PenaltyListResponseDto searchPenaltyUser(Pageable pageable, String intraId, Boolean current) {
+    @Transactional(readOnly = true)
+    public PenaltyListResponseDto getAllPenaltiesByIntraId(Pageable pageable, String intraId, Boolean current) {
         Page<Penalty> allPenalties;
         if (current) {
-            allPenalties = penaltyRepository.findAllByIntraId(pageable, intraId);
-        } else {
             allPenalties = penaltyRepository.findAllCurrentByIntraId(pageable, LocalDateTime.now(), intraId);
+        } else {
+            allPenalties = penaltyRepository.findAllByIntraId(pageable, intraId);
         }
         Page<PenaltyUserResponseDto> responseDtos = allPenalties.map(PenaltyUserResponseDto::new);
         return new PenaltyListResponseDto(responseDtos.getContent(), responseDtos.getNumber() + 1,
@@ -91,7 +96,12 @@ public class PenaltyService {
     private void modifyStartTimeOfAfterPenalties(Penalty penalty) {
         List<Penalty> afterPenalties = penaltyRepository.findAfterPenaltiesByUser(penalty.getUser().getId(),
                 penalty.getStartTime());
-        LocalDateTime newStartTime = LocalDateTime.now();
+        LocalDateTime newStartTime;
+        if (penalty.getStartTime().isAfter(LocalDateTime.now())) {
+            newStartTime = penalty.getStartTime();
+        } else {
+            newStartTime = LocalDateTime.now();
+        }
         for (Penalty afterPenalty : afterPenalties) {
             afterPenalty.updateStartTime(newStartTime);
             newStartTime = newStartTime.plusHours(afterPenalty.getPenaltyTime());

@@ -24,6 +24,6 @@ public class PenaltyUserResponseDto {
     public PenaltyUserResponseDto(Penalty penalty) {
         this.intraId = penalty.getUser().getIntraId();
         this.reason = penalty.getMessage();
-        this.releaseTime = penalty.getStartTime().plusHours(penalty.getPenalty_time());
+        this.releaseTime = penalty.getStartTime().plusHours(penalty.getPenaltyTime());
     }
 }

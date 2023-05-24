@@ -46,8 +46,12 @@ public class RedisPenaltyUserRepository {
 
     public void deletePenaltyInUser(RedisPenaltyUser penaltyUser, Integer penaltyTime) {
         LocalDateTime newReleaseTime = penaltyUser.getReleaseTime().minusHours(penaltyTime);
-        penaltyUser.updateReleaseTime(newReleaseTime);
+        penaltyUser.updateReleaseTime(newReleaseTime, penaltyUser.getPenaltyTime() - penaltyTime);
         Duration duration = Duration.between(LocalDateTime.now(), newReleaseTime);
+        if (duration.isNegative()) {
+            redisTemplate.delete(PenaltyKey.USER_ADMIN + penaltyUser.getIntraId());
+            return;
+        }
         redisTemplate.opsForValue().set(PenaltyKey.USER_ADMIN + penaltyUser.getIntraId(), penaltyUser,
                 duration.getSeconds(), TimeUnit.SECONDS);
     }
