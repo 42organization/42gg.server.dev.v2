@@ -22,14 +22,9 @@ public class SlotAdminService {
         return new SlotAdminDto(slotManagement);
     }
 
-    public void addSlotSetting(Integer pastSlotTime, Integer futureSlotTime,
-                               Integer interval, Integer openMinute) {
-        SlotManagement slotManagement = SlotManagement.builder()
-                .futureSlotTime(futureSlotTime)
-                .pastSlotTime(pastSlotTime)
-                .gameInterval(interval)
-                .openMinute(openMinute)
-                .build();
+    public void addSlotSetting(SlotAdminDto requestDto) {
+        SlotManagement slotManagement = new SlotManagement(requestDto);
+
         adminSlotManagementRepository.save(slotManagement);
     }
 }
