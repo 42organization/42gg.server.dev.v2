@@ -8,6 +8,7 @@ import com.gg.server.domain.noti.type.NotiType;
 import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
+import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.NotExistException;
 import lombok.AllArgsConstructor;
@@ -15,6 +16,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +26,7 @@ import java.util.stream.Collectors;
 public class NotiService {
     private final NotiRepository notiRepository;
     private final UserRepository userRepository;
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
 
     @Transactional(readOnly = true)
     public List<NotiResponseDto> findNotiByUser(UserDto userDto) {
@@ -55,6 +59,24 @@ public class NotiService {
     public void removeAllNotisByUser(UserDto userDto) {
         User user = userRepository.findById(userDto.getId()).orElseThrow(() -> new UsernameNotFoundException("User" + userDto.getId()));
         notiRepository.deleteAllByUser(user);
+    }
+
+    @Transactional
+    public void createMatched(UserDto userDto, LocalDateTime startTime) {
+        String notiMessage = startTime.format(DateTimeFormatter.ofPattern("HH:mm")) + "에 신청한 매칭이 성사되었습니다.";
+
+        User user = userRepository.findById(userDto.getId()).orElseThrow(() -> new UserNotFoundException());
+        Noti noti = new Noti(user, NotiType.MATCHED, notiMessage, false);
+        notiRepository.save(noti);
+    }
+
+    @Transactional
+    public void createMatchCancel(UserDto userDto, LocalDateTime startTime) {
+        String notiMessage = startTime.format(DateTimeFormatter.ofPattern("HH:mm")) + "에 신청한 매칭이 상대에 의해 취소되었습니다.";
+
+        User user = userRepository.findById(userDto.getId()).orElseThrow(() -> new UserNotFoundException());
+        Noti noti = new Noti(user, NotiType.CANCELEDBYMAN, notiMessage, false);
+        notiRepository.save(noti);
     }
 
     public Noti createNoti(User user, String msg, NotiType notiType) {
