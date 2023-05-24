@@ -2,7 +2,6 @@ package com.gg.server.game.service;
 
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
-import com.gg.server.domain.game.dto.GameTeamUser;
 import com.gg.server.domain.game.service.GameStatusService;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
@@ -16,28 +15,22 @@ import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
-import com.gg.server.global.scheduler.GameStatusScheduler;
 import com.gg.server.utils.TestDataUtils;
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
 @RequiredArgsConstructor
 @Transactional
-public class GameServiceTest {
+public class GameStatusServiceTest {
     @Autowired
     private GameRepository gameRepository;
     @Autowired private SeasonRepository seasonRepository;
@@ -99,10 +92,5 @@ public class GameServiceTest {
         teamUserRepository.flush();
         System.out.println("==============");
         gameStatusService.imminentGame();
-    }
-
-    @Test
-    void game조회테스트() throws Exception {
-
     }
 }
