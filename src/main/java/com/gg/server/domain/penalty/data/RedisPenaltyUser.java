@@ -35,7 +35,8 @@ public class RedisPenaltyUser {
         this.reason = reason;
     }
 
-    public void updateReleaseTime(LocalDateTime releaseTime) {
+    public void updateReleaseTime(LocalDateTime releaseTime, Integer penaltyTime) {
         this.releaseTime = releaseTime;
+        this.penaltyTime = penaltyTime;
     }
 }
