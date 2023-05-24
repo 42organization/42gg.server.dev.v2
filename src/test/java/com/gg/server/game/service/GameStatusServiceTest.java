@@ -36,6 +36,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
 @RequiredArgsConstructor
+@Transactional
 public class GameServiceTest {
     @Autowired
     private GameRepository gameRepository;
@@ -70,7 +71,6 @@ public class GameServiceTest {
         liveGame = gameRepository.save(new Game(season, StatusType.LIVE, Mode.RANK, startTime.minusMinutes(15), startTime));
     }
     @Test
-    @Transactional
     void gameBefore상태변경테스트() throws Exception{
         System.out.println("g1.startTime: " + game1.getStartTime());
         System.out.println(game1.getStatus());
@@ -79,14 +79,12 @@ public class GameServiceTest {
     }
 
     @Test
-    @Transactional
     void gameLIVE상태변경테스트() throws Exception{
         gameStatusService.updateLiveToWaitStatus();
         assertThat(liveGame.getStatus()).isEqualTo(StatusType.WAIT);
     }
 
     @Test
-    @Transactional
     void game5분전알림테스트() throws Exception{
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime startTime = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), now.getMinute());
@@ -101,5 +99,10 @@ public class GameServiceTest {
         teamUserRepository.flush();
         System.out.println("==============");
         gameStatusService.imminentGame();
+    }
+
+    @Test
+    void game조회테스트() throws Exception {
+
     }
 }

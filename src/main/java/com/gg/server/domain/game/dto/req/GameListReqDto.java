@@ -2,8 +2,10 @@ package com.gg.server.domain.game.dto.req;
 
 import com.gg.server.domain.game.type.StatusType;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class GameListReqDto extends NormalGameListReqDto {
     private StatusType status;
     public GameListReqDto(Integer pageNum, Integer pageSize, String nickname, StatusType status) {

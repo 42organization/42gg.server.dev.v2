@@ -57,7 +57,8 @@ public class NotiService {
         notiRepository.deleteAllByUser(user);
     }
 
-    public Noti createNoti(User user, String msg, NotiType notiType) {
+    public Noti createImminentNoti(User user, String enemyIntra, NotiType notiType) {
+        String msg = "<intraId::" + enemyIntra + ">님과 경기 5분 전 입니다. 서두르세요!";
         return notiRepository.save(new Noti(user, notiType, msg, false));
     }
 

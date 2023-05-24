@@ -59,13 +59,13 @@ public class GameStatusService {
             log.info("시작 5분 전인 게임이 존재하지 않습니다.");
             return;
         } else {
-            notiProcess(games.get(0), games.get(1).getUserId());
-            notiProcess(games.get(1), games.get(0).getUserId());
+            notiProcess(games.get(0), games.get(1).getIntraId());
+            notiProcess(games.get(1), games.get(0).getIntraId());
         }
     }
 
-    private void notiProcess(GameUser game, Long enemyId) {
-        Noti noti = notiService.createNoti(userService.getUser(game.getUserId()), enemyId.toString(), NotiType.IMMINENT);
+    private void notiProcess(GameUser game, String enemyIntra) {
+        Noti noti = notiService.createImminentNoti(userService.getUser(game.getUserId()), enemyIntra, NotiType.IMMINENT);
         snsNotiService.sendSnsNotification(noti, new UserNotiDto(game));
     }
 

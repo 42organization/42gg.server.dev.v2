@@ -24,6 +24,7 @@ public class GameFindService {
     @Transactional(readOnly = true)
     public GameListResDto normalGameListByIntra(Pageable pageable, String intra) {
         Slice<Long> games = gameRepository.findGamesByUserAndMode(intra, Mode.NORMAL.name(), StatusType.END.name(), pageable);
+        System.out.println(games.getContent());
         return new GameListResDto(getGameResultList(games.getContent()), games.isLast());
     }
 
