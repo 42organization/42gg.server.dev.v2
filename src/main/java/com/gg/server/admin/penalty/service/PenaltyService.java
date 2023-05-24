@@ -60,8 +60,7 @@ public class PenaltyService {
             allPenalties = penaltyRepository.findAll(pageable);
         }
         Page<PenaltyUserResponseDto> responseDtos = allPenalties.map(PenaltyUserResponseDto::new);
-        return new PenaltyListResponseDto(responseDtos.getContent(), responseDtos.getNumber() + 1,
-                responseDtos.getTotalPages());
+        return new PenaltyListResponseDto(responseDtos.getContent(), responseDtos.getTotalPages());
     }
 
 
@@ -91,8 +90,7 @@ public class PenaltyService {
             allPenalties = penaltyRepository.findAllByIntraId(pageable, intraId);
         }
         Page<PenaltyUserResponseDto> responseDtos = allPenalties.map(PenaltyUserResponseDto::new);
-        return new PenaltyListResponseDto(responseDtos.getContent(), responseDtos.getNumber() + 1,
-                responseDtos.getTotalPages());
+        return new PenaltyListResponseDto(responseDtos.getContent(), responseDtos.getTotalPages());
     }
 
     private void modifyStartTimeOfAfterPenalties(Penalty penalty) {
