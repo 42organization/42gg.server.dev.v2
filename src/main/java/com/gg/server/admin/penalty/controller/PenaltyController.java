@@ -1,7 +1,6 @@
 package com.gg.server.admin.penalty.controller;
 
 import com.gg.server.admin.penalty.dto.PenaltyListResponseDto;
-import com.gg.server.admin.penalty.dto.PenaltyParamDto;
 import com.gg.server.admin.penalty.dto.PenaltyRequestDto;
 import com.gg.server.admin.penalty.service.PenaltyService;
 import com.gg.server.global.dto.PageRequestDto;
