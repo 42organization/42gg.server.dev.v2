@@ -27,10 +27,17 @@ public class GameResultResDto {
         this.status = game.getStatus().name();//name -> 대문자
         this.time = game.getStartTime();
         this.mode = game.getMode();
-        team1 = new TeamUserListDto(Arrays.asList(
-                new TeamUserInfoDto(game.getT1IntraId(), game.getT1Image(), game.getT1Exp())));
-        team2 = new TeamUserListDto(Arrays.asList(
-                new TeamUserInfoDto(game.getT2IntraId(), game.getT2Image(), game.getT2Exp())));
+        if (mode == Mode.NORMAL) {
+            team1 = new TeamUserListDto(Arrays.asList(
+                    new TeamUserInfoDto(game.getT1IntraId(), game.getT1Image(), game.getT1Exp())), null, null);
+            team2 = new TeamUserListDto(Arrays.asList(
+                    new TeamUserInfoDto(game.getT2IntraId(), game.getT2Image(), game.getT2Exp())), null, null);
+        } else {
+            team1 = new TeamUserListDto(Arrays.asList(
+                    new TeamUserInfoDto(game.getT1IntraId(), game.getT1Image(), game.getT1Exp())), game.getT1IsWin(), game.getT1Score());
+            team2 = new TeamUserListDto(Arrays.asList(
+                    new TeamUserInfoDto(game.getT2IntraId(), game.getT2Image(), game.getT2Exp())), game.getT2IsWin(), game.getT2Score());
+        }
     }
 
     @Override
