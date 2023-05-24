@@ -1,8 +1,6 @@
 package com.gg.server.admin.season.data;
 
 import com.gg.server.domain.season.data.Season;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,5 +17,4 @@ public interface SeasonAdminRepository extends JpaRepository<Season, Long> {
     List<Season> findBeforeSeasons(@Param("targetTime") LocalDateTime targetTime);
     @Query("select s from Season s where s.startTime <= :now and s.endTime >= :now")
     Optional<Season> findCurrentSeason(@Param("now") LocalDateTime now);
-
 }

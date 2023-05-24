@@ -1,10 +1,9 @@
-package com.gg.server.admin.slot.service;
+package com.gg.server.admin.slotmanagement.service;
 
-import com.gg.server.admin.slot.data.adminSlotManagementRepository;
-import com.gg.server.admin.slot.dto.SlotAdminDto;
+import com.gg.server.admin.slotmanagement.data.adminSlotManagementRepository;
+import com.gg.server.admin.slotmanagement.dto.SlotAdminDto;
 import com.gg.server.domain.slotmanagement.SlotManagement;
-import com.gg.server.global.exception.ErrorCode;
-import com.gg.server.global.exception.custom.AdminException;
+import com.gg.server.domain.slotmanagement.exception.SmNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +17,7 @@ public class SlotAdminService {
     @Transactional(readOnly = true)
     public SlotAdminDto getSlotSetting() {
         SlotManagement slotManagement = adminSlotManagementRepository.findFirstByOrderByCreatedAtDesc()
-                .orElseThrow(() -> new AdminException("현재 슬롯DB값이 null입니다.", ErrorCode.SN001));
+                .orElseThrow(() -> new SmNotFoundException());
 
         return new SlotAdminDto(slotManagement);
     }

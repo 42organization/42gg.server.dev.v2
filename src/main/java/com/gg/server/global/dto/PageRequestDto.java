@@ -20,9 +20,4 @@ public class PageRequestDto {
     @Min(value = 1, message = "size must be greater than 0")
     @Max(value = 30, message = "size must be less than 30")
     private Integer size = 20;
-
-    public PageRequestDto(Integer page, Integer size) {
-        this.page = page;
-        this.size = size;
-    }
 }

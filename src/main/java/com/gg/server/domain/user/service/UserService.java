@@ -105,20 +105,8 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserDetailResponseDto getUserDetail(String targetUserIntraId) {
         User targetUser = userFindService.findByIntraId(targetUserIntraId);
-        int currentExp = ExpLevelCalculator.getCurrentLevelMyExp(targetUser.getTotalExp());
-        int maxExp = ExpLevelCalculator.getLevelMaxExp(ExpLevelCalculator.getLevel(targetUser.getTotalExp()));
         String statusMessage = getUserStatusMessage(targetUser);
-        UserDetailResponseDto responseDto = UserDetailResponseDto.builder()
-                .intraId(targetUser.getIntraId())
-                .userImageUri(targetUser.getImageUri())
-                .racketType(targetUser.getRacketType().getCode())
-                .statusMessage(statusMessage)
-                .level(ExpLevelCalculator.getLevel(targetUser.getTotalExp()))
-                .currentExp(currentExp)
-                .maxExp(maxExp)
-                .snsNotiOpt(targetUser.getSnsNotiOpt().getCode())
-                .build();
-        return responseDto;
+        return new UserDetailResponseDto(targetUser, statusMessage);
     }
 
     private String getUserStatusMessage(User targetUser) {
@@ -132,12 +120,12 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUser(String racketType, String statusMessage, String snsNotiOpt, String intraId) {
+    public void updateUser(RacketType racketType, String statusMessage, SnsType snsNotiOpt, String intraId) {
         User user = userFindService.findByIntraId(intraId);
         Season currentSeason = seasonFindService.findCurrentSeason(LocalDateTime.now());
         updateRedisRankStatusMessage(statusMessage, user, currentSeason);
         updateRankTableStatusMessage(user.getId(), statusMessage, currentSeason.getId());
-        user.updateTypes(RacketType.valueOf(racketType), SnsType.valueOf(snsNotiOpt));
+        user.updateTypes(racketType, snsNotiOpt);
     }
 
     private void updateRankTableStatusMessage(Long userId, String statusMessage, Long seasonId) {
