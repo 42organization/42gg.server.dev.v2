@@ -11,6 +11,7 @@ import com.gg.server.admin.season.data.SeasonAdminRepository;
 import com.gg.server.admin.season.dto.SeasonUpdateRequestDto;
 import com.gg.server.admin.season.service.SeasonAdminService;
 import com.gg.server.domain.rank.data.RankRepository;
+import com.gg.server.domain.rank.exception.RedisDataNotFoundException;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.Season;
@@ -109,9 +110,8 @@ class SeasonAdminControllerTest {
     @Test
     @DisplayName("[GET]pingpong/admin/seasons")
     void getAdminSeasons() throws Exception {
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
-
 
         String contentAsString = mockMvc.perform(MockMvcRequestBuilders.get("/pingpong/admin/seasons")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
@@ -133,7 +133,7 @@ class SeasonAdminControllerTest {
     @Test
     @DisplayName("[POST]/pingpong/admin/seasons")
     void createSeasons() throws Exception {
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
         SeasonCreateRequestDto seasonCreateReqeustDto = SeasonCreateRequestDto.builder()
@@ -164,7 +164,7 @@ class SeasonAdminControllerTest {
     @Test
     @DisplayName("[Delete]/pingpong/admin/season/{seasonId}")
     void deleteSeasons() throws Exception {
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
         Season newSeason = Season.builder()
@@ -189,16 +189,20 @@ class SeasonAdminControllerTest {
                 .andExpect(status().isNoContent())
                 .andReturn().getResponse().getContentAsString();
 
-        String redisHashKey = RedisKeyManager.getHashKey(dbSeasonId);
-
-        if (rankRedisRepository.findRankByUserId(redisHashKey, userId) != null)
-            throw new SeasonForbiddenException();
+        try {
+            String redisHashKey = RedisKeyManager.getHashKey(dbSeasonId);
+            if (rankRedisRepository.findRankByUserId(redisHashKey, userId) != null)
+                throw new SeasonForbiddenException();
+        }
+        catch(RedisDataNotFoundException ex){
+            System.out.println("success: 레디스가 지워져 있습니다");
+        }
     }
 
     @Test
     @DisplayName("[Put]/pingpong/admin/seasons/{seasonId}")
     void updateSeasons() throws Exception {
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
         Season newSeason = Season.builder()

@@ -45,7 +45,7 @@ class AnnouncementAdminControllerTest {
     @Test
     @DisplayName("[Get]/pingpong/admin/announcement")
     void getAnnouncementList() throws Exception {
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
         Integer currentPage = 2;
@@ -68,7 +68,7 @@ class AnnouncementAdminControllerTest {
     @Test
     @DisplayName("[Post]/pingpong/admin/announcement")
     void addAnnouncement() throws Exception {
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
         //공지사항 1개 정책 때문에 기존 공지사항 지울 것
@@ -100,7 +100,7 @@ class AnnouncementAdminControllerTest {
     @Test
     @DisplayName("fail[Post]/pingpong/admin/announcement")
     void addAnnouncementFail() throws Exception {
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
         AnnouncementAdminAddDto addDto = AnnouncementAdminAddDto.builder()
@@ -123,14 +123,13 @@ class AnnouncementAdminControllerTest {
     @Test
     @DisplayName("[Put]/pingpong/admin/announcement")
     void putAnnouncement() throws Exception {
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
         //공지사항 1개 정책 때문에 기존 공지사항 지울 것
 //        Announcement delDto = announcementAdminRepository.findFirstByOrderByIdDesc();
 //        announcementAdminRepository.delete(delDto);
         //공지사항 없으면 만들어 주는 과정 넣어 줄것
-
 
         String url = "/pingpong/admin/announcement/";
 
