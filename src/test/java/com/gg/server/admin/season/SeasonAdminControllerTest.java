@@ -11,6 +11,7 @@ import com.gg.server.admin.season.data.SeasonAdminRepository;
 import com.gg.server.admin.season.dto.SeasonUpdateRequestDto;
 import com.gg.server.admin.season.service.SeasonAdminService;
 import com.gg.server.domain.rank.data.RankRepository;
+import com.gg.server.domain.rank.exception.RedisDataNotFoundException;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.Season;
@@ -189,10 +190,15 @@ class SeasonAdminControllerTest {
                 .andExpect(status().isNoContent())
                 .andReturn().getResponse().getContentAsString();
 
-        String redisHashKey = RedisKeyManager.getHashKey(dbSeasonId);
+        try {
+            String redisHashKey = RedisKeyManager.getHashKey(dbSeasonId);
 
-        if (rankRedisRepository.findRankByUserId(redisHashKey, userId) != null)
-            throw new SeasonForbiddenException();
+            if (rankRedisRepository.findRankByUserId(redisHashKey, userId) != null)
+                throw new SeasonForbiddenException();
+        }
+        catch(RedisDataNotFoundException ex){
+            System.out.println("success: 레디스가 지워져 있습니다");
+        }
     }
 
     @Test

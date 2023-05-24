@@ -1,5 +1,6 @@
 package com.gg.server.domain.season.data;
 
+import com.gg.server.admin.season.dto.SeasonCreateRequestDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -47,5 +48,12 @@ public class Season {
         this.endTime = endTime;
         this.startPpp = startPpp;
         this.pppGap = pppGap;
+    }
+
+    public Season(SeasonCreateRequestDto createDto) {
+        this.seasonName = createDto.getSeasonName();
+        this.startTime = createDto.getStartTime();
+        this.startPpp = createDto.getStartPpp();
+        this.pppGap = createDto.getPppGap();
     }
 }

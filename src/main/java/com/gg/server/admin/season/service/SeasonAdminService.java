@@ -38,17 +38,12 @@ public class SeasonAdminService {
 
     @Transactional
     public void createSeason(SeasonCreateRequestDto createDto) {
-        Season newSeason = Season.builder()
-                .seasonName(createDto.getSeasonName())
-                .startTime(createDto.getStartTime())
-                .startPpp(createDto.getStartPpp())
-                .pppGap(createDto.getPppGap())
-                .build();
+        Season newSeason = new Season(createDto);
+
         insert(newSeason);
         seasonAdminRepository.save(newSeason);
 
         Long seasonId = newSeason.getId();
-
         SeasonAdminDto seasonAdminDto = findSeasonById(seasonId);
 
         if (LocalDateTime.now().isBefore(seasonAdminDto.getStartTime())) {
