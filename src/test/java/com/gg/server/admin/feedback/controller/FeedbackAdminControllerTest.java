@@ -48,7 +48,7 @@ class FeedbackAdminControllerTest {
     @Test
     @DisplayName("[Get]/pingpong/admin/feedback")
     void getFeedback() throws Exception {
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
         Integer currentPage = 1;
@@ -73,7 +73,7 @@ class FeedbackAdminControllerTest {
     @Test
     @DisplayName("[Patch]pingpong/admin/feedback/{id}")
     void patchFeedback() throws Exception {
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
         Feedback feedback = Feedback.builder()
@@ -97,7 +97,7 @@ class FeedbackAdminControllerTest {
     @Test
     @DisplayName("[get]pingpong/admin/feedback/users?intraId=${intraId}&page=${pageNumber}&size={size}")
     void findFeedbackByIntraId() throws Exception {
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
         User user = userRepository.findById(userId).get();
