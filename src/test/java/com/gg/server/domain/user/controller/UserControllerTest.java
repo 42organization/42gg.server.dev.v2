@@ -1,6 +1,7 @@
 package com.gg.server.domain.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.rank.data.RankRepository;
 import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
@@ -80,8 +81,8 @@ class UserControllerTest {
         String url = "/pingpong/users/live";
         String event = "game";
         int notiCnt = 2;
-        String currentMatchMode = "RANK";
-        testDataUtils.addMockDataUserLiveApi(event, notiCnt, currentMatchMode, userId);
+        Mode currentMatchMode = Mode.RANK;
+        testDataUtils.addMockDataUserLiveApi(event, notiCnt, currentMatchMode.getCode(), userId);
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
