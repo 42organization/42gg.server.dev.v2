@@ -4,7 +4,6 @@ import com.gg.server.admin.user.dto.UserDetailAdminResponseDto;
 import com.gg.server.admin.user.dto.UserSearchAdminRequestDto;
 import com.gg.server.admin.user.dto.UserSearchAdminResponseDto;
 import com.gg.server.admin.user.service.UserAdminService;
-import com.gg.server.global.dto.PageRequestDto;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,7 +24,6 @@ public class UserAdminController {
         Pageable pageable = PageRequest.of(searchRequestDto.getPage() - 1,
                 searchRequestDto.getSize(),
                 Sort.by("intraId").ascending());
-        UserSearchAdminResponseDto responseDto;
         if (searchRequestDto.getUserFilter() != null)
             return userAdminService.searchByIntraId(pageable, searchRequestDto.getUserFilter());
         else if (searchRequestDto.getIntraId() != null)
