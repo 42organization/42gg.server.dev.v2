@@ -10,7 +10,7 @@ import com.gg.server.domain.match.dto.MatchStatusDto;
 import com.gg.server.domain.match.dto.MatchStatusResponseListDto;
 import com.gg.server.domain.match.dto.SlotStatusDto;
 import com.gg.server.domain.match.dto.SlotStatusResponseListDto;
-import com.gg.server.domain.match.type.MatchKeyTemp2;
+import com.gg.server.domain.match.type.MatchKey;
 import com.gg.server.domain.match.type.Option;
 import com.gg.server.domain.match.type.SlotStatus;
 import com.gg.server.domain.noti.data.Noti;
@@ -48,11 +48,11 @@ import org.springframework.transaction.annotation.Transactional;
 @AutoConfigureMockMvc
 @ActiveProfiles("local")
 @RequiredArgsConstructor
-class MatchRedisServiceTest {
+class MatchServiceTest {
     @Autowired
     MatchFindService matchFindService;
     @Autowired
-    MatchRedisService matchRedisService;
+    MatchService matchService;
     @Autowired
     RedisMatchTimeRepository redisMatchTimeRepository;
     @Autowired
@@ -106,17 +106,17 @@ class MatchRedisServiceTest {
     @Test
     void addMatchDifferentOption() {
         System.out.println("this.users = " + this.users);
-        matchRedisService.makeMatch(UserDto.from(users.get(0)), Option.NORMAL, this.slotTimes.get(0));
-        matchRedisService.makeMatch(UserDto.from(users.get(1)), Option.RANK, this.slotTimes.get(0));
-        Long size = redisTemplate.opsForList().size(MatchKeyTemp2.TIME.getCode() + slotTimes.get(0));
+        matchService.makeMatch(UserDto.from(users.get(0)), Option.NORMAL, this.slotTimes.get(0));
+        matchService.makeMatch(UserDto.from(users.get(1)), Option.RANK, this.slotTimes.get(0));
+        Long size = redisTemplate.opsForList().size(MatchKey.getTime(slotTimes.get(0)));
         Assertions.assertThat(size).isEqualTo(2L);
     }
 
     @DisplayName("Queue에 매칭 가능한 normal 상대가 있을 경우 게임 생성")
     @Test
     void addMatchSameNormalOption() {
-        matchRedisService.makeMatch(UserDto.from(users.get(0)), Option.NORMAL, this.slotTimes.get(0));
-        matchRedisService.makeMatch(UserDto.from(users.get(1)), Option.NORMAL, this.slotTimes.get(0));
+        matchService.makeMatch(UserDto.from(users.get(0)), Option.NORMAL, this.slotTimes.get(0));
+        matchService.makeMatch(UserDto.from(users.get(1)), Option.NORMAL, this.slotTimes.get(0));
         Optional<Game> game = gameRepository.findByStartTime(slotTimes.get(0));
         Assertions.assertThat(game.isEmpty()).isEqualTo(false);
     }
@@ -127,10 +127,10 @@ class MatchRedisServiceTest {
         User user1 = matchTestSetting.createUser();
         matchTestSetting.addUsertoRankRedis(user1.getId(),
                 this.testSeason.getStartPpp() + this.testSeason.getPppGap() + 1, this.testSeason.getId());//pppGap차이가 충분히 큰 경우
-        matchRedisService.makeMatch(UserDto.from(user1), Option.RANK, this.slotTimes.get(0));
-        matchRedisService.makeMatch(UserDto.from(users.get(0)), Option.NORMAL, this.slotTimes.get(0));
-        matchRedisService.makeMatch(UserDto.from(users.get(1)), Option.RANK, this.slotTimes.get(0));
-        Long size = redisTemplate.opsForList().size(MatchKeyTemp2.TIME.getCode() + slotTimes.get(0));
+        matchService.makeMatch(UserDto.from(user1), Option.RANK, this.slotTimes.get(0));
+        matchService.makeMatch(UserDto.from(users.get(0)), Option.NORMAL, this.slotTimes.get(0));
+        matchService.makeMatch(UserDto.from(users.get(1)), Option.RANK, this.slotTimes.get(0));
+        Long size = redisTemplate.opsForList().size(MatchKey.getTime(slotTimes.get(0)));
         Assertions.assertThat(size).isEqualTo(3L);
         Optional<Game> game = gameRepository.findByStartTime(slotTimes.get(0));
         Assertions.assertThat(game.isEmpty()).isEqualTo(true);
@@ -145,9 +145,9 @@ class MatchRedisServiceTest {
         User user1 = matchTestSetting.createUser();
         matchTestSetting.addUsertoRankRedis(user1.getId(),userRank.getPpp() + this.testSeason.getPppGap()
                 , this.testSeason.getId());//pppGap차이가 pppGap만큼
-        matchRedisService.makeMatch(UserDto.from(user1), Option.RANK, this.slotTimes.get(0));
-        matchRedisService.makeMatch(UserDto.from(users.get(0)), Option.RANK, this.slotTimes.get(0));
-        Long size = redisTemplate.opsForList().size(MatchKeyTemp2.TIME.getCode() + slotTimes.get(0));
+        matchService.makeMatch(UserDto.from(user1), Option.RANK, this.slotTimes.get(0));
+        matchService.makeMatch(UserDto.from(users.get(0)), Option.RANK, this.slotTimes.get(0));
+        Long size = redisTemplate.opsForList().size(MatchKey.getTime(slotTimes.get(0)));
         Assertions.assertThat(size).isEqualTo(0L);
         Optional<Game> game = gameRepository.findByStartTime(slotTimes.get(0));
         Assertions.assertThat(game.isEmpty()).isEqualTo(false);
@@ -161,9 +161,9 @@ class MatchRedisServiceTest {
         User user1 = matchTestSetting.createUser();
         matchTestSetting.addUsertoRankRedis(user1.getId(),userRank.getPpp() + this.testSeason.getPppGap()
                 , this.testSeason.getId());//pppGap차이가 pppGap만큼
-        matchRedisService.makeMatch(UserDto.from(user1), Option.BOTH, this.slotTimes.get(0));
-        matchRedisService.makeMatch(UserDto.from(users.get(0)), Option.BOTH, this.slotTimes.get(0));
-        Long size = redisTemplate.opsForList().size(MatchKeyTemp2.TIME.getCode() + slotTimes.get(0));
+        matchService.makeMatch(UserDto.from(user1), Option.BOTH, this.slotTimes.get(0));
+        matchService.makeMatch(UserDto.from(users.get(0)), Option.BOTH, this.slotTimes.get(0));
+        Long size = redisTemplate.opsForList().size(MatchKey.getTime(slotTimes.get(0)));
         Assertions.assertThat(size).isEqualTo(0L);
         Optional<Game> game = gameRepository.findByStartTime(slotTimes.get(0));
         Assertions.assertThat(game.isEmpty()).isEqualTo(false);
@@ -175,13 +175,13 @@ class MatchRedisServiceTest {
     @Test
     void cancelMatchAfterMakingGameEntity() {
         //normal 게임 생성
-        matchRedisService.makeMatch(UserDto.from(users.get(0)), Option.NORMAL, this.slotTimes.get(3));
-        matchRedisService.makeMatch(UserDto.from(users.get(1)), Option.NORMAL, this.slotTimes.get(3));
+        matchService.makeMatch(UserDto.from(users.get(0)), Option.NORMAL, this.slotTimes.get(3));
+        matchService.makeMatch(UserDto.from(users.get(1)), Option.NORMAL, this.slotTimes.get(3));
         //user2 다른 슬롯 등록
-        matchRedisService.makeMatch(UserDto.from(users.get(1)), Option.NORMAL, this.slotTimes.get(1));
+        matchService.makeMatch(UserDto.from(users.get(1)), Option.NORMAL, this.slotTimes.get(1));
 
         //첫번째 유저 경기 취소
-        matchRedisService.cancelMatch(UserDto.from(users.get(0)), slotTimes.get(3));
+        matchService.cancelMatch(UserDto.from(users.get(0)), slotTimes.get(3));
 
         Optional<Game> game = gameRepository.findByStartTime(slotTimes.get(3));
         Assertions.assertThat(game.isEmpty()).isEqualTo(true);
@@ -208,11 +208,11 @@ class MatchRedisServiceTest {
         matchTestSetting.addUsertoRankRedis(user1.getId(),userRank.getPpp() + this.testSeason.getPppGap() + 100
                 , this.testSeason.getId());
         //매칭이 이루어질 수 없는 유저 3명을 큐에 등록
-        matchRedisService.makeMatch(UserDto.from(users.get(0)), Option.RANK, slotTimes.get(0));
-        matchRedisService.makeMatch(UserDto.from(users.get(1)), Option.NORMAL, slotTimes.get(0));
-        matchRedisService.makeMatch(UserDto.from(user1), Option.RANK, slotTimes.get(0));
+        matchService.makeMatch(UserDto.from(users.get(0)), Option.RANK, slotTimes.get(0));
+        matchService.makeMatch(UserDto.from(users.get(1)), Option.NORMAL, slotTimes.get(0));
+        matchService.makeMatch(UserDto.from(user1), Option.RANK, slotTimes.get(0));
         //user1의 취소
-        matchRedisService.cancelMatch(UserDto.from(users.get(1)), slotTimes.get(0));
+        matchService.cancelMatch(UserDto.from(users.get(1)), slotTimes.get(0));
         List<RedisMatchUser> allMatchUsers = redisMatchTimeRepository.getAllMatchUsers(slotTimes.get(0));
         Assertions.assertThat(allMatchUsers.size()).isEqualTo(2L);
 
@@ -222,9 +222,9 @@ class MatchRedisServiceTest {
     @Test
     void readMyTableAfterMakingGame() {
         //normal 게임 생성
-        matchRedisService.makeMatch(UserDto.from(users.get(0)), Option.NORMAL, slotTimes.get(0));
-        matchRedisService.makeMatch(UserDto.from(users.get(1)), Option.RANK, slotTimes.get(1));
-        matchRedisService.makeMatch(UserDto.from(users.get(2)), Option.NORMAL, slotTimes.get(2));
+        matchService.makeMatch(UserDto.from(users.get(0)), Option.NORMAL, slotTimes.get(0));
+        matchService.makeMatch(UserDto.from(users.get(1)), Option.RANK, slotTimes.get(1));
+        matchService.makeMatch(UserDto.from(users.get(2)), Option.NORMAL, slotTimes.get(2));
         SlotStatusResponseListDto slotStatusList = matchFindService.getAllMatchStatus(users.get(0).getId(),
                 Option.NORMAL);
         for (int i = 0; i < 3; i++) {
@@ -249,10 +249,10 @@ class MatchRedisServiceTest {
     @Test
     void readMyTableBeforeMakingGame() {
         for (int i = 0; i < 3; i++) {
-            matchRedisService.makeMatch(UserDto.from(users.get(0)), Option.NORMAL, slotTimes.get(i));
+            matchService.makeMatch(UserDto.from(users.get(0)), Option.NORMAL, slotTimes.get(i));
         }
-        matchRedisService.makeMatch(UserDto.from(users.get(1)), Option.NORMAL, slotTimes.get(3));
-        matchRedisService.makeMatch(UserDto.from(users.get(2)), Option.NORMAL, slotTimes.get(3));
+        matchService.makeMatch(UserDto.from(users.get(1)), Option.NORMAL, slotTimes.get(3));
+        matchService.makeMatch(UserDto.from(users.get(2)), Option.NORMAL, slotTimes.get(3));
         SlotStatusResponseListDto slotStatusList = matchFindService.getAllMatchStatus(users.get(0).getId(),
                 Option.NORMAL);
         for (SlotStatusDto dto : slotStatusList.getMatchBoards()) {
@@ -275,8 +275,8 @@ class MatchRedisServiceTest {
     @Test
     void readCurrentMatchAfterMakingGameEntity() {
         //게임생성
-        matchRedisService.makeMatch(UserDto.from(users.get(1)), Option.NORMAL, slotTimes.get(3));
-        matchRedisService.makeMatch(UserDto.from(users.get(2)), Option.NORMAL, slotTimes.get(3));
+        matchService.makeMatch(UserDto.from(users.get(1)), Option.NORMAL, slotTimes.get(3));
+        matchService.makeMatch(UserDto.from(users.get(2)), Option.NORMAL, slotTimes.get(3));
         UserDto userDto = UserDto.from(users.get(1));
         MatchStatusResponseListDto currentMatch = matchFindService.getCurrentMatch(userDto);
         //user의 current match 확인
@@ -294,7 +294,7 @@ class MatchRedisServiceTest {
         //유저 슬롯 3개 등록 시도
         for (int i = 0; i < 3; i++) {
             System.out.println("slotTimes = " + slotTimes.get(i));
-            matchRedisService.makeMatch(UserDto.from(users.get(1)), Option.NORMAL, slotTimes.get(i));
+            matchService.makeMatch(UserDto.from(users.get(1)), Option.NORMAL, slotTimes.get(i));
         }
         UserDto userDto = UserDto.from(users.get(1));
         MatchStatusResponseListDto currentMatch = matchFindService.getCurrentMatch(userDto);

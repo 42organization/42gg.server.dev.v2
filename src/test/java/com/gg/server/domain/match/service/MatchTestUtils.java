@@ -1,6 +1,5 @@
 package com.gg.server.domain.match.service;
 
-import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.match.data.RedisMatchTimeRepository;
 import com.gg.server.domain.match.data.RedisMatchUserRepository;
 import com.gg.server.domain.rank.redis.RankRedis;
@@ -29,13 +28,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class MatchTestUtils {
     private final UserRepository userRepository;
-//    private final GameRepository gameRepository;
-    private final TeamUserRepository teamUserRepository;
-    private final TeamRepository teamRepository;
     private final SeasonRepository seasonRepository;
     private final RankRedisRepository rankRedisRepository;
-    private final RedisMatchTimeRepository redisMatchTimeRepository;
-    private final RedisMatchUserRepository redisMatchUserRepository;
     private final SlotManagementRepository slotManagementRepository;
 
     public User createUser() {
@@ -51,11 +45,6 @@ public class MatchTestUtils {
                 .build();
         userRepository.save(user);
         return user;
-    }
-
-    public List<User> findAllUsers() {
-        List<User> users = userRepository.findAll();
-        return users;
     }
 
     public RankRedis addUsertoRankRedis(Long userId, Integer ppp, Long seasonId) {
@@ -96,8 +85,8 @@ public class MatchTestUtils {
 
     public SlotManagement makeTestSlotManagement(Integer interval) {
         SlotManagement slotManagement = SlotManagement.builder()
-                .futureSlotTime(22)
-                .pastSlotTime(2)
+                .futureSlotTime(10)
+                .pastSlotTime(0)
                 .gameInterval(interval)
                 .openMinute(5)
                 .build();
