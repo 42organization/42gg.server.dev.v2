@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import java.io.IOException;
 
@@ -46,18 +45,13 @@ public class AsyncNewUserImageUploader {
     }
 
     @Transactional
-//    @Async("asyncExecutor")
     public void update(String intraId, MultipartFile multipartFile) throws IOException {
         User user =  userRepository.getUserByIntraId(intraId);
-        entityManager.lock(user, LockModeType.PESSIMISTIC_WRITE);
         String s3ImageUrl = userImageHandler.updateAndGetS3ImageUri(multipartFile, user);
         if (s3ImageUrl == null) {
             user.imageUpdate(defaultImageUrl);
         } else {
             user.imageUpdate(s3ImageUrl);
         }
-        entityManager.lock(user, LockModeType.NONE);
-        entityManager.flush();
-        entityManager.clear();
     }
 }
