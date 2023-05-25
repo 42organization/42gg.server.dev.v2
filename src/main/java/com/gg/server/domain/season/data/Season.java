@@ -1,5 +1,6 @@
 package com.gg.server.domain.season.data;
 
+import com.gg.server.admin.season.dto.SeasonCreateRequestDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -10,7 +11,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Getter
-@Builder
 public class Season {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,11 +41,20 @@ public class Season {
     @Column(name = "ppp_gap")
     private Integer pppGap;
 
+    @Builder
     public Season(String seasonName, LocalDateTime startTime, LocalDateTime endTime, Integer startPpp, Integer pppGap) {
         this.seasonName = seasonName;
         this.startTime = startTime;
         this.endTime = endTime;
         this.startPpp = startPpp;
         this.pppGap = pppGap;
+    }
+
+    @Builder
+    public Season(SeasonCreateRequestDto createDto) {
+        this.seasonName = createDto.getSeasonName();
+        this.startTime = createDto.getStartTime();
+        this.startPpp = createDto.getStartPpp();
+        this.pppGap = createDto.getPppGap();
     }
 }

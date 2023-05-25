@@ -1,5 +1,6 @@
 package com.gg.server.domain.announcement;
 
+import com.gg.server.admin.announcement.dto.AnnouncementAdminAddDto;
 import com.gg.server.global.utils.BaseTimeEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +15,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Entity
-@Builder
 public class Announcement extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,8 +30,21 @@ public class Announcement extends BaseTimeEntity {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    @Builder
+    public Announcement(String content, String creatorIntraId){
+        this.content = content;
+        this.creatorIntraId = creatorIntraId;
+    }
+
     public void update(String deleterIntraId, LocalDateTime deletedAt) {
         this.deleterIntraId = deleterIntraId;
         this.deletedAt = deletedAt;
+    }
+
+    static public Announcement from(AnnouncementAdminAddDto addDto) {
+        return Announcement.builder()
+                .content(addDto.getContent())
+                .creatorIntraId(addDto.getCreatorIntraId())
+                .build();
     }
 }

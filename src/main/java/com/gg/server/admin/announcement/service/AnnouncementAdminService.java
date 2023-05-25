@@ -35,10 +35,8 @@ public class AnnouncementAdminService {
         if (findAnnouncementExist() == true)
             throw new AnDupException();
 
-        Announcement announcementAdmin = Announcement.builder()
-                .content(addDto.getContent())
-                .creatorIntraId(addDto.getCreatorIntraId())
-                .build();
+        Announcement announcementAdmin = Announcement.from(addDto);
+
         announcementAdminRepository.save(announcementAdmin);
     }
 

@@ -23,10 +23,7 @@ public class SlotAdminController {
 
     @PutMapping
     public ResponseEntity modifySlotSetting(@Valid @RequestBody SlotAdminDto requestDto){
-        slotAdminService.addSlotSetting(requestDto.getPastSlotTime(),
-                requestDto.getFutureSlotTime(),
-                requestDto.getInterval(),
-                requestDto.getOpenMinute());
+        slotAdminService.addSlotSetting(requestDto);
         return ResponseEntity.ok().build();
     }
 

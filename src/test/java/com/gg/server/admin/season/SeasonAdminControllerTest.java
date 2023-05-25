@@ -136,12 +136,11 @@ class SeasonAdminControllerTest {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
-        SeasonCreateRequestDto seasonCreateReqeustDto = SeasonCreateRequestDto.builder()
-                .seasonName("redis1")
-                .startTime(LocalDateTime.now().plusDays(1))
-                .startPpp(1000)
-                .pppGap(500)
-                .build();
+        SeasonCreateRequestDto seasonCreateReqeustDto = new SeasonCreateRequestDto(
+                "redis1",
+                LocalDateTime.now().plusDays(1),
+                1000,
+                500);
         String content = objectMapper.writeValueAsString(seasonCreateReqeustDto);
 
         String contentAsString = mockMvc.perform(MockMvcRequestBuilders.post("/pingpong/admin/seasons")
@@ -221,12 +220,12 @@ class SeasonAdminControllerTest {
             rankRedisAdminService.addAllUserRankByNewSeason(seasonAdminDto);
         }
         dbSeasonId = seasonId;
-        SeasonUpdateRequestDto seasonUpdateRequestDto = SeasonUpdateRequestDto.builder()
-                .seasonName("putSeasonTestName")
-                .startTime(LocalDateTime.now().plusDays(1))
-                .startPpp(1000)
-                .pppGap(500)
-                .build();
+        SeasonUpdateRequestDto seasonUpdateRequestDto = new SeasonUpdateRequestDto(
+                "putSeasonTestName",
+                LocalDateTime.now().plusDays(1),
+                1000,
+                500);
+
         String content = objectMapper.writeValueAsString(seasonUpdateRequestDto);
 
         String contentAsString = mockMvc.perform(MockMvcRequestBuilders.put("/pingpong/admin/seasons/" + dbSeasonId)
