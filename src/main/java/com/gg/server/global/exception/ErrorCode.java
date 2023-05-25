@@ -26,8 +26,18 @@ public enum ErrorCode {
     RANK_NOT_FOUND(404, "RK100", "RANK NOT FOUND"),
     REDIS_RANK_NOT_FOUND(404, "RK101", "REDIS RANK NOT FOUND"),
 
-    //game
-    GAME_NOT_FOUND(404, "GM100", "GAME_NOT_FOUND"),
+    /** Penalty **/
+    PENALTY_NOT_FOUND(404, "PE100", "PENALTY NOT FOUND"),
+    REDIS_PENALTY_USER_NOT_FOUND(404, "PE101", "REDIS PENALTY USER NOT FOUND"),
+    PENALTY_EXPIRED(400, "PE200", "PENALTY EXPIRED"),
+
+    /** team **/
+    TEAM_ID_NOT_MATCH(400, "TM201", "TEAM id 가 일치하지 않습니다."),
+
+    /** game **/
+    GAME_DB_NOT_VALID(500, "GM201", "GAME DB NOT CONSISTENCY"),
+    SCORE_NOT_MATCHED(400, "GM202", "score 입력이 기존과 다릅니다."),
+    GAME_NOT_FOUND(404, "GM101", "GAME 이 존재하지 않습니다."),
 
     /** Common **/
     INTERNAL_SERVER_ERR(500, "CM001","INTERNAL SERVER ERROR"),

@@ -4,6 +4,7 @@ import com.gg.server.global.exception.custom.AuthenticationException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.SdkClientException;
 import com.gg.server.global.exception.custom.CustomRuntimeException;
+import com.gg.server.global.exception.custom.DBConsistencyException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +34,13 @@ public class GlobalExceptionHandler {
         ec.setMessage(ex.getMessage());
         ErrorResponse response = new ErrorResponse(ec);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({DBConsistencyException.class})
+    public ResponseEntity<ErrorResponse> dbConsistencyException(DBConsistencyException ex) {
+        log.error("db 정합성 오류", ex);
+        return new ResponseEntity<>(new ErrorResponse(ex.getErrorCode()), HttpStatus.INTERNAL_SERVER_ERROR);
+
     }
 
     @ExceptionHandler({CustomRuntimeException.class})

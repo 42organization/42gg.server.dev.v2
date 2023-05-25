@@ -33,6 +33,7 @@ import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpHeaders;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,6 +92,7 @@ public class GameControllerTest {
     private User user1;
     private User user2;
     private Game game1;
+    private Game game2;
 
     @BeforeEach
     void init() {
@@ -113,7 +115,8 @@ public class GameControllerTest {
             List<TeamUser> teams = new ArrayList<>();
             teams.add(teamUserRepository.save(new TeamUser(team1, user1)));
             teams.add(teamUserRepository.save(new TeamUser(team2, user2)));
-            game.updateStatus();
+            System.out.println("===========");
+            gameService.expUpdates(game, teams);
             rankRedisService.updateRankRedis(teams, season.getId(), game);
             game = gameRepository.save(new Game(season, StatusType.WAIT, Mode.NORMAL, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
             team1 = teamRepository.save(new Team(game, 0, false));
@@ -133,6 +136,19 @@ public class GameControllerTest {
         Team team2 = teamRepository.save(new Team(game1, 2, true));
         teamUserRepository.save(new TeamUser(team1, user1));
         teamUserRepository.save(new TeamUser(team2, user2));
+        game2 = gameRepository.save(new Game(season, StatusType.WAIT, Mode.RANK, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
+        team1 = teamRepository.save(new Team(game1, 1, false));
+        team2 = teamRepository.save(new Team(game1, 2, true));
+        List<TeamUser> teams = new ArrayList<>();
+        teams.add(teamUserRepository.save(new TeamUser(team1, user1)));
+        teams.add(teamUserRepository.save(new TeamUser(team2, user2)));
+        gameService.expUpdates(game2, teams);
+        rankRedisService.updateRankRedis(teams, season.getId(), game2);
+    }
+
+    @AfterEach
+    public void flushRedis() {
+        rankRedisRepository.deleteAll();
     }
 
     @Test
@@ -158,7 +174,7 @@ public class GameControllerTest {
     @Transactional
     public void 일반게임목록조회() throws Exception {
         //given
-        String url = "/pingpong/games/normal?pageNum=1&pageSize=10";
+        String url = "/pingpong/games/normal?page=1&size=10";
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startTime"));
         GameListResDto expect = gameFindService.getNormalGameList(pageable);
         //when
@@ -179,7 +195,7 @@ public class GameControllerTest {
     @Transactional
     public void user일반게임목록조회() throws Exception {
         //given
-        String url = "/pingpong/games/normal?pageNum=1&pageSize=10&nickname=test1";
+        String url = "/pingpong/games/normal?page=1&size=10&intraId=test1";
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startTime"));
         GameListResDto expect = gameFindService.normalGameListByIntra(pageable, "test1");
         //when
@@ -200,7 +216,7 @@ public class GameControllerTest {
     @Transactional
     public void 랭크게임목록조회() throws Exception {
         //given
-        String url = "/pingpong/games/rank?pageNum=1&pageSize=10&seasonId=" + season.getId();
+        String url = "/pingpong/games/rank?page=1&size=10&seasonId=" + season.getId();
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startTime"));
         GameListResDto expect = gameFindService.rankGameList(pageable, season.getId());
         //when
@@ -221,7 +237,7 @@ public class GameControllerTest {
     @Transactional
     public void user랭크게임목록조회() throws Exception {
         //given
-        String url = "/pingpong/games/rank?pageNum=1&pageSize=10&seasonId=" + season.getId() + "&nickname=" + "test1";
+        String url = "/pingpong/games/rank?page=1&size=10&seasonId=" + season.getId() + "&nickname=" + "test1";
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startTime"));
         GameListResDto expect = gameFindService.rankGameListByIntra(pageable, season.getId(), "test1");
         //when
@@ -242,7 +258,7 @@ public class GameControllerTest {
     @Transactional
     public void 랭크게임목록error조회() throws Exception {
         //given
-        String url = "/pingpong/games/rank?pageNum=1&pageSize=0";
+        String url = "/pingpong/games/rank?page=1&size=0";
         //then
         mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().is4xxClientError())
@@ -252,7 +268,7 @@ public class GameControllerTest {
     @Transactional
     public void 전체게임목록조회() throws Exception {
         //given
-        String url = "/pingpong/games?pageNum=1&pageSize=10";
+        String url = "/pingpong/games?page=1&size=10";
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startTime"));
         GameListResDto expect = gameFindService.allGameList(pageable, null);
         //when
@@ -273,7 +289,7 @@ public class GameControllerTest {
     @Transactional
     public void user전체게임목록조회() throws Exception {
         //given
-        String url = "/pingpong/games?pageNum=1&pageSize=10&nickname=test1";
+        String url = "/pingpong/games?page=1&size=10&nickname=test1";
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startTime"));
         GameListResDto expect = gameFindService.allGameListUser(pageable, "test1", null);
         //when
@@ -286,7 +302,7 @@ public class GameControllerTest {
         System.out.println(result.getGames().size() +", " + result.getIsLast());
         System.out.println(expect.getGames().size() + ", " + expect.getIsLast());
         assertThat(result.getGames().size()).isEqualTo(expect.getGames().size());
-        assertThat(result.getGames().get(result.getGames().size() - 1).getGameId().equals(expect.getGames().get(expect.getGames().size() - 1).getGameId()));
+        assertThat(result.getGames().get(result.getGames().size() - 1).getGameId()).isEqualTo(expect.getGames().get(expect.getGames().size() - 1).getGameId());
         assertThat(result.getIsLast()).isEqualTo(expect.getIsLast());
     }
 
@@ -312,8 +328,8 @@ public class GameControllerTest {
     void 랭크게임결과입력테스트() throws Exception {
         String url = "/pingpong/games/rank";
         Game game = gameRepository.save(new Game(season, StatusType.WAIT, Mode.RANK, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
-        Team team1 = teamRepository.save(new Team(game, -1, false));
-        Team team2 = teamRepository.save(new Team(game, -1, false));
+        Team team1 = teamRepository.save(new Team(game, 0, false));
+        Team team2 = teamRepository.save(new Team(game, 0, false));
         String ac1 = tokenProvider.createToken(user1.getId());
         String ac2 = tokenProvider.createToken(user2.getId());
         teamUserRepository.save(new TeamUser(team1, user1));
@@ -345,7 +361,7 @@ public class GameControllerTest {
     @Test
     @Transactional
     void 랭크게임결과조회() throws Exception {
-        String url = "/pinpong/games/" + game1.getId() + "/result/rank";
+        String url = "/pingpong/games/" + game2.getId() + "/result/rank";
         String content = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
