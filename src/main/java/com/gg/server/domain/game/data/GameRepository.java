@@ -3,9 +3,10 @@ package com.gg.server.domain.game.data;
 import com.gg.server.domain.game.dto.GameTeamUserInfo;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
-import com.gg.server.domain.season.data.Season;
 import java.time.LocalDateTime;
 import java.util.Optional;
+
+import com.gg.server.domain.team.dto.GameUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.gg.server.domain.game.dto.GameTeamUser;
 import org.springframework.data.domain.Pageable;
@@ -20,8 +21,8 @@ public interface GameRepository extends JpaRepository<Game, Long>, GameRepositor
     Slice<Game> findAllByAndStatus(StatusType status, Pageable pageable);
     Slice<Game> findAllByAndStatusIn(List<StatusType> statusList, Pageable pageable);
     Slice<Game> findAllByModeAndStatusAndSeasonId(Mode mode, StatusType status, Long season, Pageable pageable);
-    @Query(value = "select t1.gameId, t1.startTime, t1.status, t1.mode, t1.intraId t1IntraId, t1.image t1Image, t1.total_exp t1Exp, " +
-            "t2.intraId t2IntraId, t2.image t2Image, t2.total_exp t2Exp " +
+    @Query(value = "select t1.gameId, t1.startTime, t1.status, t1.mode, t1.intraId t1IntraId, t1.win t1IsWin, t1.score t1Score, t1.image t1Image, t1.total_exp t1Exp, " +
+            "t2.win t2IsWin, t2.score t2Score, t2.intraId t2IntraId, t2.image t2Image, t2.total_exp t2Exp " +
             "from v_teamuser t1, v_teamuser t2 " +
             "where t1.gameId IN (:games) and t1.teamId <t2.teamId and t1.gameId=t2.gameId order by t1.startTime desc;", nativeQuery = true)
     List<GameTeamUser> findTeamsByGameIsIn(@Param("games") List<Long> games);
@@ -38,7 +39,6 @@ public interface GameRepository extends JpaRepository<Game, Long>, GameRepositor
     @Query(value = "SELECT g FROM Game g, Team t, TeamUser tu WHERE g.status = :status AND g.id = t.game.id"
             + " AND t.id = tu.team.id AND tu.user.id = :userId")
     Optional<Game> findByStatusTypeAndUserId(@Param("status") StatusType status, @Param("userId") Long userId);
-
     @Query(value = "select gameId " +
             "from v_teamuser " +
             "where intraId = :intra and status in (:status) order by startTime desc", nativeQuery = true)
@@ -54,4 +54,11 @@ public interface GameRepository extends JpaRepository<Game, Long>, GameRepositor
 
     List<Game> findAllByStatusAndStartTimeLessThanEqual(StatusType status, LocalDateTime startTime);
     List<Game> findAllByStatusAndEndTimeLessThanEqual(StatusType status, LocalDateTime endTime);
+
+    @Query(value = "SELECT u.id userId, u.e_mail email, u.intra_id intraId, u.sns_noti_opt snsNotiOpt, g.id gameId " +
+            "FROM " +
+            "(SELECT id, status FROM game where start_time<=:time) g, " +
+            "team t, team_user tu, user u " +
+            "WHERE g.id=t.game_id AND t.id = tu.team_id AND tu.user_id=u.id AND g.status = 'BEFORE'", nativeQuery = true)
+    List<GameUser> findAllByStartTimeLessThanEqual(@Param("time") LocalDateTime time);
 }

@@ -1,4 +1,4 @@
-package com.gg.server.domain.penalty.data.Type;
+package com.gg.server.domain.penalty.type;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;

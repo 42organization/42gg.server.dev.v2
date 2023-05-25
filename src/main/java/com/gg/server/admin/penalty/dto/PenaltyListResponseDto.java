@@ -10,6 +10,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PenaltyListResponseDto {
     List<PenaltyUserResponseDto> penaltyList;
-    Integer currentPage;
     Integer totalPage;
 }

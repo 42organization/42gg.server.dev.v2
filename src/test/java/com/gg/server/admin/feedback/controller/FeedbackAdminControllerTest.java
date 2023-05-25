@@ -48,7 +48,7 @@ class FeedbackAdminControllerTest {
     @Test
     @DisplayName("[Get]/pingpong/admin/feedback")
     void getFeedback() throws Exception {
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
         Integer currentPage = 1;
@@ -63,7 +63,6 @@ class FeedbackAdminControllerTest {
 
 
         FeedbackListAdminResponseDto result = objectMapper.readValue(contentAsString, FeedbackListAdminResponseDto.class);
-        assertThat(result.getCurrentPage()).isEqualTo(1);
         assertThat(result.getFeedbackList().size()).isEqualTo(5);
         System.out.println(result.getFeedbackList().get(0).getId());
         System.out.println(result.getFeedbackList().get(0).getContent());
@@ -73,7 +72,7 @@ class FeedbackAdminControllerTest {
     @Test
     @DisplayName("[Patch]pingpong/admin/feedback/{id}")
     void patchFeedback() throws Exception {
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
         Feedback feedback = Feedback.builder()
@@ -97,7 +96,7 @@ class FeedbackAdminControllerTest {
     @Test
     @DisplayName("[get]pingpong/admin/feedback/users?intraId=${intraId}&page=${pageNumber}&size={size}")
     void findFeedbackByIntraId() throws Exception {
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
         User user = userRepository.findById(userId).get();
@@ -120,11 +119,10 @@ class FeedbackAdminControllerTest {
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
-
         FeedbackListAdminResponseDto result = objectMapper.readValue(contentAsString, FeedbackListAdminResponseDto.class);
-        assertThat(result.getCurrentPage()).isEqualTo(1);
-        System.out.println(result.getFeedbackList().get(0).getId());
-        System.out.println(result.getFeedbackList().get(0).getContent());
-        System.out.println(result.getFeedbackList().get(0).getIntraId());
+        assertThat(result.getFeedbackList().size()).isBetween(0, 5);
+        assertThat(result.getFeedbackList().get(0).getIntraId()).isEqualTo(user.getIntraId());
+        assertThat(result.getFeedbackList().get(0).getContent()).isEqualTo("test1234");
+        assertThat(result.getFeedbackList().get(0).getIntraId()).isEqualTo(user.getIntraId());
     }
 }
