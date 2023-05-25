@@ -20,7 +20,7 @@ public class JwtRedisRepository {
     public Long getUserIdByRefToken(String refreshToken){
         String userId = redisTemplate.opsForValue().get(refreshToken);
         if (userId == null)
-            throw new TokenNotValidException("Authentication error", ErrorCode.UNAUTHORIZED);
+            throw new TokenNotValidException();
         return Long.valueOf(userId);
     }
 

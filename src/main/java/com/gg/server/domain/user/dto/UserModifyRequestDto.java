@@ -1,16 +1,15 @@
 package com.gg.server.domain.user.dto;
 
+import com.gg.server.domain.user.type.RacketType;
+import com.gg.server.domain.user.type.SnsType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import javax.validation.constraints.Pattern;
 
 @Getter
 @AllArgsConstructor
 public class UserModifyRequestDto {
-        @Pattern(regexp = "(PENHOLDER|SHAKEHAND|DUAL|NONE)", message = "Invalid value for field 'racketType'")
-        private String racketType;
+
+        private RacketType racketType;
         private String statusMessage;
-        @Pattern(regexp = "(SLACK|NONE|EMAIL|BOTH)", message = "Invalid value for field 'snsNotiOpt'")
-        private String snsNotiOpt;
+        private SnsType snsNotiOpt;
 }

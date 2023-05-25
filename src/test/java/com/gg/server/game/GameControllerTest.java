@@ -10,10 +10,13 @@ import com.gg.server.domain.game.dto.GameTeamInfo;
 import com.gg.server.domain.game.dto.req.RankResultReqDto;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
+import com.gg.server.domain.pchange.data.PChange;
+import com.gg.server.domain.pchange.data.PChangeRepository;
 import com.gg.server.domain.rank.data.Rank;
 import com.gg.server.domain.rank.data.RankRepository;
 import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
+import com.gg.server.domain.rank.redis.RankRedisService;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.data.SeasonRepository;
@@ -22,6 +25,7 @@ import com.gg.server.domain.team.data.TeamRepository;
 import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.team.data.TeamUserRepository;
 import com.gg.server.domain.user.User;
+import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
@@ -42,6 +46,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
@@ -63,6 +69,12 @@ public class GameControllerTest {
     @Autowired
     RankRedisRepository rankRedisRepository;
     @Autowired
+    PChangeRepository pChangeRepository;
+    @Autowired
+    RankRedisService rankRedisService;
+    @Autowired
+    RankRepository rankRepository;
+    @Autowired
     TestDataUtils testDataUtils;
     @Autowired
     GameService gameService;
@@ -74,8 +86,6 @@ public class GameControllerTest {
     ObjectMapper objectMapper;
     @Autowired
     AuthTokenProvider tokenProvider;
-    @Autowired
-    RankRepository rankRepository;
     private String accessToken;
     private Season season;
     private User user1;
@@ -89,17 +99,34 @@ public class GameControllerTest {
         user1 = testDataUtils.createNewUser("test1", "test1@email", "null1", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
         accessToken = tokenProvider.createToken(user1.getId());
         user2 = testDataUtils.createNewUser("test2", "test2@email", "null1", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
+        rankRepository.save(Rank.from(user1, season, season.getStartPpp()));
+        rankRepository.save(Rank.from(user2, season, season.getStartPpp()));
+        RankRedis userRank = RankRedis.from(UserDto.from(user1), season.getStartPpp());
+        String redisHashKey = RedisKeyManager.getHashKey(season.getId());
+        rankRedisRepository.addRankData(redisHashKey, user1.getId(), userRank);
+        userRank = RankRedis.from(UserDto.from(user2), season.getStartPpp());
+        rankRedisRepository.addRankData(redisHashKey, user2.getId(), userRank);
         for (int i = 0; i < 10; i++) {
-            Game game = gameRepository.save(new Game(season, StatusType.END, Mode.RANK, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
+            Game game = gameRepository.save(new Game(season, StatusType.WAIT, Mode.RANK, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
             Team team1 = teamRepository.save(new Team(game, 1, false));
             Team team2 = teamRepository.save(new Team(game, 2, true));
-            teamUserRepository.save(new TeamUser(team1, user1));
-            teamUserRepository.save(new TeamUser(team2, user2));
-            game = gameRepository.save(new Game(season, StatusType.END, Mode.NORMAL, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
+            List<TeamUser> teams = new ArrayList<>();
+            teams.add(teamUserRepository.save(new TeamUser(team1, user1)));
+            teams.add(teamUserRepository.save(new TeamUser(team2, user2)));
+            game.updateStatus();
+            rankRedisService.updateRankRedis(teams, season.getId(), game);
+            game = gameRepository.save(new Game(season, StatusType.WAIT, Mode.NORMAL, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
             team1 = teamRepository.save(new Team(game, 0, false));
             team2 = teamRepository.save(new Team(game, 0, false));
             teamUserRepository.save(new TeamUser(team1, user1));
             teamUserRepository.save(new TeamUser(team2, user2));
+            teams.clear();
+            teams.add(teamUserRepository.save(new TeamUser(team1, user1)));
+            teams.add(teamUserRepository.save(new TeamUser(team2, user2)));
+            game.updateStatus();
+            gameService.expUpdates(game, teams);
+            pChangeRepository.save(new PChange(game, user1, 0));
+            pChangeRepository.save(new PChange(game, user2, 0));
         }
         game1 = gameRepository.save(new Game(season, StatusType.WAIT, Mode.RANK, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
         Team team1 = teamRepository.save(new Team(game1, 1, false));
@@ -287,23 +314,14 @@ public class GameControllerTest {
         Game game = gameRepository.save(new Game(season, StatusType.WAIT, Mode.RANK, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
         Team team1 = teamRepository.save(new Team(game, -1, false));
         Team team2 = teamRepository.save(new Team(game, -1, false));
-//        User user1 = testDataUtils.createNewUser("test3", "test3@email", "null1", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
         String ac1 = tokenProvider.createToken(user1.getId());
-//        User user2 = testDataUtils.createNewUser("test4", "test4@email", "null1", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
         String ac2 = tokenProvider.createToken(user2.getId());
         teamUserRepository.save(new TeamUser(team1, user1));
         teamUserRepository.save(new TeamUser(team2, user2));
-        rankRepository.save(new Rank(user1, season, season.getStartPpp(), 0, 0, ""));
-        rankRepository.save(new Rank(user2, season, season.getStartPpp(), 0, 0, ""));
         teamUserRepository.flush();
-        rankRepository.flush();
         gameRepository.flush();
         teamRepository.flush();
         String content = objectMapper.writeValueAsString(new RankResultReqDto(game.getId(), team1.getId(), 1, team2.getId(), 2));
-        rankRedisRepository.addRankData(RedisKeyManager.getHashKey(season.getId()), user1.getId(),
-                new RankRedis(user1.getId(), user1.getIntraId(), season.getStartPpp(), 0, 0,  "test user3"));
-        rankRedisRepository.addRankData(RedisKeyManager.getHashKey(season.getId()), user2.getId(),
-                new RankRedis(user2.getId(), user2.getIntraId(), season.getStartPpp(), 0, 0,  "test user4"));
         System.out.println(user1.getTotalExp());
         System.out.println(user2.getTotalExp());
         // then
@@ -322,5 +340,16 @@ public class GameControllerTest {
                 .andReturn().getResponse();
         System.out.println(user1.getTotalExp());
         System.out.println(user2.getTotalExp());
+    }
+
+    @Test
+    @Transactional
+    void 랭크게임결과조회() throws Exception {
+        String url = "/pinpong/games/" + game1.getId() + "/result/rank";
+        String content = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println("result: " + content);
     }
 }
