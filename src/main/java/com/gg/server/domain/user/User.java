@@ -66,9 +66,6 @@ public class User extends BaseTimeEntity implements Serializable {
         this.racketType = updateReq.getRacketType();
         this.roleType = updateReq.getRoleType();
     }
-    public void updateEMail(String eMail) {
-        this.eMail = eMail;
-    }
 
     public void imageUpdate(String imageUri) {
         this.imageUri = imageUri;
@@ -79,9 +76,6 @@ public class User extends BaseTimeEntity implements Serializable {
         this.snsNotiOpt = snsType;
     }
 
-    public void updateRoleType(RoleType roleType) {
-        this.roleType = roleType;
-    }
     public void addExp(int plus) {
         this.totalExp += plus;
     }
