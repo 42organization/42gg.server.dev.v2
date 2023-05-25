@@ -81,7 +81,7 @@ public class UserAdminService {
     @Transactional(readOnly = true)
     public UserDetailAdminResponseDto getUserDetailByIntraId(String intraId) {
         User user = userAdminRepository.findByIntraId(intraId).orElseThrow(() -> new NotFoundException("못찾음"));//에러코드 수정 필요
-        Season currSeason = seasonAdminRepository.findCurrentSeason(LocalDateTime.now()).orElseThrow(() -> new NotFoundException("못찾음"));// 에러코드 수정 필요
+        Season currSeason = seasonAdminRepository.findCurrentSeason(LocalDateTime.now()).orElseThrow(() -> new NotFoundException("못찾음"));
         RankRedis userCurrRank = rankRedisRepository.findRankByUserId(RedisKeyManager.getHashKey(currSeason.getId()),
                 user.getId());
         return new UserDetailAdminResponseDto(user, userCurrRank);
@@ -91,7 +91,7 @@ public class UserAdminService {
     public void updateUserDetail(String intraId,
                                  UserUpdateAdminRequestDto userUpdateAdminRequestDto,
                                  MultipartFile userImageFile) throws IOException{
-        Season currSeason = seasonAdminRepository.findCurrentSeason(LocalDateTime.now()).orElseThrow(() -> new SeasonNotFoundException("못찾음", ErrorCode.SEASON_NOT_FOUND));//에러코드 수정 필요
+        Season currSeason = seasonAdminRepository.findCurrentSeason(LocalDateTime.now()).orElseThrow(() -> new SeasonNotFoundException());
         User user = userAdminRepository.findByIntraId(intraId).orElseThrow(() -> new NotFoundException("못찾음"));//에러코드 수정 필요
 
         user.modifyUserDetail(userUpdateAdminRequestDto);
@@ -100,7 +100,7 @@ public class UserAdminService {
     }
 
     private void updateUserRank(Long userId, Long currSeasonId, UserUpdateAdminRequestDto updateReq) {
-        Rank userCurrRank = rankRepository.findByUserIdAndSeasonId(userId, currSeasonId).orElseThrow(() -> new RankNotFoundException("못찾음", ErrorCode.RANK_NOT_FOUND));//에러코드 수정 필요
+        Rank userCurrRank = rankRepository.findByUserIdAndSeasonId(userId, currSeasonId).orElseThrow(() -> new RankNotFoundException());
         RankRedis userCurrRankRedis = rankRedisRepository.findRankByUserId(RedisKeyManager.getHashKey(currSeasonId),
                 userId);
 
