@@ -99,6 +99,30 @@ class UserAdminControllerTest {
     }
 
     @Test
+    @DisplayName("유저 필터링 조회 테스트")
+    @Transactional
+    public void 유저필터링조회테스트() throws Exception {
+        //given
+        String accessToken = testDataUtils.getLoginAccessToken();
+        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+        User user = userRepository.findById(userId).get();
+        int page = 1;
+        int size = 20;
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("intraId").ascending());
+        String url = "/pingpong/admin/users?page=1&userFilter=\"" + user.getIntraId() + "\"";
+
+        //when
+        String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        UserSearchAdminResponseDto actureResponse = objectMapper.readValue(contentAsString, UserSearchAdminResponseDto.class);
+
+        List<UserSearchAdminDto> actureUserList = actureResponse.getUserSearchAdminDtos();
+        for (UserSearchAdminDto userDto : actureUserList)
+            Assertions.assertThat(userDto.getIntraId()).isEqualTo(user.getIntraId());
+    }
+
+    @Test
     @DisplayName("GET /pingpong/admin/users/{intraId}")
     @Transactional
     public void userGetDetailTest() throws Exception{

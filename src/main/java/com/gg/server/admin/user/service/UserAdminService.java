@@ -3,6 +3,7 @@ import com.gg.server.admin.season.data.SeasonAdminRepository;
 import com.gg.server.admin.user.data.UserAdminRepository;
 import com.gg.server.admin.user.dto.UserDetailAdminResponseDto;
 import com.gg.server.admin.user.dto.UserSearchAdminDto;
+import com.gg.server.admin.user.dto.UserSearchAdminRequestDto;
 import com.gg.server.admin.user.dto.UserSearchAdminResponseDto;
 import com.gg.server.domain.match.type.Option;
 import com.gg.server.domain.rank.data.Rank;
@@ -40,7 +41,16 @@ public class UserAdminService {
         List<UserSearchAdminDto> userSearchAdminDtos = new ArrayList<UserSearchAdminDto>();
         for (User user : userPage.getContent())
             userSearchAdminDtos.add(new UserSearchAdminDto(user, getUserStatusMessage(user)));
-        return new UserSearchAdminResponseDto(userSearchAdminDtos, userPage.getTotalPages(), userPage.getNumber() + 1);
+        return new UserSearchAdminResponseDto(userSearchAdminDtos, userPage.getTotalPages());
+    }
+
+    @Transactional(readOnly = true)
+    public UserSearchAdminResponseDto searchByIntraId(Pageable pageable, String intraId) {
+        Page<User> userPage = userAdminRepository.findByIntraId(pageable, intraId);
+        List<UserSearchAdminDto> userSearchAdminDtos = new ArrayList<UserSearchAdminDto>();
+        for (User user : userPage.getContent())
+            userSearchAdminDtos.add(new UserSearchAdminDto(user, getUserStatusMessage(user)));
+        return new UserSearchAdminResponseDto(userSearchAdminDtos, userPage.getTotalPages());
     }
 
     /* 문자열을 포함하는 intraId를 가진 유저 찾기 */
@@ -50,7 +60,7 @@ public class UserAdminService {
         List<UserSearchAdminDto> userSearchAdminDtos = new ArrayList<UserSearchAdminDto>();
         for (User user : userPage.getContent())
             userSearchAdminDtos.add(new UserSearchAdminDto(user, getUserStatusMessage(user)));
-        return new UserSearchAdminResponseDto(userSearchAdminDtos, userPage.getTotalPages(), userPage.getNumber() + 1);
+        return new UserSearchAdminResponseDto(userSearchAdminDtos, userPage.getTotalPages());
     }
 
     @Transactional(readOnly = true)

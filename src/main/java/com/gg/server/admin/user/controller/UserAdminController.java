@@ -1,6 +1,7 @@
 package com.gg.server.admin.user.controller;
 
 import com.gg.server.admin.user.dto.UserDetailAdminResponseDto;
+import com.gg.server.admin.user.dto.UserSearchAdminRequestDto;
 import com.gg.server.admin.user.dto.UserSearchAdminResponseDto;
 import com.gg.server.admin.user.service.UserAdminService;
 import com.gg.server.global.dto.PageRequestDto;
@@ -20,15 +21,17 @@ public class UserAdminController {
     private final UserAdminService userAdminService;
 
     @GetMapping
-    public UserSearchAdminResponseDto userSearchAll(@ModelAttribute @Valid PageRequestDto pageRequestDto,
-                                                    @RequestParam(required = false) String intraId) {
-        Pageable pageable = PageRequest.of(pageRequestDto.getPage() - 1,
-                pageRequestDto.getSize(),
+    public UserSearchAdminResponseDto userSearchAll(@ModelAttribute @Valid UserSearchAdminRequestDto searchRequestDto) {
+        Pageable pageable = PageRequest.of(searchRequestDto.getPage() - 1,
+                searchRequestDto.getSize(),
                 Sort.by("intraId").ascending());
-        if (intraId == null)
-            return userAdminService.searchAll(pageable);
+        UserSearchAdminResponseDto responseDto;
+        if (searchRequestDto.getUserFilter() != null)
+            return userAdminService.searchByIntraId(pageable, searchRequestDto.getUserFilter());
+        else if (searchRequestDto.getIntraId() != null)
+            return userAdminService.findByPartsOfIntraId(searchRequestDto.getIntraId(), pageable);
         else
-            return userAdminService.findByPartsOfIntraId(intraId, pageable);
+            return userAdminService.searchAll(pageable);
     }
 
     @GetMapping("/{intraId}")

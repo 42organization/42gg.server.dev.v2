@@ -3,12 +3,14 @@ package com.gg.server.global.dto;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 @Getter
+@Setter
 public class PageRequestDto {
 
     @Min(value = 1, message = "page must be greater than 0")
@@ -21,6 +23,9 @@ public class PageRequestDto {
 
     public PageRequestDto(Integer page, Integer size) {
         this.page = page;
-        this.size = size;
+        if (size == null)
+            this.size = 20;
+        else
+            this.size = size;
     }
 }
