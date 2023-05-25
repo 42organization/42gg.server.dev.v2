@@ -50,4 +50,21 @@ public class GameResultResDto {
                 ", team2=" + team2 +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        } else if (!(obj instanceof GameResultResDto)) {
+            return false;
+        } else {
+            GameResultResDto other = (GameResultResDto) obj;
+            return this.gameId.equals(other.getGameId())
+                    && this.status.equals(other.getStatus())
+                    && this.mode.equals(other.getMode())
+                    && this.time.equals(other.getTime())
+                    && this.team1.equals(other.getTeam1())
+                    && this.team2.equals(other.getTeam2());
+        }
+    }
 }

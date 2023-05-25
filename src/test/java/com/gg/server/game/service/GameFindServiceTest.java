@@ -1,23 +1,19 @@
 package com.gg.server.game.service;
 
 import com.gg.server.domain.game.data.Game;
+import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.dto.GameListResDto;
+import com.gg.server.domain.game.dto.GameResultResDto;
+import com.gg.server.domain.game.dto.GameTeamUser;
 import com.gg.server.domain.game.service.GameFindService;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
-import com.gg.server.domain.pchange.data.PChange;
-import com.gg.server.domain.rank.data.Rank;
 import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.Season;
-import com.gg.server.domain.team.data.Team;
-import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.dto.UserDto;
-import com.gg.server.domain.user.type.RacketType;
-import com.gg.server.domain.user.type.RoleType;
-import com.gg.server.domain.user.type.SnsType;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import lombok.RequiredArgsConstructor;
@@ -27,12 +23,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
 @RequiredArgsConstructor
@@ -47,6 +46,8 @@ public class GameFindServiceTest {
     AuthTokenProvider tokenProvider;
     @Autowired
     RankRedisRepository rankRedisRepository;
+    @Autowired
+    GameRepository gameRepository;
 
     @BeforeEach
     void init() {
@@ -104,6 +105,12 @@ public class GameFindServiceTest {
     void 일반game목록조회() {
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startTime"));
         GameListResDto response = gameFindService.getNormalGameList(pageable);
-        System.out.println(response.getGames().size());
+        Slice<Game> games = gameRepository.findAllByModeAndStatus(Mode.NORMAL, StatusType.END, pageable);
+        GameListResDto expect = new GameListResDto(getGameResultList(games.getContent().stream().map(Game::getId).collect(Collectors.toList())), games.isLast());
+        assertThat(response).isEqualTo(expect);
+    }
+    private List<GameResultResDto> getGameResultList(List<Long> games) {
+        List<GameTeamUser> teamViews = gameRepository.findTeamsByGameIsIn(games);
+        return teamViews.stream().map(GameResultResDto::new).collect(Collectors.toList());
     }
 }

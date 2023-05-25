@@ -8,7 +8,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
 @Getter
-@Setter
 public class NormalGameListReqDto extends PageRequestDto {
     private String intraId;
 

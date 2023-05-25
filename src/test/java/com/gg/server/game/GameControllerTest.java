@@ -301,7 +301,7 @@ public class GameControllerTest {
         System.out.println(result.getGames().size() +", " + result.getIsLast());
         System.out.println(expect.getGames().size() + ", " + expect.getIsLast());
         assertThat(result.getGames().size()).isEqualTo(expect.getGames().size());
-        assertThat(result.getGames().get(result.getGames().size() - 1).getGameId().equals(expect.getGames().get(expect.getGames().size() - 1).getGameId()));
+        assertThat(result.getGames().get(result.getGames().size() - 1).getGameId()).isEqualTo(expect.getGames().get(expect.getGames().size() - 1).getGameId());
         assertThat(result.getIsLast()).isEqualTo(expect.getIsLast());
     }
 

@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-@Setter
 public class GameListReqDto extends NormalGameListReqDto {
     private StatusType status;
     public GameListReqDto(Integer pageNum, Integer pageSize, String nickname, StatusType status) {

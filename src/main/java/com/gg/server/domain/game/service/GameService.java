@@ -63,8 +63,11 @@ public class GameService {
         if (teamUsers.size() == 2 &&
                 (game.getStatus() == StatusType.WAIT || game.getStatus() == StatusType.LIVE)) {
             expUpdates(game, teamUsers);
+            log.info("3");
             pChangeService.addPChange(game, teamUsers.get(0).getUser(), null);
+            log.info("5");
             pChangeService.addPChange(game, teamUsers.get(1).getUser(), null);
+            log.info("6");
             return true;
         } else if (teamUsers.size() != 2) {
             throw new InvalidParameterException("team 이 잘못되었습니다.", ErrorCode.VALID_FAILED);
@@ -101,10 +104,12 @@ public class GameService {
                 teamUsers) {
             expUpdate(tu, time);
         }
+        log.info("1");
         if (game.getStatus() == StatusType.LIVE) {
             game.updateStatus();
         }
         game.updateStatus();
+        log.info("2");
     }
 
     private void expUpdate(TeamUser teamUser, LocalDateTime time) {

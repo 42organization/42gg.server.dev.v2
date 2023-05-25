@@ -23,6 +23,7 @@ public class PChangeService {
 
     @Transactional
     public void addPChange(Game game, User user, Integer pppResult) {
+        log.info("4");
         pChangeRepository.save(new PChange(game, user, pppResult));
     }
 

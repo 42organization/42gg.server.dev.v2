@@ -15,4 +15,17 @@ public class PPPChangeResultResDto extends ExpChangeResultResDto {
         this.changedPpp = afterPpp - beforePpp;
         this.beforePpp = beforePpp;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        } else if (!(obj instanceof PPPChangeResultResDto)) {
+            return false;
+        } else {
+            PPPChangeResultResDto other = (PPPChangeResultResDto) obj;
+            return this.changedPpp.equals(other.getChangedPpp())
+                    && this.beforePpp.equals(other.getBeforePpp());
+        }
+    }
 }
