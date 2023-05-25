@@ -1,5 +1,6 @@
 package com.gg.server.domain.rank.data;
 
+import com.gg.server.admin.user.dto.UserUpdateAdminRequestDto;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.user.User;
 import com.gg.server.global.utils.BaseTimeEntity;
@@ -76,5 +77,11 @@ public class Rank extends BaseTimeEntity implements Serializable {
 
     public void updatePpp(Integer changePpp) {
         this.ppp += changePpp;
+    }
+
+    public void modifyUserRank(UserUpdateAdminRequestDto userUpdateAdminRequestDto) {
+        this.ppp = userUpdateAdminRequestDto.getPpp();
+        this.wins = userUpdateAdminRequestDto.getWins();
+        this.losses = userUpdateAdminRequestDto.getLosses();
     }
 }
