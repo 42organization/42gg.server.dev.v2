@@ -89,17 +89,15 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserLiveResponseDto getUserLiveDetail(UserDto user) {
         int notiCnt = notiRepository.countNotCheckedNotiByUser(user.getId());
-        String event = null;
-        String currentMatchMode = null;
         Optional<Game> optionalGame = gameRepository.getLatestGameByUser(user.getId());
         if (!optionalGame.isEmpty()) {
             Game latestGame = optionalGame.get();
             if (latestGame.getStatus() == StatusType.END)
-                return new UserLiveResponseDto(notiCnt, null, null);
-            event = (latestGame.getStatus() == StatusType.BEFORE) ? "match" : "game";
-            currentMatchMode = latestGame.getMode().getCode();
+                return new UserLiveResponseDto(notiCnt, null, null, null);
+            String event = (latestGame.getStatus() == StatusType.BEFORE) ? "match" : "game";
+            return new UserLiveResponseDto(notiCnt, event, latestGame.getMode(), latestGame.getId());
         }
-        return new UserLiveResponseDto(notiCnt, event, currentMatchMode);
+        return new UserLiveResponseDto(notiCnt, null, null, null);
     }
 
     @Transactional(readOnly = true)
