@@ -10,7 +10,6 @@ import java.util.List;
 public class FeedbackListAdminResponseDto {
     private List<FeedbackAdminResponseDto> feedbackList;
     private int totalPage;
-    private int currentPage;
 
     public FeedbackListAdminResponseDto(List<FeedbackAdminResponseDto> newDtos, int totalPage){
         this.feedbackList = newDtos;
