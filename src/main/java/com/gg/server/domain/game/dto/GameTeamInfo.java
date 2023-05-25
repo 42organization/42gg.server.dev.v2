@@ -45,4 +45,21 @@ public class GameTeamInfo {
         }
         this.matchTeamsInfo = new MatchTeamsInfoDto(infos, myTeamId);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        } else if (!(obj instanceof GameTeamInfo)) {
+            return false;
+        } else {
+            GameTeamInfo other = (GameTeamInfo) obj;
+            return this.status.equals(other.getStatus())
+                    && this.gameId.equals(other.getGameId())
+                    && this.isScoreExist.equals(other.getIsScoreExist())
+                    && this.mode.equals(other.getMode())
+                    && this.startTime.equals(other.getStartTime())
+                    && this.matchTeamsInfo.equals(other.getMatchTeamsInfo());
+        }
+    }
 }

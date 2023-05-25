@@ -1,5 +1,6 @@
 package com.gg.server.domain.team.dto;
 
+import com.gg.server.domain.game.dto.GameListResDto;
 import com.gg.server.global.utils.ExpLevelCalculator;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,5 +25,19 @@ public class TeamUserInfoDto {
                 ", userImageUri='" + userImageUri + '\'' +
                 ", level=" + level +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        } else if (!(obj instanceof TeamUserInfoDto)) {
+            return false;
+        } else {
+            TeamUserInfoDto other = (TeamUserInfoDto) obj;
+            return this.intraId.equals(other.getIntraId())
+                    && this.level.equals(other.getLevel())
+                    && this.userImageUri.equals(other.getUserImageUri());
+        }
     }
 }

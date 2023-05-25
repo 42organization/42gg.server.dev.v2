@@ -1,6 +1,7 @@
 package com.gg.server.domain.team.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.gg.server.domain.game.dto.GameListResDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -27,5 +28,19 @@ public class TeamUserListDto {
         return "TeamUserListDto{" +
                 "players=" + players +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        } else if (!(obj instanceof TeamUserListDto)) {
+            return false;
+        } else {
+            TeamUserListDto other = (TeamUserListDto) obj;
+            return (isWin == null || this.isWin.equals(other.getIsWin()))
+                    && (score == null || this.score.equals(other.getScore()))
+                    && this.players.equals(other.getPlayers());
+        }
     }
 }
