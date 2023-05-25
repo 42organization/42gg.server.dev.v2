@@ -59,7 +59,7 @@ public class SlotAdminControllerFailTest {
     @Test
     @DisplayName("fail[Put]/pingpong/admin/slot-management")
     void failModifySlotSetting() throws Exception {
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         SlotManagement test = SlotManagement.builder()
                 .pastSlotTime(4)
                 .futureSlotTime(1)

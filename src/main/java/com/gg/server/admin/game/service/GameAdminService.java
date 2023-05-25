@@ -14,6 +14,7 @@ import com.gg.server.domain.pchange.data.PChange;
 import com.gg.server.domain.pchange.data.PChangeRepository;
 
 import com.gg.server.domain.season.data.Season;
+import com.gg.server.domain.season.exception.SeasonNotFoundException;
 import com.gg.server.domain.team.data.Team;
 import com.gg.server.domain.user.User;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 @Service
 @RequiredArgsConstructor
@@ -46,7 +46,7 @@ public class GameAdminService {
 
     @Transactional(readOnly = true)
     public GameLogListAdminResponseDto findGamesBySeasonId(Long seasonId, Pageable pageable){
-        Season season = seasonAdminRepository.findById(seasonId).orElseThrow(()-> new GameNotFoundException());
+        Season season = seasonAdminRepository.findById(seasonId).orElseThrow(()-> new SeasonNotFoundException());
         Page<Game> games = gameAdminRepository.findBySeason(pageable, season);   //시즌 id로 게임들 찾아오기
         return createGameLogAdminDto(games);
     }
@@ -66,7 +66,7 @@ public class GameAdminService {
             }
             gameLogAdminDtoList.add(new GameLogAdminDto(game, gameTeamAdminDtoList));
         }
-        return new GameLogListAdminResponseDto(gameLogAdminDtoList, gamePage.getTotalPages(), gamePage.getNumber() + 1);
+        return new GameLogListAdminResponseDto(gameLogAdminDtoList, gamePage.getTotalPages());
     }
 
     @Transactional(readOnly = true)

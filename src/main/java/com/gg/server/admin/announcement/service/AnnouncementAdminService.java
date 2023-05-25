@@ -27,7 +27,7 @@ public class AnnouncementAdminService {
         Page<AnnouncementAdminResponseDto> responseDtos = allAnnouncements.map(AnnouncementAdminResponseDto::new);
 
         return new AnnouncementAdminListResponseDto(responseDtos.getContent(),
-                responseDtos.getTotalPages(), responseDtos.getNumber() + 1);
+                responseDtos.getTotalPages());
     }
 
     @Transactional

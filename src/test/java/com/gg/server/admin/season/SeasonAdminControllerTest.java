@@ -110,9 +110,8 @@ class SeasonAdminControllerTest {
     @Test
     @DisplayName("[GET]pingpong/admin/seasons")
     void getAdminSeasons() throws Exception {
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
-
 
         String contentAsString = mockMvc.perform(MockMvcRequestBuilders.get("/pingpong/admin/seasons")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
@@ -134,7 +133,7 @@ class SeasonAdminControllerTest {
     @Test
     @DisplayName("[POST]/pingpong/admin/seasons")
     void createSeasons() throws Exception {
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
         SeasonCreateRequestDto seasonCreateReqeustDto = new SeasonCreateRequestDto(
@@ -164,7 +163,7 @@ class SeasonAdminControllerTest {
     @Test
     @DisplayName("[Delete]/pingpong/admin/season/{seasonId}")
     void deleteSeasons() throws Exception {
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
         Season newSeason = Season.builder()
@@ -191,7 +190,6 @@ class SeasonAdminControllerTest {
 
         try {
             String redisHashKey = RedisKeyManager.getHashKey(dbSeasonId);
-
             if (rankRedisRepository.findRankByUserId(redisHashKey, userId) != null)
                 throw new SeasonForbiddenException();
         }
@@ -203,7 +201,7 @@ class SeasonAdminControllerTest {
     @Test
     @DisplayName("[Put]/pingpong/admin/seasons/{seasonId}")
     void updateSeasons() throws Exception {
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
         Season newSeason = Season.builder()

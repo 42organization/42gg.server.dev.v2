@@ -1,6 +1,7 @@
 package com.gg.server.admin.penalty.dto;
 
-import com.gg.server.admin.penalty.data.RedisPenaltyUser;
+import com.gg.server.domain.penalty.data.Penalty;
+import com.gg.server.domain.penalty.data.RedisPenaltyUser;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,5 +19,11 @@ public class PenaltyUserResponseDto {
         this.intraId = penaltyUser.getIntraId();
         this.reason = penaltyUser.getReason();
         this.releaseTime = penaltyUser.getReleaseTime();
+    }
+
+    public PenaltyUserResponseDto(Penalty penalty) {
+        this.intraId = penalty.getUser().getIntraId();
+        this.reason = penalty.getMessage();
+        this.releaseTime = penalty.getStartTime().plusHours(penalty.getPenaltyTime());
     }
 }

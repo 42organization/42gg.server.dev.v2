@@ -2,7 +2,6 @@ package com.gg.server.game.service;
 
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
-import com.gg.server.domain.game.dto.GameTeamUser;
 import com.gg.server.domain.game.service.GameStatusService;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
@@ -16,27 +15,22 @@ import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
-import com.gg.server.global.scheduler.GameStatusScheduler;
 import com.gg.server.utils.TestDataUtils;
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
 @RequiredArgsConstructor
-public class GameServiceTest {
+@Transactional
+public class GameStatusServiceTest {
     @Autowired
     private GameRepository gameRepository;
     @Autowired private SeasonRepository seasonRepository;
@@ -70,7 +64,6 @@ public class GameServiceTest {
         liveGame = gameRepository.save(new Game(season, StatusType.LIVE, Mode.RANK, startTime.minusMinutes(15), startTime));
     }
     @Test
-    @Transactional
     void gameBefore상태변경테스트() throws Exception{
         System.out.println("g1.startTime: " + game1.getStartTime());
         System.out.println(game1.getStatus());
@@ -79,14 +72,12 @@ public class GameServiceTest {
     }
 
     @Test
-    @Transactional
     void gameLIVE상태변경테스트() throws Exception{
         gameStatusService.updateLiveToWaitStatus();
         assertThat(liveGame.getStatus()).isEqualTo(StatusType.WAIT);
     }
 
     @Test
-    @Transactional
     void game5분전알림테스트() throws Exception{
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime startTime = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), now.getMinute());

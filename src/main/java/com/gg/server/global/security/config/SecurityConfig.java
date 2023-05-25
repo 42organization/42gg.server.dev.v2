@@ -50,7 +50,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                     .and()
                     .authorizeRequests()
-                        .antMatchers(HttpMethod.GET, "/admin").hasRole("ADMIN")
+                        .antMatchers("/pingpong/admin/**").hasRole("ADMIN")
                         .antMatchers("/user").hasRole("USER")
                     .antMatchers("/login", "/oauth2/authorization/**", "/",
                             "/pingpong/users/accesstoken",

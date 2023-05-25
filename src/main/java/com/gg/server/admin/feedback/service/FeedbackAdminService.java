@@ -22,7 +22,7 @@ public class FeedbackAdminService {
         Page<FeedbackAdminResponseDto> feedbackAdminResponseDtos = feedbacks.map(FeedbackAdminResponseDto::new);
 
         FeedbackListAdminResponseDto responseDto = new FeedbackListAdminResponseDto(feedbackAdminResponseDtos.getContent(),
-                feedbackAdminResponseDtos.getTotalPages(), feedbackAdminResponseDtos.getNumber() + 1);
+                feedbackAdminResponseDtos.getTotalPages());
         return responseDto;
     }
 
@@ -41,7 +41,7 @@ public class FeedbackAdminService {
         Page<Feedback> feedbacks = feedbackAdminRepository.findFeedbacksByUserIntraId(intraId, pageable);
         Page<FeedbackAdminResponseDto> feedbackAdminResponseDtos = feedbacks.map(FeedbackAdminResponseDto::new);
         FeedbackListAdminResponseDto responseDto = new FeedbackListAdminResponseDto(feedbackAdminResponseDtos.getContent(),
-                feedbackAdminResponseDtos.getTotalPages(), feedbackAdminResponseDtos.getNumber() + 1);
+                feedbackAdminResponseDtos.getTotalPages());
         return responseDto;
     }
 }
