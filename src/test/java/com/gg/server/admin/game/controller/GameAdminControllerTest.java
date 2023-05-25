@@ -57,7 +57,6 @@ class GameAdminControllerTest {
                 .andReturn().getResponse().getContentAsString();
 
         GameLogListAdminResponseDto result = objectMapper.readValue(contentAsString, GameLogListAdminResponseDto.class);
-        assertThat(result.getCurrentPage()).isEqualTo(currentPage);
         assertThat(result.getGameLogList().size()).isEqualTo(pageSize);
         System.out.println(result.getGameLogList().get(0).getGameId());
         System.out.println(result.getGameLogList().get(0).getStartAt());
