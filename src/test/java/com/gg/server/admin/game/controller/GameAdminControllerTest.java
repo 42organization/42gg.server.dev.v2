@@ -42,7 +42,7 @@ class GameAdminControllerTest {
     @Test
     @DisplayName("[Get]/pingpong/admin/games/users?intraId=${intraId}&page=${pageNumber}&size={sizeNum}")
     void getUserGameList() throws Exception {
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
         Integer currentPage = 2;

@@ -3,6 +3,7 @@ package com.gg.server.admin.announcement.controller;
 import com.gg.server.admin.announcement.dto.AnnouncementAdminAddDto;
 import com.gg.server.admin.announcement.dto.AnnouncementAdminListResponseDto;
 import com.gg.server.admin.announcement.service.AnnouncementAdminService;
+import com.gg.server.global.dto.PageRequestDto;
 import lombok.AllArgsConstructor;
 
 import org.springframework.data.domain.PageRequest;
@@ -14,7 +15,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 
 @RestController
 @AllArgsConstructor
@@ -25,9 +25,9 @@ public class AnnouncementAdminController {
 
     @GetMapping("/announcement")
     public ResponseEntity<AnnouncementAdminListResponseDto> getAnnouncementList(
-            @RequestParam(defaultValue = "1") @Min(1) int page, @RequestParam(defaultValue = "5") @Min(1) int size) {
+            @ModelAttribute @Valid PageRequestDto anReq) {
 
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("createdAt").descending());
+        Pageable pageable = PageRequest.of(anReq.getPage() - 1, anReq.getSize(), Sort.by("createdAt").descending());
 
         return ResponseEntity.ok()
                 .body(announcementAdminService.findAllAnnouncement(pageable));

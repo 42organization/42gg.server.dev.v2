@@ -23,4 +23,17 @@ public class GameListResDto {
                 ", isLast=" + isLast +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        } else if (!(obj instanceof GameListResDto)) {
+            return false;
+        } else {
+            GameListResDto other = (GameListResDto) obj;
+            return this.isLast == other.getIsLast()
+                    && this.games.equals(other.getGames());
+        }
+    }
 }

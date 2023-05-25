@@ -2,6 +2,7 @@ package com.gg.server.domain.game.dto.req;
 
 import com.gg.server.global.dto.PageRequestDto;
 import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;

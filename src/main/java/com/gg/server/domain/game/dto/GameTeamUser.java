@@ -13,7 +13,11 @@ public interface GameTeamUser {
     String getT1IntraId();
     String getT1Image();
     Integer getT1Exp();
+    Integer getT1Score();
+    Boolean getT1IsWin();
     String getT2IntraId();
     String getT2Image();
     Integer getT2Exp();
+    Integer getT2Score();
+    Boolean getT2IsWin();
 }

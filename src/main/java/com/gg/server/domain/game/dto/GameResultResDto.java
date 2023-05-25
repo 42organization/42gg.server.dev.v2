@@ -27,10 +27,17 @@ public class GameResultResDto {
         this.status = game.getStatus().name();//name -> 대문자
         this.time = game.getStartTime();
         this.mode = game.getMode();
-        team1 = new TeamUserListDto(Arrays.asList(
-                new TeamUserInfoDto(game.getT1IntraId(), game.getT1Image(), game.getT1Exp())));
-        team2 = new TeamUserListDto(Arrays.asList(
-                new TeamUserInfoDto(game.getT2IntraId(), game.getT2Image(), game.getT2Exp())));
+        if (mode == Mode.NORMAL) {
+            team1 = new TeamUserListDto(Arrays.asList(
+                    new TeamUserInfoDto(game.getT1IntraId(), game.getT1Image(), game.getT1Exp())), null, null);
+            team2 = new TeamUserListDto(Arrays.asList(
+                    new TeamUserInfoDto(game.getT2IntraId(), game.getT2Image(), game.getT2Exp())), null, null);
+        } else {
+            team1 = new TeamUserListDto(Arrays.asList(
+                    new TeamUserInfoDto(game.getT1IntraId(), game.getT1Image(), game.getT1Exp())), game.getT1IsWin(), game.getT1Score());
+            team2 = new TeamUserListDto(Arrays.asList(
+                    new TeamUserInfoDto(game.getT2IntraId(), game.getT2Image(), game.getT2Exp())), game.getT2IsWin(), game.getT2Score());
+        }
     }
 
     @Override
@@ -42,5 +49,22 @@ public class GameResultResDto {
                 ", team1=" + team1 +
                 ", team2=" + team2 +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        } else if (!(obj instanceof GameResultResDto)) {
+            return false;
+        } else {
+            GameResultResDto other = (GameResultResDto) obj;
+            return this.gameId.equals(other.getGameId())
+                    && this.status.equals(other.getStatus())
+                    && this.mode.equals(other.getMode())
+                    && this.time.equals(other.getTime())
+                    && this.team1.equals(other.getTeam1())
+                    && this.team2.equals(other.getTeam2());
+        }
     }
 }

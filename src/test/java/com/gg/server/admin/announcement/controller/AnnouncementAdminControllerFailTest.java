@@ -41,7 +41,7 @@ public class AnnouncementAdminControllerFailTest {
     @Test
     @DisplayName("fail currentPage[Get]/pingpong/admin/announcement")
     void failAnnouncementList1() throws Exception {
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
         Integer currentPage = 0;
@@ -58,7 +58,7 @@ public class AnnouncementAdminControllerFailTest {
     @Test
     @DisplayName("fail pageSize[Get]/pingpong/admin/announcement")
     void failAnnouncementList2() throws Exception {
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
         Integer currentPage = 2;

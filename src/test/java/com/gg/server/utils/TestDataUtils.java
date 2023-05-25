@@ -61,6 +61,20 @@ public class TestDataUtils {
         return tokenProvider.createToken(user.getId());
     }
 
+    public String getAdminLoginAccessToken() {
+        User user = User.builder()
+                .eMail("email")
+                .intraId("intraId")
+                .imageUri("image")
+                .racketType(RacketType.PENHOLDER)
+                .snsNotiOpt(SnsType.NONE)
+                .roleType(RoleType.ADMIN)
+                .totalExp(1000)
+                .build();
+        userRepository.save(user);
+        return tokenProvider.createToken(user.getId());
+    }
+
     public User createNewUser(){
         String randomId = UUID.randomUUID().toString().substring(0, 30);
         User user = User.builder()
