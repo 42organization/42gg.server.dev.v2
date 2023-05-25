@@ -115,6 +115,7 @@ public class GameControllerTest {
             List<TeamUser> teams = new ArrayList<>();
             teams.add(teamUserRepository.save(new TeamUser(team1, user1)));
             teams.add(teamUserRepository.save(new TeamUser(team2, user2)));
+            System.out.println("===========");
             gameService.expUpdates(game, teams);
             rankRedisService.updateRankRedis(teams, season.getId(), game);
             game = gameRepository.save(new Game(season, StatusType.WAIT, Mode.NORMAL, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
