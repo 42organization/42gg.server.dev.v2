@@ -1,4 +1,4 @@
-package com.gg.server.admin.penalty.data;
+package com.gg.server.domain.penalty.data;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -33,5 +33,10 @@ public class RedisPenaltyUser {
         this.releaseTime = releaseTime;
         this.startTime = startTime;
         this.reason = reason;
+    }
+
+    public void updateReleaseTime(LocalDateTime releaseTime, Integer penaltyTime) {
+        this.releaseTime = releaseTime;
+        this.penaltyTime = penaltyTime;
     }
 }

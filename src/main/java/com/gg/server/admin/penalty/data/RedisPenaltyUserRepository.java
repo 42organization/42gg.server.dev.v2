@@ -1,6 +1,7 @@
 package com.gg.server.admin.penalty.data;
 
 import com.gg.server.admin.penalty.type.PenaltyKey;
+import com.gg.server.domain.penalty.data.RedisPenaltyUser;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -42,7 +43,16 @@ public class RedisPenaltyUserRepository {
                 .collect(Collectors.toList());
         return users;
     }
-    public void deletePenaltyUser(String intraId) {
-        redisTemplate.delete(PenaltyKey.USER_ADMIN + intraId);
+
+    public void deletePenaltyInUser(RedisPenaltyUser penaltyUser, Integer penaltyTime) {
+        LocalDateTime newReleaseTime = penaltyUser.getReleaseTime().minusHours(penaltyTime);
+        penaltyUser.updateReleaseTime(newReleaseTime, penaltyUser.getPenaltyTime() - penaltyTime);
+        Duration duration = Duration.between(LocalDateTime.now(), newReleaseTime);
+        if (duration.isNegative()) {
+            redisTemplate.delete(PenaltyKey.USER_ADMIN + penaltyUser.getIntraId());
+            return;
+        }
+        redisTemplate.opsForValue().set(PenaltyKey.USER_ADMIN + penaltyUser.getIntraId(), penaltyUser,
+                duration.getSeconds(), TimeUnit.SECONDS);
     }
 }
