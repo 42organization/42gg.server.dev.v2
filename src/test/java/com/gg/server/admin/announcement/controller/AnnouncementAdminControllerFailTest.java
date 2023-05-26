@@ -42,7 +42,7 @@ public class AnnouncementAdminControllerFailTest {
     @DisplayName("fail currentPage[Get]/pingpong/admin/announcement")
     void failAnnouncementList1() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
-        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
 
         Integer currentPage = 0;
         Integer pageSize = 5;//페이지 사이즈 크기가 실제 디비 정보보다 큰지 확인할 것
@@ -59,7 +59,7 @@ public class AnnouncementAdminControllerFailTest {
     @DisplayName("fail pageSize[Get]/pingpong/admin/announcement")
     void failAnnouncementList2() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
-        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
 
         Integer currentPage = 2;
         Integer pageSize = 0;//페이지 사이즈 크기가 실제 디비 정보보다 큰지 확인할 것

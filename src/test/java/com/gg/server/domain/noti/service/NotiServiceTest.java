@@ -47,7 +47,7 @@ class NotiServiceTest {
     public void 유저매칭알림전송테스트() throws Exception {
         //given
         String accessToken = testDataUtils.getLoginAccessToken();
-        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
         User user = userRepository.getById(userId);
         UserDto userDto = UserDto.from(user);
         LocalDateTime now = LocalDateTime.now();
