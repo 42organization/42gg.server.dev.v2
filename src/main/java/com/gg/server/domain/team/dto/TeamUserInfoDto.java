@@ -46,8 +46,8 @@ public class TeamUserInfoDto {
             return this.intraId.equals(other.getIntraId())
                     && this.level.equals(other.getLevel())
                     && this.userImageUri.equals(other.getUserImageUri())
-                    && this.wins.equals(other.getWins())
-                    && this.losses.equals(other.getLosses());
+                    && (this.wins == other.getWins() || this.wins.equals(other.getWins()))
+                    && (this.losses == other.getLosses() || this.losses.equals(other.getLosses()));
         }
     }
 }
