@@ -9,10 +9,12 @@ import com.gg.server.domain.match.data.RedisMatchUser;
 import com.gg.server.domain.match.data.RedisMatchTimeRepository;
 import com.gg.server.domain.match.data.RedisMatchUserRepository;
 import com.gg.server.domain.match.exception.EnrolledSlotException;
+import com.gg.server.domain.match.exception.PenaltyUserSlotException;
 import com.gg.server.domain.match.exception.SlotCountException;
 import com.gg.server.domain.match.exception.SlotNotFoundException;
 import com.gg.server.domain.match.type.Option;
 import com.gg.server.domain.noti.service.NotiService;
+import com.gg.server.domain.penalty.service.PenaltyService;
 import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
@@ -50,9 +52,13 @@ public class MatchService {
     private final TeamUserRepository teamUserRepository;
     private final UserRepository userRepository;
     private final NotiService notiService;
+    private final PenaltyService penaltyService;
 
     @Transactional
     public void makeMatch(UserDto userDto, Option option, LocalDateTime startTime) {
+        if (penaltyService.isPenaltyUser(userDto.getIntraId())) {
+            throw new PenaltyUserSlotException();
+        }
         Season currentSeason = seasonFindService.findCurrentSeason(LocalDateTime.now());
         RankRedis rank = rankRedisRepository
                 .findRankByUserId(RedisKeyManager.getHashKey(currentSeason.getId()), userDto.getId());
@@ -86,6 +92,7 @@ public class MatchService {
             List<User> enemyTeam = userRepository.findEnemyByGameAndUser(game.get().getId(), userDto.getId());
             enemyTeam.forEach(enemy -> notiService.createMatchCancel(enemy, startTime));
             gameRepository.delete(game.get());//cascade 테스트
+            penaltyService.givePenalty(userDto, 1);
             //취소한 user에게 패널티 추가
             return;
         }
