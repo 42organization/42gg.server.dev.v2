@@ -1,43 +1,42 @@
 package com.gg.server.game.service;
 
+
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
-import com.gg.server.domain.game.dto.GameListResDto;
-import com.gg.server.domain.game.dto.GameResultResDto;
-import com.gg.server.domain.game.dto.GameTeamUser;
 import com.gg.server.domain.game.service.GameFindService;
-import com.gg.server.domain.game.type.Mode;
-import com.gg.server.domain.game.type.StatusType;
+import com.gg.server.domain.pchange.data.PChange;
+import com.gg.server.domain.pchange.data.PChangeRepository;
 import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.Season;
+import com.gg.server.domain.team.data.Team;
+import com.gg.server.domain.team.data.TeamRepository;
+import com.gg.server.domain.team.data.TeamUser;
+import com.gg.server.domain.team.data.TeamUserRepository;
 import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
 @RequiredArgsConstructor
 @Transactional
-public class GameFindServiceTest {
+@Slf4j
+public class GameDBTest {
 
     @Autowired
     GameFindService gameFindService;
@@ -49,6 +48,14 @@ public class GameFindServiceTest {
     RankRedisRepository rankRedisRepository;
     @Autowired
     GameRepository gameRepository;
+    @Autowired
+    TeamRepository teamRepository;
+    @Autowired
+    TeamUserRepository teamUserRepository;
+    @Autowired
+    PChangeRepository pChangeRepository;
+    @Autowired
+    EntityManager em;
 
     @BeforeEach
     void init() {
@@ -103,15 +110,19 @@ public class GameFindServiceTest {
 //        teamUserRepository.save(new TeamUser(team2, user2));
     }
     @Test
-    void 일반game목록조회() {
-        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startTime"));
-        GameListResDto response = gameFindService.getNormalGameList(pageable);
-        Slice<Game> games = gameRepository.findAllByModeAndStatus(Mode.NORMAL, StatusType.END, pageable);
-        GameListResDto expect = new GameListResDto(getGameResultList(games.getContent().stream().map(Game::getId).collect(Collectors.toList())), games.isLast());
-        assertThat(response).isEqualTo(expect);
-    }
-    private List<GameResultResDto> getGameResultList(List<Long> games) {
-        List<GameTeamUser> teamViews = gameRepository.findTeamsByGameIsIn(games);
-        return teamViews.stream().map(GameResultResDto::new).collect(Collectors.toList());
+    @DisplayName(value = "Cascade 종속삭제테스트")
+    @Transactional
+    public void Cascade종속삭제테스트() throws Exception {
+        pChangeRepository.deleteAll();
+        gameRepository.deleteAll();
+        em.flush();
+        List<Game> gameList = gameRepository.findAll();
+        List<Team> teamList = teamRepository.findAll();
+        List<TeamUser> teamUserList = teamUserRepository.findAll();
+        log.info("GAME LIST SIZE : " + Integer.toString(gameList.size()));
+        log.info("TEAM LIST SIZE: " + Integer.toString(teamList.size()));
+        log.info("TEAM_USER LIST SIZE: " + Integer.toString(teamUserList.size()));
+        Assertions.assertThat(teamList.size()).isEqualTo(0);
+        Assertions.assertThat(teamUserList.size()).isEqualTo(0);
     }
 }

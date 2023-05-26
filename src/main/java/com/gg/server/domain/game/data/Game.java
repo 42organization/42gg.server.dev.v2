@@ -3,11 +3,13 @@ package com.gg.server.domain.game.data;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
+import com.gg.server.domain.team.data.Team;
 import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -39,6 +41,9 @@ public class Game {
 
     @Column(name = "end_time")
     private LocalDateTime endTime;
+
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
+    private List<Team> teams;
 
     public Game(Season season, StatusType status, Mode mode, LocalDateTime startTime, LocalDateTime endTime) {
         this.season = season;
