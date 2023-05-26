@@ -18,10 +18,10 @@ public class TeamUserInfoDto {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer losses;
 
-    public TeamUserInfoDto(String intraId, String userImageUri, Integer level, Integer wins, Integer losses) {
+    public TeamUserInfoDto(String intraId, String userImageUri, Integer exp, Integer wins, Integer losses) {
         this.intraId = intraId;
         this.userImageUri = userImageUri;
-        this.level = level;
+        this.level = ExpLevelCalculator.getLevel(exp);
         this.wins = wins;
         this.losses = losses;
     }
