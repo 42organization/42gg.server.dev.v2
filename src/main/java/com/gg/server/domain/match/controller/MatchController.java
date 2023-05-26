@@ -37,7 +37,7 @@ public class MatchController {
     }
     @DeleteMapping("match")
     public ResponseEntity deleteUserMatch(@RequestParam("startTime")
-                                              @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") LocalDateTime startTime,
+                                              @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime startTime,
                                           @Parameter(hidden = true) @Login UserDto user) {
         matchService.cancelMatch(user, startTime);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
