@@ -21,6 +21,7 @@ import com.gg.server.domain.user.exception.TokenNotValidException;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.SnsType;
 import com.gg.server.global.exception.ErrorCode;
+import com.gg.server.global.security.config.properties.AppProperties;
 import com.gg.server.global.security.jwt.repository.JwtRedisRepository;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.global.utils.ExpLevelCalculator;
@@ -53,12 +54,25 @@ public class UserService {
     private final SeasonFindService seasonFindService;
     private final PChangeRepository pChangeRepository;
     private final RankFindService rankFindService;
+    private final AppProperties appProperties;
 
-    public String regenerate(String refreshToken) {
-        Long userId = jwtRedisRepository.getUserIdByRefToken(refreshToken);
+    public UserJwtTokenDto regenerate(String refreshToken) {
         if (tokenProvider.getTokenClaims(refreshToken) == null)
             throw new TokenNotValidException();
-        return tokenProvider.createToken(userId);
+        Long userId = tokenProvider.getUserIdFromToken(refreshToken);
+        String refTokenKey = RedisKeyManager.getRefKey(userId);
+        String redisRefToken = jwtRedisRepository.getRefToken(refTokenKey);
+        if (redisRefToken == null || !redisRefToken.equals(refreshToken))
+            throw new TokenNotValidException();
+        return authenticationSuccess(userId, refTokenKey);
+    }
+
+    private UserJwtTokenDto authenticationSuccess(Long userId, String refTokenKey) {
+        String newRefToken = tokenProvider.refreshToken(userId);
+        long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
+        jwtRedisRepository.addRefToken(refTokenKey, newRefToken, refreshTokenExpiry);
+        String newAccessToken = tokenProvider.createToken(userId);
+        return new UserJwtTokenDto(newAccessToken, newRefToken);
     }
 
     /**

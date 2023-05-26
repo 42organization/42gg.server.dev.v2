@@ -23,17 +23,12 @@ public class AuthTokenProvider {
         key = Keys.hmacShaKeyFor(appProperties.getAuth().getTokenSecret().getBytes());
         log.info(key.getAlgorithm());
     }
-
-    public String createToken(Authentication authentication) {
-        System.out.print("token provider: ");
-        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-
+    public String refreshToken(Long userId) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() +
-                appProperties.getAuth().getTokenExpiry());
-        System.out.println("expiryDate: " + expiryDate);
+                appProperties.getAuth().getRefreshTokenExpiry());
         return Jwts.builder()
-                .setSubject(Long.toString(userPrincipal.getId()))
+                .setSubject(Long.toString(userId))
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
                 .signWith(key)
@@ -44,7 +39,6 @@ public class AuthTokenProvider {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() +
                 appProperties.getAuth().getTokenExpiry());
-        System.out.println("expiryDate: " + expiryDate);
         return Jwts.builder()
                 .setSubject(Long.toString(userId))
                 .setIssuedAt(new Date())
@@ -79,14 +73,4 @@ public class AuthTokenProvider {
         return Long.parseLong(claims.getSubject());
     }
 
-    public String refreshToken() {
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() +
-                appProperties.getAuth().getRefreshTokenExpiry());
-        return Jwts.builder()
-                .setIssuedAt(new Date())
-                .setExpiration(expiryDate)
-                .signWith(key)
-                .compact();
-    }
 }

@@ -19,9 +19,8 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/accesstoken")
-    public UserAccessTokenDto generateAccessToken(@RequestParam String refreshToken) {
-        String accessToken = userService.regenerate(refreshToken);
-        return new UserAccessTokenDto(accessToken);
+    public UserJwtTokenDto generateAccessToken(@RequestParam String refreshToken) {
+        return userService.regenerate(refreshToken);
     }
 
     @GetMapping

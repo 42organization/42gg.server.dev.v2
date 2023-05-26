@@ -58,9 +58,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         if (tokenProvider.getTokenClaims(accessToken) != null){
             Long userId = tokenProvider.getUserIdFromToken(accessToken);
             UserDetails userDetails = customUserDetailsService.loadUserById(userId);
-            long accessTokenExpiry = appProperties.getAuth().getTokenExpiry();
-            String newAccessToken = tokenProvider.createToken(userId);
-            CookieUtil.addCookie(response, TokenHeaders.ACCESS_TOKEN, newAccessToken, (int) (accessTokenExpiry / 1000));
             return new OAuth2AuthenticationToken((OAuth2User) userDetails, userDetails.getAuthorities(), "42");
         }
         throw new RuntimeException("token not validated");
