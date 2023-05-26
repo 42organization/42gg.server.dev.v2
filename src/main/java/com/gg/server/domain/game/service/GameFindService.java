@@ -58,7 +58,6 @@ public class GameFindService {
     }
 
     private List<GameResultResDto> getGameResultList(List<Long> games) {
-        System.out.println(games);
         List<GameTeamUser> teamViews = gameRepository.findTeamsByGameIsIn(games);
         return teamViews.stream().map(GameResultResDto::new).collect(Collectors.toList());
     }
