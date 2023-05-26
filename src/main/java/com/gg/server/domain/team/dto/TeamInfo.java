@@ -26,7 +26,7 @@ public class TeamInfo {
     }
 
     public void addPlayer(GameTeamUserInfo info) {
-        this.players.add(new TeamUserInfoDto(info.getIntraId(), info.getImage(), info.getExp()));
+        this.players.add(new TeamUserInfoDto(info.getIntraId(), info.getImage(), info.getExp(), null, null));
     }
 
     @Override

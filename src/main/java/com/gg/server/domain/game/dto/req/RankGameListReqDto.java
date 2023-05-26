@@ -15,4 +15,9 @@ public class RankGameListReqDto extends NormalGameListReqDto {
         super(pageNum, pageSize, nickname);
         this.seasonId = seasonId;
     }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

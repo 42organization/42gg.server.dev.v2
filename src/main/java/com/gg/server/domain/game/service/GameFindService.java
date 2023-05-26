@@ -7,6 +7,7 @@ import com.gg.server.domain.game.dto.GameResultResDto;
 import com.gg.server.domain.game.dto.GameTeamUser;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
+import com.gg.server.domain.rank.redis.RankRedisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -57,6 +58,7 @@ public class GameFindService {
     }
 
     private List<GameResultResDto> getGameResultList(List<Long> games) {
+        System.out.println(games);
         List<GameTeamUser> teamViews = gameRepository.findTeamsByGameIsIn(games);
         return teamViews.stream().map(GameResultResDto::new).collect(Collectors.toList());
     }
