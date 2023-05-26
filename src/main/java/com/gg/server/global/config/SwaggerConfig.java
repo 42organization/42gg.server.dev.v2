@@ -17,6 +17,15 @@ public class SwaggerConfig {
         return GroupedOpenApi.builder()
                 .group("pingpong")
                 .pathsToMatch("/pingpong/**")
+                .packagesToScan("com.gg.server.domain")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi admin_group() {
+        return GroupedOpenApi.builder()
+                .group("pingpong admin")
+                .pathsToMatch("/pingpong/admin/**")
                 .build();
     }
 

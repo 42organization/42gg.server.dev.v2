@@ -5,8 +5,10 @@ import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.dto.GameListResDto;
 import com.gg.server.domain.game.dto.GameResultResDto;
 import com.gg.server.domain.game.dto.GameTeamUser;
+import com.gg.server.domain.game.exception.GameNotExistException;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
+import com.gg.server.domain.rank.redis.RankRedisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -67,5 +69,10 @@ public class GameFindService {
             statusTypes.add(StatusType.LIVE.name());
         Slice<Long> games = gameRepository.findGamesByUser(intra, statusTypes, pageable);
         return new GameListResDto(getGameResultList(games.getContent()), games.isLast());
+    }
+
+    public Game findByGameId(Long gameId) {
+        return gameRepository.findById(gameId)
+                .orElseThrow(GameNotExistException::new);
     }
 }

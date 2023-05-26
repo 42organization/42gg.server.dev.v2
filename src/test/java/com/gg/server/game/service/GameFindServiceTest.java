@@ -17,7 +17,7 @@ import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,34 +73,11 @@ public class GameFindServiceTest {
         RankRedis userRank = RankRedis.from(UserDto.from(newUser), season.getStartPpp());
         String redisHashKey = RedisKeyManager.getHashKey(season.getId());
         rankRedisRepository.addRankData(redisHashKey, newUser.getId(), userRank);
+    }
 
-//        for (int i = 0; i < 10; i++) {
-//            Game game = gameRepository.save(new Game(season, StatusType.WAIT, Mode.RANK, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
-//            Team team1 = teamRepository.save(new Team(game, 1, false));
-//            Team team2 = teamRepository.save(new Team(game, 2, true));
-//            List<TeamUser> teams = new ArrayList<>();
-//            teams.add(teamUserRepository.save(new TeamUser(team1, user1)));
-//            teams.add(teamUserRepository.save(new TeamUser(team2, user2)));
-//            game.updateStatus();
-//            rankRedisService.updateRankRedis(teams, season.getId(), game);
-//            game = gameRepository.save(new Game(season, StatusType.WAIT, Mode.NORMAL, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
-//            team1 = teamRepository.save(new Team(game, 0, false));
-//            team2 = teamRepository.save(new Team(game, 0, false));
-//            teamUserRepository.save(new TeamUser(team1, user1));
-//            teamUserRepository.save(new TeamUser(team2, user2));
-//            teams.clear();
-//            teams.add(teamUserRepository.save(new TeamUser(team1, user1)));
-//            teams.add(teamUserRepository.save(new TeamUser(team2, user2)));
-//            game.updateStatus();
-//            gameService.expUpdates(game, teams);
-//            pChangeRepository.save(new PChange(game, user1, 0));
-//            pChangeRepository.save(new PChange(game, user2, 0));
-//        }
-//        game1 = gameRepository.save(new Game(season, StatusType.WAIT, Mode.RANK, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
-//        Team team1 = teamRepository.save(new Team(game1, 1, false));
-//        Team team2 = teamRepository.save(new Team(game1, 2, true));
-//        teamUserRepository.save(new TeamUser(team1, user1));
-//        teamUserRepository.save(new TeamUser(team2, user2));
+    @AfterEach
+    public void flushRedis() {
+        rankRedisRepository.deleteAll();
     }
     @Test
     void 일반game목록조회() {
@@ -114,4 +91,6 @@ public class GameFindServiceTest {
         List<GameTeamUser> teamViews = gameRepository.findTeamsByGameIsIn(games);
         return teamViews.stream().map(GameResultResDto::new).collect(Collectors.toList());
     }
+
+
 }

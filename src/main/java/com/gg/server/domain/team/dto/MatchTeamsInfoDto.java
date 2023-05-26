@@ -1,8 +1,6 @@
 package com.gg.server.domain.team.dto;
 
-import com.gg.server.domain.game.dto.GameResultResDto;
 import com.gg.server.domain.game.dto.GameTeamUserInfo;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;

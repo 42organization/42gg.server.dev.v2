@@ -5,6 +5,7 @@ import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.service.GameStatusService;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
+import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.data.SeasonRepository;
 import com.gg.server.domain.team.data.Team;
@@ -17,6 +18,7 @@ import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
 import com.gg.server.utils.TestDataUtils;
 import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,8 @@ public class GameStatusServiceTest {
     @Autowired private SeasonRepository seasonRepository;
     @Autowired
     private GameStatusService gameStatusService;
+    @Autowired
+    private RankRedisRepository rankRedisRepository;
     @Autowired
     TestDataUtils testDataUtils;
     @Autowired
@@ -62,6 +66,10 @@ public class GameStatusServiceTest {
         teamUserRepository.save(new TeamUser(team1, user1));
         teamUserRepository.save(new TeamUser(team2, user2));
         liveGame = gameRepository.save(new Game(season, StatusType.LIVE, Mode.RANK, startTime.minusMinutes(15), startTime));
+    }
+    @AfterEach
+    public void flushRedis() {
+        rankRedisRepository.deleteAll();
     }
     @Test
     void gameBefore상태변경테스트() throws Exception{
