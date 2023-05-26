@@ -38,8 +38,8 @@ public class TeamUserListDto {
             return false;
         } else {
             TeamUserListDto other = (TeamUserListDto) obj;
-            return (isWin == null || this.isWin.equals(other.getIsWin()))
-                    && (score == null || this.score.equals(other.getScore()))
+            return (isWin == other.getIsWin() || this.isWin.equals(other.getIsWin()))
+                    && (score == other.getScore() || this.score.equals(other.getScore()))
                     && this.players.equals(other.getPlayers());
         }
     }
