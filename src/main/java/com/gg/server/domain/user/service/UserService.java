@@ -25,6 +25,7 @@ import com.gg.server.global.security.config.properties.AppProperties;
 import com.gg.server.global.security.jwt.repository.JwtRedisRepository;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.global.utils.ExpLevelCalculator;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -57,13 +58,17 @@ public class UserService {
     private final AppProperties appProperties;
 
     public UserJwtTokenDto regenerate(String refreshToken) {
-        if (tokenProvider.getTokenClaims(refreshToken) == null)
+        Long userId = tokenProvider.getUserIdFormRefreshToken(refreshToken);
+        if (userId == null)
             throw new TokenNotValidException();
-        Long userId = tokenProvider.getUserIdFromToken(refreshToken);
         String refTokenKey = RedisKeyManager.getRefKey(userId);
         String redisRefToken = jwtRedisRepository.getRefToken(refTokenKey);
-        if (redisRefToken == null || !redisRefToken.equals(refreshToken))
+        if (redisRefToken == null)
             throw new TokenNotValidException();
+        if (!redisRefToken.equals(refreshToken)){
+            jwtRedisRepository.deleteRefToken(refTokenKey);
+            throw new TokenNotValidException();
+        }
         return authenticationSuccess(userId, refTokenKey);
     }
 

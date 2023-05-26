@@ -21,11 +21,7 @@ public class JwtRedisRepository {
         return redisTemplate.opsForValue().get(refTokenKey);
     }
 
-    public Long getUserIdByRefToken(String refreshToken){
-        String userId = redisTemplate.opsForValue().get(refreshToken);
-        if (userId == null)
-            throw new TokenNotValidException();
-        return Long.valueOf(userId);
+    public void deleteRefToken(String refTokenKey) {
+        redisTemplate.delete(refTokenKey);
     }
-
 }

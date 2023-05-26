@@ -17,10 +17,12 @@ public class AuthTokenProvider {
 
     private AppProperties appProperties;
     private final Key key;
+    private final Key refreshKey;
 
     public AuthTokenProvider(AppProperties appProperties) {
         this.appProperties = appProperties;
         key = Keys.hmacShaKeyFor(appProperties.getAuth().getTokenSecret().getBytes());
+        refreshKey = Keys.hmacShaKeyFor(appProperties.getAuth().getRefreshTokenSecret().getBytes());
         log.info(key.getAlgorithm());
     }
     public String refreshToken(Long userId) {
@@ -31,7 +33,7 @@ public class AuthTokenProvider {
                 .setSubject(Long.toString(userId))
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
-                .signWith(key)
+                .signWith(refreshKey)
                 .compact();
     }
 
@@ -47,7 +49,7 @@ public class AuthTokenProvider {
                 .compact();
     }
 
-    public Claims getTokenClaims(String token) {
+    private Claims getClaims(String token, Key key) {
         try {
             return Jwts.parserBuilder()
                     .setSigningKey(key)
@@ -68,9 +70,17 @@ public class AuthTokenProvider {
         return null;
     }
 
-    public Long getUserIdFromToken(String token) {
-        Claims claims = getTokenClaims(token);
-        return Long.parseLong(claims.getSubject());
+    public Long getUserIdFromAccessToken(String accessToken) {
+        Claims claims = getClaims(accessToken, key);
+        if (claims == null)
+            return null;
+        return Long.valueOf(claims.getSubject());
     }
 
+    public Long getUserIdFormRefreshToken(String refreshToken) {
+        Claims claims = getClaims(refreshToken, refreshKey);
+        if (claims == null)
+            return null;
+        return Long.valueOf(claims.getSubject());
+    }
 }
