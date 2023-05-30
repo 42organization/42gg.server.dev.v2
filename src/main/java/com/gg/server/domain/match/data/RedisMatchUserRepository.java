@@ -2,6 +2,7 @@ package com.gg.server.domain.match.data;
 
 import com.gg.server.domain.match.exception.PastSlotException;
 import com.gg.server.domain.match.type.MatchKey;
+import com.gg.server.domain.match.type.Option;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -22,13 +23,13 @@ public class RedisMatchUserRepository {
      * value : startTime
      * slot의 startTime 각각의 만료기한 설정
      * **/
-    public void addMatchTime(Long userId, LocalDateTime startTime) {
+    public void addMatchTime(Long userId, LocalDateTime startTime, Option option) {
         Duration duration = Duration.between(LocalDateTime.now(), startTime);
         if (duration.isNegative()) {
             throw new PastSlotException();
         }
         redisTemplate.opsForValue().set(MatchKey.getUserTime(userId, startTime),
-                new RedisMatchTime(startTime), duration.getSeconds(), TimeUnit.SECONDS);
+                new RedisMatchTime(startTime, option), duration.getSeconds(), TimeUnit.SECONDS);
 
     }
     public void deleteMatchUser(Long userId) {

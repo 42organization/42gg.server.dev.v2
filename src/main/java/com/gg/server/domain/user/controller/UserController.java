@@ -6,6 +6,8 @@ import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.global.utils.argumentresolver.Login;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -19,9 +21,9 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/accesstoken")
-    public UserAccessTokenDto generateAccessToken(@RequestParam String refreshToken) {
+    public ResponseEntity<UserAccessTokenDto> generateAccessToken(@RequestParam String refreshToken) {
         String accessToken = userService.regenerate(refreshToken);
-        return new UserAccessTokenDto(accessToken);
+        return new ResponseEntity<>( new UserAccessTokenDto(accessToken), HttpStatus.CREATED);
     }
 
     @GetMapping
@@ -57,9 +59,10 @@ public class UserController {
     }
 
     @PutMapping("{intraId}")
-    public void doModifyUser (@Valid @RequestBody UserModifyRequestDto userModifyRequestDto, @PathVariable String intraId) {
+    public ResponseEntity doModifyUser (@Valid @RequestBody UserModifyRequestDto userModifyRequestDto, @PathVariable String intraId) {
         userService.updateUser(userModifyRequestDto.getRacketType(), userModifyRequestDto.getStatusMessage(),
                 userModifyRequestDto.getSnsNotiOpt(), intraId);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
 }
