@@ -1,4 +1,4 @@
-package com.gg.server.domain.announcement;
+package com.gg.server.domain.announcement.data;
 
 import com.gg.server.admin.announcement.dto.AnnouncementAdminAddDto;
 import com.gg.server.global.utils.BaseTimeEntity;
