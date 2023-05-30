@@ -77,7 +77,7 @@ class UserControllerTest {
     @DisplayName("live")
     public void userLiveTest() throws Exception {
         String accessToken = testDataUtils.getLoginAccessToken();
-        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
         String url = "/pingpong/users/live";
         String event = "game";
         int notiCnt = 2;

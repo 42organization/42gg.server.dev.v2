@@ -64,7 +64,7 @@ class SlotAdminControllerTest {
     @DisplayName("[Get]/pingpong/admin/slot-management")
     void getSlotSetting() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
-        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
 
         String contentAsString = mockMvc.perform(get("/pingpong/admin/slot-management").header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())

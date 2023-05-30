@@ -66,7 +66,7 @@ public class SeasonTestController {
     void season_list_test() throws Exception {
         //given
         String accessToken = testDataUtils.getLoginAccessToken();
-        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
         String url = "/pingpong/seasons";
         List<SeasonResDto> list = seasonService.seasonList();
         //when

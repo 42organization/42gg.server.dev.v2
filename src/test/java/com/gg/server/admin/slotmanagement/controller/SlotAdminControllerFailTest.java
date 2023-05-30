@@ -49,7 +49,7 @@ public class SlotAdminControllerFailTest {
 //    @DisplayName("fail[Get]/pingpong/admin/slot-management")
 //    void failGetSlotSetting() throws Exception {
 //        String accessToken = testDataUtils.getLoginAccessToken();
-//        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+//        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
 //
 //        String contentAsString = mockMvc.perform(get("/pingpong/admin/slot-management").header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
 //                .andExpect(status().isBadRequest())

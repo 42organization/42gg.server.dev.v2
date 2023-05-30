@@ -21,9 +21,14 @@ import com.gg.server.domain.user.exception.TokenNotValidException;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.SnsType;
 import com.gg.server.global.exception.ErrorCode;
+import com.gg.server.global.security.config.properties.AppProperties;
+import com.gg.server.global.security.cookie.CookieUtil;
 import com.gg.server.global.security.jwt.repository.JwtRedisRepository;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
+import com.gg.server.global.security.jwt.utils.TokenHeaders;
+import com.gg.server.global.utils.ApplicationYmlRead;
 import com.gg.server.global.utils.ExpLevelCalculator;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,6 +38,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -53,12 +59,30 @@ public class UserService {
     private final SeasonFindService seasonFindService;
     private final PChangeRepository pChangeRepository;
     private final RankFindService rankFindService;
+    private final AppProperties appProperties;
 
-    public String regenerate(String refreshToken) {
-        Long userId = jwtRedisRepository.getUserIdByRefToken(refreshToken);
-        if (tokenProvider.getTokenClaims(refreshToken) == null)
+
+    public UserJwtTokenDto regenerate(String refreshToken) {
+        Long userId = tokenProvider.getUserIdFormRefreshToken(refreshToken);
+        if (userId == null)
             throw new TokenNotValidException();
-        return tokenProvider.createToken(userId);
+        String refTokenKey = RedisKeyManager.getRefKey(userId);
+        String redisRefToken = jwtRedisRepository.getRefToken(refTokenKey);
+        if (redisRefToken == null)
+            throw new TokenNotValidException();
+        if (!redisRefToken.equals(refreshToken)){
+            jwtRedisRepository.deleteRefToken(refTokenKey);
+            throw new TokenNotValidException();
+        }
+        return authenticationSuccess(userId, refTokenKey);
+    }
+
+    private UserJwtTokenDto authenticationSuccess(Long userId, String refTokenKey) {
+        String newRefToken = tokenProvider.refreshToken(userId);
+        long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
+        jwtRedisRepository.addRefToken(refTokenKey, newRefToken, refreshTokenExpiry);
+        String newAccessToken = tokenProvider.createToken(userId);
+        return new UserJwtTokenDto(newAccessToken, newRefToken);
     }
 
     /**
