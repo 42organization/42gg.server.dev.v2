@@ -2,8 +2,8 @@ package com.gg.server.admin.penalty.service;
 
 import com.gg.server.admin.penalty.data.PenaltyAdminRepository;
 import com.gg.server.domain.penalty.data.Penalty;
-import com.gg.server.domain.penalty.data.RedisPenaltyUser;
-import com.gg.server.admin.penalty.data.RedisPenaltyUserRepository;
+import com.gg.server.domain.penalty.redis.RedisPenaltyUser;
+import com.gg.server.admin.penalty.data.PenaltyUserAdminRedisRepository;
 import com.gg.server.admin.penalty.dto.PenaltyListResponseDto;
 import com.gg.server.admin.penalty.dto.PenaltyUserResponseDto;
 import com.gg.server.domain.penalty.exception.PenaltyExpiredException;
@@ -23,31 +23,31 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class PenaltyService {
-    private final RedisPenaltyUserRepository redisPenaltyUserRepository;
+public class PenaltyAdminService {
+    private final PenaltyUserAdminRedisRepository penaltyUserAdminRedisRepository;
     private final UserFindService userFindService;
     private final PenaltyAdminRepository penaltyRepository;
 
     @Transactional
     public void givePenalty(String intraId, Integer penaltyTime, String reason) {
         User user = userFindService.findByIntraId(intraId);
-        Optional<RedisPenaltyUser> redisPenaltyUser = redisPenaltyUserRepository.findByIntraId(intraId);
+        Optional<RedisPenaltyUser> redisPenaltyUser = penaltyUserAdminRedisRepository.findByIntraId(intraId);
         LocalDateTime releaseTime;
         RedisPenaltyUser penaltyUser;
         Penalty penalty;
         LocalDateTime now = LocalDateTime.now();
         if (redisPenaltyUser.isPresent()) {
             releaseTime = redisPenaltyUser.get().getReleaseTime().plusHours(penaltyTime);
-            penaltyUser = new RedisPenaltyUser(intraId, redisPenaltyUser.get().getPenaltyTime() + penaltyTime,
+            penaltyUser = new RedisPenaltyUser(intraId, redisPenaltyUser.get().getPenaltyTime() + penaltyTime * 60,
                     releaseTime, redisPenaltyUser.get().getStartTime(), reason);
-            penalty = new Penalty(user, PenaltyType.NOSHOW, reason, redisPenaltyUser.get().getReleaseTime(), penaltyTime);
+            penalty = new Penalty(user, PenaltyType.NOSHOW, reason, redisPenaltyUser.get().getReleaseTime(), penaltyTime * 60);
         } else {
             releaseTime = now.plusHours(penaltyTime);
-            penaltyUser = new RedisPenaltyUser(intraId, penaltyTime, releaseTime, now, reason);
-            penalty = new Penalty(user, PenaltyType.NOSHOW, reason, now, penaltyTime);
+            penaltyUser = new RedisPenaltyUser(intraId, penaltyTime * 60, releaseTime, now, reason);
+            penalty = new Penalty(user, PenaltyType.NOSHOW, reason, now, penaltyTime * 60);
         }
         penaltyRepository.save(penalty);
-        redisPenaltyUserRepository.addPenaltyUser(penaltyUser, releaseTime);
+        penaltyUserAdminRedisRepository.addPenaltyUser(penaltyUser, releaseTime);
     }
 
 
@@ -71,10 +71,10 @@ public class PenaltyService {
         if (penalty.getStartTime().plusHours(penalty.getPenaltyTime()).isBefore(LocalDateTime.now())) {
             throw new PenaltyExpiredException();
         }
-        RedisPenaltyUser penaltyUser = redisPenaltyUserRepository
+        RedisPenaltyUser penaltyUser = penaltyUserAdminRedisRepository
                 .findByIntraId(penalty.getUser().getIntraId()).orElseThrow(()
                 -> new RedisPenaltyUserNotFoundException());
-        redisPenaltyUserRepository.deletePenaltyInUser(penaltyUser,
+        penaltyUserAdminRedisRepository.deletePenaltyInUser(penaltyUser,
                 penalty.getPenaltyTime());//redis 시간 줄여주기
         //뒤에 있는 penalty 시간 당겨주기
         modifyStartTimeOfAfterPenalties(penalty);

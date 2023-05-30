@@ -9,11 +9,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.penalty.data.PenaltyAdminRepository;
 import com.gg.server.domain.penalty.data.Penalty;
-import com.gg.server.domain.penalty.data.RedisPenaltyUser;
-import com.gg.server.admin.penalty.data.RedisPenaltyUserRepository;
+import com.gg.server.domain.penalty.redis.RedisPenaltyUser;
+import com.gg.server.admin.penalty.data.PenaltyUserAdminRedisRepository;
 import com.gg.server.admin.penalty.dto.PenaltyListResponseDto;
 import com.gg.server.admin.penalty.dto.PenaltyRequestDto;
-import com.gg.server.admin.penalty.service.PenaltyService;
+import com.gg.server.admin.penalty.service.PenaltyAdminService;
+import com.gg.server.domain.penalty.type.PenaltyType;
 import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.UserRepository;
 import com.gg.server.domain.user.type.RacketType;
@@ -36,7 +37,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.http.MediaType;
@@ -48,7 +48,7 @@ import org.springframework.transaction.annotation.Transactional;
 @AutoConfigureMockMvc
 @ActiveProfiles("local")
 @Transactional
-class PenaltyControllerTest {
+class PenaltyAdminControllerTest {
     @Autowired
     TestDataUtils testDataUtils;
     @Autowired
@@ -58,7 +58,7 @@ class PenaltyControllerTest {
     @Autowired
     UserRepository userRepository;
     @Autowired
-    RedisPenaltyUserRepository redisPenaltyUserRepository;
+    PenaltyUserAdminRedisRepository penaltyUserAdminRedisRepository;
     @Autowired
     PenaltyAdminRepository penaltyAdminRepository;
     @Autowired
@@ -66,15 +66,15 @@ class PenaltyControllerTest {
     @Autowired
     RedisConnectionFactory redisConnectionFactory;
     @Autowired
-    PenaltyService penaltyService;
+    PenaltyAdminService penaltyAdminService;
 
     private final String headUrl = "/pingpong/admin/";
 
     @AfterEach
     void clear() {
         RedisConnection connection = redisConnectionFactory.getConnection();
-//        connection.flushDb();
-//        connection.close();
+        connection.flushDb();
+        connection.close();
     }
 
     @Test
@@ -89,7 +89,7 @@ class PenaltyControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new PenaltyRequestDto(intraId, 3, "test1"))))
                 .andExpect(status().isCreated());
-        Optional<RedisPenaltyUser> penaltyUser = redisPenaltyUserRepository.findByIntraId(intraId);
+        Optional<RedisPenaltyUser> penaltyUser = penaltyUserAdminRedisRepository.findByIntraId(intraId);
         //redis
         Assertions.assertThat(penaltyUser).isPresent();
         Assertions.assertThat(penaltyUser.get().getPenaltyTime()).isEqualTo(3);
@@ -120,7 +120,7 @@ class PenaltyControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new PenaltyRequestDto(intraId, 2, "test2"))))
                 .andExpect(status().isCreated());
-        Optional<RedisPenaltyUser> penaltyUser = redisPenaltyUserRepository.findByIntraId(intraId);
+        Optional<RedisPenaltyUser> penaltyUser = penaltyUserAdminRedisRepository.findByIntraId(intraId);
         //redis 확인
         Assertions.assertThat(penaltyUser).isPresent();
         Assertions.assertThat(penaltyUser.get().getPenaltyTime()).isEqualTo(5);
@@ -161,7 +161,7 @@ class PenaltyControllerTest {
         for (int i = 0; i < 20; i++) {
             User newUser = testDataUtils.createNewUser();
             users.add(newUser);
-            penaltyService.givePenalty(newUser.getIntraId(), 3, "test" + String.valueOf(i));
+            penaltyAdminService.givePenalty(newUser.getIntraId(), 3, "test" + String.valueOf(i));
         }
         List<Integer> sizeCounts = new ArrayList<Integer>();
         Integer totalPages = -1;
@@ -208,14 +208,14 @@ class PenaltyControllerTest {
             User newUser = testDataUtils.createNewUser(intraId, "test", "test", RacketType.NONE, SnsType.EMAIL,
                     RoleType.USER);
             users.add(newUser);
-            penaltyService.givePenalty(newUser.getIntraId(), 3, "test" + String.valueOf(i));
+            penaltyAdminService.givePenalty(newUser.getIntraId(), 3, "test" + String.valueOf(i));
         }
         for (int i = 0; i < 20; i++) {
             String intraId = "dummy" + String.valueOf(i);
             User newUser = testDataUtils.createNewUser(intraId, "test", "test", RacketType.NONE, SnsType.EMAIL,
                     RoleType.USER);
             users.add(newUser);
-            penaltyService.givePenalty(newUser.getIntraId(), 3, "test" + String.valueOf(i));
+            penaltyAdminService.givePenalty(newUser.getIntraId(), 3, "test" + String.valueOf(i));
         }
         List<Integer> sizeCounts = new ArrayList<Integer>();
         Integer totalPages = -1;
@@ -240,7 +240,7 @@ class PenaltyControllerTest {
         tokenProvider.getUserIdFromAccessToken(accessToken);
         User newUser = testDataUtils.createNewUser();
         String intraId = newUser.getIntraId();
-        penaltyService.givePenalty(intraId, 3, "test!");
+        penaltyAdminService.givePenalty(intraId, 3, "test!");
         List<Penalty> penalties = penaltyAdminRepository.findAll();
         List<Penalty> userPenalties = penalties.stream().filter(ele -> ele.getUser().getIntraId().equals(intraId))
                 .collect(Collectors.toList());
@@ -250,7 +250,7 @@ class PenaltyControllerTest {
                         delete(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isNoContent());
         //Redis에 penaltyUser 없는지 확인
-        Optional<RedisPenaltyUser> penaltyUser = redisPenaltyUserRepository.findByIntraId(intraId);
+        Optional<RedisPenaltyUser> penaltyUser = penaltyUserAdminRedisRepository.findByIntraId(intraId);
         Assertions.assertThat(penaltyUser).isEmpty();
         //MySQL에 penalty 없는지 확인
         List<Penalty> afterPenalties = penaltyAdminRepository.findAll();
@@ -265,8 +265,8 @@ class PenaltyControllerTest {
         tokenProvider.getUserIdFromAccessToken(accessToken);
         User newUser = testDataUtils.createNewUser();
         String intraId = newUser.getIntraId();
-        penaltyService.givePenalty(intraId, 3, "test!");
-        penaltyService.givePenalty(intraId, 2, "test2");
+        penaltyAdminService.givePenalty(intraId, 3, "test!");
+        penaltyAdminService.givePenalty(intraId, 2, "test2");
         List<Penalty> penalties = penaltyAdminRepository.findAll();
         List<Penalty> userPenalties = penalties.stream().filter(ele -> ele.getUser().getIntraId().equals(intraId))
                 .collect(Collectors.toList());
@@ -276,7 +276,7 @@ class PenaltyControllerTest {
                         delete(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isNoContent());
         //Redis에 penaltyUser 있는지 확인
-        Optional<RedisPenaltyUser> penaltyUser = redisPenaltyUserRepository.findByIntraId(intraId);
+        Optional<RedisPenaltyUser> penaltyUser = penaltyUserAdminRedisRepository.findByIntraId(intraId);
         Assertions.assertThat(penaltyUser.get().getPenaltyTime()).isEqualTo(2);
 
         //MySQL에 penalty 없는지 확인
@@ -312,4 +312,44 @@ class PenaltyControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    @DisplayName("get pingpong/admin/penalty?page={page}&size={pageSize}&current=true")
+    public void getCurrentPenalties() throws Exception {
+        List<User> users = new ArrayList<User>();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
+        tokenProvider.getUserIdFromToken(accessToken);
+        //penalty user 20명 넣고 테스트
+        for (int i = 0; i < 20; i++) {
+            User newUser = testDataUtils.createNewUser();
+            users.add(newUser);
+        }
+
+        //과거 penalty들 db에 저장
+        for (int i = 0; i < 20; i++) {
+            Penalty penalty = new Penalty(users.get(i), PenaltyType.NOSHOW, "test", LocalDateTime.now().minusHours(3), 120);
+            penaltyAdminRepository.save(penalty);
+        }
+
+        //현재 패널티 부여
+        for (int i = 0; i < 20; i++) {
+            penaltyAdminService.givePenalty(users.get(i).getIntraId(), 3, "test" + String.valueOf(i));
+        }
+
+
+
+        List<Integer> sizeCounts = new ArrayList<Integer>();
+        Integer totalPages = -1;
+        for (int i = 1; i <= 3; i++) {
+            String url = "/pingpong/admin/penalty?page=" + String.valueOf(i)+"&size=10&current=true";
+            String contentAsString = mockMvc.perform(
+                            get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                    .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+            PenaltyListResponseDto penaltyListResponseDto = objectMapper.readValue(contentAsString,
+                    PenaltyListResponseDto.class);
+            sizeCounts.add(penaltyListResponseDto.getPenaltyList().size());
+            totalPages = penaltyListResponseDto.getTotalPage();
+        }
+        Assertions.assertThat(sizeCounts).isEqualTo(List.of(10, 10, 0));
+        Assertions.assertThat(totalPages).isEqualTo(2);
+    }
 }

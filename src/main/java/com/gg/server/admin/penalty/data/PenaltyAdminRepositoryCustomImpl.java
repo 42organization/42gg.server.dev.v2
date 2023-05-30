@@ -15,7 +15,7 @@ public class PenaltyAdminRepositoryCustomImpl implements PenaltyAdminRepositoryC
 
     @Override
     public Page<Penalty> findAllCurrent(Pageable pageable, LocalDateTime targetTime) {
-        String sql = "select p from Penalty p where TIME_TO_SEC(TIMEDIFF(p.startTime, :targetTime)) < p.penaltyTime * 60 * 60 "
+        String sql = "select p from Penalty p where TIME_TO_SEC(TIMEDIFF(:targetTime, p.startTime)) < p.penaltyTime * 60 "
                 + "order by p.startTime desc";
         long count = countCurrent(targetTime);
         List<Penalty> penalties = em.createQuery(sql, Penalty.class)
@@ -43,7 +43,7 @@ public class PenaltyAdminRepositoryCustomImpl implements PenaltyAdminRepositoryC
     @Override
     public Page<Penalty> findAllCurrentByIntraId(Pageable pageable, LocalDateTime targetTime, String intraId) {
         String sql = "select p from Penalty p join fetch p.user where " +
-                "p.user.intraId like :intraId and TIME_TO_SEC(TIMEDIFF(p.startTime, :targetTime)) < p.penaltyTime * 60 * 60 "
+                "p.user.intraId like :intraId and TIME_TO_SEC(TIMEDIFF(:targetTime, p.startTime)) < p.penaltyTime * 60 "
                 + "order by p.startTime desc";
         long count = countCurrentByIntraId(intraId, targetTime);
         List<Penalty> penalties = em.createQuery(sql, Penalty.class)
@@ -57,7 +57,7 @@ public class PenaltyAdminRepositoryCustomImpl implements PenaltyAdminRepositoryC
     }
 
     private long countCurrent(LocalDateTime targetTime) {
-        String sql = "select p from Penalty p where TIME_TO_SEC(TIMEDIFF(p.startTime, :targetTime)) < p.penaltyTime * 60 * 60 "
+        String sql = "select p from Penalty p where TIME_TO_SEC(TIMEDIFF(:targetTime, p.startTime)) < p.penaltyTime * 60 "
                 + "order by p.startTime desc";
         return em.createQuery(sql, Penalty.class)
                 .setParameter("targetTime", targetTime)
@@ -75,7 +75,7 @@ public class PenaltyAdminRepositoryCustomImpl implements PenaltyAdminRepositoryC
 
     private long countCurrentByIntraId(String intraId, LocalDateTime targetTime) {
         String sql = "select p from Penalty p join fetch p.user where " +
-                "p.user.intraId like :intraId and TIME_TO_SEC(TIMEDIFF(p.startTime, :targetTime)) < p.penaltyTime * 60 * 60 "
+                "p.user.intraId like :intraId and TIME_TO_SEC(TIMEDIFF(:targetTime, p.startTime)) < p.penaltyTime * 60 "
                 + "order by p.startTime desc";
         return em.createQuery(sql, Penalty.class)
                 .setParameter("intraId", "%" + intraId + "%")

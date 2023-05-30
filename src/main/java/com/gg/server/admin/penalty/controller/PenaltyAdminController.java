@@ -2,7 +2,7 @@ package com.gg.server.admin.penalty.controller;
 
 import com.gg.server.admin.penalty.dto.PenaltyListResponseDto;
 import com.gg.server.admin.penalty.dto.PenaltyRequestDto;
-import com.gg.server.admin.penalty.service.PenaltyService;
+import com.gg.server.admin.penalty.service.PenaltyAdminService;
 import com.gg.server.global.dto.PageRequestDto;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -27,12 +27,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Validated
 @RequestMapping("/pingpong/admin/")
-public class PenaltyController {
-    private final PenaltyService penaltyService;
+public class PenaltyAdminController {
+    private final PenaltyAdminService penaltyAdminService;
 
     @PostMapping("penalty")
     public ResponseEntity givePenaltyToUser(@RequestBody @Valid PenaltyRequestDto requestDto) {
-        penaltyService.givePenalty(requestDto.getIntraId(), requestDto.getPenaltyTime(), requestDto.getReason());
+        penaltyAdminService.givePenalty(requestDto.getIntraId(), requestDto.getPenaltyTime(), requestDto.getReason());
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -42,13 +42,13 @@ public class PenaltyController {
         Pageable pageable = PageRequest.of(pageRequestDto.getPage() - 1, pageRequestDto.getSize(),
                 Sort.by("startTime").descending());
         if (intraId == null)
-            return penaltyService.getAllPenalties(pageable, current);
-        return penaltyService.getAllPenaltiesByIntraId(pageable, intraId, current);
+            return penaltyAdminService.getAllPenalties(pageable, current);
+        return penaltyAdminService.getAllPenaltiesByIntraId(pageable, intraId, current);
     }
 
     @DeleteMapping("penalty/{penaltyId}")
     public ResponseEntity releasePenaltyUser(@PathVariable @Min(1) Long penaltyId) {
-        penaltyService.deletePenalty(penaltyId);
+        penaltyAdminService.deletePenalty(penaltyId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
