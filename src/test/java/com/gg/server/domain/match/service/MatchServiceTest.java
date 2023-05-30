@@ -239,6 +239,7 @@ class MatchServiceTest {
     void readMyTableAfterMakingGame() {
         //normal 게임 생성
         matchService.makeMatch(UserDto.from(users.get(0)), Option.NORMAL, slotTimes.get(0));
+        matchService.makeMatch(UserDto.from(users.get(0)), Option.RANK, slotTimes.get(4));
         matchService.makeMatch(UserDto.from(users.get(1)), Option.RANK, slotTimes.get(1));
         matchService.makeMatch(UserDto.from(users.get(2)), Option.NORMAL, slotTimes.get(2));
         SlotStatusResponseListDto slotStatusList = matchFindService.getAllMatchStatus(users.get(0).getId(),
@@ -256,6 +257,9 @@ class MatchServiceTest {
             }
             if (dto.getStartTime().equals(slotTimes.get(2))) {
                 Assertions.assertThat(dto.getStatus()).isEqualTo(SlotStatus.MATCH.getCode());
+            }
+            if (dto.getStartTime().equals(slotTimes.get(4))) {
+                Assertions.assertThat(dto.getStatus()).isEqualTo(SlotStatus.CLOSE.getCode());
             }
         }
 
