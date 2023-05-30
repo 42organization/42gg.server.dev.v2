@@ -14,6 +14,7 @@ import com.gg.server.admin.penalty.data.PenaltyUserAdminRedisRepository;
 import com.gg.server.admin.penalty.dto.PenaltyListResponseDto;
 import com.gg.server.admin.penalty.dto.PenaltyRequestDto;
 import com.gg.server.admin.penalty.service.PenaltyAdminService;
+import com.gg.server.domain.penalty.type.PenaltyType;
 import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.UserRepository;
 import com.gg.server.domain.user.type.RacketType;
@@ -22,6 +23,7 @@ import com.gg.server.domain.user.type.SnsType;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -310,4 +312,44 @@ class PenaltyAdminControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    @DisplayName("get pingpong/admin/penalty?page={page}&size={pageSize}&current=true")
+    public void getCurrentPenalties() throws Exception {
+        List<User> users = new ArrayList<User>();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
+        tokenProvider.getUserIdFromToken(accessToken);
+        //penalty user 20명 넣고 테스트
+        for (int i = 0; i < 20; i++) {
+            User newUser = testDataUtils.createNewUser();
+            users.add(newUser);
+        }
+
+        //과거 penalty들 db에 저장
+        for (int i = 0; i < 20; i++) {
+            Penalty penalty = new Penalty(users.get(i), PenaltyType.NOSHOW, "test", LocalDateTime.now().minusHours(3), 120);
+            penaltyAdminRepository.save(penalty);
+        }
+
+        //현재 패널티 부여
+        for (int i = 0; i < 20; i++) {
+            penaltyAdminService.givePenalty(users.get(i).getIntraId(), 3, "test" + String.valueOf(i));
+        }
+
+
+
+        List<Integer> sizeCounts = new ArrayList<Integer>();
+        Integer totalPages = -1;
+        for (int i = 1; i <= 3; i++) {
+            String url = "/pingpong/admin/penalty?page=" + String.valueOf(i)+"&size=10&current=true";
+            String contentAsString = mockMvc.perform(
+                            get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                    .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+            PenaltyListResponseDto penaltyListResponseDto = objectMapper.readValue(contentAsString,
+                    PenaltyListResponseDto.class);
+            sizeCounts.add(penaltyListResponseDto.getPenaltyList().size());
+            totalPages = penaltyListResponseDto.getTotalPage();
+        }
+        Assertions.assertThat(sizeCounts).isEqualTo(List.of(10, 10, 0));
+        Assertions.assertThat(totalPages).isEqualTo(2);
+    }
 }
