@@ -77,7 +77,7 @@ public class MatchService {
             createGame(currentSeason, startTime, enemy.get(), matchUser);
             cancelEnrolledSlots(enemy.get(), matchUser);
         } else {
-            addUserToQueue(startTime, matchUser);
+            addUserToQueue(startTime, matchUser, option);
         }
     }
 
@@ -143,10 +143,10 @@ public class MatchService {
                 .findFirst();
     }
 
-    private void addUserToQueue(LocalDateTime startTime, RedisMatchUser matchUser) {
+    private void addUserToQueue(LocalDateTime startTime, RedisMatchUser matchUser, Option option) {
         redisMatchTimeRepository.addMatchUser(startTime, matchUser);
         redisMatchTimeRepository.setMatchTimeWithExpiry(startTime);
-        redisMatchUserRepository.addMatchTime(matchUser.getUserId(), startTime);
+        redisMatchUserRepository.addMatchTime(matchUser.getUserId(), startTime, option);
     }
 
     private void cancelEnrolledSlots(RedisMatchUser enemy, RedisMatchUser player) {
