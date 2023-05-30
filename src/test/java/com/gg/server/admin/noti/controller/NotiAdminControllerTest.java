@@ -114,7 +114,7 @@ class NotiAdminControllerTest {
     @Transactional
     public void sendNotiToUserTest() throws Exception {
         //given
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
         User user = userRepository.findById(userId).get();
         String url = "/pingpong/admin/notifications";
