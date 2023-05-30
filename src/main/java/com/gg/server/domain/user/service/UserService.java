@@ -88,7 +88,7 @@ public class UserService {
      * - currentMatchMode
      *     - normal
      *     - rank
-     *     - null -> 매칭이 안잡혔을 때
+     *     - null -> 매칭이 안잡혔을 때 or 게임 전
      */
     @Transactional(readOnly = true)
     public UserLiveResponseDto getUserLiveDetail(UserDto user) {
@@ -98,8 +98,14 @@ public class UserService {
         if (optionalGame.isPresent()) {
             Game game = optionalGame.get();
             if (game.getStatus() == StatusType.LIVE || game.getStatus() == StatusType.WAIT)
-                return new UserLiveResponseDto(user, notiCnt, "game", game.getMatch().getMode(), enrolledSlots);
+                return new UserLiveResponseDto(notiCnt, "game", game.getMode(), game.getId());
+            if (game.getStatus() == StatusType.BEFORE)
+                return new UserLiveResponseDto(notiCnt, "match", null, null);
         }
+        if (enrolledSlots.size() != 0){
+            return new UserLiveResponseDto(notiCnt, "match", null, null);
+        }
+        return new UserLiveResponseDto(notiCnt, null, null, null);
     }
 
     @Transactional(readOnly = true)
