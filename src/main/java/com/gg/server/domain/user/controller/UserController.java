@@ -3,11 +3,16 @@ package com.gg.server.domain.user.controller;
 import com.gg.server.domain.user.dto.*;
 import com.gg.server.domain.user.service.UserService;
 import com.gg.server.domain.user.type.RoleType;
+import com.gg.server.global.security.cookie.CookieUtil;
+import com.gg.server.global.security.jwt.utils.TokenHeaders;
 import com.gg.server.global.utils.argumentresolver.Login;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import org.apache.http.HttpResponse;
+import org.springframework.http.HttpRequest;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -19,8 +24,8 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/accesstoken")
-    public UserJwtTokenDto generateAccessToken(@RequestParam String refreshToken) {
-        return userService.regenerate(refreshToken);
+    public UserJwtTokenDto generateAccessToken(@RequestParam String refreshToken, HttpServletResponse response) {
+        return userService.regenerate(refreshToken, response);
     }
 
     @GetMapping
