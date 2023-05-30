@@ -1,5 +1,6 @@
 package com.gg.server.admin.game.dto;
 
+import com.gg.server.global.dto.PageRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,14 +12,13 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
-public class GameLogAdminRequestDto {
+@Setter
+public class GameLogAdminRequestDto extends PageRequestDto {
     private Long seasonId;
-    @NotNull
-    @Positive(message = "Positive vaild fail")
-    private int page;
-    @Size(min=1)
-    private int size = 20;
+
+    public GameLogAdminRequestDto(Integer page, Integer size, Long seasonId) {
+        super(page, size);
+        this.seasonId = seasonId;
+    }
 }

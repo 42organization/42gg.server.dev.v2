@@ -2,6 +2,7 @@ package com.gg.server.admin.game.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.gg.server.domain.team.data.Team;
+import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,10 +24,10 @@ public class GameTeamAdminDto {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean win;
 
-    public GameTeamAdminDto(Team team, List<User> userList) {
-        this.intraId1 = userList.get(0).getIntraId();
-        if (userList.size() > 1)
-            this.intraId2 = userList.get(1).getIntraId();
+    public GameTeamAdminDto(Team team, List<TeamUser> teamUserList) {
+        this.intraId1 = teamUserList.get(0).getUser().getIntraId();
+        if (teamUserList.size() > 1)
+            this.intraId2 = teamUserList.get(1).getUser().getIntraId();
         else
             this.intraId2 = null;
         this.teamId = team.getId();

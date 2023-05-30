@@ -1,9 +1,11 @@
 package com.gg.server.game.service;
 
 
+import com.gg.server.admin.game.service.GameAdminService;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.service.GameFindService;
+import com.gg.server.domain.game.service.GameService;
 import com.gg.server.domain.pchange.data.PChange;
 import com.gg.server.domain.pchange.data.PChangeRepository;
 import com.gg.server.domain.rank.redis.RankRedis;
@@ -21,14 +23,25 @@ import com.gg.server.utils.TestDataUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
+import org.hibernate.SessionFactory;
+import org.hibernate.stat.Statistics;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionManager;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
+import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -49,6 +62,8 @@ public class GameDBTest {
     @Autowired
     GameRepository gameRepository;
     @Autowired
+    GameAdminService gameAdminService;
+    @Autowired
     TeamRepository teamRepository;
     @Autowired
     TeamUserRepository teamUserRepository;
@@ -56,6 +71,10 @@ public class GameDBTest {
     PChangeRepository pChangeRepository;
     @Autowired
     EntityManager em;
+    @Autowired
+    EntityManagerFactory emF;
+    @Autowired
+    PlatformTransactionManager tm;
 
     @BeforeEach
     void init() {
@@ -124,5 +143,18 @@ public class GameDBTest {
         log.info("TEAM_USER LIST SIZE: " + Integer.toString(teamUserList.size()));
         Assertions.assertThat(teamList.size()).isEqualTo(0);
         Assertions.assertThat(teamUserList.size()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName(value = "game 전적조회 쿼리 수 테스트")
+    @Transactional
+    @Rollback(value = false)
+    public void 게임전적조회쿼리테스트() throws Exception {
+        Pageable pageable = PageRequest.of(0, 20, Sort.by("startTime").descending());
+        gameAdminService.findGamesBySeasonId(4L, pageable);
+        Statistics statistics = emF.unwrap(SessionFactory.class).getStatistics();
+        System.out.println("Query count: " + statistics.getQueryExecutionCount());
+        System.out.println("Second-level cache hit count: " + statistics.getSecondLevelCacheHitCount());
+        // 원하는 통계 정보를 추가로 출력하거나 처리할 수 있습니다.
     }
 }

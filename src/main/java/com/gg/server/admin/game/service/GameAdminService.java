@@ -16,6 +16,7 @@ import com.gg.server.domain.pchange.data.PChangeRepository;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.exception.SeasonNotFoundException;
 import com.gg.server.domain.team.data.Team;
+import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
@@ -59,10 +60,10 @@ public class GameAdminService {
         List<GameLogAdminDto> gameLogAdminDtoList = new ArrayList<>();
         for (Game game : gameList) {
             List<GameTeamAdminDto> gameTeamAdminDtoList = new ArrayList<>();
-            List<Team> teamList = teamAdminRepository.findAllByGame(game);
+            List<Team> teamList = game.getTeams();
             for (Team team : teamList) {
-                List<User> userList = teamUserAdminRepository.findUsersByTeamId(team.getId());
-                gameTeamAdminDtoList.add(new GameTeamAdminDto(team, userList));
+                List<TeamUser> teamUserList = team.getTeamUsers();
+                gameTeamAdminDtoList.add(new GameTeamAdminDto(team, teamUserList));
             }
             gameLogAdminDtoList.add(new GameLogAdminDto(game, gameTeamAdminDtoList));
         }
