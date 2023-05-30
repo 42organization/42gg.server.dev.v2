@@ -317,7 +317,7 @@ class PenaltyAdminControllerTest {
     public void getCurrentPenalties() throws Exception {
         List<User> users = new ArrayList<User>();
         String accessToken = testDataUtils.getAdminLoginAccessToken();
-        tokenProvider.getUserIdFromToken(accessToken);
+        tokenProvider.getUserIdFromAccessToken(accessToken);
         //penalty user 20명 넣고 테스트
         for (int i = 0; i < 20; i++) {
             User newUser = testDataUtils.createNewUser();
