@@ -61,9 +61,8 @@ public class UserService {
     private final RankFindService rankFindService;
     private final AppProperties appProperties;
 
-    private final ApplicationYmlRead applicationYmlRead;
 
-    public UserJwtTokenDto regenerate(String refreshToken, HttpServletResponse response) {
+    public UserJwtTokenDto regenerate(String refreshToken) {
         Long userId = tokenProvider.getUserIdFormRefreshToken(refreshToken);
         if (userId == null)
             throw new TokenNotValidException();
@@ -75,17 +74,15 @@ public class UserService {
             jwtRedisRepository.deleteRefToken(refTokenKey);
             throw new TokenNotValidException();
         }
-        return authenticationSuccess(userId, refTokenKey, response);
+        return authenticationSuccess(userId, refTokenKey);
     }
 
-    private UserJwtTokenDto authenticationSuccess(Long userId, String refTokenKey, HttpServletResponse response) {
+    private UserJwtTokenDto authenticationSuccess(Long userId, String refTokenKey) {
         String newRefToken = tokenProvider.refreshToken(userId);
         long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
         jwtRedisRepository.addRefToken(refTokenKey, newRefToken, refreshTokenExpiry);
         String newAccessToken = tokenProvider.createToken(userId);
-        CookieUtil.addCookie(response, TokenHeaders.REFRESH_TOKEN, newRefToken,
-                (int)(refreshTokenExpiry / 1000), applicationYmlRead.getDomain());
-        return new UserJwtTokenDto(newAccessToken);
+        return new UserJwtTokenDto(newAccessToken, newRefToken);
     }
 
     /**

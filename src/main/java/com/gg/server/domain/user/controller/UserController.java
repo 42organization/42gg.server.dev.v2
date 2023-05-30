@@ -3,18 +3,22 @@ package com.gg.server.domain.user.controller;
 import com.gg.server.domain.user.dto.*;
 import com.gg.server.domain.user.service.UserService;
 import com.gg.server.domain.user.type.RoleType;
+import com.gg.server.global.security.config.properties.AppProperties;
 import com.gg.server.global.security.cookie.CookieUtil;
 import com.gg.server.global.security.jwt.utils.TokenHeaders;
+import com.gg.server.global.utils.ApplicationYmlRead;
 import com.gg.server.global.utils.argumentresolver.Login;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
-import org.apache.http.HttpResponse;
-import org.springframework.http.HttpRequest;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,10 +26,16 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final AppProperties appProperties;
+
+    private final ApplicationYmlRead applicationYmlRead;
 
     @PostMapping("/accesstoken")
-    public UserJwtTokenDto generateAccessToken(@RequestParam String refreshToken, HttpServletResponse response) {
-        return userService.regenerate(refreshToken, response);
+    public ResponseEntity<UserAccessTokenDto> generateAccessToken(@RequestParam String refreshToken, HttpServletResponse response) {
+        UserJwtTokenDto result = userService.regenerate(refreshToken);
+        CookieUtil.addCookie(response, TokenHeaders.REFRESH_TOKEN, result.getRefreshToken(),
+                (int)(appProperties.getAuth().getRefreshTokenExpiry() / 1000), applicationYmlRead.getDomain());
+        return new ResponseEntity<>(new UserAccessTokenDto(result.getAccessToken()), HttpStatus.CREATED);
     }
 
     @GetMapping
@@ -61,9 +71,10 @@ public class UserController {
     }
 
     @PutMapping("{intraId}")
-    public void doModifyUser (@Valid @RequestBody UserModifyRequestDto userModifyRequestDto, @PathVariable String intraId) {
+    public ResponseEntity doModifyUser (@Valid @RequestBody UserModifyRequestDto userModifyRequestDto, @PathVariable String intraId) {
         userService.updateUser(userModifyRequestDto.getRacketType(), userModifyRequestDto.getStatusMessage(),
                 userModifyRequestDto.getSnsNotiOpt(), intraId);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
 }

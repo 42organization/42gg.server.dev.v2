@@ -4,6 +4,7 @@ import com.gg.server.domain.rank.dto.ExpRankDto;
 import com.gg.server.domain.rank.dto.ExpRankPageResponseDto;
 import com.gg.server.domain.rank.dto.RankDto;
 import com.gg.server.domain.rank.dto.RankPageResponseDto;
+import com.gg.server.domain.rank.exception.RedisDataNotFoundException;
 import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
@@ -82,11 +83,12 @@ public class RankService {
 
     private int findMyRank(UserDto curUser, Season season) {
         String zSetKey = RedisKeyManager.getZSetKey(season.getId());
-        String hashKey = RedisKeyManager.getHashKey(season.getId());
-
-        RankRedis myRankRedis = redisRepository.findRankByUserId(hashKey, curUser.getId());
-        Long myRank = redisRepository.getRankInZSet(zSetKey, curUser.getId());
-        return (myRankRedis.getLosses() + myRankRedis.getWins() == 0)? -1 : myRank.intValue() + 1;
+        try {
+            Long myRank = redisRepository.getRankInZSet(zSetKey, curUser.getId());
+            return myRank.intValue() + 1;
+        } catch (RedisDataNotFoundException e) {
+            return -1;
+        }
     }
 
     private int calcTotalPage(Season season, int pageSize) {
