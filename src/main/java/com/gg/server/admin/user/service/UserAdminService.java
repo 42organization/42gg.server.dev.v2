@@ -18,6 +18,7 @@ import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.exception.SeasonNotFoundException;
 import com.gg.server.domain.user.User;
+import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.global.exception.ErrorCode;
@@ -80,8 +81,8 @@ public class UserAdminService {
 
     @Transactional(readOnly = true)
     public UserDetailAdminResponseDto getUserDetailByIntraId(String intraId) {
-        User user = userAdminRepository.findByIntraId(intraId).orElseThrow(() -> new NotFoundException("못찾음"));//에러코드 수정 필요
-        Season currSeason = seasonAdminRepository.findCurrentSeason(LocalDateTime.now()).orElseThrow(() -> new NotFoundException("못찾음"));
+        User user = userAdminRepository.findByIntraId(intraId).orElseThrow(() -> new UserNotFoundException());
+        Season currSeason = seasonAdminRepository.findCurrentSeason(LocalDateTime.now()).orElseThrow(() -> new SeasonNotFoundException());
         RankRedis userCurrRank = rankRedisRepository.findRankByUserId(RedisKeyManager.getHashKey(currSeason.getId()),
                 user.getId());
         return new UserDetailAdminResponseDto(user, userCurrRank);
@@ -92,7 +93,7 @@ public class UserAdminService {
                                  UserUpdateAdminRequestDto userUpdateAdminRequestDto,
                                  MultipartFile userImageFile) throws IOException{
         Season currSeason = seasonAdminRepository.findCurrentSeason(LocalDateTime.now()).orElseThrow(() -> new SeasonNotFoundException());
-        User user = userAdminRepository.findByIntraId(intraId).orElseThrow(() -> new NotFoundException("못찾음"));//에러코드 수정 필요
+        User user = userAdminRepository.findByIntraId(intraId).orElseThrow(() -> new UserNotFoundException());
 
         user.modifyUserDetail(userUpdateAdminRequestDto);
         asyncNewUserImageUploader.update(intraId, userImageFile);
@@ -117,7 +118,7 @@ public class UserAdminService {
     }
     private String getUserStatusMessage(User targetUser) {
         Season currentSeason = seasonAdminRepository.findCurrentSeason(LocalDateTime.now())
-                .orElseThrow(() -> new NoSuchElementException("현재 시즌이 없습니다."));
+                .orElseThrow(() -> new SeasonNotFoundException());
         String hashKey = RedisKeyManager.getHashKey(currentSeason.getId());
         RankRedis userRank = rankRedisRepository.findRankByUserId(hashKey, targetUser.getId());
         if (userRank == null)
