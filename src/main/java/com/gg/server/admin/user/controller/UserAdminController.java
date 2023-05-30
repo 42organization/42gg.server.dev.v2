@@ -50,16 +50,16 @@ public class UserAdminController {
 
     @PutMapping("/{intraId}")
     public ResponseEntity userUpdateDetail(@PathVariable String intraId,
-                                           @RequestPart UserUpdateAdminRequestDto updateRequestDto,
-                                           @RequestPart(required = false) MultipartFile multipartFile) throws IOException {
-        if (multipartFile != null) {
-            if (multipartFile.getSize() > 50000) {
+                                           @RequestPart UserUpdateAdminRequestDto updateUserInfo,
+                                           @RequestPart(required = false) MultipartFile imgData) throws IOException {
+        if (imgData != null) {
+            if (imgData.getSize() > 50000) {
                 throw new UserImageLargeException();
-            } else if (multipartFile.getContentType() == null || !multipartFile.getContentType().equals("image/jpeg")) {
+            } else if (imgData.getContentType() == null || !imgData.getContentType().equals("image/jpeg")) {
                 throw new UserImageTypeException();
             }
         }
-        userAdminService.updateUserDetail(intraId, updateRequestDto, multipartFile);
+        userAdminService.updateUserDetail(intraId, updateUserInfo, imgData);
 
         return new ResponseEntity(HttpStatus.OK);
     }

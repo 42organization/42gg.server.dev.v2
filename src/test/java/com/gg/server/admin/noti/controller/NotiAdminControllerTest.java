@@ -91,7 +91,7 @@ class NotiAdminControllerTest {
 
         //then
         List<Noti> notiList1 = notiAdminRepository.findAll(pageable).getContent();
-        List<NotiAdminDto> expectedNotiAdminDtoList = actureResponse1.getNotifications();
+        List<NotiAdminDto> expectedNotiAdminDtoList = actureResponse1.getNotiList();
         for (int i = 0; i < notiList1.size(); i++) {
             Assertions.assertThat(expectedNotiAdminDtoList.get(i).getIntraId()).isEqualTo(expectedNotiAdminDtoList.get(i).getIntraId());
             Assertions.assertThat(expectedNotiAdminDtoList.get(i).getMessage()).isEqualTo(expectedNotiAdminDtoList.get(i).getMessage());
@@ -102,7 +102,7 @@ class NotiAdminControllerTest {
         List<Noti> notiList2 = notiRepository.findByUser(user);
         Assertions.assertThat(notiList2.size()).isEqualTo(1);
         Noti expectedNoti2 = notiList2.get(0);
-        NotiAdminDto actureNotiResponseDto2 = actureResponse2.getNotifications().get(0);
+        NotiAdminDto actureNotiResponseDto2 = actureResponse2.getNotiList().get(0);
         Assertions.assertThat(expectedNoti2.getUser().getIntraId()).isEqualTo(actureNotiResponseDto2.getIntraId());
         Assertions.assertThat(expectedNoti2.getMessage()).isEqualTo(testMessage);
         Assertions.assertThat(expectedNoti2.getIsChecked()).isFalse();
@@ -114,7 +114,7 @@ class NotiAdminControllerTest {
     @Transactional
     public void sendNotiToUserTest() throws Exception {
         //given
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
         User user = userRepository.findById(userId).get();
         String url = "/pingpong/admin/notifications";
