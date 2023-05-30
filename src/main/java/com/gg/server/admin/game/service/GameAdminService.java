@@ -18,6 +18,7 @@ import com.gg.server.domain.season.exception.SeasonNotFoundException;
 import com.gg.server.domain.team.data.Team;
 import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.user.User;
+import com.gg.server.domain.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -72,7 +73,7 @@ public class GameAdminService {
 
     @Transactional(readOnly = true)
     public GameLogListAdminResponseDto findGamesByIntraId(String intraId, Pageable pageable){
-        User user = userAdminRepository.findByIntraId(intraId).orElseThrow(() -> new UsernameNotFoundException("User" + intraId));
+        User user = userAdminRepository.findByIntraId(intraId).orElseThrow(() -> new UserNotFoundException());
         List<PChange> pChangeList = pChangeRepository.findAllByUserId(user.getId());
         List<Game> gameList = new ArrayList<>();
 

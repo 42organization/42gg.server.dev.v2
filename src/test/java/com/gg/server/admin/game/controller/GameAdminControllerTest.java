@@ -43,7 +43,7 @@ class GameAdminControllerTest {
     @DisplayName("[Get]/pingpong/admin/games/users?intraId=${intraId}&page=${pageNumber}&size={sizeNum}")
     void getUserGameList() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
-        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
 
         Integer currentPage = 2;
         Integer pageSize = 5;//페이지 사이즈 크기가 실제 디비 정보보다 큰지 확인할 것

@@ -9,6 +9,7 @@ import com.gg.server.admin.user.data.UserAdminRepository;
 import com.gg.server.domain.noti.data.Noti;
 import com.gg.server.domain.noti.type.NotiType;
 import com.gg.server.domain.user.User;
+import com.gg.server.domain.user.exception.UserNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,7 +29,7 @@ public class NotiAdminService {
         String intraId = sendNotiAdminRequestDto.getIntraId();
 
         User user = userAdminRepository.findByIntraId(intraId)
-                .orElseThrow(() -> new UsernameNotFoundException("User " + intraId));
+                .orElseThrow(() -> new UserNotFoundException());
         notiAdminRepository.save(new Noti(user, NotiType.ANNOUNCE, message, false));
     }
 
@@ -36,17 +37,13 @@ public class NotiAdminService {
     public NotiListAdminResponseDto getAllNoti(Pageable pageable) {
         Page<Noti> allNotiPage = notiAdminRepository.findAll(pageable);
         Page<NotiAdminDto> notiAdminDtoPage = allNotiPage.map(NotiAdminDto::new);
-        return new NotiListAdminResponseDto(notiAdminDtoPage.getContent(), notiAdminDtoPage.getTotalPages(),
-                notiAdminDtoPage.getNumber() + 1);
+        return new NotiListAdminResponseDto(notiAdminDtoPage.getContent(), notiAdminDtoPage.getTotalPages());
     }
 
     @Transactional(readOnly = true)
     public NotiListAdminResponseDto getFilteredNotifications(Pageable pageable, String intraId) {
         Page<Noti> findNotis = notiAdminRepository.findNotisByUserIntraId(pageable, intraId);
         Page<NotiAdminDto> notiResponseDtoPage = findNotis.map(NotiAdminDto::new);
-        return new NotiListAdminResponseDto(
-                notiResponseDtoPage.getContent(), notiResponseDtoPage.getTotalPages(),
-                notiResponseDtoPage.getNumber() + 1
-        );
+        return new NotiListAdminResponseDto(notiResponseDtoPage.getContent(), notiResponseDtoPage.getTotalPages());
     }
 }

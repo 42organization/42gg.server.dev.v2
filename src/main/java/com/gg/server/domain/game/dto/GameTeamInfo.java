@@ -32,7 +32,7 @@ public class GameTeamInfo {
         Long myTeamId = null;
         for (GameTeamUserInfo info :
                 infos) {
-            if (info.getScore() != 0) {
+            if (info.getScore() > -1) {
                 this.isScoreExist = true;
             }
             if (!this.mode.equals(info.getMode()) || !this.gameId.equals(info.getGameId())

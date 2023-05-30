@@ -1,7 +1,7 @@
 package com.gg.server.admin.penalty.data;
 
 import com.gg.server.admin.penalty.type.PenaltyKey;
-import com.gg.server.domain.penalty.data.RedisPenaltyUser;
+import com.gg.server.domain.penalty.redis.RedisPenaltyUser;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class RedisPenaltyUserRepository {
+public class PenaltyUserAdminRedisRepository {
     private final RedisTemplate<String, RedisPenaltyUser> redisTemplate;
 
     public void addPenaltyUser(RedisPenaltyUser penaltyUser, LocalDateTime releaseTime) {

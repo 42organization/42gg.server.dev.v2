@@ -111,7 +111,7 @@ class SeasonAdminControllerTest {
     @DisplayName("[GET]pingpong/admin/seasons")
     void getAdminSeasons() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
-        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
 
         String contentAsString = mockMvc.perform(MockMvcRequestBuilders.get("/pingpong/admin/seasons")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
@@ -134,7 +134,7 @@ class SeasonAdminControllerTest {
     @DisplayName("[POST]/pingpong/admin/seasons")
     void createSeasons() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
-        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
 
         SeasonCreateRequestDto seasonCreateReqeustDto = new SeasonCreateRequestDto(
                 "redis1",
@@ -164,7 +164,7 @@ class SeasonAdminControllerTest {
     @DisplayName("[Delete]/pingpong/admin/season/{seasonId}")
     void deleteSeasons() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
-        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
 
         Season newSeason = Season.builder()
                 .seasonName("redis1")
@@ -202,7 +202,7 @@ class SeasonAdminControllerTest {
     @DisplayName("[Put]/pingpong/admin/seasons/{seasonId}")
     void updateSeasons() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
-        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
 
         Season newSeason = Season.builder()
                 .seasonName("redis1")

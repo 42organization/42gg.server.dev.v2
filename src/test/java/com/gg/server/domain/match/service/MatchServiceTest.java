@@ -1,5 +1,6 @@
 package com.gg.server.domain.match.service;
 
+import com.gg.server.admin.penalty.data.PenaltyAdminRepository;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.type.Mode;
@@ -10,12 +11,15 @@ import com.gg.server.domain.match.dto.MatchStatusDto;
 import com.gg.server.domain.match.dto.MatchStatusResponseListDto;
 import com.gg.server.domain.match.dto.SlotStatusDto;
 import com.gg.server.domain.match.dto.SlotStatusResponseListDto;
+import com.gg.server.domain.match.exception.PenaltyUserSlotException;
 import com.gg.server.domain.match.type.MatchKey;
 import com.gg.server.domain.match.type.Option;
 import com.gg.server.domain.match.type.SlotStatus;
 import com.gg.server.domain.noti.data.Noti;
 import com.gg.server.domain.noti.data.NotiRepository;
 import com.gg.server.domain.noti.type.NotiType;
+import com.gg.server.domain.penalty.redis.PenaltyUserRedisRepository;
+import com.gg.server.domain.penalty.redis.RedisPenaltyUser;
 import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
@@ -69,7 +73,10 @@ class MatchServiceTest {
     RankRedisRepository rankRedisRepository;
     @Autowired
     NotiRepository notiRepository;
-
+    @Autowired
+    PenaltyAdminRepository penaltyRepository;
+    @Autowired
+    PenaltyUserRedisRepository penaltyUserRedisRepository;
     List<User> users;
     List<LocalDateTime> slotTimes;
 
@@ -197,7 +204,16 @@ class MatchServiceTest {
         Assertions.assertThat(notifications.get(0).getType()).isEqualTo(NotiType.MATCHED);
         Assertions.assertThat(notifications.get(1).getType()).isEqualTo(NotiType.CANCELEDBYMAN);
 
+        //패널티 확인
+        Optional<RedisPenaltyUser> penaltyUser = penaltyUserRedisRepository.findByIntraId(users.get(0).getIntraId());
+        Assertions.assertThat(penaltyUser).isPresent();
+        Assertions.assertThat(penaltyUser.get().getPenaltyTime()).isEqualTo(1);
+        org.junit.jupiter.api.Assertions.assertThrows(PenaltyUserSlotException.class, () -> {
+                matchService.makeMatch(UserDto.from(users.get(0)), Option.BOTH, slotTimes.get(10));
+                }
+        );
     }
+
 
     @DisplayName("게임 생성 전 경기 취소")
     @Test
@@ -223,6 +239,7 @@ class MatchServiceTest {
     void readMyTableAfterMakingGame() {
         //normal 게임 생성
         matchService.makeMatch(UserDto.from(users.get(0)), Option.NORMAL, slotTimes.get(0));
+        matchService.makeMatch(UserDto.from(users.get(0)), Option.RANK, slotTimes.get(4));
         matchService.makeMatch(UserDto.from(users.get(1)), Option.RANK, slotTimes.get(1));
         matchService.makeMatch(UserDto.from(users.get(2)), Option.NORMAL, slotTimes.get(2));
         SlotStatusResponseListDto slotStatusList = matchFindService.getAllMatchStatus(users.get(0).getId(),
@@ -240,6 +257,9 @@ class MatchServiceTest {
             }
             if (dto.getStartTime().equals(slotTimes.get(2))) {
                 Assertions.assertThat(dto.getStatus()).isEqualTo(SlotStatus.MATCH.getCode());
+            }
+            if (dto.getStartTime().equals(slotTimes.get(4))) {
+                Assertions.assertThat(dto.getStatus()).isEqualTo(SlotStatus.CLOSE.getCode());
             }
         }
 

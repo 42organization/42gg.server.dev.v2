@@ -57,7 +57,7 @@ class FeedbackControllerTest {
     @DisplayName("[Post]/pingpong/feedback")
     void getAnnouncementList() throws Exception {
         String accessToken = testDataUtils.getLoginAccessToken();
-        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
         System.out.println(userId);
 
         FeedbackRequestDto addDto = FeedbackRequestDto.builder()

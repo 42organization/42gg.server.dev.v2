@@ -13,15 +13,15 @@ import java.util.concurrent.TimeUnit;
 public class JwtRedisRepository {
     private final RedisTemplate<String, String> redisTemplate;
 
-    public void addRefToken(String refreshToken, String userId, long timeOut) {
-        redisTemplate.opsForValue().set(refreshToken, userId, timeOut, TimeUnit.MILLISECONDS);
+    public void addRefToken(String refTokenKey, String refreshToken, long timeOut) {
+        redisTemplate.opsForValue().set(refTokenKey, refreshToken, timeOut, TimeUnit.MILLISECONDS);
     }
 
-    public Long getUserIdByRefToken(String refreshToken){
-        String userId = redisTemplate.opsForValue().get(refreshToken);
-        if (userId == null)
-            throw new TokenNotValidException();
-        return Long.valueOf(userId);
+    public String getRefToken(String refTokenKey){
+        return redisTemplate.opsForValue().get(refTokenKey);
     }
 
+    public void deleteRefToken(String refTokenKey) {
+        redisTemplate.delete(refTokenKey);
+    }
 }

@@ -1,6 +1,8 @@
 package com.gg.server.admin.noti.controller;
 
 
+import com.gg.server.admin.noti.dto.NotiListAdminRequestDto;
+import com.gg.server.admin.noti.dto.NotiListAdminResponseDto;
 import com.gg.server.admin.noti.dto.SendNotiAdminRequestDto;
 import com.gg.server.admin.noti.service.NotiAdminService;
 import com.gg.server.domain.noti.dto.NotiResponseDto;
@@ -22,15 +24,17 @@ public class NotiAdminController {
     private final NotiAdminService notiAdminService;
 
     @GetMapping
-    public ResponseEntity<NotiResponseDto> getAllNoti(@RequestParam @Size(min=1, max=30) int page,
-                                                             @RequestParam(defaultValue = "20") int size,
-                                                             @RequestParam(required = false) String intraId) {
+    public NotiListAdminResponseDto getAllNoti(@ModelAttribute NotiListAdminRequestDto requestDto) {
+        int page = requestDto.getPage();
+        int size = requestDto.getSize();
+        String intraId = requestDto.getIntraId();
+
         Pageable pageable = PageRequest.of(page - 1, size,
                 Sort.by("createdAt").descending().and(Sort.by("user.intraId").ascending()));
         if (intraId == null)
-            return new ResponseEntity(notiAdminService.getAllNoti(pageable), HttpStatus.OK);
+            return notiAdminService.getAllNoti(pageable);
         else
-            return new ResponseEntity(notiAdminService.getFilteredNotifications(pageable, intraId), HttpStatus.OK);
+            return notiAdminService.getFilteredNotifications(pageable, intraId);
     }
     @PostMapping
     public ResponseEntity sendNotiToUser(@RequestBody SendNotiAdminRequestDto sendNotiAdminRequestDto) {
