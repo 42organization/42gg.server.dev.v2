@@ -71,8 +71,8 @@ class PenaltyAdminControllerTest {
     @AfterEach
     void clear() {
         RedisConnection connection = redisConnectionFactory.getConnection();
-//        connection.flushDb();
-//        connection.close();
+        connection.flushDb();
+        connection.close();
     }
 
     @Test
