@@ -1,6 +1,6 @@
 package com.gg.server.domain.slotmanagement;
 
-import com.gg.server.admin.slotmanagement.dto.SlotAdminDto;
+import com.gg.server.admin.slotmanagement.dto.SlotCreateRequestDto;
 import com.gg.server.global.utils.BaseTimeEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -35,16 +36,25 @@ public class SlotManagement extends BaseTimeEntity {
     @Column(name = "game_interval")
     private Integer gameInterval;
 
+    @NotNull
+    @Column(name = "start_time")
+    private LocalDateTime startTime;
+
+    @NotNull
+    @Column(name = "end_time")
+    private LocalDateTime endTime;
+
     @Builder
     public SlotManagement(Integer pastSlotTime, Integer futureSlotTime, Integer openMinute, Integer gameInterval) {
         this.pastSlotTime = pastSlotTime;
         this.futureSlotTime = futureSlotTime;
         this.openMinute = openMinute;
         this.gameInterval = gameInterval;
+
     }
 
     @Builder
-    public SlotManagement(SlotAdminDto requestDto) {
+    public SlotManagement(SlotCreateRequestDto requestDto) {
         this.pastSlotTime = requestDto.getPastSlotTime();
         this.futureSlotTime = requestDto.getFutureSlotTime();
         this.openMinute = requestDto.getOpenMinute();
