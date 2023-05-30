@@ -1,4 +1,4 @@
-package com.gg.server.domain.penalty.data;
+package com.gg.server.domain.penalty.redis;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
