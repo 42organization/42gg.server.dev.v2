@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PenaltyUserResponseDto {
+    private Long penaltyId;
     private String intraId;
     private String reason;
     private LocalDateTime releaseTime;
@@ -22,8 +23,19 @@ public class PenaltyUserResponseDto {
     }
 
     public PenaltyUserResponseDto(Penalty penalty) {
+        this.penaltyId = penalty.getId();
         this.intraId = penalty.getUser().getIntraId();
         this.reason = penalty.getMessage();
         this.releaseTime = penalty.getStartTime().plusHours(penalty.getPenaltyTime());
+    }
+
+    @Override
+    public String toString() {
+        return "PenaltyUserResponseDto{" +
+                "penaltyId=" + penaltyId +
+                ", intraId='" + intraId + '\'' +
+                ", reason='" + reason + '\'' +
+                ", releaseTime=" + releaseTime +
+                '}';
     }
 }
