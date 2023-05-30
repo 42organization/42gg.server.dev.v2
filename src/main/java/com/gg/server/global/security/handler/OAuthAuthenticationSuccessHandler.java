@@ -57,6 +57,8 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
         CookieUtil.addCookie(response, TokenHeaders.ACCESS_TOKEN, accessToken, (int) (accessTokenExpiry / 1000));
 
         String refTokenKey = RedisKeyManager.getRefKey(principal.getId());
+        if (jwtRedisRepository.getRefToken(refTokenKey) != null)
+            jwtRedisRepository.deleteRefToken(refTokenKey);
         jwtRedisRepository.addRefToken(refTokenKey, refreshToken, refreshTokenExpiry);
         return UriComponentsBuilder.fromUriString(applicationYmlRead.getFrontUrl())
                 .queryParam("token", accessToken)
