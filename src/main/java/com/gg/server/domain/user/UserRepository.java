@@ -1,5 +1,6 @@
 package com.gg.server.domain.user;
 
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,4 +19,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Long findExpRankingByIntraId(@Param("intraId") String intraId);
 
     Page<User> findAll(Pageable pageable);
+
+    @Query("select tu.user from User u, TeamUser tu, Team t, Game g" +
+            " where g.id=:gameId and t.game.id =g.id and tu.team.id = t.id "
+            + "and u.id = tu.user.id and u.id !=:userId")
+    List<User> findEnemyByGameAndUser(@Param("gameId") Long gameId, @Param("userId") Long userId);
 }

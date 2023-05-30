@@ -43,6 +43,13 @@ public enum ErrorCode {
     SCORE_NOT_MATCHED(400, "GM202", "score 입력이 기존과 다릅니다."),
     GAME_NOT_FOUND(404, "GM101", "GAME 이 존재하지 않습니다."),
 
+    /** match **/
+    SLOT_ENROLLED(400, "MA300", "SLOT ALREADY ENROLLED"),
+    SLOT_COUNT_EXCEEDED(400, "MA301", "SLOT COUNT MORE THAN THREE"),
+    SLOT_NOT_FOUND(404, "MA100", "SLOT NOT FOUND"),
+    PENALTY_USER_ENROLLED(400, "MA302", "PENALTY USER ENROLLED"),
+    SLOT_PAST(400, "MA303", "PAST SLOT ENROLLED"),
+
     /** Common **/
     INTERNAL_SERVER_ERR(500, "CM001","INTERNAL SERVER ERROR"),
     NOT_FOUND(404, "CM002", "NOT FOUND"),
@@ -59,7 +66,7 @@ public enum ErrorCode {
     /**
      * PChange
      **/
-    PC_NOT_FOUND(404, "PC100", "PChange 가 존재하지 않습니다."),
+    PCHANGE_NOT_FOUND(404, "PC100", "PChange 가 존재하지 않습니다."),
 
     AWS_S3_ERR(500, "CL001", "AWS S3 Error"),
     AWS_SERVER_ERR(500, "CL002", "AWS Error"),

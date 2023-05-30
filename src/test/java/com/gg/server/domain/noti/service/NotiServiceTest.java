@@ -55,8 +55,8 @@ class NotiServiceTest {
         String expectedMatchCancelNotiMessage = now.format(DateTimeFormatter.ofPattern("HH:mm")) + "에 신청한 매칭이 상대에 의해 취소되었습니다.";
 
         //when
-        notiService.createMatched(userDto, now);
-        notiService.createMatchCancel(userDto, now);
+        notiService.createMatched(user, now);
+        notiService.createMatchCancel(user, now);
         List<Noti> actureNotiList = notiRepository.findAllByUser(user);
 
         //then

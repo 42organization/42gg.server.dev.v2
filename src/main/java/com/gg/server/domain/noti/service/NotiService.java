@@ -62,19 +62,15 @@ public class NotiService {
     }
 
     @Transactional
-    public void createMatched(UserDto userDto, LocalDateTime startTime) {
+    public void createMatched(User user, LocalDateTime startTime) {
         String notiMessage = startTime.format(DateTimeFormatter.ofPattern("HH:mm")) + "에 신청한 매칭이 성사되었습니다.";
-
-        User user = userRepository.findById(userDto.getId()).orElseThrow(() -> new UserNotFoundException());
         Noti noti = new Noti(user, NotiType.MATCHED, notiMessage, false);
         notiRepository.save(noti);
     }
 
     @Transactional
-    public void createMatchCancel(UserDto userDto, LocalDateTime startTime) {
+    public void createMatchCancel(User user, LocalDateTime startTime) {
         String notiMessage = startTime.format(DateTimeFormatter.ofPattern("HH:mm")) + "에 신청한 매칭이 상대에 의해 취소되었습니다.";
-
-        User user = userRepository.findById(userDto.getId()).orElseThrow(() -> new UserNotFoundException());
         Noti noti = new Noti(user, NotiType.CANCELEDBYMAN, notiMessage, false);
         notiRepository.save(noti);
     }
