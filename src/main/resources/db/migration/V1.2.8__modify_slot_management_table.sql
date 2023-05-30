@@ -11,7 +11,7 @@ END //
 
 DELIMITER ;
 
-alter table slot_management add column start_time DATETIME;정
+alter table slot_management add column start_time DATETIME;
 alter table slot_management add column end_time DATETIME;
 
 SET SQL_SAFE_UPDATES=0;
