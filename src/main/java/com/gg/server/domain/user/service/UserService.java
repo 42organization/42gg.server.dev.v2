@@ -3,6 +3,8 @@ package com.gg.server.domain.user.service;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.type.StatusType;
+import com.gg.server.domain.match.data.RedisMatchTime;
+import com.gg.server.domain.match.data.RedisMatchUserRepository;
 import com.gg.server.domain.noti.data.NotiRepository;
 import com.gg.server.domain.pchange.data.PChange;
 import com.gg.server.domain.pchange.data.PChangeRepository;
@@ -37,6 +39,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,6 +56,7 @@ public class UserService {
     private final SeasonFindService seasonFindService;
     private final PChangeRepository pChangeRepository;
     private final RankFindService rankFindService;
+    private final RedisMatchUserRepository redisMatchUserRepository;
 
     public String regenerate(String refreshToken) {
         Long userId = jwtRedisRepository.getUserIdByRefToken(refreshToken);
@@ -78,7 +82,7 @@ public class UserService {
      * @param user
      * - event:
      *     - null → 로그인 유저가 잡힌 매칭이 하나도 없을 때
-     *     - match → 매칭은 되었으나 게임시작 전일 때
+     *     - match → 매칭은 되었으나 게임시작 전일 때 or 매칭중인 경우
      *     - game → 유저가 게임이 잡혔고 현재 게임중인 경우
      *
      * - currentMatchMode
@@ -90,14 +94,12 @@ public class UserService {
     public UserLiveResponseDto getUserLiveDetail(UserDto user) {
         int notiCnt = notiRepository.countNotCheckedNotiByUser(user.getId());
         Optional<Game> optionalGame = gameRepository.getLatestGameByUser(user.getId());
-        if (!optionalGame.isEmpty()) {
-            Game latestGame = optionalGame.get();
-            if (latestGame.getStatus() == StatusType.END)
-                return new UserLiveResponseDto(notiCnt, null, null, null);
-            String event = (latestGame.getStatus() == StatusType.BEFORE) ? "match" : "game";
-            return new UserLiveResponseDto(notiCnt, event, latestGame.getMode(), latestGame.getId());
+        Set<RedisMatchTime> enrolledSlots = redisMatchUserRepository.getAllMatchTime(user.getId());
+        if (optionalGame.isPresent()) {
+            Game game = optionalGame.get();
+            if (game.getStatus() == StatusType.LIVE || game.getStatus() == StatusType.WAIT)
+                return new UserLiveResponseDto(user, notiCnt, "game", game.getMatch().getMode(), enrolledSlots);
         }
-        return new UserLiveResponseDto(notiCnt, null, null, null);
     }
 
     @Transactional(readOnly = true)
