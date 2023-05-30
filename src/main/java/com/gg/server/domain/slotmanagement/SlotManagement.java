@@ -45,12 +45,14 @@ public class SlotManagement extends BaseTimeEntity {
     private LocalDateTime endTime;
 
     @Builder
-    public SlotManagement(Integer pastSlotTime, Integer futureSlotTime, Integer openMinute, Integer gameInterval) {
+    public SlotManagement(Integer pastSlotTime, Integer futureSlotTime, Integer openMinute, Integer gameInterval,
+                          LocalDateTime startTime, LocalDateTime endTime) {
         this.pastSlotTime = pastSlotTime;
         this.futureSlotTime = futureSlotTime;
         this.openMinute = openMinute;
         this.gameInterval = gameInterval;
-
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 
     @Builder
