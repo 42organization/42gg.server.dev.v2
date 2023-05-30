@@ -115,7 +115,7 @@ class NotiAdminControllerTest {
     public void sendNotiToUserTest() throws Exception {
         //given
         String accessToken = testDataUtils.getAdminLoginAccessToken();
-        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
         User user = userRepository.findById(userId).get();
         String url = "/pingpong/admin/notifications";
         String wrongIntraId = UUID.randomUUID().toString().substring(0, 30);
