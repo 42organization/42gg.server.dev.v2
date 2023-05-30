@@ -49,7 +49,7 @@ class FeedbackAdminControllerTest {
     @DisplayName("[Get]/pingpong/admin/feedback")
     void getFeedback() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
-        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
 
         Integer currentPage = 1;
         Integer pageSize = 5;//페이지 사이즈 크기가 실제 디비 정보보다 큰지 확인할 것
@@ -73,7 +73,7 @@ class FeedbackAdminControllerTest {
     @DisplayName("[Patch]pingpong/admin/feedback/{id}")
     void patchFeedback() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
-        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
 
         Feedback feedback = Feedback.builder()
                 .category(FeedbackType.ETC)
@@ -97,7 +97,7 @@ class FeedbackAdminControllerTest {
     @DisplayName("[get]pingpong/admin/feedback/users?intraId=${intraId}&page=${pageNumber}&size={size}")
     void findFeedbackByIntraId() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
-        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
 
         User user = userRepository.findById(userId).get();
 

@@ -57,7 +57,7 @@ class NotiControllerTest {
     public void NotiFindByUserTest() throws Exception {
         //given
         String accessToken = testDataUtils.getLoginAccessToken();
-        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
         String url = "/pingpong/notifications";
 
         UserDto userDto = UserDto.from(userRepository.getById(userId));
@@ -78,7 +78,7 @@ class NotiControllerTest {
     public void checkNotiByUserTest() throws Exception{
         //given
         String accessToken = testDataUtils.getLoginAccessToken();
-        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
         String url = "/pingpong/notifications/check";
         User user = userRepository.findById(userId).get();
 
@@ -105,7 +105,7 @@ class NotiControllerTest {
     public void notiRemoveAll() throws Exception {
         //given
         String accessToken = testDataUtils.getLoginAccessToken();
-        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
         String url = "/pingpong/notifications";
         User user = userRepository.findById(userId).get();
 
