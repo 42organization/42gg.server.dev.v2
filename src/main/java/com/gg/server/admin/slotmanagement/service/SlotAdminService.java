@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class SlotAdminService {
     private final adminSlotManagementRepository adminSlotManagementRepository;
@@ -32,6 +31,7 @@ public class SlotAdminService {
         return new SlotListAdminResponseDto(dtoList);
     }
 
+    @Transactional
     public void addSlotSetting(SlotCreateRequestDto requestDto) {
         SlotManagement slotManagement = new SlotManagement(requestDto);
 

@@ -2,6 +2,7 @@ package com.gg.server.admin.slotmanagement.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.slotmanagement.data.adminSlotManagementRepository;
+import com.gg.server.admin.slotmanagement.dto.SlotAdminDto;
 import com.gg.server.admin.slotmanagement.dto.SlotCreateRequestDto;
 import com.gg.server.admin.slotmanagement.dto.SlotListAdminResponseDto;
 import com.gg.server.domain.slotmanagement.SlotManagement;
@@ -52,6 +53,8 @@ class SlotAdminControllerTest {
                 .futureSlotTime(12)
                 .openMinute(5)
                 .gameInterval(15)
+                .startTime(LocalDateTime.now().plusDays(2))
+                .endTime(LocalDateTime.now().plusDays(10))
                 .build();
 
         adminSlotManagementRepository.save(test);
@@ -71,6 +74,16 @@ class SlotAdminControllerTest {
         assertThat(slotAdminDto.getSlotList().get(0).getFutureSlotTime()).isEqualTo(12);
         assertThat(slotAdminDto.getSlotList().get(0).getOpenMinute()).isEqualTo(5);
         assertThat(slotAdminDto.getSlotList().get(0).getInterval()).isEqualTo(15);
+
+        for(SlotAdminDto dto : slotAdminDto.getSlotList()){
+            System.out.println(dto.getFutureSlotTime());
+            System.out.println(dto.getPastSlotTime());
+            System.out.println(dto.getInterval());
+            System.out.println(dto.getOpenMinute());
+            System.out.println(dto.getStartTime());
+            System.out.println(dto.getEndTime());
+            System.out.println("----------------------");
+        }
 
 
     }
