@@ -40,7 +40,6 @@ public class SlotManagement extends BaseTimeEntity {
     @Column(name = "start_time")
     private LocalDateTime startTime;
 
-    @NotNull
     @Column(name = "end_time")
     private LocalDateTime endTime;
 
