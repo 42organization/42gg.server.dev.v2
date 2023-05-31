@@ -37,17 +37,13 @@ public class NotiAdminService {
     public NotiListAdminResponseDto getAllNoti(Pageable pageable) {
         Page<Noti> allNotiPage = notiAdminRepository.findAll(pageable);
         Page<NotiAdminDto> notiAdminDtoPage = allNotiPage.map(NotiAdminDto::new);
-        return new NotiListAdminResponseDto(notiAdminDtoPage.getContent(), notiAdminDtoPage.getTotalPages(),
-                notiAdminDtoPage.getNumber() + 1);
+        return new NotiListAdminResponseDto(notiAdminDtoPage.getContent(), notiAdminDtoPage.getTotalPages());
     }
 
     @Transactional(readOnly = true)
     public NotiListAdminResponseDto getFilteredNotifications(Pageable pageable, String intraId) {
         Page<Noti> findNotis = notiAdminRepository.findNotisByUserIntraId(pageable, intraId);
         Page<NotiAdminDto> notiResponseDtoPage = findNotis.map(NotiAdminDto::new);
-        return new NotiListAdminResponseDto(
-                notiResponseDtoPage.getContent(), notiResponseDtoPage.getTotalPages(),
-                notiResponseDtoPage.getNumber() + 1
-        );
+        return new NotiListAdminResponseDto(notiResponseDtoPage.getContent(), notiResponseDtoPage.getTotalPages());
     }
 }

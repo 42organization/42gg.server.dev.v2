@@ -3,6 +3,7 @@ package com.gg.server.domain.rank.redis;
 public class RedisKeyManager {
     private static final String ZSetKeyPrefix = "rank:ZSet:";
     private static final String HashKeyPrefix = "rank:hash:";
+    private static final String RefKeyPrefix = "refresh:token:";
 
     public static String getZSetKey(Long seasonId) {
         return ZSetKeyPrefix + seasonId;
@@ -12,4 +13,7 @@ public class RedisKeyManager {
         return HashKeyPrefix + seasonId;
     }
 
+    public static String getRefKey(Long id) {
+        return RefKeyPrefix + id.toString();
+    }
 }

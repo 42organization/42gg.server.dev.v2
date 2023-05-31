@@ -139,7 +139,15 @@ public class MatchFindService {
         Integer interval = matchUser.getSlotManagement().getGameInterval();
         Set<RedisMatchTime> allMatchTime = redisMatchUserRepository.getAllMatchTime(matchUser.getUserId());
         allMatchTime.stream().forEach(match -> slots.put(match.getStartTime(),
-                getMatchStatusDto(match.getStartTime(), SlotStatus.MYTABLE, interval)));
+                getMatchStatusDto(match.getStartTime(),
+                        getMySlotStatus(match.getOption(), matchUser.getOption()), interval)));
+    }
+
+    private SlotStatus getMySlotStatus(Option myOption, Option viewOption) {
+        if (myOption.equals(viewOption)) {
+            return SlotStatus.MYTABLE;
+        }
+        return SlotStatus.CLOSE;
     }
 
     private void groupEnrolledSlots(HashMap<LocalDateTime, SlotStatusDto> slots, MatchUserInfoDto matchUser) {

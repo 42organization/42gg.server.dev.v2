@@ -31,7 +31,7 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
                                   NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         HttpServletRequest request = (HttpServletRequest)webRequest.getNativeRequest();
         String accessToken = HeaderUtil.getAccessToken(request);
-        Long loginUserId = tokenProvider.getUserIdFromToken(accessToken);
+        Long loginUserId = tokenProvider.getUserIdFromAccessToken(accessToken);
         User user = userRepository.findById(loginUserId).orElseThrow();
         UserDto userDto = UserDto.from(user);
         return userDto;

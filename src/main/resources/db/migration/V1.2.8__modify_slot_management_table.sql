@@ -1,7 +1,7 @@
 DELIMITER //
 
 CREATE TRIGGER prevent_delete_season
-BEFORE DELETE ON Season
+BEFORE DELETE ON season
 FOR EACH ROW
 BEGIN
   IF OLD.start_time < NOW() THEN

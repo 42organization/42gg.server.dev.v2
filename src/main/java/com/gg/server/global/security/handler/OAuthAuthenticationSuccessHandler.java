@@ -1,5 +1,6 @@
 package com.gg.server.global.security.handler;
 
+import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.global.security.UserPrincipal;
 import com.gg.server.global.security.cookie.CookieUtil;
 import com.gg.server.global.security.config.properties.AppProperties;
@@ -42,18 +43,22 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
 
     @Override
     protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        // token 설정
-        String accessToken = tokenProvider.createToken(authentication);
-        String refreshToken = tokenProvider.refreshToken();
+        UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
+
         // 쿠키 시간 설정
         long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
-        long accessTokenExpiry = appProperties.getAuth().getTokenExpiry();
 
-        CookieUtil.addCookie(response, TokenHeaders.REFRESH_TOKEN, refreshToken, (int)(refreshTokenExpiry / 1000));
-        CookieUtil.addCookie(response, TokenHeaders.ACCESS_TOKEN, accessToken, (int) (accessTokenExpiry / 1000));
+        // token 설정
+        String accessToken = tokenProvider.createToken(principal.getId());
+        String refreshToken = tokenProvider.refreshToken(principal.getId());
 
-        UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
-        jwtRedisRepository.addRefToken(refreshToken, principal.getId().toString(), refreshTokenExpiry);
+        CookieUtil.addCookie(response, TokenHeaders.REFRESH_TOKEN, refreshToken,
+                        (int)(refreshTokenExpiry / 1000), applicationYmlRead.getDomain());
+
+        String refTokenKey = RedisKeyManager.getRefKey(principal.getId());
+        if (jwtRedisRepository.getRefToken(refTokenKey) != null)
+            jwtRedisRepository.deleteRefToken(refTokenKey);
+        jwtRedisRepository.addRefToken(refTokenKey, refreshToken, refreshTokenExpiry);
         return UriComponentsBuilder.fromUriString(applicationYmlRead.getFrontUrl())
                 .queryParam("token", accessToken)
                 .build().toUriString();
