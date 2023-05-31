@@ -94,7 +94,7 @@ public class UserService {
     public UserLiveResponseDto getUserLiveDetail(UserDto user) {
         int notiCnt = notiRepository.countNotCheckedNotiByUser(user.getId());
         Optional<Game> optionalGame = gameRepository.getLatestGameByUser(user.getId());
-        Set<RedisMatchTime> enrolledSlots = redisMatchUserRepository.getAllMatchTime(user.getId());
+        int userMatchCnt = redisMatchUserRepository.countMatchTime(user.getId());
         if (optionalGame.isPresent()) {
             Game game = optionalGame.get();
             if (game.getStatus() == StatusType.LIVE || game.getStatus() == StatusType.WAIT)
@@ -102,7 +102,7 @@ public class UserService {
             if (game.getStatus() == StatusType.BEFORE)
                 return new UserLiveResponseDto(notiCnt, "match", null, null);
         }
-        if (enrolledSlots.size() != 0){
+        if (userMatchCnt > 0){
             return new UserLiveResponseDto(notiCnt, "match", null, null);
         }
         return new UserLiveResponseDto(notiCnt, null, null, null);
