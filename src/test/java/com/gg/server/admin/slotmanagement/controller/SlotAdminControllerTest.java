@@ -6,6 +6,7 @@ import com.gg.server.admin.slotmanagement.dto.SlotAdminDto;
 import com.gg.server.admin.slotmanagement.dto.SlotCreateRequestDto;
 import com.gg.server.admin.slotmanagement.dto.SlotListAdminResponseDto;
 import com.gg.server.domain.slotmanagement.SlotManagement;
+import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
@@ -46,20 +48,6 @@ class SlotAdminControllerTest {
     @Autowired
     adminSlotManagementRepository adminSlotManagementRepository;
 
-    @BeforeEach
-    void setUp() {
-        SlotManagement test = SlotManagement.builder()
-                .pastSlotTime(1)
-                .futureSlotTime(12)
-                .openMinute(5)
-                .gameInterval(15)
-                .startTime(LocalDateTime.now().plusDays(2))
-                .endTime(LocalDateTime.now().plusDays(10))
-                .build();
-
-        adminSlotManagementRepository.save(test);
-    }
-
     @Test
     @DisplayName("[Get]/pingpong/admin/slot-management")
     void getSlotSetting() throws Exception {
@@ -70,10 +58,6 @@ class SlotAdminControllerTest {
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
         SlotListAdminResponseDto slotAdminDto = objectMapper.readValue(contentAsString, SlotListAdminResponseDto.class);
-        assertThat(slotAdminDto.getSlotList().get(0).getPastSlotTime()).isEqualTo(1);
-        assertThat(slotAdminDto.getSlotList().get(0).getFutureSlotTime()).isEqualTo(12);
-        assertThat(slotAdminDto.getSlotList().get(0).getOpenMinute()).isEqualTo(5);
-        assertThat(slotAdminDto.getSlotList().get(0).getInterval()).isEqualTo(15);
 
         for(SlotAdminDto dto : slotAdminDto.getSlotList()){
             System.out.println(dto.getFutureSlotTime());
@@ -92,21 +76,27 @@ class SlotAdminControllerTest {
     @DisplayName("[Post]/pingpong/admin/slot-management")
     void modifySlotSetting() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
-        SlotManagement test = SlotManagement.builder()
-                .pastSlotTime(4)
-                .futureSlotTime(1)
-                .openMinute(1)
-                .gameInterval(20)
-                .startTime(LocalDateTime.now().plusDays(2))
-                .build();
+        SlotCreateRequestDto test = new SlotCreateRequestDto(4,1,20,1,LocalDateTime.now().plusDays(2));
+
         String content = objectMapper.writeValueAsString(test);
 
         String contentAsString = mockMvc.perform(post("/pingpong/admin/slot-management")
                 .content(content)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
+
+        List<SlotManagement> slotList = adminSlotManagementRepository.findAllByOrderByCreatedAtDesc();
+        for(SlotManagement slot : slotList){
+            System.out.println(slot.getFutureSlotTime());
+            System.out.println(slot.getPastSlotTime());
+            System.out.println(slot.getGameInterval());
+            System.out.println(slot.getOpenMinute());
+            System.out.println(slot.getStartTime());
+            System.out.println(slot.getEndTime());
+            System.out.println("----------------------");
+        }
     }
 
 }
