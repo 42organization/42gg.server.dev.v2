@@ -139,14 +139,14 @@ public class GameService {
         if (!myTeam.getUser().getId().equals(userId)) {
             throw new InvalidParameterException("team user 정보 불일치.", ErrorCode.VALID_FAILED);
         } else {
-            if (myTeam.getTeam().getScore().equals(0) && enemyTeam.getTeam().getScore().equals(0)){
+            if (myTeam.getTeam().getScore().equals(-1) && enemyTeam.getTeam().getScore().equals(-1)){
                 setTeamScore(myTeam, scoreDto.getMyTeamScore(), scoreDto.getMyTeamScore() > scoreDto.getEnemyTeamScore());
                 setTeamScore(enemyTeam, scoreDto.getEnemyTeamScore(), scoreDto.getMyTeamScore() < scoreDto.getEnemyTeamScore());
                 expUpdates(game, teams);
                 rankRedisService.updateRankRedis(teams, seasonId, game);
             } else {
-                // score 가 일치하지 않다는 에러
-                throw new ScoreNotMatchedException();
+                // score 가 이미 입력됨
+                return false;
             }
             return true;
         }
