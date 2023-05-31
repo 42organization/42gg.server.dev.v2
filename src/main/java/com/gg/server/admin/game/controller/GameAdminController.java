@@ -17,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
 @RestController
 @RequiredArgsConstructor
@@ -45,11 +47,12 @@ public class GameAdminController {
     }
 
     @PutMapping("/{gameId}")
-    public ResponseEntity gameResultEdit(@Valid @RequestBody RankGamePPPModifyReqDto reqDto) {
+    public ResponseEntity gameResultEdit(@Valid @RequestBody RankGamePPPModifyReqDto reqDto,
+                                         @PathVariable @Positive Long gameId) {
         if (reqDto.getTeam1Score() + reqDto.getTeam2Score() > 3 || reqDto.getTeam1Score() == reqDto.getTeam2Score()) {
             throw new InvalidParameterException("점수를 잘못 입력했습니다.", ErrorCode.VALID_FAILED);
         }
-        gameAdminService.rankResultEdit(reqDto);
+        gameAdminService.rankResultEdit(reqDto, gameId);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 }

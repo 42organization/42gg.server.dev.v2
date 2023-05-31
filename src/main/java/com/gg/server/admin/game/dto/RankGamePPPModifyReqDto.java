@@ -9,9 +9,6 @@ import javax.validation.constraints.PositiveOrZero;
 
 @Getter
 public class RankGamePPPModifyReqDto {
-    @Positive
-    @NotNull(message = "gameId 는 필수 값입니다.")
-    private Long gameId;
     @NotNull(message = "TeamId1 는 필수 값입니다.")
     @Positive
     private Long Team1Id;

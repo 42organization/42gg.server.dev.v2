@@ -94,10 +94,10 @@ public class GameAdminService {
     }
 
     @Transactional
-    public void rankResultEdit(RankGamePPPModifyReqDto reqDto) {
+    public void rankResultEdit(RankGamePPPModifyReqDto reqDto, Long gameId) {
         // 게임이 두명 다 가장 마지막 게임인지 확인 (그 game에 해당하는 팀이 맞는지 확인)
         List<TeamUser> teamUsers = teamUserAdminRepository.findUsersByTeamIdIn(List.of(reqDto.getTeam1Id(), reqDto.getTeam2Id()));
-        Game game = gameAdminRepository.findById(reqDto.getGameId())
+        Game game = gameAdminRepository.findById(gameId)
                 .orElseThrow(GameNotExistException::new);
         Season season = seasonAdminRepository.findById(game.getSeason().getId())
                 .orElseThrow(SeasonNotFoundException::new);
@@ -107,7 +107,7 @@ public class GameAdminService {
             List<PChange> pChanges = pChangeAdminRepository.findByTeamUser(teamUser.getUser().getId());
             rollbackGameResult(reqDto, season, teamUser, pChanges);
             // 최근 pchange 지우기
-            if (!pChanges.get(0).getGame().getId().equals(reqDto.getGameId())) {
+            if (!pChanges.get(0).getGame().getId().equals(gameId)) {
                 throw new NotRecentlyGameException();
             }
             pChangeAdminRepository.delete(pChanges.get(0));
