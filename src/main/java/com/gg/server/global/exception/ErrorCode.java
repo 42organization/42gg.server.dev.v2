@@ -23,7 +23,7 @@ public enum ErrorCode {
     SEASON_TIME_BEFORE(403, "SE501", "SEASON TIME BEFORE"),
 
     //slotmanagement
-    SM_NOT_FOUND(404, "SM100", "SM NOT FOUND"),
+    SLOTMANAGEMENT_NOT_FOUND(404, "SM100", "SM NOT FOUND"),
 
     //rank
     RANK_NOT_FOUND(404, "RK100", "RANK NOT FOUND"),
