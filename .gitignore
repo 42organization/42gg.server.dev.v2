@@ -11,6 +11,7 @@ src/main/resources/application-test.yml
 .DS_Store
 src/test/resources/application.yml
 src/test/resources/application-local.yml
+python
 
 ### STS ###
 .apt_generated
