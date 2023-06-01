@@ -84,11 +84,16 @@ public class MatchTestUtils {
     }
 
     public SlotManagement makeTestSlotManagement(Integer interval) {
+        SlotManagement slotManagement1 = slotManagementRepository.findFirstByOrderByCreatedAtDesc();
+        if (slotManagement1 !=  null) {
+            return slotManagement1;
+        }
         SlotManagement slotManagement = SlotManagement.builder()
                 .futureSlotTime(10)
                 .pastSlotTime(0)
                 .gameInterval(interval)
                 .openMinute(5)
+                .startTime(LocalDateTime.now().minusHours(2))
                 .build();
         slotManagementRepository.save(slotManagement);
         return slotManagement;

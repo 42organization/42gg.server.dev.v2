@@ -11,6 +11,7 @@ import com.gg.server.domain.match.dto.MatchStatusDto;
 import com.gg.server.domain.match.dto.MatchStatusResponseListDto;
 import com.gg.server.domain.match.dto.SlotStatusDto;
 import com.gg.server.domain.match.dto.SlotStatusResponseListDto;
+import com.gg.server.domain.match.exception.EnrolledSlotException;
 import com.gg.server.domain.match.exception.PenaltyUserSlotException;
 import com.gg.server.domain.match.type.MatchKey;
 import com.gg.server.domain.match.type.Option;
@@ -185,14 +186,15 @@ class MatchServiceTest {
         matchService.makeMatch(UserDto.from(users.get(0)), Option.NORMAL, this.slotTimes.get(3));
         matchService.makeMatch(UserDto.from(users.get(1)), Option.NORMAL, this.slotTimes.get(3));
         //user2 다른 슬롯 등록
-        matchService.makeMatch(UserDto.from(users.get(1)), Option.NORMAL, this.slotTimes.get(1));
-
         //첫번째 유저 경기 취소
+        org.junit.jupiter.api.Assertions.assertThrows(
+                EnrolledSlotException.class,
+                () -> matchService.makeMatch(UserDto.from(users.get(0)), Option.NORMAL, this.slotTimes.get(0))
+        );
         matchService.cancelMatch(UserDto.from(users.get(0)), slotTimes.get(3));
-
         Optional<Game> game = gameRepository.findByStartTime(slotTimes.get(3));
         Assertions.assertThat(game.isEmpty()).isEqualTo(true);
-        Assertions.assertThat(redisMatchUserRepository.countMatchTime(users.get(1).getId())).isEqualTo(1L);
+        Assertions.assertThat(redisMatchUserRepository.countMatchTime(users.get(1).getId())).isEqualTo(0L);
 
         //알람 확인
         List<Noti> notifications = notiRepository.findAllByUser(users.get(1));
