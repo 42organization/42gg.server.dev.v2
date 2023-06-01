@@ -1,6 +1,7 @@
 package com.gg.server.domain.slotmanagement;
 
 import com.gg.server.admin.slotmanagement.dto.SlotCreateRequestDto;
+import com.gg.server.domain.slotmanagement.exception.SlotManagementForbiddenException;
 import com.gg.server.global.utils.BaseTimeEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -60,5 +61,13 @@ public class SlotManagement extends BaseTimeEntity {
         this.futureSlotTime = requestDto.getFutureSlotTime();
         this.openMinute = requestDto.getOpenMinute();
         this.gameInterval = requestDto.getInterval();
+        this.startTime = requestDto.getStartTime();
+        this.endTime = null;
+    }
+
+    public void updateEndTime(LocalDateTime endTime) {
+        if (this.endTime != null)
+            throw new SlotManagementForbiddenException();
+        this.endTime = endTime;
     }
 }

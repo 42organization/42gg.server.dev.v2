@@ -3,7 +3,6 @@ package com.gg.server.admin.slotmanagement.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.slotmanagement.data.adminSlotManagementRepository;
 import com.gg.server.admin.slotmanagement.dto.SlotCreateRequestDto;
-import com.gg.server.domain.slotmanagement.SlotManagement;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RequiredArgsConstructor
@@ -59,19 +56,30 @@ public class SlotAdminControllerFailTest {
 //    }
 
     @Test
-    @DisplayName("fail[Put]/pingpong/admin/slot-management")
+    @DisplayName("fail[Post]/pingpong/admin/slot-management")
     void failModifySlotSetting() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
-        SlotManagement test = SlotManagement.builder()
-                .pastSlotTime(4)
-                .futureSlotTime(1)
-                .openMinute(null)
-                .gameInterval(20)
-                .startTime(LocalDateTime.now().plusDays(2))
-                .build();
+        SlotCreateRequestDto test = new SlotCreateRequestDto(4,1,20,null,LocalDateTime.now().plusDays(2));
         String content = objectMapper.writeValueAsString(test);
 
-        String contentAsString = mockMvc.perform(put("/pingpong/admin/slot-management")
+        String contentAsString = mockMvc.perform(post("/pingpong/admin/slot-management")
+                .content(content)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isBadRequest())
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println(contentAsString);
+    }
+
+    @Test
+    @DisplayName("fail[Post]/pingpong/admin/slot-management")
+    void 엔드타임_미래시점_보다_가까울_경우() throws Exception {
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
+        SlotCreateRequestDto test = new SlotCreateRequestDto(4,1,20,1,LocalDateTime.now().plusHours(1));
+        String content = objectMapper.writeValueAsString(test);
+
+        String contentAsString = mockMvc.perform(post("/pingpong/admin/slot-management")
                 .content(content)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))

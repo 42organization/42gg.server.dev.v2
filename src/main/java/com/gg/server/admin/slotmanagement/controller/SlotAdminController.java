@@ -4,6 +4,7 @@ import com.gg.server.admin.slotmanagement.dto.SlotCreateRequestDto;
 import com.gg.server.admin.slotmanagement.dto.SlotListAdminResponseDto;
 import com.gg.server.admin.slotmanagement.service.SlotAdminService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,9 +23,9 @@ public class SlotAdminController {
     }
 
     @PostMapping
-    public ResponseEntity modifySlotSetting(@Valid @RequestBody SlotCreateRequestDto requestDto){
+    public ResponseEntity addSlotSetting(@Valid @RequestBody SlotCreateRequestDto requestDto){
         slotAdminService.addSlotSetting(requestDto);
-        return ResponseEntity.ok().build();
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 
 }
