@@ -117,7 +117,7 @@ public class GameControllerTest {
             teams.add(teamUserRepository.save(new TeamUser(team2, user2)));
             System.out.println("===========");
             gameService.expUpdates(game, teams);
-            rankRedisService.updateRankRedis(teams, season.getId(), game);
+            rankRedisService.updateRankRedis(teams, game);
             game = gameRepository.save(new Game(season, StatusType.WAIT, Mode.NORMAL, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
             team1 = teamRepository.save(new Team(game, 0, false));
             team2 = teamRepository.save(new Team(game, 0, false));
@@ -143,7 +143,7 @@ public class GameControllerTest {
         teams.add(teamUserRepository.save(new TeamUser(team1, user1)));
         teams.add(teamUserRepository.save(new TeamUser(team2, user2)));
         gameService.expUpdates(game2, teams);
-        rankRedisService.updateRankRedis(teams, season.getId(), game2);
+        rankRedisService.updateRankRedis(teams, game2);
     }
 
     @AfterEach
