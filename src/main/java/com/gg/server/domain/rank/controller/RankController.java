@@ -26,7 +26,8 @@ public class RankController {
     private final RankService rankService;
     @GetMapping("/exp")
     public ExpRankPageResponseDto getExpRankPage(@ModelAttribute @Valid PageRequestDto pageRequestDto, @Parameter(hidden = true) @Login UserDto user) {
-        PageRequest pageRequest = PageRequest.of(pageRequestDto.getPage() - 1, pageRequestDto.getSize(), Sort.by("totalExp").descending());
+        PageRequest pageRequest = PageRequest.of(pageRequestDto.getPage() - 1, pageRequestDto.getSize(),
+                Sort.by("totalExp").descending().and(Sort.by("intraId")));
         return rankService.getExpRankPage(pageRequest, user);
     }
 

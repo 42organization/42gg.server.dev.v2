@@ -15,7 +15,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Page<User> findByIntraIdContains(Pageable pageable, String intraId);
     Optional<User> findByKakaoId(Long kakaoId);
     @Query(nativeQuery = true, value = "select ranking from " +
-            "(select intra_id, row_number() over (order by total_exp desc) as ranking from user) ranked where intra_id=:intraId")
+            "(select intra_id, row_number() over (order by total_exp desc, intra_id asc) as ranking from user) ranked where intra_id=:intraId")
     Long findExpRankingByIntraId(@Param("intraId") String intraId);
 
     Page<User> findAll(Pageable pageable);
@@ -24,4 +24,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
             " where g.id=:gameId and t.game.id =g.id and tu.team.id = t.id "
             + "and u.id = tu.user.id and u.id !=:userId")
     List<User> findEnemyByGameAndUser(@Param("gameId") Long gameId, @Param("userId") Long userId);
+
+    List<User> findUsersByIdIn(List<Long> userIds);
 }
