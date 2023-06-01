@@ -43,7 +43,7 @@ public enum ErrorCode {
     SCORE_NOT_MATCHED(400, "GM202", "score 입력이 기존과 다릅니다."),
     GAME_NOT_FOUND(404, "GM101", "GAME 이 존재하지 않습니다."),
     GAME_NOT_RECENTLY(400, "GM203", "가장 최근 게임이 아닙니다."),
-    GAME_DUPLICATION_EXCPETION(400, "GM204", "GAME ALREADY EXISTS"),
+    GAME_DUPLICATION_EXCPETION(409, "GM204", "GAME ALREADY EXISTS"),
 
     /** match **/
     SLOT_ENROLLED(400, "MA300", "SLOT ALREADY ENROLLED"),
