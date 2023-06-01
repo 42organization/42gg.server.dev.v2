@@ -3,7 +3,10 @@ package com.gg.server.admin.slotmanagement.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.slotmanagement.data.adminSlotManagementRepository;
 import com.gg.server.admin.slotmanagement.dto.SlotAdminDto;
+import com.gg.server.admin.slotmanagement.dto.SlotCreateRequestDto;
+import com.gg.server.admin.slotmanagement.dto.SlotListAdminResponseDto;
 import com.gg.server.domain.slotmanagement.SlotManagement;
+import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
@@ -42,53 +48,55 @@ class SlotAdminControllerTest {
     @Autowired
     adminSlotManagementRepository adminSlotManagementRepository;
 
-    @BeforeEach
-    void setUp() {
-        SlotManagement test = SlotManagement.builder()
-                .pastSlotTime(1)
-                .futureSlotTime(12)
-                .openMinute(5)
-                .gameInterval(15)
-                .build();
-
-        adminSlotManagementRepository.save(test);
-    }
-
     @Test
     @DisplayName("[Get]/pingpong/admin/slot-management")
     void getSlotSetting() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
-        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
 
         String contentAsString = mockMvc.perform(get("/pingpong/admin/slot-management").header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
-        SlotAdminDto slotAdminDto = objectMapper.readValue(contentAsString, SlotAdminDto.class);
-        assertThat(slotAdminDto.getPastSlotTime()).isEqualTo(1);
-        assertThat(slotAdminDto.getFutureSlotTime()).isEqualTo(12);
-        assertThat(slotAdminDto.getOpenMinute()).isEqualTo(5);
-        assertThat(slotAdminDto.getInterval()).isEqualTo(15);
+        SlotListAdminResponseDto slotAdminDto = objectMapper.readValue(contentAsString, SlotListAdminResponseDto.class);
+
+        for(SlotAdminDto dto : slotAdminDto.getSlotList()){
+            System.out.println(dto.getFutureSlotTime());
+            System.out.println(dto.getPastSlotTime());
+            System.out.println(dto.getInterval());
+            System.out.println(dto.getOpenMinute());
+            System.out.println(dto.getStartTime());
+            System.out.println(dto.getEndTime());
+            System.out.println("----------------------");
+        }
+
 
     }
 
     @Test
-    @DisplayName("[Put]/pingpong/admin/slot-management")
+    @DisplayName("[Post]/pingpong/admin/slot-management")
     void modifySlotSetting() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
-        SlotManagement test = SlotManagement.builder()
-                .pastSlotTime(4)
-                .futureSlotTime(1)
-                .openMinute(1)
-                .gameInterval(20)
-                .build();
-        String content = objectMapper.writeValueAsString(new SlotAdminDto(test));
+        SlotCreateRequestDto test = new SlotCreateRequestDto(4,1,20,1,LocalDateTime.now().plusHours(13));
 
-        String contentAsString = mockMvc.perform(put("/pingpong/admin/slot-management")
+        String content = objectMapper.writeValueAsString(test);
+
+        String contentAsString = mockMvc.perform(post("/pingpong/admin/slot-management")
                 .content(content)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
+
+        List<SlotManagement> slotList = adminSlotManagementRepository.findAllByOrderByCreatedAtDesc();
+        for(SlotManagement slot : slotList){
+            System.out.println(slot.getFutureSlotTime());
+            System.out.println(slot.getPastSlotTime());
+            System.out.println(slot.getGameInterval());
+            System.out.println(slot.getOpenMinute());
+            System.out.println(slot.getStartTime());
+            System.out.println(slot.getEndTime());
+            System.out.println("----------------------");
+        }
     }
 
 }

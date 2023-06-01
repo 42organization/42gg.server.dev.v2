@@ -79,4 +79,8 @@ public class User extends BaseTimeEntity implements Serializable {
     public void addExp(int plus) {
         this.totalExp += plus;
     }
+
+    public void updateExp(int beforeExp) {
+        this.totalExp = beforeExp;
+    }
 }

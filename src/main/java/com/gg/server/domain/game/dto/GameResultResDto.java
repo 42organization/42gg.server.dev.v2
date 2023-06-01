@@ -29,14 +29,14 @@ public class GameResultResDto {
         this.mode = game.getMode();
         if (mode == Mode.NORMAL) {
             team1 = new TeamUserListDto(Arrays.asList(
-                    new TeamUserInfoDto(game.getT1IntraId(), game.getT1Image(), game.getT1Exp())), null, null);
+                    new TeamUserInfoDto(game.getT1IntraId(), game.getT1Image(), game.getT1Exp(), null, null)), null, null);
             team2 = new TeamUserListDto(Arrays.asList(
-                    new TeamUserInfoDto(game.getT2IntraId(), game.getT2Image(), game.getT2Exp())), null, null);
+                    new TeamUserInfoDto(game.getT2IntraId(), game.getT2Image(), game.getT2Exp(), null, null)), null, null);
         } else {
             team1 = new TeamUserListDto(Arrays.asList(
-                    new TeamUserInfoDto(game.getT1IntraId(), game.getT1Image(), game.getT1Exp())), game.getT1IsWin(), game.getT1Score());
+                    new TeamUserInfoDto(game.getT1IntraId(), game.getT1Image(), game.getT1Exp(), game.getT1Wins(), game.getT1Losses())), game.getT1IsWin(), game.getT1Score());
             team2 = new TeamUserListDto(Arrays.asList(
-                    new TeamUserInfoDto(game.getT2IntraId(), game.getT2Image(), game.getT2Exp())), game.getT2IsWin(), game.getT2Score());
+                    new TeamUserInfoDto(game.getT2IntraId(), game.getT2Image(), game.getT2Exp(), game.getT2Wins(), game.getT2Losses())), game.getT2IsWin(), game.getT2Score());
         }
     }
 

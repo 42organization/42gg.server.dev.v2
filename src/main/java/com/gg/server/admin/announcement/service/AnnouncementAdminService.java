@@ -4,10 +4,9 @@ import com.gg.server.admin.announcement.data.AnnouncementAdminRepository;
 import com.gg.server.admin.announcement.dto.AnnouncementAdminAddDto;
 import com.gg.server.admin.announcement.dto.AnnouncementAdminListResponseDto;
 import com.gg.server.admin.announcement.dto.AnnouncementAdminResponseDto;
-import com.gg.server.domain.announcement.Announcement;
-import com.gg.server.domain.announcement.exception.AnDupException;
-import com.gg.server.domain.announcement.exception.AnNotFoundException;
-import com.gg.server.global.exception.ErrorCode;
+import com.gg.server.domain.announcement.data.Announcement;
+import com.gg.server.domain.announcement.exception.AnnounceDupException;
+import com.gg.server.domain.announcement.exception.AnnounceNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,7 +32,7 @@ public class AnnouncementAdminService {
     @Transactional
     public void addAnnouncement(AnnouncementAdminAddDto addDto){
         if (findAnnouncementExist() == true)
-            throw new AnDupException();
+            throw new AnnounceDupException();
 
         Announcement announcementAdmin = Announcement.from(addDto);
 
@@ -43,7 +42,7 @@ public class AnnouncementAdminService {
     @Transactional
     public void modifyAnnouncementIsDel(String deleterIntraId) {
         if (findAnnouncementExist() == false)
-            throw new AnNotFoundException();
+            throw new AnnounceNotFoundException();
 
         Announcement announcement = announcementAdminRepository.findFirstByOrderByIdDesc();
         announcement.update(deleterIntraId, LocalDateTime.now());

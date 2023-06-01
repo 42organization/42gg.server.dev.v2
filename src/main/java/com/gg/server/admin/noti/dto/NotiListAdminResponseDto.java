@@ -12,15 +12,13 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 public class NotiListAdminResponseDto {
-    private List<NotiAdminDto> notifications;
+    private List<NotiAdminDto> notiList;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer totalPage;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Integer currentPage;
     @Override
     public String toString() {
         return "NotiListResponseDto{" +
-                "notifications=" + notifications +
+                "notifications=" + notiList +
                 '}';
     }
 
@@ -29,6 +27,6 @@ public class NotiListAdminResponseDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         NotiListAdminResponseDto other = (NotiListAdminResponseDto) o;
-        return Objects.equals(notifications, other.notifications);
+        return Objects.equals(notiList, other.notiList);
     }
 }

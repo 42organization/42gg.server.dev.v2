@@ -1,5 +1,6 @@
 package com.gg.server.domain.team.data;
 
+import com.gg.server.domain.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,6 +17,5 @@ public interface TeamUserRepository extends JpaRepository<TeamUser, Long> {
             "where game.start_time >= :today and team_user.team_id = team.id and team_user.user_id = :userId " +
             "and team.game_id = game.id and game.status = 'END'", nativeQuery = true)
     Integer findByDateAndUser(LocalDateTime today, Long userId);
-    @Query("select t from TeamUser  t where t.team.id = :teamId")
-    TeamUser findByTeam(@Param("teamId") Long teamId);
+
 }

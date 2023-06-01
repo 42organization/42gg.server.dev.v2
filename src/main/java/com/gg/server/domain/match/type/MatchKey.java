@@ -1,26 +1,27 @@
 package com.gg.server.domain.match.type;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import java.util.Locale;
+import java.time.LocalDateTime;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
-public enum MatchKey {
-    USER("MATCH:USER:"),
-    TIME("MATCH:TIME:");
-    private final String code;
-    @JsonCreator
-    public static MatchKey getEnumFromValue(String value) {
-        for(MatchKey e : values()) {
-            if(e.code.equals(value)) {
-                return e;
-            }
-            else if (e.code.toUpperCase(Locale.ROOT).equals(value.toUpperCase(Locale.ROOT))) {
-                return e;
-            }
-        }
-        return null;
+public class MatchKey {
+    public static final String USER = "MATCH:USER:";
+    public static final String TIME = "MATCH:TIME:";
+    private static final String conjunctive = ":";
+
+    public static String getUserTime(Long userId, LocalDateTime startTime) {
+        return USER + userId + conjunctive + startTime;
+    }
+
+    public static String getUser(Long userId) {
+        return USER + userId;
+    }
+
+    public static String getTime(LocalDateTime startTime) {
+        return TIME + startTime;
+    }
+
+    public static String getAllTime() {
+        return TIME;
     }
 }

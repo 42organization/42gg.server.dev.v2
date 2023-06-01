@@ -36,6 +36,8 @@ public class GameService {
     private final RankRedisService rankRedisService;
     private final PChangeService pChangeService;
 
+    private final GameFindService gameFindService;
+
     @Transactional(readOnly = true)
     public GameTeamInfo getUserGameInfo(Long gameId, Long userId) {
         List<GameTeamUserInfo> infos = gameRepository.findTeamGameUser(gameId);
@@ -49,16 +51,16 @@ public class GameService {
     public synchronized Boolean createRankResult(RankResultReqDto scoreDto, Long userId) {
         log.info("create Rank Result");
         // 현재 게임 id
-        Game game = findByGameId(scoreDto.getGameId());
+        Game game = gameFindService.findByGameId(scoreDto.getGameId());
         if (game.getStatus() != StatusType.WAIT && game.getStatus() != StatusType.LIVE) {
             return false;
         }
-        return updateScore(game, scoreDto, game.getSeason().getId(), userId);
+        return updateScore(game, scoreDto, userId);
     }
 
     @Transactional
     public synchronized Boolean normalExpResult(NormalResultReqDto normalResultReqDto) {
-        Game game = findByGameId(normalResultReqDto.getGameId());
+        Game game = gameFindService.findByGameId(normalResultReqDto.getGameId());
         List<TeamUser> teamUsers = teamUserRepository.findAllByGameId(game.getId());
         if (teamUsers.size() == 2 &&
                 (game.getStatus() == StatusType.WAIT || game.getStatus() == StatusType.LIVE)) {
@@ -85,7 +87,7 @@ public class GameService {
 
     @Transactional(readOnly = true)
     public PPPChangeResultResDto pppChangeResult(Long gameId, Long userId) throws PChangeNotExistException {
-        Season season = findByGameId(gameId).getSeason();
+        Season season = gameFindService.findByGameId(gameId).getSeason();
         List<PChange> pChanges = pChangeService.findPPPChangeHistory(gameId, userId, season.getId());
         if (pChanges.size() == 1) {
             return new PPPChangeResultResDto(0, pChanges.get(0).getExp(), season.getStartPpp(), pChanges.get(0).getPppResult());
@@ -117,8 +119,7 @@ public class GameService {
     }
 
     private void setTeamScore(TeamUser tu, int teamScore, Boolean isWin) {
-        tu.getTeam().inputScore(teamScore);
-        tu.getTeam().setWin(isWin);
+        tu.getTeam().updateScore(teamScore, isWin);
     }
 
     private TeamUser findTeamId(Long teamId, List<TeamUser> teamUsers) {
@@ -130,34 +131,23 @@ public class GameService {
         }
         throw new TeamIdNotMatchException();
     }
-    private Boolean updateScore(Game game, RankResultReqDto scoreDto, Long seasonId, Long userId) {
-        log.info("update score");
+    private Boolean updateScore(Game game, RankResultReqDto scoreDto, Long userId) {
         List<TeamUser> teams = teamUserRepository.findAllByGameId(game.getId());
         TeamUser myTeam = findTeamId(scoreDto.getMyTeamId(), teams);
         TeamUser enemyTeam = findTeamId(scoreDto.getEnemyTeamId(), teams);
         if (!myTeam.getUser().getId().equals(userId)) {
             throw new InvalidParameterException("team user 정보 불일치.", ErrorCode.VALID_FAILED);
         } else {
-            if (myTeam.getTeam().getScore().equals(scoreDto.getMyTeamScore())
-                    && enemyTeam.getTeam().getScore().equals(scoreDto.getEnemyTeamScore())) {
+            if (myTeam.getTeam().getScore().equals(-1) && enemyTeam.getTeam().getScore().equals(-1)){
+                setTeamScore(myTeam, scoreDto.getMyTeamScore(), scoreDto.getMyTeamScore() > scoreDto.getEnemyTeamScore());
+                setTeamScore(enemyTeam, scoreDto.getEnemyTeamScore(), scoreDto.getMyTeamScore() < scoreDto.getEnemyTeamScore());
                 expUpdates(game, teams);
-                rankRedisService.updateRankRedis(teams, seasonId, game);
-            } else if (myTeam.getTeam().getScore().equals(0) && enemyTeam.getTeam().getScore().equals(0)){
-                setTeamScore(myTeam, scoreDto.getMyTeamScore(), scoreDto.getMyTeamScore() > scoreDto.getEnemyTeamScore());
-                setTeamScore(enemyTeam, scoreDto.getEnemyTeamScore(), scoreDto.getMyTeamScore() < scoreDto.getEnemyTeamScore());
+                rankRedisService.updateRankRedis(teams, game);
             } else {
-                // team score 초기화
-                setTeamScore(myTeam, scoreDto.getMyTeamScore(), scoreDto.getMyTeamScore() > scoreDto.getEnemyTeamScore());
-                setTeamScore(enemyTeam, scoreDto.getEnemyTeamScore(), scoreDto.getMyTeamScore() < scoreDto.getEnemyTeamScore());
-                // score 가 일치하지 않다는 에러
-                throw new ScoreNotMatchedException();
+                // score 가 이미 입력됨
+                return false;
             }
             return true;
         }
-    }
-
-    public Game findByGameId(Long gameId) {
-        return gameRepository.findById(gameId)
-                .orElseThrow(GameNotExistException::new);
     }
 }

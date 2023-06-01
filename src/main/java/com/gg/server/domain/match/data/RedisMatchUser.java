@@ -8,16 +8,17 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.redis.core.RedisHash;
 
 @Getter
+@RedisHash("matchUser")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RedisMatchUser {
     @Id
     private Long userId;
     private Integer ppp;
-    private String option;//normal, both, rank
+    private Option option;
 
     public RedisMatchUser(Long userId, Integer ppp, Option option) {
         this.userId = userId;
         this.ppp = ppp;
-        this.option = option.getCode();
+        this.option = option;
     }
 }

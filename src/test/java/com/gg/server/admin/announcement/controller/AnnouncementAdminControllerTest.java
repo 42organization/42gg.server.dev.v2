@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.announcement.data.AnnouncementAdminRepository;
 import com.gg.server.admin.announcement.dto.AnnouncementAdminAddDto;
 import com.gg.server.admin.announcement.dto.AnnouncementAdminListResponseDto;
-import com.gg.server.domain.announcement.Announcement;
+import com.gg.server.domain.announcement.data.Announcement;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +46,7 @@ class AnnouncementAdminControllerTest {
     @DisplayName("[Get]/pingpong/admin/announcement")
     void getAnnouncementList() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
-        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
 
         Integer currentPage = 2;
         Integer pageSize = 5;//페이지 사이즈 크기가 실제 디비 정보보다 큰지 확인할 것
@@ -69,7 +69,7 @@ class AnnouncementAdminControllerTest {
     @DisplayName("[Post]/pingpong/admin/announcement")
     void addAnnouncement() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
-        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
 
         //공지사항 1개 정책 때문에 기존 공지사항 지울 것
         Announcement delDto = announcementAdminRepository.findFirstByOrderByIdDesc();
@@ -98,7 +98,7 @@ class AnnouncementAdminControllerTest {
     @DisplayName("fail[Post]/pingpong/admin/announcement")
     void addAnnouncementFail() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
-        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
 
         AnnouncementAdminAddDto addDto = new AnnouncementAdminAddDto("하나하나둘둘", null);
 
@@ -118,7 +118,7 @@ class AnnouncementAdminControllerTest {
     @DisplayName("[Put]/pingpong/admin/announcement")
     void putAnnouncement() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
-        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
 
         //공지사항 1개 정책 때문에 기존 공지사항 지울 것
 //        Announcement delDto = announcementAdminRepository.findFirstByOrderByIdDesc();

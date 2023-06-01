@@ -1,10 +1,8 @@
 package com.gg.server.global.exception;
 
-import com.gg.server.global.exception.custom.AuthenticationException;
+import com.gg.server.global.exception.custom.*;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.SdkClientException;
-import com.gg.server.global.exception.custom.CustomRuntimeException;
-import com.gg.server.global.exception.custom.DBConsistencyException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +38,20 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> dbConsistencyException(DBConsistencyException ex) {
         log.error("db 정합성 오류", ex);
         return new ResponseEntity<>(new ErrorResponse(ex.getErrorCode()), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
+    @ExceptionHandler({NotExistException.class, PageNotFoundException.class})
+    public ResponseEntity<ErrorResponse> notFoundException(CustomRuntimeException ex) {
+        log.error("Not Exist", ex);
+        ErrorResponse response = new ErrorResponse(ex.getErrorCode());
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler({ForbiddenException.class})
+    public ResponseEntity<ErrorResponse> forbiddenException(ForbiddenException ex) {
+        log.error("forbidden", ex);
+        ErrorResponse response = new ErrorResponse(ex.getErrorCode());
+        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler({CustomRuntimeException.class})

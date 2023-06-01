@@ -4,6 +4,7 @@ import com.gg.server.global.security.config.properties.AppProperties;
 import com.gg.server.global.security.cookie.CookieUtil;
 import com.gg.server.global.security.service.CustomUserDetailsService;
 import com.gg.server.global.utils.HeaderUtil;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHeaders;
@@ -29,7 +30,6 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private final AuthTokenProvider tokenProvider;
     private final CustomUserDetailsService customUserDetailsService;
-    private final AppProperties appProperties;
 
     @Override
     protected void doFilterInternal(
@@ -42,7 +42,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
                 return;
             }
-            OAuth2AuthenticationToken authentication = validate(request, response);
+            OAuth2AuthenticationToken authentication = validate(request);
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (Exception e) {
@@ -51,16 +51,12 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private OAuth2AuthenticationToken validate(HttpServletRequest request, HttpServletResponse response) {
+    private OAuth2AuthenticationToken validate(HttpServletRequest request) {
         String accessToken = HeaderUtil.getAccessToken(request);
-
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
         //access token 검증
-        if (tokenProvider.getTokenClaims(accessToken) != null){
-            Long userId = tokenProvider.getUserIdFromToken(accessToken);
+        if (userId != null){
             UserDetails userDetails = customUserDetailsService.loadUserById(userId);
-            long accessTokenExpiry = appProperties.getAuth().getTokenExpiry();
-            String newAccessToken = tokenProvider.createToken(userId);
-            CookieUtil.addCookie(response, TokenHeaders.ACCESS_TOKEN, newAccessToken, (int) (accessTokenExpiry / 1000));
             return new OAuth2AuthenticationToken((OAuth2User) userDetails, userDetails.getAuthorities(), "42");
         }
         throw new RuntimeException("token not validated");

@@ -1,10 +1,14 @@
 package com.gg.server.domain.match.data;
 
+import com.gg.server.domain.match.exception.PastSlotException;
 import com.gg.server.domain.match.type.MatchKey;
-import java.time.Instant;
+import com.gg.server.domain.match.type.Option;
+import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -12,39 +16,40 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class RedisMatchUserRepository {
-    private final RedisTemplate redisTemplate;
-    //일단 sorted set으로 하고 시간이 지나거나 매칭이 되면 user queue
-    //에서 빼주는 방식으로 구현
-    public void addMatchTime(Long userId, RedisMatchTime matchTime) {
-        redisTemplate.opsForZSet().add(MatchKey.USER.getCode() + userId, matchTime, getOrder(matchTime.getStartTime()));
-    }
+    private final RedisTemplate<String, RedisMatchTime> redisTemplate;
 
+    /**
+     * key : userId : startTime
+     * value : startTime
+     * slot의 startTime 각각의 만료기한 설정
+     * **/
+    public void addMatchTime(Long userId, LocalDateTime startTime, Option option) {
+        Duration duration = Duration.between(LocalDateTime.now(), startTime);
+        if (duration.isNegative()) {
+            throw new PastSlotException();
+        }
+        redisTemplate.opsForValue().set(MatchKey.getUserTime(userId, startTime),
+                new RedisMatchTime(startTime, option), duration.getSeconds(), TimeUnit.SECONDS);
+
+    }
     public void deleteMatchUser(Long userId) {
-        redisTemplate.delete(MatchKey.USER.getCode() + userId.toString());
-    }
-    public void deleteMatchTime(Long userId, RedisMatchTime matchTime) {
-        redisTemplate.opsForZSet().remove(MatchKey.USER.getCode() + userId, matchTime);
+        Set<String> keys = redisTemplate.keys(MatchKey.getUser(userId) + "*");
+        keys.stream().forEach(key -> redisTemplate.delete(key));
     }
 
-    public void pop(Long userId) {
-        redisTemplate.opsForZSet().removeRange(MatchKey.USER.getCode() + userId.toString(), 0, 0);
+    public void deleteMatchTime(Long userId, LocalDateTime startTime) {
+        redisTemplate.delete(MatchKey.getUserTime(userId, startTime));
     }
-
-    public Long countMatchTime(Long userId) {
-        return redisTemplate.opsForZSet().zCard(MatchKey.USER.getCode() + userId);
+    public int countMatchTime(Long userId) {
+        return redisTemplate.keys(MatchKey.getUser(userId) + "*").size();
     }
 
     public Set<RedisMatchTime> getAllMatchTime(Long userId){
-        return redisTemplate.opsForZSet().range(MatchKey.USER.getCode() + userId, 0, -1);
-        //0 -1 idx 확인
+        Set<String> keys = redisTemplate.keys(MatchKey.getUser(userId) + "*");
+        return keys.stream().map(key -> redisTemplate.opsForValue().get(key)).collect(Collectors.toSet());
     }
 
-    public Double getMatchUserOrder(Long userId, RedisMatchTime matchTime) {
-        return redisTemplate.opsForZSet().score(MatchKey.USER.getCode() + userId, matchTime);
-    }
-    //정렬 기준
-    private double getOrder(LocalDateTime dateTime) {
-        Instant instant = dateTime.toInstant(ZoneOffset.UTC);
-        return (double) instant.toEpochMilli() / 1000.0;
+    public Optional<RedisMatchTime> getUserTime(Long userId, LocalDateTime startTime) {
+        return Optional.ofNullable(redisTemplate.opsForValue().get(MatchKey.getUserTime(userId, startTime)));
     }
 }

@@ -21,9 +21,10 @@ public interface GameRepository extends JpaRepository<Game, Long>, GameRepositor
     Slice<Game> findAllByAndStatus(StatusType status, Pageable pageable);
     Slice<Game> findAllByAndStatusIn(List<StatusType> statusList, Pageable pageable);
     Slice<Game> findAllByModeAndStatusAndSeasonId(Mode mode, StatusType status, Long season, Pageable pageable);
-    @Query(value = "select t1.gameId, t1.startTime, t1.status, t1.mode, t1.intraId t1IntraId, t1.win t1IsWin, t1.score t1Score, t1.image t1Image, t1.total_exp t1Exp, " +
-            "t2.win t2IsWin, t2.score t2Score, t2.intraId t2IntraId, t2.image t2Image, t2.total_exp t2Exp " +
-            "from v_teamuser t1, v_teamuser t2 " +
+    @Query(value = "select t1.gameId, t1.startTime, t1.status, t1.mode, " +
+            "t1.intraId t1IntraId, t1.win t1IsWin, t1.score t1Score, t1.image t1Image, t1.total_exp t1Exp, t1.wins t1Wins, t1.losses t1Losses, " +
+            "t2.win t2IsWin, t2.score t2Score, t2.intraId t2IntraId, t2.wins t2Wins, t2.losses t2Losses, t2.image t2Image, t2.total_exp t2Exp " +
+            "from v_rank_game_detail t1, v_rank_game_detail t2 " +
             "where t1.gameId IN (:games) and t1.teamId <t2.teamId and t1.gameId=t2.gameId order by t1.startTime desc;", nativeQuery = true)
     List<GameTeamUser> findTeamsByGameIsIn(@Param("games") List<Long> games);
 
@@ -41,7 +42,7 @@ public interface GameRepository extends JpaRepository<Game, Long>, GameRepositor
     Optional<Game> findByStatusTypeAndUserId(@Param("status") StatusType status, @Param("userId") Long userId);
     @Query(value = "select gameId " +
             "from v_teamuser " +
-            "where intraId = :intra and status in (:status) order by startTime desc", nativeQuery = true)
+            "where intraId = :intra and status in (:status)", nativeQuery = true)
     Slice<Long> findGamesByUser(@Param("intra") String intra, @Param("status") List<String> status, Pageable pageable);
     @Query(value = "select gameId " +
             "from v_teamuser " +

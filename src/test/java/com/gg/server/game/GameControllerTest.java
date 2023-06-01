@@ -115,9 +115,8 @@ public class GameControllerTest {
             List<TeamUser> teams = new ArrayList<>();
             teams.add(teamUserRepository.save(new TeamUser(team1, user1)));
             teams.add(teamUserRepository.save(new TeamUser(team2, user2)));
-            System.out.println("===========");
             gameService.expUpdates(game, teams);
-            rankRedisService.updateRankRedis(teams, season.getId(), game);
+            rankRedisService.updateRankRedis(teams, game);
             game = gameRepository.save(new Game(season, StatusType.WAIT, Mode.NORMAL, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
             team1 = teamRepository.save(new Team(game, 0, false));
             team2 = teamRepository.save(new Team(game, 0, false));
@@ -143,7 +142,7 @@ public class GameControllerTest {
         teams.add(teamUserRepository.save(new TeamUser(team1, user1)));
         teams.add(teamUserRepository.save(new TeamUser(team2, user2)));
         gameService.expUpdates(game2, teams);
-        rankRedisService.updateRankRedis(teams, season.getId(), game2);
+        rankRedisService.updateRankRedis(teams, game2);
     }
 
     @AfterEach
@@ -317,7 +316,7 @@ public class GameControllerTest {
     @Test
     @Transactional
     void 게임목록조회에러테스트2() throws Exception {
-        String url = "/pingpong/games?pageNum=1&pageSize=10&status=2";
+        String url = "/pingpong/games?page=1&size=10&status=2";
         mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString();
@@ -328,8 +327,8 @@ public class GameControllerTest {
     void 랭크게임결과입력테스트() throws Exception {
         String url = "/pingpong/games/rank";
         Game game = gameRepository.save(new Game(season, StatusType.WAIT, Mode.RANK, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
-        Team team1 = teamRepository.save(new Team(game, 0, false));
-        Team team2 = teamRepository.save(new Team(game, 0, false));
+        Team team1 = teamRepository.save(new Team(game, -1, false));
+        Team team2 = teamRepository.save(new Team(game, -1, false));
         String ac1 = tokenProvider.createToken(user1.getId());
         String ac2 = tokenProvider.createToken(user2.getId());
         teamUserRepository.save(new TeamUser(team1, user1));
@@ -352,7 +351,7 @@ public class GameControllerTest {
         mockMvc.perform(post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + ac2)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content))
-                .andExpect(status().isCreated())
+                .andExpect(status().isConflict())
                 .andReturn().getResponse();
         System.out.println(user1.getTotalExp());
         System.out.println(user2.getTotalExp());
