@@ -39,7 +39,7 @@ public class PenaltyService {
                     releaseTime, redisPenaltyUser.get().getStartTime(), "[AUTO] 매칭 취소");
             penalty = new Penalty(user, PenaltyType.CANCEL, "[AUTO] 매칭 취소", redisPenaltyUser.get().getReleaseTime(), penaltyMinutes);
         } else {
-            releaseTime = now.plusHours(penaltyMinutes);
+            releaseTime = now.plusMinutes(penaltyMinutes);
             penaltyUser = new RedisPenaltyUser(user.getIntraId(), penaltyMinutes, releaseTime, now, "[AUTO] 매칭 취소");
             penalty = new Penalty(user, PenaltyType.CANCEL, "[AUTO] 매칭 취소", now, penaltyMinutes);
         }
