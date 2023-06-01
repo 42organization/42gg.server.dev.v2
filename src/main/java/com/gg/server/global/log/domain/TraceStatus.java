@@ -3,13 +3,13 @@ package com.gg.server.global.log.domain;
 import lombok.Getter;
 
 @Getter
-public class LogStatus {
-    private LogId logId;
+public class TraceStatus {
+    private TraceId traceId;
     private Long startTimeMs;
     private String message;
 
-    public LogStatus(LogId logId, Long startTimeMs, String message) {
-        this.logId = logId;
+    public TraceStatus(TraceId traceId, Long startTimeMs, String message) {
+        this.traceId = traceId;
         this.startTimeMs = startTimeMs;
         this.message = message;
     }

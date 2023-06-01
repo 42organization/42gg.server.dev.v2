@@ -2,16 +2,16 @@ package com.gg.server.global.log.domain;
 
 import java.util.UUID;
 
-public class LogId {
+public class TraceId {
     private String id;
     private int level;
 
-    public LogId() {
+    public TraceId() {
         this.id = createId();
         this.level = 0;
     }
 
-    private LogId(String id, int level) {
+    private TraceId(String id, int level) {
         this.id = id;
         this.level = level;
     }
@@ -20,12 +20,12 @@ public class LogId {
         return UUID.randomUUID().toString().substring(0, 8);
     }
 
-    public LogId createNextId() {
-        return new LogId(id, level + 1);
+    public TraceId createNextId() {
+        return new TraceId(id, level + 1);
     }
 
-    public LogId createPreviousId() {
-        return new LogId(id, level - 1);
+    public TraceId createPreviousId() {
+        return new TraceId(id, level - 1);
     }
 
     public boolean isFirstLevel() {
