@@ -92,9 +92,5 @@ public class GameDBTest {
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
-
-//        Pageable pageable = PageRequest.of(0, 20, Sort.by("startTime").descending());
-//        gameAdminService.findGamesBySeasonId(4L, pageable);
-        // 원하는 통계 정보를 추가로 출력하거나 처리할 수 있습니다.
     }
 }
