@@ -63,9 +63,9 @@ public class MatchService {
         if (gameRepository.findByStartTime(startTime).isPresent()) {
             throw new GameExistException();
         }
-        Season currentSeason = seasonFindService.findCurrentSeason(LocalDateTime.now());
-        RankRedis rank = rankRedisRepository
-                .findRankByUserId(RedisKeyManager.getHashKey(currentSeason.getId()), userDto.getId());
+        if (gameRepository.findByStatusTypeAndUserId(StatusType.BEFORE, userDto.getId()).isPresent()) {
+            throw new EnrolledSlotException();
+        }
         //유저 이미 큐에 등록 시 예외 처리
         if (redisMatchUserRepository.getUserTime(userDto.getId(), startTime).isPresent()) {
             throw new EnrolledSlotException();
@@ -74,6 +74,9 @@ public class MatchService {
         if (redisMatchUserRepository.countMatchTime(userDto.getId()) >= 3) {
             throw new SlotCountException();
         }
+        Season currentSeason = seasonFindService.findCurrentSeason(LocalDateTime.now());
+        RankRedis rank = rankRedisRepository
+                .findRankByUserId(RedisKeyManager.getHashKey(currentSeason.getId()), userDto.getId());
         RedisMatchUser matchUser = new RedisMatchUser(userDto.getId(), rank.getPpp(), option);
         Optional<RedisMatchUser> enemy = findEnemy(startTime, matchUser, currentSeason.getPppGap());
         //1) 매칭 가능한 유저 있을 시 게임 생성 2) 없으면 큐에 넣어주기
