@@ -76,7 +76,7 @@ class SlotAdminControllerTest {
     @DisplayName("[Post]/pingpong/admin/slot-management")
     void modifySlotSetting() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
-        SlotCreateRequestDto test = new SlotCreateRequestDto(4,1,20,1,LocalDateTime.now().plusDays(2));
+        SlotCreateRequestDto test = new SlotCreateRequestDto(4,1,20,1,LocalDateTime.now().plusHours(13));
 
         String content = objectMapper.writeValueAsString(test);
 

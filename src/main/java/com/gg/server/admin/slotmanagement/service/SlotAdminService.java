@@ -34,6 +34,7 @@ public class SlotAdminService {
 
     @Transactional
     public void addSlotSetting(SlotCreateRequestDto requestDto) {
+        requestDto.updateStartTime();
         updateNowSlotManagementEndTime(requestDto.getStartTime());
         SlotManagement slotManagement = new SlotManagement(requestDto);
 
