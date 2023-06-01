@@ -25,7 +25,7 @@ public class RankController {
 
     private final RankService rankService;
     @GetMapping("/exp")
-    public ExpRankPageResponseDto getExpRankPage(@ModelAttribute @Valid PageRequestDto pageRequestDto, @Parameter(hidden = true) @Login UserDto user) {
+    public ExpRankPageResponseDto getExpRankPage(@Valid PageRequestDto pageRequestDto, @Parameter(hidden = true) @Login UserDto user) {
         PageRequest pageRequest = PageRequest.of(pageRequestDto.getPage() - 1, pageRequestDto.getSize(),
                 Sort.by("totalExp").descending().and(Sort.by("intraId")));
         return rankService.getExpRankPage(pageRequest, user);
@@ -41,7 +41,7 @@ public class RankController {
      *  gameType는 single로 고정되어 오고있는데 현재 rank게임은 single만 구현되어있어서 사용 안하기로
      */
     @GetMapping("/ranks/{gameType}")
-    public RankPageResponseDto getRankPage(@ModelAttribute @Valid PageRequestDto pageRequestDto, @Parameter(hidden = true) @Login UserDto user,
+    public RankPageResponseDto getRankPage(@Valid PageRequestDto pageRequestDto, @Parameter(hidden = true) @Login UserDto user,
                                            Long season,  String gameType){
         PageRequest pageRequest = PageRequest.of(pageRequestDto.getPage() - 1, pageRequestDto.getSize());
         return rankService.getRankPage(pageRequest, user, season);
