@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.redis.core.RedisHash;
 
 @Getter
+@RedisHash("matchUser")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RedisMatchUser {
     @Id
