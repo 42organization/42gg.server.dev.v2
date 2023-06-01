@@ -55,7 +55,7 @@ public class GameService {
         if (game.getStatus() != StatusType.WAIT && game.getStatus() != StatusType.LIVE) {
             return false;
         }
-        return updateScore(game, scoreDto, game.getSeason().getId(), userId);
+        return updateScore(game, scoreDto, userId);
     }
 
     @Transactional
@@ -119,8 +119,7 @@ public class GameService {
     }
 
     private void setTeamScore(TeamUser tu, int teamScore, Boolean isWin) {
-        tu.getTeam().inputScore(teamScore);
-        tu.getTeam().setWin(isWin);
+        tu.getTeam().updateScore(teamScore, isWin);
     }
 
     private TeamUser findTeamId(Long teamId, List<TeamUser> teamUsers) {
@@ -132,7 +131,7 @@ public class GameService {
         }
         throw new TeamIdNotMatchException();
     }
-    private Boolean updateScore(Game game, RankResultReqDto scoreDto, Long seasonId, Long userId) {
+    private Boolean updateScore(Game game, RankResultReqDto scoreDto, Long userId) {
         List<TeamUser> teams = teamUserRepository.findAllByGameId(game.getId());
         TeamUser myTeam = findTeamId(scoreDto.getMyTeamId(), teams);
         TeamUser enemyTeam = findTeamId(scoreDto.getEnemyTeamId(), teams);
@@ -143,7 +142,7 @@ public class GameService {
                 setTeamScore(myTeam, scoreDto.getMyTeamScore(), scoreDto.getMyTeamScore() > scoreDto.getEnemyTeamScore());
                 setTeamScore(enemyTeam, scoreDto.getEnemyTeamScore(), scoreDto.getMyTeamScore() < scoreDto.getEnemyTeamScore());
                 expUpdates(game, teams);
-                rankRedisService.updateRankRedis(teams, seasonId, game);
+                rankRedisService.updateRankRedis(teams, game);
             } else {
                 // score 가 이미 입력됨
                 return false;

@@ -41,4 +41,8 @@ public class PChange extends BaseTimeEntity {
         this.pppResult = pppResult;
         this.exp = user.getTotalExp();
     }
+
+    public void updatePPP(Integer ppp) {
+        this.pppResult = ppp;
+    }
 }
