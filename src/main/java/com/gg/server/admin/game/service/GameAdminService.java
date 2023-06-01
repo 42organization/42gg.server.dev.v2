@@ -3,39 +3,29 @@ package com.gg.server.admin.game.service;
 import com.gg.server.admin.game.dto.GameLogAdminDto;
 import com.gg.server.admin.game.dto.GameLogListAdminResponseDto;
 import com.gg.server.admin.game.data.GameAdminRepository;
-import com.gg.server.admin.game.dto.GameTeamAdminDto;
 import com.gg.server.admin.game.dto.RankGamePPPModifyReqDto;
 import com.gg.server.admin.game.exception.NotRecentlyGameException;
 import com.gg.server.admin.pchange.data.PChangeAdminRepository;
 import com.gg.server.admin.season.data.SeasonAdminRepository;
-import com.gg.server.admin.team.data.TeamAdminRepository;
 import com.gg.server.admin.team.data.TeamUserAdminRepository;
 import com.gg.server.admin.user.data.UserAdminRepository;
 import com.gg.server.domain.game.data.Game;
-import com.gg.server.domain.game.dto.GameResultResDto;
 import com.gg.server.domain.game.dto.GameTeamUser;
-import com.gg.server.domain.game.exception.GameNotFoundException;
+import com.gg.server.domain.game.exception.GameNotExistException;
 import com.gg.server.domain.pchange.data.PChange;
 import com.gg.server.domain.pchange.data.PChangeRepository;
 
-import com.gg.server.domain.rank.data.RankRepository;
 import com.gg.server.domain.rank.redis.RankRedisService;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.exception.SeasonNotFoundException;
-import com.gg.server.domain.team.data.Team;
 import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.hibernate.SessionFactory;
-import org.hibernate.stat.Statistics;
 import org.springframework.data.domain.*;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManagerFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,10 +38,9 @@ public class GameAdminService {
     private final SeasonAdminRepository seasonAdminRepository;
     private final UserAdminRepository userAdminRepository;
     private final PChangeRepository pChangeRepository;
-    private final EntityManagerFactory emF;
     private final PChangeAdminRepository pChangeAdminRepository;
     private final RankRedisService rankRedisService;
-    private final RankRepository rankRepository;
+    private final TeamUserAdminRepository teamUserAdminRepository;
 
     @Transactional(readOnly = true)
     public GameLogListAdminResponseDto findAllGamesByAdmin(Pageable pageable) {

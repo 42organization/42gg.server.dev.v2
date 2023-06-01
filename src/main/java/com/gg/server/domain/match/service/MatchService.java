@@ -2,7 +2,7 @@ package com.gg.server.domain.match.service;
 
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
-import com.gg.server.domain.game.exception.GameExistException;
+import com.gg.server.domain.game.exception.GameAlreadyExistException;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.match.data.RedisMatchTime;
@@ -61,7 +61,7 @@ public class MatchService {
             throw new PenaltyUserSlotException();
         }
         if (gameRepository.findByStartTime(startTime).isPresent()) {
-            throw new GameExistException();
+            throw new GameAlreadyExistException();
         }
         if (gameRepository.findByStatusTypeAndUserId(StatusType.BEFORE, userDto.getId()).isPresent()) {
             throw new EnrolledSlotException();
