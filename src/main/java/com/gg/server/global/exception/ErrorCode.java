@@ -14,8 +14,8 @@ public enum ErrorCode {
 
 
     //announcement
-    AN_NOT_FOUND(404, "AN100", "ANNOUNCEMENT NOT FOUND"),
-    AN_DUP(409, "AN300", "ANNOUNCEMENT DUPLICATION"),
+    ANNOUNCE_NOT_FOUND(404, "AN100", "ANNOUNCEMENT NOT FOUND"),
+    ANNOUNCE_DUPLICATE(409, "AN300", "ANNOUNCEMENT DUPLICATION"),
 
     //season
     SEASON_NOT_FOUND(404, "SE100", "SEASON NOT FOUND"),
@@ -23,7 +23,8 @@ public enum ErrorCode {
     SEASON_TIME_BEFORE(403, "SE501", "SEASON TIME BEFORE"),
 
     //slotmanagement
-    SM_NOT_FOUND(404, "SM100", "SM NOT FOUND"),
+    SLOTMANAGEMENT_NOT_FOUND(404, "SM100", "SLOTMANAGEMENT NOT FOUND"),
+    SLOTMANAGEMENT_FORBIDDEN(403, "SM500", "SLOTMANAGEMENT FORBIDDEN"),
 
     //rank
     RANK_NOT_FOUND(404, "RK100", "RANK NOT FOUND"),
@@ -42,6 +43,8 @@ public enum ErrorCode {
     GAME_DB_NOT_VALID(500, "GM201", "GAME DB NOT CONSISTENCY"),
     SCORE_NOT_MATCHED(400, "GM202", "score 입력이 기존과 다릅니다."),
     GAME_NOT_FOUND(404, "GM101", "GAME 이 존재하지 않습니다."),
+    GAME_NOT_RECENTLY(400, "GM203", "가장 최근 게임이 아닙니다."),
+    GAME_DUPLICATION_EXCPETION(409, "GM204", "GAME ALREADY EXISTS"),
 
     /** match **/
     SLOT_ENROLLED(400, "MA300", "SLOT ALREADY ENROLLED"),
@@ -67,6 +70,7 @@ public enum ErrorCode {
      * PChange
      **/
     PCHANGE_NOT_FOUND(404, "PC100", "PChange 가 존재하지 않습니다."),
+
 
     AWS_S3_ERR(500, "CL001", "AWS S3 Error"),
     AWS_SERVER_ERR(500, "CL002", "AWS Error"),

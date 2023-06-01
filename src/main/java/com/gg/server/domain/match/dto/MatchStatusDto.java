@@ -1,5 +1,6 @@
 package com.gg.server.domain.match.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.match.data.RedisMatchTime;
 import com.gg.server.domain.slotmanagement.SlotManagement;
@@ -13,7 +14,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MatchStatusDto {
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime startTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime endTime;
     private Boolean isMatched;
     private Boolean isImminent;

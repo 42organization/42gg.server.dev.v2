@@ -3,6 +3,7 @@ package com.gg.server.domain.user.service;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.type.StatusType;
+import com.gg.server.domain.match.data.RedisMatchUserRepository;
 import com.gg.server.domain.noti.data.NotiRepository;
 import com.gg.server.domain.pchange.data.PChange;
 import com.gg.server.domain.pchange.data.PChangeRepository;
@@ -20,15 +21,9 @@ import com.gg.server.domain.user.dto.*;
 import com.gg.server.domain.user.exception.TokenNotValidException;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.SnsType;
-import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.security.config.properties.AppProperties;
-import com.gg.server.global.security.cookie.CookieUtil;
 import com.gg.server.global.security.jwt.repository.JwtRedisRepository;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
-import com.gg.server.global.security.jwt.utils.TokenHeaders;
-import com.gg.server.global.utils.ApplicationYmlRead;
-import com.gg.server.global.utils.ExpLevelCalculator;
-import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -38,7 +33,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -59,6 +53,7 @@ public class UserService {
     private final SeasonFindService seasonFindService;
     private final PChangeRepository pChangeRepository;
     private final RankFindService rankFindService;
+    private final RedisMatchUserRepository redisMatchUserRepository;
     private final AppProperties appProperties;
 
 
@@ -102,24 +97,28 @@ public class UserService {
      * @param user
      * - event:
      *     - null → 로그인 유저가 잡힌 매칭이 하나도 없을 때
-     *     - match → 매칭은 되었으나 게임시작 전일 때
+     *     - match → 매칭은 되었으나 게임시작 전일 때 or 매칭중인 경우
      *     - game → 유저가 게임이 잡혔고 현재 게임중인 경우
      *
      * - currentMatchMode
      *     - normal
      *     - rank
-     *     - null -> 매칭이 안잡혔을 때
+     *     - null -> 매칭이 안잡혔을 때 or 게임 전
      */
     @Transactional(readOnly = true)
     public UserLiveResponseDto getUserLiveDetail(UserDto user) {
         int notiCnt = notiRepository.countNotCheckedNotiByUser(user.getId());
         Optional<Game> optionalGame = gameRepository.getLatestGameByUser(user.getId());
-        if (!optionalGame.isEmpty()) {
-            Game latestGame = optionalGame.get();
-            if (latestGame.getStatus() == StatusType.END)
-                return new UserLiveResponseDto(notiCnt, null, null, null);
-            String event = (latestGame.getStatus() == StatusType.BEFORE) ? "match" : "game";
-            return new UserLiveResponseDto(notiCnt, event, latestGame.getMode(), latestGame.getId());
+        int userMatchCnt = redisMatchUserRepository.countMatchTime(user.getId());
+        if (optionalGame.isPresent()) {
+            Game game = optionalGame.get();
+            if (game.getStatus() == StatusType.LIVE || game.getStatus() == StatusType.WAIT)
+                return new UserLiveResponseDto(notiCnt, "game", game.getMode(), game.getId());
+            if (game.getStatus() == StatusType.BEFORE)
+                return new UserLiveResponseDto(notiCnt, "match", null, null);
+        }
+        if (userMatchCnt > 0){
+            return new UserLiveResponseDto(notiCnt, "match", null, null);
         }
         return new UserLiveResponseDto(notiCnt, null, null, null);
     }

@@ -1,6 +1,6 @@
 package com.gg.server.admin.announcement.dto;
 
-import com.gg.server.domain.announcement.Announcement;
+import com.gg.server.domain.announcement.data.Announcement;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

@@ -36,4 +36,11 @@ public class SlotCreateRequestDto {
     @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
     private LocalDateTime startTime;
 
+    public void updateStartTime(){
+        LocalDateTime setStartTime = LocalDateTime.of(
+                this.startTime.getYear(), this.startTime.getMonth(),
+                this.startTime.getDayOfMonth(), this.startTime.getHour(), 0);
+        this.startTime = setStartTime;
+    }
+
 }
