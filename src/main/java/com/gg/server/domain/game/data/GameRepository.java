@@ -42,7 +42,7 @@ public interface GameRepository extends JpaRepository<Game, Long>, GameRepositor
     Optional<Game> findByStatusTypeAndUserId(@Param("status") StatusType status, @Param("userId") Long userId);
     @Query(value = "select gameId " +
             "from v_teamuser " +
-            "where intraId = :intra and status in (:status) order by startTime desc", nativeQuery = true)
+            "where intraId = :intra and status in (:status)", nativeQuery = true)
     Slice<Long> findGamesByUser(@Param("intra") String intra, @Param("status") List<String> status, Pageable pageable);
     @Query(value = "select gameId " +
             "from v_teamuser " +
