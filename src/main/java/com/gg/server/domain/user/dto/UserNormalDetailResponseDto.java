@@ -7,6 +7,6 @@ import lombok.Getter;
 @Getter
 public class UserNormalDetailResponseDto {
     private String intraId;
-    private String userImageUrl;
+    private String userImageUri;
     private Boolean isAdmin;
 }
