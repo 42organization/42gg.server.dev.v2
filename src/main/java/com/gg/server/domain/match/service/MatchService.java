@@ -2,6 +2,7 @@ package com.gg.server.domain.match.service;
 
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
+import com.gg.server.domain.game.exception.GameExistException;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.match.data.RedisMatchTime;
@@ -55,9 +56,12 @@ public class MatchService {
     private final PenaltyService penaltyService;
 
     @Transactional
-    public void makeMatch(UserDto userDto, Option option, LocalDateTime startTime) {
+    public synchronized void makeMatch(UserDto userDto, Option option, LocalDateTime startTime) {
         if (penaltyService.isPenaltyUser(userDto.getIntraId())) {
             throw new PenaltyUserSlotException();
+        }
+        if (gameRepository.findByStartTime(startTime).isPresent()) {
+            throw new GameExistException();
         }
         Season currentSeason = seasonFindService.findCurrentSeason(LocalDateTime.now());
         RankRedis rank = rankRedisRepository
@@ -83,7 +87,7 @@ public class MatchService {
 
     @Transactional
     //게임 생성 전 매칭 취소
-    public void cancelMatch(UserDto userDto, LocalDateTime startTime) {
+    public synchronized void cancelMatch(UserDto userDto, LocalDateTime startTime) {
         //취소 패널티는 게임이 만들어진 후 고려
         //이미 매칭이 성사되서 게임이 만들어졌다
         Optional<Game> game = gameRepository.findByStartTime(startTime);

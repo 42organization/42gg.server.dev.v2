@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.redis.core.RedisHash;
 
 @Getter
+@RedisHash("matchTime")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RedisMatchTime implements Serializable {
     @Id
