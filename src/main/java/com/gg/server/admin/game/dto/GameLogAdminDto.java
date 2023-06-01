@@ -1,14 +1,12 @@
 package com.gg.server.admin.game.dto;
 
-import com.gg.server.domain.game.data.Game;
+import com.gg.server.domain.game.dto.GameTeamUser;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -21,15 +19,13 @@ public class GameLogAdminDto {
     private GameTeamAdminDto team1;
     private GameTeamAdminDto team2;
 
-    public GameLogAdminDto(Game game, List<GameTeamAdminDto> gameTeamAdminDtoList) {
-        this.gameId = game.getId();
+    public GameLogAdminDto(GameTeamUser game) {
+        this.gameId = game.getGameId();
         this.startAt = game.getStartTime();
         this.slotTime = game.getEndTime() == null ? null :
                 String.valueOf(Duration.between(game.getStartTime().toLocalTime(), game.getEndTime().toLocalTime()).toMinutes());
         this.mode = game.getMode().getCode();
-        if (gameTeamAdminDtoList.size() > 1) {
-            this.team1 = gameTeamAdminDtoList.get(0);
-            this.team2 = gameTeamAdminDtoList.get(1);
-        }
+        this.team1 = new GameTeamAdminDto(game.getT1IntraId(), game.getT1TeamId(), game.getT1Score(), game.getT1IsWin());
+        this.team2 = new GameTeamAdminDto(game.getT2IntraId(), game.getT2TeamId(), game.getT2Score(), game.getT2IsWin());
     }
 }

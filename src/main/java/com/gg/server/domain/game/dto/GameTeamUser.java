@@ -8,8 +8,10 @@ import java.time.LocalDateTime;
 public interface GameTeamUser {
     Long getGameId();
     LocalDateTime getStartTime();
+    LocalDateTime getEndTime();
     StatusType getStatus();
     Mode getMode();
+    Long getT1TeamId();
     Integer getT1Wins();
     Integer getT1Losses();
     String getT1IntraId();
@@ -17,6 +19,7 @@ public interface GameTeamUser {
     Integer getT1Exp();
     Integer getT1Score();
     Boolean getT1IsWin();
+    Long getT2TeamId();
     Integer getT2Wins();
     Integer getT2Losses();
     String getT2IntraId();
