@@ -15,7 +15,7 @@ public class ExpChangeResultResDto {
     private Integer afterMaxExp;
 
     public ExpChangeResultResDto(Integer beforeExp, Integer currentExp) {
-        this.beforeExp = beforeExp;
+        this.beforeExp = ExpLevelCalculator.getCurrentLevelMyExp(beforeExp);
         this.beforeLevel = ExpLevelCalculator.getLevel(beforeExp);
         this.beforeMaxExp = ExpLevelCalculator.getLevelMaxExp(beforeLevel);
         this.increasedExp = currentExp - beforeExp;
