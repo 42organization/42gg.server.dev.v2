@@ -51,10 +51,10 @@ public class GameService {
 
     @Transactional
     @Caching(evict = {
-            @CacheEvict(value = "rankGameListByIntra"),
-            @CacheEvict(value = "rankGameList"),
-            @CacheEvict(value = "allGameList"),
-            @CacheEvict(value = "allGameListByUser")
+            @CacheEvict(value = "rankGameListByIntra", allEntries = true),
+            @CacheEvict(value = "rankGameList", allEntries = true),
+            @CacheEvict(value = "allGameList", allEntries = true),
+            @CacheEvict(value = "allGameListByUser", allEntries = true)
     })
     public synchronized Boolean createRankResult(RankResultReqDto scoreDto, Long userId) {
         log.info("create Rank Result");
@@ -68,10 +68,10 @@ public class GameService {
 
     @Transactional
     @Caching(evict = {
-            @CacheEvict(value = "normalGameListByIntra"),
-            @CacheEvict(value = "normalGameList"),
-            @CacheEvict(value = "allGameList"),
-            @CacheEvict(value = "allGameListByUser")
+            @CacheEvict(value = "normalGameListByIntra", allEntries = true),
+            @CacheEvict(value = "normalGameList", allEntries = true),
+            @CacheEvict(value = "allGameList", allEntries = true),
+            @CacheEvict(value = "allGameListByUser", allEntries = true)
     })
     public synchronized Boolean normalExpResult(NormalResultReqDto normalResultReqDto) {
         Game game = gameFindService.findByGameId(normalResultReqDto.getGameId());
