@@ -21,6 +21,8 @@ import com.gg.server.global.exception.custom.InvalidParameterException;
 import com.gg.server.global.utils.ExpLevelCalculator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,6 +50,12 @@ public class GameService {
     }
 
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "rankGameListByIntra", allEntries = true),
+            @CacheEvict(value = "rankGameList", allEntries = true),
+            @CacheEvict(value = "allGameList", allEntries = true),
+            @CacheEvict(value = "allGameListByUser", allEntries = true)
+    })
     public synchronized Boolean createRankResult(RankResultReqDto scoreDto, Long userId) {
         log.info("create Rank Result");
         // 현재 게임 id
@@ -59,6 +67,12 @@ public class GameService {
     }
 
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "normalGameListByIntra", allEntries = true),
+            @CacheEvict(value = "normalGameList", allEntries = true),
+            @CacheEvict(value = "allGameList", allEntries = true),
+            @CacheEvict(value = "allGameListByUser", allEntries = true)
+    })
     public synchronized Boolean normalExpResult(NormalResultReqDto normalResultReqDto) {
         Game game = gameFindService.findByGameId(normalResultReqDto.getGameId());
         List<TeamUser> teamUsers = teamUserRepository.findAllByGameId(game.getId());
