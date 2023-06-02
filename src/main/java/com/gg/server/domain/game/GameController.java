@@ -30,7 +30,7 @@ public class GameController {
     private final GameFindService gameFindService;
 
     @GetMapping
-    GameListResDto allGameList(@ModelAttribute @Valid GameListReqDto gameReq) {
+    GameListResDto allGameList(@Valid GameListReqDto gameReq) {
         if (gameReq.getStatus() != null && !gameReq.getStatus().name().equals("LIVE")) {
             throw new InvalidParameterException("status not valid", ErrorCode.VALID_FAILED);
         }
