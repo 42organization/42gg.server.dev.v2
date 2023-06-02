@@ -4,6 +4,7 @@ import com.gg.server.global.exception.custom.*;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.SdkClientException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
@@ -83,8 +84,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({RuntimeException.class})
     public ResponseEntity<ErrorResponse> runtimeException(RuntimeException ex) {
-        log.error("Runtime error", ex);
-        ErrorResponse response = new ErrorResponse(ErrorCode.BAD_REQUEST);
+        log.error("처리되지 않은 에러입니다.", ex);
+        ErrorResponse response = new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERR);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
@@ -95,7 +96,7 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception ex) {
-        log.error("처리되지 않은 에러입니다.", ex);
+        log.error("!!!!!! SERVER ERROR !!!!!!", ex);
         ErrorResponse response = new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERR);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
