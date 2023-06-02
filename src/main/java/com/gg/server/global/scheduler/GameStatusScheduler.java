@@ -4,8 +4,6 @@ import com.gg.server.domain.game.service.GameStatusService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-
 @Component
 @Slf4j
 public class GameStatusScheduler extends AbstractScheduler{
