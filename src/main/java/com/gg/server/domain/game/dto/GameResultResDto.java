@@ -7,15 +7,12 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.team.dto.TeamUserInfoDto;
 import com.gg.server.domain.team.dto.TeamUserListDto;
-import com.gg.server.global.utils.ExpLevelCalculator;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 @Getter
 @NoArgsConstructor
