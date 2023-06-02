@@ -20,6 +20,9 @@ import java.util.Arrays;
 public class TraceAspect {
     private final LogTrace logTrace;
 
+    @Pointcut("execution(* com.gg.server.admin..*(..))")
+    public void allAdmin(){}
+
     @Pointcut("execution(* com.gg.server.domain..*(..))")
     public void allDomain(){}
 
@@ -27,12 +30,12 @@ public class TraceAspect {
     public void securityDomain(){}
 
     @Pointcut("execution(* com.gg.server.global.utils..*(..))")
-    public void utilDomain(){}
+    public void util(){}
 
     @Pointcut("execution(* com.gg.server.global.scheduler..*(..))")
-    public void schedulerDomain(){}
+    public void scheduler(){}
 
-    @Around("(allDomain() || utilDomain() || schedulerDomain()) && !securityDomain()")
+    @Around("(allAdmin() || allDomain() || util() || scheduler()) && !securityDomain()")
     public Object doLog(ProceedingJoinPoint joinPoint) throws Throwable {
         TraceStatus status = null;
         MethodSignature method = (MethodSignature)joinPoint.getSignature();
