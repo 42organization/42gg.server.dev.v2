@@ -79,8 +79,8 @@ public class GameService {
         if (teamUsers.size() == 2 &&
                 (game.getStatus() == StatusType.WAIT || game.getStatus() == StatusType.LIVE)) {
             expUpdates(game, teamUsers);
-            pChangeService.addPChange(game, teamUsers.get(0).getUser(), null);
-            pChangeService.addPChange(game, teamUsers.get(1).getUser(), null);
+            pChangeService.addPChange(game, teamUsers.get(0).getUser(), 0);
+            pChangeService.addPChange(game, teamUsers.get(1).getUser(), 0);
             return true;
         } else if (teamUsers.size() != 2) {
             throw new InvalidParameterException("team 이 잘못되었습니다.", ErrorCode.VALID_FAILED);
