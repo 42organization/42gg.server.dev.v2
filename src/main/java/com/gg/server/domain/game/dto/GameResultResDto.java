@@ -1,5 +1,9 @@
 package com.gg.server.domain.game.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.team.dto.TeamUserInfoDto;
 import com.gg.server.domain.team.dto.TeamUserListDto;
@@ -7,6 +11,7 @@ import com.gg.server.global.utils.ExpLevelCalculator;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,6 +23,8 @@ public class GameResultResDto {
     private Long gameId;
     private String status;
     private Mode mode;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime time;
     private TeamUserListDto team1;
     private TeamUserListDto team2;
