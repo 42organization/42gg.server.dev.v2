@@ -42,7 +42,7 @@ public class SlotGenerator {
         this.minTime = LocalDateTime.of(
                         now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour(), 0)
                 .minusHours(slotManagement.getPastSlotTime());
-        this.maxTime = getMaxTime(slotManagement);
+        this.maxTime = setMaxTime(slotManagement);
         this.option = option;
         this.slots = new HashMap<LocalDateTime, SlotStatusDto>();
         this.matchUser = new RedisMatchUser(user.getUserId(), user.getPpp(), option);
@@ -97,7 +97,7 @@ public class SlotGenerator {
         return new SlotStatusResponseListDto(matchBoards);
     }
 
-    private LocalDateTime getMaxTime(SlotManagement slotManagement) {
+    private LocalDateTime setMaxTime(SlotManagement slotManagement) {
         LocalDateTime compared = LocalDateTime.of(
                         now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour(), 0)
                 .plusHours(slotManagement.getFutureSlotTime());
