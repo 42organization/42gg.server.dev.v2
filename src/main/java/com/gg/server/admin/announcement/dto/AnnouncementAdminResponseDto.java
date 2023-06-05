@@ -22,6 +22,7 @@ public class AnnouncementAdminResponseDto {
         this.creatorIntraId = announcementAdmin.getCreatorIntraId();
         this.deleterIntraId = announcementAdmin.getDeleterIntraId();
         this.createdAt = announcementAdmin.getCreatedAt();
+        this.modifiedAt = announcementAdmin.getModifiedAt();
         this.deletedAt = announcementAdmin.getDeletedAt();
     }
 }

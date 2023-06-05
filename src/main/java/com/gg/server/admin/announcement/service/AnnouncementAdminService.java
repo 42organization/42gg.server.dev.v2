@@ -44,15 +44,14 @@ public class AnnouncementAdminService {
         if (findAnnouncementExist() == false)
             throw new AnnounceNotFoundException();
 
-        Announcement announcement = announcementAdminRepository.findFirstByOrderByIdDesc();
+        Announcement announcement = announcementAdminRepository.findFirstByOrderByIdDesc().orElseThrow(()-> new AnnounceNotFoundException());
         announcement.update(deleterIntraId, LocalDateTime.now());
     }
 
     private Boolean findAnnouncementExist() {
-        Announcement announcement = announcementAdminRepository.findFirstByOrderByIdDesc();
-        if (announcement == null)
-            return false;
-        else if (announcement.getDeletedAt() == null)
+        Announcement announcement = announcementAdminRepository.findFirstByOrderByIdDesc().orElseThrow(()-> new AnnounceNotFoundException());
+
+        if (announcement.getDeletedAt() == null)
             return true;
 
         return false;

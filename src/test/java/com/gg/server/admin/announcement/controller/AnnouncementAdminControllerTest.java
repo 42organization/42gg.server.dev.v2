@@ -5,6 +5,7 @@ import com.gg.server.admin.announcement.data.AnnouncementAdminRepository;
 import com.gg.server.admin.announcement.dto.AnnouncementAdminAddDto;
 import com.gg.server.admin.announcement.dto.AnnouncementAdminListResponseDto;
 import com.gg.server.domain.announcement.data.Announcement;
+import com.gg.server.domain.announcement.exception.AnnounceNotFoundException;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import lombok.RequiredArgsConstructor;
@@ -72,7 +73,7 @@ class AnnouncementAdminControllerTest {
         Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
 
         //공지사항 1개 정책 때문에 기존 공지사항 지울 것
-        Announcement delDto = announcementAdminRepository.findFirstByOrderByIdDesc();
+        Announcement delDto = announcementAdminRepository.findFirstByOrderByIdDesc().orElseThrow(()-> new AnnounceNotFoundException());
         announcementAdminRepository.delete(delDto);
 
         AnnouncementAdminAddDto addDto = new AnnouncementAdminAddDto("하나하나둘둘", "testId");
@@ -87,7 +88,7 @@ class AnnouncementAdminControllerTest {
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
 
-        Announcement result = announcementAdminRepository.findFirstByOrderByIdDesc();
+        Announcement result = announcementAdminRepository.findFirstByOrderByIdDesc().orElseThrow(()-> new AnnounceNotFoundException());
 
         assertThat(result.getContent()).isEqualTo(addDto.getContent());
         assertThat(result.getCreatorIntraId()).isEqualTo(addDto.getCreatorIntraId());
@@ -132,7 +133,7 @@ class AnnouncementAdminControllerTest {
                 .andExpect(status().isNoContent())
                 .andReturn().getResponse().getContentAsString();
 
-        Announcement result = announcementAdminRepository.findFirstByOrderByIdDesc();
+        Announcement result = announcementAdminRepository.findFirstByOrderByIdDesc().orElseThrow(()-> new AnnounceNotFoundException());
 
         assertThat(result.getDeleterIntraId()).isEqualTo("deleterTestId");
         assertThat(result.getDeletedAt()).isNotNull();
