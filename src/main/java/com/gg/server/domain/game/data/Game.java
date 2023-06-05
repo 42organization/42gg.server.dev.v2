@@ -1,5 +1,6 @@
 package com.gg.server.domain.game.data;
 
+import com.gg.server.domain.match.dto.GameAddDto;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
@@ -51,6 +52,14 @@ public class Game {
         this.mode = mode;
         this.startTime = startTime;
         this.endTime = endTime;
+    }
+
+    public Game(GameAddDto dto, Integer interval) {
+        this.season = dto.getSeason();
+        this.status = StatusType.BEFORE;
+        this.mode = dto.getMode();
+        this.startTime = dto.getStartTime();
+        this.endTime = dto.getStartTime().plusMinutes(interval);
     }
 
     @Override
