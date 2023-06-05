@@ -69,11 +69,16 @@ alter table slot_team_user modify user_id BIGINT not null;
 ####
 
 ### announcement ###
+SET SQL_SAFE_UPDATES=0;
 alter table announcement modify content VARCHAR(1000) not null;
 alter table announcement modify creator_intra_id VARCHAR(30) not null;
 alter table announcement modify deleter_intra_id VARCHAR(30);
 alter table announcement change deleted_time deleted_at DATETIME;
 alter table announcement drop column is_del;
+alter table announcement change column created_time created_at DATETIME not null;
+alter table announcement add column modified_at DATETIME;
+update announcement set modified_at=deleted_at where modified_at is null;
+SET SQL_SAFE_UPDATES=1;
 ####
 
 ### feed_back ###
@@ -263,8 +268,68 @@ alter table user drop column enum_role_type;
 alter table user add column kakao_id BIGINT;
 
 alter table user drop column status_message;
+alter table user modify intra_id VARCHAR(30) not null;
+alter table user modify e_mail VARCHAR(60);
+alter table user modify racket_type VARCHAR(10);
+alter table user modify role_type VARCHAR(10) not null;
+alter table user modify sns_noti_opt VARCHAR(10);
+alter table user drop ppp;
+
+alter table ranks drop ranking;
+####
+
+### add Penalty table ###
+DROP TABLE IF EXISTS `penalty`;
+
+CREATE TABLE `penalty` (
+                         `id` BIGINT NOT NULL AUTO_INCREMENT,
+                         `user_id` BIGINT NOT NULL,
+                         `penalty_type` VARCHAR(20) NOT NULL,
+                         `message` VARCHAR(100) NULL,
+                         `start_time` DATETIME NOT NULL,
+                         `penalty_time` INT NOT NULL,
+                         `created_at` DATETIME NOT NULL,
+                         `modified_at` DATETIME NOT NULL,
+                         PRIMARY KEY (`id`),
+                         INDEX `fk_penalty_user_user_id_idx` (`user_id` ASC) VISIBLE,
+                         CONSTRAINT `fk_penalty_user_user_id`
+                           FOREIGN KEY (`user_id`)
+                             REFERENCES user (`id`)
+                             ON DELETE NO ACTION
+                             ON UPDATE NO ACTION);
+####
+
+### slot_management ###
+alter table slot_management add column start_time DATETIME;
+alter table slot_management add column end_time DATETIME;
+
+SET SQL_SAFE_UPDATES=0;
+DELETE t1
+FROM slot_management t1
+JOIN (SELECT MAX(created_at) AS max_created_at FROM slot_management) t2
+WHERE t1.created_at < t2.max_created_at;
+SET SQL_SAFE_UPDATES=0;
+
+UPDATE slot_management
+SET start_time = created_at;
+
+alter table slot_management modify start_time DATETIME NOT NULL;
 ####
 
 ### drop tables ###
 drop table slot;
+####
+
+### views ###
+create or replace view v_teamuser as
+select team.id teamId, team.score, team.win, g.id gameId, g.season_id seasonId, g.start_time startTime, g.status, g.mode, tu.user_id userId, u.intra_id intraId, u.image_uri image, u.total_exp
+from team, team_user tu, user u, game g
+where team.id=tu.team_id and u.id=tu.user_id and g.id=team.game_id;
+
+create or replace view v_rank_game_detail as
+select team.id teamId, team.score, team.win, g.id gameId, g.season_id seasonId, g.start_time startTime, g.end_time endTime, g.status, g.mode,
+       tu.user_id userId, u.intra_id intraId, u.image_uri image, u.total_exp,
+       r.wins, r.losses
+from team, team_user tu, user u, game g, ranks r
+where team.id=tu.team_id and u.id=tu.user_id and g.id=team.game_id and r.user_id = u.id and r.season_id = g.season_id;
 ####
