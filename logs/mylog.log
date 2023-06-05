@@ -1,4 +1,0 @@
-[2023-06-05 09:47:20:25217] INFO  --- [           main] c.g.s.g.l.s.ThreadLocalLogTrace          : [8e9c6460] SeasonRepository.findCurrentSeason(): arguments = [2023-06-05T09:47:20.165594]
-[2023-06-05 09:47:20:25286] INFO  --- [           main] c.g.s.g.l.s.ThreadLocalLogTrace          : [8e9c6460] SeasonRepository.findCurrentSeason(): arguments = [2023-06-05T09:47:20.165594] time=69ms
-[2023-06-05 09:47:20:25287] INFO  --- [           main] c.g.s.g.l.s.ThreadLocalLogTrace          : [530c5e01] RankRedisRepository.isEmpty(): arguments = [rank:hash:4]
-[2023-06-05 09:47:20:25634] INFO  --- [           main] c.g.s.g.l.s.ThreadLocalLogTrace          : [530c5e01] RankRedisRepository.isEmpty(): arguments = [rank:hash:4] time=347ms

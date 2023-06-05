@@ -27,8 +27,8 @@
             <!-- daily rollover -->
             <fileNamePattern>${LOGS_ABSOLUTE_PATH}/daylogs/%d{yyyy-MM-dd}.log</fileNamePattern>
             <!-- keep 30 days' worth of history capped at 3GB total size -->
-            <maxHistory>30</maxHistory>
-            <totalSizeCap>50MB</totalSizeCap>
+            <maxHistory>2</maxHistory>
+            <totalSizeCap>10MB</totalSizeCap>
         </rollingPolicy>
     </appender>
 
@@ -44,7 +44,7 @@
             <!-- daily rollover -->
             <fileNamePattern>${LOGS_ABSOLUTE_PATH}/mydaylogs/%d{yyyy-MM-dd}.log</fileNamePattern>
             <!-- keep 30 days' worth of history capped at 3GB total size -->
-            <maxHistory>30</maxHistory>
+            <maxHistory>2</maxHistory>
             <totalSizeCap>50MB</totalSizeCap>
         </rollingPolicy>
     </appender>
@@ -66,8 +66,8 @@
             <!-- daily rollover -->
             <fileNamePattern>${LOGS_ABSOLUTE_PATH}/dayerror/%d{yyyy-MM-dd}.log</fileNamePattern>
             <!-- keep 30 days' worth of history capped at 3GB total size -->
-            <maxHistory>30</maxHistory>
-            <totalSizeCap>50MB</totalSizeCap>
+            <maxHistory>2</maxHistory>
+            <totalSizeCap>30MB</totalSizeCap>
         </rollingPolicy>
     </appender>
 

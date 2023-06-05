@@ -49,4 +49,4 @@ out/
 pingping.pem
 
 ###  logs  ###
-./logs/
+./logs/*
