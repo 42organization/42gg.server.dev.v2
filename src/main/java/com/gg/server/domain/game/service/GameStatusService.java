@@ -4,6 +4,7 @@ import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.exception.GameDataConsistencyException;
 import com.gg.server.domain.game.type.StatusType;
+import com.gg.server.domain.match.exception.SlotNotFoundException;
 import com.gg.server.domain.noti.data.Noti;
 import com.gg.server.domain.noti.dto.UserNotiDto;
 import com.gg.server.domain.noti.service.NotiService;
@@ -15,6 +16,7 @@ import com.gg.server.domain.team.dto.GameUser;
 import com.gg.server.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.weaver.patterns.ConcreteCflowPointcut.Slot;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,7 +54,8 @@ public class GameStatusService {
 
     @Transactional
     public void imminentGame() {
-        SlotManagement slotManagement = slotManagementRepository.findFirstByOrderByCreatedAtDesc();
+        SlotManagement slotManagement = slotManagementRepository.findCurrent(LocalDateTime.now())
+                .orElseThrow(SlotNotFoundException::new);
         List<GameUser> games = gameRepository.findAllByStartTimeLessThanEqual(getTime(slotManagement.getOpenMinute()));
         if (games.size() > 2) {
             log.error("imminent game size is not 2 -> size: " + games.size() + ", check time: " + getTime(slotManagement.getOpenMinute()));

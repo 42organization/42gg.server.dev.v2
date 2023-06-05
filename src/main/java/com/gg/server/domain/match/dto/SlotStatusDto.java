@@ -22,6 +22,12 @@ public class SlotStatusDto {
         this.status = status.getCode();
     }
 
+    public SlotStatusDto(LocalDateTime startTime, SlotStatus status, Integer interval) {
+        this.startTime = startTime;
+        this.endTime = startTime.plusMinutes(interval);
+        this.status = status.getCode();
+    }
+
     @Override
     public String toString() {
         return "SlotStatusDto{" +
