@@ -6,7 +6,6 @@ import com.gg.server.admin.season.service.SeasonAdminService;
 import com.gg.server.admin.season.dto.SeasonAdminDto;
 import com.gg.server.admin.season.dto.SeasonListAdminResponseDto;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

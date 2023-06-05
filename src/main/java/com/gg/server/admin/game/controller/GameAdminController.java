@@ -5,7 +5,6 @@ import com.gg.server.admin.game.dto.GameLogListAdminResponseDto;
 import com.gg.server.admin.game.dto.GameUserLogAdminReqDto;
 import com.gg.server.admin.game.dto.RankGamePPPModifyReqDto;
 import com.gg.server.admin.game.service.GameAdminService;
-import com.gg.server.domain.game.dto.req.RankResultReqDto;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.InvalidParameterException;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
 @RestController

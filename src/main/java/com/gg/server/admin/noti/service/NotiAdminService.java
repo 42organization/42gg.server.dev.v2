@@ -1,6 +1,5 @@
 package com.gg.server.admin.noti.service;
 
-
 import com.gg.server.admin.noti.data.NotiAdminRepository;
 import com.gg.server.admin.noti.dto.NotiAdminDto;
 import com.gg.server.admin.noti.dto.NotiListAdminResponseDto;

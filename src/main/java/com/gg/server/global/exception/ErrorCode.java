@@ -65,7 +65,7 @@ public enum ErrorCode {
     BAD_ARGU(400, "ARGUMENT-ERR-400", "잘못된 argument 입니다."),
 
     //Feedback
-    FB_NOT_FOUND(404, "FB100", "FB NOT FOUND"),
+    FEEDBACK_NOT_FOUND(404, "FB100", "FB NOT FOUND"),
 
     /**
      * PChange

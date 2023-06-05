@@ -1,10 +1,8 @@
 package com.gg.server.admin.noti.dto;
 
-import com.gg.server.admin.user.dto.UserAdminDto;
 import com.gg.server.domain.noti.data.Noti;
 import com.gg.server.domain.noti.type.NotiType;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;

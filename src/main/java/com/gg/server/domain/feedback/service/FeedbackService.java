@@ -5,7 +5,6 @@ import com.gg.server.domain.feedback.data.FeedbackRepository;
 import com.gg.server.domain.feedback.dto.FeedbackRequestDto;
 import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.UserRepository;
-import com.gg.server.domain.user.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
