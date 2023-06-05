@@ -27,14 +27,14 @@ public class GameFindService {
     @Cacheable(value = "normalGameListByIntra", cacheManager = "gameCacheManager")
     public GameListResDto normalGameListByIntra(Pageable pageable, String intra) {
         Slice<Long> games = gameRepository.findGamesByUserAndMode(intra, Mode.NORMAL.name(), StatusType.END.name(), pageable);
-        return new GameListResDto(getGameResultList(games.getContent()), games.isLast());
+        return new GameListResDto(getNormalGameResultList(games.getContent()), games.isLast());
     }
 
     @Transactional(readOnly = true)
     @Cacheable(value = "normalGameList", cacheManager = "gameCacheManager")
     public GameListResDto getNormalGameList(Pageable pageable) {
         Slice<Game> games = gameRepository.findAllByModeAndStatus(Mode.NORMAL, StatusType.END, pageable);
-        return new GameListResDto(getGameResultList(games.getContent().stream().map(Game::getId).collect(Collectors.toList())), games.isLast());
+        return new GameListResDto(getNormalGameResultList(games.getContent().stream().map(Game::getId).collect(Collectors.toList())), games.isLast());
     }
 
     @Transactional(readOnly = true)
@@ -65,6 +65,10 @@ public class GameFindService {
 
     private List<GameResultResDto> getGameResultList(List<Long> games) {
         List<GameTeamUser> teamViews = gameRepository.findTeamsByGameIsIn(games);
+        return teamViews.stream().map(GameResultResDto::new).collect(Collectors.toList());
+    }
+    private List<GameResultResDto> getNormalGameResultList(List<Long> games) {
+        List<GameTeamUser> teamViews = gameRepository.findTeamsByGameIsInAndNormalMode(games);
         return teamViews.stream().map(GameResultResDto::new).collect(Collectors.toList());
     }
     @Transactional(readOnly = true)

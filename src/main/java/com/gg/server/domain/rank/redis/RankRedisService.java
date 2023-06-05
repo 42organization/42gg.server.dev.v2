@@ -22,6 +22,11 @@ public class RankRedisService {
     private final RankRedisRepository rankRedisRepository;
     private final PChangeService pChangeService;
     private final RankRepository rankRepository;
+
+    public Integer getUserPpp(Long userId, Long seasonId) {
+        String hashKey = RedisKeyManager.getHashKey(seasonId);
+        return rankRedisRepository.findRankByUserId(hashKey, userId).getPpp();
+    }
     public void updateRankRedis(List<TeamUser> list, Game game) {
         // 단식 -> 2명 기준
         String key = RedisKeyManager.getHashKey(game.getSeason().getId());

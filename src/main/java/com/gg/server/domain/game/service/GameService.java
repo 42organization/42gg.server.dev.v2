@@ -16,6 +16,7 @@ import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.team.data.TeamUserRepository;
 import com.gg.server.domain.team.exception.TeamIdNotMatchException;
+import com.gg.server.domain.user.User;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.InvalidParameterException;
 import com.gg.server.global.utils.ExpLevelCalculator;
@@ -79,13 +80,19 @@ public class GameService {
         if (teamUsers.size() == 2 &&
                 (game.getStatus() == StatusType.WAIT || game.getStatus() == StatusType.LIVE)) {
             expUpdates(game, teamUsers);
-            pChangeService.addPChange(game, teamUsers.get(0).getUser(), null);
-            pChangeService.addPChange(game, teamUsers.get(1).getUser(), null);
+            savePChange(game, teamUsers);
             return true;
         } else if (teamUsers.size() != 2) {
             throw new InvalidParameterException("team 이 잘못되었습니다.", ErrorCode.VALID_FAILED);
         }
         return false;
+    }
+
+    private void savePChange(Game game, List<TeamUser> teamUsers) {
+        pChangeService.addPChange(game, teamUsers.get(0).getUser(),
+                rankRedisService.getUserPpp(teamUsers.get(0).getUser().getId(), game.getSeason().getId()));
+        pChangeService.addPChange(game, teamUsers.get(1).getUser(),
+                rankRedisService.getUserPpp(teamUsers.get(1).getUser().getId(), game.getSeason().getId()));
     }
 
     @Transactional(readOnly = true)
