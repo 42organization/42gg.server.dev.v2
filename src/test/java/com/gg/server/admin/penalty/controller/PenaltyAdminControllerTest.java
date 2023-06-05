@@ -92,7 +92,7 @@ class PenaltyAdminControllerTest {
         Optional<RedisPenaltyUser> penaltyUser = penaltyUserAdminRedisRepository.findByIntraId(intraId);
         //redis
         Assertions.assertThat(penaltyUser).isPresent();
-        Assertions.assertThat(penaltyUser.get().getPenaltyTime()).isEqualTo(3);
+        Assertions.assertThat(penaltyUser.get().getPenaltyTime()).isEqualTo(3 * 60);
         Assertions.assertThat(
                 Duration.between(penaltyUser.get().getStartTime(),
                         penaltyUser.get().getReleaseTime()).getSeconds()).isEqualTo(3 * 60 * 60);
@@ -100,7 +100,7 @@ class PenaltyAdminControllerTest {
         //mySQL
         List<Penalty> penalties = penaltyAdminRepository.findAll();
         Assertions.assertThat(penalties.stream().anyMatch(ele -> ele.getUser().getIntraId().equals(intraId)
-                && ele.getPenaltyTime().equals(3))).isEqualTo(true);
+                && ele.getPenaltyTime().equals(3 * 60))).isEqualTo(true);
     }
 
     @Test
@@ -123,7 +123,7 @@ class PenaltyAdminControllerTest {
         Optional<RedisPenaltyUser> penaltyUser = penaltyUserAdminRedisRepository.findByIntraId(intraId);
         //redis 확인
         Assertions.assertThat(penaltyUser).isPresent();
-        Assertions.assertThat(penaltyUser.get().getPenaltyTime()).isEqualTo(5);
+        Assertions.assertThat(penaltyUser.get().getPenaltyTime()).isEqualTo(5 * 60);
         Assertions.assertThat(
                 Duration.between(penaltyUser.get().getStartTime(),
                         penaltyUser.get().getReleaseTime()).getSeconds()).isEqualTo(5 * 60 * 60);
@@ -141,7 +141,7 @@ class PenaltyAdminControllerTest {
     @Test
     @DisplayName("POST 유효하지 않은 intraId에 penalty 부여")
     public void giveUserPenaltyWithInvalidIntraId() throws Exception {
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         tokenProvider.getUserIdFromAccessToken(accessToken);
         String intraId = "invalid!";
         String url = "/pingpong/admin/penalty";
@@ -277,7 +277,7 @@ class PenaltyAdminControllerTest {
                 .andExpect(status().isNoContent());
         //Redis에 penaltyUser 있는지 확인
         Optional<RedisPenaltyUser> penaltyUser = penaltyUserAdminRedisRepository.findByIntraId(intraId);
-        Assertions.assertThat(penaltyUser.get().getPenaltyTime()).isEqualTo(2);
+        Assertions.assertThat(penaltyUser.get().getPenaltyTime()).isEqualTo(2 * 60);
 
         //MySQL에 penalty 없는지 확인
         List<Penalty> afterPenalties = penaltyAdminRepository.findAll();
