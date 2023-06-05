@@ -55,7 +55,7 @@ class UserAdminControllerTest {
     @Transactional
     public void userSearchAllTest() throws Exception{
         //given
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
         User user = userRepository.findById(userId).get();
         int page = 1;
@@ -94,7 +94,7 @@ class UserAdminControllerTest {
     @Transactional
     public void 유저필터링조회테스트() throws Exception {
         //given
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
         User user = userRepository.findById(userId).get();
         int page = 1;
@@ -118,7 +118,7 @@ class UserAdminControllerTest {
     @Transactional
     public void userGetDetailTest() throws Exception{
         //given
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
         User user = userRepository.findByIntraId("nheo").get();
         String url = "/pingpong/admin/users/" + user.getIntraId();

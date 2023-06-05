@@ -1,7 +1,5 @@
 package com.gg.server.domain.match.service;
 
-import com.gg.server.domain.match.data.RedisMatchTimeRepository;
-import com.gg.server.domain.match.data.RedisMatchUserRepository;
 import com.gg.server.domain.match.exception.SlotNotFoundException;
 import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
@@ -10,8 +8,6 @@ import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.data.SeasonRepository;
 import com.gg.server.domain.slotmanagement.SlotManagement;
 import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
-import com.gg.server.domain.team.data.TeamRepository;
-import com.gg.server.domain.team.data.TeamUserRepository;
 import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.UserRepository;
 import com.gg.server.domain.user.type.RacketType;

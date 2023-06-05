@@ -1,11 +1,10 @@
 SET SQL_SAFE_UPDATES=0;
+
 DELETE FROM team_user
 WHERE team_id NOT IN (SELECT id FROM team);
-SET SQL_SAFE_UPDATES=1;
-
-SET SQL_SAFE_UPDATES=0;
 delete FROM game
 WHERE id NOT IN (SELECT game_id FROM team);
+
 SET SQL_SAFE_UPDATES=1;
 
 alter table team_user

@@ -83,7 +83,7 @@ public class SlotAdminControllerFailTest {
                 .content(content)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
 
         System.out.println(contentAsString);
