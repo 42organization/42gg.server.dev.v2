@@ -15,8 +15,8 @@ public class AnnouncementService {
 
     @Transactional(readOnly = true)
     public AnnouncementDto findLastAnnouncement() {
-        Announcement announcement = announcementRepository.findFirstByOrderByIdDesc();
-        if (announcement == null || announcement.getDeletedAt() != null)
+        Announcement announcement = announcementRepository.findFirstByOrderByIdDesc().orElseThrow(() -> new AnnounceNotFoundException());
+        if (announcement.getDeletedAt() != null)
             throw new AnnounceNotFoundException();
 
         return AnnouncementDto.from(announcement);
