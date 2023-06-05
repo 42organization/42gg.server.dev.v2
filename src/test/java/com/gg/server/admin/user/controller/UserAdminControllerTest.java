@@ -1,21 +1,16 @@
 package com.gg.server.admin.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gg.server.admin.noti.dto.SendNotiAdminRequestDto;
 import com.gg.server.admin.user.data.UserAdminRepository;
 import com.gg.server.admin.user.dto.UserDetailAdminResponseDto;
 import com.gg.server.admin.user.dto.UserSearchAdminDto;
 import com.gg.server.admin.user.dto.UserSearchAdminResponseDto;
 import com.gg.server.admin.user.service.UserAdminService;
-import com.gg.server.domain.noti.data.Noti;
-import com.gg.server.domain.noti.dto.NotiResponseDto;
-import com.gg.server.domain.noti.type.NotiType;
 import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.UserRepository;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import lombok.RequiredArgsConstructor;
-import net.bytebuddy.asm.Advice;
 import org.apache.http.HttpHeaders;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -26,17 +21,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import javax.transaction.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RequiredArgsConstructor

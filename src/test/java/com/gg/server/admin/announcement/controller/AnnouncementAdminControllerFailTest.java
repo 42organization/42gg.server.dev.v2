@@ -2,7 +2,6 @@ package com.gg.server.admin.announcement.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.announcement.data.AnnouncementAdminRepository;
-import com.gg.server.admin.announcement.dto.AnnouncementAdminListResponseDto;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import lombok.RequiredArgsConstructor;
