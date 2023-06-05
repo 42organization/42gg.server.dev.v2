@@ -14,7 +14,7 @@ public interface SlotManagementRepository
     List<SlotManagement> findAfter(@Param("now") LocalDateTime now);
 
     @Query("select sm from SlotManagement sm where (sm.endTime is null"
-            + " or sm.endTime > :now) and sm.startTime <:now")
+            + " or sm.endTime > :now) and sm.startTime <=:now")
     Optional<SlotManagement> findCurrent(@Param("now") LocalDateTime now);
 
     SlotManagement findFirstByOrderByCreatedAtDesc();
