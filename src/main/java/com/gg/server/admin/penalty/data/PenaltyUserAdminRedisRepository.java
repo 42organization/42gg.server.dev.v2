@@ -45,7 +45,7 @@ public class PenaltyUserAdminRedisRepository {
     }
 
     public void deletePenaltyInUser(RedisPenaltyUser penaltyUser, Integer penaltyTime) {
-        LocalDateTime newReleaseTime = penaltyUser.getReleaseTime().minusHours(penaltyTime);
+        LocalDateTime newReleaseTime = penaltyUser.getReleaseTime().minusMinutes(penaltyTime);
         penaltyUser.updateReleaseTime(newReleaseTime, penaltyUser.getPenaltyTime() - penaltyTime);
         Duration duration = Duration.between(LocalDateTime.now(), newReleaseTime);
         if (duration.isNegative()) {
