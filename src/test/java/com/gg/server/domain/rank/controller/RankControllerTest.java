@@ -1,7 +1,6 @@
 package com.gg.server.domain.rank.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gg.server.Application;
 import com.gg.server.domain.rank.dto.ExpRankPageResponseDto;
 import com.gg.server.domain.rank.dto.RankDto;
 import com.gg.server.domain.rank.dto.RankPageResponseDto;
@@ -13,14 +12,14 @@ import com.gg.server.domain.user.User;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import org.apache.http.HttpHeaders;
-import org.aspectj.lang.annotation.After;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
@@ -56,6 +55,9 @@ class RankControllerTest {
     @Autowired
     RankRedisRepository redisRepository;
 
+    @Autowired
+    RedisUploadService redisUploadService;
+
     @BeforeEach
     public void flushRedis(){
         redisRepository.deleteAll();
@@ -64,6 +66,7 @@ class RankControllerTest {
     @AfterEach
     public void flushRedisAfter(){
         redisRepository.deleteAll();
+        redisUploadService.uploadRedis();
     }
 
     @Test

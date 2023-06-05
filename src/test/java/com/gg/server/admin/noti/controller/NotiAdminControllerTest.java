@@ -67,7 +67,7 @@ class NotiAdminControllerTest {
     @Transactional
     public void getAllNotiTest() throws Exception {
         //given
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
         User user = userRepository.findById(userId).get();
         String testMessage = "Test notification";
@@ -128,11 +128,11 @@ class NotiAdminControllerTest {
                         .content(objectMapper.writeValueAsString(new SendNotiAdminRequestDto(user.getIntraId(), expectedMessage))))
                 .andExpect(status().isCreated());
 
-            //400 존재하지 않는 intraId
+            //404 존재하지 않는 intraId
         mockMvc.perform(post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new SendNotiAdminRequestDto(wrongIntraId, expectedMessage))))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
 
         //then
         List<Noti> notiList = notiRepository.findByUser(user);

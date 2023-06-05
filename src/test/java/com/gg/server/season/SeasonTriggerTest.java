@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cglib.proxy.UndeclaredThrowableException;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,8 +31,6 @@ public class SeasonTriggerTest {
 
     @Autowired
     MockMvc mvc;
-    @Autowired
-    private SeasonService seasonService;
     @Autowired
     TestDataUtils testDataUtils;
     @Autowired
@@ -60,8 +59,8 @@ public class SeasonTriggerTest {
     @Transactional
     public void 시즌삭제방지Test() throws Exception {
         Long id = 3L;
-        log.info("ID : " + Long.toString(id));
-        Throwable thrownException = Assertions.assertThrows(PersistenceException.class, () -> {
+        log.info("ID : " + id);
+        Throwable thrownException = Assertions.assertThrows(UndeclaredThrowableException.class, () -> {
             seasonRepository.deleteById(id);
             em.flush();
         });

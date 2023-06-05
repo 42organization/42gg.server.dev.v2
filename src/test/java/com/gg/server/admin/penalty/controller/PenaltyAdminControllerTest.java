@@ -80,7 +80,7 @@ class PenaltyAdminControllerTest {
     @Test
     @DisplayName("POST : penalty를 부여받지 않은 유효한 intraId에 penalty 부여")
     public void giveUserPenaltyforFirstTimeWithValidIntraId() throws Exception {
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         tokenProvider.getUserIdFromAccessToken(accessToken);
         User newUser = testDataUtils.createNewUser();
         String intraId = newUser.getIntraId();
@@ -106,7 +106,7 @@ class PenaltyAdminControllerTest {
     @Test
     @DisplayName("POST : penalty를 부여받은 유효한 intraId에 penalty 부여")
     public void giveUserPenaltyRepeatablyWithValidIntraId() throws Exception {
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         tokenProvider.getUserIdFromAccessToken(accessToken);
         User newUser = testDataUtils.createNewUser();
         String intraId = newUser.getIntraId();
@@ -155,7 +155,7 @@ class PenaltyAdminControllerTest {
     @DisplayName("GET pagination 유효성 검사")
     public void checkPagination() throws Exception {
         List<User> users = new ArrayList<User>();
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         tokenProvider.getUserIdFromAccessToken(accessToken);
         //penalty user 20명 넣고 테스트
         for (int i = 0; i < 20; i++) {
@@ -182,7 +182,7 @@ class PenaltyAdminControllerTest {
     @Test
     @DisplayName("GET parameter 유효성 검사")
     public void checkInputException() throws Exception {
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         tokenProvider.getUserIdFromAccessToken(accessToken);
         String url = "/pingpong/admin/penalty?page=-1&size=10&current=false";
         String contentAsString = mockMvc.perform(
@@ -198,7 +198,7 @@ class PenaltyAdminControllerTest {
     @DisplayName("GET pagination keyword 유효성 검사")
     public void checkPaginationWithKeyword() throws Exception {
         List<User> users = new ArrayList<User>();
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         tokenProvider.getUserIdFromAccessToken(accessToken);
         //penalty user 40명 넣고 테스트
         //그중 20명만 intraId에 test포함
@@ -236,7 +236,7 @@ class PenaltyAdminControllerTest {
     @Test
     @DisplayName("DELETE 패널티 삭제 - 유저 패널티가 1번만 부과된 경우")
     public void deleteExistPenaltyUser() throws Exception {
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         tokenProvider.getUserIdFromAccessToken(accessToken);
         User newUser = testDataUtils.createNewUser();
         String intraId = newUser.getIntraId();
@@ -261,7 +261,7 @@ class PenaltyAdminControllerTest {
     @Test
     @DisplayName("DELETE 패널티 삭제 - 유저 패널티가 2번 부과된 경우")
     public void deleteExistPenaltyUserOfTwicePenalty() throws Exception {
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         tokenProvider.getUserIdFromAccessToken(accessToken);
         User newUser = testDataUtils.createNewUser();
         String intraId = newUser.getIntraId();
@@ -288,7 +288,7 @@ class PenaltyAdminControllerTest {
     @Test
     @DisplayName("DELETE 존재하지 않는 패널티 유저 삭제")
     public void deleteInvalidPenaltyUser() throws Exception {
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         tokenProvider.getUserIdFromAccessToken(accessToken);
         //user에 패널티는 부여하지 않는다.
         User newUser = testDataUtils.createNewUser();
@@ -296,20 +296,20 @@ class PenaltyAdminControllerTest {
         String url = "/pingpong/admin/penalty/users/" + intraId;
         mockMvc.perform(
                         delete(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
     @Test
     @DisplayName("DELETE 존재하지 않는 패널티 유저 삭제")
     public void deleteInvalidIntraId() throws Exception {
-        String accessToken = testDataUtils.getLoginAccessToken();
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
         tokenProvider.getUserIdFromAccessToken(accessToken);
         //30자 이상
         String intraId = UUID.randomUUID().toString();
         String url = "/pingpong/admin/penalty/users/" + intraId;
         mockMvc.perform(
                         delete(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
     @Test

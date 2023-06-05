@@ -168,7 +168,9 @@ public class TestDataUtils {
     public Season createSeason(){
         LocalDateTime startTime = LocalDateTime.now();
         LocalDateTime endTime = startTime.plusMonths(1);
-        Season season = new Season("name", startTime, endTime, 1000, 300);
+        Season season = seasonRepository.findCurrentSeason(LocalDateTime.now()).orElse(null);
+        if (season == null)
+            season = new Season("name", startTime, endTime, 1000, 300);
         seasonRepository.save(season);
         return season;
     }
