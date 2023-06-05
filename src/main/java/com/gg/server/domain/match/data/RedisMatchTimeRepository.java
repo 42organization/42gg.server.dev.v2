@@ -41,10 +41,9 @@ public class RedisMatchTimeRepository {
 
    public Set<LocalDateTime> getAllEnrolledStartTimes() {
         Set<String> keys = redisTemplate.keys(MatchKey.getAllTime() + "*");
-       Integer prefixIdx = MatchKey.getAllTime().length();
-       Set<LocalDateTime> times = keys.stream().map(str -> LocalDateTime.parse(str.substring(prefixIdx)))
-               .collect(Collectors.toSet());
-        return times;
+        Integer prefixIdx = MatchKey.getAllTime().length();
+       return keys.stream().map(str -> LocalDateTime.parse(str.substring(prefixIdx)))
+              .collect(Collectors.toSet());
     }
 
 }

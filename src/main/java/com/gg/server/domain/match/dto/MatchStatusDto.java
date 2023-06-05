@@ -4,8 +4,11 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.match.data.RedisMatchTime;
 import com.gg.server.domain.slotmanagement.SlotManagement;
+import com.gg.server.domain.user.User;
+import com.gg.server.domain.user.dto.UserDto;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,14 +26,14 @@ public class MatchStatusDto {
     private List<String> myTeam;
     private List<String> enemyTeam;
 
-    public MatchStatusDto(Game game, List<String> myTeam, List<String> enemyTeam, SlotManagement slotManagement) {
+    public MatchStatusDto(Game game, String userIntraId, String enemyIntraId, SlotManagement slotManagement) {
         this.startTime = game.getStartTime();
         this.endTime = game.getEndTime();
         this.isMatched = true;
         this.isImminent = game.getStartTime().minusMinutes(slotManagement.getOpenMinute())
                 .isBefore(LocalDateTime.now());
-        this.myTeam = myTeam;
-        this.enemyTeam = enemyTeam;
+        this.myTeam = List.of(userIntraId);
+        this.enemyTeam = List.of(enemyIntraId);
 
     }
 

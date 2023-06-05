@@ -1,5 +1,6 @@
 package com.gg.server.domain.match.type;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.gg.server.domain.match.exception.OptionInvalidException;
 import java.util.Locale;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public enum Option {
             else if (e.code.toUpperCase(Locale.ROOT).equals(code.toUpperCase(Locale.ROOT)))
                 return e;
         }
-        return null;
+        throw new OptionInvalidException();
     }
 
 

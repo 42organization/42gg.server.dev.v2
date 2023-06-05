@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,9 +45,9 @@ public class MatchController {
     }
 
     @GetMapping("match/time/scope")
-    public SlotStatusResponseListDto getMatchTimeScope(@RequestParam("mode") Option option,
+    public SlotStatusResponseListDto getMatchTimeScope(@RequestParam (required = true) String mode,
                                                        @Parameter(hidden = true) @Login UserDto user){
-        return matchFindService.getAllMatchStatus(user.getId(), option);
+        return matchFindService.getAllMatchStatus(user.getId(), Option.getEnumValue(mode));
     }
 
     @GetMapping("match")
