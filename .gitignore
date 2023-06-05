@@ -47,3 +47,6 @@ out/
 ### pem key ###
 42gg.pem
 pingping.pem
+
+###  logs  ###
+./logs/

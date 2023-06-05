@@ -1,0 +1,251 @@
+[2023-06-05 09:47:20:25217] INFO  --- [           main] c.g.s.g.l.s.ThreadLocalLogTrace          : [8e9c6460] SeasonRepository.findCurrentSeason(): arguments = [2023-06-05T09:47:20.165594]
+[2023-06-05 09:47:20:25217] INFO  --- [           main] c.g.s.g.l.s.ThreadLocalLogTrace          : [8e9c6460] SeasonRepository.findCurrentSeason(): arguments = [2023-06-05T09:47:20.165594]
+[2023-06-05 09:47:20:25250] DEBUG --- [           main] org.hibernate.SQL                        : 
+    select
+        season0_.id as id1_7_,
+        season0_.end_time as end_time2_7_,
+        season0_.ppp_gap as ppp_gap3_7_,
+        season0_.season_name as season_n4_7_,
+        season0_.start_ppp as start_pp5_7_,
+        season0_.start_time as start_ti6_7_ 
+    from
+        season season0_ 
+    where
+        season0_.start_time<=? 
+        and season0_.end_time>=?
+[2023-06-05 09:47:20:25255] TRACE --- [           main] o.h.type.descriptor.sql.BasicBinder      : binding parameter [1] as [TIMESTAMP] - [2023-06-05T09:47:20.165594]
+[2023-06-05 09:47:20:25255] TRACE --- [           main] o.h.type.descriptor.sql.BasicBinder      : binding parameter [2] as [TIMESTAMP] - [2023-06-05T09:47:20.165594]
+[2023-06-05 09:47:20:25286] INFO  --- [           main] c.g.s.g.l.s.ThreadLocalLogTrace          : [8e9c6460] SeasonRepository.findCurrentSeason(): arguments = [2023-06-05T09:47:20.165594] time=69ms
+[2023-06-05 09:47:20:25286] INFO  --- [           main] c.g.s.g.l.s.ThreadLocalLogTrace          : [8e9c6460] SeasonRepository.findCurrentSeason(): arguments = [2023-06-05T09:47:20.165594] time=69ms
+[2023-06-05 09:47:20:25287] INFO  --- [           main] c.g.s.g.l.s.ThreadLocalLogTrace          : [530c5e01] RankRedisRepository.isEmpty(): arguments = [rank:hash:4]
+[2023-06-05 09:47:20:25287] INFO  --- [           main] c.g.s.g.l.s.ThreadLocalLogTrace          : [530c5e01] RankRedisRepository.isEmpty(): arguments = [rank:hash:4]
+[2023-06-05 09:47:20:25634] INFO  --- [           main] c.g.s.g.l.s.ThreadLocalLogTrace          : [530c5e01] RankRedisRepository.isEmpty(): arguments = [rank:hash:4] time=347ms
+[2023-06-05 09:47:20:25634] INFO  --- [           main] c.g.s.g.l.s.ThreadLocalLogTrace          : [530c5e01] RankRedisRepository.isEmpty(): arguments = [rank:hash:4] time=347ms
+[2023-06-05 09:47:23:28053] DEBUG --- [           main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+[2023-06-05 09:47:23:28053] DEBUG --- [           main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+[2023-06-05 09:47:23:28139] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.g.s.TestController:
+	{GET [/user]}: testUser()
+	{GET [/admin]}: testAdmin()
+[2023-06-05 09:47:23:28139] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.g.s.TestController:
+	{GET [/user]}: testUser()
+	{GET [/admin]}: testAdmin()
+[2023-06-05 09:47:23:28142] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.g.s.a.a.c.AnnouncementAdminController:
+	{GET [/pingpong/admin/announcement]}: getAnnouncementList(PageRequestDto)
+	{POST [/pingpong/admin/announcement]}: addaAnnouncement(AnnouncementAdminAddDto)
+	{DELETE [/pingpong/admin/announcement/{deleterIntraId}]}: announcementModify(String)
+[2023-06-05 09:47:23:28142] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.g.s.a.a.c.AnnouncementAdminController:
+	{GET [/pingpong/admin/announcement]}: getAnnouncementList(PageRequestDto)
+	{POST [/pingpong/admin/announcement]}: addaAnnouncement(AnnouncementAdminAddDto)
+	{DELETE [/pingpong/admin/announcement/{deleterIntraId}]}: announcementModify(String)
+[2023-06-05 09:47:23:28144] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.g.s.a.f.c.FeedbackAdminController:
+	{GET [/pingpong/admin/feedback]}: feedbackAll(PageRequestDto)
+	{PATCH [/pingpong/admin/feedback/{id}]}: feedbackIsSolvedToggle(Long)
+	{GET [/pingpong/admin/feedback/users]}: feedbackFindByIntraId(FeedbackAdminPageRequestDto)
+[2023-06-05 09:47:23:28144] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.g.s.a.f.c.FeedbackAdminController:
+	{GET [/pingpong/admin/feedback]}: feedbackAll(PageRequestDto)
+	{PATCH [/pingpong/admin/feedback/{id}]}: feedbackIsSolvedToggle(Long)
+	{GET [/pingpong/admin/feedback/users]}: feedbackFindByIntraId(FeedbackAdminPageRequestDto)
+[2023-06-05 09:47:23:28146] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.g.s.a.g.c.GameAdminController:
+	{GET [/pingpong/admin/games]}: gameFindBySeasonId(GameLogAdminRequestDto)
+	{GET [/pingpong/admin/games/users]}: gameFindByIntraId(GameUserLogAdminReqDto)
+	{PUT [/pingpong/admin/games/{gameId}]}: gameResultEdit(RankGamePPPModifyReqDto,Long)
+[2023-06-05 09:47:23:28146] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.g.s.a.g.c.GameAdminController:
+	{GET [/pingpong/admin/games]}: gameFindBySeasonId(GameLogAdminRequestDto)
+	{GET [/pingpong/admin/games/users]}: gameFindByIntraId(GameUserLogAdminReqDto)
+	{PUT [/pingpong/admin/games/{gameId}]}: gameResultEdit(RankGamePPPModifyReqDto,Long)
+[2023-06-05 09:47:23:28146] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.g.s.a.n.c.NotiAdminController:
+	{GET [/pingpong/admin/notifications]}: getAllNoti(NotiListAdminRequestDto)
+	{POST [/pingpong/admin/notifications]}: sendNotiToUser(SendNotiAdminRequestDto)
+[2023-06-05 09:47:23:28146] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.g.s.a.n.c.NotiAdminController:
+	{GET [/pingpong/admin/notifications]}: getAllNoti(NotiListAdminRequestDto)
+	{POST [/pingpong/admin/notifications]}: sendNotiToUser(SendNotiAdminRequestDto)
+[2023-06-05 09:47:23:28147] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.g.s.a.p.c.PenaltyAdminController:
+	{POST [/pingpong/admin/penalty]}: givePenaltyToUser(PenaltyRequestDto)
+	{GET [/pingpong/admin/penalty]}: getAllPenaltyUser(PageRequestDto,String,Boolean)
+	{DELETE [/pingpong/admin/penalty/{penaltyId}]}: releasePenaltyUser(Long)
+[2023-06-05 09:47:23:28147] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.g.s.a.p.c.PenaltyAdminController:
+	{POST [/pingpong/admin/penalty]}: givePenaltyToUser(PenaltyRequestDto)
+	{GET [/pingpong/admin/penalty]}: getAllPenaltyUser(PageRequestDto,String,Boolean)
+	{DELETE [/pingpong/admin/penalty/{penaltyId}]}: releasePenaltyUser(Long)
+[2023-06-05 09:47:23:28149] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.g.s.a.s.c.SeasonAdminController:
+	{GET [/pingpong/admin/seasons]}: rankSeasonList()
+	{POST [/pingpong/admin/seasons]}: createSeason(SeasonCreateRequestDto)
+	{DELETE [/pingpong/admin/seasons/{seasonId}]}: deleteSeason(Long)
+	{PUT [/pingpong/admin/seasons/{seasonId}]}: updateSeason(Long,SeasonUpdateRequestDto)
+[2023-06-05 09:47:23:28149] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.g.s.a.s.c.SeasonAdminController:
+	{GET [/pingpong/admin/seasons]}: rankSeasonList()
+	{POST [/pingpong/admin/seasons]}: createSeason(SeasonCreateRequestDto)
+	{DELETE [/pingpong/admin/seasons/{seasonId}]}: deleteSeason(Long)
+	{PUT [/pingpong/admin/seasons/{seasonId}]}: updateSeason(Long,SeasonUpdateRequestDto)
+[2023-06-05 09:47:23:28150] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.g.s.a.s.c.SlotAdminController:
+	{GET [/pingpong/admin/slot-management]}: getSlotSetting()
+	{POST [/pingpong/admin/slot-management]}: addSlotSetting(SlotCreateRequestDto)
+[2023-06-05 09:47:23:28150] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.g.s.a.s.c.SlotAdminController:
+	{GET [/pingpong/admin/slot-management]}: getSlotSetting()
+	{POST [/pingpong/admin/slot-management]}: addSlotSetting(SlotCreateRequestDto)
+[2023-06-05 09:47:23:28151] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.g.s.a.u.c.UserAdminController:
+	{GET [/pingpong/admin/users]}: userSearchAll(UserSearchAdminRequestDto)
+	{GET [/pingpong/admin/users/{intraId}]}: userGetDetail(String)
+	{PUT [/pingpong/admin/users/{intraId}]}: userUpdateDetail(String,UserUpdateAdminRequestDto,MultipartFile)
+[2023-06-05 09:47:23:28151] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.g.s.a.u.c.UserAdminController:
+	{GET [/pingpong/admin/users]}: userSearchAll(UserSearchAdminRequestDto)
+	{GET [/pingpong/admin/users/{intraId}]}: userGetDetail(String)
+	{PUT [/pingpong/admin/users/{intraId}]}: userUpdateDetail(String,UserUpdateAdminRequestDto,MultipartFile)
+[2023-06-05 09:47:23:28152] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.g.s.d.a.c.AnnouncementController:
+	{GET [/pingpong/announcement]}: findLastAnnounceContent()
+[2023-06-05 09:47:23:28152] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.g.s.d.a.c.AnnouncementController:
+	{GET [/pingpong/announcement]}: findLastAnnounceContent()
+[2023-06-05 09:47:23:28152] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.g.s.d.f.c.FeedbackController:
+	{POST [/pingpong/feedback]}: feedbackSave(FeedbackRequestDto,UserDto)
+[2023-06-05 09:47:23:28152] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.g.s.d.f.c.FeedbackController:
+	{POST [/pingpong/feedback]}: feedbackSave(FeedbackRequestDto,UserDto)
+[2023-06-05 09:47:23:28154] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.g.s.d.g.GameController:
+	{GET [/pingpong/games]}: allGameList(GameListReqDto)
+	{GET [/pingpong/games/normal]}: normalGameList(NormalGameListReqDto)
+	{GET [/pingpong/games/rank]}: rankGameList(RankGameListReqDto)
+	{GET [/pingpong/games/{gameId}]}: getGameInfo(Long,UserDto)
+	{POST [/pingpong/games/rank]}: createRankResult(RankResultReqDto,UserDto)
+	{POST [/pingpong/games/normal]}: createNormalResult(NormalResultReqDto)
+	{GET [/pingpong/games/{gameId}/result/normal]}: getNormalExpChange(Long,UserDto)
+	{GET [/pingpong/games/{gameId}/result/rank]}: getRankPPPChange(Long,UserDto)
+[2023-06-05 09:47:23:28154] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.g.s.d.g.GameController:
+	{GET [/pingpong/games]}: allGameList(GameListReqDto)
+	{GET [/pingpong/games/normal]}: normalGameList(NormalGameListReqDto)
+	{GET [/pingpong/games/rank]}: rankGameList(RankGameListReqDto)
+	{GET [/pingpong/games/{gameId}]}: getGameInfo(Long,UserDto)
+	{POST [/pingpong/games/rank]}: createRankResult(RankResultReqDto,UserDto)
+	{POST [/pingpong/games/normal]}: createNormalResult(NormalResultReqDto)
+	{GET [/pingpong/games/{gameId}/result/normal]}: getNormalExpChange(Long,UserDto)
+	{GET [/pingpong/games/{gameId}/result/rank]}: getRankPPPChange(Long,UserDto)
+[2023-06-05 09:47:23:28157] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.g.s.d.m.c.MatchController:
+	{POST [/pingpong/match]}: createUserMatch(MatchRequestDto,UserDto)
+	{DELETE [/pingpong/match]}: deleteUserMatch(LocalDateTime,UserDto)
+	{GET [/pingpong/match/time/scope]}: getMatchTimeScope(Option,UserDto)
+	{GET [/pingpong/match]}: getCurrentMatch(UserDto)
+[2023-06-05 09:47:23:28157] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.g.s.d.m.c.MatchController:
+	{POST [/pingpong/match]}: createUserMatch(MatchRequestDto,UserDto)
+	{DELETE [/pingpong/match]}: deleteUserMatch(LocalDateTime,UserDto)
+	{GET [/pingpong/match/time/scope]}: getMatchTimeScope(Option,UserDto)
+	{GET [/pingpong/match]}: getCurrentMatch(UserDto)
+[2023-06-05 09:47:23:28158] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.g.s.d.n.c.NotiController:
+	{GET [/pingpong/notifications]}: notiFindByUser(UserDto)
+	{PUT [/pingpong/notifications/check]}: checkNotiByUser(UserDto)
+	{DELETE [/pingpong/notifications]}: notiRemoveAll(UserDto)
+[2023-06-05 09:47:23:28158] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.g.s.d.n.c.NotiController:
+	{GET [/pingpong/notifications]}: notiFindByUser(UserDto)
+	{PUT [/pingpong/notifications/check]}: checkNotiByUser(UserDto)
+	{DELETE [/pingpong/notifications]}: notiRemoveAll(UserDto)
+[2023-06-05 09:47:23:28159] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.g.s.d.r.c.RankController:
+	{GET [/pingpong/exp]}: getExpRankPage(PageRequestDto,UserDto)
+	{GET [/pingpong/ranks/{gameType}]}: getRankPage(PageRequestDto,UserDto,Long,String)
+[2023-06-05 09:47:23:28159] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.g.s.d.r.c.RankController:
+	{GET [/pingpong/exp]}: getExpRankPage(PageRequestDto,UserDto)
+	{GET [/pingpong/ranks/{gameType}]}: getRankPage(PageRequestDto,UserDto,Long,String)
+[2023-06-05 09:47:23:28160] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.g.s.d.s.SeasonController:
+	{GET [/pingpong/seasons]}: seasonList()
+[2023-06-05 09:47:23:28160] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.g.s.d.s.SeasonController:
+	{GET [/pingpong/seasons]}: seasonList()
+[2023-06-05 09:47:23:28162] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.g.s.d.u.c.UserController:
+	{POST [/pingpong/users/accesstoken]}: generateAccessToken(String,HttpServletResponse)
+	{GET [/pingpong/users]}: getUserNormalDetail(UserDto)
+	{GET [/pingpong/users/live]}: getUserLiveDetail(UserDto)
+	{GET [/pingpong/users/searches]}: searchUsers(String)
+	{GET [/pingpong/users/{intraId}]}: getUserDetail(String)
+	{GET [/pingpong/users/{intraId}/rank]}: getUserRank(String,Long)
+	{GET [/pingpong/users/{intraId}/historics]}: getUserHistory(String,Long)
+	{PUT [/pingpong/users/{intraId}]}: doModifyUser(UserModifyRequestDto,String)
+[2023-06-05 09:47:23:28162] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.g.s.d.u.c.UserController:
+	{POST [/pingpong/users/accesstoken]}: generateAccessToken(String,HttpServletResponse)
+	{GET [/pingpong/users]}: getUserNormalDetail(UserDto)
+	{GET [/pingpong/users/live]}: getUserLiveDetail(UserDto)
+	{GET [/pingpong/users/searches]}: searchUsers(String)
+	{GET [/pingpong/users/{intraId}]}: getUserDetail(String)
+	{GET [/pingpong/users/{intraId}/rank]}: getUserRank(String,Long)
+	{GET [/pingpong/users/{intraId}/historics]}: getUserHistory(String,Long)
+	{PUT [/pingpong/users/{intraId}]}: doModifyUser(UserModifyRequestDto,String)
+[2023-06-05 09:47:23:28167] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	o.s.b.a.w.s.e.BasicErrorController:
+	{ [/error], produces [text/html]}: errorHtml(HttpServletRequest,HttpServletResponse)
+	{ [/error]}: error(HttpServletRequest)
+[2023-06-05 09:47:23:28167] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	o.s.b.a.w.s.e.BasicErrorController:
+	{ [/error], produces [text/html]}: errorHtml(HttpServletRequest,HttpServletResponse)
+	{ [/error]}: error(HttpServletRequest)
+[2023-06-05 09:47:23:28181] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	o.s.w.a.MultipleOpenApiWebMvcResource:
+	{GET [/v3/api-docs/{group}], produces [application/json]}: openapiJson(HttpServletRequest,String,String,Locale)
+	{GET [/v3/api-docs.yaml/{group}], produces [application/vnd.oai.openapi]}: openapiYaml(HttpServletRequest,String,String,Locale)
+[2023-06-05 09:47:23:28181] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	o.s.w.a.MultipleOpenApiWebMvcResource:
+	{GET [/v3/api-docs/{group}], produces [application/json]}: openapiJson(HttpServletRequest,String,String,Locale)
+	{GET [/v3/api-docs.yaml/{group}], produces [application/vnd.oai.openapi]}: openapiYaml(HttpServletRequest,String,String,Locale)
+[2023-06-05 09:47:23:28194] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	o.s.w.a.OpenApiWebMvcResource:
+	{GET [/v3/api-docs], produces [application/json]}: openapiJson(HttpServletRequest,String,Locale)
+	{GET [/v3/api-docs.yaml], produces [application/vnd.oai.openapi]}: openapiYaml(HttpServletRequest,String,Locale)
+[2023-06-05 09:47:23:28194] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	o.s.w.a.OpenApiWebMvcResource:
+	{GET [/v3/api-docs], produces [application/json]}: openapiJson(HttpServletRequest,String,Locale)
+	{GET [/v3/api-docs.yaml], produces [application/vnd.oai.openapi]}: openapiYaml(HttpServletRequest,String,Locale)
+[2023-06-05 09:47:23:28198] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	o.s.w.u.SwaggerWelcomeWebMvc:
+	{GET [/api-docs]}: redirectToUi(HttpServletRequest)
+[2023-06-05 09:47:23:28198] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	o.s.w.u.SwaggerWelcomeWebMvc:
+	{GET [/api-docs]}: redirectToUi(HttpServletRequest)
+[2023-06-05 09:47:23:28200] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	o.s.w.u.SwaggerConfigResource:
+	{GET [/v3/api-docs/swagger-config], produces [application/json]}: openapiJson(HttpServletRequest)
+[2023-06-05 09:47:23:28200] TRACE --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	o.s.w.u.SwaggerConfigResource:
+	{GET [/v3/api-docs/swagger-config], produces [application/json]}: openapiJson(HttpServletRequest)
+[2023-06-05 09:47:23:28209] DEBUG --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 61 mappings in 'requestMappingHandlerMapping'
+[2023-06-05 09:47:23:28209] DEBUG --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 61 mappings in 'requestMappingHandlerMapping'
+[2023-06-05 09:47:23:28293] DEBUG --- [           main] o.s.w.s.h.BeanNameUrlHandlerMapping      : Detected 0 mappings in 'beanNameHandlerMapping'
+[2023-06-05 09:47:23:28293] DEBUG --- [           main] o.s.w.s.h.BeanNameUrlHandlerMapping      : Detected 0 mappings in 'beanNameHandlerMapping'
+[2023-06-05 09:47:23:28329] TRACE --- [           main] o.s.w.s.f.s.RouterFunctionMapping        : 0 RouterFunction(s) in 'routerFunctionMapping'
+[2023-06-05 09:47:23:28329] TRACE --- [           main] o.s.w.s.f.s.RouterFunctionMapping        : 0 RouterFunction(s) in 'routerFunctionMapping'
+[2023-06-05 09:47:24:29059] TRACE --- [           main] o.s.w.s.h.SimpleUrlHandlerMapping        : Mapped [/webjars/**] onto ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+[2023-06-05 09:47:24:29059] TRACE --- [           main] o.s.w.s.h.SimpleUrlHandlerMapping        : Mapped [/webjars/**] onto ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+[2023-06-05 09:47:24:29060] TRACE --- [           main] o.s.w.s.h.SimpleUrlHandlerMapping        : Mapped [/**] onto ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+[2023-06-05 09:47:24:29060] TRACE --- [           main] o.s.w.s.h.SimpleUrlHandlerMapping        : Mapped [/**] onto ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+[2023-06-05 09:47:24:29061] TRACE --- [           main] o.s.w.s.h.SimpleUrlHandlerMapping        : Mapped [/swagger-ui*/**] onto ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+[2023-06-05 09:47:24:29061] TRACE --- [           main] o.s.w.s.h.SimpleUrlHandlerMapping        : Mapped [/swagger-ui*/**] onto ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+[2023-06-05 09:47:24:29061] DEBUG --- [           main] o.s.w.s.h.SimpleUrlHandlerMapping        : Patterns [/webjars/**, /**, /swagger-ui*/**] in 'resourceHandlerMapping'
+[2023-06-05 09:47:24:29061] DEBUG --- [           main] o.s.w.s.h.SimpleUrlHandlerMapping        : Patterns [/webjars/**, /**, /swagger-ui*/**] in 'resourceHandlerMapping'
+[2023-06-05 09:47:24:29130] DEBUG --- [           main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 2 @ExceptionHandler, 1 ResponseBodyAdvice
+[2023-06-05 09:47:24:29130] DEBUG --- [           main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 2 @ExceptionHandler, 1 ResponseBodyAdvice

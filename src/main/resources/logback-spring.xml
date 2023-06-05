@@ -4,9 +4,9 @@
     <property name="LOGS_ABSOLUTE_PATH" value="./logs" />
 
     <property name="CONSOLE_LOG_PATTERN"
-              value="[%d{yyyy-MM-dd HH:mm:ss}:%-3relative] %-5level ${PID:-} --- [%15.15thread] %-40.40logger{36} : %msg%n"/>
+              value="[%d{yyyy-MM-dd HH:mm:ss}:%-3relative] %-5level --- [%15.15thread] %-40.40logger{36} : %msg%n"/>
     <property name="FILE_LOG_PATTERN"
-              value="[%d{yyyy-MM-dd HH:mm:ss}:%-3relative] %-5level ${PID:-} --- [%15.15thread] %-40.40logger{36} : %msg%n"/>
+              value="[%d{yyyy-MM-dd HH:mm:ss}:%-3relative] %-5level --- [%15.15thread] %-40.40logger{36} : %msg%n"/>
 
     <!-- 콘솔(STDOUT) -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
@@ -18,17 +18,56 @@
     <!-- 파일(FILE) -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!--     log 기록할 파일 위치 설정 -->
-        <file>${LOGS_ABSOLUTE_PATH}/logback.log</file>
+        <file>${LOGS_ABSOLUTE_PATH}/all.log</file>
         <!--     log 기록 타입 인코딩 -->
         <encoder>
             <pattern>${FILE_LOG_PATTERN}</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- daily rollover -->
-            <fileNamePattern>logFile.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${LOGS_ABSOLUTE_PATH}/daylogs/%d{yyyy-MM-dd}.log</fileNamePattern>
             <!-- keep 30 days' worth of history capped at 3GB total size -->
             <maxHistory>30</maxHistory>
-            <totalSizeCap>1GB</totalSizeCap>
+            <totalSizeCap>50MB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <!-- 커스텀 로그 파일(FILE) -->
+    <appender name="MYLOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--     log 기록할 파일 위치 설정 -->
+        <file>${LOGS_ABSOLUTE_PATH}/mylog.log</file>
+        <!--     log 기록 타입 인코딩 -->
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>${LOGS_ABSOLUTE_PATH}/mydaylogs/%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- keep 30 days' worth of history capped at 3GB total size -->
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>50MB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <!-- 에러 로그 파일(FILE) -->
+    <appender name="ERROR_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--     log 기록할 파일 위치 설정 -->
+        <file>${LOGS_ABSOLUTE_PATH}/error.log</file>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>error</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <!--     log 기록 타입 인코딩 -->
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>${LOGS_ABSOLUTE_PATH}/dayerror/%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- keep 30 days' worth of history capped at 3GB total size -->
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>50MB</totalSizeCap>
         </rollingPolicy>
     </appender>
 
@@ -38,9 +77,20 @@
         <appender-ref ref="STDOUT" />
     </root>
 
-    <!-- log 레벨 설정 (org.springframework.web=debug)-->
-    <logger name="org.springframework.web" level="debug">
+    <root level="error">
         <appender-ref ref="FILE" />
+        <appender-ref ref="ERROR_LOG" />
+    </root>
+
+    <!-- log 레벨 설정 (org.springframework.web=debug)-->
+    <logger name="org.springframework.web" level="trace">
+        <appender-ref ref="FILE" />
+    </logger>
+
+    <!-- log 레벨 설정 자체로그(c.g.s.g.l.s.ThreadLocalLogTrace=info)-->
+    <logger name="com.gg.server.global.log.service.ThreadLocalLogTrace" level="info">
+        <appender-ref ref="FILE" />
+        <appender-ref ref="MYLOG" />
     </logger>
 
 </configuration>
