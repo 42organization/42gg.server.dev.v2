@@ -2,6 +2,7 @@ package com.gg.server.domain.match.service;
 
 import com.gg.server.domain.match.data.RedisMatchTimeRepository;
 import com.gg.server.domain.match.data.RedisMatchUserRepository;
+import com.gg.server.domain.match.exception.SlotNotFoundException;
 import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
@@ -84,7 +85,8 @@ public class MatchTestUtils {
     }
 
     public SlotManagement makeTestSlotManagement(Integer interval) {
-        SlotManagement slotManagement1 = slotManagementRepository.findFirstByOrderByCreatedAtDesc();
+        SlotManagement slotManagement1 = slotManagementRepository.findCurrent(LocalDateTime.now())
+                .orElseThrow(SlotNotFoundException::new);
         if (slotManagement1 !=  null) {
             return slotManagement1;
         }
