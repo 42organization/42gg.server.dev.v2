@@ -50,9 +50,8 @@ public class AnnouncementAdminService {
 
     private Boolean findAnnouncementExist() {
         Announcement announcement = announcementAdminRepository.findFirstByOrderByIdDesc().orElseThrow(()-> new AnnounceNotFoundException());
-        if (announcement == null)
-            return false;
-        else if (announcement.getDeletedAt() == null)
+
+        if (announcement.getDeletedAt() == null)
             return true;
 
         return false;
