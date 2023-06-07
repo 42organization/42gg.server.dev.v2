@@ -56,9 +56,10 @@ public class RankRedisService {
         // rank table 수정
         Rank rank = rankRepository.findByUserIdAndSeasonId(myTeam.getUserId(), seasonId)
                 .orElseThrow(() -> new NotExistException("rank 정보가 없습니다.", ErrorCode.NOT_FOUND));
-        rank.addPpp(EloRating.pppChange(myPPP, enemyPPP,
-                teamuser.getTeam().getWin(), Math.abs(teamuser.getTeam().getScore() - enemyScore) == 2));
-        myTeam.updateRank(rank.getPpp(),
+        Integer changedPpp = EloRating.pppChange(myPPP, enemyPPP,
+                teamuser.getTeam().getWin(), Math.abs(teamuser.getTeam().getScore() - enemyScore) == 2);
+        rank.addPpp(changedPpp);
+        myTeam.updateRank(changedPpp,
                 win, losses);
     }
 

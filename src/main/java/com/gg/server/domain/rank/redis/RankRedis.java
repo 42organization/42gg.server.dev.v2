@@ -31,6 +31,12 @@ public class RankRedis implements Serializable {
         this.losses = losses;
     }
 
+    public void changedRank(int ppp, int wins, int losses) {
+        this.ppp = ppp;
+        this.wins = wins;
+        this.losses = losses;
+    }
+
     public void setStatusMessage(String msg) {
         this.statusMessage = msg;
     }
@@ -61,4 +67,16 @@ public class RankRedis implements Serializable {
         return rankRedis;
     }
 
+    @Override
+    public String toString() {
+        return "RankRedis{" +
+                "userId=" + userId +
+                ", intraId='" + intraId + '\'' +
+                ", ppp=" + ppp +
+                ", wins=" + wins +
+                ", losses=" + losses +
+                ", statusMessage='" + statusMessage + '\'' +
+                ", userImageUri='" + userImageUri + '\'' +
+                '}';
+    }
 }
