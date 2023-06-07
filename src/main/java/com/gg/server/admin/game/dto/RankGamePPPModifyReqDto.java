@@ -13,16 +13,16 @@ import javax.validation.constraints.PositiveOrZero;
 public class RankGamePPPModifyReqDto {
     @NotNull(message = "Team1Id 는 필수 값입니다.")
     @Positive
-    private Long Team1Id;
+    private Long team1Id;
     @NotNull(message = "Team1Score 는 필수 값입니다.")
     @PositiveOrZero
     @Max(2)
-    private int Team1Score;
+    private int team1Score;
     @NotNull(message = "Team2Id 는 필수 값입니다.")
     @Positive
-    private Long Team2Id;
+    private Long team2Id;
     @NotNull(message = "Team2Score 는 필수 값입니다.")
     @PositiveOrZero
     @Max(2)
-    private int Team2Score;
+    private int team2Score;
 }
