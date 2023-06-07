@@ -35,16 +35,12 @@ public class RankRedisService {
         RankRedis enemyTeam = rankRedisRepository.findRankByUserId(key, list.get(1).getUser().getId());
         Integer myPPP = myTeam.getPpp();
         Integer enemyPPP = enemyTeam.getPpp();
-        System.out.println("myTeam: " + myTeam);
-        System.out.println("enemyTeam: " + enemyTeam);
         updatePPP(list.get(0), myTeam, list.get(1).getTeam().getScore(), myPPP, enemyPPP, game.getSeason().getId());
         updatePPP(list.get(1), enemyTeam, list.get(0).getTeam().getScore(), enemyPPP, myPPP, game.getSeason().getId());
         updateRankUser(key, zsetKey, list.get(0).getUser().getId(), myTeam);
         updateRankUser(key, zsetKey, list.get(1).getUser().getId(), enemyTeam);
         pChangeService.addPChange(game, list.get(0).getUser(), myTeam.getPpp());
         pChangeService.addPChange(game, list.get(1).getUser(), enemyTeam.getPpp());
-        System.out.println("myTeam: " + myTeam);
-        System.out.println("enemyTeam: " + enemyTeam);
     }
 
     private void updateRankUser(String hashKey, String zsetKey, Long userId, RankRedis userRank) {
@@ -63,7 +59,6 @@ public class RankRedisService {
         Integer changedPpp = EloRating.pppChange(myPPP, enemyPPP,
                 teamuser.getTeam().getWin(), Math.abs(teamuser.getTeam().getScore() - enemyScore) == 2);
         rank.addPpp(changedPpp);
-        System.out.println("userId: " + myTeam.getUserId() +", " + rank.getPpp());
         myTeam.updateRank(changedPpp,
                 win, losses);
     }
