@@ -26,17 +26,29 @@ public class CookieUtil {
         return Optional.empty();
     }
 
-    public static void addCookie(HttpServletResponse response, String name, String value, int maxAge, String domain) {
-        ResponseCookie cookie = ResponseCookie.from(name, value)
-                .maxAge(maxAge)
-//                .domain(domain)
-//                .httpOnly(true)
-                .path("/")
-                .secure(true)
-                .sameSite(SameSite.NONE.attributeValue())
-                .build();
+//    public static void addCookie(HttpServletResponse response, String name, String value, int maxAge, String domain) {
+//        ResponseCookie cookie = ResponseCookie.from(name, value)
+//                .maxAge(maxAge)
+////                .domain(domain)
+////                .httpOnly(true)
+//                .path("/")
+//                .secure(true)
+//                .sameSite(SameSite.NONE.attributeValue())
+//                .build();
+//
+//        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+//    }
 
-        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+    public static void addCookie(HttpServletResponse response, String name, String value, int maxAge, String domain) {
+        StringBuilder cookieBuilder = new StringBuilder();
+        cookieBuilder.append(name).append("=").append(value).append("; ");
+        cookieBuilder.append("Max-Age=").append(maxAge).append("; ");
+        cookieBuilder.append("Domain=").append(domain).append("; ");
+        cookieBuilder.append("Path=/; ");
+        cookieBuilder.append("Secure; ");
+        cookieBuilder.append("SameSite=None");
+
+        response.setHeader("Set-Cookie", cookieBuilder.toString());
     }
 
     public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {
