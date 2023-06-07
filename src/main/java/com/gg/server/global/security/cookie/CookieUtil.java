@@ -44,6 +44,7 @@ public class CookieUtil {
         cookieBuilder.append(name).append("=").append(value).append("; ");
         cookieBuilder.append("Max-Age=").append(maxAge).append("; ");
         cookieBuilder.append("Domain=").append(domain).append("; ");
+        cookieBuilder.append("HttpOnly=").append(false).append("; ");
         cookieBuilder.append("Path=/; ");
         cookieBuilder.append("Secure; ");
         cookieBuilder.append("SameSite=None");
