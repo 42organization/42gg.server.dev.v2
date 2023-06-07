@@ -12,6 +12,7 @@ src/main/resources/application-test.yml
 src/test/resources/application.yml
 src/test/resources/application-local.yml
 python
+/logs
 
 ### STS ###
 .apt_generated
