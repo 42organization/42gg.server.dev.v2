@@ -35,11 +35,16 @@ public class PChange extends BaseTimeEntity {
     @Column(name = "exp")
     private Integer exp;
 
-    public PChange(Game game, User user, Integer pppResult) {
+    @NotNull
+    @Column(name = "is_checked")
+    private Boolean isChecked;
+
+    public PChange(Game game, User user, Integer pppResult, Boolean is_checked) {
         this.game = game;
         this.user = user;
         this.pppResult = pppResult;
         this.exp = user.getTotalExp();
+        this.isChecked = is_checked;
     }
 
     public void updatePPP(Integer ppp) {

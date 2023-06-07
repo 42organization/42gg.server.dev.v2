@@ -39,8 +39,8 @@ public class RankRedisService {
         updatePPP(list.get(1), enemyTeam, list.get(0).getTeam().getScore(), enemyPPP, myPPP, game.getSeason().getId());
         updateRankUser(key, zsetKey, list.get(0).getUser().getId(), myTeam);
         updateRankUser(key, zsetKey, list.get(1).getUser().getId(), enemyTeam);
-        pChangeService.addPChange(game, list.get(0).getUser(), myTeam.getPpp());
-        pChangeService.addPChange(game, list.get(1).getUser(), enemyTeam.getPpp());
+        pChangeService.addPChange(game, list.get(0).getUser(), myTeam.getPpp(), true);
+        pChangeService.addPChange(game, list.get(1).getUser(), enemyTeam.getPpp(), false);
     }
 
     private void updateRankUser(String hashKey, String zsetKey, Long userId, RankRedis userRank) {

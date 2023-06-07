@@ -7,6 +7,7 @@ import com.gg.server.domain.match.data.RedisMatchUserRepository;
 import com.gg.server.domain.noti.data.NotiRepository;
 import com.gg.server.domain.pchange.data.PChange;
 import com.gg.server.domain.pchange.data.PChangeRepository;
+import com.gg.server.domain.pchange.exception.PChangeNotExistException;
 import com.gg.server.domain.rank.data.Rank;
 import com.gg.server.domain.rank.exception.RedisDataNotFoundException;
 import com.gg.server.domain.rank.redis.RankRedis;
@@ -24,6 +25,7 @@ import com.gg.server.domain.user.type.SnsType;
 import com.gg.server.global.security.config.properties.AppProperties;
 import com.gg.server.global.security.jwt.repository.JwtRedisRepository;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
+import jdk.jshell.Snippet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -114,6 +116,12 @@ public class UserService {
             Game game = optionalGame.get();
             if (game.getStatus() == StatusType.LIVE || game.getStatus() == StatusType.WAIT)
                 return new UserLiveResponseDto(notiCnt, "game", game.getMode(), game.getId());
+            else if (game.getStatus() == StatusType.END) {
+                PChange userPChange = pChangeRepository.findPChangeByUserIdAndGameId(user.getId(), game.getId()).orElseThrow(() -> new PChangeNotExistException());
+                if (userPChange.getIsChecked() == false)
+                    return new UserLiveResponseDto(notiCnt, "game", game.getMode(), game.getId());
+            }
+
             if (game.getStatus() == StatusType.BEFORE)
                 return new UserLiveResponseDto(notiCnt, "match", null, null);
         }

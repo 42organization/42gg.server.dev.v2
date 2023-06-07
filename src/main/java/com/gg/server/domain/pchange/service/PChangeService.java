@@ -22,8 +22,8 @@ public class PChangeService {
     private final PChangeRepository pChangeRepository;
 
     @Transactional
-    public void addPChange(Game game, User user, Integer pppResult) {
-        pChangeRepository.save(new PChange(game, user, pppResult));
+    public void addPChange(Game game, User user, Integer pppResult, Boolean is_checked) {
+        pChangeRepository.save(new PChange(game, user, pppResult, is_checked));
     }
 
     public List<PChange> findExpChangeHistory(Long gameId, Long userId) {
