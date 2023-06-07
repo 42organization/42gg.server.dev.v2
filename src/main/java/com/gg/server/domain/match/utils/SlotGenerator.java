@@ -89,10 +89,16 @@ public class SlotGenerator {
     }
 
     public SlotStatusResponseListDto getResponseListDto() {
-        List<SlotStatusDto> matchBoards = new ArrayList<SlotStatusDto>();
-        for (LocalDateTime time = minTime ; time.isBefore(maxTime) ; time = time.plusMinutes(interval)) {
-            SlotStatusDto dto = slots.getOrDefault(time, new SlotStatusDto(time, SlotStatus.OPEN, interval));
-            matchBoards.add(dto);
+        long slotCountPerHour = 60 / interval;
+        List<List<SlotStatusDto>> matchBoards = new ArrayList<List<SlotStatusDto>>();
+        for (LocalDateTime time = minTime ; time.isBefore(maxTime) ; time = time.plusHours(1)) {
+            List<SlotStatusDto> hourBoard = new ArrayList<SlotStatusDto>();
+            for (long i = 0; i < slotCountPerHour; i++) {
+                SlotStatusDto dto = slots.getOrDefault(time.plusMinutes(i * interval),
+                        new SlotStatusDto(time, SlotStatus.OPEN, interval));
+                hourBoard.add(dto);
+            }
+            matchBoards.add(hourBoard);
         }
         return new SlotStatusResponseListDto(matchBoards);
     }

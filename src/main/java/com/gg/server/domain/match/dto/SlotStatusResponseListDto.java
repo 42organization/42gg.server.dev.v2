@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SlotStatusResponseListDto {
-    private List<SlotStatusDto> matchBoards;
+    private List<List<SlotStatusDto>> matchBoards;
 
     @Override
     public String toString() {
@@ -19,7 +19,7 @@ public class SlotStatusResponseListDto {
                 '}';
     }
 
-    public SlotStatusResponseListDto(List<SlotStatusDto> matchBoards) {
+    public SlotStatusResponseListDto(List<List<SlotStatusDto>> matchBoards) {
         this.matchBoards = matchBoards;
     }
 }

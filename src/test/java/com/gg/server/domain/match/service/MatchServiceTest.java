@@ -249,19 +249,21 @@ class MatchServiceTest {
         for (int i = 0; i < 3; i++) {
             System.out.println("slotTimes = " + String.valueOf(i) + slotTimes.get(i));
         }
-        for (SlotStatusDto dto : slotStatusList.getMatchBoards()) {
-            System.out.println("dto = " + dto);
-            if (dto.getStartTime().equals(slotTimes.get(0))) {
-                Assertions.assertThat(dto.getStatus()).isEqualTo(SlotStatus.MYTABLE.getCode());
-            }
-            if (dto.getStartTime().equals(slotTimes.get(1))) {
-                Assertions.assertThat(dto.getStatus()).isEqualTo(SlotStatus.OPEN.getCode());
-            }
-            if (dto.getStartTime().equals(slotTimes.get(2))) {
-                Assertions.assertThat(dto.getStatus()).isEqualTo(SlotStatus.MATCH.getCode());
-            }
-            if (dto.getStartTime().equals(slotTimes.get(4))) {
-                Assertions.assertThat(dto.getStatus()).isEqualTo(SlotStatus.CLOSE.getCode());
+        for (List<SlotStatusDto> dtos : slotStatusList.getMatchBoards()) {
+            for (SlotStatusDto dto: dtos) {
+                System.out.println("dto = " + dto);
+                if (dto.getStartTime().equals(slotTimes.get(0))) {
+                    Assertions.assertThat(dto.getStatus()).isEqualTo(SlotStatus.MYTABLE.getCode());
+                }
+                if (dto.getStartTime().equals(slotTimes.get(1))) {
+                    Assertions.assertThat(dto.getStatus()).isEqualTo(SlotStatus.OPEN.getCode());
+                }
+                if (dto.getStartTime().equals(slotTimes.get(2))) {
+                    Assertions.assertThat(dto.getStatus()).isEqualTo(SlotStatus.MATCH.getCode());
+                }
+                if (dto.getStartTime().equals(slotTimes.get(4))) {
+                    Assertions.assertThat(dto.getStatus()).isEqualTo(SlotStatus.CLOSE.getCode());
+                }
             }
         }
 
@@ -277,18 +279,20 @@ class MatchServiceTest {
         matchService.makeMatch(UserDto.from(users.get(2)), Option.NORMAL, slotTimes.get(3));
         SlotStatusResponseListDto slotStatusList = matchFindService.getAllMatchStatus(users.get(0).getId(),
                 Option.NORMAL);
-        for (SlotStatusDto dto : slotStatusList.getMatchBoards()) {
-            if (dto.getStartTime().equals(slotTimes.get(0))) {
-                Assertions.assertThat(dto.getStatus()).isEqualTo(SlotStatus.MYTABLE.getCode());
-            }
-            if (dto.getStartTime().equals(slotTimes.get(1))) {
-                Assertions.assertThat(dto.getStatus()).isEqualTo(SlotStatus.MYTABLE.getCode());
-            }
-            if (dto.getStartTime().equals(slotTimes.get(2))) {
-                Assertions.assertThat(dto.getStatus()).isEqualTo(SlotStatus.MYTABLE.getCode());
-            }
-            if (dto.getStartTime().equals(slotTimes.get(3))) {
-                Assertions.assertThat(dto.getStatus()).isEqualTo(SlotStatus.CLOSE.getCode());
+        for (List<SlotStatusDto> dtos : slotStatusList.getMatchBoards()) {
+            for (SlotStatusDto dto: dtos) {
+                if (dto.getStartTime().equals(slotTimes.get(0))) {
+                    Assertions.assertThat(dto.getStatus()).isEqualTo(SlotStatus.MYTABLE.getCode());
+                }
+                if (dto.getStartTime().equals(slotTimes.get(1))) {
+                    Assertions.assertThat(dto.getStatus()).isEqualTo(SlotStatus.MYTABLE.getCode());
+                }
+                if (dto.getStartTime().equals(slotTimes.get(2))) {
+                    Assertions.assertThat(dto.getStatus()).isEqualTo(SlotStatus.MYTABLE.getCode());
+                }
+                if (dto.getStartTime().equals(slotTimes.get(3))) {
+                    Assertions.assertThat(dto.getStatus()).isEqualTo(SlotStatus.CLOSE.getCode());
+                }
             }
         }
 
