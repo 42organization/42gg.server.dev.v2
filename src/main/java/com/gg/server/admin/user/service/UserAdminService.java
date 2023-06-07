@@ -108,7 +108,7 @@ public class UserAdminService {
         userCurrRank.modifyUserRank(updateReq);
         userCurrRank.setStatusMessage(updateReq.getStatusMessage());
 
-        userCurrRankRedis.updateRank(updateReq.getPpp(),
+        userCurrRankRedis.changedRank(updateReq.getPpp(),
                 updateReq.getWins(),
                 updateReq.getLosses());
         userCurrRankRedis.setStatusMessage(updateReq.getStatusMessage());
