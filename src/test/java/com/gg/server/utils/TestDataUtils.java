@@ -20,6 +20,7 @@ import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.team.data.TeamUserRepository;
 import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.UserRepository;
+import com.gg.server.domain.user.controller.dto.GameInfoDto;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
@@ -120,7 +121,7 @@ public class TestDataUtils {
         return user;
     }
 
-    public void addMockDataUserLiveApi(String event, int notiCnt, String currentMatchMode, Long userId) {
+    public GameInfoDto addMockDataUserLiveApi(String event, int notiCnt, String currentMatchMode, Long userId) {
         User curUser = userRepository.findById(userId).get();
         for (int i = 0; i < notiCnt; i++) {
             Noti noti = new Noti(curUser, NotiType.ANNOUNCE, String.valueOf(i), false);
@@ -128,6 +129,7 @@ public class TestDataUtils {
         }
         LocalDateTime startTime, endTime;
         Season season = createSeason();
+        createUserRank(curUser, "testUserMessage", season);
         Mode mode = (currentMatchMode == "RANK")? Mode.RANK : Mode.NORMAL;
         createGame(curUser, LocalDateTime.now().minusMinutes(100), LocalDateTime.now().minusMinutes(85), season, mode);
         createGame(curUser, LocalDateTime.now().minusMinutes(50), LocalDateTime.now().minusMinutes(35), season, mode);
@@ -135,15 +137,16 @@ public class TestDataUtils {
         if (event.equals("match")){
             startTime = now.plusMinutes(10);
             endTime = startTime.plusMinutes(15);
-            createGame(curUser, startTime, endTime, season, mode);
+            return createGame(curUser, startTime, endTime, season, mode);
         }else if (event.equals("game")){
             startTime = now.minusMinutes(5);
             endTime = startTime.plusMinutes(15);
-            createGame(curUser, startTime, endTime, season, mode);
+            return createGame(curUser, startTime, endTime, season, mode);
         }
+        return null;
     }
 
-    private void createGame(User curUser, LocalDateTime startTime, LocalDateTime endTime, Season season, Mode mode) {
+    private GameInfoDto createGame(User curUser, LocalDateTime startTime, LocalDateTime endTime, Season season, Mode mode) {
         LocalDateTime now = LocalDateTime.now();
         Game game;
         if (now.isBefore(startTime))
@@ -153,15 +156,18 @@ public class TestDataUtils {
         else
             game = new Game(season, StatusType.END, mode, startTime, endTime);
         gameRepository.save(game);
-        Team myTeam = new Team(game, 0, false);
+        Team myTeam = new Team(game, -1, false);
         TeamUser teamUser = new TeamUser(myTeam, curUser);
-        Team enemyTeam = new Team(game, 0, false);
+        Team enemyTeam = new Team(game, -1, false);
         User enemyUser = createNewUser();
+        createUserRank(enemyUser, "enemyUserMeassage", season);
         TeamUser enemyTeamUser = new TeamUser(enemyTeam, enemyUser);
         teamRepository.save(myTeam);
         teamRepository.save(enemyTeam);
         teamUserRepository.save(teamUser);
         teamUserRepository.save(enemyTeamUser);
+
+        return new GameInfoDto(game.getId(), myTeam.getId(), curUser.getId(), enemyTeam.getId(), enemyUser.getId());
     }
 
 
@@ -221,8 +227,8 @@ public class TestDataUtils {
         teamUserRepository.save(teamUser);
         teamUserRepository.save(enemyTeamUser);
 
-        PChange pChange1 = new PChange(game, newUser, 1100);
-        PChange pChange2 = new PChange(game, enemyUser, 900);
+        PChange pChange1 = new PChange(game, newUser, 1100, true);
+        PChange pChange2 = new PChange(game, enemyUser, 900, true);
 
         pChangeRepository.save(pChange1);
         pChangeRepository.save(pChange2);

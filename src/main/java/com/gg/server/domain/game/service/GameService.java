@@ -165,7 +165,7 @@ public class GameService {
                 setTeamScore(myTeam, scoreDto.getMyTeamScore(), scoreDto.getMyTeamScore() > scoreDto.getEnemyTeamScore());
                 setTeamScore(enemyTeam, scoreDto.getEnemyTeamScore(), scoreDto.getMyTeamScore() < scoreDto.getEnemyTeamScore());
                 expUpdates(game, teams);
-                rankRedisService.updateRankRedis(teams, game);
+                rankRedisService.updateRankRedis(myTeam, enemyTeam, game);
             } else {
                 // score 가 이미 입력됨
                 return false;

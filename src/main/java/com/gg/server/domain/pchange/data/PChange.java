@@ -47,6 +47,9 @@ public class PChange extends BaseTimeEntity {
         this.isChecked = is_checked;
     }
 
+    public void checkPChange() {
+        this.isChecked = true;
+    }
     public void updatePPP(Integer ppp) {
         this.pppResult = ppp;
     }

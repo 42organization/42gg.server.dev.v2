@@ -27,20 +27,20 @@ public class RankRedisService {
         String hashKey = RedisKeyManager.getHashKey(seasonId);
         return rankRedisRepository.findRankByUserId(hashKey, userId).getPpp();
     }
-    public void updateRankRedis(List<TeamUser> list, Game game) {
+    public void updateRankRedis(TeamUser myTeamUser, TeamUser enemyTeamUser, Game game) {
         // 단식 -> 2명 기준
         String key = RedisKeyManager.getHashKey(game.getSeason().getId());
         String zsetKey = RedisKeyManager.getZSetKey(game.getSeason().getId());
-        RankRedis myTeam = rankRedisRepository.findRankByUserId(key, list.get(0).getUser().getId());
-        RankRedis enemyTeam = rankRedisRepository.findRankByUserId(key, list.get(1).getUser().getId());
+        RankRedis myTeam = rankRedisRepository.findRankByUserId(key, myTeamUser.getUser().getId());
+        RankRedis enemyTeam = rankRedisRepository.findRankByUserId(key, enemyTeamUser.getUser().getId());
         Integer myPPP = myTeam.getPpp();
         Integer enemyPPP = enemyTeam.getPpp();
-        updatePPP(list.get(0), myTeam, list.get(1).getTeam().getScore(), myPPP, enemyPPP, game.getSeason().getId());
-        updatePPP(list.get(1), enemyTeam, list.get(0).getTeam().getScore(), enemyPPP, myPPP, game.getSeason().getId());
-        updateRankUser(key, zsetKey, list.get(0).getUser().getId(), myTeam);
-        updateRankUser(key, zsetKey, list.get(1).getUser().getId(), enemyTeam);
-        pChangeService.addPChange(game, list.get(0).getUser(), myTeam.getPpp(), true);
-        pChangeService.addPChange(game, list.get(1).getUser(), enemyTeam.getPpp(), false);
+        updatePPP(myTeamUser, myTeam, enemyTeamUser.getTeam().getScore(), myPPP, enemyPPP, game.getSeason().getId());
+        updatePPP(enemyTeamUser, enemyTeam, myTeamUser.getTeam().getScore(), enemyPPP, myPPP, game.getSeason().getId());
+        updateRankUser(key, zsetKey, myTeamUser.getUser().getId(), myTeam);
+        updateRankUser(key, zsetKey, enemyTeamUser.getUser().getId(), enemyTeam);
+        pChangeService.addPChange(game, myTeamUser.getUser(), myTeam.getPpp(), true);
+        pChangeService.addPChange(game, enemyTeamUser.getUser(), enemyTeam.getPpp(), false);
     }
 
     private void updateRankUser(String hashKey, String zsetKey, Long userId, RankRedis userRank) {
