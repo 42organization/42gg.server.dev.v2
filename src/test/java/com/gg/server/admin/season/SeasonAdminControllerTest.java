@@ -77,34 +77,6 @@ class SeasonAdminControllerTest {
     SeasonListAdminResponseDto responseDto;
     Long dbSeasonId;
 
-    @BeforeEach
-    void setUp() {
-        Season test1 = Season.builder()
-                .seasonName("test1")
-                .startTime(LocalDateTime.now())
-                .endTime(LocalDateTime.now().plusDays(1))
-                .startPpp(1000)
-                .pppGap(500)
-                .build();
-        Season test2 = Season.builder()
-                .seasonName("test2")
-                .startTime(LocalDateTime.now().minusDays(1))
-                .endTime(LocalDateTime.now().minusMinutes(5))
-                .startPpp(1000)
-                .pppGap(500)
-                .build();
-
-        seasonAdminRepository.save(test1);
-        seasonAdminRepository.save(test2);
-
-        List<Season> seasons =  seasonAdminRepository.findAll();
-        List<SeasonAdminDto> dtoList = new ArrayList<>();
-        for (Season season : seasons) {
-            SeasonAdminDto dto = new SeasonAdminDto(season);
-            dtoList.add(dto);
-        }
-        responseDto = new SeasonListAdminResponseDto(dtoList);
-    }
 
     @Test
     @DisplayName("[GET]pingpong/admin/seasons")
