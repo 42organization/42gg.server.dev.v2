@@ -114,15 +114,11 @@ public class UserService {
         int userMatchCnt = redisMatchUserRepository.countMatchTime(user.getId());
         if (optionalGame.isPresent()) {
             Game game = optionalGame.get();
-            System.out.println("MANGO : game exist");
             if (game.getStatus() == StatusType.LIVE || game.getStatus() == StatusType.WAIT)
                 return new UserLiveResponseDto(notiCnt, "game", game.getMode(), game.getId());
             else if (game.getStatus() == StatusType.END) {
-                System.out.println("MANGO : game is END");
                 PChange userPChange = pChangeRepository.findPChangeByUserIdAndGameId(user.getId(), game.getId()).orElseThrow(() -> new PChangeNotExistException());
-                System.out.println("MANGOO : " + userPChange.getIsChecked());
                 if (userPChange.getIsChecked() == false) {
-                    System.out.println("MANGO : is cehck is FALSE");
                     userPChange.checkPChange();
                     return new UserLiveResponseDto(notiCnt, "game", game.getMode(), game.getId());
                 }
@@ -134,7 +130,6 @@ public class UserService {
         if (userMatchCnt > 0){
             return new UserLiveResponseDto(notiCnt, "match", null, null);
         }
-        System.out.println("MANGO : WAHTFJSLKFJSDKJF");
         return new UserLiveResponseDto(notiCnt, null, null, null);
     }
 
