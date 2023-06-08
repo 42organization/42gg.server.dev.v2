@@ -67,11 +67,11 @@ public class SeasonAdminService {
         Season season = seasonAdminRepository.findById(seasonDto.getSeasonId())
                 .orElseThrow(() -> new SeasonNotFoundException());
         detach(season);
-        seasonAdminRepository.delete(season);
 
         if (LocalDateTime.now().isBefore(seasonDto.getStartTime())) {
             rankAdminService.deleteAllUserRankBySeason(seasonDto);
             rankRedisAdminService.deleteSeasonRankBySeasonId(seasonDto.getSeasonId());
+            seasonAdminRepository.delete(season);
         }
     }
 
