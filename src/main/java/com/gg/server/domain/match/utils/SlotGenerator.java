@@ -95,7 +95,7 @@ public class SlotGenerator {
             List<SlotStatusDto> hourBoard = new ArrayList<SlotStatusDto>();
             for (long i = 0; i < slotCountPerHour; i++) {
                 SlotStatusDto dto = slots.getOrDefault(time.plusMinutes(i * interval),
-                        new SlotStatusDto(time, SlotStatus.OPEN, interval));
+                        new SlotStatusDto(time.plusMinutes(i * interval), SlotStatus.OPEN, interval));
                 hourBoard.add(dto);
             }
             matchBoards.add(hourBoard);
