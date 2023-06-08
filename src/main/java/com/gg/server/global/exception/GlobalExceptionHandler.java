@@ -57,14 +57,14 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({CustomRuntimeException.class})
     public ResponseEntity<ErrorResponse> validException(CustomRuntimeException ex) {
-        log.error("예외처리된 에러", ex);
+        log.error("예외처리된 에러", ex.getMessage(), ex.getErrorCode());
         ErrorResponse response = new ErrorResponse(ex.getErrorCode());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ErrorResponse> authenticationException(AuthenticationException ex) {
-        log.error("authentication exception", ex);
+        log.error("authentication exception");
         ErrorResponse response = new ErrorResponse(ex.getErrorCode());
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
@@ -77,7 +77,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(SdkClientException.class)
     protected ResponseEntity<ErrorResponse> httpRequestMethodNotSupportedExceptionHandle(SdkClientException ex) {
-        log.error("AmazonServiceException", ex);
+        log.error("AmazonServiceException", ex.getMessage());
         ErrorResponse response = new ErrorResponse(ErrorCode.AWS_SERVER_ERR);
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -90,13 +90,13 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     protected ResponseEntity<ErrorResponse> httpRequestMethodNotSupportedExceptionHandle(HttpRequestMethodNotSupportedException ex) {
-        log.error("지원하지 않는 메소드 요청입니다.", ex);
+        log.error("지원하지 않는 메소드 요청입니다.", ex.getMethod());
         ErrorResponse response = new ErrorResponse(ErrorCode.METHOD_NOT_ALLOWED);
         return new ResponseEntity<>(response, HttpStatus.METHOD_NOT_ALLOWED);
     }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception ex) {
-        log.error("!!!!!! SERVER ERROR !!!!!!", ex);
+        log.error("!!!!!! SERVER ERROR !!!!!!", ex.getMessage());
         ErrorResponse response = new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERR);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
