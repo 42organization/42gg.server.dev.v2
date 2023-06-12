@@ -33,11 +33,23 @@ public class SlotAdminService {
 
     @Transactional
     public void addSlotSetting(SlotCreateRequestDto requestDto) {
+        checkVaildSlotManagement(requestDto);
         requestDto.updateStartTime();
         updateNowSlotManagementEndTime(requestDto.getStartTime());
         SlotManagement slotManagement = new SlotManagement(requestDto);
 
         adminSlotManagementRepository.save(slotManagement);
+    }
+
+    private void checkVaildSlotManagement(SlotCreateRequestDto requestDto) {
+        if (requestDto.getPastSlotTime() > 23)
+            throw new SlotManagementForbiddenException();
+        if (requestDto.getFutureSlotTime() > 12)
+            throw new SlotManagementForbiddenException();
+        if (60 % requestDto.getInterval() != 0)
+            throw new SlotManagementForbiddenException();
+        if (requestDto.getPastSlotTime() > requestDto.getInterval())
+            throw new SlotManagementForbiddenException();
     }
 
     private void updateNowSlotManagementEndTime(LocalDateTime endTime){
