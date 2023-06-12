@@ -46,7 +46,7 @@ public class SlotAdminService {
             throw new SlotManagementForbiddenException();
         if (requestDto.getFutureSlotTime() > 12)
             throw new SlotManagementForbiddenException();
-        if (60 % requestDto.getInterval() != 0)
+        if (60 % requestDto.getInterval() != 0 || requestDto.getInterval() % 5 != 0)
             throw new SlotManagementForbiddenException();
         if (requestDto.getPastSlotTime() > requestDto.getInterval())
             throw new SlotManagementForbiddenException();
