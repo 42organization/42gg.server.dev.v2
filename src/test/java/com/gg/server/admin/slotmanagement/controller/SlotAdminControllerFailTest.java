@@ -88,4 +88,38 @@ public class SlotAdminControllerFailTest {
 
         System.out.println(contentAsString);
     }
+
+    @Test
+    @DisplayName("fail[Post]/pingpong/admin/slot-management")
+    void 인터벌이7일때() throws Exception {
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
+        SlotCreateRequestDto test = new SlotCreateRequestDto(4,1,7,1,LocalDateTime.now().plusHours(1));
+        String content = objectMapper.writeValueAsString(test);
+
+        String contentAsString = mockMvc.perform(post("/pingpong/admin/slot-management")
+                .content(content)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().is4xxClientError())
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println(contentAsString);
+    }
+
+    @Test
+    @DisplayName("fail[Post]/pingpong/admin/slot-management")
+    void 상대방공개시간이게임시간보다클떄() throws Exception {
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
+        SlotCreateRequestDto test = new SlotCreateRequestDto(4,1,10,15,LocalDateTime.now().plusHours(1));
+        String content = objectMapper.writeValueAsString(test);
+
+        String contentAsString = mockMvc.perform(post("/pingpong/admin/slot-management")
+                .content(content)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().is4xxClientError())
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println(contentAsString);
+    }
 }
