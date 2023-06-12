@@ -86,7 +86,8 @@ jobs:
           key: ${{ secrets.MAIN_SERVER_PEM }}
           script: |
             cd ./docker
-            docker rmi -f ${{ env.IMAGE_NAME }}:latest
+            docker-compose down
+            docker rmi ${{ env.IMAGE_NAME }}:latest
             docker-compose up -d
 
       - name: Remove Github Actions IP From Security Group

@@ -1,6 +1,4 @@
-FROM ubuntu:20.04
-
-RUN apt-get update && apt-get install -y openjdk-11-jdk
+FROM openjdk:11-jdk
 
 WORKDIR /app
 

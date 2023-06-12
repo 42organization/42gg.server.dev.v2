@@ -48,7 +48,7 @@ public class MatchService {
     @Transactional
     public synchronized void makeMatch(UserDto userDto, Option option, LocalDateTime startTime) {
         checkValid(userDto, startTime);
-        Season season = seasonFindService.findCurrentSeason(LocalDateTime.now());
+        Season season = seasonFindService.findCurrentSeason(startTime);
         RankRedis rank = rankRedisRepository
                 .findRankByUserId(RedisKeyManager.getHashKey(season.getId()), userDto.getId());
         RedisMatchUser player = new RedisMatchUser(userDto.getId(), rank.getPpp(), option);

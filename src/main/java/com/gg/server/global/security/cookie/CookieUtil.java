@@ -1,6 +1,9 @@
 package com.gg.server.global.security.cookie;
 
 
+import org.springframework.boot.web.server.Cookie.SameSite;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.util.SerializationUtils;
 
 import javax.servlet.http.Cookie;
@@ -24,13 +27,16 @@ public class CookieUtil {
     }
 
     public static void addCookie(HttpServletResponse response, String name, String value, int maxAge, String domain) {
-        Cookie cookie = new Cookie(name, value);
-        cookie.setPath("/");
-        cookie.setSecure(true);
-        cookie.setDomain(domain);
-        cookie.setMaxAge(maxAge);
+        ResponseCookie cookie = ResponseCookie.from(name, value)
+                .maxAge(maxAge)
+//                .domain(domain)
+                .httpOnly(false)
+                .path("/")
+                .secure(true)
+//                .sameSite(SameSite.NONE.attributeValue())
+                .build();
 
-        response.addCookie(cookie);
+        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
     public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {
