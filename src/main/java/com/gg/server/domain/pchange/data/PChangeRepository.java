@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PChangeRepository extends JpaRepository<PChange, Long> , PChangeRepositoryCustom{
 
@@ -13,4 +14,6 @@ public interface PChangeRepository extends JpaRepository<PChange, Long> , PChang
 
     @Query(value = "SELECT pc FROM PChange pc join fetch pc.user WHERE pc.user.id =:userId order by pc.id desc")
     List<PChange> findAllByUserId(@Param("userId") Long userId);
+
+    Optional<PChange> findPChangeByUserIdAndGameId(Long userId, Long gameId);
 }

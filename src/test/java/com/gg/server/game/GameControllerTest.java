@@ -116,7 +116,7 @@ public class GameControllerTest {
             teams.add(teamUserRepository.save(new TeamUser(team1, user1)));
             teams.add(teamUserRepository.save(new TeamUser(team2, user2)));
             gameService.expUpdates(game, teams);
-            rankRedisService.updateRankRedis(teams, game);
+            rankRedisService.updateRankRedis(teams.get(0), teams.get(1), game);
             game = gameRepository.save(new Game(season, StatusType.WAIT, Mode.NORMAL, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
             team1 = teamRepository.save(new Team(game, 0, false));
             team2 = teamRepository.save(new Team(game, 0, false));
@@ -127,8 +127,8 @@ public class GameControllerTest {
             teams.add(teamUserRepository.save(new TeamUser(team2, user2)));
             game.updateStatus();
             gameService.expUpdates(game, teams);
-            pChangeRepository.save(new PChange(game, user1, 0));
-            pChangeRepository.save(new PChange(game, user2, 0));
+            pChangeRepository.save(new PChange(game, user1, 0, true));
+            pChangeRepository.save(new PChange(game, user2, 0, true));
         }
         game1 = gameRepository.save(new Game(season, StatusType.WAIT, Mode.RANK, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
         Team team1 = teamRepository.save(new Team(game1, 1, false));
@@ -142,7 +142,7 @@ public class GameControllerTest {
         teams.add(teamUserRepository.save(new TeamUser(team1, user1)));
         teams.add(teamUserRepository.save(new TeamUser(team2, user2)));
         gameService.expUpdates(game2, teams);
-        rankRedisService.updateRankRedis(teams, game2);
+        rankRedisService.updateRankRedis(teams.get(0), teams.get(1), game2);
     }
 
     @AfterEach

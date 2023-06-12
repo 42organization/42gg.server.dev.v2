@@ -80,7 +80,7 @@ public class GameService {
         if (teamUsers.size() == 2 &&
                 (game.getStatus() == StatusType.WAIT || game.getStatus() == StatusType.LIVE)) {
             expUpdates(game, teamUsers);
-            savePChange(game, teamUsers);
+            savePChange(game, teamUsers, normalResultReqDto);
             return true;
         } else if (teamUsers.size() != 2) {
             throw new InvalidParameterException("team 이 잘못되었습니다.", ErrorCode.VALID_FAILED);
@@ -88,11 +88,13 @@ public class GameService {
         return false;
     }
 
-    private void savePChange(Game game, List<TeamUser> teamUsers) {
+    private void savePChange(Game game, List<TeamUser> teamUsers, NormalResultReqDto normalResultReqDto) {
         pChangeService.addPChange(game, teamUsers.get(0).getUser(),
-                rankRedisService.getUserPpp(teamUsers.get(0).getUser().getId(), game.getSeason().getId()));
+                rankRedisService.getUserPpp(teamUsers.get(0).getUser().getId(), game.getSeason().getId()),
+                normalResultReqDto.getMyTeamId() == teamUsers.get(0).getTeam().getId() ? true : false);
         pChangeService.addPChange(game, teamUsers.get(1).getUser(),
-                rankRedisService.getUserPpp(teamUsers.get(1).getUser().getId(), game.getSeason().getId()));
+                rankRedisService.getUserPpp(teamUsers.get(1).getUser().getId(), game.getSeason().getId()),
+                normalResultReqDto.getMyTeamId() == teamUsers.get(1).getTeam().getId() ? true : false);
     }
 
     @Transactional(readOnly = true)
@@ -163,7 +165,7 @@ public class GameService {
                 setTeamScore(myTeam, scoreDto.getMyTeamScore(), scoreDto.getMyTeamScore() > scoreDto.getEnemyTeamScore());
                 setTeamScore(enemyTeam, scoreDto.getEnemyTeamScore(), scoreDto.getMyTeamScore() < scoreDto.getEnemyTeamScore());
                 expUpdates(game, teams);
-                rankRedisService.updateRankRedis(teams, game);
+                rankRedisService.updateRankRedis(myTeam, enemyTeam, game);
             } else {
                 // score 가 이미 입력됨
                 return false;

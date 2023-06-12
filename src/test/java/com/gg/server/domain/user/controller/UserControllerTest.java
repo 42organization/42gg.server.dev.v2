@@ -1,7 +1,12 @@
 package com.gg.server.domain.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gg.server.domain.game.data.Game;
+import com.gg.server.domain.game.data.GameRepository;
+import com.gg.server.domain.game.dto.req.RankResultReqDto;
+import com.gg.server.domain.game.service.GameService;
 import com.gg.server.domain.game.type.Mode;
+import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.rank.data.RankRepository;
 import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
@@ -10,6 +15,7 @@ import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.data.SeasonRepository;
 import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.UserRepository;
+import com.gg.server.domain.user.controller.dto.GameInfoDto;
 import com.gg.server.domain.user.dto.*;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
@@ -67,6 +73,11 @@ class UserControllerTest {
     @Autowired
     SeasonRepository seasonRepository;
 
+    @Autowired
+    GameRepository gameRepository;
+
+    @Autowired
+    GameService gameService;
 
     @AfterEach
     public void flushRedis() {
@@ -78,18 +89,49 @@ class UserControllerTest {
     public void userLiveTest() throws Exception {
         String accessToken = testDataUtils.getLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
-        String url = "/pingpong/users/live";
+        String liveUrl = "/pingpong/users/live";
         String event = "game";
         int notiCnt = 2;
         Mode currentMatchMode = Mode.RANK;
-        testDataUtils.addMockDataUserLiveApi(event, notiCnt, currentMatchMode.getCode(), userId);
-        String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+        GameInfoDto gameInfo = testDataUtils.addMockDataUserLiveApi(event, notiCnt, currentMatchMode.getCode(), userId);
+        Game testGame = gameRepository.getById(gameInfo.getGameId());
+
+        // Rank Live 게임 테스트
+        String contentAsString1 = mockMvc.perform(get(liveUrl).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
-        UserLiveResponseDto userLiveResponseDto = objectMapper.readValue(contentAsString, UserLiveResponseDto.class);
-        assertThat(userLiveResponseDto.getEvent()).isEqualTo(event);
-        assertThat(userLiveResponseDto.getNotiCount()).isEqualTo(notiCnt);
-        assertThat(userLiveResponseDto.getCurrentMatchMode()).isEqualTo(currentMatchMode);
+        UserLiveResponseDto userLiveResponseDto1 = objectMapper.readValue(contentAsString1, UserLiveResponseDto.class);
+        assertThat(userLiveResponseDto1.getEvent()).isEqualTo(event);
+        assertThat(userLiveResponseDto1.getNotiCount()).isEqualTo(notiCnt);
+        assertThat(userLiveResponseDto1.getCurrentMatchMode()).isEqualTo(currentMatchMode);
+        assertThat(userLiveResponseDto1.getGameId()).isEqualTo(gameInfo.getGameId());
+
+        // Rank 점수 입력 테스트
+        RankResultReqDto rankResultReqDto = new RankResultReqDto(gameInfo.getGameId(),
+                gameInfo.getEnemyTeamId(), 1,
+                gameInfo.getMyTeamId(), 2);
+        assertThat(testGame.getStatus()).isEqualTo(StatusType.LIVE);
+        gameService.createRankResult(rankResultReqDto, gameInfo.getEnemyUserId());
+        assertThat(testGame.getStatus()).isEqualTo(StatusType.END);
+
+        String contentAsString2 = mockMvc.perform(get(liveUrl).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        UserLiveResponseDto userLiveResponseDto2 = objectMapper.readValue(contentAsString2, UserLiveResponseDto.class);
+        assertThat(userLiveResponseDto2.getEvent()).isEqualTo(event);
+        assertThat(userLiveResponseDto2.getNotiCount()).isEqualTo(notiCnt);
+        assertThat(userLiveResponseDto2.getCurrentMatchMode()).isEqualTo(currentMatchMode);
+        assertThat(userLiveResponseDto2.getGameId()).isEqualTo(gameInfo.getGameId());
+
+        // Rank PChange is_checked 테스트
+        String contentAsString3 = mockMvc.perform(get(liveUrl).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        UserLiveResponseDto userLiveResponseDto3 = objectMapper.readValue(contentAsString3, UserLiveResponseDto.class);
+        assertThat(userLiveResponseDto3.getEvent()).isEqualTo(null);
+        assertThat(userLiveResponseDto3.getNotiCount()).isEqualTo(notiCnt);
+        assertThat(userLiveResponseDto3.getCurrentMatchMode()).isEqualTo(null);
+        assertThat(userLiveResponseDto3.getGameId()).isEqualTo(null);
     }
     
     @Test

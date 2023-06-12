@@ -96,7 +96,7 @@ public class GameAdminService {
             }
             pChangeAdminRepository.delete(pChanges.get(0));
         }
-        rankRedisService.updateRankRedis(teamUsers, game);
+        rankRedisService.updateRankRedis(teamUsers.get(0), teamUsers.get(1), game);
     }
 
     private void rollbackGameResult(RankGamePPPModifyReqDto reqDto, Season season, TeamUser teamUser, List<PChange> pChanges) {
