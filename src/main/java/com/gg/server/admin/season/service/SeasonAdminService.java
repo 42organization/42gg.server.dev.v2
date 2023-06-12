@@ -80,14 +80,12 @@ public class SeasonAdminService {
         Season season = seasonAdminRepository.findById(seasonId)
                 .orElseThrow(() -> new SeasonNotFoundException());
 
-        if (LocalDateTime.now().isBefore(season.getEndTime())) {
-            season.setPppGap(updateDto.getPppGap());
-        }
         if (LocalDateTime.now().isBefore(season.getStartTime())) {
             detach(season);
             season.setSeasonName(updateDto.getSeasonName());
             season.setStartTime(updateDto.getStartTime());
             season.setStartPpp(updateDto.getStartPpp());
+            season.setPppGap(updateDto.getPppGap());
             insert(season);
             seasonAdminRepository.save(season);
         }
@@ -112,7 +110,7 @@ public class SeasonAdminService {
         List<Season> afterSeasons = seasonAdminRepository.findAfterSeasons(season.getStartTime());
         Season afterSeason = afterSeasons.isEmpty() ? null : afterSeasons.get(0);
 
-        if (LocalDateTime.now().plusMinutes(1).isAfter(season.getStartTime()))
+        if (LocalDateTime.now().plusHours(24).isAfter(season.getStartTime()))
             throw new SeasonTimeBeforeException();
         if (beforeSeason != null) {
             if (beforeSeason.getStartTime().plusDays(1).isAfter(season.getStartTime()))
