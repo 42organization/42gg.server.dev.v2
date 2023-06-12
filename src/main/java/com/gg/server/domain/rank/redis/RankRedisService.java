@@ -71,7 +71,7 @@ public class RankRedisService {
         Rank rank = rankRepository.findByUserIdAndSeasonId(myTeam.getUserId(), seasonId)
                 .orElseThrow(RankNotFoundException::new);
         rank.modifyUserRank(ppp, win, losses);
-        myTeam.updateRank(ppp, win, losses);
+        myTeam.changedRank(ppp, win, losses);
         updateRankUser(hashkey, RedisKeyManager.getZSetKey(seasonId), teamUser.getUser().getId(), myTeam);
     }
 }
