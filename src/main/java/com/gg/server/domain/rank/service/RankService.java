@@ -71,14 +71,20 @@ public class RankService {
             season = seasonFindService.findSeasonById(seasonId);
         }
         int totalPage = calcTotalPage(season, pageRequest.getPageSize());
+        if (totalPage == 0)
+            return returnEmptyRankPage();
         if (pageRequest.getPageNumber() + 1 > totalPage)
             throw new PageNotFoundException("페이지가 존재하지 않습니다.", ErrorCode.PAGE_NOT_FOUND);
-        int myRank = findMyRank(curUser, season);
 
+        int myRank = findMyRank(curUser, season);
         int startRank = pageRequest.getPageNumber() * pageRequest.getPageSize();
         int endRank = startRank + pageRequest.getPageSize() - 1;
         List<RankDto> rankList = createRankList(startRank, endRank, season);
         return new RankPageResponseDto(myRank, pageRequest.getPageNumber() + 1, totalPage, rankList);
+    }
+
+    private RankPageResponseDto returnEmptyRankPage() {
+        return new RankPageResponseDto(-1, 1, 1, new ArrayList<>());
     }
 
     private int findMyRank(UserDto curUser, Season season) {
