@@ -14,6 +14,7 @@ src/test/resources/application-local.yml
 python
 /logs
 
+
 ### STS ###
 .apt_generated
 .classpath
