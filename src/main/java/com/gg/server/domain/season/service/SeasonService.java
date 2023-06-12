@@ -5,6 +5,7 @@ import com.gg.server.domain.season.dto.SeasonResDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,7 +15,8 @@ public class SeasonService {
     private final SeasonRepository seasonRepository;
 
     public List<SeasonResDto> seasonList() {
-        return seasonRepository.findAll().stream().map(SeasonResDto::new).collect(Collectors.toList());
+        return seasonRepository.findActiveSeasons(LocalDateTime.now())
+                .stream().map(SeasonResDto::new).collect(Collectors.toList());
     }
 
 //    public CurSeason getCurSeason() {
