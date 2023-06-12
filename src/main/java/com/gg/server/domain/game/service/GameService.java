@@ -111,13 +111,12 @@ public class GameService {
     @Transactional(readOnly = true)
     public PPPChangeResultResDto pppChangeResult(Long gameId, Long userId) throws PChangeNotExistException {
         Season season = gameFindService.findByGameId(gameId).getSeason();
-        List<PChange> pChanges = pChangeService.findPPPChangeHistory(gameId, userId, season.getId());
-        if (pChanges.size() == 1) {
-            return new PPPChangeResultResDto(0, pChanges.get(0).getExp(), season.getStartPpp(), pChanges.get(0).getPppResult());
-        } else {
-            log.info("before:", pChanges.get(1).getExp(), ", after: ", pChanges.get(0).getExp());
-            return new PPPChangeResultResDto(pChanges.get(1).getExp(), pChanges.get(0).getExp(), pChanges.get(1).getPppResult(), pChanges.get(0).getPppResult());
-        }
+        List<PChange> pppHistory = pChangeService.findPPPChangeHistory(gameId, userId, season.getId());
+        List<PChange> expHistory = pChangeService.findExpChangeHistory(gameId, userId);
+        return new PPPChangeResultResDto(expHistory.size() <= 1 ? 0 : expHistory.get(1).getExp(),
+                pppHistory.get(0).getExp(),
+                pppHistory.size() <= 1 ? season.getStartPpp() : pppHistory.get(1).getPppResult(),
+                pppHistory.get(0).getPppResult());
     }
 
     public void expUpdates(Game game, List<TeamUser> teamUsers) {
@@ -154,6 +153,7 @@ public class GameService {
         }
         throw new TeamIdNotMatchException();
     }
+
     private Boolean updateScore(Game game, RankResultReqDto scoreDto, Long userId) {
         List<TeamUser> teams = teamUserRepository.findAllByGameId(game.getId());
         TeamUser myTeam = findTeamId(scoreDto.getMyTeamId(), teams);
