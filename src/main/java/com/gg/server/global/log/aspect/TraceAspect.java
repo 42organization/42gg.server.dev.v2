@@ -29,13 +29,10 @@ public class TraceAspect {
     @Pointcut("execution(* com.gg.server.global.security..*(..))")
     public void securityDomain(){}
 
-    @Pointcut("execution(* com.gg.server.global.utils..*(..))")
-    public void util(){}
-
     @Pointcut("execution(* com.gg.server.global.scheduler..*(..))")
     public void scheduler(){}
 
-    @Around("(allAdmin() || allDomain() || util() || scheduler()) && !securityDomain()")
+    @Around("(allAdmin() || allDomain() || scheduler()) && !securityDomain()")
     public Object doLog(ProceedingJoinPoint joinPoint) throws Throwable {
         TraceStatus status = null;
         MethodSignature method = (MethodSignature)joinPoint.getSignature();
