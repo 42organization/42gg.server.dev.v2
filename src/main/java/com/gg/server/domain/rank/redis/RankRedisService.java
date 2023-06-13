@@ -58,7 +58,7 @@ public class RankRedisService {
                 .orElseThrow(() -> new NotExistException("rank 정보가 없습니다.", ErrorCode.NOT_FOUND));
         Integer changedPpp = EloRating.pppChange(myPPP, enemyPPP,
                 teamuser.getTeam().getWin(), Math.abs(teamuser.getTeam().getScore() - enemyScore) == 2);
-        rank.addPpp(changedPpp);
+        rank.modifyUserRank(rank.getPpp() + changedPpp, win, losses);
         myTeam.updateRank(changedPpp,
                 win, losses);
     }
@@ -70,7 +70,7 @@ public class RankRedisService {
         int losses = !teamUser.getTeam().getWin() ? myTeam.getLosses() - 1: myTeam.getLosses();
         Rank rank = rankRepository.findByUserIdAndSeasonId(myTeam.getUserId(), seasonId)
                 .orElseThrow(RankNotFoundException::new);
-        rank.updatePpp(ppp);
+        rank.modifyUserRank(ppp, win, losses);
         myTeam.changedRank(ppp, win, losses);
         updateRankUser(hashkey, RedisKeyManager.getZSetKey(seasonId), teamUser.getUser().getId(), myTeam);
     }
