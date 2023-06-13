@@ -37,11 +37,11 @@ DB 테이블 변경에 따른 리빌딩 프로젝트
     </tr>
   </thead>
     <tr>
-        <td align=center><a href="https://github.com/nheo9143">안영선 @yoahn</a></td>
-        <td align=center><a href="https://github.com/nheo9143">김재혁 @jaehyuki</a></td>
-        <td align=center><a href="https://github.com/nheo9143">김의진 @yuikim</a></td>
-        <td align=center><a href="https://github.com/nheo9143">이현규 @hyunkyle</a></td>
-        <td align=center><a href="https://github.com/nheo9143">이 철 @cheolee</a></td>
+        <td align=center><a href="https://github.com/AYoungSn">안영선 @yoahn</a></td>
+        <td align=center><a href="https://github.com/greatSweetMango">김재혁 @jaehyuki</a></td>
+        <td align=center><a href="https://github.com/kmularise">김의진 @yuikim</a></td>
+        <td align=center><a href="https://github.com/wken5577">이현규 @hyunkyle</a></td>
+        <td align=center><a href="https://github.com/FeFe2200">이 철 @cheolee</a></td>
     </tr>
     <tr>
         <td align=center>PM</td>
