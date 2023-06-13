@@ -120,6 +120,20 @@ class MatchServiceTest {
         Assertions.assertThat(size).isEqualTo(2L);
     }
 
+    @DisplayName("normal both 매칭 시 게임 생성")
+    @Test
+    void makeGameWithNormalAndBoth() {
+        System.out.println("this.users = " + this.users);
+        matchService.makeMatch(UserDto.from(users.get(0)), Option.NORMAL, this.slotTimes.get(0));
+        matchService.makeMatch(UserDto.from(users.get(1)), Option.BOTH, this.slotTimes.get(0));
+        matchService.makeMatch(UserDto.from(users.get(2)), Option.BOTH, this.slotTimes.get(1));
+        matchService.makeMatch(UserDto.from(users.get(3)), Option.NORMAL, this.slotTimes.get(1));
+        Optional<Game> game1 = gameRepository.findByStartTime(slotTimes.get(0));
+        Optional<Game> game2 = gameRepository.findByStartTime(slotTimes.get(1));
+        Assertions.assertThat(game1).isPresent();
+        Assertions.assertThat(game2).isPresent();
+    }
+
     @DisplayName("Queue에 매칭 가능한 normal 상대가 있을 경우 게임 생성")
     @Test
     void addMatchSameNormalOption() {

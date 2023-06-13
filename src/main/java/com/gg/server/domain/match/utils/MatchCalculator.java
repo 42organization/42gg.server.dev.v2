@@ -28,12 +28,14 @@ public class MatchCalculator {
         }
         if (matchUser.getOption().equals(Option.NORMAL)) {
             return allMatchUsers.stream()
-                    .filter(player -> player.getOption().equals(Option.NORMAL))
+                    .filter(player -> player.getOption().equals(Option.NORMAL) ||
+                            player.getOption().equals(Option.BOTH))
                     .findFirst();
         }
         if (matchUser.getOption().equals(Option.RANK)) {
             return allMatchUsers.stream()
-                    .filter(player -> player.getOption().equals(Option.RANK)
+                    .filter(player -> (player.getOption().equals(Option.RANK) ||
+                            player.getOption().equals(Option.BOTH))
                             && Math.abs(player.getPpp() - matchUser.getPpp()) <= pppGap)
                     .findFirst();
         }
