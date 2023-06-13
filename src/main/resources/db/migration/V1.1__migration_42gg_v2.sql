@@ -175,6 +175,7 @@ alter table noti drop column enum_noti_type;
 
 alter table noti drop intra_id;
 alter table noti drop slot_id;
+delete from noti;
 SET SQL_SAFE_UPDATES=1;
 ####
 
