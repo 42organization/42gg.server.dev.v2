@@ -26,9 +26,9 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- daily rollover -->
             <fileNamePattern>${LOGS_ABSOLUTE_PATH}/allLogDays/%d{yyyy-MM-dd}.log</fileNamePattern>
-            <!-- keep 30 days' worth of history capped at 3GB total size -->
-            <maxHistory>2</maxHistory>
-            <totalSizeCap>10MB</totalSizeCap>
+            <!-- keep 30 days' worth of history capped at 50MB total size -->
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>50MB</totalSizeCap>
         </rollingPolicy>
     </appender>
 
@@ -43,9 +43,9 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- daily rollover -->
             <fileNamePattern>${LOGS_ABSOLUTE_PATH}/myLogDays/%d{yyyy-MM-dd}.log</fileNamePattern>
-            <!-- keep 30 days' worth of history capped at 3GB total size -->
-            <maxHistory>2</maxHistory>
-            <totalSizeCap>20MB</totalSizeCap>
+            <!-- keep 30 days' worth of history capped at 50MB total size -->
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>50MB</totalSizeCap>
         </rollingPolicy>
     </appender>
 
@@ -65,9 +65,9 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- daily rollover -->
             <fileNamePattern>${LOGS_ABSOLUTE_PATH}/errorLogDays/%d{yyyy-MM-dd}.log</fileNamePattern>
-            <!-- keep 30 days' worth of history capped at 3GB total size -->
-            <maxHistory>2</maxHistory>
-            <totalSizeCap>1MB</totalSizeCap>
+            <!-- keep 30 days' worth of history capped at 50MB total size -->
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>50MB</totalSizeCap>
         </rollingPolicy>
     </appender>
 
@@ -81,11 +81,6 @@
         <appender-ref ref="FILE" />
         <appender-ref ref="ERROR_LOG" />
     </root>
-
-    <!-- log 레벨 설정 (org.springframework.web=debug) -->
-    <logger name="org.springframework.web" level="trace">
-        <appender-ref ref="FILE" />
-    </logger>
 
     <!-- log 레벨 설정 자체로그(c.g.s.g.l.s.ThreadLocalLogTrace=info) -->
     <logger name="com.gg.server.global.log.service.ThreadLocalLogTrace" level="info">
