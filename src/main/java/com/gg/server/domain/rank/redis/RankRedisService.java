@@ -11,6 +11,7 @@ import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.NotExistException;
 import com.gg.server.global.utils.EloRating;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RankRedisService {
     private final RankRedisRepository rankRedisRepository;
     private final PChangeService pChangeService;
@@ -41,6 +43,7 @@ public class RankRedisService {
         updateRankUser(key, zsetKey, enemyTeamUser.getUser().getId(), enemyTeam);
         pChangeService.addPChange(game, myTeamUser.getUser(), myTeam.getPpp(), true);
         pChangeService.addPChange(game, enemyTeamUser.getUser(), enemyTeam.getPpp(), false);
+        log.info("Final: userId: " + myTeamUser.getUser().getIntraId() + ", " + "ppp: redis(" + myTeam.getPpp() + ")");
     }
 
     private void updateRankUser(String hashKey, String zsetKey, Long userId, RankRedis userRank) {
@@ -70,8 +73,10 @@ public class RankRedisService {
         int losses = !teamUser.getTeam().getWin() ? myTeam.getLosses() - 1: myTeam.getLosses();
         Rank rank = rankRepository.findByUserIdAndSeasonId(myTeam.getUserId(), seasonId)
                 .orElseThrow(RankNotFoundException::new);
+        log.info("Before: userId: " + teamUser.getUser().getIntraId() + ", " + "ppp: rank(" + rank.getPpp() + "), redis(" + myTeam.getPpp() + ")");
         rank.modifyUserRank(ppp, win, losses);
         myTeam.changedRank(ppp, win, losses);
         updateRankUser(hashkey, RedisKeyManager.getZSetKey(seasonId), teamUser.getUser().getId(), myTeam);
+        log.info("After: userId: " + teamUser.getUser().getIntraId() + ", " + "ppp: rank(" + rank.getPpp() + "), redis(" + myTeam.getPpp() + ")");
     }
 }

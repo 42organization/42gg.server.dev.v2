@@ -53,4 +53,16 @@ public class PChange extends BaseTimeEntity {
     public void updatePPP(Integer ppp) {
         this.pppResult = ppp;
     }
+
+    @Override
+    public String toString() {
+        return "PChange{" +
+                "id=" + id +
+                ", game=" + game +
+                ", user=" + user +
+                ", pppResult=" + pppResult +
+                ", exp=" + exp +
+                ", isChecked=" + isChecked +
+                '}';
+    }
 }

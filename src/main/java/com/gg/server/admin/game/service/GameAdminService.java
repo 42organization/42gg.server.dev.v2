@@ -15,6 +15,8 @@ import com.gg.server.domain.game.exception.GameNotExistException;
 import com.gg.server.domain.pchange.data.PChange;
 import com.gg.server.domain.pchange.data.PChangeRepository;
 
+import com.gg.server.domain.rank.data.RankRepository;
+import com.gg.server.domain.rank.exception.RankNotFoundException;
 import com.gg.server.domain.rank.redis.RankRedisService;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.exception.SeasonNotFoundException;
@@ -22,6 +24,7 @@ import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +35,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class GameAdminService {
 
     private final GameAdminRepository gameAdminRepository;
@@ -41,6 +45,7 @@ public class GameAdminService {
     private final PChangeAdminRepository pChangeAdminRepository;
     private final RankRedisService rankRedisService;
     private final TeamUserAdminRepository teamUserAdminRepository;
+    private final RankRepository rankRepository;
 
     @Transactional(readOnly = true)
     public GameLogListAdminResponseDto findAllGamesByAdmin(Pageable pageable) {
@@ -104,17 +109,19 @@ public class GameAdminService {
         // rankredis 에 ppp 다시 반영
         // rank zset 도 update
         // 이전 ppp, exp 되돌리기
+        // rank data 에 있는 ppp 되돌리기
+        log.info(pChanges + "");
+        if (teamUser.getTeam().getId().equals(reqDto.getTeam1Id())) {
+            teamUser.getTeam().updateScore(reqDto.getTeam1Score(), reqDto.getTeam1Score() > reqDto.getTeam2Score());
+        } else if (teamUser.getTeam().getId().equals(reqDto.getTeam2Id())) {
+            teamUser.getTeam().updateScore(reqDto.getTeam2Score(), reqDto.getTeam2Score() > reqDto.getTeam1Score());
+        }
         if (pChanges.size() == 1) {
             rankRedisService.rollbackRank(teamUser, season.getStartPpp(), season.getId());
             teamUser.getUser().updateExp(0);
         } else {
             rankRedisService.rollbackRank(teamUser, pChanges.get(1).getPppResult(), season.getId());
             teamUser.getUser().updateExp(pChanges.get(1).getExp());
-        }
-        if (teamUser.getTeam().getId().equals(reqDto.getTeam1Id())) {
-            teamUser.getTeam().updateScore(reqDto.getTeam1Score(), reqDto.getTeam1Score() > reqDto.getTeam2Score());
-        } else if (teamUser.getTeam().getId().equals(reqDto.getTeam2Id())) {
-            teamUser.getTeam().updateScore(reqDto.getTeam2Score(), reqDto.getTeam2Score() > reqDto.getTeam1Score());
         }
     }
 }
