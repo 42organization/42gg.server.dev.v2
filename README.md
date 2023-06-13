@@ -44,7 +44,7 @@ DB 테이블 변경에 따른 리빌딩 프로젝트
         <td align=center><a href="https://github.com/FeFe2200">이 철 @cheolee</a></td>
     </tr>
     <tr>
-        <td align=center>PM</td>
+        <td align=center>PM<br>Game기능 담당</td>
         <td align=center></td>
         <td align=center></td>
         <td align=center></td>
