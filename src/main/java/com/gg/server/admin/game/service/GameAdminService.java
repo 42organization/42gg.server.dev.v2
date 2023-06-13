@@ -25,6 +25,8 @@ import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -83,6 +85,12 @@ public class GameAdminService {
     }
 
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "rankGameListByIntra", allEntries = true),
+            @CacheEvict(value = "rankGameList", allEntries = true),
+            @CacheEvict(value = "allGameList", allEntries = true),
+            @CacheEvict(value = "allGameListByUser", allEntries = true)
+    })
     public void rankResultEdit(RankGamePPPModifyReqDto reqDto, Long gameId) {
         // 게임이 두명 다 가장 마지막 게임인지 확인 (그 game에 해당하는 팀이 맞는지 확인)
         List<TeamUser> teamUsers = teamUserAdminRepository.findUsersByTeamIdIn(List.of(reqDto.getTeam1Id(), reqDto.getTeam2Id()));
