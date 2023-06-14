@@ -78,7 +78,7 @@ jobs:
         run: |
           aws ec2 authorize-security-group-ingress --group-id ${{ secrets.AWS_MAIN_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
 
-      - name: executing docker-compose up on test server
+      - name: executing docker-compose up on main server
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.MAIN_SERVER_HOST }}
