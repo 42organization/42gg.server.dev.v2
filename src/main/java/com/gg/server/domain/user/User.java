@@ -83,4 +83,8 @@ public class User extends BaseTimeEntity implements Serializable {
     public void updateExp(int beforeExp) {
         this.totalExp = beforeExp;
     }
+
+    public void updateKakaoId(Long kakaoId) {
+        this.kakaoId = kakaoId;
+    }
 }
