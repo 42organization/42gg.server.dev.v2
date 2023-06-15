@@ -70,4 +70,10 @@ public class SlotManagement extends BaseTimeEntity {
             throw new SlotManagementForbiddenException();
         this.endTime = endTime;
     }
+
+    public void setNullEndTime() {
+        if (this.endTime == null)
+            throw new SlotManagementForbiddenException();
+        this.endTime = null;
+    }
 }

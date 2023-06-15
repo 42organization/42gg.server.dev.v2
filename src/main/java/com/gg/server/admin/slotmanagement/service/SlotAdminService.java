@@ -8,6 +8,7 @@ import com.gg.server.domain.slotmanagement.SlotManagement;
 import com.gg.server.domain.slotmanagement.exception.SlotManagementForbiddenException;
 import com.gg.server.domain.slotmanagement.exception.SlotManagementNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SlotAdminService {
@@ -39,6 +41,19 @@ public class SlotAdminService {
         SlotManagement slotManagement = new SlotManagement(requestDto);
 
         adminSlotManagementRepository.save(slotManagement);
+    }
+
+    @Transactional
+    public void delSlotSetting() {
+        List<SlotManagement> slotManagements = adminSlotManagementRepository.findAllByOrderByCreatedAtDesc();
+
+        SlotManagement slotManagement = slotManagements.get(0);
+        if (LocalDateTime.now().isAfter(slotManagement.getStartTime()))
+            throw new SlotManagementForbiddenException();
+        adminSlotManagementRepository.delete(slotManagement);
+
+        SlotManagement beforeSlotManagement = slotManagements.get(1);
+        beforeSlotManagement.setNullEndTime();
     }
 
     private void checkVaildSlotManagement(SlotCreateRequestDto requestDto) {

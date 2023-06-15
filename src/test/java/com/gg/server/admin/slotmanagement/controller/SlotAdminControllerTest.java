@@ -77,7 +77,7 @@ class SlotAdminControllerTest {
     void modifySlotSetting() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
         SlotCreateRequestDto test = new SlotCreateRequestDto(4,1,20,1,LocalDateTime.now().plusHours(13));
-
+        System.out.println(test.getStartTime());
         String content = objectMapper.writeValueAsString(test);
 
         String contentAsString = mockMvc.perform(post("/pingpong/admin/slot-management")
@@ -85,6 +85,38 @@ class SlotAdminControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
+
+        List<SlotManagement> slotList = adminSlotManagementRepository.findAllByOrderByCreatedAtDesc();
+        for(SlotManagement slot : slotList){
+            System.out.println(slot.getFutureSlotTime());
+            System.out.println(slot.getPastSlotTime());
+            System.out.println(slot.getGameInterval());
+            System.out.println(slot.getOpenMinute());
+            System.out.println(slot.getStartTime());
+            System.out.println(slot.getEndTime());
+            System.out.println("----------------------");
+        }
+    }
+
+    @Test
+    @DisplayName("[Delete]/pingpong/admin/slot-management")
+    void delSlotSetting() throws Exception {
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
+        SlotCreateRequestDto test = new SlotCreateRequestDto(4,1,20,1,LocalDateTime.now().plusHours(13));
+        System.out.println(test.getStartTime());
+        String content = objectMapper.writeValueAsString(test);
+
+        mockMvc.perform(post("/pingpong/admin/slot-management")
+                .content(content)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
+
+        String contentAsString = mockMvc.perform(delete("/pingpong/admin/slot-management")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isNoContent())
                 .andReturn().getResponse().getContentAsString();
 
         List<SlotManagement> slotList = adminSlotManagementRepository.findAllByOrderByCreatedAtDesc();

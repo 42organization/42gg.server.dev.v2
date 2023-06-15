@@ -2,7 +2,9 @@ package com.gg.server.admin.slotmanagement.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.slotmanagement.data.adminSlotManagementRepository;
+import com.gg.server.admin.slotmanagement.dto.SlotAdminDto;
 import com.gg.server.admin.slotmanagement.dto.SlotCreateRequestDto;
+import com.gg.server.domain.slotmanagement.SlotManagement;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -121,5 +125,29 @@ public class SlotAdminControllerFailTest {
                 .andReturn().getResponse().getContentAsString();
 
         System.out.println(contentAsString);
+    }
+
+    @Test
+    @DisplayName("fail[Delete]/pingpong/admin/slot-management")
+    void 슬롯정보가현재적용중인경우() throws Exception {
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
+
+        String contentAsString = mockMvc.perform(delete("/pingpong/admin/slot-management")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().is4xxClientError())
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println(contentAsString);
+
+        List<SlotManagement> slotManagements = adminSlotManagementRepository.findAllByOrderByCreatedAtDesc();
+        for (SlotManagement slot : slotManagements) {
+            System.out.println("-----------------------");
+            System.out.println(slot.getFutureSlotTime());
+            System.out.println(slot.getPastSlotTime());
+            System.out.println(slot.getOpenMinute());
+            System.out.println(slot.getStartTime());
+            System.out.println(slot.getEndTime());
+            System.out.println(slot.getId());
+        }
     }
 }
