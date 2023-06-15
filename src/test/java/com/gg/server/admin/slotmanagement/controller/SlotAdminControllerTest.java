@@ -103,9 +103,16 @@ class SlotAdminControllerTest {
     @DisplayName("[Delete]/pingpong/admin/slot-management")
     void delSlotSetting() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
-        SlotManagement test = new SlotManagement(4,1,20,1,LocalDateTime.now().plusHours(13), null);
-        adminSlotManagementRepository.save(test);
+        SlotCreateRequestDto test = new SlotCreateRequestDto(4,1,20,1,LocalDateTime.now().plusHours(13));
         System.out.println(test.getStartTime());
+        String content = objectMapper.writeValueAsString(test);
+
+        mockMvc.perform(post("/pingpong/admin/slot-management")
+                .content(content)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
 
         String contentAsString = mockMvc.perform(delete("/pingpong/admin/slot-management")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))

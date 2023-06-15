@@ -129,7 +129,7 @@ public class SlotAdminControllerFailTest {
 
     @Test
     @DisplayName("fail[Delete]/pingpong/admin/slot-management")
-    void 슬롯정보가1개일경우() throws Exception {
+    void 슬롯정보가현재적용중인경우() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
 
         String contentAsString = mockMvc.perform(delete("/pingpong/admin/slot-management")
