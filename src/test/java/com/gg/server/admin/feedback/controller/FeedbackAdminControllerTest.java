@@ -94,7 +94,7 @@ class FeedbackAdminControllerTest {
     }
 
     @Test
-    @DisplayName("[get]pingpong/admin/feedback/users?intraId=${intraId}&page=${pageNumber}&size={size}")
+    @DisplayName("[get]pingpong/admin/feedback?intraId=${intraId}&page=${pageNumber}&size={size}")
     void findFeedbackByIntraId() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
@@ -111,7 +111,7 @@ class FeedbackAdminControllerTest {
         Integer currentPage = 1;
         Integer pageSize = 5;//페이지 사이즈 크기가 실제 디비 정보보다 큰지 확인할 것
 
-        String url = "/pingpong/admin/feedback/users?intraId=" + user.getIntraId() + "&page=" + currentPage + "&size=" + pageSize;
+        String url = "/pingpong/admin/feedback?intraId=" + user.getIntraId() + "&page=" + currentPage + "&size=" + pageSize;
         Boolean status = feedback.getIsSolved();
 
         String contentAsString = mockMvc.perform(get(url)
