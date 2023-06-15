@@ -48,6 +48,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler({DuplicationException.class})
+    public ResponseEntity<ErrorResponse> duplicatedException(DuplicationException ex) {
+        log.error("Duplicated", ex.getStackTrace());
+        return new ResponseEntity<>(new ErrorResponse(ex.getErrorCode()), HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler({ForbiddenException.class})
     public ResponseEntity<ErrorResponse> forbiddenException(ForbiddenException ex) {
         log.error("forbidden", ex);
