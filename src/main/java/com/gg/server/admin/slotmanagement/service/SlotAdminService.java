@@ -41,6 +41,19 @@ public class SlotAdminService {
         adminSlotManagementRepository.save(slotManagement);
     }
 
+    @Transactional
+    public void delSlotSetting() {
+        List<SlotManagement> slotManagements = adminSlotManagementRepository.findAllByOrderByCreatedAtDesc();
+        if (slotManagements.size() <= 1)
+            throw new SlotManagementForbiddenException();
+
+        SlotManagement slotManagement = slotManagements.get(0);
+        adminSlotManagementRepository.delete(slotManagement);
+
+        SlotManagement beforeSlotManagement = slotManagements.get(1);
+        beforeSlotManagement.setNullEndTime();
+    }
+
     private void checkVaildSlotManagement(SlotCreateRequestDto requestDto) {
         if (requestDto.getPastSlotTime() > 23)
             throw new SlotManagementForbiddenException();
