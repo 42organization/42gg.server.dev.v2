@@ -48,9 +48,6 @@ public class SlotAdminService {
         List<SlotManagement> slotManagements = adminSlotManagementRepository.findAllByOrderByCreatedAtDesc();
 
         SlotManagement slotManagement = slotManagements.get(0);
-        log.error(slotManagement.getStartTime()+"");
-        log.error(LocalDateTime.now()+"");
-        log.error(LocalDateTime.now().isAfter(slotManagement.getStartTime())+"");
         if (LocalDateTime.now().isAfter(slotManagement.getStartTime()))
             throw new SlotManagementForbiddenException();
         adminSlotManagementRepository.delete(slotManagement);
