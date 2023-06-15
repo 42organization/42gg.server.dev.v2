@@ -24,23 +24,20 @@ public class FeedbackAdminController {
     private final FeedbackAdminService feedbackAdminService;
 
     @GetMapping
-    public FeedbackListAdminResponseDto feedbackAll(@ModelAttribute @Valid PageRequestDto req) {
+    public FeedbackListAdminResponseDto feedbackAll(@ModelAttribute @Valid FeedbackAdminPageRequestDto req) {
 
-        Pageable pageable = PageRequest.of(req.getPage() - 1, req.getSize(), Sort.by("isSolved").and(Sort.by("createdAt")));
-        return feedbackAdminService.findAllFeedback(pageable);
+        if (req.getIntraId() == null){
+            Pageable pageable = PageRequest.of(req.getPage() - 1, req.getSize(), Sort.by("isSolved").and(Sort.by("createdAt")));
+            return feedbackAdminService.findAllFeedback(pageable);
+        }
+        Pageable pageable = PageRequest.of(req.getPage() - 1, req.getSize(), Sort.by("intra_id").and(Sort.by("createdAt")));
+        return feedbackAdminService.findByPartsOfIntraId(req.getIntraId(), pageable);
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity feedbackIsSolvedToggle(@PathVariable @NotNull Long id){
-        feedbackAdminService.toggleFeedbackIsSolvedByAdmin(id);
+    @PatchMapping("/{feedbackId}")
+    public ResponseEntity feedbackIsSolvedToggle(@PathVariable @NotNull Long feedbackId){
+        feedbackAdminService.toggleFeedbackIsSolvedByAdmin(feedbackId);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping("/users")
-    public FeedbackListAdminResponseDto feedbackFindByIntraId(@ModelAttribute @Valid FeedbackAdminPageRequestDto req) {
-
-        Pageable pageable = PageRequest.of(req.getPage() - 1, req.getSize(), Sort.by("intra_id").and(Sort.by("createdAt")));
-
-        return feedbackAdminService.findByPartsOfIntraId(req.getIntraId(), pageable);
-    }
 }

@@ -7,7 +7,6 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 public class FeedbackAdminPageRequestDto extends PageRequestDto {
-    @NotNull(message = "plz. intraId")
     String intraId;
 
     public FeedbackAdminPageRequestDto(String intraId, Integer page, Integer size) {
