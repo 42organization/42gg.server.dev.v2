@@ -5,6 +5,7 @@ import com.gg.server.domain.game.dto.GameTeamInfo;
 import com.gg.server.domain.game.dto.PPPChangeResultResDto;
 import com.gg.server.domain.game.dto.req.*;
 import com.gg.server.domain.game.dto.GameListResDto;
+import com.gg.server.domain.game.exception.ScoreNotMatchedException;
 import com.gg.server.domain.game.service.GameFindService;
 import com.gg.server.domain.game.service.GameService;
 import com.gg.server.domain.user.dto.UserDto;
@@ -70,7 +71,7 @@ public class GameController {
             throw new InvalidParameterException("점수를 잘못 입력했습니다.", ErrorCode.VALID_FAILED);
         }
         if (!gameService.createRankResult(reqDto, user.getId())) {
-            return new ResponseEntity(HttpStatus.CONFLICT);
+            throw new ScoreNotMatchedException();
         }
         return new ResponseEntity(HttpStatus.CREATED);
     }

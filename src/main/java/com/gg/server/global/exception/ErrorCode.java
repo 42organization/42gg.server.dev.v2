@@ -61,7 +61,7 @@ public enum ErrorCode {
     UNAUTHORIZED(401, "CM004", "UNAUTHORIZED"),
     METHOD_NOT_ALLOWED(405, "CM005", "METHOD NOT ALLOWED"),
     PAGE_NOT_FOUND(404, "CM006", "PAGE NOT FOUND"),
-    VALID_FAILED(400, "GAME-ERR-400" , "Valid Test Failed."),
+    VALID_FAILED(400, "CM007" , "Valid Test Failed."),
     BAD_ARGU(400, "ARGUMENT-ERR-400", "잘못된 argument 입니다."),
 
     //Feedback

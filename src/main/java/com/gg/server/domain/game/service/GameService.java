@@ -6,7 +6,6 @@ import com.gg.server.domain.game.dto.*;
 import com.gg.server.domain.game.dto.req.NormalResultReqDto;
 import com.gg.server.domain.game.dto.req.RankResultReqDto;
 import com.gg.server.domain.game.exception.GameNotExistException;
-import com.gg.server.domain.game.exception.ScoreNotMatchedException;
 import com.gg.server.domain.pchange.data.PChange;
 import com.gg.server.domain.pchange.exception.PChangeNotExistException;
 import com.gg.server.domain.pchange.service.PChangeService;
