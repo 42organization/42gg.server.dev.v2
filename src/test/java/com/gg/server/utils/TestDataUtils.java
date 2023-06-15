@@ -146,7 +146,7 @@ public class TestDataUtils {
         return null;
     }
 
-    private GameInfoDto createGame(User curUser, LocalDateTime startTime, LocalDateTime endTime, Season season, Mode mode) {
+    public GameInfoDto createGame(User curUser, LocalDateTime startTime, LocalDateTime endTime, Season season, Mode mode) {
         LocalDateTime now = LocalDateTime.now();
         Game game;
         if (now.isBefore(startTime))
@@ -160,6 +160,7 @@ public class TestDataUtils {
         TeamUser teamUser = new TeamUser(myTeam, curUser);
         Team enemyTeam = new Team(game, -1, false);
         User enemyUser = createNewUser();
+        createUserRank(curUser, "statusMessage", season);
         createUserRank(enemyUser, "enemyUserMeassage", season);
         TeamUser enemyTeamUser = new TeamUser(enemyTeam, enemyUser);
         teamRepository.save(myTeam);
@@ -182,6 +183,8 @@ public class TestDataUtils {
     }
 
     public void createUserRank(User newUser, String statusMessage, Season season) {
+        if (rankRepository.findByUserIdAndSeasonId(newUser.getId(), season.getId()).isPresent())
+            return ;
         String zSetKey = RedisKeyManager.getZSetKey(season.getId());
         String hashKey = RedisKeyManager.getHashKey(season.getId());
         redisRepository.addRankData(hashKey, newUser.getId(),
