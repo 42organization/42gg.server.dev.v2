@@ -41,8 +41,8 @@ public class CookieUtil {
         String sameSite = appProperties.getAuth().getSameSite();
         ResponseCookie cookie = ResponseCookie.from(name, value)
                 .maxAge(maxAge)
-                .domain(domain)
-                .httpOnly(false)
+//                .domain(domain)
+//                .httpOnly(false)
                 .path("/")
                 .secure(true)
                 .sameSite(sameSite)
