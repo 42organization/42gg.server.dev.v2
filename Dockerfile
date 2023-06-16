@@ -3,7 +3,6 @@ FROM openjdk:11-jdk
 WORKDIR /app
 
 ARG JAR_FILE=build/libs/server-42gg.jar
-ARG PROFILE=default
 
 COPY ${JAR_FILE} .
 
