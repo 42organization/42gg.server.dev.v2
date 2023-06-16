@@ -15,8 +15,10 @@ import com.gg.server.domain.game.exception.GameNotExistException;
 import com.gg.server.domain.pchange.data.PChange;
 import com.gg.server.domain.pchange.data.PChangeRepository;
 
+import com.gg.server.domain.rank.data.Rank;
 import com.gg.server.domain.rank.data.RankRepository;
 import com.gg.server.domain.rank.exception.RankNotFoundException;
+import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisService;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.exception.SeasonNotFoundException;
@@ -98,15 +100,14 @@ public class GameAdminService {
                 .orElseThrow(GameNotExistException::new);
         Season season = seasonAdminRepository.findById(game.getSeason().getId())
                 .orElseThrow(SeasonNotFoundException::new);
+        if (!isRecentlyGame(teamUsers, gameId)) {
+            throw new NotRecentlyGameException();
+        }
         // pchange 가져와서 rank ppp 이전 값을 가지고 새 점수를 바탕으로 다시 계산
         for (TeamUser teamUser :
                 teamUsers) {
             List<PChange> pChanges = pChangeAdminRepository.findByTeamUser(teamUser.getUser().getId());
             rollbackGameResult(reqDto, season, teamUser, pChanges);
-            // 최근 pchange 지우기
-            if (!pChanges.get(0).getGame().getId().equals(gameId)) {
-                throw new NotRecentlyGameException();
-            }
             pChangeAdminRepository.delete(pChanges.get(0));
         }
         rankRedisService.updateRankRedis(teamUsers.get(0), teamUsers.get(1), game);
@@ -118,7 +119,6 @@ public class GameAdminService {
         // rank zset 도 update
         // 이전 ppp, exp 되돌리기
         // rank data 에 있는 ppp 되돌리기
-        log.info(pChanges + "");
         if (teamUser.getTeam().getId().equals(reqDto.getTeam1Id())) {
             teamUser.getTeam().updateScore(reqDto.getTeam1Score(), reqDto.getTeam1Score() > reqDto.getTeam2Score());
         } else if (teamUser.getTeam().getId().equals(reqDto.getTeam2Id())) {
@@ -131,5 +131,14 @@ public class GameAdminService {
             rankRedisService.rollbackRank(teamUser, pChanges.get(1).getPppResult(), season.getId());
             teamUser.getUser().updateExp(pChanges.get(1).getExp());
         }
+    }
+
+    private Boolean isRecentlyGame(List<TeamUser> teamUsers, Long gameId) {
+        for (TeamUser teamUser : teamUsers) {
+            List<PChange> pChanges = pChangeAdminRepository.findByTeamUser(teamUser.getUser().getId());
+            if (!pChanges.get(0).getGame().getId().equals(gameId))
+                return false;
+        }
+        return true;
     }
 }
