@@ -111,6 +111,8 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
         // 쿠키 시간 설정
         long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
 
+        String refTokenKey = RedisKeyManager.getRefKey(deletedUser.getId());
+        jwtRedisRepository.deleteRefToken(refTokenKey);
         // token 설정
         String accessToken = tokenProvider.createToken(remainedUser.getId());
         String refreshToken = tokenProvider.refreshToken(remainedUser.getId());
