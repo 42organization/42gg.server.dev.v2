@@ -38,16 +38,26 @@ public class CookieUtil {
 
     public void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
         String domain = applicationYmlRead.getDomain();
-        String sameSite = appProperties.getAuth().getSameSite();
-        ResponseCookie cookie = ResponseCookie.from(name, value)
-                .maxAge(maxAge)
+//        String sameSite = appProperties.getAuth().getSameSite();
+//        ResponseCookie cookie = ResponseCookie.from(name, value)
+//                .maxAge(maxAge)
 //                .domain(domain)
-                .httpOnly(false)
-                .path("/")
-                .secure(true)
-                .sameSite(sameSite)
-                .build();
-        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+//                .httpOnly(false)
+//                .path("/")
+//                .secure(true)
+//                .sameSite(sameSite)
+//                .build();
+//        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+        StringBuilder cookieBuilder = new StringBuilder();
+        cookieBuilder.append(name).append("=").append(value).append("; ");
+        cookieBuilder.append("Max-Age=").append(maxAge).append("; ");
+        cookieBuilder.append("Domain=").append(domain).append("; ");
+        cookieBuilder.append("HttpOnly=").append(false).append("; ");
+        cookieBuilder.append("Path=/; ");
+        cookieBuilder.append("Secure; ");
+        cookieBuilder.append("SameSite=None");
+        response.setHeader("Set-Cookie", cookieBuilder.toString());
     }
 
     public void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {
