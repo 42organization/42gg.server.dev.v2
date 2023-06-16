@@ -50,7 +50,48 @@ class SlotAdminControllerTest {
 
     @Test
     @DisplayName("[Get]/pingpong/admin/slot-management")
-    void getSlotSetting() throws Exception {
+    void getSlotSetting1() throws Exception {
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
+
+        SlotCreateRequestDto test = new SlotCreateRequestDto(4,1,20,1,LocalDateTime.now().plusHours(13));
+        System.out.println(test.getStartTime());
+        String content = objectMapper.writeValueAsString(test);
+        mockMvc.perform(post("/pingpong/admin/slot-management")
+                .content(content)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
+        SlotCreateRequestDto test2 = new SlotCreateRequestDto(4,1,20,1,LocalDateTime.now().plusHours(48));
+        System.out.println(test.getStartTime());
+        String content2 = objectMapper.writeValueAsString(test2);
+        mockMvc.perform(post("/pingpong/admin/slot-management")
+                .content(content2)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
+
+        String contentAsString = mockMvc.perform(get("/pingpong/admin/slot-management").header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        SlotListAdminResponseDto slotAdminDto = objectMapper.readValue(contentAsString, SlotListAdminResponseDto.class);
+
+        for(SlotAdminDto dto : slotAdminDto.getSlotList()){
+            System.out.println(dto.getFutureSlotTime());
+            System.out.println(dto.getPastSlotTime());
+            System.out.println(dto.getInterval());
+            System.out.println(dto.getOpenMinute());
+            System.out.println(dto.getStartTime());
+            System.out.println(dto.getEndTime());
+            System.out.println("----------------------");
+        }
+    }
+
+    @Test
+    @DisplayName("[Get]/pingpong/admin/slot-management")
+    void getSlotSetting2() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
 
@@ -68,8 +109,6 @@ class SlotAdminControllerTest {
             System.out.println(dto.getEndTime());
             System.out.println("----------------------");
         }
-
-
     }
 
     @Test
