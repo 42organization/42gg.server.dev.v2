@@ -76,7 +76,8 @@ jobs:
         key: ${{ secrets.TEST_SERVER_PEM }}
         script: |
           cd ./docker
-          docker-compose down
+          docker stop tomcat
+          docker rm tomcat
           docker rmi ${{ env.IMAGE_NAME }}:latest
           docker-compose up -d
 
