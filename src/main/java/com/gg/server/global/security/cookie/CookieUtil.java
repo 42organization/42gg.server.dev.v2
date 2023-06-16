@@ -47,7 +47,7 @@ public class CookieUtil {
                 .secure(true)
                 .sameSite(sameSite)
                 .build();
-
+        System.out.println("cookie = " + cookie.toString());
         response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
