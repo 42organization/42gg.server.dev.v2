@@ -132,6 +132,17 @@ public class SlotAdminControllerFailTest {
     void 슬롯정보가현재적용중인경우() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
 
+        List<SlotManagement> slotManagements = adminSlotManagementRepository.findAllByOrderByCreatedAtDesc();
+        for (SlotManagement slot : slotManagements) {
+            System.out.println("-----------------------");
+            System.out.println(slot.getFutureSlotTime());
+            System.out.println(slot.getPastSlotTime());
+            System.out.println(slot.getOpenMinute());
+            System.out.println(slot.getStartTime());
+            System.out.println(slot.getEndTime());
+            System.out.println(slot.getId());
+        }
+
         String contentAsString = mockMvc.perform(delete("/pingpong/admin/slot-management")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().is4xxClientError())
@@ -139,8 +150,8 @@ public class SlotAdminControllerFailTest {
 
         System.out.println(contentAsString);
 
-        List<SlotManagement> slotManagements = adminSlotManagementRepository.findAllByOrderByCreatedAtDesc();
-        for (SlotManagement slot : slotManagements) {
+        List<SlotManagement> slotManagements2 = adminSlotManagementRepository.findAllByOrderByCreatedAtDesc();
+        for (SlotManagement slot : slotManagements2) {
             System.out.println("-----------------------");
             System.out.println(slot.getFutureSlotTime());
             System.out.println(slot.getPastSlotTime());
