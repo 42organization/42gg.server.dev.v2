@@ -29,12 +29,13 @@ public class UserController {
     private final UserService userService;
     private final AppProperties appProperties;
     private final ApplicationYmlRead applicationYmlRead;
+    private final CookieUtil cookieUtil;
 
     @PostMapping("/accesstoken")
     public ResponseEntity<UserAccessTokenDto> generateAccessToken(@RequestParam String refreshToken, HttpServletResponse response) {
         UserJwtTokenDto result = userService.regenerate(refreshToken);
-        CookieUtil.addCookie(response, TokenHeaders.REFRESH_TOKEN, result.getRefreshToken(),
-                (int)(appProperties.getAuth().getRefreshTokenExpiry() / 1000), applicationYmlRead.getDomain());
+        cookieUtil.addCookie(response, TokenHeaders.REFRESH_TOKEN, result.getRefreshToken(),
+                (int)(appProperties.getAuth().getRefreshTokenExpiry() / 1000));
         return new ResponseEntity<>(new UserAccessTokenDto(result.getAccessToken()), HttpStatus.CREATED);
     }
 
@@ -82,7 +83,7 @@ public class UserController {
      */
     @GetMapping("/oauth/42")
     public void addOauthFortyTwo(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        CookieUtil.addCookie(response, TokenHeaders.ACCESS_TOKEN, HeaderUtil.getAccessToken(request), 100000, applicationYmlRead.getDomain());
+        cookieUtil.addCookie(response, TokenHeaders.ACCESS_TOKEN, HeaderUtil.getAccessToken(request), 100000);
         response.sendRedirect(applicationYmlRead.getFrontUrl() + "/oauth2/authorization/42");
     }
     /**
@@ -90,7 +91,7 @@ public class UserController {
      */
     @GetMapping("/oauth/kakao")
     public void addOauthKakao(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        CookieUtil.addCookie(response, TokenHeaders.ACCESS_TOKEN, HeaderUtil.getAccessToken(request),100000, applicationYmlRead.getDomain());
+        cookieUtil.addCookie(response, TokenHeaders.ACCESS_TOKEN, HeaderUtil.getAccessToken(request),100000);
         response.sendRedirect(applicationYmlRead.getFrontUrl() + "/oauth2/authorization/kakao");
     }
 
