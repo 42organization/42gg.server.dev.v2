@@ -89,13 +89,13 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
         User newUser = userRepository.findById(principal.getId()).orElseThrow(UserNotFoundException::new);
         //kakao 계정 사용자가 42 인증
         if (existUser.getRoleType().equals(RoleType.GUEST)) {
-            return UriComponentsBuilder.fromUriString(applicationYmlRead.getUserDetailFrontUrl())
+            return UriComponentsBuilder.fromUriString(applicationYmlRead.getFrontUrl() + "/users/detail")
                     .queryParam("token", getUserAccessToken(response, newUser, existUser))
                 .build().toUriString();
         }
         //기존 user 사용자가 카카오 인증
         if (newUser.getRoleType().equals(RoleType.GUEST)) {
-            return UriComponentsBuilder.fromUriString(applicationYmlRead.getUserDetailFrontUrl())
+            return UriComponentsBuilder.fromUriString(applicationYmlRead.getFrontUrl() + "/users/detail")
                     .queryParam("token", getUserAccessToken(response, existUser, newUser))
                     .build().toUriString();
         }

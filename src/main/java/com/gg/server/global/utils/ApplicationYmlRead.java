@@ -16,10 +16,6 @@ public class ApplicationYmlRead {
         return web.get("frontUrl");
     }
 
-    public String getUserDetailFrontUrl () {
-        return web.get("user-Detail-FrontUrl");
-    }
-
     public String getDomain(){
         return web.get("domain");
     }

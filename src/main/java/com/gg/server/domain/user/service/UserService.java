@@ -20,6 +20,7 @@ import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.UserRepository;
 import com.gg.server.domain.user.dto.*;
 import com.gg.server.domain.user.exception.TokenNotValidException;
+import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.SnsType;
 import com.gg.server.global.security.config.properties.AppProperties;
@@ -231,5 +232,11 @@ public class UserService {
 
     public User getUser(Long userId) {
         return userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User" + userId));
+    }
+
+    @Transactional
+    public void deleteKakaoId(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
+        user.updateKakaoId(null);
     }
 }

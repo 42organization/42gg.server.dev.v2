@@ -52,7 +52,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .authorizeRequests()
                         .antMatchers("/pingpong/admin/**").hasRole("ADMIN")
                         .antMatchers("/user").hasRole("USER")
-                    .antMatchers("/login", "/oauth2/authorization/**", "/",
+                    .antMatchers("/login", "/oauth2/authorization/**", "/", "/test/kakao",
+                            "/test/42",
                             "/pingpong/users/accesstoken",
                             "/swagger-ui/**", "/swagger-ui**", "/v3/api-docs/**", "/v3/api-docs**", "/api-docs").permitAll()
                         .anyRequest().authenticated()
@@ -76,14 +77,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource corsConfigSource = new UrlBasedCorsConfigurationSource();
-
         CorsConfiguration corsConfig = new CorsConfiguration();
         corsConfig.setAllowedHeaders(Arrays.asList(corsProperties.getAllowedHeaders().split(",")));
         corsConfig.setAllowedMethods(Arrays.asList(corsProperties.getAllowedMethods().split(",")));
         corsConfig.setAllowedOrigins(Arrays.asList(corsProperties.getAllowedOrigins().split(",")));
         corsConfig.setAllowCredentials(true);
         corsConfig.setMaxAge(corsConfig.getMaxAge());
-
         corsConfigSource.registerCorsConfiguration("/**", corsConfig);
         return corsConfigSource;
     }
