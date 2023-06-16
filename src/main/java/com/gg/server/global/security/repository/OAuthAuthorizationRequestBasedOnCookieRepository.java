@@ -20,7 +20,6 @@ public class OAuthAuthorizationRequestBasedOnCookieRepository implements Authori
     public static final String OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME = "oauth2_auth_request";
     public static final String REDIRECT_URI_PARAM_COOKIE_NAME = "redirect_uri";
     private static final int cookieExpireSeconds = 180;
-    private final ApplicationYmlRead applicationYmlRead;
     private final CookieUtil cookieUtil;
 
     @Override
@@ -52,9 +51,5 @@ public class OAuthAuthorizationRequestBasedOnCookieRepository implements Authori
         return this.loadAuthorizationRequest(request);
     }
 
-    public void removeAuthorizationRequestCookies(HttpServletRequest request, HttpServletResponse response) {
-        cookieUtil.deleteCookie(request, response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME);
-        cookieUtil.deleteCookie(request, response, REDIRECT_URI_PARAM_COOKIE_NAME);
-    }
 }
 

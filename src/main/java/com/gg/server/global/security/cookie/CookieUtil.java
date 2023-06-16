@@ -41,13 +41,12 @@ public class CookieUtil {
         String sameSite = appProperties.getAuth().getSameSite();
         ResponseCookie cookie = ResponseCookie.from(name, value)
                 .maxAge(maxAge)
-                .domain(domain)
+//                .domain(domain)
                 .httpOnly(false)
                 .path("/")
                 .secure(true)
                 .sameSite(sameSite)
                 .build();
-        System.out.println("cookie = " + cookie.toString());
         response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
