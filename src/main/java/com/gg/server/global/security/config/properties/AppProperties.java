@@ -24,6 +24,7 @@ public class AppProperties {
     public static class Auth {
         private String tokenSecret;
         private String refreshTokenSecret;
+        private String sameSite;
         private long tokenExpiry;
         private long refreshTokenExpiry;
     }

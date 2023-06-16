@@ -32,6 +32,7 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
     private final AuthTokenProvider tokenProvider;
     private final AppProperties appProperties;
     private final ApplicationYmlRead applicationYmlRead;
+    private final CookieUtil cookieUtil;
 
     @Transactional
     @Override
@@ -54,7 +55,7 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
         for (Cookie cookie :cookies) {
             if (cookie.getName().equals(TokenHeaders.ACCESS_TOKEN) ) {
                 Long existUserId = tokenProvider.getUserIdFromAccessToken(cookie.getValue());
-                CookieUtil.deleteCookie(request, response, TokenHeaders.ACCESS_TOKEN);
+                cookieUtil.deleteCookie(request, response, TokenHeaders.ACCESS_TOKEN);
                 if (existUserId != null) {
                     return deleteKakaoUser(existUserId, response, authentication);
                 } else {
@@ -71,8 +72,8 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
         String accessToken = tokenProvider.createToken(principal.getId());
         String refreshToken = tokenProvider.refreshToken(principal.getId());
 
-        CookieUtil.addCookie(response, TokenHeaders.REFRESH_TOKEN, refreshToken,
-                        (int)(refreshTokenExpiry / 1000), applicationYmlRead.getDomain());
+        cookieUtil.addCookie(response, TokenHeaders.REFRESH_TOKEN, refreshToken,
+                        (int)(refreshTokenExpiry / 1000));
 
         String refTokenKey = RedisKeyManager.getRefKey(principal.getId());
         if (jwtRedisRepository.getRefToken(refTokenKey) != null)
@@ -114,8 +115,8 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
         String accessToken = tokenProvider.createToken(remainedUser.getId());
         String refreshToken = tokenProvider.refreshToken(remainedUser.getId());
 
-        CookieUtil.addCookie(response, TokenHeaders.REFRESH_TOKEN, refreshToken,
-                (int)(refreshTokenExpiry / 1000), applicationYmlRead.getDomain());
+        cookieUtil.addCookie(response, TokenHeaders.REFRESH_TOKEN, refreshToken,
+                (int)(refreshTokenExpiry / 1000));
         return accessToken;
     }
 
