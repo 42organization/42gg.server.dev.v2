@@ -37,10 +37,7 @@ jobs:
       - name: Make application ymls
         run: |
           cd ./src/main/resources
-          touch ./application.yml
-          touch ./application-main.yml
-          echo "${{ secrets.YML_ACTIVE_MAIN }}" | base64 -d > application.yml
-          echo "${{ secrets.APPLICATION_MAIN_YML }}" | base64 -d > application-main.yml
+          echo "${{ secrets.APPLICATION_YML }}" | base64 -d > application.yml
         shell: bash
 
       - name: Login to Docker Hub
@@ -50,7 +47,7 @@ jobs:
           password: ${{ env.DOCKER_PASSWORD }}
 
       - name: Build with Gradle
-        run: ./gradlew bootWar
+        run: ./gradlew clean build
 
       - name: Store latest image as new tag
         run: |
@@ -60,7 +57,7 @@ jobs:
 
       - name: build new docker image as latest tag
         run: |
-          docker build -t ${{ env.IMAGE_NAME }}:latest .
+          docker build --build-arg PROFILE=main -t ${{ env.IMAGE_NAME }}:latest .
           docker push ${{ env.IMAGE_NAME }}:latest
 
       - name: Get Github Actions IP
