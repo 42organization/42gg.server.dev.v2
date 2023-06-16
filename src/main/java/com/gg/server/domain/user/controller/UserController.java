@@ -7,8 +7,11 @@ import com.gg.server.global.security.config.properties.AppProperties;
 import com.gg.server.global.security.cookie.CookieUtil;
 import com.gg.server.global.security.jwt.utils.TokenHeaders;
 import com.gg.server.global.utils.ApplicationYmlRead;
+import com.gg.server.global.utils.HeaderUtil;
 import com.gg.server.global.utils.argumentresolver.Login;
 import io.swagger.v3.oas.annotations.Parameter;
+import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
@@ -23,10 +26,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/pingpong/users")
 public class UserController {
-
     private final UserService userService;
     private final AppProperties appProperties;
-
     private final ApplicationYmlRead applicationYmlRead;
 
     @PostMapping("/accesstoken")
@@ -75,5 +76,31 @@ public class UserController {
                 userModifyRequestDto.getSnsNotiOpt(), intraId);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
+
+    /**
+     *기존 카카오 유저 42 로그인 인증
+     */
+    @GetMapping("/oauth/42")
+    public void addOauthFortyTwo(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        CookieUtil.addCookie(response, TokenHeaders.ACCESS_TOKEN, HeaderUtil.getAccessToken(request), 100000, applicationYmlRead.getDomain());
+        response.sendRedirect(applicationYmlRead.getFrontUrl() + "/oauth2/authorization/42");
+    }
+    /**
+     *기존 42user 카카오 로그인 인증
+     */
+    @GetMapping("/oauth/kakao")
+    public void addOauthKakao(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        CookieUtil.addCookie(response, TokenHeaders.ACCESS_TOKEN, HeaderUtil.getAccessToken(request),100000, applicationYmlRead.getDomain());
+        response.sendRedirect(applicationYmlRead.getFrontUrl() + "/oauth2/authorization/kakao");
+    }
+
+    /**
+     * 42user 카카오 로그인 연동 해제
+     */
+    @DeleteMapping("/oauth/kakao")
+    public void deleteOauthKakao(@Parameter(hidden = true) @Login UserDto user) {
+        userService.deleteKakaoId(user.getId());
+    }
+
 
 }
