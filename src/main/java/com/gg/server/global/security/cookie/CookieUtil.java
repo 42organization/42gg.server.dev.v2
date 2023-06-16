@@ -29,11 +29,11 @@ public class CookieUtil {
     public static void addCookie(HttpServletResponse response, String name, String value, int maxAge, String domain) {
         ResponseCookie cookie = ResponseCookie.from(name, value)
                 .maxAge(maxAge)
-                .domain(domain)
+//                .domain(domain)
                 .httpOnly(false)
                 .path("/")
                 .secure(true)
-                .sameSite(SameSite.NONE.attributeValue())
+//                .sameSite(SameSite.NONE.attributeValue())
                 .build();
 
         response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
