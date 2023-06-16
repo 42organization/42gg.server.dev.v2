@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -81,13 +82,15 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     private void createUserRank(User savedUser) {
-        Season currentSeason = seasonRepository.findCurrentSeason(LocalDateTime.now())
-                .orElseThrow(() -> new NoSuchElementException("현재 시즌이 없습니다."));
-        Rank userRank = Rank.from(savedUser, currentSeason, currentSeason.getStartPpp());
-        rankRepository.save(userRank);
-        RankRedis rankRedis = RankRedis.from(UserDto.from(savedUser), currentSeason.getStartPpp());
-        String hashKey = RedisKeyManager.getHashKey(currentSeason.getId());
-        rankRedisRepository.addRankData(hashKey, savedUser.getId(), rankRedis);
+        seasonRepository.findCurrentAndNewSeason(LocalDateTime.now()).forEach(
+            season -> {
+                Rank userRank = Rank.from(savedUser, season, season.getStartPpp());
+                rankRepository.save(userRank);
+                RankRedis rankRedis = RankRedis.from(UserDto.from(savedUser), season.getStartPpp());
+                String hashKey = RedisKeyManager.getHashKey(season.getId());
+                rankRedisRepository.addRankData(hashKey, savedUser.getId(), rankRedis);
+            }
+        );
     }
 
     private User createUser(OAuthUserInfo userInfo) {
