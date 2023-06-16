@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface adminSlotManagementRepository extends JpaRepository<SlotManagement, Long> {
     @Query("select slot from SlotManagement slot where slot.endTime > :nowTime or slot.startTime > :nowTime or slot.endTime = null order by slot.startTime desc")
-    List<SlotManagement> findAllApplyByOrderByStartTimeDesc(@Param("nowTime")LocalDateTime nowTime);
+    List<SlotManagement> findAfterNowSlotManagement(@Param("nowTime")LocalDateTime nowTime);
 
     List<SlotManagement> findAllByOrderByCreatedAtDesc();
 
