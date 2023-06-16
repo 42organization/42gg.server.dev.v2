@@ -44,10 +44,10 @@ DB 테이블 변경에 따른 리빌딩 프로젝트
         <td align=center><a href="https://github.com/FeFe2200">이 철 @cheolee</a></td>
     </tr>
     <tr>
-        <td align=center>PM</td>
+        <td align=center>PM<br>Game기능 담당</td>
+        <td align=center></td>
         <td align=center>매칭 기능<br>
 로그인기능 일부담당<br>관리자페이지 기능<br>일부담당</td>
-        <td align=center></td>
         <td align=center></td>
         <td align=center>관리자기능<br>일부 및 <br>로그 담당</td>
     </tr>
