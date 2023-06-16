@@ -8,6 +8,7 @@ import com.gg.server.domain.slotmanagement.SlotManagement;
 import com.gg.server.domain.slotmanagement.exception.SlotManagementForbiddenException;
 import com.gg.server.domain.slotmanagement.exception.SlotManagementNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SlotAdminService {
@@ -68,7 +70,10 @@ public class SlotAdminService {
     private void updateNowSlotManagementEndTime(LocalDateTime endTime){
         SlotManagement nowSlotManagement = adminSlotManagementRepository.findFirstByOrderByIdDesc()
                 .orElseThrow(() -> new SlotManagementNotFoundException());
-        LocalDateTime nowFutureSlotTime = LocalDateTime.now().plusHours(nowSlotManagement.getFutureSlotTime());
+
+        LocalDateTime nowFutureSlotTime = LocalDateTime.now().isAfter(nowSlotManagement.getStartTime())
+                ?LocalDateTime.now().plusHours(nowSlotManagement.getFutureSlotTime())
+                :nowSlotManagement.getStartTime().plusHours(nowSlotManagement.getFutureSlotTime());
 
         if (nowFutureSlotTime.isAfter(endTime))
             throw new SlotManagementForbiddenException();
