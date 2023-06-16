@@ -10,9 +10,9 @@ import java.util.Locale;
 @Getter
 @RequiredArgsConstructor
 public enum PenaltyType {
-    NONE("NONE"),
-    NOSHOW("NOSHOW"),
-    CANCEL("CANCEL");
+    NONE("none"),
+    NOSHOW("noshow"),
+    CANCEL("cancel");
 
     private final String code;
 
