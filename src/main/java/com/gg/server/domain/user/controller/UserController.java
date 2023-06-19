@@ -72,7 +72,11 @@ public class UserController {
     }
 
     @PutMapping("{intraId}")
-    public ResponseEntity doModifyUser (@Valid @RequestBody UserModifyRequestDto userModifyRequestDto, @PathVariable String intraId) {
+    public ResponseEntity doModifyUser (@Valid @RequestBody UserModifyRequestDto userModifyRequestDto,
+                                        @PathVariable String intraId, @Parameter(hidden = true) @Login UserDto loginUser) {
+        if (!loginUser.getIntraId().equals(intraId)) {
+            return new ResponseEntity(HttpStatus.FORBIDDEN);
+        }
         userService.updateUser(userModifyRequestDto.getRacketType(), userModifyRequestDto.getStatusMessage(),
                 userModifyRequestDto.getSnsNotiOpt(), intraId);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
