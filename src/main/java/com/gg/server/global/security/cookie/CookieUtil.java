@@ -21,7 +21,6 @@ import java.util.Optional;
 public class CookieUtil {
 
     private final ApplicationYmlRead applicationYmlRead;
-    private final AppProperties appProperties;
 
     public Optional<Cookie> getCookie(HttpServletRequest request, String name) {
         Cookie[] cookies = request.getCookies();
@@ -38,26 +37,25 @@ public class CookieUtil {
 
     public void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
         String domain = applicationYmlRead.getDomain();
-        String sameSite = appProperties.getAuth().getSameSite();
         ResponseCookie cookie = ResponseCookie.from(name, value)
                 .maxAge(maxAge)
-//                .domain(domain)
+                .domain(domain)
                 .httpOnly(false)
                 .path("/")
                 .secure(true)
-                .sameSite(sameSite)
                 .build();
-        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-
-//        StringBuilder cookieBuilder = new StringBuilder();
-//        cookieBuilder.append(name).append("=").append(value).append("; ");
-//        cookieBuilder.append("Max-Age=").append(maxAge).append("; ");
-//        cookieBuilder.append("Domain=").append(domain).append("; ");
-//        cookieBuilder.append("HttpOnly=").append(false).append("; ");
-//        cookieBuilder.append("Path=/; ");
-//        cookieBuilder.append("Secure; ");
-//        cookieBuilder.append("SameSite=None");
-//        response.setHeader("Set-Cookie", cookieBuilder.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+    }
+    public void deleteCookie(HttpServletResponse response, String name) {
+        String domain = applicationYmlRead.getDomain();
+        ResponseCookie cookie = ResponseCookie.from(name, null)
+                .maxAge(0)
+                .domain(domain)
+                .httpOnly(false)
+                .path("/")
+                .secure(true)
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
     public void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {

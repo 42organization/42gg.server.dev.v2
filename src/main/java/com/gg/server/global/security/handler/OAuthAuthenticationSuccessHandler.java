@@ -55,7 +55,7 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
         for (Cookie cookie :cookies) {
             if (cookie.getName().equals(TokenHeaders.ACCESS_TOKEN) ) {
                 Long existUserId = tokenProvider.getUserIdFromAccessToken(cookie.getValue());
-                cookieUtil.deleteCookie(request, response, TokenHeaders.ACCESS_TOKEN);
+                cookieUtil.deleteCookie(response, TokenHeaders.ACCESS_TOKEN);
                 if (existUserId != null) {
                     return deleteKakaoUser(existUserId, response, authentication);
                 } else {
@@ -76,8 +76,7 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
                         (int)(refreshTokenExpiry / 1000));
 
         String refTokenKey = RedisKeyManager.getRefKey(principal.getId());
-        if (jwtRedisRepository.getRefToken(refTokenKey) != null)
-            jwtRedisRepository.deleteRefToken(refTokenKey);
+        jwtRedisRepository.deleteRefToken(refTokenKey);
         jwtRedisRepository.addRefToken(refTokenKey, refreshToken, refreshTokenExpiry);
         return UriComponentsBuilder.fromUriString(applicationYmlRead.getFrontUrl())
                 .queryParam("token", accessToken)
@@ -90,32 +89,37 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
         User newUser = userRepository.findById(principal.getId()).orElseThrow(UserNotFoundException::new);
         //kakao 계정 사용자가 42 인증
         if (existUser.getRoleType().equals(RoleType.GUEST)) {
-            return UriComponentsBuilder.fromUriString(applicationYmlRead.getFrontUrl() + "/users/detail")
-                    .queryParam("token", getUserAccessToken(response, newUser, existUser))
+            return UriComponentsBuilder.fromUriString(applicationYmlRead.getFrontUrl() + "/users/detail?intraId=" + newUser.getIntraId())
+                    .queryParam("token", saveAndGetUserAccessToken(response, newUser, existUser))
                 .build().toUriString();
         }
         //기존 user 사용자가 카카오 인증
         if (newUser.getRoleType().equals(RoleType.GUEST)) {
-            return UriComponentsBuilder.fromUriString(applicationYmlRead.getFrontUrl() + "/users/detail")
-                    .queryParam("token", getUserAccessToken(response, existUser, newUser))
+            return UriComponentsBuilder.fromUriString(applicationYmlRead.getFrontUrl() + "/users/detail?intraId=" + existUser.getIntraId())
+                    .queryParam("token", saveAndGetUserAccessToken(response, existUser, newUser))
                     .build().toUriString();
         }
         throw new UserNotFoundException();
     }
 
 
-    private String getUserAccessToken(HttpServletResponse response,
+    private String saveAndGetUserAccessToken(HttpServletResponse response,
                                         User remainedUser, User deletedUser) {
         remainedUser.updateKakaoId(deletedUser.getKakaoId());
-        userRepository.delete(deletedUser);
         // 쿠키 시간 설정
         long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
 
-        String refTokenKey = RedisKeyManager.getRefKey(deletedUser.getId());
-        jwtRedisRepository.deleteRefToken(refTokenKey);
+        String remainTokenKey = RedisKeyManager.getRefKey(remainedUser.getId());
+        String deleteTokenKey = RedisKeyManager.getRefKey(deletedUser.getId());
+        jwtRedisRepository.deleteRefToken(deleteTokenKey);
+        jwtRedisRepository.deleteRefToken(remainTokenKey);
+
+        userRepository.delete(deletedUser);
+
         // token 설정
         String accessToken = tokenProvider.createToken(remainedUser.getId());
         String refreshToken = tokenProvider.refreshToken(remainedUser.getId());
+        jwtRedisRepository.addRefToken(remainTokenKey, refreshToken, refreshTokenExpiry);
 
         cookieUtil.addCookie(response, TokenHeaders.REFRESH_TOKEN, refreshToken,
                 (int)(refreshTokenExpiry / 1000));
