@@ -81,17 +81,17 @@ public class UserController {
     /**
      *기존 카카오 유저 42 로그인 인증
      */
-    @GetMapping("/oauth/42")
-    public void addOauthFortyTwo(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        cookieUtil.addCookie(response, TokenHeaders.ACCESS_TOKEN, HeaderUtil.getAccessToken(request), 100000);
+    @PostMapping("/oauth/42")
+    public void addOauthFortyTwo(@RequestParam String accessToken, HttpServletResponse response) throws IOException {
+        cookieUtil.addCookie(response, TokenHeaders.ACCESS_TOKEN, accessToken, -1);
         response.sendRedirect(applicationYmlRead.getFrontUrl() + "/oauth2/authorization/42");
     }
     /**
      *기존 42user 카카오 로그인 인증
      */
-    @GetMapping("/oauth/kakao")
-    public void addOauthKakao(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        cookieUtil.addCookie(response, TokenHeaders.ACCESS_TOKEN, HeaderUtil.getAccessToken(request),100000);
+    @PostMapping("/oauth/kakao")
+    public void addOauthKakao(@RequestParam String accessToken, HttpServletResponse response) throws IOException {
+        cookieUtil.addCookie(response, TokenHeaders.ACCESS_TOKEN, accessToken,-1);
         response.sendRedirect(applicationYmlRead.getFrontUrl() + "/oauth2/authorization/kakao");
     }
 

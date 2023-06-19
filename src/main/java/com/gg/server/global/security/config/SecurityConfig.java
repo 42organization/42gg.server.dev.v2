@@ -52,8 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .authorizeRequests()
                         .antMatchers("/pingpong/admin/**").hasRole("ADMIN")
                         .antMatchers("/user").hasRole("USER")
-                    .antMatchers("/login", "/oauth2/authorization/**", "/", "/test/kakao",
-                            "/test/42",
+                    .antMatchers("/login", "/oauth2/authorization/**", "/","/pingpong/users/oauth/**",
                             "/pingpong/users/accesstoken",
                             "/swagger-ui/**", "/swagger-ui**", "/v3/api-docs/**", "/v3/api-docs**", "/api-docs").permitAll()
                         .anyRequest().authenticated()
