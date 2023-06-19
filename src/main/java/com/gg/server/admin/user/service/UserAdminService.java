@@ -20,6 +20,7 @@ import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.exception.SeasonNotFoundException;
 import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.exception.UserNotFoundException;
+import com.gg.server.domain.user.service.UserFindService;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.global.exception.ErrorCode;
@@ -52,13 +53,14 @@ public class UserAdminService {
     private final RankRedisRepository rankRedisRepository;
     private final RankRedisAdminService rankRedisAdminService;
     private final AsyncNewUserImageUploader asyncNewUserImageUploader;
+    private final UserFindService userFindService;
 
     @Transactional(readOnly = true)
     public UserSearchAdminResponseDto searchAll(Pageable pageable) {
         Page<User> userPage = userAdminRepository.findAll(pageable);
         List<UserSearchAdminDto> userSearchAdminDtos = new ArrayList<UserSearchAdminDto>();
         for (User user : userPage.getContent())
-            userSearchAdminDtos.add(new UserSearchAdminDto(user, getUserStatusMessage(user)));
+            userSearchAdminDtos.add(new UserSearchAdminDto(user, userFindService.getUserStatusMessage(user)));
         return new UserSearchAdminResponseDto(userSearchAdminDtos, userPage.getTotalPages());
     }
 
@@ -67,7 +69,7 @@ public class UserAdminService {
         Page<User> userPage = userAdminRepository.findByIntraId(pageable, intraId);
         List<UserSearchAdminDto> userSearchAdminDtos = new ArrayList<UserSearchAdminDto>();
         for (User user : userPage.getContent())
-            userSearchAdminDtos.add(new UserSearchAdminDto(user, getUserStatusMessage(user)));
+            userSearchAdminDtos.add(new UserSearchAdminDto(user, userFindService.getUserStatusMessage(user)));
         return new UserSearchAdminResponseDto(userSearchAdminDtos, userPage.getTotalPages());
     }
 
@@ -77,7 +79,7 @@ public class UserAdminService {
         Page<User> userPage = userAdminRepository.findByIntraIdContains(pageable, intraId);
         List<UserSearchAdminDto> userSearchAdminDtos = new ArrayList<UserSearchAdminDto>();
         for (User user : userPage.getContent())
-            userSearchAdminDtos.add(new UserSearchAdminDto(user, getUserStatusMessage(user)));
+            userSearchAdminDtos.add(new UserSearchAdminDto(user, userFindService.getUserStatusMessage(user)));
         return new UserSearchAdminResponseDto(userSearchAdminDtos, userPage.getTotalPages());
     }
 
@@ -117,16 +119,5 @@ public class UserAdminService {
         rankRedisAdminService.updateRankUser(RedisKeyManager.getHashKey(currSeasonId),
                 RedisKeyManager.getZSetKey(currSeasonId),
                 userId, userCurrRankRedis);
-    }
-    private String getUserStatusMessage(User targetUser) {
-        Season currentSeason = seasonAdminRepository.findCurrentSeason(LocalDateTime.now())
-                .orElseThrow(() -> new SeasonNotFoundException());
-        String hashKey = RedisKeyManager.getHashKey(currentSeason.getId());
-        try{
-            RankRedis userRank = rankRedisRepository.findRankByUserId(hashKey, targetUser.getId());
-            return userRank.getStatusMessage();
-        }catch (RedisDataNotFoundException e) {
-            return "";
-        }
     }
 }

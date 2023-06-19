@@ -137,18 +137,8 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserDetailResponseDto getUserDetail(String targetUserIntraId) {
         User targetUser = userFindService.findByIntraId(targetUserIntraId);
-        String statusMessage = getUserStatusMessage(targetUser);
+        String statusMessage = userFindService.getUserStatusMessage(targetUser);
         return new UserDetailResponseDto(targetUser, statusMessage);
-    }
-
-    private String getUserStatusMessage(User targetUser) {
-        Season currentSeason = seasonFindService.findCurrentSeason(LocalDateTime.now());
-        String hashKey = RedisKeyManager.getHashKey(currentSeason.getId());
-        RankRedis userRank = rankRedisRepository.findRankByUserId(hashKey, targetUser.getId());
-        if (userRank == null)
-            return "";
-        else
-            return userRank.getStatusMessage();
     }
 
     @Transactional
