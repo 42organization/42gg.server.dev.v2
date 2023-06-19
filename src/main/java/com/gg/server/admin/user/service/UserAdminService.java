@@ -12,6 +12,7 @@ import com.gg.server.domain.rank.data.Rank;
 import com.gg.server.domain.rank.data.RankRepository;
 import com.gg.server.domain.rank.exception.RankNotFoundException;
 import com.gg.server.domain.rank.exception.RankUpdateException;
+import com.gg.server.domain.rank.exception.RedisDataNotFoundException;
 import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
@@ -27,6 +28,7 @@ import lombok.AllArgsConstructor;
 import org.apache.tomcat.jni.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.convert.RedisData;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -120,10 +122,11 @@ public class UserAdminService {
         Season currentSeason = seasonAdminRepository.findCurrentSeason(LocalDateTime.now())
                 .orElseThrow(() -> new SeasonNotFoundException());
         String hashKey = RedisKeyManager.getHashKey(currentSeason.getId());
-        RankRedis userRank = rankRedisRepository.findRankByUserId(hashKey, targetUser.getId());
-        if (userRank == null)
-            return "";
-        else
+        try{
+            RankRedis userRank = rankRedisRepository.findRankByUserId(hashKey, targetUser.getId());
             return userRank.getStatusMessage();
+        }catch (RedisDataNotFoundException e) {
+            return "";
+        }
     }
 }
