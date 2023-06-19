@@ -39,7 +39,7 @@ public class CookieUtil {
         String domain = applicationYmlRead.getDomain();
         ResponseCookie cookie = ResponseCookie.from(name, value)
                 .maxAge(maxAge)
-                .domain(domain)
+//                .domain(domain)
                 .httpOnly(false)
                 .path("/")
                 .secure(true)
