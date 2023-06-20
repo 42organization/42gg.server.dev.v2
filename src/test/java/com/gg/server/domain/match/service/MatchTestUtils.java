@@ -44,6 +44,21 @@ public class MatchTestUtils {
         return user;
     }
 
+    public User createGuestUser() {
+        String randomId = UUID.randomUUID().toString().substring(0, 30);
+        User user = User.builder()
+                .eMail("email")
+                .intraId(randomId)
+                .imageUri("image")
+                .racketType(RacketType.PENHOLDER)
+                .snsNotiOpt(SnsType.NONE)
+                .roleType(RoleType.GUEST)
+                .totalExp(1000)
+                .build();
+        userRepository.save(user);
+        return user;
+    }
+
     public RankRedis addUsertoRankRedis(Long userId, Integer ppp, Long seasonId) {
         String randomId = UUID.randomUUID().toString();
         RankRedis rankRedis = new RankRedis(userId,  randomId, ppp, 0, 0,"test", "");

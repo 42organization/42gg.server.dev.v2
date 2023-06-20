@@ -23,6 +23,7 @@ import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
 import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
+import com.gg.server.domain.user.type.RoleType;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -65,17 +66,22 @@ public class MatchFindService {
     }
 
     @Transactional(readOnly = true)
-    public SlotStatusResponseListDto getAllMatchStatus(Long userId, Option option) {
+    public SlotStatusResponseListDto getAllMatchStatus(UserDto userDto, Option option) {
         SlotManagement slotManagement = slotManagementRepository.findCurrent(LocalDateTime.now())
                 .orElseThrow(SlotNotFoundException::new);
         Season season = seasonFindService.findCurrentSeason(LocalDateTime.now());
-        RankRedis user = rankRedisRepository.
-                findRankByUserId(RedisKeyManager.getHashKey(season.getId()), userId);
+        RankRedis user;
+        if (userDto.getRoleType().equals(RoleType.GUEST)) {
+            user = RankRedis.from(userDto, season.getStartPpp());
+        } else {
+            user = rankRedisRepository.
+                    findRankByUserId(RedisKeyManager.getHashKey(season.getId()), userDto.getId());
+        }
         SlotGenerator slotGenerator = new SlotGenerator(user, slotManagement, season, option);
         List<Game> games = gameRepository.findAllBetween(slotGenerator.getNow(), slotGenerator.getMaxTime());
         slotGenerator.addPastSlots();
         slotGenerator.addMatchedSlots(games);
-        Optional<Game> myGame = gameRepository.findByStatusTypeAndUserId(StatusType.BEFORE, userId);
+        Optional<Game> myGame = gameRepository.findByStatusTypeAndUserId(StatusType.BEFORE, userDto.getId());
         if (myGame.isPresent()) {
             groupEnrolledSlots(slotGenerator, myGame.get());
         } else {

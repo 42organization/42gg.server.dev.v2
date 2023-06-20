@@ -47,7 +47,7 @@ public class MatchController {
     @GetMapping("match/time/scope")
     public SlotStatusResponseListDto getMatchTimeScope(@RequestParam (required = true) String mode,
                                                        @Parameter(hidden = true) @Login UserDto user){
-        return matchFindService.getAllMatchStatus(user.getId(), Option.getEnumValue(mode));
+        return matchFindService.getAllMatchStatus(user, Option.getEnumValue(mode));
     }
 
     @GetMapping("match")
