@@ -68,7 +68,7 @@ public class PenaltyAdminService {
     public void deletePenalty(Long penaltyId) {
         Penalty penalty = penaltyRepository.findById(penaltyId).orElseThrow(()
         -> new PenaltyNotFoundException());
-        if (penalty.getStartTime().plusHours(penalty.getPenaltyTime()).isBefore(LocalDateTime.now())) {
+        if (penalty.getStartTime().plusMinutes(penalty.getPenaltyTime()).isBefore(LocalDateTime.now())) {
             throw new PenaltyExpiredException();
         }
         RedisPenaltyUser penaltyUser = penaltyUserAdminRedisRepository
@@ -104,7 +104,7 @@ public class PenaltyAdminService {
         }
         for (Penalty afterPenalty : afterPenalties) {
             afterPenalty.updateStartTime(newStartTime);
-            newStartTime = newStartTime.plusHours(afterPenalty.getPenaltyTime());
+            newStartTime = newStartTime.plusMinutes(afterPenalty.getPenaltyTime());
         }
     }
 }
