@@ -132,6 +132,13 @@ class MatchServiceTest {
         Optional<Game> game2 = gameRepository.findByStartTime(slotTimes.get(1));
         Assertions.assertThat(game1).isPresent();
         Assertions.assertThat(game2).isPresent();
+        System.out.println("normal user + matchService = " + matchFindService.getAllMatchStatus(UserDto.from(users.get(0)), Option.NORMAL));
+        System.out.println();
+        System.out.println("normal user both + matchService = " + matchFindService.getAllMatchStatus(UserDto.from(users.get(0)), Option.BOTH));
+        System.out.println("both user + matchService = " + matchFindService.getAllMatchStatus(UserDto.from(users.get(1)),
+                Option.BOTH));
+        System.out.println("both user normal matchService = " + matchFindService.getAllMatchStatus(UserDto.from(users.get(1)),
+                Option.NORMAL));
     }
 
     @DisplayName("Queue에 매칭 가능한 normal 상대가 있을 경우 게임 생성")
@@ -258,7 +265,7 @@ class MatchServiceTest {
         matchService.makeMatch(UserDto.from(users.get(0)), Option.RANK, slotTimes.get(4));
         matchService.makeMatch(UserDto.from(users.get(1)), Option.RANK, slotTimes.get(1));
         matchService.makeMatch(UserDto.from(users.get(2)), Option.NORMAL, slotTimes.get(2));
-        SlotStatusResponseListDto slotStatusList = matchFindService.getAllMatchStatus(users.get(0).getId(),
+        SlotStatusResponseListDto slotStatusList = matchFindService.getAllMatchStatus(UserDto.from(users.get(0)),
                 Option.NORMAL);
         for (int i = 0; i < 3; i++) {
             System.out.println("slotTimes = " + String.valueOf(i) + slotTimes.get(i));
@@ -291,7 +298,7 @@ class MatchServiceTest {
         }
         matchService.makeMatch(UserDto.from(users.get(1)), Option.NORMAL, slotTimes.get(3));
         matchService.makeMatch(UserDto.from(users.get(2)), Option.NORMAL, slotTimes.get(3));
-        SlotStatusResponseListDto slotStatusList = matchFindService.getAllMatchStatus(users.get(0).getId(),
+        SlotStatusResponseListDto slotStatusList = matchFindService.getAllMatchStatus(UserDto.from(users.get(0)),
                 Option.NORMAL);
         for (List<SlotStatusDto> dtos : slotStatusList.getMatchBoards()) {
             for (SlotStatusDto dto: dtos) {
@@ -348,5 +355,16 @@ class MatchServiceTest {
             Assertions.assertThat(match.get(i).getStartTime()).isEqualTo(slotTimes.get(i));
             Assertions.assertThat(match.get(i).getIsMatched()).isEqualTo(false);
         }
+    }
+
+    @DisplayName("Guest User slot 조회")
+    @Test
+    void readAllSlotsAndCurrentMatchForGuset() {
+        User guestUser = matchTestSetting.createGuestUser();
+        MatchStatusResponseListDto currentMatch = matchFindService.getCurrentMatch(UserDto.from(guestUser));
+        SlotStatusResponseListDto allMatchStatus = matchFindService.getAllMatchStatus(UserDto.from(guestUser),
+                Option.NORMAL);
+        Assertions.assertThat(currentMatch.getMatch().size()).isEqualTo(0);
+        System.out.println("allMatchStatus = " + allMatchStatus);
     }
 }
