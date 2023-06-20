@@ -43,7 +43,6 @@ public class RankRedisService {
         updateRankUser(key, zsetKey, enemyTeamUser.getUser().getId(), enemyTeam);
         pChangeService.addPChange(game, myTeamUser.getUser(), myTeam.getPpp(), true);
         pChangeService.addPChange(game, enemyTeamUser.getUser(), enemyTeam.getPpp(), false);
-        log.info("Final: userId: " + myTeamUser.getUser().getIntraId() + ", " + "ppp: redis(" + myTeam.getPpp() + ")");
     }
 
     private void updateRankUser(String hashKey, String zsetKey, Long userId, RankRedis userRank) {

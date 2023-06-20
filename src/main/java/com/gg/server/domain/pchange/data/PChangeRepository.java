@@ -15,5 +15,7 @@ public interface PChangeRepository extends JpaRepository<PChange, Long> , PChang
     @Query(value = "SELECT pc FROM PChange pc join fetch pc.user WHERE pc.user.id =:userId order by pc.id desc")
     List<PChange> findAllByUserId(@Param("userId") Long userId);
 
+    Optional<PChange> findByUserIdAndGameId(Long userId, Long gameId);
+
     Optional<PChange> findPChangeByUserIdAndGameId(Long userId, Long gameId);
 }

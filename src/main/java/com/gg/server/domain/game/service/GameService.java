@@ -7,6 +7,7 @@ import com.gg.server.domain.game.dto.req.NormalResultReqDto;
 import com.gg.server.domain.game.dto.req.RankResultReqDto;
 import com.gg.server.domain.game.exception.GameNotExistException;
 import com.gg.server.domain.pchange.data.PChange;
+import com.gg.server.domain.pchange.data.PChangeRepository;
 import com.gg.server.domain.pchange.exception.PChangeNotExistException;
 import com.gg.server.domain.pchange.service.PChangeService;
 import com.gg.server.domain.rank.redis.RankRedisService;
@@ -37,6 +38,7 @@ public class GameService {
     private final TeamUserRepository teamUserRepository;
     private final RankRedisService rankRedisService;
     private final PChangeService pChangeService;
+    private final PChangeRepository pChangeRepository;
 
     private final GameFindService gameFindService;
 
@@ -57,7 +59,6 @@ public class GameService {
             @CacheEvict(value = "allGameListByUser", allEntries = true)
     })
     public synchronized Boolean createRankResult(RankResultReqDto scoreDto, Long userId) {
-        log.info("create Rank Result");
         // 현재 게임 id
         Game game = gameFindService.findByGameId(scoreDto.getGameId());
         if (game.getStatus() != StatusType.WAIT && game.getStatus() != StatusType.LIVE) {
@@ -81,10 +82,23 @@ public class GameService {
             expUpdates(game, teamUsers);
             savePChange(game, teamUsers, loginUserId);
             return true;
+        } else if (teamUsers.size() == 2 && game.getStatus() == StatusType.END) {
+            updatePchangeIsChecked(game, loginUserId);
+            return true;
         } else if (teamUsers.size() != 2) {
             throw new InvalidParameterException("team 이 잘못되었습니다.", ErrorCode.VALID_FAILED);
         }
         return false;
+    }
+
+    private void updatePchangeIsChecked(Game game, Long loginUserId) {
+        pChangeRepository.findPChangeByUserIdAndGameId(loginUserId, game.getId())
+                .ifPresentOrElse(pChange -> {
+                    pChange.userCheckResult();
+                    pChangeRepository.save(pChange);
+                }, () -> {
+                    throw new PChangeNotExistException();
+                });
     }
 
     private void savePChange(Game game, List<TeamUser> teamUsers, Long loginUserId) {
