@@ -77,8 +77,8 @@ public class GameController {
     }
 
     @PostMapping("/normal")
-    ResponseEntity createNormalResult(@Valid @RequestBody NormalResultReqDto reqDto) {
-        if (gameService.normalExpResult(reqDto))
+    ResponseEntity createNormalResult(@Valid @RequestBody NormalResultReqDto reqDto, @Parameter(hidden = true) @Login UserDto user) {
+        if (gameService.normalExpResult(reqDto, user.getId()))
             return new ResponseEntity(HttpStatus.CREATED);
         return new ResponseEntity(HttpStatus.ACCEPTED);
     }

@@ -73,13 +73,13 @@ public class GameService {
             @CacheEvict(value = "allGameList", allEntries = true),
             @CacheEvict(value = "allGameListByUser", allEntries = true)
     })
-    public synchronized Boolean normalExpResult(NormalResultReqDto normalResultReqDto) {
+    public synchronized Boolean normalExpResult(NormalResultReqDto normalResultReqDto, Long loginUserId) {
         Game game = gameFindService.findByGameId(normalResultReqDto.getGameId());
         List<TeamUser> teamUsers = teamUserRepository.findAllByGameId(game.getId());
         if (teamUsers.size() == 2 &&
                 (game.getStatus() == StatusType.WAIT || game.getStatus() == StatusType.LIVE)) {
             expUpdates(game, teamUsers);
-            savePChange(game, teamUsers, normalResultReqDto);
+            savePChange(game, teamUsers, loginUserId);
             return true;
         } else if (teamUsers.size() != 2) {
             throw new InvalidParameterException("team 이 잘못되었습니다.", ErrorCode.VALID_FAILED);
@@ -87,13 +87,13 @@ public class GameService {
         return false;
     }
 
-    private void savePChange(Game game, List<TeamUser> teamUsers, NormalResultReqDto normalResultReqDto) {
+    private void savePChange(Game game, List<TeamUser> teamUsers, Long loginUserId) {
+        Long team1UserId = teamUsers.get(0).getUser().getId();
+        Long team2UserId = teamUsers.get(1).getUser().getId();
         pChangeService.addPChange(game, teamUsers.get(0).getUser(),
-                rankRedisService.getUserPpp(teamUsers.get(0).getUser().getId(), game.getSeason().getId()),
-                normalResultReqDto.getMyTeamId() == teamUsers.get(0).getTeam().getId() ? true : false);
+                rankRedisService.getUserPpp(team1UserId, game.getSeason().getId()), team1UserId.equals(loginUserId));
         pChangeService.addPChange(game, teamUsers.get(1).getUser(),
-                rankRedisService.getUserPpp(teamUsers.get(1).getUser().getId(), game.getSeason().getId()),
-                normalResultReqDto.getMyTeamId() == teamUsers.get(1).getTeam().getId() ? true : false);
+                rankRedisService.getUserPpp(team2UserId, game.getSeason().getId()), team2UserId.equals(loginUserId));
     }
 
     @Transactional(readOnly = true)
