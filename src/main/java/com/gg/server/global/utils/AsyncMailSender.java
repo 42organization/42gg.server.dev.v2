@@ -21,6 +21,5 @@ public class AsyncMailSender {
         } catch(Exception ex) {
             log.error(ex.getMessage());
         }
-        log.info("java mail send complete");
     }
 }
