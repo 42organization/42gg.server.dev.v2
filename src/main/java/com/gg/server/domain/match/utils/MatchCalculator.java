@@ -65,15 +65,16 @@ public class MatchCalculator {
     }
 
     private SlotStatus getRankSlotStatus(List<RedisMatchUser> allMatchUsers) {
-        if (allMatchUsers.stream().anyMatch(e -> e.getOption().equals(Option.RANK)
-                && (e.getPpp() - matchUser.getPpp()) <= pppGap)) {
+        if (allMatchUsers.stream().anyMatch(e -> (e.getOption().equals(Option.RANK)
+        || e.getOption().equals(Option.BOTH)) && (e.getPpp() - matchUser.getPpp()) <= pppGap)) {
             return SlotStatus.MATCH;
         }
         return SlotStatus.OPEN;
     }
 
     private SlotStatus getNormalSlotStatus(List<RedisMatchUser> allMatchUsers) {
-        if (allMatchUsers.stream().anyMatch(e -> e.getOption().equals(Option.NORMAL))) {
+        if (allMatchUsers.stream().anyMatch(e -> e.getOption().equals(Option.NORMAL) ||
+                e.getOption().equals(Option.BOTH))) {
             return SlotStatus.MATCH;
         }
         return SlotStatus.OPEN;
