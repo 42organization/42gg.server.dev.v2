@@ -28,7 +28,7 @@
             <fileNamePattern>${LOGS_ABSOLUTE_PATH}/allLogDays/%d{yyyy-MM-dd}.log</fileNamePattern>
             <!-- keep 30 days' worth of history capped at 50MB total size -->
             <maxHistory>30</maxHistory>
-            <totalSizeCap>50MB</totalSizeCap>
+            <totalSizeCap>400MB</totalSizeCap>
         </rollingPolicy>
     </appender>
 
@@ -45,7 +45,7 @@
             <fileNamePattern>${LOGS_ABSOLUTE_PATH}/myLogDays/%d{yyyy-MM-dd}.log</fileNamePattern>
             <!-- keep 30 days' worth of history capped at 50MB total size -->
             <maxHistory>30</maxHistory>
-            <totalSizeCap>50MB</totalSizeCap>
+            <totalSizeCap>500MB</totalSizeCap>
         </rollingPolicy>
     </appender>
 
@@ -67,8 +67,13 @@
             <fileNamePattern>${LOGS_ABSOLUTE_PATH}/errorLogDays/%d{yyyy-MM-dd}.log</fileNamePattern>
             <!-- keep 30 days' worth of history capped at 50MB total size -->
             <maxHistory>30</maxHistory>
-            <totalSizeCap>50MB</totalSizeCap>
+            <totalSizeCap>100MB</totalSizeCap>
         </rollingPolicy>
+    </appender>
+
+    <appender name="elk_Logstash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>172.26.0.20:5000</destination>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
     </appender>
 
     <!-- log 레벨 설정 (logging.level.root=info) -->
@@ -76,9 +81,8 @@
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE" />
         <appender-ref ref="ERROR_LOG" />
+        <appender-ref ref="elk_Logstash" />
     </root>
-
-    <!-- c.g.s.g.u.q.LoggingInterceptor -->
 
     <!-- log 레벨 설정 자체로그(c.g.s.g.l.s.ThreadLocalLogTrace=info) -->
     <logger name="com.gg.server.global.log.service.ThreadLocalLogTrace" level="info">
