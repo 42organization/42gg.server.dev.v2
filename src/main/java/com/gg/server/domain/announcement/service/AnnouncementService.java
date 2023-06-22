@@ -17,7 +17,7 @@ public class AnnouncementService {
     public AnnouncementDto findLastAnnouncement() {
         Announcement announcement = announcementRepository.findFirstByOrderByIdDesc().orElseThrow(() -> new AnnounceNotFoundException());
         if (announcement.getDeletedAt() != null)
-            throw new AnnounceNotFoundException();
+            return new AnnouncementDto("");
 
         return AnnouncementDto.from(announcement);
     }
