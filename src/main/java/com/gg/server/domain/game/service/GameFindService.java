@@ -75,8 +75,10 @@ public class GameFindService {
     @Cacheable(value = "allGameListByUser", cacheManager = "gameCacheManager")
     public GameListResDto allGameListUser(Pageable pageable, String intra, StatusType status) {
         List<String> statusTypes = Arrays.asList(StatusType.END.name());
-        if (status == StatusType.LIVE)
+        if (status == StatusType.LIVE) {
             statusTypes.add(StatusType.LIVE.name());
+            statusTypes.add(StatusType.WAIT.name());
+        }
         Slice<Long> games = gameRepository.findGamesByUser(intra, statusTypes, pageable);
         return new GameListResDto(getGameResultList(games.getContent()), games.isLast());
     }
