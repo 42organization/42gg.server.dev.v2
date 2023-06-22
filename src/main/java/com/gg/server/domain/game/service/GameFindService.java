@@ -56,7 +56,7 @@ public class GameFindService {
     public GameListResDto allGameList(Pageable pageable, StatusType status) {
         Slice<Game> games;
         if (status != null) {
-            games = gameRepository.findAllByAndStatusIn(Arrays.asList(StatusType.END, StatusType.LIVE), pageable);
+            games = gameRepository.findAllByAndStatusIn(Arrays.asList(StatusType.END, StatusType.LIVE, StatusType.WAIT), pageable);
         } else {
             games = gameRepository.findAllByAndStatus(StatusType.END, pageable);
         }
