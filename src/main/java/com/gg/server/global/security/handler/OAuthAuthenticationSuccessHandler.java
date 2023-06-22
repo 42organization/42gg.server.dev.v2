@@ -54,6 +54,7 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie :cookies) {
             if (cookie.getName().equals(TokenHeaders.ACCESS_TOKEN) ) {
+                System.out.println("accessToken = " + cookie.getValue());
                 Long existUserId = tokenProvider.getUserIdFromAccessToken(cookie.getValue());
                 cookieUtil.deleteCookie(response, TokenHeaders.ACCESS_TOKEN);
                 if (existUserId != null) {
