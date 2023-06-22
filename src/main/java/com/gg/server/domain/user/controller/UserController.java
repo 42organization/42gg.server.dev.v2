@@ -1,6 +1,8 @@
 package com.gg.server.domain.user.controller;
 
 import com.gg.server.domain.user.dto.*;
+import com.gg.server.domain.user.exception.KakaoOauth2AlreadyExistException;
+import com.gg.server.domain.user.exception.KakaoOauth2NotFoundException;
 import com.gg.server.domain.user.service.UserService;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.global.security.config.properties.AppProperties;
@@ -94,7 +96,11 @@ public class UserController {
      *기존 42user 카카오 로그인 인증
      */
     @PostMapping("/oauth/kakao")
-    public void addOauthKakao(@RequestParam String accessToken, HttpServletResponse response) throws IOException {
+    public void addOauthKakao(@RequestParam String accessToken, HttpServletResponse response,
+                              @Parameter(hidden = true) @Login UserDto user) throws IOException {
+        if (user.getKakaoId() != null) {
+            throw new KakaoOauth2AlreadyExistException();
+        }
         cookieUtil.addCookie(response, TokenHeaders.ACCESS_TOKEN, accessToken,-1);
         response.sendRedirect(applicationYmlRead.getFrontUrl() + "/oauth2/authorization/kakao");
     }
@@ -104,6 +110,9 @@ public class UserController {
      */
     @DeleteMapping("/oauth/kakao")
     public void deleteOauthKakao(@Parameter(hidden = true) @Login UserDto user) {
+        if (user.getKakaoId() == null) {
+            throw new KakaoOauth2NotFoundException();
+        }
         userService.deleteKakaoId(user.getId());
     }
 

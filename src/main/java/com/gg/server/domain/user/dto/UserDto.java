@@ -18,6 +18,7 @@ public class UserDto {
     private RoleType roleType;
     private Integer totalExp;
     private SnsType snsNotiOpt;
+    private Long kakaoId;
 
     static public UserDto from (User user) {
         UserDto userDto;
@@ -33,6 +34,7 @@ public class UserDto {
                     .roleType(user.getRoleType())
                     .totalExp(user.getTotalExp())
                     .snsNotiOpt(user.getSnsNotiOpt())
+                    .kakaoId(user.getKakaoId())
                     .build();
         }
         return userDto;
@@ -45,9 +47,11 @@ public class UserDto {
                 ", intraId='" + intraId + '\'' +
                 ", eMail='" + eMail + '\'' +
                 ", imageUri='" + imageUri + '\'' +
-                ", racketType=" + racketType + '\'' +
-                ", roleType=" + roleType + '\'' +
+                ", racketType=" + racketType +
+                ", roleType=" + roleType +
                 ", totalExp=" + totalExp +
+                ", snsNotiOpt=" + snsNotiOpt +
+                ", kakaoId=" + kakaoId +
                 '}';
     }
 }
