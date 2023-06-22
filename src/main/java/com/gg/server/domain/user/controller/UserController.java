@@ -110,8 +110,8 @@ public class UserController {
      */
     @DeleteMapping("/oauth/kakao")
     public void deleteOauthKakao(@Parameter(hidden = true) @Login UserDto user) {
-        if (user.getKakaoId() == null) {
-            throw new KakaoOauth2NotFoundException();
+        if (user.getRoleType().equals(RoleType.GUEST) || user.getKakaoId() == null) {
+            throw new KakaoOauth2AlreadyExistException();
         }
         userService.deleteKakaoId(user.getId());
     }
