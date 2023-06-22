@@ -25,13 +25,13 @@ public class SlotAdminController {
     }
 
     @PostMapping
-    public ResponseEntity addSlotSetting(@Valid @RequestBody SlotCreateRequestDto requestDto){
+    public synchronized ResponseEntity addSlotSetting(@Valid @RequestBody SlotCreateRequestDto requestDto){
         slotAdminService.addSlotSetting(requestDto);
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
     @DeleteMapping
-    public ResponseEntity delSlotSetting(){
+    public synchronized ResponseEntity delSlotSetting(){
         slotAdminService.delSlotSetting();
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }

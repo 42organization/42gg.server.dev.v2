@@ -12,6 +12,7 @@ import com.gg.server.admin.user.data.UserAdminRepository;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.dto.GameTeamUser;
 import com.gg.server.domain.game.exception.GameNotExistException;
+import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.pchange.data.PChange;
 import com.gg.server.domain.pchange.data.PChangeRepository;
 
@@ -53,7 +54,7 @@ public class GameAdminService {
 
     @Transactional(readOnly = true)
     public GameLogListAdminResponseDto findAllGamesByAdmin(Pageable pageable) {
-        Page<Game> gamePage = gameAdminRepository.findAll(pageable); //모든 게임 정보 가져오기
+        Page<Game> gamePage = gameAdminRepository.findAllByStatus(pageable, StatusType.END); //모든 게임 정보 가져오기
         return new GameLogListAdminResponseDto(getGameLogList(gamePage.getContent().stream().map(Game::getId).collect(Collectors.toList())), gamePage.getTotalPages());
     }
 
