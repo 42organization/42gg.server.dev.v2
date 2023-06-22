@@ -7,6 +7,7 @@ import com.gg.server.domain.user.service.UserService;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.global.security.config.properties.AppProperties;
 import com.gg.server.global.security.cookie.CookieUtil;
+import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.global.security.jwt.utils.TokenHeaders;
 import com.gg.server.global.utils.ApplicationYmlRead;
 import com.gg.server.global.utils.HeaderUtil;
@@ -32,6 +33,7 @@ public class UserController {
     private final AppProperties appProperties;
     private final ApplicationYmlRead applicationYmlRead;
     private final CookieUtil cookieUtil;
+    private final AuthTokenProvider tokenProvider;
 
     @PostMapping("/accesstoken")
     public ResponseEntity<UserAccessTokenDto> generateAccessToken(@RequestParam String refreshToken, HttpServletResponse response) {
@@ -96,9 +98,9 @@ public class UserController {
      *기존 42user 카카오 로그인 인증
      */
     @PostMapping("/oauth/kakao")
-    public void addOauthKakao(@RequestParam String accessToken, HttpServletResponse response,
-                              @Parameter(hidden = true) @Login UserDto user) throws IOException {
-        if (user.getKakaoId() != null) {
+    public void addOauthKakao(@RequestParam String accessToken, HttpServletResponse response) throws IOException {
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
+        if (userService.getKakaoId(userId) != null) {
             throw new KakaoOauth2AlreadyExistException();
         }
         cookieUtil.addCookie(response, TokenHeaders.ACCESS_TOKEN, accessToken,-1);
