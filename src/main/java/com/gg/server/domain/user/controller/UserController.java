@@ -92,7 +92,7 @@ public class UserController {
     @PostMapping("/oauth/42")
     public void addOauthFortyTwo(@RequestParam String accessToken, HttpServletResponse response) throws IOException {
         cookieUtil.addCookie(response, TokenHeaders.ACCESS_TOKEN, accessToken, -1);
-        response.sendRedirect(applicationYmlRead.getFrontUrl() + "/oauth2/authorization/42");
+        response.sendRedirect(applicationYmlRead.getBackUrl() + "/oauth2/authorization/42");
     }
     /**
      *기존 42user 카카오 로그인 인증
@@ -104,7 +104,7 @@ public class UserController {
             throw new KakaoOauth2AlreadyExistException();
         }
         cookieUtil.addCookie(response, TokenHeaders.ACCESS_TOKEN, accessToken,-1);
-        response.sendRedirect(applicationYmlRead.getFrontUrl() + "/oauth2/authorization/kakao");
+        response.sendRedirect(applicationYmlRead.getBackUrl() + "/oauth2/authorization/kakao");
     }
 
     /**

@@ -88,4 +88,10 @@ dependencies {
 
 	/* flyway */
 	implementation 'org.flywaydb:flyway-core'
+
+	//actuator 추가
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+	//prometheus 추가
+	implementation 'io.micrometer:micrometer-registry-prometheus'
 }
