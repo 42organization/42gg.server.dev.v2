@@ -25,14 +25,14 @@ public class SlotAdminController {
     }
 
     @PostMapping
-    public ResponseEntity addSlotSetting(@Valid @RequestBody SlotCreateRequestDto requestDto){
+    public synchronized ResponseEntity addSlotSetting(@Valid @RequestBody SlotCreateRequestDto requestDto){
         log.error(requestDto.getStartTime()+"::과연 몇시로 들어오는가?");//프로트 확인용,로그 출력후 삭제할 것임
         slotAdminService.addSlotSetting(requestDto);
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
     @DeleteMapping
-    public ResponseEntity delSlotSetting(){
+    public synchronized ResponseEntity delSlotSetting(){
         slotAdminService.delSlotSetting();
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
