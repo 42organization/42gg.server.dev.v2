@@ -100,7 +100,8 @@ public class UserAdminService {
         User user = userAdminRepository.findByIntraId(intraId).orElseThrow(() -> new UserNotFoundException());
 
         user.modifyUserDetail(userUpdateAdminRequestDto);
-        asyncNewUserImageUploader.update(intraId, userImageFile);
+        if (userImageFile != null)
+            asyncNewUserImageUploader.update(intraId, userImageFile);
         updateUserRank(user.getId(), currSeason.getId(), userUpdateAdminRequestDto);
     }
 
