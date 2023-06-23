@@ -10,9 +10,11 @@ import com.gg.server.admin.season.data.SeasonAdminRepository;
 import com.gg.server.admin.team.data.TeamUserAdminRepository;
 import com.gg.server.admin.user.data.UserAdminRepository;
 import com.gg.server.domain.game.data.Game;
+import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.dto.GameTeamUser;
 import com.gg.server.domain.game.exception.GameNotExistException;
 import com.gg.server.domain.game.type.StatusType;
+import com.gg.server.domain.match.data.RedisMatchUserRepository;
 import com.gg.server.domain.pchange.data.PChange;
 import com.gg.server.domain.pchange.data.PChangeRepository;
 
@@ -25,6 +27,7 @@ import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.exception.SeasonNotFoundException;
 import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.user.User;
+import com.gg.server.domain.user.UserRepository;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +53,7 @@ public class GameAdminService {
     private final PChangeAdminRepository pChangeAdminRepository;
     private final RankRedisService rankRedisService;
     private final TeamUserAdminRepository teamUserAdminRepository;
-    private final RankRepository rankRepository;
+    private final RedisMatchUserRepository redisMatchUserRepository;
 
     @Transactional(readOnly = true)
     public GameLogListAdminResponseDto findAllGamesByAdmin(Pageable pageable) {
@@ -101,7 +104,7 @@ public class GameAdminService {
                 .orElseThrow(GameNotExistException::new);
         Season season = seasonAdminRepository.findById(game.getSeason().getId())
                 .orElseThrow(SeasonNotFoundException::new);
-        if (!isRecentlyGame(teamUsers, gameId)) {
+        if (!isRecentlyGame(teamUsers, gameId) || EnrollSlots(teamUsers)) {
             throw new NotRecentlyGameException();
         }
         // pchange 가져와서 rank ppp 이전 값을 가지고 새 점수를 바탕으로 다시 계산
@@ -141,5 +144,18 @@ public class GameAdminService {
                 return false;
         }
         return true;
+    }
+
+    private Boolean EnrollSlots(List<TeamUser> teamUsers) {
+        for (TeamUser teamUser : teamUsers) {
+            Long userId = teamUser.getUser().getId();
+            if (redisMatchUserRepository.countMatchTime(userId) > 0) {
+                return true;
+            }
+            if (gameAdminRepository.findByStatusTypeAndUserId(StatusType.BEFORE, userId).isPresent()) {
+                return true;
+            }
+        }
+        return false;
     }
 }
