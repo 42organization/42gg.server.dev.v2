@@ -147,7 +147,7 @@ public class SeasonAdminService {
 
     private void checkSeasonAtDB()
     {
-        List<Season> seasons =  seasonAdminRepository.findCurrentAndNewSeason(LocalDateTime.now());
+        List<Season> seasons =  seasonAdminRepository.findAll();
         for (int i = 0; i < seasons.size(); i++) {
             for (int j = i + 1; j < seasons.size(); j++) {
                 if (isOverlap(seasons.get(i), seasons.get(j)))
