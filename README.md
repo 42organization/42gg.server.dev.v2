@@ -24,6 +24,22 @@ DB 테이블 변경에 따른 리빌딩 프로젝트
 <img src="https://img.shields.io/badge/redis-DC382D?style=for-the-badge&logo=redis&logoColor=white">
 <img src="https://img.shields.io/badge/DOCKER-007396?style=for-the-badge&logo=DOCKER&logoColor=white">
 
+
+## ⚡️ 프로젝트 관리
+<img src="https://img.shields.io/badge/JIRA-0052CC?style=for-the-badge&logo=jirasoftware&logoColor=white">
+
+## ⚡️ 프로젝트 아키텍처
+
+
+## ⚡️ V1과 달라진 점
+
+- 디비 변경
+- 게임추가 기능
+- 로그인 연동 추가
+- 도커 도입
+- 모니터링 도입
+-
+
 ## ⚡️ 팀소개
 
 <table>
@@ -53,8 +69,4 @@ DB 테이블 변경에 따른 리빌딩 프로젝트
     </tr>
 
 </table>
-
-## ⚡️ 프로젝트 관리
-<img src="https://img.shields.io/badge/JIRA-0052CC?style=for-the-badge&logo=jirasoftware&logoColor=white">
-
 
