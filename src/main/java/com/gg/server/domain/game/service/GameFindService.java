@@ -72,7 +72,7 @@ public class GameFindService {
         return teamViews.stream().map(GameResultResDto::new).collect(Collectors.toList());
     }
     @Transactional(readOnly = true)
-    @Cacheable(value = "allGameListByUser", cacheManager = "gameCacheManager", key = "#pageable.pageNumber + #pageable.pageSize + #pageable.sort.toString() + #status")
+    @Cacheable(value = "allGameListByUser", cacheManager = "gameCacheManager", key = "#pageable.pageNumber + #pageable.pageSize + #pageable.sort.toString() + #status + #intra")
     public GameListResDto allGameListUser(Pageable pageable, String intra, String status) {
         List<String> statusTypes = Arrays.asList(StatusType.END.name());
         if (status.equals("LIVE")) {
