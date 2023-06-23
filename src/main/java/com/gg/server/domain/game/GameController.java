@@ -37,9 +37,9 @@ public class GameController {
         }
         Pageable pageable = PageRequest.of(gameReq.getPage() - 1, gameReq.getSize(), Sort.by(Sort.Direction.DESC, "startTime"));
         if (gameReq.getIntraId() != null) {
-            return gameFindService.allGameListUser(pageable, gameReq.getIntraId(), gameReq.getStatus().name());
+            return gameFindService.allGameListUser(pageable, gameReq.getIntraId(), gameReq.getStatus() != null ? gameReq.getStatus().name() : "NULL");
         }
-        return gameFindService.allGameList(pageable, gameReq.getStatus().name());
+        return gameFindService.allGameList(pageable, gameReq.getStatus() != null ? gameReq.getStatus().name() : "NULL");
     }
 
     @GetMapping("/normal")
