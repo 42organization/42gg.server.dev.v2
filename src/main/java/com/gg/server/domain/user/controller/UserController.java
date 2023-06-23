@@ -86,6 +86,12 @@ public class UserController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
+    @PostMapping("/logout")
+    public void logout(HttpServletResponse response) {
+        cookieUtil.deleteCookie(response, TokenHeaders.REFRESH_TOKEN);
+    }
+
+
     /**
      *기존 카카오 유저 42 로그인 인증
      */
