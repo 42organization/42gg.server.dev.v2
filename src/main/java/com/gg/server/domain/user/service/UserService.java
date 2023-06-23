@@ -217,6 +217,8 @@ public class UserService {
             return new UserRankResponseDto(userRanking.intValue(), userRank.getPpp(), userRank.getWins(), userRank.getLosses(), winRate);
         } catch (RedisDataNotFoundException ex){
             return new UserRankResponseDto(-1, season.getStartPpp(), 0, 0, 0);
+        } catch (ArithmeticException ex2){
+            return new UserRankResponseDto(-1, season.getStartPpp(), 0, 0, 0);
         }
     }
 
