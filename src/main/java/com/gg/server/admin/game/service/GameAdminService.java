@@ -92,7 +92,6 @@ public class GameAdminService {
             @CacheEvict(value = "rankGameListByIntra", allEntries = true),
             @CacheEvict(value = "rankGameList", allEntries = true),
             @CacheEvict(value = "allGameList", allEntries = true),
-            @CacheEvict(value = "allGameListLive", allEntries = true),
             @CacheEvict(value = "allGameListByUser", allEntries = true)
     })
     public void rankResultEdit(RankGamePPPModifyReqDto reqDto, Long gameId) {

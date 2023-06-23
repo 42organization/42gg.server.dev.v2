@@ -48,7 +48,6 @@ public class GameStatusService {
     }
 
     @Caching(evict = {
-            @CacheEvict(value = "allGameListLive", allEntries = true),
             @CacheEvict(value = "allGameList", allEntries = true),
     })
     void cacheDelete() {}
