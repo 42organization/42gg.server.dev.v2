@@ -9,9 +9,9 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public enum RoleType {
 
-    ADMIN("ROLE_ADMIN", "관리자"),
-    USER("ROLE_USER", "일반 사용자"),
-    GUEST("ROLE_GUEST", "게스트");
+    ADMIN("ADMIN", "관리자"),
+    USER("USER", "일반 사용자"),
+    GUEST("GUEST", "게스트");
 
     private final String key;
     private final String displayName;
