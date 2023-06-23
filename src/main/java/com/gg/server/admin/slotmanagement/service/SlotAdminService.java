@@ -69,12 +69,12 @@ public class SlotAdminService {
         SlotManagement nowSlotManagement = adminSlotManagementRepository.findFirstByOrderByIdDesc()
                 .orElseThrow(() -> new SlotManagementNotFoundException());
 
-        LocalDateTime nowFutureSlotTime = LocalDateTime.now().isAfter(nowSlotManagement.getStartTime())
-                ?LocalDateTime.now().plusHours(nowSlotManagement.getFutureSlotTime())
-                :nowSlotManagement.getStartTime().plusHours(nowSlotManagement.getFutureSlotTime());
+        //LocalDateTime nowFutureSlotTime = LocalDateTime.now().isAfter(nowSlotManagement.getStartTime())
+        //        ?LocalDateTime.now().plusHours(nowSlotManagement.getFutureSlotTime())
+        //        :nowSlotManagement.getStartTime().plusHours(nowSlotManagement.getFutureSlotTime());
 
-        if (nowFutureSlotTime.isAfter(endTime))
-            throw new SlotManagementForbiddenException();
+        //if (nowFutureSlotTime.isAfter(endTime))
+        //   throw new SlotManagementForbiddenException();
 
         nowSlotManagement.updateEndTime(endTime);
     }
