@@ -36,6 +36,9 @@ public class GameStatusService {
     private final SlotManagementRepository slotManagementRepository;
 
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "allGameList", allEntries = true),
+    })
     public void updateBeforeToLiveStatus() {
         // game before 중에 현재 시작 시간인 경우 LIVE로 update
         List<Game> game = gameRepository.findAllByStatusAndStartTimeLessThanEqual(StatusType.BEFORE, getTime(0));
@@ -47,12 +50,12 @@ public class GameStatusService {
         }
     }
 
-    @Caching(evict = {
-            @CacheEvict(value = "allGameList", allEntries = true),
-    })
     void cacheDelete() {}
 
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "allGameList", allEntries = true),
+    })
     public void updateLiveToWaitStatus() {
         // game live 중에 종료 시간인 경우 wait 로 update
         LocalDateTime endTime = getTime(1);
