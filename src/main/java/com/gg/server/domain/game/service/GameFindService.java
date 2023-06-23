@@ -52,6 +52,7 @@ public class GameFindService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "allGameList", cacheManager = "gameCacheManager")
     public GameListResDto allGameList(Pageable pageable, StatusType status) {
         Slice<Game> games;
         if (status == StatusType.LIVE) {
