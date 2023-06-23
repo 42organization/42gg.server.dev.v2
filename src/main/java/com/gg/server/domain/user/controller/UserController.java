@@ -32,9 +32,7 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
     private final AppProperties appProperties;
-    private final ApplicationYmlRead applicationYmlRead;
     private final CookieUtil cookieUtil;
-    private final AuthTokenProvider tokenProvider;
 
     @PostMapping("/accesstoken")
     public ResponseEntity<UserAccessTokenDto> generateAccessToken(@RequestParam String refreshToken, HttpServletResponse response) {

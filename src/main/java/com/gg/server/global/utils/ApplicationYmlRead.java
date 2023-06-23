@@ -20,9 +20,6 @@ public class ApplicationYmlRead {
         return web.get("domain");
     }
 
-    public String getBackUrl() {
-        return web.get("backUrl");
-    }
 
     public String getFrontLoginUrl() {
         return web.get("frontUrl") + "/login";
