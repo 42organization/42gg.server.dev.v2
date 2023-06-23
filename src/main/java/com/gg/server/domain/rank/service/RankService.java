@@ -99,8 +99,12 @@ public class RankService {
 
     private int calcTotalPage(Season season, int pageSize) {
         String zSetKey = RedisKeyManager.getZSetKey(season.getId());
-        Long totalUserCount = redisRepository.countTotalRank(zSetKey);
-        return (int) Math.ceil((double) totalUserCount / pageSize);
+        try{
+            Long totalUserCount = redisRepository.countTotalRank(zSetKey);
+            return (int) Math.ceil((double) totalUserCount / pageSize);
+        } catch (RedisDataNotFoundException e) {
+            return 0;
+        }
     }
 
     private List<RankDto> createRankList(int startRank, int endRank, Season season) {

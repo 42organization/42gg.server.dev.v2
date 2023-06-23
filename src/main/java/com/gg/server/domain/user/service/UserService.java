@@ -229,4 +229,10 @@ public class UserService {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
         user.updateKakaoId(null);
     }
+
+    @Transactional(readOnly = true)
+    public Long getKakaoId(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
+        return user.getKakaoId();
+    }
 }

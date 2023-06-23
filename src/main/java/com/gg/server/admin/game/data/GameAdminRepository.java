@@ -2,6 +2,7 @@ package com.gg.server.admin.game.data;
 
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.dto.GameTeamUser;
+import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.season.data.Season;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,4 +22,6 @@ public interface GameAdminRepository extends JpaRepository<Game, Long> {
             "from v_rank_game_detail t1, v_rank_game_detail t2 " +
             "where t1.gameId IN (:games) and t1.teamId <t2.teamId and t1.gameId=t2.gameId order by t1.startTime desc;", nativeQuery = true)
     List<GameTeamUser> findTeamsByGameIsIn(@Param("games") List<Long> games);
+
+    Page<Game> findAllByStatus(Pageable pageable, StatusType status);
 }

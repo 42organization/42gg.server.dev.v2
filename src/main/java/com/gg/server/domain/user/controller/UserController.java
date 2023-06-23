@@ -1,10 +1,13 @@
 package com.gg.server.domain.user.controller;
 
 import com.gg.server.domain.user.dto.*;
+import com.gg.server.domain.user.exception.KakaoOauth2AlreadyExistException;
+import com.gg.server.domain.user.exception.KakaoOauth2NotFoundException;
 import com.gg.server.domain.user.service.UserService;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.global.security.config.properties.AppProperties;
 import com.gg.server.global.security.cookie.CookieUtil;
+import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.global.security.jwt.utils.TokenHeaders;
 import com.gg.server.global.utils.ApplicationYmlRead;
 import com.gg.server.global.utils.HeaderUtil;
@@ -30,6 +33,7 @@ public class UserController {
     private final AppProperties appProperties;
     private final ApplicationYmlRead applicationYmlRead;
     private final CookieUtil cookieUtil;
+    private final AuthTokenProvider tokenProvider;
 
     @PostMapping("/accesstoken")
     public ResponseEntity<UserAccessTokenDto> generateAccessToken(@RequestParam String refreshToken, HttpServletResponse response) {
@@ -88,15 +92,19 @@ public class UserController {
     @PostMapping("/oauth/42")
     public void addOauthFortyTwo(@RequestParam String accessToken, HttpServletResponse response) throws IOException {
         cookieUtil.addCookie(response, TokenHeaders.ACCESS_TOKEN, accessToken, -1);
-        response.sendRedirect(applicationYmlRead.getFrontUrl() + "/oauth2/authorization/42");
+//        response.sendRedirect(applicationYmlRead.getBackUrl() + "/oauth2/authorization/42");
     }
     /**
      *기존 42user 카카오 로그인 인증
      */
     @PostMapping("/oauth/kakao")
     public void addOauthKakao(@RequestParam String accessToken, HttpServletResponse response) throws IOException {
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
+        if (userService.getKakaoId(userId) != null) {
+            throw new KakaoOauth2AlreadyExistException();
+        }
         cookieUtil.addCookie(response, TokenHeaders.ACCESS_TOKEN, accessToken,-1);
-        response.sendRedirect(applicationYmlRead.getFrontUrl() + "/oauth2/authorization/kakao");
+//        response.sendRedirect(applicationYmlRead.getBackUrl() + "/oauth2/authorization/kakao");
     }
 
     /**
@@ -104,6 +112,9 @@ public class UserController {
      */
     @DeleteMapping("/oauth/kakao")
     public void deleteOauthKakao(@Parameter(hidden = true) @Login UserDto user) {
+        if (user.getRoleType().equals(RoleType.GUEST) || user.getKakaoId() == null) {
+            throw new KakaoOauth2AlreadyExistException();
+        }
         userService.deleteKakaoId(user.getId());
     }
 
