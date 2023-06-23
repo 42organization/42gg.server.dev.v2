@@ -56,6 +56,7 @@ public class GameService {
             @CacheEvict(value = "rankGameListByIntra", allEntries = true),
             @CacheEvict(value = "rankGameList", allEntries = true),
             @CacheEvict(value = "allGameList", allEntries = true),
+            @CacheEvict(value = "allGameListLive", allEntries = true),
             @CacheEvict(value = "allGameListByUser", allEntries = true)
     })
     public synchronized Boolean createRankResult(RankResultReqDto scoreDto, Long userId) {
@@ -72,6 +73,7 @@ public class GameService {
             @CacheEvict(value = "normalGameListByIntra", allEntries = true),
             @CacheEvict(value = "normalGameList", allEntries = true),
             @CacheEvict(value = "allGameList", allEntries = true),
+            @CacheEvict(value = "allGameListLive", allEntries = true),
             @CacheEvict(value = "allGameListByUser", allEntries = true)
     })
     public synchronized Boolean normalExpResult(NormalResultReqDto normalResultReqDto, Long loginUserId) {
