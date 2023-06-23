@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import com.gg.server.domain.team.dto.GameUser;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.gg.server.domain.game.dto.GameTeamUser;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +19,9 @@ import java.util.List;
 
 public interface GameRepository extends JpaRepository<Game, Long>, GameRepositoryCustom{
     Slice<Game> findAllByModeAndStatus(Mode mode, StatusType status, Pageable pageable);
+    @Cacheable(value = "allGameList", cacheManager = "gameCacheManager")
     Slice<Game> findAllByAndStatus(StatusType status, Pageable pageable);
+    @Cacheable(value = "allGameListLive", cacheManager = "gameCacheManager")
     Slice<Game> findAllByAndStatusIn(List<StatusType> statusList, Pageable pageable);
     Slice<Game> findAllByModeAndStatusAndSeasonId(Mode mode, StatusType status, Long season, Pageable pageable);
     @Query(value = "select t1.gameId, t1.startTime, t1.status, t1.mode, " +

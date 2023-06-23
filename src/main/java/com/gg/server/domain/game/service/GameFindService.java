@@ -52,10 +52,9 @@ public class GameFindService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "allGameList", cacheManager = "gameCacheManager")
     public GameListResDto allGameList(Pageable pageable, StatusType status) {
         Slice<Game> games;
-        if (status != null) {
+        if (status == StatusType.LIVE) {
             games = gameRepository.findAllByAndStatusIn(Arrays.asList(StatusType.END, StatusType.LIVE, StatusType.WAIT), pageable);
         } else {
             games = gameRepository.findAllByAndStatus(StatusType.END, pageable);
