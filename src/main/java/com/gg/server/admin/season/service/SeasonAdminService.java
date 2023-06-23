@@ -27,7 +27,7 @@ public class SeasonAdminService {
     private final RankAdminService rankAdminService;
 
     public List<SeasonAdminDto> findAllSeasons() {
-        List<Season> seasons =  seasonAdminRepository.findAll();
+        List<Season> seasons =  seasonAdminRepository.findAllByOrderByStartTimeDesc();
         List<SeasonAdminDto> dtoList = new ArrayList<>();
         for (Season season : seasons) {
             SeasonAdminDto dto = new SeasonAdminDto(season);
@@ -110,11 +110,11 @@ public class SeasonAdminService {
         List<Season> afterSeasons = seasonAdminRepository.findAfterSeasons(season.getStartTime());
         Season afterSeason = afterSeasons.isEmpty() ? null : afterSeasons.get(0);
 
-        //if (LocalDateTime.now().plusHours(24).isAfter(season.getStartTime()))
-        //    throw new SeasonTimeBeforeException();
+        if (LocalDateTime.now().plusHours(24).isAfter(season.getStartTime()))
+            throw new SeasonTimeBeforeException();
         if (beforeSeason != null) {
-            //if (beforeSeason.getStartTime().plusDays(1).isAfter(season.getStartTime()))
-            //   throw new SeasonForbiddenException();
+            if (beforeSeason.getStartTime().plusDays(1).isAfter(season.getStartTime()))
+               throw new SeasonForbiddenException();
             beforeSeason.setEndTime(season.getStartTime().minusSeconds(1));
         }
         if (afterSeason != null)
