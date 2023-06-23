@@ -15,7 +15,7 @@ public class SeasonService {
     private final SeasonRepository seasonRepository;
 
     public List<SeasonResDto> seasonList() {
-        return seasonRepository.findActiveSeasons(LocalDateTime.now())
+        return seasonRepository.findActiveSeasonsDesc(LocalDateTime.now())
                 .stream().map(SeasonResDto::new).collect(Collectors.toList());
     }
 
