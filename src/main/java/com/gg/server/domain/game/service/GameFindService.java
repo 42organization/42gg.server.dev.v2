@@ -52,10 +52,10 @@ public class GameFindService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "allGameList", cacheManager = "gameCacheManager")
-    public GameListResDto allGameList(Pageable pageable, StatusType status) {
+    @Cacheable(value = "allGameList", cacheManager = "gameCacheManager", key = "#pageable.pageNumber + #pageable.pageSize + #pageable.sort + #status?.name()")
+    public GameListResDto allGameList(Pageable pageable, String status) {
         Slice<Game> games;
-        if (status == StatusType.LIVE) {
+        if (status.equals("LIVE")) {
             games = gameRepository.findAllByAndStatusIn(Arrays.asList(StatusType.END, StatusType.LIVE, StatusType.WAIT), pageable);
         } else {
             games = gameRepository.findAllByAndStatus(StatusType.END, pageable);
@@ -72,10 +72,10 @@ public class GameFindService {
         return teamViews.stream().map(GameResultResDto::new).collect(Collectors.toList());
     }
     @Transactional(readOnly = true)
-    @Cacheable(value = "allGameListByUser", cacheManager = "gameCacheManager")
-    public GameListResDto allGameListUser(Pageable pageable, String intra, StatusType status) {
+    @Cacheable(value = "allGameListByUser", cacheManager = "gameCacheManager", key = "#pageable.pageNumber + #pageable.pageSize + #pageable.sort + #status?.name()")
+    public GameListResDto allGameListUser(Pageable pageable, String intra, String status) {
         List<String> statusTypes = Arrays.asList(StatusType.END.name());
-        if (status == StatusType.LIVE) {
+        if (status.equals("LIVE")) {
             statusTypes.add(StatusType.LIVE.name());
             statusTypes.add(StatusType.WAIT.name());
         }
