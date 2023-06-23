@@ -27,7 +27,7 @@ public class SeasonAdminService {
     private final RankAdminService rankAdminService;
 
     public List<SeasonAdminDto> findAllSeasons() {
-        List<Season> seasons =  seasonAdminRepository.findAll();
+        List<Season> seasons =  seasonAdminRepository.findAllByOrderByStartTimeDesc();
         List<SeasonAdminDto> dtoList = new ArrayList<>();
         for (Season season : seasons) {
             SeasonAdminDto dto = new SeasonAdminDto(season);
