@@ -19,4 +19,7 @@ public interface SeasonAdminRepository extends JpaRepository<Season, Long> {
     Optional<Season> findCurrentSeason(@Param("now") LocalDateTime now);
 
     List<Season> findAllByOrderByStartTimeDesc();
+
+    @Query("select s from Season s where s.startTime <= :now and s.endTime >= :now or s.startTime > :now ORDER BY s.startTime DESC")
+    List<Season> findCurrentAndNewSeason(@Param("now") LocalDateTime now);
 }

@@ -43,6 +43,8 @@ public class SeasonAdminService {
         insert(newSeason);
         seasonAdminRepository.save(newSeason);
 
+        checkSeasonAtDB();
+
         Long seasonId = newSeason.getId();
         SeasonAdminDto seasonAdminDto = findSeasonById(seasonId);
 
@@ -73,6 +75,7 @@ public class SeasonAdminService {
             rankRedisAdminService.deleteSeasonRankBySeasonId(seasonDto.getSeasonId());
             seasonAdminRepository.delete(season);
         }
+        checkSeasonAtDB();
     }
 
     @Transactional
@@ -88,6 +91,7 @@ public class SeasonAdminService {
             season.setPppGap(updateDto.getPppGap());
             insert(season);
             seasonAdminRepository.save(season);
+            checkSeasonAtDB();
         }
 
         SeasonAdminDto seasonAdminDto = findSeasonById(seasonId);
@@ -139,5 +143,39 @@ public class SeasonAdminService {
             else
                 beforeSeason.setEndTime(LocalDateTime.of(9999, 12, 31, 23, 59, 59));
         }
+    }
+
+    private void checkSeasonAtDB()
+    {
+        List<Season> seasons =  seasonAdminRepository.findCurrentAndNewSeason(LocalDateTime.now());
+        for (int i = 0; i < seasons.size(); i++) {
+            for (int j = i + 1; j < seasons.size(); j++) {
+                if (isOverlap(seasons.get(i), seasons.get(j)))
+                    throw new SeasonForbiddenException();
+            }
+        }
+    }
+
+    private boolean isOverlap(Season season1, Season season2) {
+        LocalDateTime start1 = season1.getStartTime();
+        LocalDateTime end1 = season1.getEndTime();
+        LocalDateTime start2 = season2.getStartTime();
+        LocalDateTime end2 = season2.getEndTime();
+
+        if (start1.isEqual(end1) || start2.isEqual(end2)) {
+            return false;
+        }
+        // 첫 번째 기간이 두 번째 기간의 이전에 끝날 때
+        if (end1.isBefore(start2)) {
+            return false;
+        }
+
+        // 첫 번째 기간이 두 번째 기간의 이후에 시작할 때
+        if (start1.isAfter(end2)) {
+            return false;
+        }
+
+        // 나머지 경우에는 두 기간이 겹칩니다.
+        return true;
     }
 }
