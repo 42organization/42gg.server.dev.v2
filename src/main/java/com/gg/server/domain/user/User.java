@@ -64,7 +64,7 @@ public class User extends BaseTimeEntity implements Serializable {
     public void modifyUserDetail(UserUpdateAdminRequestDto updateReq) {
         this.eMail = updateReq.getEmail();
         this.racketType = updateReq.getRacketType();
-        this.roleType = updateReq.getRoleType();
+        this.roleType = RoleType.of(updateReq.getRoleType());
     }
 
     public void imageUpdate(String imageUri) {

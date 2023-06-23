@@ -14,7 +14,7 @@ public class UserUpdateAdminRequestDto {
     private Integer losses;
     private Integer ppp;
     private String email;
-    private RoleType roleType;
+    private String roleType;
 
     @Override
     public String toString() {
