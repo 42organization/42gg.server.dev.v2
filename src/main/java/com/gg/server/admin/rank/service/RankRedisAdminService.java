@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.gg.server.domain.user.type.RoleType.GUEST;
+
 @Service
 @AllArgsConstructor
 public class RankRedisAdminService {
@@ -26,10 +28,12 @@ public class RankRedisAdminService {
         String redisHashKey = RedisKeyManager.getHashKey(seasonAdminDto.getSeasonId());
 
         users.forEach(user -> {
-            UserDto userDto = UserDto.from(user);
-            RankRedis userRank = RankRedis.from(userDto, seasonAdminDto.getStartPpp());
+            if (user.getRoleType() != GUEST) {
+                UserDto userDto = UserDto.from(user);
+                RankRedis userRank = RankRedis.from(userDto, seasonAdminDto.getStartPpp());
 
-            rankRedisRepository.addRankData(redisHashKey, user.getId(), userRank);
+                rankRedisRepository.addRankData(redisHashKey, user.getId(), userRank);
+            }
         });
     }
 

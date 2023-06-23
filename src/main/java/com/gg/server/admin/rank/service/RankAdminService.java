@@ -17,6 +17,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.gg.server.domain.user.type.RoleType.GUEST;
+
 @Service
 @AllArgsConstructor
 public class RankAdminService {
@@ -33,8 +35,10 @@ public class RankAdminService {
         List<Rank> ranks = new ArrayList<>();
         Season season = seasonRepository.findById(seasonAdminDto.getSeasonId()).get();
         users.forEach(user -> {
-            Rank userRank = Rank.from(user, season, seasonAdminDto.getStartPpp());
-            ranks.add(userRank);
+            if (user.getRoleType() != GUEST) {
+                Rank userRank = Rank.from(user, season, seasonAdminDto.getStartPpp());
+                ranks.add(userRank);
+            }
         });
         rankRepository.saveAll(ranks);
     }
