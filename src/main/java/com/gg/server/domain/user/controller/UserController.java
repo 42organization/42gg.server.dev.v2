@@ -4,6 +4,7 @@ import com.gg.server.domain.user.dto.*;
 import com.gg.server.domain.user.exception.KakaoOauth2AlreadyExistException;
 import com.gg.server.domain.user.exception.KakaoOauth2NotFoundException;
 import com.gg.server.domain.user.service.UserService;
+import com.gg.server.domain.user.type.OauthType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.global.security.config.properties.AppProperties;
 import com.gg.server.global.security.cookie.CookieUtil;
@@ -91,28 +92,6 @@ public class UserController {
         cookieUtil.deleteCookie(response, TokenHeaders.REFRESH_TOKEN);
     }
 
-
-    /**
-     *기존 카카오 유저 42 로그인 인증
-     */
-    @PostMapping("/oauth/42")
-    public void addOauthFortyTwo(@RequestParam String accessToken, HttpServletResponse response) throws IOException {
-        cookieUtil.addCookie(response, TokenHeaders.ACCESS_TOKEN, accessToken, -1);
-//        response.sendRedirect(applicationYmlRead.getBackUrl() + "/oauth2/authorization/42");
-    }
-    /**
-     *기존 42user 카카오 로그인 인증
-     */
-    @PostMapping("/oauth/kakao")
-    public void addOauthKakao(@RequestParam String accessToken, HttpServletResponse response) throws IOException {
-        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
-        if (userService.getKakaoId(userId) != null) {
-            throw new KakaoOauth2AlreadyExistException();
-        }
-        cookieUtil.addCookie(response, TokenHeaders.ACCESS_TOKEN, accessToken,-1);
-//        response.sendRedirect(applicationYmlRead.getBackUrl() + "/oauth2/authorization/kakao");
-    }
-
     /**
      * 42user 카카오 로그인 연동 해제
      */
@@ -124,5 +103,8 @@ public class UserController {
         userService.deleteKakaoId(user.getId());
     }
 
-
+    @GetMapping("/oauth")
+    public UserOauthDto getUserOauth2Information(@Parameter(hidden = true) @Login UserDto user) {
+        return new UserOauthDto(OauthType.of(user.getRoleType(), user.getKakaoId()).getCode());
+    }
 }
