@@ -49,6 +49,12 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew clean build
 
+      - name: Store latest image as new tag
+        run: |
+          docker pull ${{ env.IMAGE_NAME }}:latest
+          docker tag ${{ env.IMAGE_NAME }}:latest ${{ env.IMAGE_NAME }}:${{ env.LAST_VERSION_TAG }}
+          docker push ${{ env.IMAGE_NAME }}:${{ env.LAST_VERSION_TAG }}
+
       - name: build new docker image as latest tag
         run: |
           docker build -t ${{ env.IMAGE_NAME }}:latest .
@@ -77,6 +83,9 @@ jobs:
           key: ${{ secrets.MAIN_SERVER_PEM }}
           script: |
             cd ./docker
+            docker stop tomcat
+            docker rm tomcat
+            docker rmi ${{ env.IMAGE_NAME }}:latest
             docker-compose up -d
 
       - name: Remove Github Actions IP From Security Group
