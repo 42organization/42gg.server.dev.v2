@@ -17,6 +17,8 @@ import com.gg.server.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.weaver.patterns.ConcreteCflowPointcut.Slot;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,16 +39,27 @@ public class GameStatusService {
     public void updateBeforeToLiveStatus() {
         // game before 중에 현재 시작 시간인 경우 LIVE로 update
         List<Game> game = gameRepository.findAllByStatusAndStartTimeLessThanEqual(StatusType.BEFORE, getTime(0));
+        if (!game.isEmpty()) {
+            cacheDelete();
+        }
         for (Game g : game) {
             g.updateStatus();
         }
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "allGameList", allEntries = true),
+    })
+    void cacheDelete() {}
+
     @Transactional
     public void updateLiveToWaitStatus() {
-        // game live 중에 현재 시작 시간인 경우 wait 로 update
+        // game live 중에 종료 시간인 경우 wait 로 update
         LocalDateTime endTime = getTime(1);
         List<Game> game = gameRepository.findAllByStatusAndEndTimeLessThanEqual(StatusType.LIVE, endTime);
+        if (!game.isEmpty()) {
+            cacheDelete();
+        }
         for (Game g : game) {
             g.updateStatus();
         }
@@ -77,7 +90,7 @@ public class GameStatusService {
     private LocalDateTime getTime(int plusMiniute) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime endTime = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(),
-                now.getHour(), now.getMinute(), 1);
+                now.getHour(), now.getMinute(), 10);
         return endTime.plusMinutes(plusMiniute);
     }
 }
