@@ -72,7 +72,7 @@
     </appender>
 
     <appender name="elk_Logstash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-        <destination>logstash:5000</destination>
+        <destination>172.26.0.20:5000</destination>
         <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
     </appender>
 
