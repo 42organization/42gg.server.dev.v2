@@ -56,7 +56,6 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
         for (Cookie cookie :cookies) {
             if (cookie.getName().equals(TokenHeaders.REFRESH_TOKEN) ) {
                 Long existUserId = tokenProvider.getUserIdFormRefreshToken(cookie.getValue());
-                cookieUtil.deleteCookie(response, TokenHeaders.REFRESH_TOKEN);
                 if (existUserId != null && !existUserId.equals(principal.getId())) {
                     return deleteKakaoUser(existUserId, response, authentication);
                 }
