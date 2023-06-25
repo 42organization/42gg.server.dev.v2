@@ -37,6 +37,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -46,8 +47,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final JwtRedisRepository jwtRedisRepository;
-    private final AuthTokenProvider tokenProvider;
     private final UserFindService userFindService;
     private final UserRepository userRepository;
     private final NotiRepository notiRepository;
@@ -57,31 +56,8 @@ public class UserService {
     private final PChangeRepository pChangeRepository;
     private final RankFindService rankFindService;
     private final RedisMatchUserRepository redisMatchUserRepository;
-    private final AppProperties appProperties;
 
 
-    public UserJwtTokenDto regenerate(String refreshToken) {
-        Long userId = tokenProvider.getUserIdFormRefreshToken(refreshToken);
-        if (userId == null)
-            throw new TokenNotValidException();
-        String refTokenKey = RedisKeyManager.getRefKey(userId);
-        String redisRefToken = jwtRedisRepository.getRefToken(refTokenKey);
-        if (redisRefToken == null)
-            throw new TokenNotValidException();
-        if (!redisRefToken.equals(refreshToken)){
-            jwtRedisRepository.deleteRefToken(refTokenKey);
-            throw new TokenNotValidException();
-        }
-        return authenticationSuccess(userId, refTokenKey);
-    }
-
-    private UserJwtTokenDto authenticationSuccess(Long userId, String refTokenKey) {
-        String newRefToken = tokenProvider.refreshToken(userId);
-        long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
-        jwtRedisRepository.addRefToken(refTokenKey, newRefToken, refreshTokenExpiry);
-        String newAccessToken = tokenProvider.createToken(userId);
-        return new UserJwtTokenDto(newAccessToken, newRefToken);
-    }
 
     /**
      * @param intraId
@@ -236,5 +212,27 @@ public class UserService {
     public Long getKakaoId(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
         return user.getKakaoId();
+    }
+
+    @Transactional(readOnly = true)
+    public UserImageResponseDto getRankedUserImages(Long seasonId) {
+        Season targetSeason;
+        if (seasonId == 0)
+            targetSeason = seasonFindService.findCurrentSeason(LocalDateTime.now());
+        else
+            targetSeason = seasonFindService.findSeasonById(seasonId);
+        try {
+            String zSetKey = RedisKeyManager.getZSetKey(targetSeason.getId());
+            List<Long> userIds = rankRedisRepository.getUserIdsByRangeFromZSet(zSetKey, 0, 2);
+            List<User> users = userRepository.findUsersByIdIn(userIds);
+            List<UserImageDto> userImages = new ArrayList<>();
+            userIds.forEach(userId -> {
+                User user = users.stream().filter(u -> u.getId().equals(userId)).findFirst().orElseThrow(UserNotFoundException::new);
+                userImages.add(new UserImageDto(user.getIntraId(), user.getImageUri()));
+            });
+            return new UserImageResponseDto(userImages);
+        } catch (RedisDataNotFoundException ex){
+            return new UserImageResponseDto(new ArrayList<>());
+        }
     }
 }

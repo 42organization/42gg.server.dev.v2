@@ -3,6 +3,7 @@ package com.gg.server.domain.user.controller;
 import com.gg.server.domain.user.dto.*;
 import com.gg.server.domain.user.exception.KakaoOauth2AlreadyExistException;
 import com.gg.server.domain.user.exception.KakaoOauth2NotFoundException;
+import com.gg.server.domain.user.service.UserAuthenticationService;
 import com.gg.server.domain.user.service.UserService;
 import com.gg.server.domain.user.type.OauthType;
 import com.gg.server.domain.user.type.RoleType;
@@ -31,12 +32,13 @@ import java.util.List;
 @RequestMapping("/pingpong/users")
 public class UserController {
     private final UserService userService;
+    private final UserAuthenticationService userAuthenticationService;
     private final AppProperties appProperties;
     private final CookieUtil cookieUtil;
 
     @PostMapping("/accesstoken")
     public ResponseEntity<UserAccessTokenDto> generateAccessToken(@RequestParam String refreshToken, HttpServletResponse response) {
-        UserJwtTokenDto result = userService.regenerate(refreshToken);
+        UserJwtTokenDto result = userAuthenticationService.regenerate(refreshToken);
         cookieUtil.addCookie(response, TokenHeaders.REFRESH_TOKEN, result.getRefreshToken(),
                 (int)(appProperties.getAuth().getRefreshTokenExpiry() / 1000));
         return new ResponseEntity<>(new UserAccessTokenDto(result.getAccessToken()), HttpStatus.CREATED);
@@ -104,5 +106,10 @@ public class UserController {
     @GetMapping("/oauth")
     public UserOauthDto getUserOauth2Information(@Parameter(hidden = true) @Login UserDto user) {
         return new UserOauthDto(OauthType.of(user.getRoleType(), user.getKakaoId()).getCode());
+    }
+
+    @GetMapping("/images")
+    public UserImageResponseDto getUserImage(@RequestParam Long seasonId) {
+        return userService.getRankedUserImages(seasonId);
     }
 }
