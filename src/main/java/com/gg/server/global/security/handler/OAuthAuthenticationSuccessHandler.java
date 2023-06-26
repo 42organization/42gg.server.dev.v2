@@ -50,20 +50,17 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
 
     @Override
     protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        
+
+        UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie :cookies) {
             if (cookie.getName().equals(TokenHeaders.REFRESH_TOKEN) ) {
                 Long existUserId = tokenProvider.getUserIdFormRefreshToken(cookie.getValue());
-                cookieUtil.deleteCookie(response, TokenHeaders.REFRESH_TOKEN);
-                if (existUserId != null) {
+                if (existUserId != null && !existUserId.equals(principal.getId())) {
                     return deleteKakaoUser(existUserId, response, authentication);
-                } else {
-                    throw new UserNotFoundException();
                 }
             }
         }
-        UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
 
         // 쿠키 시간 설정
         long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
