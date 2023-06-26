@@ -1,5 +1,6 @@
 package com.gg.server.domain.user.controller;
 
+import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.user.dto.*;
 import com.gg.server.domain.user.exception.KakaoOauth2AlreadyExistException;
 import com.gg.server.domain.user.exception.KakaoOauth2NotFoundException;
@@ -19,6 +20,8 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -109,7 +112,12 @@ public class UserController {
     }
 
     @GetMapping("/images")
-    public UserImageResponseDto getUserImage(@RequestParam Long seasonId) {
-        return userService.getRankedUserImages(seasonId);
+    public UserImageResponseDto getUserImage(@RequestParam(required = false) Long seasonId, Mode mode) {
+        if (mode == Mode.RANK)
+            return userService.getRankedUserImagesByPPP(seasonId);
+        else{
+            PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "totalExp"));
+            return userService.getRankedUserImagesByExp(pageRequest);
+        }
     }
 }
