@@ -14,7 +14,6 @@ public class RankDto {
     private int ppp;
     private String statusMessage;
 
-    private String userImageUri;
 
     public static RankDto from(RankRedis rankRedis, int rank) {
         RankDto dto = RankDto.builder()
@@ -22,7 +21,6 @@ public class RankDto {
                 .rank(rank)
                 .ppp(rankRedis.getPpp())
                 .statusMessage(rankRedis.getStatusMessage())
-                .userImageUri(rankRedis.getUserImageUri())
                 .build();
         return dto;
     }
