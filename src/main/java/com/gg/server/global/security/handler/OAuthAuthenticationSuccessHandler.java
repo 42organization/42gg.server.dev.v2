@@ -76,7 +76,6 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
         jwtRedisRepository.deleteRefToken(refTokenKey);
         jwtRedisRepository.addRefToken(refTokenKey, refreshToken, refreshTokenExpiry);
         return UriComponentsBuilder.fromUriString(applicationYmlRead.getFrontUrl())
-                .queryParam("token", accessToken)
                 .build().toUriString();
     }
 
@@ -86,14 +85,14 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
         User newUser = userRepository.findById(principal.getId()).orElseThrow(UserNotFoundException::new);
         //kakao 계정 사용자가 42 인증
         if (existUser.getRoleType().equals(RoleType.GUEST)) {
+            saveAndGetUserAccessToken(response, newUser, existUser);
             return UriComponentsBuilder.fromUriString(applicationYmlRead.getFrontUrl() + "/users/detail?intraId=" + newUser.getIntraId())
-                    .queryParam("token", saveAndGetUserAccessToken(response, newUser, existUser))
                 .build().toUriString();
         }
         //기존 user 사용자가 카카오 인증
         if (newUser.getRoleType().equals(RoleType.GUEST)) {
+            saveAndGetUserAccessToken(response, existUser, newUser);
             return UriComponentsBuilder.fromUriString(applicationYmlRead.getFrontUrl() + "/users/detail?intraId=" + existUser.getIntraId())
-                    .queryParam("token", saveAndGetUserAccessToken(response, existUser, newUser))
                     .build().toUriString();
         }
         throw new UserNotFoundException();
