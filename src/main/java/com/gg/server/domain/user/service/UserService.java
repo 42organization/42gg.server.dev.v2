@@ -209,13 +209,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public Long getKakaoId(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
-        return user.getKakaoId();
-    }
-
-    @Transactional(readOnly = true)
-    public UserImageResponseDto getRankedUserImages(Long seasonId) {
+    public UserImageResponseDto getRankedUserImagesByPPP(Long seasonId) {
         Season targetSeason;
         if (seasonId == 0)
             targetSeason = seasonFindService.findCurrentSeason(LocalDateTime.now());
@@ -234,5 +228,14 @@ public class UserService {
         } catch (RedisDataNotFoundException ex){
             return new UserImageResponseDto(new ArrayList<>());
         }
+    }
+
+    public UserImageResponseDto getRankedUserImagesByExp(PageRequest pageRequest) {
+        List<User> users = userRepository.findAll(pageRequest).getContent();
+        List<UserImageDto> userImages = new ArrayList<>();
+        for (User user : users) {
+            userImages.add(new UserImageDto(user.getIntraId(), user.getImageUri()));
+        }
+        return new UserImageResponseDto(userImages);
     }
 }
