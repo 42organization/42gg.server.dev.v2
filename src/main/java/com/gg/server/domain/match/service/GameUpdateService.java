@@ -7,7 +7,9 @@ import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.match.dto.GameAddDto;
 import com.gg.server.domain.match.exception.EnrolledSlotException;
 import com.gg.server.domain.match.exception.SlotNotFoundException;
+import com.gg.server.domain.noti.data.Noti;
 import com.gg.server.domain.noti.service.NotiService;
+import com.gg.server.domain.noti.service.SnsNotiService;
 import com.gg.server.domain.slotmanagement.SlotManagement;
 import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
 import com.gg.server.domain.team.data.Team;
@@ -32,6 +34,7 @@ public class GameUpdateService {
     private final TeamUserRepository teamUserRepository;
     private final SlotManagementRepository slotManagementRepository;
     private final NotiService notiService;
+    private final SnsNotiService snsNotiService;
 
     public void make(GameAddDto addDto) {
         SlotManagement slotManagement = slotManagementRepository.findCurrent(LocalDateTime.now())
@@ -48,13 +51,18 @@ public class GameUpdateService {
         TeamUser enemyTeamUser = new TeamUser(enemyTeam, enemyUser);
         List<TeamUser> matchTeamUser = List.of(enemyTeamUser, myTeamUser);
         teamUserRepository.saveAll(matchTeamUser);
-        notiService.createMatched(playerUser, addDto.getStartTime());
-        notiService.createMatched(enemyUser, addDto.getStartTime());
+        Noti playerNoti = notiService.createMatched(playerUser, addDto.getStartTime());
+        snsNotiService.sendSnsNotification(playerNoti, UserDto.from(playerUser));
+        Noti enemyNoti = notiService.createMatched(enemyUser, addDto.getStartTime());
+        snsNotiService.sendSnsNotification(enemyNoti, UserDto.from(enemyUser));
     }
 
     public void delete(Game game, UserDto userDto) {
         List<User> enemyTeam = userRepository.findEnemyByGameAndUser(game.getId(), userDto.getId());
-        enemyTeam.forEach(enemy -> notiService.createMatchCancel(enemy, game.getStartTime()));
+        enemyTeam.forEach(enemy -> {
+            Noti noti = notiService.createMatchCancel(enemy, game.getStartTime());
+            snsNotiService.sendSnsNotification(noti, UserDto.from(enemy));
+        });
         gameRepository.delete(game);
     }
 }
