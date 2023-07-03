@@ -4,6 +4,7 @@ import com.gg.server.domain.noti.data.Noti;
 import com.gg.server.domain.noti.dto.UserNotiDto;
 import com.gg.server.domain.noti.service.sns.NotiMailSender;
 import com.gg.server.domain.noti.service.sns.SlackbotService;
+import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.domain.user.type.SnsType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,22 @@ public class SnsNotiService {
 
     @Transactional(readOnly = true)
     public void sendSnsNotification(Noti noti, UserNotiDto user) {
+        log.info("Send Sns Noti");
+        SnsType userSnsNotiOpt = user.getSnsNotiOpt();
+        if (userSnsNotiOpt == SnsType.NONE)
+            return;
+        if(userSnsNotiOpt == SnsType.EMAIL)
+            notiMailSender.send(user, noti);
+        else if (userSnsNotiOpt == SnsType.SLACK)
+            slackbotService.send(user, noti);
+        else if (userSnsNotiOpt == SnsType.BOTH) {
+            notiMailSender.send(user, noti);
+            slackbotService.send(user, noti);
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public void sendSnsNotification(Noti noti, UserDto user) {
         log.info("Send Sns Noti");
         SnsType userSnsNotiOpt = user.getSnsNotiOpt();
         if (userSnsNotiOpt == SnsType.NONE)

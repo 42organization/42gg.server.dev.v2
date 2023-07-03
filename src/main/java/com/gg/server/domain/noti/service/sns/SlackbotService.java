@@ -8,6 +8,7 @@ import com.gg.server.domain.noti.exception.SlackJsonParseException;
 import com.gg.server.domain.noti.exception.SlackSendException;
 import com.gg.server.domain.noti.exception.SlackUserGetFailedException;
 import com.gg.server.domain.noti.service.NotiService;
+import com.gg.server.domain.user.dto.UserDto;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -85,6 +86,16 @@ public class SlackbotService {
 
     @Async("asyncExecutor")
     public void send(UserNotiDto user, Noti noti) {
+        log.info("slack alarm send");
+        try {
+            startSendNoti(user.getIntraId(), noti);
+        } catch (SlackSendException e) {
+            log.error("SlackSendException message = {}", e.getMessage());
+        }
+    }
+
+    @Async("asyncExecutor")
+    public void send(UserDto user, Noti noti) {
         log.info("slack alarm send");
         try {
             startSendNoti(user.getIntraId(), noti);
