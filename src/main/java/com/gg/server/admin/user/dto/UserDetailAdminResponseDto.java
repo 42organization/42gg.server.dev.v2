@@ -46,7 +46,7 @@ public class UserDetailAdminResponseDto {
         this.wins = 0;
         this.losses = 0;
         this.ppp = 0;
-        this.email = user.getEMail();
+        this.email = user.getEMail() == null ? "" : user.getEMail();
         this.roleType = user.getRoleType().getKey();
         this.exp = user.getTotalExp();
     }
