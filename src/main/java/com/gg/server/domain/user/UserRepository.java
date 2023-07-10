@@ -13,6 +13,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByIntraId(String intraId);
     User getUserByIntraId(String IntraId);
     Page<User> findByIntraIdContains(Pageable pageable, String intraId);
+
+    Page<User> findAllByTotalExpGreaterThan(Pageable pageable, Integer exp);
     Optional<User> findByKakaoId(Long kakaoId);
     @Query(nativeQuery = true, value = "select ranking from " +
             "(select intra_id, row_number() over (order by total_exp desc, intra_id asc) as ranking from user) ranked where intra_id=:intraId")
