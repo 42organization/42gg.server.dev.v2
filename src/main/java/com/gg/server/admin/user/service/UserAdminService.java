@@ -87,9 +87,13 @@ public class UserAdminService {
     public UserDetailAdminResponseDto getUserDetailByIntraId(String intraId) {
         User user = userAdminRepository.findByIntraId(intraId).orElseThrow(() -> new UserNotFoundException());
         Season currSeason = seasonAdminRepository.findCurrentSeason(LocalDateTime.now()).orElseThrow(() -> new SeasonNotFoundException());
-        RankRedis userCurrRank = rankRedisRepository.findRankByUserId(RedisKeyManager.getHashKey(currSeason.getId()),
-                user.getId());
-        return new UserDetailAdminResponseDto(user, userCurrRank);
+        try {
+            RankRedis userCurrRank = rankRedisRepository.findRankByUserId(RedisKeyManager.getHashKey(currSeason.getId()),
+                    user.getId());
+           return new UserDetailAdminResponseDto(user, userCurrRank);
+        } catch (RedisDataNotFoundException e){
+            return new UserDetailAdminResponseDto(user);
+        }
     }
 
     @Transactional

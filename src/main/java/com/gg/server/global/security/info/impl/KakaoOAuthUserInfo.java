@@ -22,7 +22,7 @@ public class KakaoOAuthUserInfo extends OAuthUserInfo {
     public String getEmail() {
         Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
         if (kakaoAccount.get("email") == null)
-            return null;
+            return "";
         return kakaoAccount.get("email").toString();
     }
 

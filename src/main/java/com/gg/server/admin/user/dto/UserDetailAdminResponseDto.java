@@ -36,6 +36,21 @@ public class UserDetailAdminResponseDto {
         this.roleType = user.getRoleType().getKey();
         this.exp = user.getTotalExp();
     }
+
+    public UserDetailAdminResponseDto(User user) {
+        this.userId = user.getId();
+        this.intraId = user.getIntraId();
+        this.userImageUri = user.getImageUri();
+        this.racketType = user.getRacketType().getCode();
+        this.statusMessage = "";
+        this.wins = 0;
+        this.losses = 0;
+        this.ppp = 0;
+        this.email = user.getEMail();
+        this.roleType = user.getRoleType().getKey();
+        this.exp = user.getTotalExp();
+    }
+
     @Override
     public String toString() {
         return "UserDetailResponseDto{" +
