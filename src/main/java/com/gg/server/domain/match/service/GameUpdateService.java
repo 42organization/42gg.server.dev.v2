@@ -57,8 +57,14 @@ public class GameUpdateService {
         snsNotiService.sendSnsNotification(enemyNoti, UserDto.from(enemyUser));
     }
 
+    /**
+     * game 매칭된 user 이외에 다른 user가 취소할 경우, 에러 발생
+     */
     public void delete(Game game, UserDto userDto) {
         List<User> enemyTeam = userRepository.findEnemyByGameAndUser(game.getId(), userDto.getId());
+        if (enemyTeam.size() > 1) {
+            throw new SlotNotFoundException();
+        }
         enemyTeam.forEach(enemy -> {
             Noti noti = notiService.createMatchCancel(enemy, game.getStartTime());
             snsNotiService.sendSnsNotification(noti, UserDto.from(enemy));

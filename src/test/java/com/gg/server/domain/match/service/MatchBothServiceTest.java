@@ -7,6 +7,7 @@ import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.match.data.RedisMatchTimeRepository;
 import com.gg.server.domain.match.data.RedisMatchUserRepository;
+import com.gg.server.domain.match.exception.SlotNotFoundException;
 import com.gg.server.domain.match.type.Option;
 import com.gg.server.domain.noti.data.NotiRepository;
 import com.gg.server.domain.penalty.redis.PenaltyUserRedisRepository;
@@ -122,5 +123,16 @@ class MatchBothServiceTest {
         System.out.println("matchFindService = " + matchFindService.getCurrentMatch(UserDto.from(users.get(0))));
     }
 
+    @DisplayName("매칭 경기 상대가 아닌 다른 유저의 매칭 경기 취소")
+    @Test
+    void cancelByNotMatchedUser() {
+        System.out.println("this.users = " + this.users);
+        // 유저 0 slot 2, 3, 0 등록 유저 1 slot 2
+        matchService.makeMatch(UserDto.from(users.get(0)), Option.BOTH, this.slotTimes.get(2));
+        matchService.makeMatch(UserDto.from(users.get(1)), Option.BOTH, this.slotTimes.get(2));
+        org.junit.jupiter.api.Assertions.assertThrows(SlotNotFoundException.class, () -> {
+            matchService.cancelMatch(UserDto.from(users.get(2)), this.slotTimes.get(2));
+        });
+    }
 
 }
