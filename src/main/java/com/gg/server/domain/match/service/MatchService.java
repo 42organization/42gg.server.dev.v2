@@ -73,7 +73,7 @@ public class MatchService {
         Optional<Game> game = gameRepository.findByStartTime(startTime);
         if (game.isPresent()) {
             gameUpdateService.delete(game.get(), userDto);//cascade 테스트
-            penaltyService.givePenalty(userDto, 1);
+            penaltyService.givePenalty(userDto, 30);
             return;
         }
         deleteUserFromQueue(userDto, startTime);
