@@ -61,6 +61,6 @@ public class UserAdminController {
         }
         userAdminService.updateUserDetail(intraId, updateUserInfo, imgData);
 
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 }
