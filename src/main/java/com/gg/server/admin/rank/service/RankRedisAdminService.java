@@ -46,7 +46,13 @@ public class RankRedisAdminService {
 
     public void updateRankUser(String hashKey, String zsetKey, Long userId, RankRedis userRank) {
         rankRedisRepository.updateRankData(hashKey, userId, userRank);
-        rankRedisRepository.deleteFromZSet(zsetKey, userId);
-        rankRedisRepository.addToZSet(zsetKey, userId, userRank.getPpp());
+        if (userPlayedRank(userRank)){
+            rankRedisRepository.deleteFromZSet(zsetKey, userId);
+            rankRedisRepository.addToZSet(zsetKey, userId, userRank.getPpp());
+        }
+    }
+
+    private boolean userPlayedRank(RankRedis userRank) {
+        return (userRank.getWins() + userRank.getLosses()) != 0;
     }
 }
