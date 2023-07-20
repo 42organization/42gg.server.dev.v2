@@ -51,10 +51,10 @@ jobs:
 
       - name: build new docker image as latest tag
         run: |
-          docker build -t ${{ env.IMAGE_NAME }}:latest .
-          docker push ${{ env.IMAGE_NAME }}:latest
-          docker tag ${{ env.IMAGE_NAME }}:latest ${{ env.IMAGE_NAME }}:${{ env.VERSION_TAG }}
+          docker build -t ${{ env.IMAGE_NAME }}:${{ env.VERSION_TAG }} .
           docker push ${{ env.IMAGE_NAME }}:${{ env.VERSION_TAG }}
+          docker tag ${{ env.IMAGE_NAME }}:${{ env.VERSION_TAG }} ${{ env.IMAGE_NAME }}:latest
+          docker push ${{ env.IMAGE_NAME }}:latest
 
       - name: Get Github Actions IP
         id: ip
