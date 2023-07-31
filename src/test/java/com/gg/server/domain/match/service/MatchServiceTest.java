@@ -144,10 +144,15 @@ class MatchServiceTest {
     @DisplayName("Queue에 매칭 가능한 normal 상대가 있을 경우 게임 생성")
     @Test
     void addMatchSameNormalOption() {
+        matchService.makeMatch(UserDto.from(users.get(2)), Option.RANK, this.slotTimes.get(0));
         matchService.makeMatch(UserDto.from(users.get(0)), Option.NORMAL, this.slotTimes.get(0));
         matchService.makeMatch(UserDto.from(users.get(1)), Option.NORMAL, this.slotTimes.get(0));
         Optional<Game> game = gameRepository.findByStartTime(slotTimes.get(0));
         Assertions.assertThat(game.isEmpty()).isEqualTo(false);
+        Long size = redisTemplate.opsForList().size(MatchKey.getTime(slotTimes.get(0)));
+        Assertions.assertThat(size).isEqualTo(1L);
+        RedisMatchUser remainedUser = (RedisMatchUser) redisTemplate.opsForList().index(MatchKey.getTime(slotTimes.get(0)), 0);
+        Assertions.assertThat(remainedUser.getUserId()).isEqualTo(users.get(2).getId());
     }
 
     @DisplayName("Queue에 user가 선택한 random option으로 매칭 가능한 상대가 없을 경우")

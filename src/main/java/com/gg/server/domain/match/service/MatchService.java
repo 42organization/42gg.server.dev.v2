@@ -58,7 +58,9 @@ public class MatchService {
         if (enemy.isPresent()) {
             GameAddDto gameDto = new GameAddDto(startTime, season, player, enemy.get());
             gameUpdateService.make(gameDto);
-            cancelEnrolledSlots(List.of(enemy.get(), player), startTime);
+            redisMatchTimeRepository.deleteMatchUser(startTime, player);
+            redisMatchTimeRepository.deleteMatchUser(startTime, enemy.get());
+            cancelEnrolledSlots(List.of(enemy.get(), player));
         } else {
             addUserToQueue(startTime, player, option);
         }
@@ -105,8 +107,7 @@ public class MatchService {
         redisMatchUserRepository.addMatchTime(matchUser.getUserId(), startTime, option);
     }
 
-    private void cancelEnrolledSlots(List<RedisMatchUser> players, LocalDateTime startTime) {
-        redisMatchTimeRepository.deleteMatchTime(startTime);
+    private void cancelEnrolledSlots(List<RedisMatchUser> players) {
         for (RedisMatchUser player : players) {
             Set<RedisMatchTime> matchTimes = redisMatchUserRepository.getAllMatchTime(player.getUserId());
             matchTimes.stream().forEach(ele -> redisMatchTimeRepository.deleteMatchUser(ele.getStartTime(), player));
