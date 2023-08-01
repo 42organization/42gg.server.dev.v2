@@ -26,7 +26,7 @@ public class CoinHistory {
     private String history;
 
     @Column(name = "amount")
-    private Long amount;
+    private int amount;
 
     @CreatedDate
     @Column(name = "createdAt", updatable = false, nullable = false)

@@ -1,5 +1,6 @@
 package com.gg.server.domain.coin.data;
 
+import com.gg.server.domain.user.data.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,14 +18,15 @@ public class CoinPolicy {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", length = 30)
-    private String CreateUserId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(name = "attendance")
     private Long attendance;
 
-    @Column(name = "nomal")
-    private Long nomal;
+    @Column(name = "normal")
+    private Long normal;
 
     @Column(name = "rankWin")
     private Long rankWin;
