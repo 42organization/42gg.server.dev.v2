@@ -1,8 +1,8 @@
 package com.gg.server.global.security.handler;
 
 import com.gg.server.domain.rank.redis.RedisKeyManager;
-import com.gg.server.domain.user.User;
-import com.gg.server.domain.user.UserRepository;
+import com.gg.server.domain.user.data.User;
+import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.global.security.UserPrincipal;

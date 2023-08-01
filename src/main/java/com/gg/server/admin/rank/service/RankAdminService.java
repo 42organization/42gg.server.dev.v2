@@ -8,7 +8,7 @@ import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.data.SeasonRepository;
 import com.gg.server.domain.season.exception.SeasonForbiddenException;
 import com.gg.server.domain.season.exception.SeasonTimeBeforeException;
-import com.gg.server.domain.user.User;
+import com.gg.server.domain.user.data.User;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -18,8 +18,8 @@ import com.gg.server.domain.team.data.Team;
 import com.gg.server.domain.team.data.TeamRepository;
 import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.team.data.TeamUserRepository;
-import com.gg.server.domain.user.User;
-import com.gg.server.domain.user.UserRepository;
+import com.gg.server.domain.user.data.User;
+import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.controller.dto.GameInfoDto;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
@@ -28,7 +28,6 @@ import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;

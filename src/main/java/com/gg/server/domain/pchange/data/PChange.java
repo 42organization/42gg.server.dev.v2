@@ -1,7 +1,7 @@
 package com.gg.server.domain.pchange.data;
 
 import com.gg.server.domain.game.data.Game;
-import com.gg.server.domain.user.User;
+import com.gg.server.domain.user.data.User;
 import com.gg.server.global.utils.BaseTimeEntity;
 import lombok.*;
 

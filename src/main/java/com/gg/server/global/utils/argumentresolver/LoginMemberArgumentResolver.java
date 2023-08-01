@@ -1,7 +1,7 @@
 package com.gg.server.global.utils.argumentresolver;
 
-import com.gg.server.domain.user.User;
-import com.gg.server.domain.user.UserRepository;
+import com.gg.server.domain.user.data.User;
+import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.global.utils.HeaderUtil;

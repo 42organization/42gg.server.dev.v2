@@ -1,10 +1,9 @@
 package com.gg.server.domain.penalty.data;
 
 import com.gg.server.domain.penalty.type.PenaltyType;
-import com.gg.server.domain.user.User;
+import com.gg.server.domain.user.data.User;
 import com.gg.server.global.utils.BaseTimeEntity;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

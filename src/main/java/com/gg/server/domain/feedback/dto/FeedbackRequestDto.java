@@ -1,7 +1,6 @@
 package com.gg.server.domain.feedback.dto;
 
 import com.gg.server.domain.feedback.type.FeedbackType;
-import com.gg.server.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

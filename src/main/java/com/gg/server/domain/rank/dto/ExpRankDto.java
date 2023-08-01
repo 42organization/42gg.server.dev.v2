@@ -1,6 +1,6 @@
 package com.gg.server.domain.rank.dto;
 
-import com.gg.server.domain.user.User;
+import com.gg.server.domain.user.data.User;
 import com.gg.server.global.utils.ExpLevelCalculator;
 import lombok.Builder;
 import lombok.Getter;

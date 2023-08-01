@@ -1,9 +1,7 @@
-package com.gg.server.domain.user;
+package com.gg.server.domain.user.data;
 
 import com.gg.server.admin.user.dto.UserUpdateAdminRequestDto;
-import com.gg.server.domain.user.type.RacketType;
-import com.gg.server.domain.user.type.RoleType;
-import com.gg.server.domain.user.type.SnsType;
+import com.gg.server.domain.user.type.*;
 import com.gg.server.global.utils.BaseTimeEntity;
 import lombok.*;
 
@@ -47,6 +45,20 @@ public class User extends BaseTimeEntity implements Serializable {
 
     @Column(name = "kakao_id")
     private Long kakaoId;
+
+    @Column(name = "gg_coin")
+    private Integer ggCoin;
+
+    @Column(name = "background")
+    @Enumerated(EnumType.STRING)
+    private BackgroundType background;
+
+    @Column(name = "text_color", length = 10)
+    private String textColor;
+
+    @Column(name = "edge")
+    @Enumerated(EnumType.STRING)
+    private EdgeType edge;
 
     @Builder
     public User(String intraId, String eMail, String imageUri, RacketType racketType,

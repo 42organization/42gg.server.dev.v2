@@ -1,13 +1,9 @@
 package com.gg.server.domain.pchange.service;
 
 import com.gg.server.domain.game.data.Game;
-import com.gg.server.domain.game.dto.ExpChangeResultResDto;
-import com.gg.server.domain.game.dto.PPPChangeResultResDto;
-import com.gg.server.domain.game.service.GameService;
 import com.gg.server.domain.pchange.data.PChange;
 import com.gg.server.domain.pchange.data.PChangeRepository;
-import com.gg.server.domain.season.data.Season;
-import com.gg.server.domain.user.User;
+import com.gg.server.domain.user.data.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

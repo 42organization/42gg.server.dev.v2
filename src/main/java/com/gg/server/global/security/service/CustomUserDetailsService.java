@@ -1,9 +1,7 @@
 package com.gg.server.global.security.service;
 
-import com.gg.server.domain.user.User;
-import com.gg.server.domain.user.UserRepository;
+import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.service.UserFindService;
-import com.gg.server.domain.user.service.UserService;
 import com.gg.server.global.security.UserPrincipal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
