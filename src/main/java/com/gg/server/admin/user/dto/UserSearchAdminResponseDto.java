@@ -1,10 +1,7 @@
 package com.gg.server.admin.user.dto;
 
-import com.gg.server.domain.user.User;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.stream.Collectors;

@@ -1,6 +1,6 @@
 package com.gg.server.domain.noti.data;
 
-import com.gg.server.domain.user.User;
+import com.gg.server.domain.user.data.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;

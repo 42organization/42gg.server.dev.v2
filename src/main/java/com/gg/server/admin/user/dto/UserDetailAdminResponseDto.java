@@ -1,8 +1,7 @@
 package com.gg.server.admin.user.dto;
 
-import com.gg.server.domain.rank.data.Rank;
 import com.gg.server.domain.rank.redis.RankRedis;
-import com.gg.server.domain.user.User;
+import com.gg.server.domain.user.data.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

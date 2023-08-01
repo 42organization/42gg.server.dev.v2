@@ -5,10 +5,10 @@ import com.gg.server.domain.penalty.data.PenaltyRepository;
 import com.gg.server.domain.penalty.redis.PenaltyUserRedisRepository;
 import com.gg.server.domain.penalty.redis.RedisPenaltyUser;
 import com.gg.server.domain.penalty.type.PenaltyType;
-import com.gg.server.domain.user.User;
+import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.domain.user.service.UserFindService;
-import com.gg.server.domain.user.service.UserService;
+
 import java.time.LocalDateTime;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;

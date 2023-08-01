@@ -1,11 +1,10 @@
 package com.gg.server.domain.team.data;
 
-import com.gg.server.domain.user.User;
+import com.gg.server.domain.user.data.User;
 import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor

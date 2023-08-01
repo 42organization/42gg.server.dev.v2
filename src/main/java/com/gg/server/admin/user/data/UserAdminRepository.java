@@ -1,6 +1,6 @@
 package com.gg.server.admin.user.data;
 
-import com.gg.server.domain.user.User;
+import com.gg.server.domain.user.data.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
