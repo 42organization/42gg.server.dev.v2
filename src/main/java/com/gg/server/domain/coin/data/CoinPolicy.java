@@ -1,7 +1,11 @@
 package com.gg.server.domain.coin.data;
 
+import com.gg.server.admin.announcement.dto.AnnouncementAdminAddDto;
+import com.gg.server.admin.coin.dto.CoinPolicyAdminAddDto;
+import com.gg.server.domain.announcement.data.Announcement;
 import com.gg.server.domain.user.data.User;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -23,18 +27,38 @@ public class CoinPolicy {
     private User user;
 
     @Column(name = "attendance")
-    private Long attendance;
+    private int attendance;
 
     @Column(name = "normal")
-    private Long normal;
+    private int normal;
 
     @Column(name = "rankWin")
-    private Long rankWin;
+    private int rankWin;
 
     @Column(name = "rankLose")
-    private Long rankLose;
+    private int rankLose;
 
     @CreatedDate
     @Column(name = "createdAt", updatable = false, nullable = false)
     private LocalDateTime createdAt;
+
+
+    @Builder
+    public CoinPolicy(User user, int attendance, int normal, int rankWin, int rankLose) {
+        this.user = user;
+        this.attendance = attendance;
+        this.normal = normal;
+        this.rankWin = rankWin;
+        this.rankLose = rankLose;
+    }
+
+    static public CoinPolicy from(User user, CoinPolicyAdminAddDto addDto) {
+        return CoinPolicy.builder()
+                .user(user)
+                .attendance(addDto.getAttendance())
+                .normal(addDto.getNormal())
+                .rankWin(addDto.getRankWin())
+                .rankLose(addDto.getRankLose())
+                .build();
+    }
 }
