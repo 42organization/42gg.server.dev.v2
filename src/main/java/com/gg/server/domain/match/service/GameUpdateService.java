@@ -36,7 +36,7 @@ public class GameUpdateService {
     private final NotiService notiService;
     private final SnsNotiService snsNotiService;
 
-    public void make(GameAddDto addDto) {
+    public void make(GameAddDto addDto, Long recoveredUserId) {
         SlotManagement slotManagement = slotManagementRepository.findCurrent(LocalDateTime.now())
                 .orElseThrow(SlotNotFoundException::new);
         Game game = new Game(addDto, slotManagement.getGameInterval());
@@ -51,24 +51,25 @@ public class GameUpdateService {
         TeamUser enemyTeamUser = new TeamUser(enemyTeam, enemyUser);
         List<TeamUser> matchTeamUser = List.of(enemyTeamUser, myTeamUser);
         teamUserRepository.saveAll(matchTeamUser);
-        Noti playerNoti = notiService.createMatched(playerUser, addDto.getStartTime());
-        snsNotiService.sendSnsNotification(playerNoti, UserDto.from(playerUser));
-        Noti enemyNoti = notiService.createMatched(enemyUser, addDto.getStartTime());
-        snsNotiService.sendSnsNotification(enemyNoti, UserDto.from(enemyUser));
+        if (!playerUser.getId().equals(recoveredUserId)) {
+            Noti playerNoti = notiService.createMatched(playerUser, addDto.getStartTime());
+            snsNotiService.sendSnsNotification(playerNoti, UserDto.from(playerUser));
+        }
+        if (!enemyUser.getId().equals(recoveredUserId)) {
+            Noti enemyNoti = notiService.createMatched(enemyUser, addDto.getStartTime());
+            snsNotiService.sendSnsNotification(enemyNoti, UserDto.from(enemyUser));
+        }
     }
 
-    /**
-     * game 매칭된 user 이외에 다른 user가 취소할 경우, 에러 발생
-     */
-    public void delete(Game game, UserDto userDto) {
-        List<User> enemyTeam = userRepository.findEnemyByGameAndUser(game.getId(), userDto.getId());
-        if (enemyTeam.size() > 1) {
-            throw new SlotNotFoundException();
-        }
+    public void delete(Game game, List<User> enemyTeam) {
         enemyTeam.forEach(enemy -> {
             Noti noti = notiService.createMatchCancel(enemy, game.getStartTime());
             snsNotiService.sendSnsNotification(noti, UserDto.from(enemy));
         });
+        gameRepository.delete(game);
+    }
+
+    public void delete(Game game) {
         gameRepository.delete(game);
     }
 }
