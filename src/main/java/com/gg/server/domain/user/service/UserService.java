@@ -1,5 +1,8 @@
 package com.gg.server.domain.user.service;
 
+import com.gg.server.domain.coin.data.CoinHistory;
+import com.gg.server.domain.coin.data.CoinHistoryRepository;
+import com.gg.server.domain.coin.data.CoinPolicyRepository;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.type.StatusType;
@@ -19,6 +22,7 @@ import com.gg.server.domain.season.service.SeasonFindService;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.*;
+import com.gg.server.domain.user.exception.UserAlreadyAttendanceException;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.SnsType;
@@ -51,8 +55,8 @@ public class UserService {
     private final PChangeRepository pChangeRepository;
     private final RankFindService rankFindService;
     private final RedisMatchUserRepository redisMatchUserRepository;
-
-
+    private final CoinHistoryRepository coinHistoryRepository;
+    private final CoinPolicyRepository coinPolicyRepository;
 
     /**
      * @param intraId
@@ -67,17 +71,15 @@ public class UserService {
     }
 
     /**
-     *
-     * @param user
-     * - event:
-     *     - null → 로그인 유저가 잡힌 매칭이 하나도 없을 때
-     *     - match → 매칭은 되었으나 게임시작 전일 때 or 매칭중인 경우
-     *     - game → 유저가 게임이 잡혔고 현재 게임중인 경우
-     *
-     * - currentMatchMode
-     *     - normal
-     *     - rank
-     *     - null -> 매칭이 안잡혔을 때 or 게임 전
+     * @param user - event:
+     *             - null → 로그인 유저가 잡힌 매칭이 하나도 없을 때
+     *             - match → 매칭은 되었으나 게임시작 전일 때 or 매칭중인 경우
+     *             - game → 유저가 게임이 잡혔고 현재 게임중인 경우
+     *             <p>
+     *             - currentMatchMode
+     *             - normal
+     *             - rank
+     *             - null -> 매칭이 안잡혔을 때 or 게임 전
      */
     @Transactional()
     public UserLiveResponseDto getUserLiveDetail(UserDto user) {
@@ -99,7 +101,7 @@ public class UserService {
             if (game.getStatus() == StatusType.BEFORE)
                 return new UserLiveResponseDto(notiCnt, "match", null, null);
         }
-        if (userMatchCnt > 0){
+        if (userMatchCnt > 0) {
             return new UserLiveResponseDto(notiCnt, "match", null, null);
         }
         return new UserLiveResponseDto(notiCnt, null, null, null);
@@ -135,25 +137,22 @@ public class UserService {
     }
 
     /**
-     *
      * @param intraId
-     * @param seasonId
-     * seasonId == 0 -> current season, else -> 해당 Id를 가진 season의 데이터
-     *
-     * 기존 쿼리
-     * @Query(nativeQuery = true, value = "SELECT * FROM pchange " +
-     *             "where game_id in (SELECT id FROM game where season = :season and mode = :mode ) " +
-     *             "AND user_id = :intraId ORDER BY id Desc limit :limit")
-     *  -> Limit에는 10이 기본으로 들어감
-     *
+     * @param seasonId seasonId == 0 -> current season, else -> 해당 Id를 가진 season의 데이터
+     *                 <p>
+     *                 기존 쿼리
      * @return 유저의 최근 10개의 랭크 경기 기록
+     * @Query(nativeQuery = true, value = "SELECT * FROM pchange " +
+     * "where game_id in (SELECT id FROM game where season = :season and mode = :mode ) " +
+     * "AND user_id = :intraId ORDER BY id Desc limit :limit")
+     * -> Limit에는 10이 기본으로 들어감
      */
     @Transactional(readOnly = true)
     public UserHistoryResponseDto getUserHistory(String intraId, Long seasonId) {
         Season season;
-        if (seasonId == 0){
+        if (seasonId == 0) {
             season = seasonFindService.findCurrentSeason(LocalDateTime.now());
-        }else{
+        } else {
             season = seasonFindService.findSeasonById(seasonId);
         }
         List<PChange> pChanges = pChangeRepository.findPChangesHistory(intraId, season.getId());
@@ -163,18 +162,16 @@ public class UserService {
     }
 
     /**
-     *
      * @param targetUserIntraId
-     * @param seasonId
-     * seasonId == 0 -> current season, else -> 해당 Id를 가진 season의 데이터
+     * @param seasonId          seasonId == 0 -> current season, else -> 해당 Id를 가진 season의 데이터
      * @return
      */
     @Transactional(readOnly = true)
     public UserRankResponseDto getUserRankDetail(String targetUserIntraId, Long seasonId) {
         Season season;
-        if (seasonId == 0){
+        if (seasonId == 0) {
             season = seasonFindService.findCurrentSeason(LocalDateTime.now());
-        }else{
+        } else {
             season = seasonFindService.findSeasonById(seasonId);
         }
         String ZSetKey = RedisKeyManager.getZSetKey(season.getId());
@@ -184,11 +181,11 @@ public class UserService {
             Long userRanking = rankRedisRepository.getRankInZSet(ZSetKey, user.getId());
             userRanking += 1;
             RankRedis userRank = rankRedisRepository.findRankByUserId(hashKey, user.getId());
-            double winRate = (double)(userRank.getWins() * 10000 / (userRank.getWins() + userRank.getLosses())) / 100;
+            double winRate = (double) (userRank.getWins() * 10000 / (userRank.getWins() + userRank.getLosses())) / 100;
             return new UserRankResponseDto(userRanking.intValue(), userRank.getPpp(), userRank.getWins(), userRank.getLosses(), winRate);
-        } catch (RedisDataNotFoundException ex){
+        } catch (RedisDataNotFoundException ex) {
             return new UserRankResponseDto(-1, season.getStartPpp(), 0, 0, 0);
-        } catch (ArithmeticException ex2){
+        } catch (ArithmeticException ex2) {
             return new UserRankResponseDto(-1, season.getStartPpp(), 0, 0, 0);
         }
     }
@@ -220,7 +217,7 @@ public class UserService {
                 userImages.add(new UserImageDto(user.getIntraId(), user.getImageUri()));
             });
             return new UserImageResponseDto(userImages);
-        } catch (RedisDataNotFoundException ex){
+        } catch (RedisDataNotFoundException ex) {
             return new UserImageResponseDto(new ArrayList<>());
         }
     }
@@ -232,5 +229,19 @@ public class UserService {
             userImages.add(new UserImageDto(user.getIntraId(), user.getImageUri()));
         }
         return new UserImageResponseDto(userImages);
+    }
+
+    public UserAttendanceResponseDto attendUser(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User" + userId));
+        LocalDateTime startOfDay = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0);
+        LocalDateTime endOfDay = LocalDateTime.now().withHour(23).withMinute(59).withSecond(59);
+        if (coinHistoryRepository.existsCoinHistoryByUserAndHistoryAndCreatedAtToday(user, "ATTENDANCE", startOfDay, endOfDay))
+            throw new UserAlreadyAttendanceException();
+        int plus = coinPolicyRepository.findTopByOrderByCreatedAtDesc().getAttendance();
+        CoinHistory coinHistory = new CoinHistory(user, "ATTENDANCE", plus);
+        coinHistoryRepository.save(coinHistory);
+        int beforeCoin = user.getGgCoin();
+        user.addGgCoin(plus);
+        return new UserAttendanceResponseDto(beforeCoin, user.getGgCoin(), plus);
     }
 }
