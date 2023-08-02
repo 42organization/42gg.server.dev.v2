@@ -147,12 +147,35 @@ class MatchServiceTest {
         matchService.makeMatch(UserDto.from(users.get(2)), Option.RANK, this.slotTimes.get(0));
         matchService.makeMatch(UserDto.from(users.get(0)), Option.NORMAL, this.slotTimes.get(0));
         matchService.makeMatch(UserDto.from(users.get(1)), Option.NORMAL, this.slotTimes.get(0));
+        matchService.cancelMatch(UserDto.from(users.get(0)), this.slotTimes.get(0));
         Optional<Game> game = gameRepository.findByStartTime(slotTimes.get(0));
-        Assertions.assertThat(game.isEmpty()).isEqualTo(false);
-        Long size = redisTemplate.opsForList().size(MatchKey.getTime(slotTimes.get(0)));
-        Assertions.assertThat(size).isEqualTo(1L);
+        Assertions.assertThat(game).isEmpty();
+        Long size = redisTemplate.opsForList().size(MatchKey.getTime(this.slotTimes.get(0)));
+        List<RedisMatchUser> allMatchUsers = redisMatchTimeRepository.getAllMatchUsers(this.slotTimes.get(0));
+        Assertions.assertThat(size).isEqualTo(2L);
         RedisMatchUser remainedUser = (RedisMatchUser) redisTemplate.opsForList().index(MatchKey.getTime(slotTimes.get(0)), 0);
         Assertions.assertThat(remainedUser.getUserId()).isEqualTo(users.get(2).getId());
+        Assertions.assertThat(notiRepository.findAllByUser(users.get(1)).size()).isEqualTo(2);
+        Assertions.assertThat(notiRepository.findAllByUser(users.get(0)).size()).isEqualTo(1);
+        Assertions.assertThat(notiRepository.findAllByUser(users.get(2)).size()).isEqualTo(0);
+    }
+
+    @DisplayName("게임 재생성 테스트")
+    @Test
+    void remakeGameAfterCancelling() {
+        matchService.makeMatch(UserDto.from(users.get(2)), Option.RANK, this.slotTimes.get(0));
+        matchService.makeMatch(UserDto.from(users.get(0)), Option.NORMAL, this.slotTimes.get(0));
+        matchService.makeMatch(UserDto.from(users.get(1)), Option.BOTH, this.slotTimes.get(0));
+        matchService.cancelMatch(UserDto.from(users.get(2)), this.slotTimes.get(0));
+        Optional<Game> game = gameRepository.findByStartTime(slotTimes.get(0));
+        Assertions.assertThat(game).isPresent();
+        Long size = redisTemplate.opsForList().size(MatchKey.getTime(this.slotTimes.get(0)));
+        Assertions.assertThat(size).isEqualTo(2L);
+        RedisMatchUser remainedUser = (RedisMatchUser) redisTemplate.opsForList().index(MatchKey.getTime(slotTimes.get(0)), 0);
+        Assertions.assertThat(remainedUser.getUserId()).isEqualTo(users.get(0).getId());
+        Assertions.assertThat(notiRepository.findAllByUser(users.get(1)).size()).isEqualTo(1);
+        Assertions.assertThat(notiRepository.findAllByUser(users.get(0)).size()).isEqualTo(1);
+        Assertions.assertThat(notiRepository.findAllByUser(users.get(2)).size()).isEqualTo(1);
     }
 
     @DisplayName("Queue에 user가 선택한 random option으로 매칭 가능한 상대가 없을 경우")
