@@ -38,7 +38,12 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException {
-        String targetUrl = determineTargetUrl(request, response, authentication);
+        String targetUrl;
+        try{
+            targetUrl = determineTargetUrl(request, response, authentication);
+        } catch (Exception e) {
+            targetUrl = applicationYmlRead.getFrontUrl();
+        }
 
         if (response.isCommitted()) {
             logger.debug("Response has already been committed. Unable to redirect to " + targetUrl);
