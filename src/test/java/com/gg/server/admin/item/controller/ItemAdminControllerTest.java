@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.item.data.ItemAdminRepository;
 import com.gg.server.admin.item.dto.ItemListResponseDto;
 import com.gg.server.admin.item.service.ItemAdminService;
-import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
