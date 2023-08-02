@@ -1,8 +1,6 @@
 package com.gg.server.domain.coin.data;
 
-import com.gg.server.admin.announcement.dto.AnnouncementAdminAddDto;
 import com.gg.server.admin.coin.dto.CoinPolicyAdminAddDto;
-import com.gg.server.domain.announcement.data.Announcement;
 import com.gg.server.domain.user.data.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,7 +40,6 @@ public class CoinPolicy {
     @Column(name = "createdAt", updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
-
     @Builder
     public CoinPolicy(User user, int attendance, int normal, int rankWin, int rankLose) {
         this.user = user;
@@ -50,6 +47,7 @@ public class CoinPolicy {
         this.normal = normal;
         this.rankWin = rankWin;
         this.rankLose = rankLose;
+        this.createdAt = LocalDateTime.now();
     }
 
     static public CoinPolicy from(User user, CoinPolicyAdminAddDto addDto) {

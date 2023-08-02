@@ -27,7 +27,7 @@ public class CoinPolicyAdminController {
     @PostMapping("/coinpolicy")
     public ResponseEntity addCoinPolicy(@Parameter(hidden = true) @Login UserDto userDto, @Valid @RequestBody CoinPolicyAdminAddDto addDto){
 
-
+        coinPolicyAdminService.addCoinPolicy(userDto, addDto);
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
