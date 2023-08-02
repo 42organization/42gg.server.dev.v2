@@ -23,16 +23,16 @@ public class CoinPolicy {
     private User user;
 
     @Column(name = "attendance")
-    private Long attendance;
+    private int attendance;
 
     @Column(name = "normal")
-    private Long normal;
+    private int normal;
 
     @Column(name = "rankWin")
-    private Long rankWin;
+    private int rankWin;
 
     @Column(name = "rankLose")
-    private Long rankLose;
+    private int rankLose;
 
     @CreatedDate
     @Column(name = "createdAt", updatable = false, nullable = false)
