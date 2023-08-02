@@ -1,6 +1,5 @@
 package com.gg.server.admin.item.controller;
 
-import com.gg.server.admin.item.dto.ItemHistoryResponseDto;
 import com.gg.server.admin.item.dto.ItemListResponseDto;
 import com.gg.server.admin.item.service.ItemAdminService;
 import com.gg.server.global.dto.PageRequestDto;
