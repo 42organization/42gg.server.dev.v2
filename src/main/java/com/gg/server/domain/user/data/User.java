@@ -71,6 +71,10 @@ public class User extends BaseTimeEntity implements Serializable {
         this.totalExp = totalExp;
         this.snsNotiOpt = snsNotiOpt;
         this.kakaoId = kakaoId;
+        this.background = BackgroundType.BASIC;
+        this.textColor = "#000000";
+        this.edge = EdgeType.BASIC;
+        this.ggCoin = 0;
     }
 
     public void modifyUserDetail(UserUpdateAdminRequestDto updateReq) {
