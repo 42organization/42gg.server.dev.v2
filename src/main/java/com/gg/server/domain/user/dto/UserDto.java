@@ -19,6 +19,7 @@ public class UserDto {
     private Integer totalExp;
     private SnsType snsNotiOpt;
     private Long kakaoId;
+    private String textColor;
 
     static public UserDto from (User user) {
         UserDto userDto;

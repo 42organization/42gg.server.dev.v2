@@ -233,4 +233,10 @@ public class UserService {
         }
         return new UserImageResponseDto(userImages);
     }
+
+    @Transactional()
+    public void updateTextColor(Long userId, String textColor) {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        user.updateTextColor(textColor);
+    }
 }

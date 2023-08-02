@@ -12,11 +12,11 @@ create table coin_policy
 (
     id         bigint not null auto_increment,
     user_id    bigint,
-    attendance bigint,
+    attendance integer,
     created_at datetime(6) not null,
-    normal     bigint,
-    rank_lose  bigint,
-    rank_win   bigint,
+    normal     integer,
+    rank_lose  integer,
+    rank_win   integer,
     primary key (id)
 );
 
@@ -65,10 +65,10 @@ create table tier
 );
 
 alter table user
-    add column background varchar(255) default "basic";
+    add column background varchar(255) default "BASIC";
 
 alter table user
-    add column edge varchar(255) default "basic";
+    add column edge varchar(255) default "BASIC";
 
 alter table user
     add column gg_coin integer default 0;

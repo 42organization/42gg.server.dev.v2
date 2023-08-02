@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum EdgeType {
-    COLOR1(0, "color1"),
+    BASIC(0, "basic"),
     COLOR2(1, "color2"),
     COLOR3(2, "color3");
 

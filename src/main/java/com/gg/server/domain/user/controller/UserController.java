@@ -1,25 +1,25 @@
 package com.gg.server.domain.user.controller;
 
 import com.gg.server.domain.game.type.Mode;
+import com.gg.server.domain.user.data.User;
+import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.*;
 import com.gg.server.domain.user.exception.KakaoOauth2AlreadyExistException;
-import com.gg.server.domain.user.exception.KakaoOauth2NotFoundException;
+import com.gg.server.domain.user.exception.UserNotFoundException;
+import com.gg.server.domain.user.exception.UserTextColorException;
 import com.gg.server.domain.user.service.UserAuthenticationService;
 import com.gg.server.domain.user.service.UserService;
+import com.gg.server.domain.user.service.UserTextColorCheckService;
 import com.gg.server.domain.user.type.OauthType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.global.security.config.properties.AppProperties;
 import com.gg.server.global.security.cookie.CookieUtil;
-import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.global.security.jwt.utils.TokenHeaders;
-import com.gg.server.global.utils.ApplicationYmlRead;
-import com.gg.server.global.utils.HeaderUtil;
 import com.gg.server.global.utils.argumentresolver.Login;
 import io.swagger.v3.oas.annotations.Parameter;
-import java.io.IOException;
-import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -33,8 +33,10 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/pingpong/users")
+
 public class UserController {
     private final UserService userService;
+    private final UserTextColorCheckService userTextColorCheck;
     private final UserAuthenticationService userAuthenticationService;
     private final AppProperties appProperties;
     private final CookieUtil cookieUtil;
@@ -118,6 +120,17 @@ public class UserController {
         else{
             PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "totalExp"));
             return userService.getRankedUserImagesByExp(pageRequest);
+        }
+    }
+
+    @PatchMapping  ("/text-color")
+    public void updateTextColor(@RequestBody UserTextColorDto TextColor, @Parameter(hidden = true) @Login UserDto user) {
+        String textColor = TextColor.getTextColor();
+        if (userTextColorCheck.check(textColor)){
+            userService.updateTextColor(user.getId() ,textColor);
+        }
+        else {
+            throw new UserTextColorException();
         }
     }
 }
