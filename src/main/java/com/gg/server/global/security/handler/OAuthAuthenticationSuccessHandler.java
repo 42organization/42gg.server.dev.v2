@@ -55,8 +55,9 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie :cookies) {
             if (cookie.getName().equals(TokenHeaders.REFRESH_TOKEN) ) {
-                Long existUserId = tokenProvider.getUserIdFormRefreshToken(cookie.getValue());
+                Long existUserId = jwtRedisRepository.getUserIdFromRefToken(cookie.getValue());
                 if (existUserId != null && !existUserId.equals(principal.getId())) {
+                    jwtRedisRepository.deleteRefToken(cookie.getValue());
                     return deleteKakaoUser(existUserId, response, authentication);
                 }
             }
@@ -67,14 +68,12 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
 
         // token 설정
         String accessToken = tokenProvider.createToken(principal.getId());
-        String refreshToken = tokenProvider.refreshToken(principal.getId());
+        String refreshToken = tokenProvider.refreshToken();
 
         cookieUtil.addCookie(response, TokenHeaders.REFRESH_TOKEN, refreshToken,
                         (int)(refreshTokenExpiry / 1000));
 
-        String refTokenKey = RedisKeyManager.getRefKey(principal.getId());
-        jwtRedisRepository.deleteRefToken(refTokenKey);
-        jwtRedisRepository.addRefToken(refTokenKey, refreshToken, refreshTokenExpiry);
+        jwtRedisRepository.addRefToken(refreshToken, refreshTokenExpiry, principal.getId());
         return UriComponentsBuilder.fromUriString(applicationYmlRead.getFrontUrl())
                 .queryParam("token", accessToken)
                 .build().toUriString();
@@ -107,18 +106,12 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
         remainedUser.updateKakaoId(deletedUser.getKakaoId());
         // 쿠키 시간 설정
         long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
-
-        String remainTokenKey = RedisKeyManager.getRefKey(remainedUser.getId());
-        String deleteTokenKey = RedisKeyManager.getRefKey(deletedUser.getId());
-        jwtRedisRepository.deleteRefToken(deleteTokenKey);
-        jwtRedisRepository.deleteRefToken(remainTokenKey);
-
         userRepository.delete(deletedUser);
 
         // token 설정
         String accessToken = tokenProvider.createToken(remainedUser.getId());
-        String refreshToken = tokenProvider.refreshToken(remainedUser.getId());
-        jwtRedisRepository.addRefToken(remainTokenKey, refreshToken, refreshTokenExpiry);
+        String refreshToken = tokenProvider.refreshToken();
+        jwtRedisRepository.addRefToken(refreshToken, refreshTokenExpiry, remainedUser.getId());
 
         cookieUtil.addCookie(response, TokenHeaders.REFRESH_TOKEN, refreshToken,
                 (int)(refreshTokenExpiry / 1000));
