@@ -1,6 +1,5 @@
 package com.gg.server.admin.coin.data;
 
-import com.gg.server.domain.announcement.data.Announcement;
 import com.gg.server.domain.coin.data.CoinPolicy;
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,6 +1,5 @@
 package com.gg.server.admin.coin.controller;
 
-import com.gg.server.admin.announcement.dto.AnnouncementAdminAddDto;
 import com.gg.server.admin.coin.dto.CoinPolicyAdminAddDto;
 import com.gg.server.admin.coin.service.CoinPolicyAdminService;
 import com.gg.server.domain.user.dto.UserDto;

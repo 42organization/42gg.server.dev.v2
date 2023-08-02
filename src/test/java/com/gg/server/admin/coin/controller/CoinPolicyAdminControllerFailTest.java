@@ -3,8 +3,6 @@ package com.gg.server.admin.coin.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.coin.data.CoinPolicyAdminRepository;
 import com.gg.server.admin.coin.dto.CoinPolicyAdminAddDto;
-import com.gg.server.domain.coin.data.CoinPolicy;
-import com.gg.server.domain.coin.exception.CoinPolicyNotFoundException;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 

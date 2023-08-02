@@ -1,11 +1,8 @@
 package com.gg.server.admin.coin.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gg.server.admin.announcement.dto.AnnouncementAdminAddDto;
 import com.gg.server.admin.coin.data.CoinPolicyAdminRepository;
 import com.gg.server.admin.coin.dto.CoinPolicyAdminAddDto;
-import com.gg.server.domain.announcement.data.Announcement;
-import com.gg.server.domain.announcement.exception.AnnounceNotFoundException;
 import com.gg.server.domain.coin.data.CoinPolicy;
 import com.gg.server.domain.coin.exception.CoinPolicyNotFoundException;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
