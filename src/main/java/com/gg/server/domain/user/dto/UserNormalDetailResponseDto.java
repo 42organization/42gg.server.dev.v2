@@ -2,9 +2,11 @@ package com.gg.server.domain.user.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserNormalDetailResponseDto {
     private String intraId;
     private String userImageUri;

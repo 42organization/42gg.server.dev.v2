@@ -163,6 +163,7 @@ class UserControllerTest {
         assertThat(responseDto.getIntraId()).isEqualTo(intraId);
         assertThat(responseDto.getUserImageUri()).isEqualTo(imageUrl);
         assertThat(responseDto.getIsAdmin()).isTrue();
+        assertThat(responseDto.getIsAttended());
     }
 
     @Test
