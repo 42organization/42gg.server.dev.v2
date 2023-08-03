@@ -25,6 +25,7 @@ import com.gg.server.domain.user.dto.*;
 import com.gg.server.domain.user.exception.UserAlreadyAttendanceException;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.domain.user.type.RacketType;
+import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -57,6 +58,8 @@ public class UserService {
     private final RedisMatchUserRepository redisMatchUserRepository;
     private final CoinHistoryRepository coinHistoryRepository;
     private final CoinPolicyRepository coinPolicyRepository;
+
+    private final String ATTENDANCE = "ATTENDANCE";
 
     /**
      * @param intraId
@@ -236,13 +239,22 @@ public class UserService {
         User user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User" + userId));
         LocalDateTime startOfDay = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0);
         LocalDateTime endOfDay = LocalDateTime.now().withHour(23).withMinute(59).withSecond(59);
-        if (coinHistoryRepository.existsCoinHistoryByUserAndHistoryAndCreatedAtToday(user, "ATTENDANCE", startOfDay, endOfDay))
+        if (coinHistoryRepository.existsCoinHistoryByUserAndHistoryAndCreatedAtToday(user, ATTENDANCE, startOfDay, endOfDay))
             throw new UserAlreadyAttendanceException();
         int plus = coinPolicyRepository.findTopByOrderByCreatedAtDesc().getAttendance();
-        CoinHistory coinHistory = new CoinHistory(user, "ATTENDANCE", plus);
+        CoinHistory coinHistory = new CoinHistory(user, ATTENDANCE, plus);
         coinHistoryRepository.save(coinHistory);
         int beforeCoin = user.getGgCoin();
         user.addGgCoin(plus);
         return new UserAttendanceResponseDto(beforeCoin, user.getGgCoin(), plus);
+    }
+
+    public UserNormalDetailResponseDto getUserNormalDetail(UserDto user) {
+        User loginUser = userRepository.findById(user.getId()).orElseThrow(() -> new UsernameNotFoundException("User" + user.getId()));
+        Boolean isAdmin = user.getRoleType() == RoleType.ADMIN;
+        LocalDateTime startOfDay = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0);
+        LocalDateTime endOfDay = LocalDateTime.now().withHour(23).withMinute(59).withSecond(59);
+        Boolean isAttended = coinHistoryRepository.existsCoinHistoryByUserAndHistoryAndCreatedAtToday(loginUser, ATTENDANCE, startOfDay, endOfDay);
+        return new UserNormalDetailResponseDto(user.getIntraId(), user.getImageUri(), isAdmin, isAttended);
     }
 }
