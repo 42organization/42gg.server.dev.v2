@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ItemHistoryResponseDto {
+public class ItemAdminDto {
     private Long itemId;
     private String name;
     private String content;
@@ -20,7 +20,7 @@ public class ItemHistoryResponseDto {
     private boolean isVisible;
     private LocalDateTime createdAt;
 
-    public ItemHistoryResponseDto(Item item) {
+    public ItemAdminDto(Item item) {
         this.itemId = item.getId();
         this.name = item.getName();
         this.content = item.getContent();
@@ -33,7 +33,7 @@ public class ItemHistoryResponseDto {
 
     @Override
     public String toString() {
-        return "ItemHistoryResponseDto{" +
+        return "ItemAdminDto{" +
                 "itemId=" + itemId +
                 ", name='" + name + '\'' +
                 ", content='" + content + '\'' +

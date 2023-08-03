@@ -2,6 +2,7 @@ package com.gg.server.admin.item.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.item.data.ItemAdminRepository;
+import com.gg.server.admin.item.dto.ItemHistoryResponseDto;
 import com.gg.server.admin.item.dto.ItemListResponseDto;
 import com.gg.server.admin.item.service.ItemAdminService;
 import com.gg.server.domain.user.data.UserRepository;
@@ -60,9 +61,10 @@ class ItemAdminControllerTest {
 
         System.out.println(contentAsString);
         ItemListResponseDto expect = itemAdminService.getAllItemHistory(pageable);
-        ItemListResponseDto result = objectMapper.readValue(contentAsString, ItemListResponseDto.class);
         System.out.println(expect.getHistoryList());
-        System.out.println(result.getHistoryList());
+        ItemListResponseDto result = objectMapper.readValue(contentAsString, ItemListResponseDto.class);
+        System.out.println(expect.getHistoryList().get(0));
+        System.out.println(result.getHistoryList().get(0));
         assertThat(result.getHistoryList().get(0).getItemId());
         assertThat(result.getHistoryList().get(0).getName());
         assertThat(result.getHistoryList().get(0).getContent());
