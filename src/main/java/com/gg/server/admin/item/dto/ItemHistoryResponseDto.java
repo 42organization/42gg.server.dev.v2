@@ -28,17 +28,4 @@ public class ItemHistoryResponseDto {
         this.discount = item.getDiscount();
         this.createdAt = item.getCreatedAt();
     }
-
-    @Override
-    public String toString() {
-        return "ItemHistoryResponseDto{" +
-                "itemId=" + itemId +
-                ", name='" + name + '\'' +
-                ", content='" + content + '\'' +
-                ", imageUri='" + imageUri + '\'' +
-                ", price=" + price +
-                ", discount=" + discount +
-                ", createdAt=" + createdAt +
-                '}';
-    }
 }
