@@ -163,6 +163,7 @@ class UserControllerTest {
         assertThat(responseDto.getIntraId()).isEqualTo(intraId);
         assertThat(responseDto.getUserImageUri()).isEqualTo(imageUrl);
         assertThat(responseDto.getIsAdmin()).isTrue();
+        assertThat(responseDto.getIsAttended());
     }
 
     @Test
@@ -319,6 +320,24 @@ class UserControllerTest {
             Assertions.fail("유저 업데이트 실패");
         });
     }
+
+    @Test
+    @DisplayName("[post] /attendance")
+    public void attendUserTest() throws Exception {
+        //given
+        String accessToken = testDataUtils.getLoginAccessToken();
+        String url = "/pingpong/users/attendance";
+
+        //when
+        String contentAsString = mockMvc.perform(post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        UserAttendanceResponseDto result = objectMapper.readValue(contentAsString, UserAttendanceResponseDto.class);
+
+        //then
+        System.out.println(result.getAfterCoin());
+        Assertions.assertThat(result.getAfterCoin() - result.getBeforeCoin()).isEqualTo(result.getCoinIncrement());
+    }
   
     @Test
     @DisplayName("[patch] text-color")
@@ -351,23 +370,5 @@ class UserControllerTest {
         }, () -> {
             Assertions.fail("유저 업데이트 실패");
         });
-    }
-
-    @Test
-    @DisplayName("[post] /attendance")
-    public void attendUserTest() throws Exception {
-        //given
-        String accessToken = testDataUtils.getLoginAccessToken();
-        String url = "/pingpong/users/attendance";
-
-        //when
-        String contentAsString = mockMvc.perform(post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
-                .andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString();
-        UserAttendanceResponseDto result = objectMapper.readValue(contentAsString, UserAttendanceResponseDto.class);
-
-        //then
-        System.out.println(result.getAfterCoin());
-        Assertions.assertThat(result.getAfterCoin() - result.getBeforeCoin()).isEqualTo(result.getCoinIncrement());
     }
 }

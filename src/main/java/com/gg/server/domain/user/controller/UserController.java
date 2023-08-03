@@ -51,8 +51,7 @@ public class UserController {
 
     @GetMapping
     UserNormalDetailResponseDto getUserNormalDetail(@Parameter(hidden = true) @Login UserDto user){
-        Boolean isAdmin = user.getRoleType() == RoleType.ADMIN;
-        return new UserNormalDetailResponseDto(user.getIntraId(), user.getImageUri(), isAdmin);
+        return userService.getUserNormalDetail(user);
     }
 
     @GetMapping("/live")
