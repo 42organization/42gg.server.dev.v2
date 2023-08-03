@@ -231,6 +231,7 @@ public class UserService {
         return new UserImageResponseDto(userImages);
     }
 
+    @Transactional
     public UserAttendanceResponseDto attendUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User" + userId));
         LocalDateTime startOfDay = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0);
