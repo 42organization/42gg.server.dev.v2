@@ -31,4 +31,11 @@ public class CoinHistory {
     @CreatedDate
     @Column(name = "createdAt", updatable = false, nullable = false)
     private LocalDateTime createdAt;
+
+    public CoinHistory(User user, String history, int amount) {
+        this.user = user;
+        this.history = history;
+        this.amount = amount;
+        this.createdAt = LocalDateTime.now();
+    }
 }
