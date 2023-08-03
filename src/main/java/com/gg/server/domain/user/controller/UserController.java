@@ -123,14 +123,8 @@ public class UserController {
     }
 
     @PatchMapping  ("/text-color")
-    public void updateTextColor(@RequestBody UserTextColorDto TextColor, @Parameter(hidden = true) @Login UserDto user) {
-        String textColor = TextColor.getTextColor();
-        if (userTextColorCheck.check(textColor)){
-            userService.updateTextColor(user.getId() ,textColor);
-        }
-        else {
-            throw new UserTextColorException();
-        }
+    public void updateTextColor(@RequestBody @Valid UserTextColorDto textColorDto, @Parameter(hidden = true) @Login UserDto user) {
+        userService.updateTextColor(user.getId() ,textColorDto);
     }
     @PostMapping("/attendance")
     public UserAttendanceResponseDto attendUser(@Parameter(hidden = true) @Login UserDto user) {

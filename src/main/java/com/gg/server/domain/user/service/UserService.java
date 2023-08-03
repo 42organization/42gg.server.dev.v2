@@ -24,6 +24,7 @@ import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.*;
 import com.gg.server.domain.user.exception.UserAlreadyAttendanceException;
 import com.gg.server.domain.user.exception.UserNotFoundException;
+import com.gg.server.domain.user.exception.UserTextColorException;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
@@ -259,7 +260,10 @@ public class UserService {
     }
   
     @Transactional()
-    public void updateTextColor(Long userId, String textColor) {
+    public void updateTextColor(Long userId, UserTextColorDto textColorDto) {
+        String textColor = textColorDto.getTextColor();
+        if (UserTextColorCheckService.check(textColor) == false)
+            throw new UserTextColorException();
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         user.updateTextColor(textColor);
     }
