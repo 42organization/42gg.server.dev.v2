@@ -133,4 +133,8 @@ public class UserController {
             throw new UserTextColorException();
         }
     }
+    @PostMapping("/attendance")
+    public UserAttendanceResponseDto attendUser(@Parameter(hidden = true) @Login UserDto user) {
+        return userService.attendUser(user.getId());
+    }
 }
