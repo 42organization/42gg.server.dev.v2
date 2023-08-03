@@ -338,4 +338,37 @@ class UserControllerTest {
         System.out.println(result.getAfterCoin());
         Assertions.assertThat(result.getAfterCoin() - result.getBeforeCoin()).isEqualTo(result.getCoinIncrement());
     }
+  
+    @Test
+    @DisplayName("[patch] text-color")
+    public void updateTextColorTest() throws Exception {
+        //given
+        Season season = testDataUtils.createSeason();
+        String intraId = "intraId";
+        String email = "email";
+        String imageUrl = "imageUrl";
+        User newUser = testDataUtils.createNewUser(intraId, email, imageUrl, RacketType.PENHOLDER,
+                SnsType.BOTH, RoleType.ADMIN);
+        String statusMessage = "statusMessage";
+        testDataUtils.createUserRank(newUser, statusMessage, season);
+        String accessToken = tokenProvider.createToken(newUser.getId());
+        String url = "/pingpong/users/text-color";
+
+        String newStatusMessage = "newStatusMessage";
+        RacketType newRacketType = RacketType.SHAKEHAND;
+        SnsType newSnsType = SnsType.SLACK;
+        String newTextColor = "#FFFFFF";
+
+        //when
+        mockMvc.perform(patch(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(new UserTextColorDto(newTextColor))))
+                .andExpect(status().isOk());
+        //then
+        userRepository.findById(newUser.getId()).ifPresentOrElse(user -> {
+            Assertions.assertThat(user.getTextColor()).isEqualTo(newTextColor);
+        }, () -> {
+            Assertions.fail("유저 업데이트 실패");
+        });
+    }
 }

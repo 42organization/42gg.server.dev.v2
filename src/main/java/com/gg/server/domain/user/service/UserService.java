@@ -24,6 +24,7 @@ import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.*;
 import com.gg.server.domain.user.exception.UserAlreadyAttendanceException;
 import com.gg.server.domain.user.exception.UserNotFoundException;
+import com.gg.server.domain.user.exception.UserTextColorException;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
@@ -256,5 +257,14 @@ public class UserService {
         LocalDateTime endOfDay = LocalDateTime.now().withHour(23).withMinute(59).withSecond(59);
         Boolean isAttended = coinHistoryRepository.existsCoinHistoryByUserAndHistoryAndCreatedAtToday(loginUser, ATTENDANCE, startOfDay, endOfDay);
         return new UserNormalDetailResponseDto(user.getIntraId(), user.getImageUri(), isAdmin, isAttended);
+    }
+  
+    @Transactional()
+    public void updateTextColor(Long userId, UserTextColorDto textColorDto) {
+        String textColor = textColorDto.getTextColor();
+        if (UserTextColorCheckService.check(textColor) == false)
+            throw new UserTextColorException();
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        user.updateTextColor(textColor);
     }
 }
