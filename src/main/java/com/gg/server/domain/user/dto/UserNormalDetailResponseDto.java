@@ -9,4 +9,5 @@ public class UserNormalDetailResponseDto {
     private String intraId;
     private String userImageUri;
     private Boolean isAdmin;
+    private Boolean isAttended;
 }
