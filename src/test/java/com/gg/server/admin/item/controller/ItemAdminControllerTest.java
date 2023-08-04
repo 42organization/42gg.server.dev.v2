@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.item.data.ItemAdminRepository;
 import com.gg.server.admin.item.dto.ItemHistoryResponseDto;
 import com.gg.server.admin.item.dto.ItemListResponseDto;
+import com.gg.server.admin.item.dto.ItemRequestDto;
 import com.gg.server.admin.item.service.ItemAdminService;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
@@ -17,7 +18,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 
 
@@ -69,5 +73,19 @@ class ItemAdminControllerTest {
         assertThat(result.getHistoryList().get(0).getName());
         assertThat(result.getHistoryList().get(0).getContent());
         assertThat(result.getHistoryList().get(0).getPrice());
+    }
+
+    @Test
+    @DisplayName("PUT /pingpong/admin/items/history/{itemId}")
+    public void updateItemTest() throws Exception {
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
+        String requestJson = "{\"name\" : \"확성기\", \"content\" : \"testing\", \"imageUri\" : \"https://kakao.com\", \"price\" : 42, \"discount\" : 50}";
+        String contentAsString = mockMvc.perform(put("/pingpong/admin/items/{itemId}", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isNoContent())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println(contentAsString);
     }
 }
