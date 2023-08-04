@@ -2,9 +2,7 @@ package com.gg.server.admin.item.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.item.data.ItemAdminRepository;
-import com.gg.server.admin.item.dto.ItemHistoryResponseDto;
 import com.gg.server.admin.item.dto.ItemListResponseDto;
-import com.gg.server.admin.item.dto.ItemRequestDto;
 import com.gg.server.admin.item.service.ItemAdminService;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
@@ -20,7 +18,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 
