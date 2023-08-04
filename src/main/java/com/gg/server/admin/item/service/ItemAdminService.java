@@ -1,7 +1,6 @@
 package com.gg.server.admin.item.service;
 
 import com.gg.server.admin.item.data.ItemAdminRepository;
-import com.gg.server.admin.item.dto.ItemAdminDto;
 import com.gg.server.admin.item.dto.ItemHistoryResponseDto;
 import com.gg.server.admin.item.dto.ItemListResponseDto;
 import com.gg.server.admin.item.dto.ItemRequestDto;
@@ -30,7 +29,6 @@ public class ItemAdminService {
         item.setIsVisible(false);
 
         Item newItem = new Item(createDto);
-        System.out.println(newItem);
         itemAdminRepository.save(newItem);
     }
 }
