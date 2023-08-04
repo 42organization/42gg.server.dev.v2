@@ -31,4 +31,10 @@ public class ItemAdminService {
         Item newItem = new Item(createDto);
         itemAdminRepository.save(newItem);
     }
+
+    @Transactional
+    public void deleteItem(Long itemId) {
+        Item item = itemAdminRepository.findById(itemId).orElseThrow(()-> new ItemNotFoundException());
+        item.setIsVisible(false);
+    }
 }

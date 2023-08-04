@@ -33,4 +33,10 @@ public class ItemAdminController {
 
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
+
+    @DeleteMapping("/{itemId}")
+    public ResponseEntity deleteItem(@PathVariable("itemId") Long itemId) {
+        itemAdminService.deleteItem(itemId);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
 }
