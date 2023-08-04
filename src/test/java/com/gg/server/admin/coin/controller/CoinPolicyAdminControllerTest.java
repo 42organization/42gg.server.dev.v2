@@ -1,8 +1,10 @@
 package com.gg.server.admin.coin.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gg.server.admin.announcement.dto.AnnouncementAdminListResponseDto;
 import com.gg.server.admin.coin.data.CoinPolicyAdminRepository;
 import com.gg.server.admin.coin.dto.CoinPolicyAdminAddDto;
+import com.gg.server.admin.coin.dto.CoinPolicyAdminListResponseDto;
 import com.gg.server.domain.coin.data.CoinPolicy;
 import com.gg.server.domain.coin.exception.CoinPolicyNotFoundException;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
@@ -20,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -42,6 +45,32 @@ class CoinPolicyAdminControllerTest {
 
     @Autowired
     CoinPolicyAdminRepository coinPolicyAdminRepository;
+
+    @Test
+    @DisplayName("[Get]/pingpong/admin/coinpolicy")
+    void getAnnouncement() throws Exception {
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
+
+        Integer currentPage = 1;
+        Integer pageSize = 5;//페이지 사이즈 크기가 실제 디비 정보보다 큰지 확인할 것
+
+        String url = "/pingpong/admin/coinpolicy?page=" + currentPage + "&size=" + pageSize;
+        String contentAsString = mockMvc.perform(get(url)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        CoinPolicyAdminListResponseDto result = objectMapper.readValue(contentAsString, CoinPolicyAdminListResponseDto.class);
+        assertThat(result.getCoinPolicyList().size()).isEqualTo(3);
+        System.out.println(result.getCoinPolicyList().get(0).getCoinPolicyId());
+        System.out.println(result.getCoinPolicyList().get(0).getCreateUserId());
+        System.out.println(result.getCoinPolicyList().get(0).getAttendance());
+        System.out.println(result.getCoinPolicyList().get(0).getNormal());
+        System.out.println(result.getCoinPolicyList().get(0).getRankWin());
+        System.out.println(result.getCoinPolicyList().get(0).getRankLose());
+
+    }
 
     @Test
     @DisplayName("[Post]/pingpong/admin/coinpolicy")
