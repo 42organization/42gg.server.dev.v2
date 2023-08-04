@@ -1,6 +1,5 @@
 package com.gg.server.admin.item.controller;
 
-import com.gg.server.admin.item.dto.ItemHistoryResponseDto;
 import com.gg.server.admin.item.dto.ItemListResponseDto;
 import com.gg.server.admin.item.dto.ItemRequestDto;
 import com.gg.server.admin.item.service.ItemAdminService;
@@ -29,7 +28,7 @@ public class ItemAdminController {
     }
 
     @PutMapping("/{itemId}")
-    public ResponseEntity updateItem(@PathVariable("itemId") Long itemId, @RequestBody ItemRequestDto itemRequestDto) {
+    public ResponseEntity updateItem(@PathVariable("itemId") Long itemId, @RequestBody @Valid ItemRequestDto itemRequestDto) {
         itemAdminService.updateItem(itemId, itemRequestDto);
 
         return new ResponseEntity(HttpStatus.NO_CONTENT);
