@@ -103,6 +103,10 @@ public class User extends BaseTimeEntity implements Serializable {
     public void updateKakaoId(Long kakaoId) {
         this.kakaoId = kakaoId;
     }
+  
+    public void updateTextColor(String textColor) {
+        this.textColor = textColor;
+    }
 
     public int addGgCoin(int plus) {
         this.ggCoin += plus;

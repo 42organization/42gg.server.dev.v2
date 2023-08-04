@@ -1,10 +1,15 @@
 package com.gg.server.domain.user.controller;
 
 import com.gg.server.domain.game.type.Mode;
+import com.gg.server.domain.user.data.User;
+import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.*;
 import com.gg.server.domain.user.exception.KakaoOauth2AlreadyExistException;
+import com.gg.server.domain.user.exception.UserNotFoundException;
+import com.gg.server.domain.user.exception.UserTextColorException;
 import com.gg.server.domain.user.service.UserAuthenticationService;
 import com.gg.server.domain.user.service.UserService;
+import com.gg.server.domain.user.service.UserTextColorCheckService;
 import com.gg.server.domain.user.type.OauthType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.global.security.config.properties.AppProperties;
@@ -14,6 +19,7 @@ import com.gg.server.global.utils.argumentresolver.Login;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -27,8 +33,10 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/pingpong/users")
+
 public class UserController {
     private final UserService userService;
+    private final UserTextColorCheckService userTextColorCheck;
     private final UserAuthenticationService userAuthenticationService;
     private final AppProperties appProperties;
     private final CookieUtil cookieUtil;
@@ -43,8 +51,7 @@ public class UserController {
 
     @GetMapping
     UserNormalDetailResponseDto getUserNormalDetail(@Parameter(hidden = true) @Login UserDto user){
-        Boolean isAdmin = user.getRoleType() == RoleType.ADMIN;
-        return new UserNormalDetailResponseDto(user.getIntraId(), user.getImageUri(), isAdmin);
+        return userService.getUserNormalDetail(user);
     }
 
     @GetMapping("/live")
@@ -115,6 +122,10 @@ public class UserController {
         }
     }
 
+    @PatchMapping  ("/text-color")
+    public void updateTextColor(@RequestBody @Valid UserTextColorDto textColorDto, @Parameter(hidden = true) @Login UserDto user) {
+        userService.updateTextColor(user.getId() ,textColorDto);
+    }
     @PostMapping("/attendance")
     public UserAttendanceResponseDto attendUser(@Parameter(hidden = true) @Login UserDto user) {
         return userService.attendUser(user.getId());

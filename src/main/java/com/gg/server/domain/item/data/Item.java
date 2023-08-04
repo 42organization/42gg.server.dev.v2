@@ -43,7 +43,6 @@ public class Item {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Builder
     public Item(String name, String content, String imageUri, Integer price,
                 Boolean isVisible, Integer discount, LocalDateTime createdAt) {
         this.name = name;
