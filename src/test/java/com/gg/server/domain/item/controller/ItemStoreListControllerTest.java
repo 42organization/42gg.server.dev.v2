@@ -91,7 +91,6 @@ class ItemStoreListControllerTest {
             assertThat(actual.getSalePrice()).isEqualTo(expected.getSalePrice());
         }
 
-//        System.out.println(objectMapper.writeValueAsString(result));
         System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(result));
     }
 }
