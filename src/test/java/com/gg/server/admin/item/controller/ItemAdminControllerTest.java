@@ -85,4 +85,15 @@ class ItemAdminControllerTest {
                 .andReturn().getResponse().getContentAsString();
         System.out.println(contentAsString);
     }
+
+    @Test
+    @DisplayName("DELETE /pingpong/admin/items/{itemId}")
+    public void deleteItemTest() throws Exception {
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
+        String contentAsString = mockMvc.perform(delete("/pingpong/admin/items/{itemId}", 1)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isNoContent())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println(contentAsString);
+    }
 }
