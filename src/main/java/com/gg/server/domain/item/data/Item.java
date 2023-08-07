@@ -1,6 +1,6 @@
 package com.gg.server.domain.item.data;
 
-import com.gg.server.admin.item.dto.ItemRequestDto;
+import com.gg.server.admin.item.dto.ItemUpdateRequestDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -43,6 +43,14 @@ public class Item {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @NotNull
+    @Column(name = "creator_intra_id", length = 10)
+    private String creatorIntraId;
+
+    @Column(name = "deleter_intra_id", length = 10)
+    @Setter
+    private String deleterIntraId;
+
     public Item(String name, String content, String imageUri, Integer price,
                 Boolean isVisible, Integer discount, LocalDateTime createdAt) {
         this.name = name;
@@ -55,13 +63,14 @@ public class Item {
     }
 
     @Builder
-    public Item(ItemRequestDto createDto) {
-        this.name = createDto.getName();
-        this.content = createDto.getContent();
-        this.imageUri = createDto.getImageUri();
-        this.price = createDto.getPrice();
-        this.discount = createDto.getDiscount();
+    public Item(ItemUpdateRequestDto updateRequestDto) {
+        this.name = updateRequestDto.getName();
+        this.content = updateRequestDto.getContent();
+        this.imageUri = updateRequestDto.getImageUri();
+        this.price = updateRequestDto.getPrice();
+        this.discount = updateRequestDto.getDiscount();
         this.isVisible = true;
+        this.creatorIntraId = updateRequestDto.getCreatorIntraId();
         this.createdAt = LocalDateTime.now();
     }
 
@@ -76,6 +85,8 @@ public class Item {
                 ", isVisible=" + isVisible +
                 ", discount=" + discount +
                 ", createdAt=" + createdAt +
+                ", creatorIntraId='" + creatorIntraId + '\'' +
+                ", deleterIntraId='" + deleterIntraId + '\'' +
                 '}';
     }
 }

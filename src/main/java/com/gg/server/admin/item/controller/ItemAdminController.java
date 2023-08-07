@@ -1,7 +1,8 @@
 package com.gg.server.admin.item.controller;
 
+import com.gg.server.admin.item.dto.ItemDeleteRequestDto;
 import com.gg.server.admin.item.dto.ItemListResponseDto;
-import com.gg.server.admin.item.dto.ItemRequestDto;
+import com.gg.server.admin.item.dto.ItemUpdateRequestDto;
 import com.gg.server.admin.item.service.ItemAdminService;
 import com.gg.server.global.dto.PageRequestDto;
 import lombok.RequiredArgsConstructor;
@@ -28,15 +29,15 @@ public class ItemAdminController {
     }
 
     @PutMapping("/{itemId}")
-    public ResponseEntity updateItem(@PathVariable("itemId") Long itemId, @RequestBody @Valid ItemRequestDto itemRequestDto) {
+    public ResponseEntity updateItem(@PathVariable("itemId") Long itemId, @RequestBody @Valid ItemUpdateRequestDto itemRequestDto) {
         itemAdminService.updateItem(itemId, itemRequestDto);
 
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping("/{itemId}")
-    public ResponseEntity deleteItem(@PathVariable("itemId") Long itemId) {
-        itemAdminService.deleteItem(itemId);
+    public ResponseEntity deleteItem(@PathVariable("itemId") Long itemId, @RequestBody @Valid ItemDeleteRequestDto itemDeleteRequestDto) {
+        itemAdminService.deleteItem(itemId, itemDeleteRequestDto);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 }

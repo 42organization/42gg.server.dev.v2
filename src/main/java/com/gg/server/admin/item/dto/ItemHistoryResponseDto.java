@@ -19,6 +19,8 @@ public class ItemHistoryResponseDto {
     private Integer discount;
     private boolean isVisible;
     private LocalDateTime createdAt;
+    private String creatorIntraId;
+    private String deleterIntraId;
 
     public ItemHistoryResponseDto(Item item) {
         this.itemId = item.getId();
@@ -29,6 +31,8 @@ public class ItemHistoryResponseDto {
         this.discount = item.getDiscount();
         this.isVisible = item.getIsVisible();
         this.createdAt = item.getCreatedAt();
+        this.creatorIntraId = item.getCreatorIntraId();
+        this.deleterIntraId = item.getDeleterIntraId();
     }
 
     @Override
@@ -42,6 +46,8 @@ public class ItemHistoryResponseDto {
                 ", discount=" + discount +
                 ", isVisible=" + isVisible +
                 ", createdAt=" + createdAt +
+                ", creatorIntraId='" + creatorIntraId + '\'' +
+                ", deleterIntraId='" + deleterIntraId + '\'' +
                 '}';
     }
 }

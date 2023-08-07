@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ItemRequestDto {
+public class ItemUpdateRequestDto {
     @NotNull(message = "plz. itemName")
     private String name;
 
@@ -25,6 +25,9 @@ public class ItemRequestDto {
     @NotNull(message = "plz. discount")
     private Integer discount;
 
+    @NotNull(message = "plz. creatorIntraId")
+    private String creatorIntraId;
+
     @Override
     public String toString() {
         return "ItemRequestDto{" +
@@ -33,6 +36,7 @@ public class ItemRequestDto {
                 ", imageUri='" + imageUri + '\'' +
                 ", price=" + price +
                 ", discount=" + discount +
+                ", creator='" + creatorIntraId + '\'' +
                 '}';
     }
 }
