@@ -16,7 +16,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 
 
@@ -60,12 +62,38 @@ class ItemAdminControllerTest {
 
         System.out.println(contentAsString);
         ItemListResponseDto expect = itemAdminService.getAllItemHistory(pageable);
-        ItemListResponseDto result = objectMapper.readValue(contentAsString, ItemListResponseDto.class);
         System.out.println(expect.getHistoryList());
-        System.out.println(result.getHistoryList());
+        ItemListResponseDto result = objectMapper.readValue(contentAsString, ItemListResponseDto.class);
+        System.out.println(expect.getHistoryList().get(0));
+        System.out.println(result.getHistoryList().get(0));
         assertThat(result.getHistoryList().get(0).getItemId());
         assertThat(result.getHistoryList().get(0).getName());
         assertThat(result.getHistoryList().get(0).getContent());
         assertThat(result.getHistoryList().get(0).getPrice());
+    }
+
+    @Test
+    @DisplayName("PUT /pingpong/admin/items/history/{itemId}")
+    public void updateItemTest() throws Exception {
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
+        String requestJson = "{\"name\" : \"확성기\", \"content\" : \"testing\", \"imageUri\" : \"https://kakao.com\", \"price\" : 42, \"discount\" : 50}";
+        String contentAsString = mockMvc.perform(put("/pingpong/admin/items/{itemId}", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isNoContent())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println(contentAsString);
+    }
+
+    @Test
+    @DisplayName("DELETE /pingpong/admin/items/{itemId}")
+    public void deleteItemTest() throws Exception {
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
+        String contentAsString = mockMvc.perform(delete("/pingpong/admin/items/{itemId}", 1)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isNoContent())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println(contentAsString);
     }
 }
