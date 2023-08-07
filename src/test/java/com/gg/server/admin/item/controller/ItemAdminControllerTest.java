@@ -76,7 +76,7 @@ class ItemAdminControllerTest {
     @DisplayName("PUT /pingpong/admin/items/history/{itemId}")
     public void updateItemTest() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
-        String requestJson = "{\"name\" : \"확성기\", \"content\" : \"testing\", \"imageUri\" : \"https://kakao.com\", \"price\" : 42, \"discount\" : 50}";
+        String requestJson = "{\"name\" : \"확성기\", \"content\" : \"testing\", \"imageUri\" : \"https://kakao.com\", \"price\" : 42, \"discount\" : 50, \"creatorIntraId\" : \"cheolee\"}";
         String contentAsString = mockMvc.perform(put("/pingpong/admin/items/{itemId}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson)
@@ -90,7 +90,10 @@ class ItemAdminControllerTest {
     @DisplayName("DELETE /pingpong/admin/items/{itemId}")
     public void deleteItemTest() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
+        String requestJson = "{\"deleterIntraId\" : \"sishin\"}";
         String contentAsString = mockMvc.perform(delete("/pingpong/admin/items/{itemId}", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isNoContent())
                 .andReturn().getResponse().getContentAsString();
