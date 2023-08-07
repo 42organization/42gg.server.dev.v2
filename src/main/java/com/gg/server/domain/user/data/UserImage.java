@@ -1,4 +1,4 @@
-package com.gg.server.domain.userImage;
+package com.gg.server.domain.user.data;
 
 import com.gg.server.global.utils.BaseTimeEntity;
 import com.sun.istack.NotNull;

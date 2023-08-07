@@ -71,6 +71,10 @@ public class User extends BaseTimeEntity implements Serializable {
         this.totalExp = totalExp;
         this.snsNotiOpt = snsNotiOpt;
         this.kakaoId = kakaoId;
+        this.background = BackgroundType.BASIC;
+        this.textColor = "#000000";
+        this.edge = EdgeType.BASIC;
+        this.ggCoin = 0;
     }
 
     public void modifyUserDetail(UserUpdateAdminRequestDto updateReq) {
@@ -98,5 +102,14 @@ public class User extends BaseTimeEntity implements Serializable {
 
     public void updateKakaoId(Long kakaoId) {
         this.kakaoId = kakaoId;
+    }
+  
+    public void updateTextColor(String textColor) {
+        this.textColor = textColor;
+    }
+
+    public int addGgCoin(int plus) {
+        this.ggCoin += plus;
+        return this.ggCoin;
     }
 }

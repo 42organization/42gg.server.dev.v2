@@ -1,6 +1,8 @@
 package com.gg.server.domain.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gg.server.domain.coin.data.CoinHistoryRepository;
+import com.gg.server.domain.coin.data.CoinPolicyRepository;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.dto.req.RankResultReqDto;
@@ -77,6 +79,13 @@ class UserControllerTest {
     @Autowired
     GameService gameService;
 
+    @Autowired
+    CoinPolicyRepository coinPolicyRepository;
+
+    @Autowired
+    CoinHistoryRepository coinHistoryRepository;
+
+
     @AfterEach
     public void flushRedis() {
         redisRepository.deleteAll();
@@ -131,10 +140,10 @@ class UserControllerTest {
         assertThat(userLiveResponseDto3.getCurrentMatchMode()).isEqualTo(null);
         assertThat(userLiveResponseDto3.getGameId()).isEqualTo(null);
     }
-    
+
     @Test
     @DisplayName("/")
-    public void userNormalDetail () throws Exception {
+    public void userNormalDetail() throws Exception {
         //given
         String url = "/pingpong/users";
         String intraId = "intra";
@@ -154,12 +163,12 @@ class UserControllerTest {
         assertThat(responseDto.getIntraId()).isEqualTo(intraId);
         assertThat(responseDto.getUserImageUri()).isEqualTo(imageUrl);
         assertThat(responseDto.getIsAdmin()).isTrue();
+        assertThat(responseDto.getIsAttended());
     }
 
     @Test
     @DisplayName("searches?intraId=${IntraId}")
-    public void searchUser() throws Exception
-    {
+    public void searchUser() throws Exception {
         //given
         String intraId[] = {"intraId", "2intra2", "2intra", "aaaa", "bbbb"};
         String email = "email";
@@ -185,8 +194,7 @@ class UserControllerTest {
 
     @Test
     @DisplayName("[GET] {targetId}")
-    public void getUserDetail () throws Exception
-    {
+    public void getUserDetail() throws Exception {
         //given
         Season season = testDataUtils.createSeason();
         String intraId = "intraId";
@@ -215,8 +223,7 @@ class UserControllerTest {
 
     @Test
     @DisplayName("/{intraId}/rank?season={seasonId}")
-    public void userRankDetail () throws Exception
-    {
+    public void userRankDetail() throws Exception {
         //given
         Season season = testDataUtils.createSeason();
         User newUser = testDataUtils.createNewUser();
@@ -239,8 +246,7 @@ class UserControllerTest {
 
     @Test
     @DisplayName("/{intraId}/historics?season={seasonId}")
-    public void getUserHistory () throws Exception
-    {
+    public void getUserHistory() throws Exception {
         //given
         Season season = testDataUtils.createSeason();
         User newUser = testDataUtils.createNewUser();
@@ -276,8 +282,7 @@ class UserControllerTest {
 
     @Test
     @DisplayName("[put] {intraId}")
-    public void  updateUser() throws Exception
-    {
+    public void updateUser() throws Exception {
         //given
         Season season = testDataUtils.createSeason();
         String intraId = "intraId";
@@ -296,8 +301,8 @@ class UserControllerTest {
 
         //when
         mockMvc.perform(put(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(new UserModifyRequestDto(newRacketType, newStatusMessage, newSnsType))))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new UserModifyRequestDto(newRacketType, newStatusMessage, newSnsType))))
                 .andExpect(status().isOk());
         //then
         String hashKey = RedisKeyManager.getHashKey(season.getId());
@@ -311,6 +316,57 @@ class UserControllerTest {
             Assertions.assertThat(user.getRacketType()).isEqualTo((newRacketType));
             Assertions.assertThat(user.getSnsNotiOpt()).isEqualTo(newSnsType);
             Assertions.assertThat(rank.getStatusMessage()).isEqualTo(newStatusMessage);
+        }, () -> {
+            Assertions.fail("유저 업데이트 실패");
+        });
+    }
+
+    @Test
+    @DisplayName("[post] /attendance")
+    public void attendUserTest() throws Exception {
+        //given
+        String accessToken = testDataUtils.getLoginAccessToken();
+        String url = "/pingpong/users/attendance";
+
+        //when
+        String contentAsString = mockMvc.perform(post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        UserAttendanceResponseDto result = objectMapper.readValue(contentAsString, UserAttendanceResponseDto.class);
+
+        //then
+        System.out.println(result.getAfterCoin());
+        Assertions.assertThat(result.getAfterCoin() - result.getBeforeCoin()).isEqualTo(result.getCoinIncrement());
+    }
+  
+    @Test
+    @DisplayName("[patch] text-color")
+    public void updateTextColorTest() throws Exception {
+        //given
+        Season season = testDataUtils.createSeason();
+        String intraId = "intraId";
+        String email = "email";
+        String imageUrl = "imageUrl";
+        User newUser = testDataUtils.createNewUser(intraId, email, imageUrl, RacketType.PENHOLDER,
+                SnsType.BOTH, RoleType.ADMIN);
+        String statusMessage = "statusMessage";
+        testDataUtils.createUserRank(newUser, statusMessage, season);
+        String accessToken = tokenProvider.createToken(newUser.getId());
+        String url = "/pingpong/users/text-color";
+
+        String newStatusMessage = "newStatusMessage";
+        RacketType newRacketType = RacketType.SHAKEHAND;
+        SnsType newSnsType = SnsType.SLACK;
+        String newTextColor = "#FFFFFF";
+
+        //when
+        mockMvc.perform(patch(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(new UserTextColorDto(newTextColor))))
+                .andExpect(status().isOk());
+        //then
+        userRepository.findById(newUser.getId()).ifPresentOrElse(user -> {
+            Assertions.assertThat(user.getTextColor()).isEqualTo(newTextColor);
         }, () -> {
             Assertions.fail("유저 업데이트 실패");
         });
