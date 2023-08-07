@@ -17,7 +17,7 @@ public class CoinHistoryService {
 
     @Transactional
     public void addAttendanceCoinHistory(User user) {
-        int  amount = coinPolicyRepository.findTopByOrderByCreatedAtDesc().getAttendance();
+        int amount = coinPolicyRepository.findTopByOrderByCreatedAtDesc().getAttendance();
         addCoinHistory(new CoinHistory(user, HistoryType.ATTENDANCECOIN.getHistory(), amount));
     }
 
