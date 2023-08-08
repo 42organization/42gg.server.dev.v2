@@ -54,9 +54,9 @@ class ItemStoreListControllerTest {
 
         //given
         List<ItemStoreResponseDto> testItems = Arrays.asList(
-                new ItemStoreResponseDto(1L, "itemName 1", "Content 1", "ImageUrl 1", 1000, 10, 900),
-                new ItemStoreResponseDto(2L, "itemName 2", "Content 2", "ImageUrl 2", 2000, 20, 1800),
-                new ItemStoreResponseDto(3L, "itemName 3", "Content 3", "ImageUrl 3", 3000, 30, 2700)
+                new ItemStoreResponseDto(1L, "itemName 1", "Content 1", "MEGAPHONE", "ImageUrl 1", 1000, 10, 900),
+                new ItemStoreResponseDto(2L, "itemName 2", "Content 2", "PROFILE_IMAGE", "ImageUrl 2", 2000, 20, 1800),
+                new ItemStoreResponseDto(3L, "itemName 3", "Content 3", "TEXT_COLOR", "ImageUrl 3", 3000, 30, 2700)
         );
         ItemStoreListResponseDto testResponse = new ItemStoreListResponseDto(testItems);
         when(itemService.getAllItems()).thenReturn(testResponse);
@@ -85,6 +85,7 @@ class ItemStoreListControllerTest {
             assertThat(actual.getItemId()).isEqualTo(expected.getItemId());
             assertThat(actual.getItemName()).isEqualTo(expected.getItemName());
             assertThat(actual.getContent()).isEqualTo(expected.getContent());
+            assertThat(actual.getItemType()).isEqualTo(expected.getItemType());
             assertThat(actual.getImageUrl()).isEqualTo(expected.getImageUrl());
             assertThat(actual.getOriginalPrice()).isEqualTo(expected.getOriginalPrice());
             assertThat(actual.getDiscount()).isEqualTo(expected.getDiscount());
