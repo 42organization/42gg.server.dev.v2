@@ -346,6 +346,41 @@ class MatchServiceTest {
         }
 
     }
+
+    @DisplayName("슬롯 조회 : 게임 등록 되면 제 3자한테 closed 처리")
+    @Test
+    void getClosedStatusOfExistGame() {
+        matchService.makeMatch(UserDto.from(users.get(1)), Option.NORMAL, slotTimes.get(3));
+        matchService.makeMatch(UserDto.from(users.get(2)), Option.NORMAL, slotTimes.get(3));
+        SlotStatusResponseListDto allMatchStatus = matchFindService.getAllMatchStatus(UserDto.from(users.get(3)),
+                Option.NORMAL);
+        for (List<SlotStatusDto> dtos : allMatchStatus.getMatchBoards()) {
+            for (SlotStatusDto dto: dtos) {
+                if (dto.getStartTime().equals(slotTimes.get(3))) {
+                    Assertions.assertThat(dto.getStatus()).isEqualTo(SlotStatus.CLOSE.getCode());
+                }
+            }
+        }
+    }
+
+    @DisplayName("슬롯 조회 : 게임 등록 되면 제3자가 다른 게임 등록해도 제 3자한테 closed 처리")
+    @Test
+    void getClosedStatusOfExistGame2() {
+        matchService.makeMatch(UserDto.from(users.get(1)), Option.NORMAL, slotTimes.get(3));
+        matchService.makeMatch(UserDto.from(users.get(2)), Option.NORMAL, slotTimes.get(3));
+        matchService.makeMatch(UserDto.from(users.get(3)), Option.NORMAL, slotTimes.get(4));
+        matchService.makeMatch(UserDto.from(users.get(4)), Option.NORMAL, slotTimes.get(4));
+        SlotStatusResponseListDto allMatchStatus = matchFindService.getAllMatchStatus(UserDto.from(users.get(3)),
+                Option.NORMAL);
+        for (List<SlotStatusDto> dtos : allMatchStatus.getMatchBoards()) {
+            for (SlotStatusDto dto: dtos) {
+                if (dto.getStartTime().equals(slotTimes.get(3))) {
+                    Assertions.assertThat(dto.getStatus()).isEqualTo(SlotStatus.CLOSE.getCode());
+                }
+            }
+        }
+    }
+
     @DisplayName("current Match 조회 : user가 등록한 슬롯이 매칭되었을 때")
     @Test
     void readCurrentMatchAfterMakingGameEntity() {
