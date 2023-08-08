@@ -1,6 +1,9 @@
 package com.gg.server.domain.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gg.server.admin.feedback.dto.FeedbackListAdminResponseDto;
+import com.gg.server.domain.announcement.data.Announcement;
+import com.gg.server.domain.announcement.exception.AnnounceNotFoundException;
 import com.gg.server.domain.coin.data.CoinHistoryRepository;
 import com.gg.server.domain.coin.data.CoinPolicyRepository;
 import com.gg.server.domain.game.data.Game;
@@ -19,6 +22,7 @@ import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.controller.dto.GameInfoDto;
 import com.gg.server.domain.user.dto.*;
+import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
@@ -370,5 +374,24 @@ class UserControllerTest {
         }, () -> {
             Assertions.fail("유저 업데이트 실패");
         });
+    }
+
+    @Test
+    @DisplayName("[get]/pingpong/users/coin")
+    public void getUserCoin() throws Exception {
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
+
+        String url = "/pingpong/users/coin";
+
+        String contentAsString = mockMvc.perform(get(url)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        UserCoinResponseDto result = objectMapper.readValue(contentAsString, UserCoinResponseDto.class);
+        int userCoin = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException()).getGgCoin();
+        assertThat(result.getCoin()).isEqualTo(userCoin);
+        System.out.println(userCoin);
     }
 }
