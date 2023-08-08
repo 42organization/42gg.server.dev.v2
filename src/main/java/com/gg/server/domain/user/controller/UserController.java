@@ -8,6 +8,7 @@ import com.gg.server.domain.user.exception.KakaoOauth2AlreadyExistException;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.domain.user.exception.UserTextColorException;
 import com.gg.server.domain.user.service.UserAuthenticationService;
+import com.gg.server.domain.user.service.UserCoinService;
 import com.gg.server.domain.user.service.UserService;
 import com.gg.server.domain.user.service.UserTextColorCheckService;
 import com.gg.server.domain.user.type.OauthType;
@@ -40,6 +41,7 @@ public class UserController {
     private final UserAuthenticationService userAuthenticationService;
     private final AppProperties appProperties;
     private final CookieUtil cookieUtil;
+    private final UserCoinService userCoinService;
 
     @PostMapping("/accesstoken")
     public ResponseEntity<UserAccessTokenDto> generateAccessToken(@RequestParam String refreshToken, HttpServletResponse response) {
@@ -129,5 +131,10 @@ public class UserController {
     @PostMapping("/attendance")
     public UserAttendanceResponseDto attendUser(@Parameter(hidden = true) @Login UserDto user) {
         return userService.attendUser(user.getId());
+    }
+
+    @GetMapping("/coin")
+    public UserCoinResponseDto getUserCoin(@Parameter(hidden = true) @Login UserDto user) {
+        return userCoinService.getUserCoin(user.getIntraId());
     }
 }
