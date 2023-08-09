@@ -1,9 +1,10 @@
 package com.gg.server.admin.item.service;
 
 import com.gg.server.admin.item.data.ItemAdminRepository;
+import com.gg.server.admin.item.dto.ItemDeleteRequestDto;
 import com.gg.server.admin.item.dto.ItemHistoryResponseDto;
 import com.gg.server.admin.item.dto.ItemListResponseDto;
-import com.gg.server.admin.item.dto.ItemRequestDto;
+import com.gg.server.admin.item.dto.ItemUpdateRequestDto;
 import com.gg.server.admin.item.exception.ItemNotFoundException;
 import com.gg.server.domain.item.data.Item;
 import lombok.RequiredArgsConstructor;
@@ -24,17 +25,18 @@ public class ItemAdminService {
     }
 
     @Transactional
-    public void updateItem(Long itemId, ItemRequestDto createDto) {
+    public void updateItem(Long itemId, ItemUpdateRequestDto itemUpdateRequestDto) {
         Item item = itemAdminRepository.findById(itemId).orElseThrow(()-> new ItemNotFoundException());
         item.setIsVisible(false);
-
-        Item newItem = new Item(createDto);
+        item.setDeleterIntraId(itemUpdateRequestDto.getCreatorIntraId());
+        Item newItem = new Item(itemUpdateRequestDto);
         itemAdminRepository.save(newItem);
     }
 
     @Transactional
-    public void deleteItem(Long itemId) {
+    public void deleteItem(Long itemId, ItemDeleteRequestDto itemDeleteRequestDto) {
         Item item = itemAdminRepository.findById(itemId).orElseThrow(()-> new ItemNotFoundException());
         item.setIsVisible(false);
+        item.setDeleterIntraId(itemDeleteRequestDto.getDeleterIntraId());
     }
 }

@@ -9,6 +9,7 @@ import com.gg.server.domain.user.exception.UserEdgeTypeNotFound;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.domain.user.exception.UserTextColorException;
 import com.gg.server.domain.user.service.UserAuthenticationService;
+import com.gg.server.domain.user.service.UserCoinService;
 import com.gg.server.domain.user.service.UserService;
 import com.gg.server.domain.user.service.UserTextColorCheckService;
 import com.gg.server.domain.user.type.EdgeType;
@@ -41,6 +42,7 @@ public class UserController {
     private final UserAuthenticationService userAuthenticationService;
     private final AppProperties appProperties;
     private final CookieUtil cookieUtil;
+    private final UserCoinService userCoinService;
 
     @PostMapping("/accesstoken")
     public ResponseEntity<UserAccessTokenDto> generateAccessToken(@RequestParam String refreshToken, HttpServletResponse response) {
@@ -138,5 +140,9 @@ public class UserController {
     public ResponseEntity updateEdge(@RequestBody @Valid UserEdgeDto userEdgeDto, @Parameter(hidden = true) @Login UserDto user) {
         userService.updateEdge(user.getId(), userEdgeDto);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
+
+    @GetMapping("/coin")
+    public UserCoinResponseDto getUserCoin(@Parameter(hidden = true) @Login UserDto user) {
+        return userCoinService.getUserCoin(user.getIntraId());
     }
 }
