@@ -7,4 +7,7 @@ import java.util.List;
 
 public interface MegaphoneRepository extends JpaRepository<Megaphone, Long> {
     List<Megaphone> findAllByUsedAt(LocalDate date);
+
+    Megaphone findFirstByOrderByIdDesc();
+
 }
