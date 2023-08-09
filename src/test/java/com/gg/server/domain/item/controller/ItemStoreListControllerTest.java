@@ -86,7 +86,7 @@ class ItemStoreListControllerTest {
             assertThat(actual.getItemName()).isEqualTo(expected.getItemName());
             assertThat(actual.getContent()).isEqualTo(expected.getContent());
             assertThat(actual.getItemType()).isEqualTo(expected.getItemType());
-            assertThat(actual.getImageUrl()).isEqualTo(expected.getImageUrl());
+            assertThat(actual.getImageUri()).isEqualTo(expected.getImageUri());
             assertThat(actual.getOriginalPrice()).isEqualTo(expected.getOriginalPrice());
             assertThat(actual.getDiscount()).isEqualTo(expected.getDiscount());
             assertThat(actual.getSalePrice()).isEqualTo(expected.getSalePrice());

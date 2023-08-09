@@ -13,7 +13,7 @@ public class ItemStoreResponseDto {
     private String itemName;
     private String content;
     private String itemType;
-    private String imageUrl;
+    private String imageUri;
     private Integer originalPrice;
     private Integer discount;
     private Integer salePrice;
@@ -22,8 +22,8 @@ public class ItemStoreResponseDto {
         this.itemId = item.getId();
         this.itemName = item.getName();
         this.content = item.getContent();
-        this.itemType = item.getType().getCode();
-        this.imageUrl = item.getImageUri();
+        this.itemType = item.getType().toString();
+        this.imageUri = item.getImageUri();
         this.originalPrice = item.getPrice();
         this.discount = item.getDiscount();
         this.salePrice = this.originalPrice - (this.originalPrice * this.discount / 100);
