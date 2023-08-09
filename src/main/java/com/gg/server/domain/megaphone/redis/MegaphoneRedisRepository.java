@@ -25,4 +25,9 @@ public class MegaphoneRedisRepository {
     public void deleteAllMegaphone() {
         redisTemplate.delete(redisTemplate.keys("megaphone*"));
     }
+
+    public void deleteMegaphoneById(Long id) {
+        redisTemplate.delete("megaphone" + id);
+    }
+
 }
