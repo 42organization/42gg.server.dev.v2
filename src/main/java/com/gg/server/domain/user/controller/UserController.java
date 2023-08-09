@@ -140,6 +140,7 @@ public class UserController {
     public ResponseEntity updateEdge(@RequestBody @Valid UserEdgeDto userEdgeDto, @Parameter(hidden = true) @Login UserDto user) {
         userService.updateEdge(user.getId(), userEdgeDto);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
 
     @GetMapping("/coin")
     public UserCoinResponseDto getUserCoin(@Parameter(hidden = true) @Login UserDto user) {
