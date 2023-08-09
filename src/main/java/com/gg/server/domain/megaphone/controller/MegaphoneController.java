@@ -22,6 +22,6 @@ public class MegaphoneController {
     public ResponseEntity useMegaphone(@RequestBody @Valid MegaphoneUseRequestDto megaphoneUseRequestDto,
                                        @Parameter(hidden = true) @Login UserDto user) {
         megaphoneService.useMegaphone(megaphoneUseRequestDto, user);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }
