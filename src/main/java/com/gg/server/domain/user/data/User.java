@@ -108,6 +108,10 @@ public class User extends BaseTimeEntity implements Serializable {
         this.textColor = textColor;
     }
 
+    public void updateEdge(EdgeType edge) {
+        this.edge = edge;
+    }
+
     public int addGgCoin(int plus) {
         this.ggCoin += plus;
         return this.ggCoin;

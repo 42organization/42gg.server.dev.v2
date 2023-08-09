@@ -22,10 +22,11 @@ import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.controller.dto.GameInfoDto;
 import com.gg.server.domain.user.dto.*;
-import com.gg.server.domain.user.exception.UserNotFoundException;
+import com.gg.server.domain.user.type.EdgeType;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
+import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -51,6 +52,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+@Slf4j
 class UserControllerTest {
 
     @Autowired
@@ -358,16 +360,13 @@ class UserControllerTest {
         String accessToken = tokenProvider.createToken(newUser.getId());
         String url = "/pingpong/users/text-color";
 
-        String newStatusMessage = "newStatusMessage";
-        RacketType newRacketType = RacketType.SHAKEHAND;
-        SnsType newSnsType = SnsType.SLACK;
         String newTextColor = "#FFFFFF";
 
         //when
         mockMvc.perform(patch(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(new UserTextColorDto(newTextColor))))
-                .andExpect(status().isOk());
+                .andExpect(status().is2xxSuccessful());
         //then
         userRepository.findById(newUser.getId()).ifPresentOrElse(user -> {
             Assertions.assertThat(user.getTextColor()).isEqualTo(newTextColor);
@@ -375,6 +374,37 @@ class UserControllerTest {
             Assertions.fail("유저 업데이트 실패");
         });
     }
+
+    @Test
+    @DisplayName("[patch] edge")
+    public void updateEdgeTest() throws Exception {
+        //given
+        Season season = testDataUtils.createSeason();
+        String intraId = "intraId";
+        String email = "email";
+        String imageUrl = "imageUrl";
+        User newUser = testDataUtils.createNewUser(intraId, email, imageUrl, RacketType.PENHOLDER,
+                SnsType.BOTH, RoleType.ADMIN);
+        String statusMessage = "statusMessage";
+        testDataUtils.createUserRank(newUser, statusMessage, season);
+        String accessToken = tokenProvider.createToken(newUser.getId());
+        String url = "/pingpong/users/edge";
+
+        EdgeType newEdge = EdgeType.BASIC;
+
+        //when
+        mockMvc.perform(patch(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new UserEdgeDto(newEdge))))
+                .andExpect(status().is2xxSuccessful());
+        //then
+        log.info("newEdge : {}", newEdge);
+        log.info("user.getEdge() : {}", newUser.getEdge());
+        userRepository.findById(newUser.getId()).ifPresentOrElse(user -> {
+            Assertions.assertThat(user.getEdge()).isEqualTo(newEdge);
+        }, () -> {
+            Assertions.fail("유저 업데이트 실패");
+        });
 
     @Test
     @DisplayName("[get]/pingpong/users/coin")

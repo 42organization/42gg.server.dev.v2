@@ -23,8 +23,10 @@ import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.*;
 import com.gg.server.domain.user.exception.UserAlreadyAttendanceException;
+import com.gg.server.domain.user.exception.UserEdgeTypeNotFound;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.domain.user.exception.UserTextColorException;
+import com.gg.server.domain.user.type.EdgeType;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
@@ -262,9 +264,17 @@ public class UserService {
     @Transactional()
     public void updateTextColor(Long userId, UserTextColorDto textColorDto) {
         String textColor = textColorDto.getTextColor();
-        if (UserTextColorCheckService.check(textColor) == false)
+        if (!UserTextColorCheckService.check(textColor))
             throw new UserTextColorException();
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         user.updateTextColor(textColor);
+    }
+
+    @Transactional
+    public void updateEdge(Long userId, UserEdgeDto userEdgeDto) {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        EdgeType edgeType = userEdgeDto.getEdgeType();
+        if (edgeType.equals(EdgeType.WRONG)) throw new UserEdgeTypeNotFound();
+        user.updateEdge(edgeType);
     }
 }
