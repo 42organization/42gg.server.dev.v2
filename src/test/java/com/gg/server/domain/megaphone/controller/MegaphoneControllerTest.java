@@ -52,7 +52,7 @@ class MegaphoneControllerTest {
     @Test
     @Transactional
     @DisplayName("[Post]/pingpong/megaphones")
-    void getAnnouncementList() throws Exception {
+    void useMegaphoneTest() throws Exception {
         String intraId = "intra";
         String email = "email";
         String imageUrl = "imageUrl";
