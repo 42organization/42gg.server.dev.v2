@@ -1,6 +1,7 @@
 package com.gg.server.domain.item.data;
 
 import com.gg.server.admin.item.dto.ItemUpdateRequestDto;
+import com.gg.server.domain.item.type.ItemType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,6 +41,11 @@ public class Item {
     private Integer discount;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type")
+    private ItemType type;
+
+    @NotNull
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
@@ -52,13 +58,14 @@ public class Item {
     private String deleterIntraId;
 
     public Item(String name, String content, String imageUri, Integer price,
-                Boolean isVisible, Integer discount, LocalDateTime createdAt) {
+                Boolean isVisible, Integer discount, ItemType type, LocalDateTime createdAt) {
         this.name = name;
         this.content = content;
         this.imageUri = imageUri;
         this.price = price;
         this.isVisible = isVisible;
         this.discount = discount;
+        this.type = type;
         this.createdAt = createdAt;
     }
 
