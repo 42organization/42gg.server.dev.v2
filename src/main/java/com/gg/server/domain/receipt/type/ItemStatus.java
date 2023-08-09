@@ -6,7 +6,9 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum ItemStatus {
-    BEFORE("before", "사용 전"), USING("using", "사용 중"),
+    BEFORE("before", "사용 전"),
+    WAITING("waiting", "사용 대기"),
+    USING("using", "사용 중"),
     USED("used", "사용 완료");
 
     private final String code;

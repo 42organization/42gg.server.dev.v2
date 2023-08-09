@@ -41,7 +41,7 @@ public class Receipt {
     private LocalDateTime purchasedAt;
 
     public Receipt(Item item, String purchaserIntraId, String ownerIntraId,
-                   ItemStatus status, LocalDateTime purchasedAt){
+                   ItemStatus status, LocalDateTime purchasedAt) {
         this.item = item;
         this.purchaserIntraId = purchaserIntraId;
         this.ownerIntraId = ownerIntraId;
@@ -61,11 +61,7 @@ public class Receipt {
                 '}';
     }
 
-    public void updateStatus() {
-        if (status == ItemStatus.BEFORE) {
-            this.status = ItemStatus.USING;
-        } else {
-            this.status = ItemStatus.USED;
-        }
+    public void updateStatus(ItemStatus status) {
+        this.status = status;
     }
 }
