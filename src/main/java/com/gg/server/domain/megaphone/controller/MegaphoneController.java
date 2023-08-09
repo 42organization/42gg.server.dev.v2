@@ -24,4 +24,13 @@ public class MegaphoneController {
         megaphoneService.useMegaphone(megaphoneUseRequestDto, user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+    @DeleteMapping("/receipt/{receiptId}")
+    public ResponseEntity deleteMegaphone(@PathVariable Long receiptId,
+                                          @Parameter(hidden = true) @Login UserDto user) {
+        megaphoneService.deleteMegaphone(receiptId, user);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+
 }
