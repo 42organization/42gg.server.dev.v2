@@ -5,11 +5,13 @@ import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.*;
 import com.gg.server.domain.user.exception.KakaoOauth2AlreadyExistException;
+import com.gg.server.domain.user.exception.UserEdgeTypeNotFound;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.domain.user.exception.UserTextColorException;
 import com.gg.server.domain.user.service.UserAuthenticationService;
 import com.gg.server.domain.user.service.UserService;
 import com.gg.server.domain.user.service.UserTextColorCheckService;
+import com.gg.server.domain.user.type.EdgeType;
 import com.gg.server.domain.user.type.OauthType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.global.security.config.properties.AppProperties;
@@ -33,7 +35,6 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/pingpong/users")
-
 public class UserController {
     private final UserService userService;
     private final UserTextColorCheckService userTextColorCheck;
@@ -122,12 +123,20 @@ public class UserController {
         }
     }
 
-    @PatchMapping  ("/text-color")
-    public void updateTextColor(@RequestBody @Valid UserTextColorDto textColorDto, @Parameter(hidden = true) @Login UserDto user) {
+    @PatchMapping("/text-color")
+    public ResponseEntity updateTextColor(@RequestBody @Valid UserTextColorDto textColorDto, @Parameter(hidden = true) @Login UserDto user) {
         userService.updateTextColor(user.getId() ,textColorDto);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
+
     @PostMapping("/attendance")
     public UserAttendanceResponseDto attendUser(@Parameter(hidden = true) @Login UserDto user) {
         return userService.attendUser(user.getId());
+    }
+
+    @PatchMapping("/edge")
+    public ResponseEntity updateEdge(@RequestBody @Valid UserEdgeDto userEdgeDto, @Parameter(hidden = true) @Login UserDto user) {
+        userService.updateEdge(user.getId(), userEdgeDto);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 }
