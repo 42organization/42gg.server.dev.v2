@@ -1,7 +1,10 @@
 package com.gg.server.domain.megaphone.service;
 
+import com.gg.server.domain.item.exception.ItemTypeException;
+import com.gg.server.domain.item.type.ItemType;
 import com.gg.server.domain.megaphone.data.Megaphone;
 import com.gg.server.domain.megaphone.data.MegaphoneRepository;
+import com.gg.server.domain.megaphone.dto.MegaphoneDetailResponseDto;
 import com.gg.server.domain.megaphone.dto.MegaphoneUseRequestDto;
 import com.gg.server.domain.megaphone.exception.MegaphoneNotFoundException;
 import com.gg.server.domain.megaphone.exception.MegaphoneTimeException;
@@ -43,6 +46,7 @@ public class MegaphoneService {
         }
         Receipt receipt = receiptRepository.findById(megaphoneUseRequestDto.getReceiptId()).orElseThrow(ReceiptNotFoundException::new);
         checkOwner(loginUser, receipt);
+        checkItemType(receipt);
         if (!receipt.getStatus().equals(ItemStatus.BEFORE)) {
             throw new ItemStatusException();
         }
@@ -64,25 +68,42 @@ public class MegaphoneService {
     }
 
     @Transactional
-    public void deleteMegaphone(Long receiptId, UserDto user) {
+    public void deleteMegaphone(Long megaphoneId, UserDto user) {
         User loginUser = userRepository.findById(user.getId()).orElseThrow(() -> new UsernameNotFoundException("User" + user.getId()));
-        Receipt receipt = receiptRepository.findById(receiptId).orElseThrow(ReceiptNotFoundException::new);
+        Megaphone megaphone = megaphoneRepository.findById(megaphoneId).orElseThrow(MegaphoneNotFoundException::new);
+        Receipt receipt = megaphone.getReceipt();
         if (!user.getRoleType().equals(RoleType.ADMIN)) {
             checkOwner(loginUser, receipt);
         }
-        if (!(receipt.getStatus().equals(ItemStatus.WAITING) || receipt.getStatus().equals(ItemStatus.USING))) {
-            throw new ItemStatusException();
-        }
-        //TODO 확성기 타입 체크
-        Megaphone megaphone = megaphoneRepository.findByReceipt(receipt).orElseThrow(MegaphoneNotFoundException::new);
+        checkUseStatus(receipt);
         if (receipt.getStatus().equals(ItemStatus.USING)) {
             megaphoneRedisRepository.deleteMegaphoneById(megaphone.getId());
         }
         receipt.updateStatus(ItemStatus.DELETED);
     }
 
+    public MegaphoneDetailResponseDto getMegaphoneDetail(Long receiptId, UserDto user) {
+        User loginUser = userRepository.findById(user.getId()).orElseThrow(() -> new UsernameNotFoundException("User" + user.getId()));
+        Receipt receipt = receiptRepository.findById(receiptId).orElseThrow(ReceiptNotFoundException::new);
+        checkOwner(loginUser, receipt);
+        checkItemType(receipt);
+        checkUseStatus(receipt);
+        Megaphone megaphone = megaphoneRepository.findByReceipt(receipt).orElseThrow(MegaphoneNotFoundException::new);
+        return new MegaphoneDetailResponseDto(megaphone);
+    }
+
     private void checkOwner(User loginUser, Receipt receipt) {
         if (!receipt.getOwnerIntraId().equals(loginUser.getIntraId()))
             throw new ReceiptNotOwnerException();
+    }
+
+    private void checkItemType(Receipt receipt) {
+        if (!receipt.getItem().getType().equals(ItemType.MEGAPHONE))
+            throw new ItemTypeException();
+    }
+
+    private void checkUseStatus(Receipt receipt) {
+        if (!(receipt.getStatus().equals(ItemStatus.WAITING) || receipt.getStatus().equals(ItemStatus.USING)))
+            throw new ItemStatusException();
     }
 }

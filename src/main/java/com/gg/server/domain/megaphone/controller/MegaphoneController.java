@@ -1,5 +1,6 @@
 package com.gg.server.domain.megaphone.controller;
 
+import com.gg.server.domain.megaphone.dto.MegaphoneDetailResponseDto;
 import com.gg.server.domain.megaphone.dto.MegaphoneUseRequestDto;
 import com.gg.server.domain.megaphone.service.MegaphoneService;
 import com.gg.server.domain.user.dto.UserDto;
@@ -25,12 +26,15 @@ public class MegaphoneController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @DeleteMapping("/receipt/{receiptId}")
-    public ResponseEntity deleteMegaphone(@PathVariable Long receiptId,
+    @DeleteMapping("/{megaphoneId}")
+    public ResponseEntity deleteMegaphone(@PathVariable Long megaphoneId,
                                           @Parameter(hidden = true) @Login UserDto user) {
-        megaphoneService.deleteMegaphone(receiptId, user);
+        megaphoneService.deleteMegaphone(megaphoneId, user);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-
+    @GetMapping("/receipt/{receiptId}")
+    public ResponseEntity<MegaphoneDetailResponseDto> getMegaphoneDetail(@PathVariable Long receiptId, @Parameter(hidden = true) @Login UserDto user) {
+        return ResponseEntity.ok(megaphoneService.getMegaphoneDetail(receiptId, user));
+    }
 }

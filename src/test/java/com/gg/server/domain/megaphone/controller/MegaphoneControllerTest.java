@@ -26,8 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RequiredArgsConstructor
@@ -81,7 +80,7 @@ class MegaphoneControllerTest {
 
     @Test
     @Transactional
-    @DisplayName("DELETE /pingpong/megaphones/receipt/{receiptId}")
+    @DisplayName("DELETE /pingpong/megaphones/{megaphoneId}")
     public void deleteMegaphoneTest() throws Exception {
         //given
         String intraId = "intra";
@@ -91,7 +90,7 @@ class MegaphoneControllerTest {
                 SnsType.BOTH, RoleType.ADMIN);
         String accessToken = tokenProvider.createToken(newUser.getId());
         Receipt receipt = receiptRepository.findById(2L).get();
-        String url = "/pingpong/megaphones/receipt/2";
+        String url = "/pingpong/megaphones/2";
 
         //when
         mockMvc.perform(delete(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
@@ -100,5 +99,26 @@ class MegaphoneControllerTest {
 
         //then
         AssertionsForClassTypes.assertThat(receipt.getStatus()).isEqualTo(ItemStatus.DELETED);
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("[GET] /pingpong/megaphones/receipt/{receiptId}")
+    void getMegaphoneDetailTest() throws Exception {
+        String intraId = "intra";
+        String email = "email";
+        String imageUrl = "imageUrl";
+        User newUser = testDataUtils.createNewUser(intraId, email, imageUrl, RacketType.PENHOLDER,
+                SnsType.BOTH, RoleType.ADMIN);
+        String accessToken = tokenProvider.createToken(newUser.getId());
+        Receipt receipt = receiptRepository.findById(1L).get();
+        String url = "/pingpong/megaphones/receipt/"+receipt.getId();
+
+        String contentAsString = mockMvc.perform(get(url)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println(contentAsString);
     }
 }

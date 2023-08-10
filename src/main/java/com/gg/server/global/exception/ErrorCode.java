@@ -39,6 +39,7 @@ public enum ErrorCode {
 
     //item
     ITEM_NOT_FOUND(404, "IT100", "ITEM NOT FOUND"),
+    ITEM_TYPE_NOT_MATCHED(400, "IT200", "ITEM TYPE NOT MATCHED"),
 
     //receipt
     RECEIPT_NOT_FOUND(404, "RC100", "RECEIPT NOT FOUND"),
