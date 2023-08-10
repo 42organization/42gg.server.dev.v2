@@ -23,7 +23,7 @@ public class ReceiptAdminController {
     @GetMapping("/list")
     public ReceiptListResponseDto getReceiptList(@ModelAttribute @Valid PageRequestDto pageRequestDto) {
         Pageable pageable = PageRequest.of(pageRequestDto.getPage() - 1, pageRequestDto.getSize(),
-                Sort.by("purchasedAt").descending());
+                Sort.by("createdAt").descending());
         return receiptAdminService.getAllReceipt(pageable);
     }
 }
