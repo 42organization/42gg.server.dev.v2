@@ -3,6 +3,7 @@ package com.gg.server.domain.user.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.domain.coin.data.CoinHistoryRepository;
 import com.gg.server.domain.coin.data.CoinPolicyRepository;
+import com.gg.server.domain.coin.service.CoinHistoryService;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.dto.req.RankResultReqDto;
@@ -88,6 +89,9 @@ class UserControllerTest {
 
     @Autowired
     CoinHistoryRepository coinHistoryRepository;
+
+    @Autowired
+    CoinHistoryService coinHistoryService;
 
 
     @AfterEach
@@ -422,5 +426,31 @@ class UserControllerTest {
         int userCoin = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException()).getGgCoin();
         assertThat(result.getCoin()).isEqualTo(userCoin);
         System.out.println(userCoin);
+    }
+
+    @Test
+    @DisplayName("[get]/pingpong/users/coins")
+    public void getUserCoinHistory() throws Exception {
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
+        User user = userRepository.getById(userId);
+
+        coinHistoryService.addNormalCoin(user);
+        coinHistoryService.addRankWinCoin(user);
+        coinHistoryService.addNormalCoin(user);
+        String url = "/pingpong/users/coins?page=1&size=5";
+
+        String contentAsString = mockMvc.perform(get(url)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        UserCoinHistoryListResponseDto result = objectMapper.readValue(contentAsString, UserCoinHistoryListResponseDto.class);
+
+        System.out.println(result.getTotalPage());
+        for(CoinHistoryResponseDto temp : result.getCoinPolicyList()){
+            System.out.println(temp.getHistory() + " " + temp.getAmount() + " " + temp.getCreatedAt());
+        }
+
     }
 }
