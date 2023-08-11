@@ -37,8 +37,8 @@ public class Receipt {
     private ItemStatus status;
 
     @NotNull
-    @Column(name = "created_At")
-    private LocalDateTime purchasedAt;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
     public Receipt(Item item, String purchaserIntraId, String ownerIntraId,
                    ItemStatus status, LocalDateTime purchasedAt) {
@@ -46,7 +46,7 @@ public class Receipt {
         this.purchaserIntraId = purchaserIntraId;
         this.ownerIntraId = ownerIntraId;
         this.status = status;
-        this.purchasedAt = purchasedAt;
+        this.createdAt = purchasedAt;
     }
 
     @Override
@@ -57,7 +57,7 @@ public class Receipt {
                 ", purchaserIntraId='" + purchaserIntraId + '\'' +
                 ", ownerIntraId='" + ownerIntraId + '\'' +
                 ", status=" + status +
-                ", purchasedAt=" + purchasedAt +
+                ", purchasedAt=" + createdAt +
                 '}';
     }
 
