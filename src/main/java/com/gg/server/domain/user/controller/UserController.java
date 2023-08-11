@@ -15,6 +15,7 @@ import com.gg.server.domain.user.service.UserTextColorCheckService;
 import com.gg.server.domain.user.type.EdgeType;
 import com.gg.server.domain.user.type.OauthType;
 import com.gg.server.domain.user.type.RoleType;
+import com.gg.server.global.dto.PageRequestDto;
 import com.gg.server.global.security.config.properties.AppProperties;
 import com.gg.server.global.security.cookie.CookieUtil;
 import com.gg.server.global.security.jwt.utils.TokenHeaders;
@@ -24,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -145,5 +147,13 @@ public class UserController {
     @GetMapping("/coin")
     public UserCoinResponseDto getUserCoin(@Parameter(hidden = true) @Login UserDto user) {
         return userCoinService.getUserCoin(user.getIntraId());
+    }
+
+    @GetMapping("/coins")
+    public ResponseEntity<UserCoinHistoryListResponseDto> getUserCoinHistory(@ModelAttribute @Valid PageRequestDto coReq, @Parameter(hidden = true) @Login UserDto user) {
+        Pageable pageable = PageRequest.of(coReq.getPage() - 1, coReq.getSize(), Sort.by("createdAt").descending());
+
+        return  ResponseEntity.ok()
+                .body(userCoinService.getUserCoinHistory(pageable ,user.getIntraId()));
     }
 }
