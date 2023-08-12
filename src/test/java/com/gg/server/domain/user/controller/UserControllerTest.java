@@ -386,18 +386,16 @@ class UserControllerTest {
         String accessToken = tokenProvider.createToken(newUser.getId());
         String url = "/pingpong/users/edge";
 
-        EdgeType newEdge = EdgeType.BASIC;
-
         //when
-        mockMvc.perform(patch(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new UserEdgeDto(newEdge))))
-                .andExpect(status().is2xxSuccessful());
+        mockMvc.perform(patch(url)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn().getResponse().getContentAsString();
+
         //then
-        log.info("newEdge : {}", newEdge);
         log.info("user.getEdge() : {}", newUser.getEdge());
         userRepository.findById(newUser.getId()).ifPresentOrElse(user -> {
-            Assertions.assertThat(user.getEdge()).isEqualTo(newEdge);
+            Assertions.assertThat(Arrays.stream(EdgeType.values()).anyMatch(v -> v.equals(user.getEdge()))).isEqualTo(true);
         }, () -> {
             Assertions.fail("유저 업데이트 실패");
         });
