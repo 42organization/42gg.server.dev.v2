@@ -26,10 +26,7 @@ import com.gg.server.domain.user.exception.UserAlreadyAttendanceException;
 import com.gg.server.domain.user.exception.UserEdgeTypeNotFound;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.domain.user.exception.UserTextColorException;
-import com.gg.server.domain.user.type.EdgeType;
-import com.gg.server.domain.user.type.RacketType;
-import com.gg.server.domain.user.type.RoleType;
-import com.gg.server.domain.user.type.SnsType;
+import com.gg.server.domain.user.type.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -276,5 +273,12 @@ public class UserService {
         EdgeType edgeType = userEdgeDto.getEdgeType();
         if (edgeType.equals(EdgeType.WRONG)) throw new UserEdgeTypeNotFound();
         user.updateEdge(edgeType);
+    }
+
+    @Transactional
+    public void updateBackground(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        BackgroundType backgroundType = BackgroundType.getRandomBackgroundType();
+        user.updateBackground(backgroundType);
     }
 }

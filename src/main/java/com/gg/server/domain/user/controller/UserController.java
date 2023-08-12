@@ -146,4 +146,10 @@ public class UserController {
     public UserCoinResponseDto getUserCoin(@Parameter(hidden = true) @Login UserDto user) {
         return userCoinService.getUserCoin(user.getIntraId());
     }
+
+    @PatchMapping("/background")
+    public ResponseEntity updateBackground(@Parameter(hidden = true) @Login UserDto user) {
+        userService.updateBackground(user.getId());
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
 }

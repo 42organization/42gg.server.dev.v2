@@ -116,4 +116,8 @@ public class User extends BaseTimeEntity implements Serializable {
         this.ggCoin += plus;
         return this.ggCoin;
     }
+
+    public void updateBackground(BackgroundType background) {
+        this.background = background;
+    }
 }
