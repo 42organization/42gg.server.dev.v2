@@ -20,10 +20,7 @@ import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.controller.dto.GameInfoDto;
 import com.gg.server.domain.user.dto.*;
 import com.gg.server.domain.user.exception.UserNotFoundException;
-import com.gg.server.domain.user.type.EdgeType;
-import com.gg.server.domain.user.type.RacketType;
-import com.gg.server.domain.user.type.RoleType;
-import com.gg.server.domain.user.type.SnsType;
+import com.gg.server.domain.user.type.*;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
@@ -40,6 +37,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -422,5 +420,35 @@ class UserControllerTest {
         int userCoin = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException()).getGgCoin();
         assertThat(result.getCoin()).isEqualTo(userCoin);
         System.out.println(userCoin);
+    }
+
+    @Test
+    @DisplayName("[patch] background")
+    public void updateBackgroundTest() throws Exception {
+        //given
+        Season season = testDataUtils.createSeason();
+        String intraId = "intraId";
+        String email = "email";
+        String imageUrl = "imageUrl";
+        User newUser = testDataUtils.createNewUser(intraId, email, imageUrl, RacketType.PENHOLDER,
+                SnsType.BOTH, RoleType.ADMIN);
+        String statusMessage = "statusMessage";
+        testDataUtils.createUserRank(newUser, statusMessage, season);
+        String accessToken = tokenProvider.createToken(newUser.getId());
+        String url = "/pingpong/users/background";
+
+        //when
+        mockMvc.perform(patch(url)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn().getResponse().getContentAsString();
+
+        //then
+        log.info("user.getBacground() : {}", newUser.getBackground());
+        userRepository.findById(newUser.getId()).ifPresentOrElse(user -> {
+            Assertions.assertThat(Arrays.stream(BackgroundType.values()).anyMatch(v -> v.equals(user.getBackground()))).isEqualTo(true);
+        }, () -> {
+            Assertions.fail("유저 업데이트 실패");
+        });
     }
 }
