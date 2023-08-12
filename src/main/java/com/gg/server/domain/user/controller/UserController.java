@@ -1,18 +1,12 @@
 package com.gg.server.domain.user.controller;
 
 import com.gg.server.domain.game.type.Mode;
-import com.gg.server.domain.user.data.User;
-import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.*;
 import com.gg.server.domain.user.exception.KakaoOauth2AlreadyExistException;
-import com.gg.server.domain.user.exception.UserEdgeTypeNotFound;
-import com.gg.server.domain.user.exception.UserNotFoundException;
-import com.gg.server.domain.user.exception.UserTextColorException;
 import com.gg.server.domain.user.service.UserAuthenticationService;
 import com.gg.server.domain.user.service.UserCoinService;
 import com.gg.server.domain.user.service.UserService;
 import com.gg.server.domain.user.service.UserTextColorCheckService;
-import com.gg.server.domain.user.type.EdgeType;
 import com.gg.server.domain.user.type.OauthType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.global.security.config.properties.AppProperties;
@@ -22,7 +16,6 @@ import com.gg.server.global.utils.argumentresolver.Login;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -137,8 +130,8 @@ public class UserController {
     }
 
     @PatchMapping("/edge")
-    public ResponseEntity updateEdge(@RequestBody @Valid UserEdgeDto userEdgeDto, @Parameter(hidden = true) @Login UserDto user) {
-        userService.updateEdge(user.getId(), userEdgeDto);
+    public ResponseEntity updateEdge(@Parameter(hidden = true) @Login UserDto user) {
+        userService.updateEdge(user.getId());
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 

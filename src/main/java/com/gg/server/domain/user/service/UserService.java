@@ -23,7 +23,6 @@ import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.*;
 import com.gg.server.domain.user.exception.UserAlreadyAttendanceException;
-import com.gg.server.domain.user.exception.UserEdgeTypeNotFound;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.domain.user.exception.UserTextColorException;
 import com.gg.server.domain.user.type.*;
@@ -268,10 +267,9 @@ public class UserService {
     }
 
     @Transactional
-    public void updateEdge(Long userId, UserEdgeDto userEdgeDto) {
+    public void updateEdge(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        EdgeType edgeType = userEdgeDto.getEdgeType();
-        if (edgeType.equals(EdgeType.WRONG)) throw new UserEdgeTypeNotFound();
+        EdgeType edgeType = EdgeType.getRandomEdgeType();
         user.updateEdge(edgeType);
     }
 
