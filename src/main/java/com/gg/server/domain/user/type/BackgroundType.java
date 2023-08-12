@@ -30,16 +30,17 @@ public enum BackgroundType {
         int tierInt = random.nextInt(100);
         int colorInt;
 
-        if (tierInt < 5)
-            colorInt = random.nextInt(99) % 3;
-        else if (tierInt < 15)
-            colorInt = (random.nextInt(99) % 3) + 3;
-        else if (tierInt < 30)
-            colorInt = (random.nextInt(99) % 3) + 6;
-        else if (tierInt < 50)
-            colorInt = (random.nextInt(99) % 3) + 9;
+        if (tierInt <= 50)
+            colorInt = random.nextInt(100) % 4;
+        else if (tierInt <= 70)
+            colorInt = (random.nextInt(99) % 3) + 4;
+        else if (tierInt <= 85)
+            colorInt = (random.nextInt(99) % 3) + 7;
+        else if (tierInt <= 95)
+            colorInt = (random.nextInt(99) % 3) + 10;
         else
-            colorInt = (random.nextInt(99) % 3) + 12;
+            colorInt = (random.nextInt(99) % 3) + 13;
+
         return BackgroundType.values()[colorInt];
     }
 
