@@ -32,7 +32,7 @@ public class ItemService {
     }
 
     @Transactional
-    public void purchaseItem(Long itemId, UserDto userDto, PurchaseItemRequestDto requestDto) {
+    public void purchaseItem(Long itemId, UserDto userDto) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow( ()-> new IllegalArgumentException("해당 아이템이 없습니다" + itemId) );
         if (!item.getIsVisible())

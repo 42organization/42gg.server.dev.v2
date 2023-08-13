@@ -24,9 +24,8 @@ public class ItemController {
 
     @PostMapping("/purchases/{itemId}")
     public ResponseEntity<Void> purchaseItem(@PathVariable Long itemId,
-                                             @Parameter(hidden = true) @Login UserDto userDto,
-                                             @RequestBody PurchaseItemRequestDto requestDto) {
-        itemService.purchaseItem(itemId, userDto, requestDto);
+                                             @Parameter(hidden = true) @Login UserDto userDto) {
+        itemService.purchaseItem(itemId, userDto);
         return ResponseEntity.ok().build();
     }
 }
