@@ -20,6 +20,7 @@ public class UserDto {
     private SnsType snsNotiOpt;
     private Long kakaoId;
     private String textColor;
+    private Integer ggCoin;
 
     static public UserDto from (User user) {
         UserDto userDto;
@@ -36,6 +37,7 @@ public class UserDto {
                     .totalExp(user.getTotalExp())
                     .snsNotiOpt(user.getSnsNotiOpt())
                     .kakaoId(user.getKakaoId())
+                    .ggCoin(user.getGgCoin())
                     .build();
         }
         return userDto;

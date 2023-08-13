@@ -1,6 +1,7 @@
 package com.gg.server.domain.user.data;
 
 import com.gg.server.admin.user.dto.UserUpdateAdminRequestDto;
+import com.gg.server.domain.item.exception.InsufficientGgcoinException;
 import com.gg.server.domain.user.type.*;
 import com.gg.server.global.utils.BaseTimeEntity;
 import lombok.*;
@@ -115,5 +116,12 @@ public class User extends BaseTimeEntity implements Serializable {
     public int addGgCoin(int plus) {
         this.ggCoin += plus;
         return this.ggCoin;
+    }
+
+    public void payGgCoin(int amount) {
+        if (this.ggCoin < amount) {
+            throw new InsufficientGgcoinException();  // 사용자의 ggCoin이 필요한 금액보다 적을 경우 예외를 발생
+        }
+        this.ggCoin = this.ggCoin - amount;
     }
 }
