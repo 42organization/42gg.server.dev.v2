@@ -15,6 +15,7 @@ public class UserUpdateAdminRequestDto {
     private Integer ppp;
     private String email;
     private String roleType;
+    private Integer coin;
 
     @Override
     public String toString() {
@@ -23,9 +24,10 @@ public class UserUpdateAdminRequestDto {
                 ", statusMessage='" + statusMessage + '\'' +
                 ", wins='" + wins + '\'' +
                 ", losses'" + losses + '\'' +
-                ", ppp=" + ppp + '\'' +
-                ", email=" + email + '\'' +
-                ", roleType=" + roleType +
+                ", ppp='" + ppp + '\'' +
+                ", email='" + email + '\'' +
+                ", roleType='" + roleType + '\'' +
+                ", coin='" + coin + '\'' +
                 '}';
     }
 }
