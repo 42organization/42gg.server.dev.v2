@@ -1,5 +1,6 @@
 package com.gg.server.domain.game.dto;
 
+import com.gg.server.domain.coin.dto.UserGameCoinResultDto;
 import com.gg.server.global.utils.ExpLevelCalculator;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,14 +14,20 @@ public class ExpChangeResultResDto {
     private Integer increasedExp;
     private Integer increasedLevel;
     private Integer afterMaxExp;
+    private int beforeCoin;
+    private int afterCoin;
+    private int coinIncrement;
 
-    public ExpChangeResultResDto(Integer beforeExp, Integer currentExp) {
+    public ExpChangeResultResDto(Integer beforeExp, Integer currentExp, UserGameCoinResultDto userGameCoinResultDto) {
         this.beforeExp = ExpLevelCalculator.getCurrentLevelMyExp(beforeExp);
         this.beforeLevel = ExpLevelCalculator.getLevel(beforeExp);
         this.beforeMaxExp = ExpLevelCalculator.getLevelMaxExp(beforeLevel);
         this.increasedExp = currentExp - beforeExp;
         this.increasedLevel = ExpLevelCalculator.getLevel(currentExp) - this.beforeLevel;
         this.afterMaxExp = ExpLevelCalculator.getLevelMaxExp(this.beforeLevel + this.increasedLevel);
+        this.beforeCoin = userGameCoinResultDto.getBeforeCoin();
+        this.afterCoin = userGameCoinResultDto.getAfterCoin();
+        this.coinIncrement = userGameCoinResultDto.getCoinIncrement();
     }
 
     @Override
