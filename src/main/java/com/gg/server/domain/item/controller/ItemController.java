@@ -29,11 +29,3 @@ public class ItemController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }
-//    @PostMapping("/purchases/{itemId}")
-//    public ResponseEntity<Void> purchaseItem(@PathVariable Long itemId,
-//                                             @Parameter(hidden = true) @Login UserDto userDto,
-//                                             @RequestBody PurchaseItemRequestDto requestDto) {
-//        itemService.purchaseItem(itemId, userDto, requestDto);
-//        return ResponseEntity.ok().build();
-//    }
-//

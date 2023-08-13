@@ -9,7 +9,6 @@ import com.gg.server.domain.item.exception.ItemNotPurchasableException;
 import com.gg.server.domain.receipt.data.Receipt;
 import com.gg.server.domain.receipt.data.ReceiptRepository;
 import com.gg.server.domain.receipt.type.ItemStatus;
-//import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,25 +51,3 @@ public class ItemService {
         receiptRepository.save(receipt);
     }
 }
-//
-//    private final ItemRepository itemRepository;
-//    private final ReceiptRepository receiptRepository;
-//
-//    public ItemStoreListResponseDto getAllItems() {
-//        List<ItemStoreResponseDto> itemStoreListResponseDto = itemRepository.findAllByIsVisible(true)
-//                .stream().map(ItemStoreResponseDto::new).collect(Collectors.toList());
-//        return new ItemStoreListResponseDto(itemStoreListResponseDto);
-//    }
-//
-//    @Transactional
-//    public void purchaseItem(Long itemId, UserDto userDto, PurchaseItemRequestDto requestDto) {
-//        Item item = itemRepository.findById(itemId)
-//                .orElseThrow(() -> new IllegalArgumentException("No item found with id: " + itemId));
-//
-//        if(!item.getIsVisible()) {
-//            throw new IllegalArgumentException("Item is not available for purchase");
-//        }
-//
-//        Receipt receipt = new Receipt(item, userDto.getIntraId(), userDto.getIntraId(), ItemStatus.BEFORE, LocalDateTime.now());
-//        receiptRepository.save(receipt);
-//    }
