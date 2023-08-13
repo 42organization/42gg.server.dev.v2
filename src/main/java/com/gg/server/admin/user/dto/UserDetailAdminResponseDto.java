@@ -21,6 +21,7 @@ public class UserDetailAdminResponseDto {
     private String email;
     private String roleType;
     private Integer exp;
+    private Integer coin;
 
     public UserDetailAdminResponseDto(User user, RankRedis rank) {
         this.userId = user.getId();
@@ -34,6 +35,7 @@ public class UserDetailAdminResponseDto {
         this.email = user.getEMail();
         this.roleType = user.getRoleType().getKey();
         this.exp = user.getTotalExp();
+        this.coin = user.getGgCoin();
     }
 
     public UserDetailAdminResponseDto(User user) {
@@ -48,6 +50,7 @@ public class UserDetailAdminResponseDto {
         this.email = user.getEMail() == null ? "" : user.getEMail();
         this.roleType = user.getRoleType().getKey();
         this.exp = user.getTotalExp();
+        this.coin = user.getGgCoin();
     }
 
     @Override
@@ -62,6 +65,7 @@ public class UserDetailAdminResponseDto {
                 ", ppp='" + ppp.toString() + '\'' +
                 ", email='" + email + '\'' +
                 ", roleType='" + roleType + '\'' +
+                ", coin='" + coin + '\'' +
                 '}';
     }
 }
