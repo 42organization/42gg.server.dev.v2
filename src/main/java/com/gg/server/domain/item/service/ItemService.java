@@ -4,13 +4,15 @@ import com.gg.server.domain.item.data.Item;
 import com.gg.server.domain.item.data.ItemRepository;
 import com.gg.server.domain.item.dto.ItemStoreListResponseDto;
 import com.gg.server.domain.item.dto.ItemStoreResponseDto;
-import com.gg.server.domain.item.dto.PurchaseItemRequestDto;
+import com.gg.server.domain.item.exception.ItemNotFoundException;
+import com.gg.server.domain.item.exception.ItemNotPurchasableException;
 import com.gg.server.domain.receipt.data.Receipt;
 import com.gg.server.domain.receipt.data.ReceiptRepository;
 import com.gg.server.domain.receipt.type.ItemStatus;
-import com.gg.server.domain.user.data.User;
+//import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.dto.UserDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class ItemService {
 
@@ -34,10 +37,14 @@ public class ItemService {
     @Transactional
     public void purchaseItem(Long itemId, UserDto userDto) {
         Item item = itemRepository.findById(itemId)
-                .orElseThrow( ()-> new IllegalArgumentException("해당 아이템이 없습니다" + itemId) );
+                .orElseThrow( ()->  {
+                    log.error("해당 아이템이 없습니다. Item ID: {}, User Intra ID: {}", itemId, userDto.getIntraId());
+                    throw new ItemNotFoundException();
+                });
         if (!item.getIsVisible())
         {
-            throw new IllegalArgumentException("지금은 구매할 수 없는 아이템 입니다.");
+            log.error("지금은 구매할 수 없는 아이템 입니다. Item ID: {}, User Intra ID: {}", itemId, userDto.getIntraId());
+            throw new ItemNotPurchasableException();
         }
 
         Receipt receipt = new Receipt(item, userDto.getIntraId(), userDto.getIntraId(),

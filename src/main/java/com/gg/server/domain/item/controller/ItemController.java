@@ -1,12 +1,12 @@
 package com.gg.server.domain.item.controller;
 
 import com.gg.server.domain.item.dto.ItemStoreListResponseDto;
-import com.gg.server.domain.item.dto.PurchaseItemRequestDto;
 import com.gg.server.domain.item.service.ItemService;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.utils.argumentresolver.Login;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +26,7 @@ public class ItemController {
     public ResponseEntity<Void> purchaseItem(@PathVariable Long itemId,
                                              @Parameter(hidden = true) @Login UserDto userDto) {
         itemService.purchaseItem(itemId, userDto);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }
 //    @PostMapping("/purchases/{itemId}")
