@@ -30,6 +30,16 @@ public class ExpChangeResultResDto {
         this.coinIncrement = userGameCoinResultDto.getCoinIncrement();
     }
 
+    //랭크 게임 수정 후 사라질 생성자
+    public ExpChangeResultResDto(Integer beforeExp, Integer currentExp) {
+        this.beforeExp = ExpLevelCalculator.getCurrentLevelMyExp(beforeExp);
+        this.beforeLevel = ExpLevelCalculator.getLevel(beforeExp);
+        this.beforeMaxExp = ExpLevelCalculator.getLevelMaxExp(beforeLevel);
+        this.increasedExp = currentExp - beforeExp;
+        this.increasedLevel = ExpLevelCalculator.getLevel(currentExp) - this.beforeLevel;
+        this.afterMaxExp = ExpLevelCalculator.getLevelMaxExp(this.beforeLevel + this.increasedLevel);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == this) {

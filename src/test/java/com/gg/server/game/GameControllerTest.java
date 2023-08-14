@@ -290,7 +290,9 @@ public class GameControllerTest {
         //given
         String url = "/pingpong/games?page=1&size=10&nickname=test1";
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startTime"));
+        System.out.println("================================================");
         GameListResDto expect = gameFindService.allGameListUser(pageable, "test1", null);
+        System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++");
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())
@@ -362,6 +364,20 @@ public class GameControllerTest {
     void 랭크게임결과조회() throws Exception {
         String url = "/pingpong/games/" + game2.getId() + "/result/rank";
         String content = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println("result: " + content);
+    }
+
+    @Test
+    @Transactional
+    void 일반게임결과조회() throws Exception {
+        String accessToken2 = testDataUtils.getAdminLoginAccessToken();
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken2);
+
+        String url = "/pingpong/games/" + "2112" + "/result/normal";
+        String content = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken2)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();

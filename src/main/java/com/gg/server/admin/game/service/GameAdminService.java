@@ -55,7 +55,6 @@ public class GameAdminService {
         return new GameLogListAdminResponseDto(getGameLogList(gamePage.getContent().stream().map(Game::getId).collect(Collectors.toList())), gamePage.getTotalPages());
     }
 
-
     @Transactional(readOnly = true)
     public GameLogListAdminResponseDto findGamesBySeasonId(Long seasonId, Pageable pageable){
         Season season = seasonAdminRepository.findById(seasonId).orElseThrow(()-> new SeasonNotFoundException());
@@ -65,7 +64,12 @@ public class GameAdminService {
 
     @Transactional(readOnly = true)
     public List<GameLogAdminDto> getGameLogList(List<Long> gameIdList){
+        log.info(gameIdList.size() + " : size");
+        for (Long id:gameIdList){
+            log.info(id+"::");
+        }
         List<GameTeamUser> teamViews = gameAdminRepository.findTeamsByGameIsIn(gameIdList);
+        log.info(teamViews.size() + "====");
         return teamViews.stream().map(GameLogAdminDto::new).collect(Collectors.toList());
     }
 
