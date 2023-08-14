@@ -25,7 +25,6 @@ import java.io.IOException;
 @RestController
 @AllArgsConstructor
 @RequestMapping(value = "/pingpong/admin/users")
-@Slf4j
 public class UserAdminController {
 
     private final UserAdminService userAdminService;
