@@ -21,11 +21,15 @@ import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.service.SeasonFindService;
+import com.gg.server.domain.user.data.User;
+import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
+import com.gg.server.domain.user.exception.UserNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +44,7 @@ public class MatchService {
     private final GameRepository gameRepository;
     private final PenaltyService penaltyService;
     private final GameUpdateService gameUpdateService;
+    private final UserRepository userRepository;
 
     /**
      * 1) 매칭 가능한 유저 있을 경우 : 게임 생성
@@ -57,7 +62,8 @@ public class MatchService {
         Optional<RedisMatchUser> enemy = matchCalculator.findEnemy(allMatchUsers);
         if (enemy.isPresent()) {
             GameAddDto gameDto = new GameAddDto(startTime, season, player, enemy.get());
-            gameUpdateService.make(gameDto);
+            gameUpdateService.make(gameDto, -1L);
+            redisMatchTimeRepository.addMatchUser(startTime, player);
             cancelEnrolledSlots(List.of(enemy.get(), player), startTime);
         } else {
             addUserToQueue(startTime, player, option);
@@ -66,17 +72,56 @@ public class MatchService {
 
     /**
      * 1) 매칭되어 게임 생성된 후 : 게임 삭제하고 알림 전송, 취소한 유저 패널티 부과
+     * 복귀 유저는 매칭 가능한 상대 존재하면 다시 매칭해주고 아니면 취소 알림 보내고 큐에 등록 시킴
      * 2) 매칭 전 : 큐에서 유저 삭제
      * */
+    /**
+     * game 매칭된 user 이외에 다른 user가 취소할 경우, 에러 발생
+     */
     @Transactional
     public synchronized void cancelMatch(UserDto userDto, LocalDateTime startTime) {
         Optional<Game> game = gameRepository.findByStartTime(startTime);
         if (game.isPresent()) {
-            gameUpdateService.delete(game.get(), userDto);//cascade 테스트
-            penaltyService.givePenalty(userDto, 30);
-            return;
+            List<User> enemyTeam = userRepository.findEnemyByGameAndUser(game.get().getId(), userDto.getId());
+            if (enemyTeam.size() > 1) {
+                throw new SlotNotFoundException();
+            }
+            cancelGame(userDto, startTime, game.get(), enemyTeam);
+        }else {
+            deleteUserFromQueue(userDto, startTime);
+        };
+    }
+
+    private void cancelGame(UserDto userDto, LocalDateTime startTime, Game game, List<User> enemyTeam) {
+        /**취소한 유저 큐에서 삭제 후 패널티 부과*/
+        Long recoveredUserId = enemyTeam.get(0).getId();
+        List<RedisMatchUser> allMatchUsers = redisMatchTimeRepository.getAllMatchUsers(startTime);
+        RedisMatchUser penaltyUser = allMatchUsers.stream()
+                .filter(ele -> ele.getUserId().equals(userDto.getId()))
+                .findFirst()
+                .orElseThrow(UserNotFoundException::new);
+        RedisMatchUser recoveredUser = allMatchUsers.stream()
+                .filter(ele -> ele.getUserId().equals(recoveredUserId))
+                .findFirst()
+                .orElseThrow(UserNotFoundException::new);
+        redisMatchTimeRepository.deleteMatchUser(startTime, penaltyUser);
+        penaltyService.givePenalty(userDto, 30);
+        /**취소 당한 유저 매칭 상대 찾고 있으면 다시 게임 생성 아니면 취소 알림*/
+        Season season = seasonFindService.findCurrentSeason(startTime);
+        MatchCalculator matchCalculator = new MatchCalculator(season.getPppGap(), recoveredUser);
+        List<RedisMatchUser> targetPlayers = allMatchUsers.stream()
+                .filter(ele -> !ele.getUserId().equals(userDto.getId())
+                        && !ele.getUserId().equals(recoveredUserId))
+                .collect(Collectors.toList());
+        Optional<RedisMatchUser> enemy = matchCalculator.findEnemy(targetPlayers);
+        if (enemy.isPresent()) {
+            gameUpdateService.delete(game);
+            GameAddDto gameDto = new GameAddDto(startTime, season, recoveredUser, enemy.get());
+            gameUpdateService.make(gameDto, recoveredUserId);
+        } else {
+            gameUpdateService.delete(game, enemyTeam);
+            redisMatchUserRepository.addMatchTime(recoveredUserId, startTime, recoveredUser.getOption());
         }
-        deleteUserFromQueue(userDto, startTime);
     }
 
     private void checkValid(UserDto userDto, LocalDateTime startTime) {
@@ -105,10 +150,13 @@ public class MatchService {
         redisMatchUserRepository.addMatchTime(matchUser.getUserId(), startTime, option);
     }
 
-    private void cancelEnrolledSlots(List<RedisMatchUser> players, LocalDateTime startTime) {
-        redisMatchTimeRepository.deleteMatchTime(startTime);
+    private void cancelEnrolledSlots(List<RedisMatchUser> players, LocalDateTime targetTIme) {
         for (RedisMatchUser player : players) {
-            Set<RedisMatchTime> matchTimes = redisMatchUserRepository.getAllMatchTime(player.getUserId());
+            Set<RedisMatchTime> matchTimes = redisMatchUserRepository
+                    .getAllMatchTime(player.getUserId())
+                    .stream()
+                    .filter(ele -> !ele.getStartTime().equals(targetTIme))
+                    .collect(Collectors.toSet());
             matchTimes.stream().forEach(ele -> redisMatchTimeRepository.deleteMatchUser(ele.getStartTime(), player));
             redisMatchUserRepository.deleteMatchUser(player.getUserId());
         }

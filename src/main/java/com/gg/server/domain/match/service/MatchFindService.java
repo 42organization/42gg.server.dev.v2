@@ -81,19 +81,22 @@ public class MatchFindService {
         List<Game> games = gameRepository.findAllBetween(slotGenerator.getNow(), slotGenerator.getMaxTime());
         slotGenerator.addPastSlots();
         slotGenerator.addMatchedSlots(games);
+
         Optional<Game> myGame = gameRepository.findByStatusTypeAndUserId(StatusType.BEFORE, userDto.getId());
+        Set<LocalDateTime> gameTimes = games.stream().map(Game::getStartTime).collect(Collectors.toSet());
         if (myGame.isPresent()) {
-            groupEnrolledSlots(slotGenerator, myGame.get());
+            groupEnrolledSlots(slotGenerator, myGame.get(), gameTimes);
         } else {
-            groupEnrolledSlots(slotGenerator);
+            groupEnrolledSlots(slotGenerator, gameTimes);
         }
         return slotGenerator.getResponseListDto();
     }
 
-    private void groupEnrolledSlots(SlotGenerator slotGenerator, Game myGame) {
+    private void groupEnrolledSlots(SlotGenerator slotGenerator, Game myGame, Set<LocalDateTime> gameTimes) {
         Set<LocalDateTime> enrolledTimes = redisMatchTimeRepository.getAllEnrolledStartTimes();
         slotGenerator.addMySlots(myGame);
-        Set<LocalDateTime> notMyEnrolledTimes = enrolledTimes.stream().filter(e -> !e.equals(myGame.getStartTime()))
+        Set<LocalDateTime> notMyEnrolledTimes = enrolledTimes.stream()
+                .filter(e -> !e.equals(myGame.getStartTime()) && !gameTimes.contains(e))
                 .collect(Collectors.toSet());
         notMyEnrolledTimes.stream().forEach(time -> {
                     List<RedisMatchUser> allMatchUsers = redisMatchTimeRepository.getAllMatchUsers(time);
@@ -101,13 +104,14 @@ public class MatchFindService {
                 }
         );
     }
-    private void groupEnrolledSlots(SlotGenerator slotGenerator) {
+    private void groupEnrolledSlots(SlotGenerator slotGenerator, Set<LocalDateTime> gameTimes) {
         Set<LocalDateTime> enrolledTimes = redisMatchTimeRepository.getAllEnrolledStartTimes();
         Set<RedisMatchTime> allMatchTime = redisMatchUserRepository.getAllMatchTime(slotGenerator.getMatchUser().getUserId());
         slotGenerator.addMySlots(allMatchTime);
         Set<LocalDateTime> times = allMatchTime.stream().map(RedisMatchTime::getStartTime)
                 .collect(Collectors.toSet());
-        Set<LocalDateTime> notMyEnrolledTimes = enrolledTimes.stream().filter(e -> !times.contains(e))
+        Set<LocalDateTime> notMyEnrolledTimes = enrolledTimes.stream()
+                .filter(e -> !times.contains(e) && !gameTimes.contains(e))
                 .collect(Collectors.toSet());
         notMyEnrolledTimes.stream().forEach(
                 time -> {

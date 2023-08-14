@@ -42,16 +42,13 @@ public class UserController {
     private final UserService userService;
     private final UserTextColorCheckService userTextColorCheck;
     private final UserAuthenticationService userAuthenticationService;
-    private final AppProperties appProperties;
     private final CookieUtil cookieUtil;
     private final UserCoinService userCoinService;
 
     @PostMapping("/accesstoken")
-    public ResponseEntity<UserAccessTokenDto> generateAccessToken(@RequestParam String refreshToken, HttpServletResponse response) {
-        UserJwtTokenDto result = userAuthenticationService.regenerate(refreshToken);
-        cookieUtil.addCookie(response, TokenHeaders.REFRESH_TOKEN, result.getRefreshToken(),
-                (int)(appProperties.getAuth().getRefreshTokenExpiry() / 1000));
-        return new ResponseEntity<>(new UserAccessTokenDto(result.getAccessToken()), HttpStatus.CREATED);
+    public ResponseEntity<UserAccessTokenDto> generateAccessToken(@RequestParam String refreshToken) {
+        String accessToken = userAuthenticationService.regenerate(refreshToken);
+        return new ResponseEntity<>(new UserAccessTokenDto(accessToken), HttpStatus.CREATED);
     }
 
     @GetMapping
