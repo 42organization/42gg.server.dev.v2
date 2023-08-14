@@ -6,6 +6,8 @@ import com.gg.server.domain.coin.data.CoinPolicyRepository;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.type.StatusType;
+import com.gg.server.domain.item.exception.ItemTypeException;
+import com.gg.server.domain.item.type.ItemType;
 import com.gg.server.domain.match.data.RedisMatchUserRepository;
 import com.gg.server.domain.noti.data.NotiRepository;
 import com.gg.server.domain.pchange.data.PChange;
@@ -17,6 +19,12 @@ import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.rank.service.RankFindService;
+import com.gg.server.domain.receipt.data.Receipt;
+import com.gg.server.domain.receipt.data.ReceiptRepository;
+import com.gg.server.domain.receipt.exception.ItemStatusException;
+import com.gg.server.domain.receipt.exception.ReceiptNotFoundException;
+import com.gg.server.domain.receipt.exception.ReceiptNotOwnerException;
+import com.gg.server.domain.receipt.type.ItemStatus;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.service.SeasonFindService;
 import com.gg.server.domain.user.data.User;
@@ -27,6 +35,7 @@ import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.domain.user.exception.UserTextColorException;
 import com.gg.server.domain.user.type.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -44,6 +53,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
     private final UserFindService userFindService;
@@ -57,6 +67,7 @@ public class UserService {
     private final RedisMatchUserRepository redisMatchUserRepository;
     private final CoinHistoryRepository coinHistoryRepository;
     private final CoinPolicyRepository coinPolicyRepository;
+    private final ReceiptRepository receiptRepository;
 
     private final String ATTENDANCE = "ATTENDANCE";
 
@@ -274,9 +285,31 @@ public class UserService {
     }
 
     @Transactional
-    public void updateBackground(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+    public void updateBackground(UserDto user, UserReceiptDto userReceiptDto) {
+        User userId = userRepository.findById(user.getId()).orElseThrow(UserNotFoundException::new);
+        Receipt receipt = receiptRepository.findById(userReceiptDto.getReceiptId()).orElseThrow(ReceiptNotFoundException::new);
+
         BackgroundType backgroundType = BackgroundType.getRandomBackgroundType();
-        user.updateBackground(backgroundType);
+        checkOwner(userId, receipt);
+        checkItemType(receipt);
+        checkUseStatus(receipt);
+
+        userId.updateBackground(backgroundType);
+        receipt.updateStatus(ItemStatus.USED);
+    }
+
+    public void checkOwner(User loginUser, Receipt receipt) {
+        if (!receipt.getOwnerIntraId().equals(loginUser.getIntraId()))
+            throw new ReceiptNotOwnerException();
+    }
+
+    public void checkItemType(Receipt receipt) {
+        if (!receipt.getItem().getType().equals(ItemType.PROFILE_BACKGROUND))
+            throw new ItemTypeException();
+    }
+
+    public void checkUseStatus(Receipt receipt) {
+        if (!receipt.getStatus().equals(ItemStatus.BEFORE))
+            throw new ItemStatusException();
     }
 }

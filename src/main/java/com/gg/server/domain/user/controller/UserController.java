@@ -16,6 +16,7 @@ import com.gg.server.global.utils.argumentresolver.Login;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/pingpong/users")
+@Slf4j
 public class UserController {
     private final UserService userService;
     private final UserTextColorCheckService userTextColorCheck;
@@ -141,8 +143,8 @@ public class UserController {
     }
 
     @PatchMapping("/background")
-    public ResponseEntity updateBackground(@Parameter(hidden = true) @Login UserDto user) {
-        userService.updateBackground(user.getId());
+    public ResponseEntity updateBackground(@RequestBody @Valid UserReceiptDto userReceiptDto, @Parameter(hidden = true) @Login UserDto user) {
+        userService.updateBackground(user, userReceiptDto);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 }
