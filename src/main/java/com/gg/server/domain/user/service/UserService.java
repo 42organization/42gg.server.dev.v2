@@ -278,10 +278,17 @@ public class UserService {
     }
 
     @Transactional
-    public void updateEdge(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+    public void updateEdge(UserDto user, UserReceiptDto userReceiptDto) {
+        User userId = userRepository.findById(user.getId()).orElseThrow(UserNotFoundException::new);
         EdgeType edgeType = EdgeType.getRandomEdgeType();
-        user.updateEdge(edgeType);
+        Receipt receipt = receiptRepository.findById(userReceiptDto.getReceiptId()).orElseThrow(ReceiptNotFoundException::new);
+
+        checkOwner(userId, receipt);
+        checkItemType(receipt, ItemType.PROFILE_BAND);
+        checkUseStatus(receipt);
+
+        userId.updateEdge(edgeType);
+        receipt.updateStatus(ItemStatus.USED);
     }
 
     @Transactional
@@ -291,7 +298,7 @@ public class UserService {
 
         BackgroundType backgroundType = BackgroundType.getRandomBackgroundType();
         checkOwner(userId, receipt);
-        checkItemType(receipt);
+        checkItemType(receipt, ItemType.PROFILE_BACKGROUND);
         checkUseStatus(receipt);
 
         userId.updateBackground(backgroundType);
@@ -303,8 +310,8 @@ public class UserService {
             throw new ReceiptNotOwnerException();
     }
 
-    public void checkItemType(Receipt receipt) {
-        if (!receipt.getItem().getType().equals(ItemType.PROFILE_BACKGROUND))
+    public void checkItemType(Receipt receipt, ItemType itemType) {
+        if (!receipt.getItem().getType().equals(itemType))
             throw new ItemTypeException();
     }
 

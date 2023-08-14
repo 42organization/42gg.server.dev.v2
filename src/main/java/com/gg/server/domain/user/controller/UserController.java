@@ -132,8 +132,8 @@ public class UserController {
     }
 
     @PatchMapping("/edge")
-    public ResponseEntity updateEdge(@Parameter(hidden = true) @Login UserDto user) {
-        userService.updateEdge(user.getId());
+    public ResponseEntity updateEdge(@RequestBody @Valid UserReceiptDto userReceiptDto, @Parameter(hidden = true) @Login UserDto user) {
+        userService.updateEdge(user, userReceiptDto);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
