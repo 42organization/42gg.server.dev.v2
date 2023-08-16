@@ -68,15 +68,16 @@ public class Item {
     }
 
     @Builder
-    public Item(ItemUpdateRequestDto updateRequestDto) {
+    public Item(ItemUpdateRequestDto updateRequestDto, String creatorIntraId) {
         this.name = updateRequestDto.getName();
         this.content = updateRequestDto.getContent();
         this.imageUri = updateRequestDto.getImageUri();
         this.price = updateRequestDto.getPrice();
         this.discount = updateRequestDto.getDiscount();
         this.isVisible = true;
-        this.creatorIntraId = updateRequestDto.getCreatorIntraId();
+        this.creatorIntraId = creatorIntraId;
         this.createdAt = LocalDateTime.now();
+        this.type = updateRequestDto.getItemType();
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.gg.server.admin.item.service;
 
 import com.gg.server.admin.item.data.ItemAdminRepository;
-import com.gg.server.admin.item.dto.ItemDeleteRequestDto;
 import com.gg.server.admin.item.dto.ItemHistoryResponseDto;
 import com.gg.server.admin.item.dto.ItemListResponseDto;
 import com.gg.server.admin.item.dto.ItemUpdateRequestDto;
@@ -25,18 +24,18 @@ public class ItemAdminService {
     }
 
     @Transactional
-    public void updateItem(Long itemId, ItemUpdateRequestDto itemUpdateRequestDto) {
+    public void updateItem(Long itemId, ItemUpdateRequestDto itemUpdateRequestDto, String creatorId) {
         Item item = itemAdminRepository.findById(itemId).orElseThrow(()-> new ItemNotFoundException());
         item.setIsVisible(false);
-        item.setDeleterIntraId(itemUpdateRequestDto.getCreatorIntraId());
-        Item newItem = new Item(itemUpdateRequestDto);
+        item.setDeleterIntraId(creatorId);
+        Item newItem = new Item(itemUpdateRequestDto, creatorId);
         itemAdminRepository.save(newItem);
     }
 
     @Transactional
-    public void deleteItem(Long itemId, ItemDeleteRequestDto itemDeleteRequestDto) {
+    public void deleteItem(Long itemId, String deleterId) {
         Item item = itemAdminRepository.findById(itemId).orElseThrow(()-> new ItemNotFoundException());
         item.setIsVisible(false);
-        item.setDeleterIntraId(itemDeleteRequestDto.getDeleterIntraId());
+        item.setDeleterIntraId(deleterId);
     }
 }

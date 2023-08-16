@@ -1,10 +1,12 @@
 package com.gg.server.admin.item.controller;
 
-import com.gg.server.admin.item.dto.ItemDeleteRequestDto;
 import com.gg.server.admin.item.dto.ItemListResponseDto;
 import com.gg.server.admin.item.dto.ItemUpdateRequestDto;
 import com.gg.server.admin.item.service.ItemAdminService;
+import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.dto.PageRequestDto;
+import com.gg.server.global.utils.argumentresolver.Login;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,15 +31,14 @@ public class ItemAdminController {
     }
 
     @PutMapping("/{itemId}")
-    public ResponseEntity updateItem(@PathVariable("itemId") Long itemId, @RequestBody @Valid ItemUpdateRequestDto itemRequestDto) {
-        itemAdminService.updateItem(itemId, itemRequestDto);
-
+    public ResponseEntity updateItem(@PathVariable("itemId") Long itemId, @RequestBody @Valid ItemUpdateRequestDto itemRequestDto, @Parameter(hidden = true) @Login UserDto user) {
+        itemAdminService.updateItem(itemId, itemRequestDto, user.getIntraId());
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping("/{itemId}")
-    public ResponseEntity deleteItem(@PathVariable("itemId") Long itemId, @RequestBody @Valid ItemDeleteRequestDto itemDeleteRequestDto) {
-        itemAdminService.deleteItem(itemId, itemDeleteRequestDto);
+    public ResponseEntity deleteItem(@PathVariable("itemId") Long itemId, @Parameter(hidden = true) @Login UserDto user) {
+        itemAdminService.deleteItem(itemId, user.getIntraId());
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 }
