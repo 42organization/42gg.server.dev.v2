@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class ItemService {
 
@@ -42,12 +41,10 @@ public class ItemService {
     public void purchaseItem(Long itemId, UserDto userDto) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow( ()->  {
-                    log.error("해당 아이템이 없습니다. Item ID: {}, User Intra ID: {}", itemId, userDto.getIntraId());
                     throw new ItemNotFoundException();
                 });
         if (!item.getIsVisible())
         {
-            log.error("지금은 구매할 수 없는 아이템 입니다. Item ID: {}, User Intra ID: {}", itemId, userDto.getIntraId());
             throw new ItemNotPurchasableException();
         }
 
@@ -62,7 +59,6 @@ public class ItemService {
 
         // 사용자의 GGcoin이 상품 가격보다 낮으면 예외 처리.
         if (userDto.getGgCoin() < finalPrice) {
-            log.error("GGcoin이 부족합니다. 필요한 GGcoin: {}, 사용자의 GGcoin: {}", finalPrice, userDto.getGgCoin());
             throw new InsufficientGgcoinException();
         }
 
