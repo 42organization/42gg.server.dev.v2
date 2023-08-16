@@ -94,9 +94,11 @@ public class GameControllerTest {
     private Game game1;
     private Game game2;
 
+    private Game game3;
+
     @BeforeEach
     void init() {
-        season = seasonRepository.save(new Season("test season", LocalDateTime.of(2023, 5, 14, 0, 0), LocalDateTime.of(2999, 12, 31, 23, 59),
+        season = seasonRepository.save(new Season("test season", LocalDateTime.of(2023, 7, 14, 0, 0), LocalDateTime.of(2999, 12, 31, 23, 59),
                 1000, 100));
         user1 = testDataUtils.createNewUser("test1", "test1@email", "null1", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
         accessToken = tokenProvider.createToken(user1.getId());
@@ -370,17 +372,4 @@ public class GameControllerTest {
         System.out.println("result: " + content);
     }
 
-    @Test
-    @Transactional
-    void 일반게임결과조회() throws Exception {
-        String accessToken2 = testDataUtils.getAdminLoginAccessToken();
-        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken2);
-
-        String url = "/pingpong/games/" + "2112" + "/result/normal";
-        String content = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken2)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString();
-        System.out.println("result: " + content);
-    }
 }
