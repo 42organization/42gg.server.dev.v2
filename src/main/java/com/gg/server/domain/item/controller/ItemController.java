@@ -24,17 +24,17 @@ public class ItemController {
     }
 
     @PostMapping("/purchases/{itemId}")
-    public ResponseEntity<Void> purchaseItem(@PathVariable Long itemId,
+    public ResponseEntity purchaseItem(@PathVariable Long itemId,
                                              @Parameter(hidden = true) @Login UserDto userDto) {
         itemService.purchaseItem(itemId, userDto);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 
     @PostMapping("/gift/{itemId}")
-    public ResponseEntity<String> giftItem(@PathVariable Long itemId,
+    public ResponseEntity giftItem(@PathVariable Long itemId,
                                            @RequestBody ItemGiftRequestDto recipient,
                                            @Parameter(hidden = true) @Login UserDto userDto) {
         itemService.giftItem(itemId, recipient.getOwnerId(), userDto);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 }
