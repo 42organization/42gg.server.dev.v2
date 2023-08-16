@@ -30,7 +30,6 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/pingpong/users")
-@Slf4j
 public class UserController {
     private final UserService userService;
     private final UserTextColorCheckService userTextColorCheck;
@@ -132,8 +131,8 @@ public class UserController {
     }
 
     @PatchMapping("/edge")
-    public ResponseEntity updateEdge(@RequestBody @Valid UserReceiptDto userReceiptDto, @Parameter(hidden = true) @Login UserDto user) {
-        userService.updateEdge(user, userReceiptDto);
+    public ResponseEntity updateEdge(@RequestBody @Valid UserEdgeDto userEdgeDto, @Parameter(hidden = true) @Login UserDto user) {
+        userService.updateEdge(user, userEdgeDto);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
@@ -143,8 +142,8 @@ public class UserController {
     }
 
     @PatchMapping("/background")
-    public ResponseEntity updateBackground(@RequestBody @Valid UserReceiptDto userReceiptDto, @Parameter(hidden = true) @Login UserDto user) {
-        userService.updateBackground(user, userReceiptDto);
+    public ResponseEntity updateBackground(@RequestBody @Valid UserBackgroundDto userBackgroundDto, @Parameter(hidden = true) @Login UserDto user) {
+        userService.updateBackground(user, userBackgroundDto);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 }

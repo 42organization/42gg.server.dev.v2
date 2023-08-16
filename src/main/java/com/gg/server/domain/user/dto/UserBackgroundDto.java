@@ -1,15 +1,15 @@
 package com.gg.server.domain.user.dto;
 
-import com.gg.server.domain.receipt.data.Receipt;
-import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserReceiptDto {
+public class UserBackgroundDto {
     @NotNull
     private Long receiptId;
 }

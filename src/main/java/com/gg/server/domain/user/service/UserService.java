@@ -35,7 +35,6 @@ import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.domain.user.exception.UserTextColorException;
 import com.gg.server.domain.user.type.*;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -53,7 +52,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class UserService {
 
     private final UserFindService userFindService;
@@ -271,17 +269,24 @@ public class UserService {
     @Transactional()
     public void updateTextColor(Long userId, UserTextColorDto textColorDto) {
         String textColor = textColorDto.getTextColor();
+        Receipt receipt = receiptRepository.findById(textColorDto.getReceiptId()).orElseThrow(ReceiptNotFoundException::new);
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+
         if (!UserTextColorCheckService.check(textColor))
             throw new UserTextColorException();
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        checkOwner(user, receipt);
+        checkItemType(receipt, ItemType.TEXT_COLOR);
+        checkUseStatus(receipt);
+
         user.updateTextColor(textColor);
+        receipt.updateStatus(ItemStatus.USED);
     }
 
     @Transactional
-    public void updateEdge(UserDto user, UserReceiptDto userReceiptDto) {
+    public void updateEdge(UserDto user, UserEdgeDto userEdgeDto) {
         User userId = userRepository.findById(user.getId()).orElseThrow(UserNotFoundException::new);
         EdgeType edgeType = EdgeType.getRandomEdgeType();
-        Receipt receipt = receiptRepository.findById(userReceiptDto.getReceiptId()).orElseThrow(ReceiptNotFoundException::new);
+        Receipt receipt = receiptRepository.findById(userEdgeDto.getReceiptId()).orElseThrow(ReceiptNotFoundException::new);
 
         checkOwner(userId, receipt);
         checkItemType(receipt, ItemType.PROFILE_BAND);
@@ -292,9 +297,9 @@ public class UserService {
     }
 
     @Transactional
-    public void updateBackground(UserDto user, UserReceiptDto userReceiptDto) {
+    public void updateBackground(UserDto user, UserBackgroundDto userBackgroundDto) {
         User userId = userRepository.findById(user.getId()).orElseThrow(UserNotFoundException::new);
-        Receipt receipt = receiptRepository.findById(userReceiptDto.getReceiptId()).orElseThrow(ReceiptNotFoundException::new);
+        Receipt receipt = receiptRepository.findById(userBackgroundDto.getReceiptId()).orElseThrow(ReceiptNotFoundException::new);
 
         BackgroundType backgroundType = BackgroundType.getRandomBackgroundType();
         checkOwner(userId, receipt);

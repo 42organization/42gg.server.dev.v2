@@ -21,7 +21,8 @@ public enum BackgroundType {
     COLOR12(12),
     COLOR13(13),
     COLOR14(14),
-    COLOR15(15);
+    COLOR15(15),
+    COLOR16(16);
 
     private final Integer code;
 
@@ -31,15 +32,15 @@ public enum BackgroundType {
         int colorInt;
 
         if (tierInt <= 50)
-            colorInt = random.nextInt(100) % 4;
+            colorInt = random.nextInt(100) % 4 + 1;
         else if (tierInt <= 70)
-            colorInt = (random.nextInt(99) % 3) + 4;
+            colorInt = (random.nextInt(99) % 3) + 5;
         else if (tierInt <= 85)
-            colorInt = (random.nextInt(99) % 3) + 7;
+            colorInt = (random.nextInt(99) % 3) + 8;
         else if (tierInt <= 95)
-            colorInt = (random.nextInt(99) % 3) + 10;
+            colorInt = (random.nextInt(99) % 3) + 11;
         else
-            colorInt = (random.nextInt(99) % 3) + 13;
+            colorInt = (random.nextInt(99) % 3) + 14;
 
         return BackgroundType.values()[colorInt];
     }

@@ -9,10 +9,15 @@ import com.gg.server.domain.game.dto.req.RankResultReqDto;
 import com.gg.server.domain.game.service.GameService;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
+import com.gg.server.domain.item.data.Item;
+import com.gg.server.domain.item.type.ItemType;
 import com.gg.server.domain.rank.data.RankRepository;
 import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
+import com.gg.server.domain.receipt.data.Receipt;
+import com.gg.server.domain.receipt.data.ReceiptRepository;
+import com.gg.server.domain.receipt.type.ItemStatus;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.data.SeasonRepository;
 import com.gg.server.domain.user.data.User;
@@ -23,6 +28,7 @@ import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.domain.user.type.*;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
+import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
@@ -87,6 +93,8 @@ class UserControllerTest {
     @Autowired
     CoinHistoryRepository coinHistoryRepository;
 
+    @Autowired
+    ReceiptRepository receiptRepository;
 
     @AfterEach
     public void flushRedis() {
@@ -356,12 +364,13 @@ class UserControllerTest {
         String accessToken = tokenProvider.createToken(newUser.getId());
         String url = "/pingpong/users/text-color";
 
+        Receipt receipt = receiptRepository.findById(4L).get();
         String newTextColor = "#FFFFFF";
 
         //when
         mockMvc.perform(patch(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(new UserTextColorDto(newTextColor))))
+                .content(objectMapper.writeValueAsString(new UserTextColorDto(4L, newTextColor))))
                 .andExpect(status().is2xxSuccessful());
         //then
         userRepository.findById(newUser.getId()).ifPresentOrElse(user -> {
@@ -369,6 +378,7 @@ class UserControllerTest {
         }, () -> {
             Assertions.fail("유저 업데이트 실패");
         });
+        AssertionsForClassTypes.assertThat(receipt.getStatus()).isEqualTo(ItemStatus.USED);
     }
 
     @Test
@@ -384,11 +394,15 @@ class UserControllerTest {
         String statusMessage = "statusMessage";
         testDataUtils.createUserRank(newUser, statusMessage, season);
         String accessToken = tokenProvider.createToken(newUser.getId());
+
+        Receipt receipt = receiptRepository.findById(3L).get();
         String url = "/pingpong/users/edge";
 
         //when
         mockMvc.perform(patch(url)
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                .content(objectMapper.writeValueAsString(3L))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn().getResponse().getContentAsString();
 
@@ -399,6 +413,7 @@ class UserControllerTest {
         }, () -> {
             Assertions.fail("유저 업데이트 실패");
         });
+        AssertionsForClassTypes.assertThat(receipt.getStatus()).isEqualTo(ItemStatus.USED);
     }
 
     @Test
@@ -427,26 +442,31 @@ class UserControllerTest {
         Season season = testDataUtils.createSeason();
         String intraId = "intraId";
         String email = "email";
-        String imageUrl = "imageUrl";
-        User newUser = testDataUtils.createNewUser(intraId, email, imageUrl, RacketType.PENHOLDER,
-                SnsType.BOTH, RoleType.ADMIN);
+        String imageUri = "imageUri";
+        User newUser = testDataUtils.createNewUser(intraId, email, imageUri, RacketType.PENHOLDER,
+                SnsType.BOTH, RoleType.USER);
         String statusMessage = "statusMessage";
         testDataUtils.createUserRank(newUser, statusMessage, season);
         String accessToken = tokenProvider.createToken(newUser.getId());
-        String url = "/pingpong/users/background";
+
+        Receipt receipt = receiptRepository.findById(2L).get();
+        String uri = "/pingpong/users/background";
 
         //when
-        mockMvc.perform(patch(url)
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+        mockMvc.perform(patch(uri)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                .content(objectMapper.writeValueAsString(2L))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn().getResponse().getContentAsString();
 
         //then
-        log.info("user.getBacground() : {}", newUser.getBackground());
+        log.info("user.getBackground() : {}", newUser.getBackground());
         userRepository.findById(newUser.getId()).ifPresentOrElse(user -> {
             Assertions.assertThat(Arrays.stream(BackgroundType.values()).anyMatch(v -> v.equals(user.getBackground()))).isEqualTo(true);
         }, () -> {
             Assertions.fail("유저 업데이트 실패");
         });
+        AssertionsForClassTypes.assertThat(receipt.getStatus()).isEqualTo(ItemStatus.USED);
     }
 }
