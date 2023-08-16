@@ -37,16 +37,16 @@ public class Receipt {
     private ItemStatus status;
 
     @NotNull
-    @Column(name = "created_At")
-    private LocalDateTime purchasedAt;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
     public Receipt(Item item, String purchaserIntraId, String ownerIntraId,
-                   ItemStatus status, LocalDateTime purchasedAt){
+                   ItemStatus status, LocalDateTime purchasedAt) {
         this.item = item;
         this.purchaserIntraId = purchaserIntraId;
         this.ownerIntraId = ownerIntraId;
         this.status = status;
-        this.purchasedAt = purchasedAt;
+        this.createdAt = purchasedAt;
     }
 
     @Override
@@ -57,15 +57,11 @@ public class Receipt {
                 ", purchaserIntraId='" + purchaserIntraId + '\'' +
                 ", ownerIntraId='" + ownerIntraId + '\'' +
                 ", status=" + status +
-                ", purchasedAt=" + purchasedAt +
+                ", purchasedAt=" + createdAt +
                 '}';
     }
 
-    public void updateStatus() {
-        if (status == ItemStatus.BEFORE) {
-            this.status = ItemStatus.USING;
-        } else {
-            this.status = ItemStatus.USED;
-        }
+    public void updateStatus(ItemStatus status) {
+        this.status = status;
     }
 }

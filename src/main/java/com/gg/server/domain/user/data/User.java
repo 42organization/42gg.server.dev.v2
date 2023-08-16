@@ -81,6 +81,7 @@ public class User extends BaseTimeEntity implements Serializable {
         this.eMail = updateReq.getEmail();
         this.racketType = updateReq.getRacketType();
         this.roleType = RoleType.of(updateReq.getRoleType());
+        this.ggCoin = updateReq.getCoin();
     }
 
     public void imageUpdate(String imageUri) {
@@ -106,6 +107,10 @@ public class User extends BaseTimeEntity implements Serializable {
   
     public void updateTextColor(String textColor) {
         this.textColor = textColor;
+    }
+
+    public void updateEdge(EdgeType edge) {
+        this.edge = edge;
     }
 
     public int addGgCoin(int plus) {
