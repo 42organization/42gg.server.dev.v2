@@ -3,16 +3,22 @@ package com.gg.server.domain.user.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.domain.coin.data.CoinHistoryRepository;
 import com.gg.server.domain.coin.data.CoinPolicyRepository;
+import com.gg.server.domain.coin.service.CoinHistoryService;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.dto.req.RankResultReqDto;
 import com.gg.server.domain.game.service.GameService;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
+import com.gg.server.domain.item.data.Item;
+import com.gg.server.domain.item.type.ItemType;
 import com.gg.server.domain.rank.data.RankRepository;
 import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
+import com.gg.server.domain.receipt.data.Receipt;
+import com.gg.server.domain.receipt.data.ReceiptRepository;
+import com.gg.server.domain.receipt.type.ItemStatus;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.data.SeasonRepository;
 import com.gg.server.domain.user.data.User;
@@ -20,12 +26,10 @@ import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.controller.dto.GameInfoDto;
 import com.gg.server.domain.user.dto.*;
 import com.gg.server.domain.user.exception.UserNotFoundException;
-import com.gg.server.domain.user.type.EdgeType;
-import com.gg.server.domain.user.type.RacketType;
-import com.gg.server.domain.user.type.RoleType;
-import com.gg.server.domain.user.type.SnsType;
+import com.gg.server.domain.user.type.*;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
+import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
@@ -40,6 +44,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -88,6 +93,12 @@ class UserControllerTest {
 
     @Autowired
     CoinHistoryRepository coinHistoryRepository;
+
+    @Autowired
+    ReceiptRepository receiptRepository;
+
+    @Autowired
+    CoinHistoryService coinHistoryService;
 
 
     @AfterEach
@@ -358,12 +369,13 @@ class UserControllerTest {
         String accessToken = tokenProvider.createToken(newUser.getId());
         String url = "/pingpong/users/text-color";
 
+        Receipt receipt = receiptRepository.findById(4L).get();
         String newTextColor = "#FFFFFF";
 
         //when
         mockMvc.perform(patch(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(new UserTextColorDto(newTextColor))))
+                .content(objectMapper.writeValueAsString(new UserTextColorDto(4L, newTextColor))))
                 .andExpect(status().is2xxSuccessful());
         //then
         userRepository.findById(newUser.getId()).ifPresentOrElse(user -> {
@@ -371,6 +383,7 @@ class UserControllerTest {
         }, () -> {
             Assertions.fail("유저 업데이트 실패");
         });
+        AssertionsForClassTypes.assertThat(receipt.getStatus()).isEqualTo(ItemStatus.USED);
     }
 
     @Test
@@ -386,23 +399,26 @@ class UserControllerTest {
         String statusMessage = "statusMessage";
         testDataUtils.createUserRank(newUser, statusMessage, season);
         String accessToken = tokenProvider.createToken(newUser.getId());
+
+        Receipt receipt = receiptRepository.findById(3L).get();
         String url = "/pingpong/users/edge";
 
-        EdgeType newEdge = EdgeType.BASIC;
-
         //when
-        mockMvc.perform(patch(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new UserEdgeDto(newEdge))))
-                .andExpect(status().is2xxSuccessful());
+        mockMvc.perform(patch(url)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                .content(objectMapper.writeValueAsString(3L))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn().getResponse().getContentAsString();
+
         //then
-        log.info("newEdge : {}", newEdge);
         log.info("user.getEdge() : {}", newUser.getEdge());
         userRepository.findById(newUser.getId()).ifPresentOrElse(user -> {
-            Assertions.assertThat(user.getEdge()).isEqualTo(newEdge);
+            Assertions.assertThat(Arrays.stream(EdgeType.values()).anyMatch(v -> v.equals(user.getEdge()))).isEqualTo(true);
         }, () -> {
             Assertions.fail("유저 업데이트 실패");
         });
+        AssertionsForClassTypes.assertThat(receipt.getStatus()).isEqualTo(ItemStatus.USED);
     }
 
     @Test
@@ -422,5 +438,65 @@ class UserControllerTest {
         int userCoin = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException()).getGgCoin();
         assertThat(result.getCoin()).isEqualTo(userCoin);
         System.out.println(userCoin);
+    }
+
+    @Test
+    @DisplayName("[patch] background")
+    public void updateBackgroundTest() throws Exception {
+        //given
+        Season season = testDataUtils.createSeason();
+        String intraId = "intraId";
+        String email = "email";
+        String imageUri = "imageUri";
+        User newUser = testDataUtils.createNewUser(intraId, email, imageUri, RacketType.PENHOLDER,
+                SnsType.BOTH, RoleType.USER);
+        String statusMessage = "statusMessage";
+        testDataUtils.createUserRank(newUser, statusMessage, season);
+        String accessToken = tokenProvider.createToken(newUser.getId());
+
+        Receipt receipt = receiptRepository.findById(2L).get();
+        String uri = "/pingpong/users/background";
+
+        //when
+        mockMvc.perform(patch(uri)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                .content(objectMapper.writeValueAsString(2L))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn().getResponse().getContentAsString();
+
+        //then
+        log.info("user.getBackground() : {}", newUser.getBackground());
+        userRepository.findById(newUser.getId()).ifPresentOrElse(user -> {
+            Assertions.assertThat(Arrays.stream(BackgroundType.values()).anyMatch(v -> v.equals(user.getBackground()))).isEqualTo(true);
+        }, () -> {
+            Assertions.fail("유저 업데이트 실패");
+        });
+        AssertionsForClassTypes.assertThat(receipt.getStatus()).isEqualTo(ItemStatus.USED);
+    }
+  
+    @Test
+    @DisplayName("[get]/pingpong/users/coins")
+    public void getUserCoinHistory() throws Exception {
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
+        User user = userRepository.getById(userId);
+
+        coinHistoryService.addNormalCoin(user);
+        coinHistoryService.addRankWinCoin(user);
+        coinHistoryService.addNormalCoin(user);
+        String url = "/pingpong/users/coins?page=1&size=5";
+
+        String contentAsString = mockMvc.perform(get(url)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        UserCoinHistoryListResponseDto result = objectMapper.readValue(contentAsString, UserCoinHistoryListResponseDto.class);
+
+        System.out.println(result.getTotalPage());
+        for(CoinHistoryResponseDto temp : result.getCoinPolicyList()){
+            System.out.println(temp.getHistory() + " " + temp.getAmount() + " " + temp.getCreatedAt());
+        }
     }
 }
