@@ -289,7 +289,7 @@ public class UserService {
         Receipt receipt = receiptRepository.findById(userEdgeDto.getReceiptId()).orElseThrow(ReceiptNotFoundException::new);
 
         checkOwner(userId, receipt);
-        checkItemType(receipt, ItemType.PROFILE_BAND);
+        checkItemType(receipt, ItemType.EDGE);
         checkUseStatus(receipt);
 
         userId.updateEdge(edgeType);
@@ -303,7 +303,7 @@ public class UserService {
 
         BackgroundType backgroundType = BackgroundType.getRandomBackgroundType();
         checkOwner(userId, receipt);
-        checkItemType(receipt, ItemType.PROFILE_BACKGROUND);
+        checkItemType(receipt, ItemType.BACKGROUND);
         checkUseStatus(receipt);
 
         userId.updateBackground(backgroundType);
