@@ -6,6 +6,7 @@ import com.gg.server.admin.item.dto.ItemListResponseDto;
 import com.gg.server.admin.item.dto.ItemUpdateRequestDto;
 import com.gg.server.admin.item.exception.ItemNotFoundException;
 import com.gg.server.domain.item.data.Item;
+import com.gg.server.domain.user.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,18 +25,18 @@ public class ItemAdminService {
     }
 
     @Transactional
-    public void updateItem(Long itemId, ItemUpdateRequestDto itemUpdateRequestDto, String creatorId) {
+    public void updateItem(Long itemId, ItemUpdateRequestDto itemUpdateRequestDto, UserDto user) {
         Item item = itemAdminRepository.findById(itemId).orElseThrow(()-> new ItemNotFoundException());
         item.setIsVisible(false);
-        item.setDeleterIntraId(creatorId);
-        Item newItem = new Item(itemUpdateRequestDto, creatorId);
+        item.setDeleterIntraId(user.getIntraId());
+        Item newItem = new Item(itemUpdateRequestDto, user.getIntraId());
         itemAdminRepository.save(newItem);
     }
 
     @Transactional
-    public void deleteItem(Long itemId, String deleterId) {
+    public void deleteItem(Long itemId, UserDto user) {
         Item item = itemAdminRepository.findById(itemId).orElseThrow(()-> new ItemNotFoundException());
         item.setIsVisible(false);
-        item.setDeleterIntraId(deleterId);
+        item.setDeleterIntraId(user.getIntraId());
     }
 }

@@ -32,13 +32,13 @@ public class ItemAdminController {
 
     @PutMapping("/{itemId}")
     public ResponseEntity updateItem(@PathVariable("itemId") Long itemId, @RequestBody @Valid ItemUpdateRequestDto itemRequestDto, @Parameter(hidden = true) @Login UserDto user) {
-        itemAdminService.updateItem(itemId, itemRequestDto, user.getIntraId());
+        itemAdminService.updateItem(itemId, itemRequestDto, user);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping("/{itemId}")
     public ResponseEntity deleteItem(@PathVariable("itemId") Long itemId, @Parameter(hidden = true) @Login UserDto user) {
-        itemAdminService.deleteItem(itemId, user.getIntraId());
+        itemAdminService.deleteItem(itemId, user);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 }
