@@ -59,4 +59,25 @@ class ReceiptAdminControllerTest {
         assertThat(result.getReceiptList().get(0).getItemName()).isEqualTo(expect.getReceiptList().get(0).getItemName());
         assertThat(result.getReceiptList().get(0).getItemPrice()).isEqualTo(expect.getReceiptList().get(0).getItemPrice());
     }
+
+    @Test
+    @DisplayName("GET /pingpong/admin/receipt/list")
+    public void findByIntraId() throws Exception {
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
+        Integer page = 1;
+        Integer size = 20;
+        String intraId = "sishin";
+        String url = "/pingpong/admin/receipt/list?page=" + page + "&size=" + size + "&intraId=" + intraId;
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("createdAt").descending());
+        String contentAsString = mockMvc.perform(get(url)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        ReceiptListResponseDto expect = receiptAdminService.findByIntraId(intraId, pageable);
+        ReceiptListResponseDto result = objectMapper.readValue(contentAsString, ReceiptListResponseDto.class);
+        assertThat(result.getReceiptList().get(0).getReceiptId()).isEqualTo(expect.getReceiptList().get(0).getReceiptId());
+        assertThat(result.getReceiptList().get(0).getCreatedAt()).isEqualTo(expect.getReceiptList().get(0).getCreatedAt());
+        assertThat(result.getReceiptList().get(0).getItemName()).isEqualTo(expect.getReceiptList().get(0).getItemName());
+        assertThat(result.getReceiptList().get(0).getItemPrice()).isEqualTo(expect.getReceiptList().get(0).getItemPrice());
+    }
 }

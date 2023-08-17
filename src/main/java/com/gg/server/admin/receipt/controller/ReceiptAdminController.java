@@ -1,8 +1,8 @@
 package com.gg.server.admin.receipt.controller;
 
+import com.gg.server.admin.receipt.dto.ReceiptAdminPageRequestDto;
 import com.gg.server.admin.receipt.dto.ReceiptListResponseDto;
 import com.gg.server.admin.receipt.service.ReceiptAdminService;
-import com.gg.server.global.dto.PageRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,9 +21,15 @@ public class ReceiptAdminController {
     private final ReceiptAdminService receiptAdminService;
 
     @GetMapping("/list")
-    public ReceiptListResponseDto getReceiptList(@ModelAttribute @Valid PageRequestDto pageRequestDto) {
-        Pageable pageable = PageRequest.of(pageRequestDto.getPage() - 1, pageRequestDto.getSize(),
+    public ReceiptListResponseDto getReceiptList(@ModelAttribute @Valid ReceiptAdminPageRequestDto req) {
+
+        if (req.getIntraId() == null) {
+            Pageable pageable = PageRequest.of(req.getPage() - 1, req.getSize(),
+                    Sort.by("createdAt").descending());
+            return receiptAdminService.getAllReceipt(pageable);
+        }
+        Pageable pageable = PageRequest.of(req.getPage() - 1, req.getSize(),
                 Sort.by("createdAt").descending());
-        return receiptAdminService.getAllReceipt(pageable);
+        return receiptAdminService.findByIntraId(req.getIntraId(), pageable);
     }
 }
