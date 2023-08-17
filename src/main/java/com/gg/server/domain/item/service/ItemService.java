@@ -31,6 +31,7 @@ public class ItemService {
     private final UserRepository userRepository;
 
     public ItemStoreListResponseDto getAllItems() {
+
         List<ItemStoreResponseDto> itemStoreListResponseDto = itemRepository.findAllByIsVisible(true)
                 .stream().map(ItemStoreResponseDto::new).collect(Collectors.toList());
         return new ItemStoreListResponseDto(itemStoreListResponseDto);
@@ -71,4 +72,41 @@ public class ItemService {
         receiptRepository.save(receipt);
     }
 
+    @Transactional
+    public void giftItem(Long itemId, String ownerId, UserDto userDto) {
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow( ()->  {
+                    throw new ItemNotFoundException();
+                });
+        if (!item.getIsVisible()) {
+            throw new ItemNotPurchasableException();
+        }
+
+        //세일가격 존재할때 세일가로 결정
+        Integer finalPrice;
+        if (item.getDiscount() != null && item.getDiscount() > 0) {
+            finalPrice = item.getPrice() - (item.getPrice() * item.getDiscount() / 100);
+        }
+        else {
+            finalPrice = item.getPrice();
+        }
+
+        // 사용자의 GGcoin이 상품 가격보다 낮으면 예외 처리.
+        if (userDto.getGgCoin() < finalPrice) {
+            throw new InsufficientGgcoinException();
+        }
+
+        User payUser = userRepository.findById(userDto.getId())
+                .orElseThrow(() -> new UserNotFoundException());
+
+
+        User owner = userRepository.findByIntraId(ownerId)
+                .orElseThrow(() -> new UserNotFoundException());
+
+        payUser.payGgCoin(finalPrice);       //상품 구매에 따른 차감
+
+        Receipt receipt = new Receipt(item, userDto.getIntraId(), ownerId,
+                ItemStatus.BEFORE, LocalDateTime.now());
+        receiptRepository.save(receipt);
+    }
 }
