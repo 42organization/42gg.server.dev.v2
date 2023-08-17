@@ -55,7 +55,7 @@ public class GameFindService {
     @Cacheable(value = "allGameList", cacheManager = "gameCacheManager", key = "#pageable.pageNumber + #pageable.pageSize + #pageable.sort.toString() + #status")
     public GameListResDto allGameList(Pageable pageable, String status) {
         Slice<Game> games;
-        if (status.equals("LIVE")) {
+        if (status != null && status.equals("LIVE")) {
             games = gameRepository.findAllByAndStatusIn(Arrays.asList(StatusType.END, StatusType.LIVE, StatusType.WAIT), pageable);
         } else {
             games = gameRepository.findAllByAndStatus(StatusType.END, pageable);
@@ -75,7 +75,7 @@ public class GameFindService {
     @Cacheable(value = "allGameListByUser", cacheManager = "gameCacheManager", key = "#pageable.pageNumber + #pageable.pageSize + #pageable.sort.toString() + #status + #intra")
     public GameListResDto allGameListUser(Pageable pageable, String intra, String status) {
         List<String> statusTypes = Arrays.asList(StatusType.END.name());
-        if (status.equals("LIVE")) {
+        if (status != null && status.equals("LIVE")) {
             statusTypes.add(StatusType.LIVE.name());
             statusTypes.add(StatusType.WAIT.name());
         }

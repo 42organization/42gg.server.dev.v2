@@ -144,10 +144,38 @@ class MatchServiceTest {
     @DisplayName("Queue에 매칭 가능한 normal 상대가 있을 경우 게임 생성")
     @Test
     void addMatchSameNormalOption() {
+        matchService.makeMatch(UserDto.from(users.get(2)), Option.RANK, this.slotTimes.get(0));
         matchService.makeMatch(UserDto.from(users.get(0)), Option.NORMAL, this.slotTimes.get(0));
         matchService.makeMatch(UserDto.from(users.get(1)), Option.NORMAL, this.slotTimes.get(0));
+        matchService.cancelMatch(UserDto.from(users.get(0)), this.slotTimes.get(0));
         Optional<Game> game = gameRepository.findByStartTime(slotTimes.get(0));
-        Assertions.assertThat(game.isEmpty()).isEqualTo(false);
+        Assertions.assertThat(game).isEmpty();
+        Long size = redisTemplate.opsForList().size(MatchKey.getTime(this.slotTimes.get(0)));
+        List<RedisMatchUser> allMatchUsers = redisMatchTimeRepository.getAllMatchUsers(this.slotTimes.get(0));
+        Assertions.assertThat(size).isEqualTo(2L);
+        RedisMatchUser remainedUser = (RedisMatchUser) redisTemplate.opsForList().index(MatchKey.getTime(slotTimes.get(0)), 0);
+        Assertions.assertThat(remainedUser.getUserId()).isEqualTo(users.get(2).getId());
+        Assertions.assertThat(notiRepository.findAllByUser(users.get(1)).size()).isEqualTo(2);
+        Assertions.assertThat(notiRepository.findAllByUser(users.get(0)).size()).isEqualTo(1);
+        Assertions.assertThat(notiRepository.findAllByUser(users.get(2)).size()).isEqualTo(0);
+    }
+
+    @DisplayName("게임 재생성 테스트")
+    @Test
+    void remakeGameAfterCancelling() {
+        matchService.makeMatch(UserDto.from(users.get(2)), Option.RANK, this.slotTimes.get(0));
+        matchService.makeMatch(UserDto.from(users.get(0)), Option.NORMAL, this.slotTimes.get(0));
+        matchService.makeMatch(UserDto.from(users.get(1)), Option.BOTH, this.slotTimes.get(0));
+        matchService.cancelMatch(UserDto.from(users.get(2)), this.slotTimes.get(0));
+        Optional<Game> game = gameRepository.findByStartTime(slotTimes.get(0));
+        Assertions.assertThat(game).isPresent();
+        Long size = redisTemplate.opsForList().size(MatchKey.getTime(this.slotTimes.get(0)));
+        Assertions.assertThat(size).isEqualTo(2L);
+        RedisMatchUser remainedUser = (RedisMatchUser) redisTemplate.opsForList().index(MatchKey.getTime(slotTimes.get(0)), 0);
+        Assertions.assertThat(remainedUser.getUserId()).isEqualTo(users.get(0).getId());
+        Assertions.assertThat(notiRepository.findAllByUser(users.get(1)).size()).isEqualTo(1);
+        Assertions.assertThat(notiRepository.findAllByUser(users.get(0)).size()).isEqualTo(1);
+        Assertions.assertThat(notiRepository.findAllByUser(users.get(2)).size()).isEqualTo(1);
     }
 
     @DisplayName("Queue에 user가 선택한 random option으로 매칭 가능한 상대가 없을 경우")
@@ -318,6 +346,41 @@ class MatchServiceTest {
         }
 
     }
+
+    @DisplayName("슬롯 조회 : 게임 등록 되면 제 3자한테 closed 처리")
+    @Test
+    void getClosedStatusOfExistGame() {
+        matchService.makeMatch(UserDto.from(users.get(1)), Option.NORMAL, slotTimes.get(3));
+        matchService.makeMatch(UserDto.from(users.get(2)), Option.NORMAL, slotTimes.get(3));
+        SlotStatusResponseListDto allMatchStatus = matchFindService.getAllMatchStatus(UserDto.from(users.get(3)),
+                Option.NORMAL);
+        for (List<SlotStatusDto> dtos : allMatchStatus.getMatchBoards()) {
+            for (SlotStatusDto dto: dtos) {
+                if (dto.getStartTime().equals(slotTimes.get(3))) {
+                    Assertions.assertThat(dto.getStatus()).isEqualTo(SlotStatus.CLOSE.getCode());
+                }
+            }
+        }
+    }
+
+    @DisplayName("슬롯 조회 : 게임 등록 되면 제3자가 다른 게임 등록해도 제 3자한테 closed 처리")
+    @Test
+    void getClosedStatusOfExistGame2() {
+        matchService.makeMatch(UserDto.from(users.get(1)), Option.NORMAL, slotTimes.get(3));
+        matchService.makeMatch(UserDto.from(users.get(2)), Option.NORMAL, slotTimes.get(3));
+        matchService.makeMatch(UserDto.from(users.get(3)), Option.NORMAL, slotTimes.get(4));
+        matchService.makeMatch(UserDto.from(users.get(4)), Option.NORMAL, slotTimes.get(4));
+        SlotStatusResponseListDto allMatchStatus = matchFindService.getAllMatchStatus(UserDto.from(users.get(3)),
+                Option.NORMAL);
+        for (List<SlotStatusDto> dtos : allMatchStatus.getMatchBoards()) {
+            for (SlotStatusDto dto: dtos) {
+                if (dto.getStartTime().equals(slotTimes.get(3))) {
+                    Assertions.assertThat(dto.getStatus()).isEqualTo(SlotStatus.CLOSE.getCode());
+                }
+            }
+        }
+    }
+
     @DisplayName("current Match 조회 : user가 등록한 슬롯이 매칭되었을 때")
     @Test
     void readCurrentMatchAfterMakingGameEntity() {

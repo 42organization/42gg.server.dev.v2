@@ -72,7 +72,6 @@ public class ItemService {
         receiptRepository.save(receipt);
     }
 
-
     @Transactional
     public void giftItem(Long itemId, String ownerId, UserDto userDto) {
         Item item = itemRepository.findById(itemId)
@@ -110,5 +109,4 @@ public class ItemService {
                 ItemStatus.BEFORE, LocalDateTime.now());
         receiptRepository.save(receipt);
     }
-
 }

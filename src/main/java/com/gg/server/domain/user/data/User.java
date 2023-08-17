@@ -82,6 +82,7 @@ public class User extends BaseTimeEntity implements Serializable {
         this.eMail = updateReq.getEmail();
         this.racketType = updateReq.getRacketType();
         this.roleType = RoleType.of(updateReq.getRoleType());
+        this.ggCoin = updateReq.getCoin();
     }
 
     public void imageUpdate(String imageUri) {
@@ -123,5 +124,9 @@ public class User extends BaseTimeEntity implements Serializable {
             throw new InsufficientGgcoinException();  // 사용자의 ggCoin이 필요한 금액보다 적을 경우 예외를 발생
         }
         this.ggCoin = this.ggCoin - amount;
+    }
+
+    public void updateBackground(BackgroundType background) {
+        this.background = background;
     }
 }

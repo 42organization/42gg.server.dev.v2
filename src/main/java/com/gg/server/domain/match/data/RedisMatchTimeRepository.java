@@ -1,6 +1,7 @@
 package com.gg.server.domain.match.data;
 
 import com.gg.server.domain.match.type.MatchKey;
+import com.gg.server.domain.user.exception.UserNotFoundException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.cache.CacheProperties.Redis;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;

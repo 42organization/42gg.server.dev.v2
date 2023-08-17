@@ -1,6 +1,9 @@
 package com.gg.server.domain.coin.data;
 
+import com.gg.server.domain.feedback.data.Feedback;
 import com.gg.server.domain.user.data.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,4 +18,6 @@ public interface CoinHistoryRepository extends JpaRepository<CoinHistory, Long> 
     CoinHistory findFirstByOrderByIdDesc();
 
     List<CoinHistory> findAllByUserOrderByIdDesc(User user);
+
+    Page<CoinHistory> findAllByUserOrderByIdDesc(User user, Pageable pageable);
 }
