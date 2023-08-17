@@ -1,18 +1,12 @@
 package com.gg.server.domain.user.controller;
 
 import com.gg.server.domain.game.type.Mode;
-import com.gg.server.domain.user.data.User;
-import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.*;
 import com.gg.server.domain.user.exception.KakaoOauth2AlreadyExistException;
-import com.gg.server.domain.user.exception.UserEdgeTypeNotFound;
-import com.gg.server.domain.user.exception.UserNotFoundException;
-import com.gg.server.domain.user.exception.UserTextColorException;
 import com.gg.server.domain.user.service.UserAuthenticationService;
 import com.gg.server.domain.user.service.UserCoinService;
 import com.gg.server.domain.user.service.UserService;
 import com.gg.server.domain.user.service.UserTextColorCheckService;
-import com.gg.server.domain.user.type.EdgeType;
 import com.gg.server.domain.user.type.OauthType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.global.dto.PageRequestDto;
@@ -137,7 +131,7 @@ public class UserController {
 
     @PatchMapping("/edge")
     public ResponseEntity updateEdge(@RequestBody @Valid UserEdgeDto userEdgeDto, @Parameter(hidden = true) @Login UserDto user) {
-        userService.updateEdge(user.getId(), userEdgeDto);
+        userService.updateEdge(user, userEdgeDto);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
@@ -146,6 +140,12 @@ public class UserController {
         return userCoinService.getUserCoin(user.getIntraId());
     }
 
+    @PatchMapping("/background")
+    public ResponseEntity updateBackground(@RequestBody @Valid UserBackgroundDto userBackgroundDto, @Parameter(hidden = true) @Login UserDto user) {
+        userService.updateBackground(user, userBackgroundDto);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+  
     @GetMapping("/coins")
     public ResponseEntity<UserCoinHistoryListResponseDto> getUserCoinHistory(@ModelAttribute @Valid PageRequestDto coReq, @Parameter(hidden = true) @Login UserDto user) {
         Pageable pageable = PageRequest.of(coReq.getPage() - 1, coReq.getSize(), Sort.by("createdAt").descending());
