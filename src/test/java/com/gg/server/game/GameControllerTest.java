@@ -94,8 +94,6 @@ public class GameControllerTest {
     private Game game1;
     private Game game2;
 
-    private Game game3;
-
     @BeforeEach
     void init() {
         season = seasonRepository.save(new Season("test season", LocalDateTime.of(2023, 7, 14, 0, 0), LocalDateTime.of(2999, 12, 31, 23, 59),
@@ -292,9 +290,7 @@ public class GameControllerTest {
         //given
         String url = "/pingpong/games?page=1&size=10&nickname=test1";
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startTime"));
-        System.out.println("================================================");
         GameListResDto expect = gameFindService.allGameListUser(pageable, "test1", null);
-        System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++");
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())
@@ -371,5 +367,4 @@ public class GameControllerTest {
                 .andReturn().getResponse().getContentAsString();
         System.out.println("result: " + content);
     }
-
 }

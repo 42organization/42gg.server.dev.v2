@@ -24,7 +24,6 @@ import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.*;
@@ -37,7 +36,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class GameAdminService {
 
     private final GameAdminRepository gameAdminRepository;
@@ -64,12 +62,7 @@ public class GameAdminService {
 
     @Transactional(readOnly = true)
     public List<GameLogAdminDto> getGameLogList(List<Long> gameIdList){
-        log.info(gameIdList.size() + " : size");
-        for (Long id:gameIdList){
-            log.info(id+"::");
-        }
         List<GameTeamUser> teamViews = gameAdminRepository.findTeamsByGameIsIn(gameIdList);
-        log.info(teamViews.size() + "====");
         return teamViews.stream().map(GameLogAdminDto::new).collect(Collectors.toList());
     }
 
