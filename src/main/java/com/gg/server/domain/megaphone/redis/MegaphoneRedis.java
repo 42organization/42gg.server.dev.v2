@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.redis.core.RedisHash;
 
 import javax.persistence.Id;
@@ -16,7 +17,8 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 @AllArgsConstructor
-public class MegaphoneRedis{
+@NoArgsConstructor
+public class MegaphoneRedis {
     @Id
     private Long id;
     private String intraId;
