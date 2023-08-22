@@ -1,5 +1,6 @@
 package com.gg.server.domain.game.dto;
 
+import com.gg.server.domain.coin.dto.UserGameCoinResultDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,8 +11,8 @@ public class PPPChangeResultResDto extends ExpChangeResultResDto {
     private Integer changedPpp;
     private Integer beforePpp;
 
-    public PPPChangeResultResDto(Integer beforeExp, Integer currentExp, Integer beforePpp, Integer afterPpp) {
-        super(beforeExp, currentExp);
+    public PPPChangeResultResDto(Integer beforeExp, Integer currentExp, Integer beforePpp, Integer afterPpp, UserGameCoinResultDto userGameCoinResultDto) {
+        super(beforeExp, currentExp, userGameCoinResultDto);
         this.changedPpp = afterPpp - beforePpp;
         this.beforePpp = beforePpp;
     }
