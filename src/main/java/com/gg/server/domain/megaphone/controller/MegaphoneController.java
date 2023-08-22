@@ -44,10 +44,4 @@ public class MegaphoneController {
     public ResponseEntity<List<MegaphoneTodayListResponseDto>> getMegaphoneTodayList(@Parameter(hidden = true) @Login UserDto user) {
         return ResponseEntity.ok(megaphoneService.getMegaphoneTodayList());
     }
-
-    @PostMapping("/test")
-    public ResponseEntity testMegaphone(@Parameter(hidden = true) @Login UserDto user) {
-        megaphoneService.testMegaphone();
-        return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
 }
