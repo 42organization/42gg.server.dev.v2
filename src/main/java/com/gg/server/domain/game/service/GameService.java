@@ -22,7 +22,6 @@ import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.InvalidParameterException;
 import com.gg.server.global.utils.ExpLevelCalculator;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
@@ -33,7 +32,6 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class GameService {
     private final GameRepository gameRepository;
     private final TeamUserRepository teamUserRepository;
