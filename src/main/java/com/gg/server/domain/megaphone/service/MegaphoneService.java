@@ -112,9 +112,4 @@ public class MegaphoneService {
         if (!(receipt.getStatus().equals(ItemStatus.WAITING) || receipt.getStatus().equals(ItemStatus.USING)))
             throw new ItemStatusException();
     }
-
-    @Transactional
-    public void testMegaphone() {
-        megaphoneRedisRepository.addMegaphone(new MegaphoneRedis(12345L, "intraId", "content", LocalDateTime.now()));
-    }
 }
