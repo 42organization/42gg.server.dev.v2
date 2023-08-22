@@ -5,6 +5,7 @@ import com.gg.server.domain.item.type.ItemType;
 import com.gg.server.domain.megaphone.data.Megaphone;
 import com.gg.server.domain.megaphone.data.MegaphoneRepository;
 import com.gg.server.domain.megaphone.dto.MegaphoneDetailResponseDto;
+import com.gg.server.domain.megaphone.dto.MegaphoneTodayListResponseDto;
 import com.gg.server.domain.megaphone.dto.MegaphoneUseRequestDto;
 import com.gg.server.domain.megaphone.exception.MegaphoneNotFoundException;
 import com.gg.server.domain.megaphone.exception.MegaphoneTimeException;
@@ -29,6 +30,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -92,6 +94,10 @@ public class MegaphoneService {
         return new MegaphoneDetailResponseDto(megaphone);
     }
 
+    public List<MegaphoneTodayListResponseDto> getMegaphoneTodayList() {
+        return megaphoneRedisRepository.getAllMegaphone().stream().map(MegaphoneTodayListResponseDto::new).collect(Collectors.toList());
+    }
+
     private void checkOwner(User loginUser, Receipt receipt) {
         if (!receipt.getOwnerIntraId().equals(loginUser.getIntraId()))
             throw new ReceiptNotOwnerException();
@@ -105,5 +111,10 @@ public class MegaphoneService {
     private void checkUseStatus(Receipt receipt) {
         if (!(receipt.getStatus().equals(ItemStatus.WAITING) || receipt.getStatus().equals(ItemStatus.USING)))
             throw new ItemStatusException();
+    }
+
+    @Transactional
+    public void testMegaphone() {
+        megaphoneRedisRepository.addMegaphone(new MegaphoneRedis(12345L, "intraId", "content", LocalDateTime.now()));
     }
 }
