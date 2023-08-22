@@ -48,7 +48,7 @@ class CoinPolicyAdminControllerTest {
 
     @Test
     @DisplayName("[Get]/pingpong/admin/coinpolicy")
-    void getAnnouncement() throws Exception {
+    void getCoinPolicy() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
 
@@ -74,7 +74,7 @@ class CoinPolicyAdminControllerTest {
 
     @Test
     @DisplayName("[Post]/pingpong/admin/coinpolicy")
-    void addAnnouncement() throws Exception {
+    void addCoinPolicy() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
 

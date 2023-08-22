@@ -1,5 +1,7 @@
 package com.gg.server.domain.game.service;
 
+import com.gg.server.domain.coin.dto.UserGameCoinResultDto;
+import com.gg.server.domain.coin.service.UserCoinChangeService;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.dto.*;
@@ -38,8 +40,8 @@ public class GameService {
     private final RankRedisService rankRedisService;
     private final PChangeService pChangeService;
     private final PChangeRepository pChangeRepository;
-
     private final GameFindService gameFindService;
+    private final UserCoinChangeService userCoinChangeService;
 
     @Transactional(readOnly = true)
     public GameTeamInfo getUserGameInfo(Long gameId, Long userId) {
@@ -109,14 +111,15 @@ public class GameService {
                 rankRedisService.getUserPpp(team2UserId, game.getSeason().getId()), team2UserId.equals(loginUserId));
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public ExpChangeResultResDto expChangeResult(Long gameId, Long userId) {
         List<PChange> pChanges = pChangeService.findExpChangeHistory(gameId, userId);
+        UserGameCoinResultDto userGameCoinResultDto = userCoinChangeService.addNormalGameCoin(userId);
+
         if (pChanges.size() == 1) {
-            return new ExpChangeResultResDto(0, pChanges.get(0).getExp());
+            return new ExpChangeResultResDto(0, pChanges.get(0).getExp(), userGameCoinResultDto);
         } else {
-            log.info("before:", pChanges.get(1).getExp(), ", after: ", pChanges.get(0).getExp());
-            return new ExpChangeResultResDto(pChanges.get(1).getExp(), pChanges.get(0).getExp());
+            return new ExpChangeResultResDto(pChanges.get(1).getExp(), pChanges.get(0).getExp(), userGameCoinResultDto);
         }
     }
 
