@@ -2,7 +2,6 @@ package com.gg.server.domain.coin.service;
 
 import com.gg.server.domain.coin.data.CoinPolicyRepository;
 import com.gg.server.domain.coin.dto.UserGameCoinResultDto;
-import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.service.GameFindService;
 import com.gg.server.domain.team.data.Team;
 import com.gg.server.domain.team.data.TeamUser;
@@ -10,7 +9,6 @@ import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -30,7 +30,7 @@ public class CoinHistoryService {
     @Transactional
     public int addRankWinCoin(User user){
         int amount = coinPolicyRepository.findTopByOrderByCreatedAtDesc().getRankWin();
-        coinHistoryRepository.save(new CoinHistory(user, HistoryType.RANKWIN.getHistory(), amount));
+        addCoinHistory(new CoinHistory(user, HistoryType.RANKWIN.getHistory(), amount));
         return amount;
     }
 
