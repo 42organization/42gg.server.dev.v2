@@ -124,7 +124,8 @@ public class UserService {
     public UserDetailResponseDto getUserDetail(String targetUserIntraId) {
         User targetUser = userFindService.findByIntraId(targetUserIntraId);
         String statusMessage = userFindService.getUserStatusMessage(targetUser);
-        return new UserDetailResponseDto(targetUser, statusMessage);
+        Tier tier = rankFindService.findByUserIdAndSeasonId(targetUser.getId(), seasonFindService.findCurrentSeason(LocalDateTime.now()).getId()).getTier();
+        return new UserDetailResponseDto(targetUser, statusMessage, tier);
     }
 
     @Transactional
