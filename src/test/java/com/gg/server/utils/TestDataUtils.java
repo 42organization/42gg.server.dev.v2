@@ -18,6 +18,8 @@ import com.gg.server.domain.team.data.Team;
 import com.gg.server.domain.team.data.TeamRepository;
 import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.team.data.TeamUserRepository;
+import com.gg.server.domain.tier.data.Tier;
+import com.gg.server.domain.tier.data.TierRepository;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.controller.dto.GameInfoDto;
@@ -46,6 +48,7 @@ public class TestDataUtils {
     private final RankRedisRepository redisRepository;
     private final PChangeRepository pChangeRepository;
     private final RankRepository rankRepository;
+    private final TierRepository tierRepository;
 
     public String getLoginAccessToken() {
         User user = User.builder()
@@ -196,6 +199,25 @@ public class TestDataUtils {
                         .losses(0)
                         .statusMessage(statusMessage)
                         .build();
+        rankRepository.save(userRank);
+    }
+
+    public void createUserRank(User newUser, String statusMessage, Season season, Tier tier) {
+        if (rankRepository.findByUserIdAndSeasonId(newUser.getId(), season.getId()).isPresent())
+            return ;
+        String zSetKey = RedisKeyManager.getZSetKey(season.getId());
+        String hashKey = RedisKeyManager.getHashKey(season.getId());
+        redisRepository.addRankData(hashKey, newUser.getId(),
+                new RankRedis(newUser.getId(), "aa", season.getStartPpp(), 0, 0, statusMessage));
+        Rank userRank = Rank.builder()
+                .user(newUser)
+                .season(season)
+                .ppp(season.getStartPpp())
+                .wins(0)
+                .losses(0)
+                .statusMessage(statusMessage)
+                .tier(tier)
+                .build();
         rankRepository.save(userRank);
     }
 

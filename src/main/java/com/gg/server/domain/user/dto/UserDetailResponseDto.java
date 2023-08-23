@@ -1,5 +1,6 @@
 package com.gg.server.domain.user.dto;
 
+import com.gg.server.domain.tier.data.Tier;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.type.SnsType;
 import com.gg.server.global.utils.ExpLevelCalculator;
@@ -17,13 +18,19 @@ public class UserDetailResponseDto {
     private Integer maxExp;
     private Double expRate;
     private SnsType snsNotiOpt;
+    private String tierName;
+    private String tierImageUri;
 
-    public UserDetailResponseDto(User user, String statusMessage) {
+
+
+    public UserDetailResponseDto(User user, String statusMessage, Tier tier) {
         this.intraId = user.getIntraId();
         this.userImageUri = user.getImageUri();
         this.racketType = user.getRacketType().getCode();
         this.statusMessage = statusMessage;
         this.snsNotiOpt = user.getSnsNotiOpt();
+        this.tierName = tier.getName();
+        this.tierImageUri = tier.getImageUri();
         calculateExpAndLevel(user);
     }
 
