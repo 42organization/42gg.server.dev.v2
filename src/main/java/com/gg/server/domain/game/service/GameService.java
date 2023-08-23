@@ -22,7 +22,6 @@ import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.InvalidParameterException;
 import com.gg.server.global.utils.ExpLevelCalculator;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
@@ -33,7 +32,6 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class GameService {
     private final GameRepository gameRepository;
     private final TeamUserRepository teamUserRepository;
@@ -123,15 +121,16 @@ public class GameService {
         }
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public PPPChangeResultResDto pppChangeResult(Long gameId, Long userId) throws PChangeNotExistException {
         Season season = gameFindService.findByGameId(gameId).getSeason();
         List<PChange> pppHistory = pChangeService.findPPPChangeHistory(gameId, userId, season.getId());
         List<PChange> expHistory = pChangeService.findExpChangeHistory(gameId, userId);
+        UserGameCoinResultDto userGameCoinResultDto = userCoinChangeService.addRankGameCoin(gameId, userId);
         return new PPPChangeResultResDto(expHistory.size() <= 1 ? 0 : expHistory.get(1).getExp(),
                 pppHistory.get(0).getExp(),
                 pppHistory.size() <= 1 ? season.getStartPpp() : pppHistory.get(1).getPppResult(),
-                pppHistory.get(0).getPppResult());
+                pppHistory.get(0).getPppResult(), userGameCoinResultDto);
     }
 
     public void expUpdates(Game game, List<TeamUser> teamUsers) {
