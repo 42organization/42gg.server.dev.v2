@@ -486,7 +486,7 @@ class UserControllerTest {
     }
   
     @Test
-    @DisplayName("[get]/pingpong/users/coins")
+    @DisplayName("[get]/pingpong/users/coinhistory")
     public void getUserCoinHistory() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
@@ -495,7 +495,7 @@ class UserControllerTest {
         coinHistoryService.addNormalCoin(user);
         coinHistoryService.addRankWinCoin(user);
         coinHistoryService.addNormalCoin(user);
-        String url = "/pingpong/users/coins?page=1&size=5";
+        String url = "/pingpong/users/coinhistory?page=1&size=5";
 
         String contentAsString = mockMvc.perform(get(url)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
@@ -505,7 +505,7 @@ class UserControllerTest {
         UserCoinHistoryListResponseDto result = objectMapper.readValue(contentAsString, UserCoinHistoryListResponseDto.class);
 
         System.out.println(result.getTotalPage());
-        for(CoinHistoryResponseDto temp : result.getCoinPolicyList()){
+        for(CoinHistoryResponseDto temp : result.getUseCoinList()){
             System.out.println(temp.getHistory() + " " + temp.getAmount() + " " + temp.getCreatedAt());
         }
     }

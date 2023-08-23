@@ -12,6 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 public class UserCoinHistoryListResponseDto {
-    private List<CoinHistoryResponseDto> coinPolicyList;
+    private List<CoinHistoryResponseDto> useCoinList;
     private int totalPage;
 }
