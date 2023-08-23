@@ -44,12 +44,34 @@ class UserCoinChangeServiceTest {
     UserCoinChangeService userCoinChangeService;
 
     @Test
+    @DisplayName("출석시 재화 증가 서비스 테스트")
+    void addAttendanceCoin() {
+        String accessToken = testDataUtils.getLoginAccessToken();
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
+        User user = userRepository.getById(userId);
+
+        int beforeCoin = user.getGgCoin();
+
+        int coinIncrement = userCoinChangeService.addAttendanceCoin(user);
+
+        assertThat(beforeCoin + coinIncrement).isEqualTo(user.getGgCoin());
+        assertThat(coinPolicyRepository.findTopByOrderByCreatedAtDesc().getAttendance()).isEqualTo(coinIncrement);
+        System.out.println(coinHistoryRepository.findFirstByOrderByIdDesc().getHistory());
+
+        try{
+            coinIncrement = userCoinChangeService.addAttendanceCoin(user);
+        }catch (Exception e){
+            System.out.println(e.getMessage() + " " + e);
+            System.out.println("===출석 중복 제거 기능 수행 완료===");
+        }
+    }
+
+    @Test
     @DisplayName("노말 게임 재화 증가 서비스 테스트")
     void addNormalGameService() {
         String accessToken = testDataUtils.getLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
         User user = userRepository.getById(userId);
-
 
         UserGameCoinResultDto userGameCoinResultDto = userCoinChangeService.addNormalGameCoin(userId);
 
