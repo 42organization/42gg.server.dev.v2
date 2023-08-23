@@ -266,10 +266,16 @@ public class UserService {
         LocalDateTime startOfDay = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0);
         LocalDateTime endOfDay = LocalDateTime.now().withHour(23).withMinute(59).withSecond(59);
         Boolean isAttended = coinHistoryRepository.existsCoinHistoryByUserAndHistoryAndCreatedAtToday(loginUser, ATTENDANCE, startOfDay, endOfDay);
+        Integer level = ExpLevelCalculator.getLevel(user.getTotalExp());
         Tier tier = rankFindService.findByUserIdAndSeasonId(user.getId(), seasonFindService.findCurrentSeason(LocalDateTime.now()).getId()).getTier();
+        /* 티어가 존재하지 않는 일반 유저일때 : None, None 처리해서 보내기*/
+        if (tier == null) {
+            String tierName = "NONE";
+            String tierImageUri = "NONE";
+            return new UserNormalDetailResponseDto(user.getIntraId(), user.getImageUri(), isAdmin, isAttended, tierName, tierImageUri, level);
+        }
         String tierName = tier.getName();
         String tierImageUri = tier.getImageUri();
-        Integer level = ExpLevelCalculator.getLevel(user.getTotalExp());
         return new UserNormalDetailResponseDto(user.getIntraId(), user.getImageUri(), isAdmin, isAttended, tierName, tierImageUri, level);
     }
   
