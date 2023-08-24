@@ -68,16 +68,32 @@ public class Item {
     }
 
     @Builder
-    public Item(ItemUpdateRequestDto updateRequestDto, String creatorIntraId) {
+    public Item(ItemUpdateRequestDto updateRequestDto, String creatorIntraId, String itemImageUri) {
         this.name = updateRequestDto.getName();
         this.content = updateRequestDto.getContent();
-        this.imageUri = updateRequestDto.getImageUri();
+        this.imageUri = itemImageUri;
         this.price = updateRequestDto.getPrice();
         this.discount = updateRequestDto.getDiscount();
         this.isVisible = true;
         this.creatorIntraId = creatorIntraId;
         this.createdAt = LocalDateTime.now();
         this.type = updateRequestDto.getItemType();
+    }
+
+    @Builder
+    public Item(ItemUpdateRequestDto updateRequestDto, String creatorIntraId) {
+        this.name = updateRequestDto.getName();
+        this.content = updateRequestDto.getContent();
+        this.price = updateRequestDto.getPrice();
+        this.discount = updateRequestDto.getDiscount();
+        this.isVisible = true;
+        this.creatorIntraId = creatorIntraId;
+        this.createdAt = LocalDateTime.now();
+        this.type = updateRequestDto.getItemType();
+    }
+
+    public void imageUpdate(String imageUri) {
+        this.imageUri = imageUri;
     }
 
     @Override
