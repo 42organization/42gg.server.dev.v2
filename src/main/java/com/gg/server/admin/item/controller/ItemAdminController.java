@@ -35,7 +35,8 @@ public class ItemAdminController {
         return itemAdminService.getAllItemHistory(pageable);
     }
 
-    @PutMapping(path="/{itemId}")
+    @PostMapping(path="/{itemId}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+//    @PostMapping("{itemId}")
     public ResponseEntity updateItem(@PathVariable("itemId") Long itemId,
                                      @RequestPart @Valid ItemUpdateRequestDto itemRequestDto,
                                      @RequestPart(required = false) MultipartFile imgData,
