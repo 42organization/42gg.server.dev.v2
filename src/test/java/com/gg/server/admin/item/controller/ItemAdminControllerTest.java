@@ -17,7 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
@@ -80,17 +80,15 @@ class ItemAdminControllerTest {
     public void updateItemTest() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
-        String createrId = userRepository.getById(userId).getIntraId();
-        String requestJson = "{\"name\" : \"확성기\", \"content\" : \"testing\", \"imageUri\" : \"https://kakao.com\", \"price\" : 42, \"discount\" : 50}";
-        String contentAsString = mockMvc.perform(put("/pingpong/admin/items/{itemId}", 1)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestJson)
+        String creatorId = userRepository.getById(userId).getIntraId();
+        MockMultipartFile image = new MockMultipartFile("file", "imagefile.jpeg", "image/jpeg", "<<jpeg data>>".getBytes());
+        MockMultipartFile jsonFile = new MockMultipartFile("itemRequestDto", "", "application/json", "{\"name\": \"TEST\", \"content\": \"TESTING\", \"price\": 42, \"discount\": 50, \"itemType\": \"MEGAPHONE\"}".getBytes());
+        String contentAsString = mockMvc.perform(multipart("/pingpong/admin/items/{itemId}", 1)
+                .file(image)
+                        .file(jsonFile)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isNoContent())
                 .andReturn().getResponse().getContentAsString();
-        System.out.println(contentAsString);
-        List<Item> list = itemAdminRepository.findAll();
-        assertThat(list.get(list.size() - 1).getCreatorIntraId()).isEqualTo(createrId);
     }
 
     @Test

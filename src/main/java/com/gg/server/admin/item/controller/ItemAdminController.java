@@ -3,6 +3,8 @@ package com.gg.server.admin.item.controller;
 import com.gg.server.admin.item.dto.ItemListResponseDto;
 import com.gg.server.admin.item.dto.ItemUpdateRequestDto;
 import com.gg.server.admin.item.service.ItemAdminService;
+import com.gg.server.domain.item.exception.ItemImageLargeException;
+import com.gg.server.domain.item.exception.ItemImageTypeException;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.dto.PageRequestDto;
 import com.gg.server.global.utils.argumentresolver.Login;
@@ -12,10 +14,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,9 +35,21 @@ public class ItemAdminController {
         return itemAdminService.getAllItemHistory(pageable);
     }
 
-    @PutMapping("/{itemId}")
-    public ResponseEntity updateItem(@PathVariable("itemId") Long itemId, @RequestBody @Valid ItemUpdateRequestDto itemRequestDto, @Parameter(hidden = true) @Login UserDto user) {
-        itemAdminService.updateItem(itemId, itemRequestDto, user);
+    @PostMapping(path="/{itemId}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity updateItem(@PathVariable("itemId") Long itemId,
+                                     @RequestPart @Valid ItemUpdateRequestDto itemRequestDto,
+                                     @RequestPart(required = false) MultipartFile imgData,
+                                     @Parameter(hidden = true) @Login UserDto user) throws IOException {
+        if (imgData != null) {
+            if (imgData.getSize() > 50000) {
+                throw new ItemImageLargeException();
+            } else if (imgData.getContentType() == null || !imgData.getContentType().equals("image/jpeg")) {
+                throw new ItemImageTypeException();
+            }
+            itemAdminService.updateItem(itemId, itemRequestDto, imgData, user);
+        } else {
+            itemAdminService.updateItem(itemId, itemRequestDto, user);
+        }
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 

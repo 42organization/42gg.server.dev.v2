@@ -17,9 +17,6 @@ public class ItemUpdateRequestDto {
     @NotNull(message = "plz. content")
     private String content;
 
-    @NotNull(message = "plz. imageUri")
-    private String imageUri;
-
     @NotNull(message = "plz. price")
     private Integer price;
 
@@ -34,7 +31,6 @@ public class ItemUpdateRequestDto {
         return "ItemUpdateRequestDto{" +
                 "name='" + name + '\'' +
                 ", content='" + content + '\'' +
-                ", imageUri='" + imageUri + '\'' +
                 ", price=" + price +
                 ", discount=" + discount +
                 ", itemType='" + itemType + '\'' +
