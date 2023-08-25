@@ -13,14 +13,12 @@ import com.gg.server.domain.season.service.SeasonFindService;
 import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
-import com.gg.server.global.dto.PageRequestDto;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.PageNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
