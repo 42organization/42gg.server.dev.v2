@@ -1,11 +1,11 @@
 package com.gg.server.domain.rank.redis;
 
 import com.gg.server.domain.rank.exception.RedisDataNotFoundException;
-import com.gg.server.global.exception.ErrorCode;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
@@ -13,18 +13,15 @@ import java.util.stream.Collectors;
 
 @Repository
 public class RankRedisRepository {
-    private final ZSetOperations<String, String> zSetOps;
-    private final RedisTemplate<String, String> redisTemplate;
+    private final ZSetOperations<String, Object> zSetOps;
     private final HashOperations<String, String, Object> hashOps;
-    private final RedisTemplate<String, Object> hashRedisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
 
-    public RankRedisRepository(RedisTemplate<String, String> redisTemplate, RedisTemplate<String, Object> hashRedisTemplate) {
+    public RankRedisRepository(RedisTemplate<String, Object> redisTemplate) {
         this.zSetOps = redisTemplate.opsForZSet();
+        this.hashOps = redisTemplate.opsForHash();
         this.redisTemplate = redisTemplate;
-        this.hashOps = hashRedisTemplate.opsForHash();
-        this.hashRedisTemplate = hashRedisTemplate;
     }
-
 
     /**
      *
@@ -48,6 +45,7 @@ public class RankRedisRepository {
      */
     public void incrementScoreInZSet(String key, Long userId, int ppp) {
         zSetOps.incrementScore(key, userId.toString(), ppp);
+
     }
 
 
@@ -114,10 +112,11 @@ public class RankRedisRepository {
      *  startRank -> 0부터 시작
      */
     public List<Long> getUserIdsByRangeFromZSet(String key, long startRank, long endRank) {
-        Set<String> result = zSetOps.reverseRange(key, startRank, endRank);
+        Set<Object> result = zSetOps.reverseRange(key, startRank, endRank);
+        List<String> stringList = result.stream().map(Object::toString).collect(Collectors.toList());
         if (result == null)
             throw new RedisDataNotFoundException();
-        return result.stream()
+        return stringList.stream()
                 .map(Long::parseLong).collect(Collectors.toList());
     }
 
@@ -130,7 +129,7 @@ public class RankRedisRepository {
      * @param userRank
      * redis hash에 user rank데이터를 추가하는 메소드
      */
-    public void addRankData(String key, Long userId, RankRedis userRank) {
+    public void addRankData(String key, Long userId, RankRedis userRank){
         hashOps.put(key, userId.toString(), userRank);
     }
 
@@ -196,14 +195,13 @@ public class RankRedisRepository {
 
     public void deleteAll(){
         redisTemplate.delete(redisTemplate.keys("*"));
-        hashRedisTemplate.delete(hashRedisTemplate.keys("*"));
     }
     public void deleteZSetKey(String key) {
         redisTemplate.delete(key);
     }
 
     public void deleteHashKey(String key) {
-        hashRedisTemplate.delete(key);
+        redisTemplate.delete(key);
     }
 
     public Boolean isEmpty(String hashKey) {
