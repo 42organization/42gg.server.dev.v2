@@ -68,7 +68,8 @@ class ItemAdminControllerTest {
         System.out.println(result.getHistoryList().get(0));
         assertThat(result.getHistoryList().get(0).getItemId());
         assertThat(result.getHistoryList().get(0).getName());
-        assertThat(result.getHistoryList().get(0).getContent());
+        assertThat(result.getHistoryList().get(0).getMainContent());
+        assertThat(result.getHistoryList().get(0).getSubContent());
         assertThat(result.getHistoryList().get(0).getPrice());
     }
 

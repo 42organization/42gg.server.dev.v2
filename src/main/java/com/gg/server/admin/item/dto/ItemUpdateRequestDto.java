@@ -13,8 +13,11 @@ public class ItemUpdateRequestDto {
     @NotNull(message = "plz. itemName")
     private String name;
 
-    @NotNull(message = "plz. content")
-    private String content;
+    @NotNull(message = "plz. mainContent")
+    private String mainContent;
+
+    @NotNull(message = "plz. subContent")
+    private String subContent;
 
     @NotNull(message = "plz. imageUri")
     private String imageUri;
@@ -32,7 +35,8 @@ public class ItemUpdateRequestDto {
     public String toString() {
         return "ItemRequestDto{" +
                 "name='" + name + '\'' +
-                ", content='" + content + '\'' +
+                ", mainContent='" + mainContent + '\'' +
+                ", subContent='" + subContent + '\'' +
                 ", imageUri='" + imageUri + '\'' +
                 ", price=" + price +
                 ", discount=" + discount +
