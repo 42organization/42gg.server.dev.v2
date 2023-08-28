@@ -12,4 +12,7 @@ public class UserNormalDetailResponseDto {
     private String userImageUri;
     private Boolean isAdmin;
     private Boolean isAttended;
+    private String tierName;
+    private String tierImageUri;
+    private Integer level;
 }

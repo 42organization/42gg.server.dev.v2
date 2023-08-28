@@ -24,7 +24,6 @@ import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.*;
@@ -37,7 +36,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class GameAdminService {
 
     private final GameAdminRepository gameAdminRepository;
@@ -54,7 +52,6 @@ public class GameAdminService {
         Page<Game> gamePage = gameAdminRepository.findAllByStatus(pageable, StatusType.END); //모든 게임 정보 가져오기
         return new GameLogListAdminResponseDto(getGameLogList(gamePage.getContent().stream().map(Game::getId).collect(Collectors.toList())), gamePage.getTotalPages());
     }
-
 
     @Transactional(readOnly = true)
     public GameLogListAdminResponseDto findGamesBySeasonId(Long seasonId, Pageable pageable){

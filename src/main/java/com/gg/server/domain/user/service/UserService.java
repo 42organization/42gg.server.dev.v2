@@ -27,6 +27,7 @@ import com.gg.server.domain.receipt.exception.ReceiptNotOwnerException;
 import com.gg.server.domain.receipt.type.ItemStatus;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.service.SeasonFindService;
+import com.gg.server.domain.tier.data.Tier;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.*;
@@ -34,6 +35,7 @@ import com.gg.server.domain.user.exception.UserAlreadyAttendanceException;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.domain.user.exception.UserTextColorException;
 import com.gg.server.domain.user.type.*;
+import com.gg.server.global.utils.ExpLevelCalculator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -122,7 +124,8 @@ public class UserService {
     public UserDetailResponseDto getUserDetail(String targetUserIntraId) {
         User targetUser = userFindService.findByIntraId(targetUserIntraId);
         String statusMessage = userFindService.getUserStatusMessage(targetUser);
-        return new UserDetailResponseDto(targetUser, statusMessage);
+        Tier tier = rankFindService.findByUserIdAndSeasonId(targetUser.getId(), seasonFindService.findCurrentSeason(LocalDateTime.now()).getId()).getTier();
+        return new UserDetailResponseDto(targetUser, statusMessage, tier);
     }
 
     @Transactional
@@ -263,7 +266,17 @@ public class UserService {
         LocalDateTime startOfDay = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0);
         LocalDateTime endOfDay = LocalDateTime.now().withHour(23).withMinute(59).withSecond(59);
         Boolean isAttended = coinHistoryRepository.existsCoinHistoryByUserAndHistoryAndCreatedAtToday(loginUser, ATTENDANCE, startOfDay, endOfDay);
-        return new UserNormalDetailResponseDto(user.getIntraId(), user.getImageUri(), isAdmin, isAttended);
+        Integer level = ExpLevelCalculator.getLevel(user.getTotalExp());
+        Tier tier = rankFindService.findByUserIdAndSeasonId(user.getId(), seasonFindService.findCurrentSeason(LocalDateTime.now()).getId()).getTier();
+        /* 티어가 존재하지 않는 일반 유저일때 : None, None 처리해서 보내기*/
+        if (tier == null) {
+            String tierName = "NONE";
+            String tierImageUri = "NONE";
+            return new UserNormalDetailResponseDto(user.getIntraId(), user.getImageUri(), isAdmin, isAttended, tierName, tierImageUri, level);
+        }
+        String tierName = tier.getName();
+        String tierImageUri = tier.getImageUri();
+        return new UserNormalDetailResponseDto(user.getIntraId(), user.getImageUri(), isAdmin, isAttended, tierName, tierImageUri, level);
     }
   
     @Transactional()

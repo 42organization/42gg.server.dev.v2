@@ -21,6 +21,8 @@ import com.gg.server.domain.receipt.data.ReceiptRepository;
 import com.gg.server.domain.receipt.type.ItemStatus;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.data.SeasonRepository;
+import com.gg.server.domain.tier.data.Tier;
+import com.gg.server.domain.tier.data.TierRepository;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.controller.dto.GameInfoDto;
@@ -75,6 +77,9 @@ class UserControllerTest {
 
     @Autowired
     RankRedisRepository redisRepository;
+
+    @Autowired
+    TierRepository tierRepository;
 
     @Autowired
     RankRepository rankRepository;
@@ -157,7 +162,7 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("/")
+    @DisplayName("GET /pingpong/users")
     public void userNormalDetail() throws Exception {
         //given
         String url = "/pingpong/users";
@@ -166,7 +171,11 @@ class UserControllerTest {
         String imageUrl = "imageUrl";
         User newUser = testDataUtils.createNewUser(intraId, email, imageUrl, RacketType.PENHOLDER,
                 SnsType.BOTH, RoleType.ADMIN);
+        Season season = testDataUtils.createSeason();
         String accessToken = tokenProvider.createToken(newUser.getId());
+        Tier tier = tierRepository.getById(1L);
+        testDataUtils.createUserRank(newUser, "statusMessage", season, tier);
+
 
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
@@ -219,7 +228,8 @@ class UserControllerTest {
         User newUser = testDataUtils.createNewUser(intraId, email, imageUrl, RacketType.PENHOLDER,
                 SnsType.BOTH, RoleType.ADMIN);
         String accessToken = tokenProvider.createToken(newUser.getId());
-        testDataUtils.createUserRank(newUser, statusMessage, season);
+        Tier tier = tierRepository.getById(1L);
+        testDataUtils.createUserRank(newUser, statusMessage, season, tier);
         String url = "/pingpong/users/" + newUser.getIntraId();
 
         //when
