@@ -44,7 +44,7 @@ public class CoinHistoryService {
     }
 
     @Transactional(readOnly = true)
-    public boolean isUserTodayAttended(User user) {
+    public boolean hasAttendedToday(User user) {
         LocalDateTime startOfDay = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0);
         LocalDateTime endOfDay = LocalDateTime.now().withHour(23).withMinute(59).withSecond(59);
         return coinHistoryRepository.existsCoinHistoryByUserAndHistoryAndCreatedAtToday(

@@ -258,7 +258,7 @@ public class UserService {
     public UserNormalDetailResponseDto getUserNormalDetail(UserDto user) {
         User loginUser = userRepository.findById(user.getId()).orElseThrow(() -> new UsernameNotFoundException("User" + user.getId()));
         Boolean isAdmin = user.getRoleType() == RoleType.ADMIN;
-        Boolean isAttended = coinHistoryService.isUserTodayAttended(loginUser);
+        Boolean isAttended = coinHistoryService.hasAttendedToday(loginUser);
         Integer level = ExpLevelCalculator.getLevel(user.getTotalExp());
         Tier tier = rankFindService.findByUserIdAndSeasonId(user.getId(), seasonFindService.findCurrentSeason(LocalDateTime.now()).getId()).getTier();
         /* 티어가 존재하지 않는 일반 유저일때 : None, None 처리해서 보내기*/

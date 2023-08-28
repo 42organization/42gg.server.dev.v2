@@ -28,7 +28,7 @@ public class UserCoinChangeService {
 
     @Transactional
     public int addAttendanceCoin(User user){
-        if (coinHistoryService.isUserTodayAttended(user))
+        if (coinHistoryService.hasAttendedToday(user))
             throw new UserAlreadyAttendanceException();
         int coinIncrement = coinPolicyRepository.findTopByOrderByCreatedAtDesc().getAttendance();
         user.addGgCoin(coinIncrement);
