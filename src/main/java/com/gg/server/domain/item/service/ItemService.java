@@ -10,6 +10,7 @@ import com.gg.server.domain.item.dto.UserItemResponseDto;
 import com.gg.server.domain.item.exception.InsufficientGgcoinException;
 import com.gg.server.domain.item.exception.ItemNotFoundException;
 import com.gg.server.domain.item.exception.ItemNotPurchasableException;
+import com.gg.server.domain.noti.service.NotiService;
 import com.gg.server.domain.receipt.data.Receipt;
 import com.gg.server.domain.receipt.data.ReceiptRepository;
 import com.gg.server.domain.receipt.type.ItemStatus;
@@ -35,6 +36,7 @@ public class ItemService {
     private final ReceiptRepository receiptRepository;
     private final UserRepository userRepository;
     private final UserItemRepository userItemRepository;
+    private final NotiService notiService;
 
     @Transactional(readOnly = true)
     public ItemStoreListResponseDto getAllItems() {
@@ -115,6 +117,7 @@ public class ItemService {
         Receipt receipt = new Receipt(item, userDto.getIntraId(), ownerId,
                 ItemStatus.BEFORE, LocalDateTime.now());
         receiptRepository.save(receipt);
+        notiService.createGiftNoti(owner, payUser, item.getName());
     }
 
     @Transactional(readOnly = true)
