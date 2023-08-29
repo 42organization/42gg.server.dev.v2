@@ -4,7 +4,7 @@ create table user_image
     user_id    bigint,
     image_uri  varchar(255),
     created_at datetime(6) not null,
-    visible    bit     not null default 1,
+    is_deleted    bit     not null default 1,
 
     primary key (id)
 );
