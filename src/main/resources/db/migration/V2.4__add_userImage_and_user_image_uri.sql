@@ -12,6 +12,8 @@ create table user_image
 alter table user_image
     add constraint fk_user_image_user_user_id
         foreign key (user_id)
-            references user (id);
+            references `user` (id);
 
 INSERT INTO user_image (user_id, image_uri, created_at) SELECT id, image_uri, created_at FROM user;
+
+alter table user drop `image_uri`
