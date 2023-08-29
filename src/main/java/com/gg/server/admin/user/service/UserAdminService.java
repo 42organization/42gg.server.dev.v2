@@ -16,8 +16,11 @@ import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.exception.SeasonNotFoundException;
 import com.gg.server.domain.user.data.User;
+import com.gg.server.domain.user.data.UserImage;
+import com.gg.server.domain.user.data.UserImageRepository;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.domain.user.service.UserFindService;
+import com.gg.server.domain.user.service.UserService;
 import com.gg.server.global.utils.aws.AsyncNewUserImageUploader;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -42,6 +45,7 @@ public class UserAdminService {
     private final RankRedisAdminService rankRedisAdminService;
     private final AsyncNewUserImageUploader asyncNewUserImageUploader;
     private final UserFindService userFindService;
+    private final UserImageRepository userImageRepository;
 
     @Transactional(readOnly = true)
     public UserSearchAdminResponseDto searchAll(Pageable pageable) {
@@ -78,9 +82,9 @@ public class UserAdminService {
         try {
             RankRedis userCurrRank = rankRedisRepository.findRankByUserId(RedisKeyManager.getHashKey(currSeason.getId()),
                     user.getId());
-           return new UserDetailAdminResponseDto(user, userCurrRank);
+           return new UserDetailAdminResponseDto(user, getUserImageToString(user), userCurrRank);
         } catch (RedisDataNotFoundException e){
-            return new UserDetailAdminResponseDto(user);
+            return new UserDetailAdminResponseDto(user, getUserImageToString(user));
         }
     }
 
@@ -112,5 +116,10 @@ public class UserAdminService {
         rankRedisAdminService.updateRankUser(RedisKeyManager.getHashKey(currSeasonId),
                 RedisKeyManager.getZSetKey(currSeasonId),
                 userId, userCurrRankRedis);
+    }
+
+    public String getUserImageToString(User user) {
+        UserImage userImage = userImageRepository.findTopByUserAndIsDeletedOrderById(user, false).orElse(null);
+        return userImage.toString();
     }
 }

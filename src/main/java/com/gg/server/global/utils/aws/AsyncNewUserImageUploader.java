@@ -43,12 +43,9 @@ public class AsyncNewUserImageUploader {
             return ;
         }
         userRepository.findByIntraId(intraId).ifPresent(user -> {
-            if (s3ImageUrl == null) {
-                user.imageUpdate(defaultImageUrl);
-            } else {
-                user.imageUpdate(s3ImageUrl);
-            }
-            userRepository.save(user);
+            UserImage userImage = new UserImage(user, (s3ImageUrl != null) ? s3ImageUrl : defaultImageUrl,
+                    LocalDateTime.now(), false);
+            userImageRepository.save(userImage);
         });
     }
 
@@ -59,6 +56,5 @@ public class AsyncNewUserImageUploader {
         s3ImageUrl = s3ImageUrl == null ? defaultImageUrl : s3ImageUrl;
         UserImage userImage = new UserImage(user, s3ImageUrl, LocalDateTime.now(), false);
         userImageRepository.saveAndFlush(userImage);
-
     }
 }

@@ -57,8 +57,7 @@ class MegaphoneControllerTest {
     void getAnnouncementList() throws Exception {
         String intraId = "intra";
         String email = "email";
-        String imageUrl = "imageUrl";
-        User newUser = testDataUtils.createNewUser(intraId, email, imageUrl, RacketType.PENHOLDER,
+        User newUser = testDataUtils.createNewUser(intraId, email, RacketType.PENHOLDER,
                 SnsType.BOTH, RoleType.ADMIN);
         String accessToken = tokenProvider.createToken(newUser.getId());
         // db에 저장해두고 테스트
@@ -86,7 +85,7 @@ class MegaphoneControllerTest {
         String intraId = "intra";
         String email = "email";
         String imageUrl = "imageUrl";
-        User newUser = testDataUtils.createNewUser(intraId, email, imageUrl, RacketType.PENHOLDER,
+        User newUser = testDataUtils.createNewUser(intraId, email, RacketType.PENHOLDER,
                 SnsType.BOTH, RoleType.ADMIN);
         String accessToken = tokenProvider.createToken(newUser.getId());
         Receipt receipt = receiptRepository.findById(2L).get();
@@ -107,8 +106,7 @@ class MegaphoneControllerTest {
     void getMegaphoneDetailTest() throws Exception {
         String intraId = "intra";
         String email = "email";
-        String imageUrl = "imageUrl";
-        User newUser = testDataUtils.createNewUser(intraId, email, imageUrl, RacketType.PENHOLDER,
+        User newUser = testDataUtils.createNewUser(intraId, email, RacketType.PENHOLDER,
                 SnsType.BOTH, RoleType.ADMIN);
         String accessToken = tokenProvider.createToken(newUser.getId());
         Receipt receipt = receiptRepository.findById(1L).get();

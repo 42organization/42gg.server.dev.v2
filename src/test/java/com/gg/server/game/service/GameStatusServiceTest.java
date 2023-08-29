@@ -56,8 +56,8 @@ public class GameStatusServiceTest {
     void init() {
         season = seasonRepository.save(new Season("test season", LocalDateTime.of(2023, 5, 14, 0, 0), LocalDateTime.of(2999, 12, 31, 23, 59),
                 1000, 100));
-        user1 = testDataUtils.createNewUser("test2", "test2@naver.com", "null1", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
-        user2 = testDataUtils.createNewUser("test3", "test3@naver.com", "null1", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
+        user1 = testDataUtils.createNewUser("test2", "test2@naver.com", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
+        user2 = testDataUtils.createNewUser("test3", "test3@naver.com", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime startTime = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), now.getMinute());
         game1 = gameRepository.save(new Game(season, StatusType.BEFORE, Mode.RANK, startTime, startTime.plusMinutes(15)));

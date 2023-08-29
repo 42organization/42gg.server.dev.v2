@@ -22,7 +22,7 @@ public class UserSearchAdminDto {
 
     @Override
     public String toString() {
-        return "UserAdminDto{" +
+        return "{" +
                 "id=" + id +
                 ", intraId='" + intraId + '\'' +
                 ", statusMessage='" + statusMessage + '\'' +

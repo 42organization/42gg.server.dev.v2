@@ -1,6 +1,8 @@
 package com.gg.server.domain.user.dto;
 
 import com.gg.server.domain.user.data.User;
+import com.gg.server.domain.user.type.BackgroundType;
+import com.gg.server.domain.user.type.EdgeType;
 import com.gg.server.domain.user.type.SnsType;
 import com.gg.server.global.utils.ExpLevelCalculator;
 import lombok.*;
@@ -17,10 +19,13 @@ public class UserDetailResponseDto {
     private Integer maxExp;
     private Double expRate;
     private SnsType snsNotiOpt;
+    private BackgroundType background;
+    private String textColor;
+    private EdgeType edge;
 
-    public UserDetailResponseDto(User user, String statusMessage) {
+    public UserDetailResponseDto(User user, String userImageUri, String statusMessage) {
         this.intraId = user.getIntraId();
-        this.userImageUri = user.getImageUri();
+        this.userImageUri = userImageUri;
         this.racketType = user.getRacketType().getCode();
         this.statusMessage = statusMessage;
         this.snsNotiOpt = user.getSnsNotiOpt();

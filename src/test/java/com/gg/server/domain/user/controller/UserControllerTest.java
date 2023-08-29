@@ -18,10 +18,13 @@ import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.receipt.data.Receipt;
 import com.gg.server.domain.receipt.data.ReceiptRepository;
+import com.gg.server.domain.receipt.exception.ReceiptNotFoundException;
 import com.gg.server.domain.receipt.type.ItemStatus;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.data.SeasonRepository;
 import com.gg.server.domain.user.data.User;
+import com.gg.server.domain.user.data.UserImage;
+import com.gg.server.domain.user.data.UserImageRepository;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.controller.dto.GameInfoDto;
 import com.gg.server.domain.user.dto.*;
@@ -33,6 +36,7 @@ import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
@@ -43,6 +47,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.FileInputStream;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -164,8 +169,7 @@ class UserControllerTest {
         String intraId = "intra";
         String email = "email";
         String imageUrl = "imageUrl";
-        User newUser = testDataUtils.createNewUser(intraId, email, imageUrl, RacketType.PENHOLDER,
-                SnsType.BOTH, RoleType.ADMIN);
+        User newUser = testDataUtils.createNewUser(intraId, email, RacketType.PENHOLDER, SnsType.BOTH, RoleType.ADMIN);
         String accessToken = tokenProvider.createToken(newUser.getId());
 
         //when
@@ -187,10 +191,9 @@ class UserControllerTest {
         //given
         String intraId[] = {"intraId", "2intra2", "2intra", "aaaa", "bbbb"};
         String email = "email";
-        String imageUrl = "imageUrl";
         User user = null;
         for (String intra : intraId) {
-            user = testDataUtils.createNewUser(intra, email, imageUrl, RacketType.PENHOLDER,
+            user = testDataUtils.createNewUser(intra, email, RacketType.PENHOLDER,
                     SnsType.BOTH, RoleType.ADMIN);
         }
         String accessToken = tokenProvider.createToken(user.getId());
@@ -216,8 +219,7 @@ class UserControllerTest {
         String email = "email";
         String imageUrl = "imageUrl";
         String statusMessage = "statusMessage";
-        User newUser = testDataUtils.createNewUser(intraId, email, imageUrl, RacketType.PENHOLDER,
-                SnsType.BOTH, RoleType.ADMIN);
+        User newUser = testDataUtils.createNewUser(intraId, email, RacketType.PENHOLDER, SnsType.BOTH, RoleType.USER);
         String accessToken = tokenProvider.createToken(newUser.getId());
         testDataUtils.createUserRank(newUser, statusMessage, season);
         String url = "/pingpong/users/" + newUser.getIntraId();
@@ -303,8 +305,7 @@ class UserControllerTest {
         String intraId = "intraId";
         String email = "email";
         String imageUrl = "imageUrl";
-        User newUser = testDataUtils.createNewUser(intraId, email, imageUrl, RacketType.PENHOLDER,
-                SnsType.BOTH, RoleType.ADMIN);
+        User newUser = testDataUtils.createNewUser(intraId, email, RacketType.PENHOLDER, SnsType.BOTH, RoleType.USER);
         String statusMessage = "statusMessage";
         testDataUtils.createUserRank(newUser, statusMessage, season);
         String accessToken = tokenProvider.createToken(newUser.getId());
@@ -361,9 +362,7 @@ class UserControllerTest {
         Season season = testDataUtils.createSeason();
         String intraId = "intraId";
         String email = "email";
-        String imageUrl = "imageUrl";
-        User newUser = testDataUtils.createNewUser(intraId, email, imageUrl, RacketType.PENHOLDER,
-                SnsType.BOTH, RoleType.ADMIN);
+        User newUser = testDataUtils.createNewUser(intraId, email, RacketType.PENHOLDER, SnsType.BOTH, RoleType.USER);
         String statusMessage = "statusMessage";
         testDataUtils.createUserRank(newUser, statusMessage, season);
         String accessToken = tokenProvider.createToken(newUser.getId());
@@ -393,9 +392,7 @@ class UserControllerTest {
         Season season = testDataUtils.createSeason();
         String intraId = "intraId";
         String email = "email";
-        String imageUrl = "imageUrl";
-        User newUser = testDataUtils.createNewUser(intraId, email, imageUrl, RacketType.PENHOLDER,
-                SnsType.BOTH, RoleType.ADMIN);
+        User newUser = testDataUtils.createNewUser(intraId, email, RacketType.PENHOLDER, SnsType.BOTH, RoleType.USER);
         String statusMessage = "statusMessage";
         testDataUtils.createUserRank(newUser, statusMessage, season);
         String accessToken = tokenProvider.createToken(newUser.getId());
@@ -447,9 +444,7 @@ class UserControllerTest {
         Season season = testDataUtils.createSeason();
         String intraId = "intraId";
         String email = "email";
-        String imageUri = "imageUri";
-        User newUser = testDataUtils.createNewUser(intraId, email, imageUri, RacketType.PENHOLDER,
-                SnsType.BOTH, RoleType.USER);
+        User newUser = testDataUtils.createNewUser(intraId, email, RacketType.PENHOLDER, SnsType.BOTH, RoleType.USER);
         String statusMessage = "statusMessage";
         testDataUtils.createUserRank(newUser, statusMessage, season);
         String accessToken = tokenProvider.createToken(newUser.getId());
@@ -498,5 +493,22 @@ class UserControllerTest {
         for(CoinHistoryResponseDto temp : result.getCoinPolicyList()){
             System.out.println(temp.getHistory() + " " + temp.getAmount() + " " + temp.getCreatedAt());
         }
+    }
+
+    @Test
+    @DisplayName("[post]/pingpong/users/profile-image")
+    public void getUserImage() throws Exception {
+        String accessToken = testDataUtils.getLoginAccessToken();
+        Receipt receipt = receiptRepository.findById(7L).orElseThrow(ReceiptNotFoundException::new);
+        MockMultipartFile image = new MockMultipartFile("profileImage", "imagefile.jpeg", "image/jpeg", "<<jpeg data>>".getBytes());
+        MockMultipartFile jsonFile = new MockMultipartFile("userProfileImageDto", "", "application/json", ("{\"receiptId\": " + receipt.getId() + "}").getBytes());
+
+        String contentAsString = mockMvc.perform(multipart("/pingpong/users/profile-image")
+                        .file(image)
+                        .file(jsonFile)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isNoContent())
+                .andReturn().getResponse().getContentAsString();
+        AssertionsForClassTypes.assertThat(receipt.getStatus()).isEqualTo(ItemStatus.USED);
     }
 }

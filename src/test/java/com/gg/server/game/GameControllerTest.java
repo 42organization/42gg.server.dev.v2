@@ -98,9 +98,9 @@ public class GameControllerTest {
     void init() {
         season = seasonRepository.save(new Season("test season", LocalDateTime.of(2023, 5, 14, 0, 0), LocalDateTime.of(2999, 12, 31, 23, 59),
                 1000, 100));
-        user1 = testDataUtils.createNewUser("test1", "test1@email", "null1", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
+        user1 = testDataUtils.createNewUser("test1", "test1@email", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
         accessToken = tokenProvider.createToken(user1.getId());
-        user2 = testDataUtils.createNewUser("test2", "test2@email", "null1", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
+        user2 = testDataUtils.createNewUser("test2", "test2@email", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
         rankRepository.save(Rank.from(user1, season, season.getStartPpp()));
         rankRepository.save(Rank.from(user2, season, season.getStartPpp()));
         RankRedis userRank = RankRedis.from(UserDto.from(user1), season.getStartPpp());

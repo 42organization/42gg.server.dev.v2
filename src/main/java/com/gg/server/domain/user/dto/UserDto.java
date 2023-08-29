@@ -13,7 +13,6 @@ public class UserDto {
     private Long id;
     private String intraId;
     private String eMail;
-    private String imageUri;
     private RacketType racketType;
     private RoleType roleType;
     private Integer totalExp;
@@ -31,7 +30,6 @@ public class UserDto {
                     .id(user.getId())
                     .intraId(user.getIntraId())
                     .eMail(user.getEMail())
-                    .imageUri(user.getImageUri())
                     .racketType(user.getRacketType())
                     .roleType(user.getRoleType())
                     .totalExp(user.getTotalExp())
@@ -49,7 +47,6 @@ public class UserDto {
                 "id=" + id +
                 ", intraId='" + intraId + '\'' +
                 ", eMail='" + eMail + '\'' +
-                ", imageUri='" + imageUri + '\'' +
                 ", racketType=" + racketType +
                 ", roleType=" + roleType +
                 ", totalExp=" + totalExp +

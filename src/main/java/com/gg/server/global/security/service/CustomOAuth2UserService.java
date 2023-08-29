@@ -94,7 +94,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         User user = User.builder()
                 .intraId(userInfo.getIntraId())
                 .roleType(userInfo.getRoleType())
-                .imageUri(userInfo.getImageUrl())
                 .kakaoId(userInfo.getKakaoId())
                 .snsNotiOpt(SnsType.EMAIL)
                 .racketType(RacketType.NONE)
