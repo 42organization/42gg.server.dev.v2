@@ -56,11 +56,12 @@ public class UserImageHandler {
             return defaultImageUrl;
         else {
             String s3ImageUrl = uploadToS3(multipartFile, updateFileName);;
-            if (!imageUrl.equals(defaultImageUrl))
-                amazonS3.deleteObject(new DeleteObjectRequest(bucketName, dir + userFileName));
+//            if (!imageUrl.equals(defaultImageUrl))
+//                amazonS3.deleteObject(new DeleteObjectRequest(bucketName, dir + userFileName));
             return s3ImageUrl;
         }
     }
+
     private Boolean isStringValid(String intraId) {
         return intraId != null && intraId.length() != 0;
     }

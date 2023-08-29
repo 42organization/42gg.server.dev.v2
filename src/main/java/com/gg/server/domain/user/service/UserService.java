@@ -30,11 +30,11 @@ import com.gg.server.domain.season.service.SeasonFindService;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.*;
-import com.gg.server.domain.user.exception.UserAlreadyAttendanceException;
-import com.gg.server.domain.user.exception.UserNotFoundException;
-import com.gg.server.domain.user.exception.UserTextColorException;
+import com.gg.server.domain.user.exception.*;
 import com.gg.server.domain.user.type.*;
+import com.gg.server.global.utils.aws.AsyncNewUserImageUploader;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -42,7 +42,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -66,6 +68,7 @@ public class UserService {
     private final CoinHistoryRepository coinHistoryRepository;
     private final CoinPolicyRepository coinPolicyRepository;
     private final ReceiptRepository receiptRepository;
+    private final AsyncNewUserImageUploader asyncNewUserImageUploader;
 
     private final String ATTENDANCE = "ATTENDANCE";
 
@@ -225,7 +228,7 @@ public class UserService {
             List<UserImageDto> userImages = new ArrayList<>();
             userIds.forEach(userId -> {
                 User user = users.stream().filter(u -> u.getId().equals(userId)).findFirst().orElseThrow(UserNotFoundException::new);
-                userImages.add(new UserImageDto(user.getIntraId(), user.getImageUri()));
+                userImages.add(new UserImageDto(user.getId(), user.getImageUri(), LocalDateTime.now(), false));
             });
             return new UserImageResponseDto(userImages);
         } catch (RedisDataNotFoundException ex) {
@@ -237,7 +240,7 @@ public class UserService {
         List<User> users = userRepository.findAll(pageRequest).getContent();
         List<UserImageDto> userImages = new ArrayList<>();
         for (User user : users) {
-            userImages.add(new UserImageDto(user.getIntraId(), user.getImageUri()));
+            userImages.add(new UserImageDto(user.getId(), user.getImageUri(), LocalDateTime.now(), false));
         }
         return new UserImageResponseDto(userImages);
     }
@@ -307,6 +310,27 @@ public class UserService {
         checkUseStatus(receipt);
 
         userId.updateBackground(backgroundType);
+        receipt.updateStatus(ItemStatus.USED);
+    }
+
+    @Transactional
+    public void updateUserProfileImage(UserDto user, UserProfileImageDto userProfileImageDto, MultipartFile userImageFile) throws IOException {
+        User userId = userRepository.findById(user.getId()).orElseThrow(UserNotFoundException::new);
+        Receipt receipt = receiptRepository.findById(userProfileImageDto.getReceiptId()).orElseThrow(ReceiptNotFoundException::new);
+
+        checkOwner(userId, receipt);
+        checkItemType(receipt, ItemType.PROFILE_IMAGE);
+        checkUseStatus(receipt);
+
+        if (userImageFile == null)
+            throw new UserImageNullException();
+        if (userImageFile.getSize() > 50000) {
+            throw new UserImageLargeException();
+        } else if (userImageFile.getContentType() == null || !userImageFile.getContentType().equals("image/jpeg")) {
+            throw new UserImageTypeException();
+        }
+
+        asyncNewUserImageUploader.update(user.getIntraId(), userImageFile);
         receipt.updateStatus(ItemStatus.USED);
     }
 

@@ -4,11 +4,19 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserImageDto {
-    String intraId;
-    String userImageUri;
+    Long id;
+    Long userId;
+    String imageUri;
+    LocalDateTime createdAt;
+    Boolean isDeleted;
 
+    public UserImageDto(Long id, String imageUri, LocalDateTime now, boolean isDeleted) {
+    }
 }

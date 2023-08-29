@@ -1,43 +1,43 @@
 package com.gg.server.domain.user.data;
 
-import com.gg.server.global.utils.BaseTimeEntity;
 import com.sun.istack.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.io.Serializable;
+import java.time.LocalDateTime;
 
-public class UserImage extends BaseTimeEntity implements Serializable {
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Getter
+public class UserImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
-    @ManyToOne
-    @Column(name = "user_id", length = 30)
-    private String userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @NotNull
-    @Column(name = "image_url")
-    private String imageUrl;
+    @Column(name = "image_uri")
+    private String imageUri;
 
-    public UserImage(String userId, String imageUrl) {
-        this.userId = userId;
-        this.imageUrl = imageUrl;
-    }
+    @NotNull
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
-    public String getImageId() {
-        return imageUrl;
-    }
+    @NotNull
+    @Column(name = "is_deleted")
+    private Boolean isDeleted;
 
-    public String getuserId() {
-        return userId;
-    }
-
-    public String getUserImageUrl() {
-        return imageUrl;
-    }
-
-    public void imageUpdate(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public UserImage(User user, String imageUri, LocalDateTime createdAt, Boolean isDeleted) {
+        this.user = user;
+        this.imageUri = imageUri;
+        this.createdAt = createdAt;
+        this.isDeleted = isDeleted;
     }
 }
