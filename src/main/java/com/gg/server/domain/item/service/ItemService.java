@@ -2,8 +2,11 @@ package com.gg.server.domain.item.service;
 
 import com.gg.server.domain.item.data.Item;
 import com.gg.server.domain.item.data.ItemRepository;
+import com.gg.server.domain.item.data.UserItemRepository;
 import com.gg.server.domain.item.dto.ItemStoreListResponseDto;
 import com.gg.server.domain.item.dto.ItemStoreResponseDto;
+import com.gg.server.domain.item.dto.UserItemListResponseDto;
+import com.gg.server.domain.item.dto.UserItemResponseDto;
 import com.gg.server.domain.item.exception.InsufficientGgcoinException;
 import com.gg.server.domain.item.exception.ItemNotFoundException;
 import com.gg.server.domain.item.exception.ItemNotPurchasableException;
@@ -15,6 +18,8 @@ import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +34,9 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final ReceiptRepository receiptRepository;
     private final UserRepository userRepository;
+    private final UserItemRepository userItemRepository;
 
+    @Transactional(readOnly = true)
     public ItemStoreListResponseDto getAllItems() {
 
         List<ItemStoreResponseDto> itemStoreListResponseDto = itemRepository.findAllByIsVisible(true)
@@ -108,5 +115,12 @@ public class ItemService {
         Receipt receipt = new Receipt(item, userDto.getIntraId(), ownerId,
                 ItemStatus.BEFORE, LocalDateTime.now());
         receiptRepository.save(receipt);
+    }
+
+    @Transactional(readOnly = true)
+    public UserItemListResponseDto getItemByUser(UserDto userDto, Pageable pageable) {
+        Page<Receipt> receipts = userItemRepository.findByOwnerIntraId(userDto.getIntraId(), pageable);
+        Page<UserItemResponseDto> responseDtos = receipts.map(UserItemResponseDto::new);
+        return new UserItemListResponseDto(responseDtos.getContent(), responseDtos.getTotalPages());
     }
 }
