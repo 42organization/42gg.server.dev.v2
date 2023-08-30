@@ -39,7 +39,7 @@ public class ItemService {
     @Transactional(readOnly = true)
     public ItemStoreListResponseDto getAllItems() {
 
-        List<ItemStoreResponseDto> itemStoreListResponseDto = itemRepository.findAllByPopDesc()
+        List<ItemStoreResponseDto> itemStoreListResponseDto = itemRepository.findAllByCreatedAtDesc()
                 .stream().map(ItemStoreResponseDto::new).collect(Collectors.toList());
         return new ItemStoreListResponseDto(itemStoreListResponseDto);
     }
