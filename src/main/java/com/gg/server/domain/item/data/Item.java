@@ -20,8 +20,11 @@ public class Item {
     @Column(name = "name", length = 30)
     private String name;
 
-    @Column(name = "content", length = 255)
-    private String content;
+    @Column(name = "main_content", length = 255)
+    private String mainContent;
+
+    @Column(name = "sub_content", length = 255)
+    private String subContent;
 
     @Column(name = "image_uri", length = 255)
     private String imageUri;
@@ -55,10 +58,11 @@ public class Item {
     @Setter
     private String deleterIntraId;
 
-    public Item(String name, String content, String imageUri, Integer price,
+    public Item(String name, String mainContent, String subContent, String imageUri, Integer price,
                 Boolean isVisible, Integer discount, ItemType type, LocalDateTime createdAt) {
         this.name = name;
-        this.content = content;
+        this.mainContent = mainContent;
+        this.subContent = subContent;
         this.imageUri = imageUri;
         this.price = price;
         this.isVisible = isVisible;
@@ -70,8 +74,9 @@ public class Item {
     @Builder
     public Item(ItemUpdateRequestDto updateRequestDto, String creatorIntraId, String itemImageUri) {
         this.name = updateRequestDto.getName();
-        this.content = updateRequestDto.getContent();
-        this.imageUri = itemImageUri;
+        this.mainContent = updateRequestDto.getMainContent();
+        this.subContent = updateRequestDto.getSubContent();
+        this.imageUri = updateRequestDto.getImageUri();
         this.price = updateRequestDto.getPrice();
         this.discount = updateRequestDto.getDiscount();
         this.isVisible = true;
@@ -83,7 +88,8 @@ public class Item {
     @Builder
     public Item(ItemUpdateRequestDto updateRequestDto, String creatorIntraId) {
         this.name = updateRequestDto.getName();
-        this.content = updateRequestDto.getContent();
+        this.mainContent = updateRequestDto.getMainContent();
+        this.subContent = updateRequestDto.getSubContent();
         this.price = updateRequestDto.getPrice();
         this.discount = updateRequestDto.getDiscount();
         this.isVisible = true;
@@ -101,7 +107,8 @@ public class Item {
         return "Item{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", content='" + content + '\'' +
+                ", mainContent='" + mainContent + '\'' +
+                ", subContent='" + subContent + '\'' +
                 ", imageUri='" + imageUri + '\'' +
                 ", price=" + price +
                 ", isVisible=" + isVisible +
