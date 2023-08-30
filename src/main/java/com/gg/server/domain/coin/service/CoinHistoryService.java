@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class CoinHistoryService {
@@ -41,7 +43,16 @@ public class CoinHistoryService {
         return amount;
     }
 
+    @Transactional(readOnly = true)
+    public boolean hasAttendedToday(User user) {
+        LocalDateTime startOfDay = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0);
+        LocalDateTime endOfDay = LocalDateTime.now().withHour(23).withMinute(59).withSecond(59);
+        return coinHistoryRepository.existsCoinHistoryByUserAndHistoryAndCreatedAtToday(
+                user, HistoryType.ATTENDANCECOIN.getHistory(), startOfDay, endOfDay);
+    }
+
     private void addCoinHistory(CoinHistory coinHistory){
         coinHistoryRepository.save(coinHistory);
     }
+
 }
