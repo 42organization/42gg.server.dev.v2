@@ -96,7 +96,7 @@ public class GameControllerTest {
 
     @BeforeEach
     void init() {
-        season = seasonRepository.save(new Season("test season", LocalDateTime.of(2023, 5, 14, 0, 0), LocalDateTime.of(2999, 12, 31, 23, 59),
+        season = seasonRepository.save(new Season("test season", LocalDateTime.of(2023, 7, 14, 0, 0), LocalDateTime.of(2999, 12, 31, 23, 59),
                 1000, 100));
         user1 = testDataUtils.createNewUser("test1", "test1@email", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
         accessToken = tokenProvider.createToken(user1.getId());

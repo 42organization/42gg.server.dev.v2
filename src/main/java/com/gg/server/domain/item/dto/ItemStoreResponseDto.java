@@ -11,7 +11,8 @@ import lombok.NoArgsConstructor;
 public class ItemStoreResponseDto {
     private Long itemId;
     private String itemName;
-    private String content;
+    private String mainContent;
+    private String subContent;
     private String itemType;
     private String imageUri;
     private Integer originalPrice;
@@ -21,7 +22,8 @@ public class ItemStoreResponseDto {
     public ItemStoreResponseDto(Item item) {
         this.itemId = item.getId();
         this.itemName = item.getName();
-        this.content = item.getContent();
+        this.mainContent = item.getMainContent();
+        this.subContent = item.getSubContent();
         this.itemType = item.getType().toString();
         this.imageUri = item.getImageUri();
         this.originalPrice = item.getPrice();

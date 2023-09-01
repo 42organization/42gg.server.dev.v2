@@ -13,7 +13,6 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class PChangeService {
     private final PChangeRepository pChangeRepository;
 

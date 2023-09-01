@@ -1,5 +1,6 @@
 package com.gg.server.domain.user.dto;
 
+import com.gg.server.domain.tier.data.Tier;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.type.BackgroundType;
 import com.gg.server.domain.user.type.EdgeType;
@@ -22,8 +23,10 @@ public class UserDetailResponseDto {
     private BackgroundType background;
     private String textColor;
     private EdgeType edge;
+    private String tierName;
+    private String tierImageUri;
 
-    public UserDetailResponseDto(User user, String userImageUri, String statusMessage) {
+    public UserDetailResponseDto(User user, String userImageUri, String statusMessage, Tier tier) {
         this.intraId = user.getIntraId();
         this.userImageUri = userImageUri;
         this.racketType = user.getRacketType().getCode();
@@ -32,6 +35,8 @@ public class UserDetailResponseDto {
         this.background= user.getBackground();
         this.textColor = user.getTextColor();
         this.edge = user.getEdge();
+        this.tierName = tier.getName();
+        this.tierImageUri = tier.getImageUri();
         calculateExpAndLevel(user);
     }
 

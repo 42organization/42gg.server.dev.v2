@@ -76,6 +76,14 @@ public class NotiService {
         return noti;
     }
 
+    @Transactional
+    public Noti createGiftNoti(User ownerUser, User payUser, String itemName) {
+        String notiMessage = "ଘ(੭ˊᵕˋ)੭* ੈ✩ " + payUser.getIntraId() + "님에게 " + itemName + " 아이템을 선물받았어요!";
+        Noti noti = new Noti(ownerUser, NotiType.GIFT, notiMessage, false);
+        notiRepository.save(noti);
+        return noti;
+    }
+
     public Noti createImminentNoti(User user, String enemyIntra, NotiType notiType, Integer gameOpenMinute) {
         String msg = "<intraId::" + enemyIntra + ">님과 경기 " + gameOpenMinute + "분 전 입니다. 서두르세요!";
         return notiRepository.save(new Noti(user, notiType, msg, false));

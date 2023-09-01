@@ -22,6 +22,8 @@ import com.gg.server.domain.receipt.exception.ReceiptNotFoundException;
 import com.gg.server.domain.receipt.type.ItemStatus;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.data.SeasonRepository;
+import com.gg.server.domain.tier.data.Tier;
+import com.gg.server.domain.tier.data.TierRepository;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserImage;
 import com.gg.server.domain.user.data.UserImageRepository;
@@ -80,6 +82,9 @@ class UserControllerTest {
 
     @Autowired
     RankRedisRepository redisRepository;
+
+    @Autowired
+    TierRepository tierRepository;
 
     @Autowired
     RankRepository rankRepository;
@@ -162,15 +167,21 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("/")
+    @DisplayName("GET /pingpong/users")
     public void userNormalDetail() throws Exception {
         //given
         String url = "/pingpong/users";
         String intraId = "intra";
         String email = "email";
         String imageUrl = "imageUrl";
+
         User newUser = testDataUtils.createNewUser(intraId, email, RacketType.PENHOLDER, SnsType.BOTH, RoleType.ADMIN);
+        Season season = testDataUtils.createSeason();
+
         String accessToken = tokenProvider.createToken(newUser.getId());
+        Tier tier = tierRepository.getById(1L);
+        testDataUtils.createUserRank(newUser, "statusMessage", season, tier);
+
 
         //when
         String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
@@ -221,7 +232,8 @@ class UserControllerTest {
         String statusMessage = "statusMessage";
         User newUser = testDataUtils.createNewUser(intraId, email, RacketType.PENHOLDER, SnsType.BOTH, RoleType.USER);
         String accessToken = tokenProvider.createToken(newUser.getId());
-        testDataUtils.createUserRank(newUser, statusMessage, season);
+        Tier tier = tierRepository.getById(1L);
+        testDataUtils.createUserRank(newUser, statusMessage, season, tier);
         String url = "/pingpong/users/" + newUser.getIntraId();
 
         //when
@@ -471,7 +483,7 @@ class UserControllerTest {
     }
   
     @Test
-    @DisplayName("[get]/pingpong/users/coins")
+    @DisplayName("[get]/pingpong/users/coinhistory")
     public void getUserCoinHistory() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
@@ -480,7 +492,7 @@ class UserControllerTest {
         coinHistoryService.addNormalCoin(user);
         coinHistoryService.addRankWinCoin(user);
         coinHistoryService.addNormalCoin(user);
-        String url = "/pingpong/users/coins?page=1&size=5";
+        String url = "/pingpong/users/coinhistory?page=1&size=5";
 
         String contentAsString = mockMvc.perform(get(url)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
@@ -490,7 +502,7 @@ class UserControllerTest {
         UserCoinHistoryListResponseDto result = objectMapper.readValue(contentAsString, UserCoinHistoryListResponseDto.class);
 
         System.out.println(result.getTotalPage());
-        for(CoinHistoryResponseDto temp : result.getCoinPolicyList()){
+        for(CoinHistoryResponseDto temp : result.getUseCoinList()){
             System.out.println(temp.getHistory() + " " + temp.getAmount() + " " + temp.getCreatedAt());
         }
     }

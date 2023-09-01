@@ -145,7 +145,7 @@ public class UserController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
   
-    @GetMapping("/coins")
+    @GetMapping("/coinhistory")
     public ResponseEntity<UserCoinHistoryListResponseDto> getUserCoinHistory(@ModelAttribute @Valid PageRequestDto coReq, @Parameter(hidden = true) @Login UserDto user) {
         Pageable pageable = PageRequest.of(coReq.getPage() - 1, coReq.getSize(), Sort.by("createdAt").descending());
 

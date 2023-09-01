@@ -14,7 +14,7 @@ public class MegaphoneRedisRepository {
     private final RedisTemplate<String, MegaphoneRedis> redisTemplate;
 
     public void addMegaphone(MegaphoneRedis megaphoneRedis) {
-        Duration duration = Duration.between(megaphoneRedis.getUsedAt(), megaphoneRedis.getUsedAt());
+        Duration duration = Duration.between(megaphoneRedis.getUsedAt(), megaphoneRedis.getUsedAt().plusDays(1));
         redisTemplate.opsForValue().set("megaphone" + megaphoneRedis.getId(), megaphoneRedis, duration);
     }
 

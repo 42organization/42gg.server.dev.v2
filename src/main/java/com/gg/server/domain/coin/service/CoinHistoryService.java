@@ -23,20 +23,22 @@ public class CoinHistoryService {
 
     @Transactional
     public void addNormalCoin(User user){
-        int  amount = coinPolicyRepository.findTopByOrderByCreatedAtDesc().getNormal();
+        int amount = coinPolicyRepository.findTopByOrderByCreatedAtDesc().getNormal();
         addCoinHistory(new CoinHistory(user, HistoryType.NORMAL.getHistory(), amount));
     }
 
     @Transactional
-    public void addRankWinCoin(User user){
-        int  amount = coinPolicyRepository.findTopByOrderByCreatedAtDesc().getRankWin();
+    public int addRankWinCoin(User user){
+        int amount = coinPolicyRepository.findTopByOrderByCreatedAtDesc().getRankWin();
         addCoinHistory(new CoinHistory(user, HistoryType.RANKWIN.getHistory(), amount));
+        return amount;
     }
 
     @Transactional
-    public void addRankLoseCoin(User user){
-        int  amount = coinPolicyRepository.findTopByOrderByCreatedAtDesc().getRankLose();
+    public int addRankLoseCoin(User user){
+        int amount = coinPolicyRepository.findTopByOrderByCreatedAtDesc().getRankLose();
         addCoinHistory(new CoinHistory(user, HistoryType.RANKLOSE.getHistory(), amount));
+        return amount;
     }
 
     private void addCoinHistory(CoinHistory coinHistory){

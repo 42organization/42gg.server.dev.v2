@@ -1,5 +1,7 @@
 package com.gg.server.domain.game.service;
 
+import com.gg.server.domain.coin.dto.UserGameCoinResultDto;
+import com.gg.server.domain.coin.service.UserCoinChangeService;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.dto.*;
@@ -20,7 +22,6 @@ import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.InvalidParameterException;
 import com.gg.server.global.utils.ExpLevelCalculator;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
@@ -31,15 +32,14 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class GameService {
     private final GameRepository gameRepository;
     private final TeamUserRepository teamUserRepository;
     private final RankRedisService rankRedisService;
     private final PChangeService pChangeService;
     private final PChangeRepository pChangeRepository;
-
     private final GameFindService gameFindService;
+    private final UserCoinChangeService userCoinChangeService;
 
     @Transactional(readOnly = true)
     public GameTeamInfo getUserGameInfo(Long gameId, Long userId) {
@@ -109,26 +109,28 @@ public class GameService {
                 rankRedisService.getUserPpp(team2UserId, game.getSeason().getId()), team2UserId.equals(loginUserId));
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public ExpChangeResultResDto expChangeResult(Long gameId, Long userId) {
         List<PChange> pChanges = pChangeService.findExpChangeHistory(gameId, userId);
+        UserGameCoinResultDto userGameCoinResultDto = userCoinChangeService.addNormalGameCoin(userId);
+
         if (pChanges.size() == 1) {
-            return new ExpChangeResultResDto(0, pChanges.get(0).getExp());
+            return new ExpChangeResultResDto(0, pChanges.get(0).getExp(), userGameCoinResultDto);
         } else {
-            log.info("before:", pChanges.get(1).getExp(), ", after: ", pChanges.get(0).getExp());
-            return new ExpChangeResultResDto(pChanges.get(1).getExp(), pChanges.get(0).getExp());
+            return new ExpChangeResultResDto(pChanges.get(1).getExp(), pChanges.get(0).getExp(), userGameCoinResultDto);
         }
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public PPPChangeResultResDto pppChangeResult(Long gameId, Long userId) throws PChangeNotExistException {
         Season season = gameFindService.findByGameId(gameId).getSeason();
         List<PChange> pppHistory = pChangeService.findPPPChangeHistory(gameId, userId, season.getId());
         List<PChange> expHistory = pChangeService.findExpChangeHistory(gameId, userId);
+        UserGameCoinResultDto userGameCoinResultDto = userCoinChangeService.addRankGameCoin(gameId, userId);
         return new PPPChangeResultResDto(expHistory.size() <= 1 ? 0 : expHistory.get(1).getExp(),
                 pppHistory.get(0).getExp(),
                 pppHistory.size() <= 1 ? season.getStartPpp() : pppHistory.get(1).getPppResult(),
-                pppHistory.get(0).getPppResult());
+                pppHistory.get(0).getPppResult(), userGameCoinResultDto);
     }
 
     public void expUpdates(Game game, List<TeamUser> teamUsers) {

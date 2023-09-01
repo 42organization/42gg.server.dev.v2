@@ -20,7 +20,7 @@ import javax.validation.Valid;
 public class ReceiptAdminController {
     private final ReceiptAdminService receiptAdminService;
 
-    @GetMapping("/list")
+    @GetMapping
     public ReceiptListResponseDto getReceiptList(@ModelAttribute @Valid ReceiptAdminPageRequestDto req) {
 
         if (req.getIntraId() == null) {
