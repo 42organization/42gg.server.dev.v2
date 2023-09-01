@@ -1,5 +1,6 @@
 package com.gg.server.domain.item.service;
 
+import com.gg.server.domain.coin.service.UserCoinChangeService;
 import com.gg.server.domain.item.data.Item;
 import com.gg.server.domain.item.data.ItemRepository;
 import com.gg.server.domain.item.data.UserItemRepository;
@@ -37,6 +38,7 @@ public class ItemService {
     private final UserRepository userRepository;
     private final UserItemRepository userItemRepository;
     private final NotiService notiService;
+    private final UserCoinChangeService userCoinChangeService;
 
     @Transactional(readOnly = true)
     public ItemStoreListResponseDto getAllItems() {
@@ -66,15 +68,7 @@ public class ItemService {
             finalPrice = item.getPrice();
         }
 
-        // 사용자의 GGcoin이 상품 가격보다 낮으면 예외 처리.
-        if (userDto.getGgCoin() < finalPrice) {
-            throw new InsufficientGgcoinException();
-        }
-
-        User payUser = userRepository.findById(userDto.getId())
-                .orElseThrow(() -> new UserNotFoundException());
-
-        payUser.payGgCoin(finalPrice);       //상품 구매에 따른 차감
+        userCoinChangeService.purchaseItemCoin(item, finalPrice, userDto.getId());
 
         Receipt receipt = new Receipt(item, userDto.getIntraId(), userDto.getIntraId(),
                 ItemStatus.BEFORE, LocalDateTime.now());
