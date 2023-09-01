@@ -94,19 +94,13 @@ public class ItemService {
             finalPrice = item.getPrice();
         }
 
-        // 사용자의 GGcoin이 상품 가격보다 낮으면 예외 처리.
-        if (userDto.getGgCoin() < finalPrice) {
-            throw new InsufficientGgcoinException();
-        }
-
         User payUser = userRepository.findById(userDto.getId())
                 .orElseThrow(() -> new UserNotFoundException());
-
 
         User owner = userRepository.findByIntraId(ownerId)
                 .orElseThrow(() -> new UserNotFoundException());
 
-        payUser.payGgCoin(finalPrice);       //상품 구매에 따른 차감
+        userCoinChangeService.giftItemCoin(item, finalPrice, payUser, owner);
 
         Receipt receipt = new Receipt(item, userDto.getIntraId(), ownerId,
                 ItemStatus.BEFORE, LocalDateTime.now());

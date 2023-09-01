@@ -26,8 +26,12 @@ public class CoinHistoryService {
 
     @Transactional
     public void addPurchaseItemCoinHistory(User user, Item item, Integer price) {
-        int amount = coinPolicyRepository.findTopByOrderByCreatedAtDesc().getAttendance();
-        addCoinHistory(new CoinHistory(user, item.getName()+ "를 구매!", amount));
+        addCoinHistory(new CoinHistory(user, item.getName()+ "를 구매!", price));
+    }
+
+    @Transactional
+    public void addGiftItemCoinHistory(User user, User giftTarget, Item item, Integer price) {
+        addCoinHistory(new CoinHistory(user, item.getName()+ "를 " + giftTarget.getIntraId() + "에게 선물!", price));
     }
 
     @Transactional

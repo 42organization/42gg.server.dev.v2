@@ -49,6 +49,13 @@ public class UserCoinChangeService {
         coinHistoryService.addPurchaseItemCoinHistory(user, item, price);
     }
 
+    @Transactional
+    public void giftItemCoin(Item item, Integer price, User user, User giftTarget){
+        user.payGgCoin(price);
+
+        coinHistoryService.addGiftItemCoinHistory(user, giftTarget, item, price);
+    }
+
 
     @Transactional
     public UserGameCoinResultDto addNormalGameCoin(Long userId) {
