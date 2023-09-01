@@ -58,7 +58,7 @@ public class GameService {
             @CacheEvict(value = "allGameList", allEntries = true),
             @CacheEvict(value = "allGameListByUser", allEntries = true)
     })
-    public synchronized Boolean createRankResult(RankResultReqDto scoreDto, Long userId) {
+    public Boolean createRankResult(RankResultReqDto scoreDto, Long userId) {
         // 현재 게임 id
         Game game = gameFindService.findByGameId(scoreDto.getGameId());
         if (game.getStatus() != StatusType.WAIT && game.getStatus() != StatusType.LIVE) {
