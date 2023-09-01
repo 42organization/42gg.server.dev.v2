@@ -15,6 +15,7 @@ import com.gg.server.domain.user.data.UserImage;
 import com.gg.server.domain.user.data.UserImageRepository;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
+import com.gg.server.domain.user.exception.UserImageNullException;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.PageNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -57,7 +58,7 @@ public class RankService {
         for(int i = 0; i < ranks.size(); i++) {
             RankRedis rank = ranks.get(i);
             User user = users.getContent().get(i);
-            UserImage userImageUri = userImageRepository.findTopByUserAndIsDeletedOrderById(user, false).orElse(null);
+            UserImage userImageUri = userImageRepository.findTopByUserAndIsDeletedOrderByIdDesc(user, false).orElseThrow(UserImageNullException::new);
             expRankDtos.add(ExpRankDto.from(user, userImageUri, startRank + i, rank.getStatusMessage()));
         }
 

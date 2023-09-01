@@ -119,7 +119,7 @@ public class UserAdminService {
     }
 
     public String getUserImageToString(User user) {
-        UserImage userImage = userImageRepository.findTopByUserAndIsDeletedOrderById(user, false).orElse(null);
+        UserImage userImage = userImageRepository.findTopByUserAndIsDeletedOrderByIdDesc(user, false).orElse(null);
         return userImage.toString();
     }
 }

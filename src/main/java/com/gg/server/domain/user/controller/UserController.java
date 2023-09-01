@@ -155,9 +155,9 @@ public class UserController {
 
     @PostMapping(path = "/profile-image", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity updateUserProfileImage(@RequestPart(required = false) MultipartFile profileImage,
-                                                 @RequestPart @Valid UserProfileImageDto userProfileImageDto,
+                                                 @RequestPart @Valid UserProfileImageRequestDto userProfileImageRequestDto,
                                                  @Parameter(hidden = true) @Login UserDto user) throws IOException {
-        userService.updateUserProfileImage(user, userProfileImageDto, profileImage);
+        userService.updateUserProfileImage(user, userProfileImageRequestDto, profileImage);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 }

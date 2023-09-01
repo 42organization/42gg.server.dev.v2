@@ -36,7 +36,6 @@ import com.gg.server.domain.user.exception.*;
 import com.gg.server.domain.user.type.*;
 import com.gg.server.global.utils.aws.AsyncNewUserImageUploader;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -317,9 +316,9 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUserProfileImage(UserDto user, UserProfileImageDto userProfileImageDto, MultipartFile userImageFile) throws IOException {
+    public void updateUserProfileImage(UserDto user, UserProfileImageRequestDto userProfileImageRequestDto, MultipartFile userImageFile) throws IOException {
         User userId = userRepository.findById(user.getId()).orElseThrow(UserNotFoundException::new);
-        Receipt receipt = receiptRepository.findById(userProfileImageDto.getReceiptId()).orElseThrow(ReceiptNotFoundException::new);
+        Receipt receipt = receiptRepository.findById(userProfileImageRequestDto.getReceiptId()).orElseThrow(ReceiptNotFoundException::new);
 
         checkOwner(userId, receipt);
         checkItemType(receipt, ItemType.PROFILE_IMAGE);
@@ -353,7 +352,7 @@ public class UserService {
     }
 
     public String getUserImageToString(User user) {
-        UserImage userImage = userImageRepository.findTopByUserAndIsDeletedOrderById(user, false).orElse(null);
+        UserImage userImage = userImageRepository.findTopByUserAndIsDeletedOrderByIdDesc(user, false).orElse(null);
         return userImage.toString();
     }
 }

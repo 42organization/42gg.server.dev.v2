@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserProfileImageDto {
+public class UserProfileImageRequestDto {
     @NotNull
     private Long receiptId;
 }

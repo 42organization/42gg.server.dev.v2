@@ -29,6 +29,9 @@ public class UserDetailResponseDto {
         this.racketType = user.getRacketType().getCode();
         this.statusMessage = statusMessage;
         this.snsNotiOpt = user.getSnsNotiOpt();
+        this.background= user.getBackground();
+        this.textColor = user.getTextColor();
+        this.edge = user.getEdge();
         calculateExpAndLevel(user);
     }
 

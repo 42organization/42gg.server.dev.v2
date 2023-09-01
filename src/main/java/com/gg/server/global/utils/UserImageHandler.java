@@ -7,6 +7,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserImage;
 import com.gg.server.domain.user.data.UserImageRepository;
+import com.gg.server.domain.user.exception.UserImageNullException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,7 +54,6 @@ public class UserImageHandler {
 
     public String updateAndGetS3ImageUri(MultipartFile multipartFile, User user) throws IOException
     {
-        UserImage userImage = userImageRepository.findTopByUserAndIsDeletedOrderById(user, false).orElse(null);
         String updateFileName = user.getIntraId() + "-" + UUID.randomUUID().toString() + ".jpeg";
         if (updateFileName.equals("small_default.jpeg"))
             return defaultImageUrl;
