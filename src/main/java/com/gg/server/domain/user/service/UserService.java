@@ -278,7 +278,7 @@ public class UserService {
         if (tier == null) {
             String tierName = "NONE";
             String tierImageUri = "NONE";
-            return new UserNormalDetailResponseDto(user.getIntraId(), user.getImageUri(), isAdmin, isAttended, tierName, tierImageUri, level);
+            return new UserNormalDetailResponseDto(loginUser.getIntraId(), getUserImageToString(loginUser), isAdmin, isAttended, tierName, tierImageUri, level);
         }
         String tierName = tier.getName();
         String tierImageUri = tier.getImageUri();
