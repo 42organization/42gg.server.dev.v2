@@ -71,6 +71,20 @@ public class Item {
         this.createdAt = createdAt;
     }
 
+    public Item(String name, String mainContent, String subContent, String imageUri, Integer price,
+                Boolean isVisible, Integer discount, ItemType type, LocalDateTime createdAt, String creatorIntraId) {
+        this.name = name;
+        this.mainContent = mainContent;
+        this.subContent = subContent;
+        this.imageUri = imageUri;
+        this.price = price;
+        this.isVisible = isVisible;
+        this.discount = discount;
+        this.type = type;
+        this.createdAt = createdAt;
+        this.creatorIntraId = creatorIntraId;
+    }
+
     @Builder
     public Item(ItemUpdateRequestDto updateRequestDto, String creatorIntraId, String itemImageUri) {
         this.name = updateRequestDto.getName();
