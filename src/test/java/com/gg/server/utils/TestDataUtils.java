@@ -54,7 +54,6 @@ public class TestDataUtils {
         User user = User.builder()
                 .eMail("email")
                 .intraId("intraId")
-                .imageUri("image")
                 .racketType(RacketType.PENHOLDER)
                 .snsNotiOpt(SnsType.NONE)
                 .roleType(RoleType.USER)
@@ -68,7 +67,6 @@ public class TestDataUtils {
         User user = User.builder()
                 .eMail("email")
                 .intraId("intraId")
-                .imageUri("image")
                 .racketType(RacketType.PENHOLDER)
                 .snsNotiOpt(SnsType.NONE)
                 .roleType(RoleType.ADMIN)
@@ -83,7 +81,6 @@ public class TestDataUtils {
         User user = User.builder()
                 .eMail("email")
                 .intraId(randomId)
-                .imageUri("image")
                 .racketType(RacketType.PENHOLDER)
                 .snsNotiOpt(SnsType.NONE)
                 .roleType(RoleType.USER)
@@ -93,12 +90,11 @@ public class TestDataUtils {
         return user;
     }
 
-    public User createNewUser(String intraId, String email, String imageUrl, RacketType racketType,
+    public User createNewUser(String intraId, String email, RacketType racketType,
                               SnsType snsType, RoleType roleType){
         User user = User.builder()
                 .eMail(email)
                 .intraId(intraId)
-                .imageUri(imageUrl)
                 .racketType(racketType)
                 .snsNotiOpt(snsType)
                 .roleType(roleType)
@@ -113,7 +109,6 @@ public class TestDataUtils {
         User user = User.builder()
                 .eMail("email")
                 .intraId(randomId)
-                .imageUri("image")
                 .racketType(RacketType.PENHOLDER)
                 .snsNotiOpt(SnsType.NONE)
                 .roleType(RoleType.USER)

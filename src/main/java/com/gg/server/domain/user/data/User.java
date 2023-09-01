@@ -25,9 +25,6 @@ public class User extends BaseTimeEntity implements Serializable {
     @Column(name = "e_mail", length = 60)
     private String eMail;
 
-    @Column(name = "image_uri")
-    private String imageUri;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "racket_type", length = 10)
     private RacketType racketType;
@@ -62,11 +59,10 @@ public class User extends BaseTimeEntity implements Serializable {
     private EdgeType edge;
 
     @Builder
-    public User(String intraId, String eMail, String imageUri, RacketType racketType,
+    public User(String intraId, String eMail, RacketType racketType,
                 RoleType roleType, Integer totalExp, SnsType snsNotiOpt, Long kakaoId) {
         this.intraId = intraId;
         this.eMail = eMail;
-        this.imageUri = imageUri;
         this.racketType = racketType;
         this.roleType = roleType;
         this.totalExp = totalExp;
@@ -83,10 +79,6 @@ public class User extends BaseTimeEntity implements Serializable {
         this.racketType = updateReq.getRacketType();
         this.roleType = RoleType.of(updateReq.getRoleType());
         this.ggCoin = updateReq.getCoin();
-    }
-
-    public void imageUpdate(String imageUri) {
-        this.imageUri = imageUri;
     }
 
     public void updateTypes(RacketType racketType, SnsType snsType) {

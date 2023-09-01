@@ -29,12 +29,13 @@ import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.service.SeasonFindService;
 import com.gg.server.domain.tier.data.Tier;
 import com.gg.server.domain.user.data.User;
+import com.gg.server.domain.user.data.UserImage;
+import com.gg.server.domain.user.data.UserImageRepository;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.*;
-import com.gg.server.domain.user.exception.UserAlreadyAttendanceException;
-import com.gg.server.domain.user.exception.UserNotFoundException;
-import com.gg.server.domain.user.exception.UserTextColorException;
+import com.gg.server.domain.user.exception.*;
 import com.gg.server.domain.user.type.*;
+import com.gg.server.global.utils.aws.AsyncNewUserImageUploader;
 import com.gg.server.global.utils.ExpLevelCalculator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -44,7 +45,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -68,6 +71,8 @@ public class UserService {
     private final CoinHistoryRepository coinHistoryRepository;
     private final CoinPolicyRepository coinPolicyRepository;
     private final ReceiptRepository receiptRepository;
+    private final AsyncNewUserImageUploader asyncNewUserImageUploader;
+    private final UserImageRepository userImageRepository;
 
     private final String ATTENDANCE = "ATTENDANCE";
 
@@ -124,8 +129,9 @@ public class UserService {
     public UserDetailResponseDto getUserDetail(String targetUserIntraId) {
         User targetUser = userFindService.findByIntraId(targetUserIntraId);
         String statusMessage = userFindService.getUserStatusMessage(targetUser);
+
         Tier tier = rankFindService.findByUserIdAndSeasonId(targetUser.getId(), seasonFindService.findCurrentSeason(LocalDateTime.now()).getId()).getTier();
-        return new UserDetailResponseDto(targetUser, statusMessage, tier);
+        return new UserDetailResponseDto(targetUser, getUserImageToString(targetUser), statusMessage, tier);
     }
 
     @Transactional
@@ -228,7 +234,7 @@ public class UserService {
             List<UserImageDto> userImages = new ArrayList<>();
             userIds.forEach(userId -> {
                 User user = users.stream().filter(u -> u.getId().equals(userId)).findFirst().orElseThrow(UserNotFoundException::new);
-                userImages.add(new UserImageDto(user.getIntraId(), user.getImageUri()));
+                userImages.add(new UserImageDto(user.getId(), getUserImageToString(user), LocalDateTime.now(), false));
             });
             return new UserImageResponseDto(userImages);
         } catch (RedisDataNotFoundException ex) {
@@ -240,7 +246,7 @@ public class UserService {
         List<User> users = userRepository.findAll(pageRequest).getContent();
         List<UserImageDto> userImages = new ArrayList<>();
         for (User user : users) {
-            userImages.add(new UserImageDto(user.getIntraId(), user.getImageUri()));
+            userImages.add(new UserImageDto(user.getId(), getUserImageToString(user), LocalDateTime.now(), false));
         }
         return new UserImageResponseDto(userImages);
     }
@@ -276,7 +282,7 @@ public class UserService {
         }
         String tierName = tier.getName();
         String tierImageUri = tier.getImageUri();
-        return new UserNormalDetailResponseDto(user.getIntraId(), user.getImageUri(), isAdmin, isAttended, tierName, tierImageUri, level);
+        return new UserNormalDetailResponseDto(user.getIntraId(), getUserImageToString(loginUser), isAdmin, isAttended, tierName, tierImageUri, level);
     }
   
     @Transactional()
@@ -323,6 +329,27 @@ public class UserService {
         receipt.updateStatus(ItemStatus.USED);
     }
 
+    @Transactional
+    public void updateUserProfileImage(UserDto user, UserProfileImageRequestDto userProfileImageRequestDto, MultipartFile userImageFile) throws IOException {
+        User userId = userRepository.findById(user.getId()).orElseThrow(UserNotFoundException::new);
+        Receipt receipt = receiptRepository.findById(userProfileImageRequestDto.getReceiptId()).orElseThrow(ReceiptNotFoundException::new);
+
+        checkOwner(userId, receipt);
+        checkItemType(receipt, ItemType.PROFILE_IMAGE);
+        checkUseStatus(receipt);
+
+        if (userImageFile == null)
+            throw new UserImageNullException();
+        if (userImageFile.getSize() > 50000) {
+            throw new UserImageLargeException();
+        } else if (userImageFile.getContentType() == null || !userImageFile.getContentType().equals("image/jpeg")) {
+            throw new UserImageTypeException();
+        }
+
+        asyncNewUserImageUploader.update(user.getIntraId(), userImageFile);
+        receipt.updateStatus(ItemStatus.USED);
+    }
+
     public void checkOwner(User loginUser, Receipt receipt) {
         if (!receipt.getOwnerIntraId().equals(loginUser.getIntraId()))
             throw new ReceiptNotOwnerException();
@@ -336,5 +363,10 @@ public class UserService {
     public void checkUseStatus(Receipt receipt) {
         if (!receipt.getStatus().equals(ItemStatus.BEFORE))
             throw new ItemStatusException();
+    }
+
+    public String getUserImageToString(User user) {
+        UserImage userImage = userImageRepository.findTopByUserAndIsDeletedOrderByIdDesc(user, false).orElse(null);
+        return userImage.toString();
     }
 }

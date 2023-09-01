@@ -1,8 +1,11 @@
 package com.gg.server.global.utils.aws;
 
 import com.gg.server.domain.user.data.User;
+import com.gg.server.domain.user.data.UserImage;
+import com.gg.server.domain.user.data.UserImageRepository;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.global.utils.UserImageHandler;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -12,7 +15,9 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
+@Slf4j
 @Component
 public class AsyncNewUserImageUploader {
     private final UserImageHandler userImageHandler;
@@ -22,10 +27,13 @@ public class AsyncNewUserImageUploader {
 
     @Value("${info.image.defaultUrl}")
     private String defaultImageUrl;
+    private final UserImageRepository userImageRepository;
 
-    public AsyncNewUserImageUploader(UserImageHandler userImageHandler, UserRepository userRepository) {
+    public AsyncNewUserImageUploader(UserImageHandler userImageHandler, UserRepository userRepository,
+                                     UserImageRepository userImageRepository) {
         this.userImageHandler = userImageHandler;
         this.userRepository = userRepository;
+        this.userImageRepository = userImageRepository;
     }
 
     @Async("asyncExecutor")
@@ -35,23 +43,18 @@ public class AsyncNewUserImageUploader {
             return ;
         }
         userRepository.findByIntraId(intraId).ifPresent(user -> {
-            if (s3ImageUrl == null) {
-                user.imageUpdate(defaultImageUrl);
-            } else {
-                user.imageUpdate(s3ImageUrl);
-            }
-            userRepository.save(user);
+            UserImage userImage = new UserImage(user, (s3ImageUrl != null) ? s3ImageUrl : defaultImageUrl,
+                    LocalDateTime.now(), false);
+            userImageRepository.save(userImage);
         });
     }
 
     @Transactional
     public void update(String intraId, MultipartFile multipartFile) throws IOException {
-        User user =  userRepository.getUserByIntraId(intraId);
+        User user = userRepository.findByIntraId(intraId).get();
         String s3ImageUrl = userImageHandler.updateAndGetS3ImageUri(multipartFile, user);
-        if (s3ImageUrl == null) {
-            user.imageUpdate(defaultImageUrl);
-        } else {
-            user.imageUpdate(s3ImageUrl);
-        }
+        s3ImageUrl = s3ImageUrl == null ? defaultImageUrl : s3ImageUrl;
+        UserImage userImage = new UserImage(user, s3ImageUrl, LocalDateTime.now(), false);
+        userImageRepository.saveAndFlush(userImage);
     }
 }

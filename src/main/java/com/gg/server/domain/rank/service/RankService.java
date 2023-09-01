@@ -11,8 +11,11 @@ import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.service.SeasonFindService;
 import com.gg.server.domain.user.data.User;
+import com.gg.server.domain.user.data.UserImage;
+import com.gg.server.domain.user.data.UserImageRepository;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
+import com.gg.server.domain.user.exception.UserImageNullException;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.PageNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +37,7 @@ public class RankService {
     private final UserRepository userRepository;
     private final RankRedisRepository redisRepository;
     private final SeasonFindService seasonFindService;
+    private final UserImageRepository userImageRepository;
 
     @Transactional(readOnly = true)
     public ExpRankPageResponseDto getExpRankPage(PageRequest pageRequest, UserDto curUser) {
@@ -54,7 +58,8 @@ public class RankService {
         for(int i = 0; i < ranks.size(); i++) {
             RankRedis rank = ranks.get(i);
             User user = users.getContent().get(i);
-            expRankDtos.add(ExpRankDto.from(user, startRank + i, rank.getStatusMessage()));
+            UserImage userImageUri = userImageRepository.findTopByUserAndIsDeletedOrderByIdDesc(user, false).orElseThrow(UserImageNullException::new);
+            expRankDtos.add(ExpRankDto.from(user, userImageUri, startRank + i, rank.getStatusMessage()));
         }
 
         return new ExpRankPageResponseDto(myRank.intValue(), pageRequest.getPageNumber() + 1, users.getTotalPages(), expRankDtos);

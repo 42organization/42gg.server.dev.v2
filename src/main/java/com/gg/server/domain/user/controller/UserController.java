@@ -3,10 +3,7 @@ package com.gg.server.domain.user.controller;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.user.dto.*;
 import com.gg.server.domain.user.exception.KakaoOauth2AlreadyExistException;
-import com.gg.server.domain.user.service.UserAuthenticationService;
-import com.gg.server.domain.user.service.UserCoinService;
-import com.gg.server.domain.user.service.UserService;
-import com.gg.server.domain.user.service.UserTextColorCheckService;
+import com.gg.server.domain.user.service.*;
 import com.gg.server.domain.user.type.OauthType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.global.dto.PageRequestDto;
@@ -22,11 +19,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -34,7 +34,6 @@ import java.util.List;
 @RequestMapping("/pingpong/users")
 public class UserController {
     private final UserService userService;
-    private final UserTextColorCheckService userTextColorCheck;
     private final UserAuthenticationService userAuthenticationService;
     private final CookieUtil cookieUtil;
     private final UserCoinService userCoinService;
@@ -152,5 +151,13 @@ public class UserController {
 
         return  ResponseEntity.ok()
                 .body(userCoinService.getUserCoinHistory(pageable ,user.getIntraId()));
+    }
+
+    @PostMapping(path = "/profile-image", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity updateUserProfileImage(@RequestPart(required = false) MultipartFile profileImage,
+                                                 @RequestPart @Valid UserProfileImageRequestDto userProfileImageRequestDto,
+                                                 @Parameter(hidden = true) @Login UserDto user) throws IOException {
+        userService.updateUserProfileImage(user, userProfileImageRequestDto, profileImage);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 }
