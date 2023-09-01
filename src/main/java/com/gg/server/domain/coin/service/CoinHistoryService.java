@@ -4,6 +4,7 @@ import com.gg.server.domain.coin.data.CoinHistory;
 import com.gg.server.domain.coin.data.CoinHistoryRepository;
 import com.gg.server.domain.coin.data.CoinPolicyRepository;
 import com.gg.server.domain.coin.type.HistoryType;
+import com.gg.server.domain.item.data.Item;
 import com.gg.server.domain.user.data.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,12 @@ public class CoinHistoryService {
     public void addAttendanceCoinHistory(User user) {
         int amount = coinPolicyRepository.findTopByOrderByCreatedAtDesc().getAttendance();
         addCoinHistory(new CoinHistory(user, HistoryType.ATTENDANCECOIN.getHistory(), amount));
+    }
+
+    @Transactional
+    public void addPurchaseItemCoinHistory(User user, Item item, Integer price) {
+        int amount = coinPolicyRepository.findTopByOrderByCreatedAtDesc().getAttendance();
+        addCoinHistory(new CoinHistory(user, item.getName()+ "를 구매!", amount));
     }
 
     @Transactional
