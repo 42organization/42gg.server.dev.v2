@@ -101,6 +101,32 @@ class UserCoinChangeServiceTest {
     }
 
     @Test
+    @DisplayName("아이템 선물시 코인사용 테스트")
+    void giftItemCoin() {
+        String accessToken = testDataUtils.getLoginAccessToken();
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
+        User user = userRepository.getById(userId);
+        user.addGgCoin(100);
+        int beforeCoin = user.getGgCoin();
+
+        Item item = new Item("과자", "111", "1", "1", 100, true, 0,
+                ItemType.EDGE,LocalDateTime.now(), user.getIntraId());
+        itemRepository.save(item);
+
+        userCoinChangeService.giftItemCoin(item, item.getPrice(), user, user);
+
+        assertThat(beforeCoin).isEqualTo(user.getGgCoin() + item.getPrice());
+        System.out.println(coinHistoryRepository.findFirstByOrderByIdDesc().getHistory());
+
+        try{
+            userCoinChangeService.giftItemCoin(item, item.getPrice(), user, user);
+        }catch (Exception e){
+            System.out.println(e.getMessage() + " " + e);
+            System.out.println("===coin이 없을 때 방어로직 기능 수행 완료===");
+        }
+    }
+
+    @Test
     @DisplayName("노말 게임 재화 증가 서비스 테스트")
     void addNormalGameService() {
         String accessToken = testDataUtils.getLoginAccessToken();
