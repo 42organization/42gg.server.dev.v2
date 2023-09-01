@@ -60,7 +60,8 @@ public class GameService {
     })
     public Boolean createRankResult(RankResultReqDto scoreDto, Long userId) {
         // 현재 게임 id
-        Game game = gameFindService.findByGameId(scoreDto.getGameId());
+        Game game = gameRepository.findWithPessimisticLockById(scoreDto.getGameId())
+                .orElseThrow(GameNotExistException::new);
         if (game.getStatus() != StatusType.WAIT && game.getStatus() != StatusType.LIVE) {
             return false;
         }

@@ -7,11 +7,13 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import com.gg.server.domain.team.dto.GameUser;
+import javax.persistence.LockModeType;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.gg.server.domain.game.dto.GameTeamUser;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -69,4 +71,7 @@ public interface GameRepository extends JpaRepository<Game, Long>, GameRepositor
             "team t, team_user tu, user u " +
             "WHERE g.id=t.game_id AND t.id = tu.team_id AND tu.user_id=u.id AND g.status = 'BEFORE'", nativeQuery = true)
     List<GameUser> findAllByStartTimeLessThanEqual(@Param("time") LocalDateTime time);
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query(value = "SELECT g FROM Game g WHERE g.id=:gamdId")
+    Optional<Game> findWithPessimisticLockById(@Param("gameId") Long gameId);
 }
