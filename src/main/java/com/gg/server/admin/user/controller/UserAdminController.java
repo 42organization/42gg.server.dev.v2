@@ -62,4 +62,10 @@ public class UserAdminController {
 
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
+
+    @DeleteMapping("/{intraId}")
+    public ResponseEntity deleteUserProfileImage(@PathVariable String intraId) {
+        userAdminService.deleteUserProfileImage(intraId);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
 }
