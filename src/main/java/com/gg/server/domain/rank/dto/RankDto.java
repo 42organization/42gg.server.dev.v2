@@ -13,6 +13,7 @@ public class RankDto {
     private int rank;
     private int ppp;
     private String statusMessage;
+    private String tierImageUri;
 
 
     public static RankDto from(RankRedis rankRedis, int rank) {
@@ -21,6 +22,7 @@ public class RankDto {
                 .rank(rank)
                 .ppp(rankRedis.getPpp())
                 .statusMessage(rankRedis.getStatusMessage())
+                .tierImageUri(rankRedis.getTierImageUrl())
                 .build();
         return dto;
     }

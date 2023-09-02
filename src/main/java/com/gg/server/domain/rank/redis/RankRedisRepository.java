@@ -187,6 +187,13 @@ public class RankRedisRepository {
         return objects.stream().map(RankRedis.class::cast).collect(Collectors.toList());
     }
 
+    public List<RankRedis> findAllRanks(String key) {
+        List<Object> objects = hashOps.values(key);
+        if(objects == null)
+            throw new RedisDataNotFoundException();
+        return objects.stream().map(RankRedis.class::cast).collect(Collectors.toList());
+    }
+
     public Long countTotalRank(String zSetKey) {
         Long result = zSetOps.size(zSetKey);
         if(result == null)

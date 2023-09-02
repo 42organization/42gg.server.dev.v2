@@ -14,10 +14,12 @@ import com.gg.server.domain.pchange.exception.PChangeNotExistException;
 import com.gg.server.domain.pchange.service.PChangeService;
 import com.gg.server.domain.rank.redis.RankRedisService;
 import com.gg.server.domain.game.type.StatusType;
+import com.gg.server.domain.rank.service.RedisUploadService;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.team.data.TeamUserRepository;
 import com.gg.server.domain.team.exception.TeamIdNotMatchException;
+import com.gg.server.domain.tier.service.TierService;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.InvalidParameterException;
 import com.gg.server.global.utils.ExpLevelCalculator;
@@ -40,6 +42,8 @@ public class GameService {
     private final PChangeRepository pChangeRepository;
     private final GameFindService gameFindService;
     private final UserCoinChangeService userCoinChangeService;
+    private final TierService tierService;
+    private final RedisUploadService redisUploadService;
 
     @Transactional(readOnly = true)
     public GameTeamInfo getUserGameInfo(Long gameId, Long userId) {
@@ -168,7 +172,8 @@ public class GameService {
         throw new TeamIdNotMatchException();
     }
 
-    private Boolean updateScore(Game game, RankResultReqDto scoreDto, Long userId) {
+    @Transactional
+    public Boolean updateScore(Game game, RankResultReqDto scoreDto, Long userId) {
         List<TeamUser> teams = teamUserRepository.findAllByGameId(game.getId());
         TeamUser myTeam = findTeamId(scoreDto.getMyTeamId(), teams);
         TeamUser enemyTeam = findTeamId(scoreDto.getEnemyTeamId(), teams);
@@ -180,6 +185,8 @@ public class GameService {
                 setTeamScore(enemyTeam, scoreDto.getEnemyTeamScore(), scoreDto.getMyTeamScore() < scoreDto.getEnemyTeamScore());
                 expUpdates(game, teams);
                 rankRedisService.updateRankRedis(myTeam, enemyTeam, game);
+                tierService.updateAllTier(game.getSeason());
+                redisUploadService.uploadRedis();
             } else {
                 // score 가 이미 입력됨
                 return false;
