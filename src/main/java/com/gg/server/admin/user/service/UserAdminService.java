@@ -141,4 +141,13 @@ public class UserAdminService {
 
         return new UserImageListAdminResponseDto(userImageAdminDto.getContent(), userImageAdminDto.getTotalPages());
     }
+
+    @Transactional(readOnly = true)
+    public UserImageListAdminResponseDto getUserImageListByIntraId(Pageable pageable, String intraId) {
+        User user = userAdminRepository.findByIntraId(intraId).orElseThrow(UserNotFoundException::new);
+        Page<UserImage> userImagePage = userImageAdminRepository.findAllByUserOrderByIdDesc(pageable, user);
+        Page<UserImageAdminDto> userImageAdminDto = userImagePage.map(UserImageAdminDto::new);
+
+        return new UserImageListAdminResponseDto(userImageAdminDto.getContent(), userImageAdminDto.getTotalPages());
+    }
 }
