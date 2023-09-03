@@ -83,4 +83,12 @@ public class UserAdminController {
         return ResponseEntity.ok()
                 .body(userAdminService.getUserImageList(pageable));
     }
+
+    @GetMapping("/images/{intraId}")
+    public ResponseEntity<UserImageListAdminResponseDto> getUserImage(@ModelAttribute @Valid PageRequestDto pageRequestDto, @PathVariable String intraId) {
+        Pageable pageable = PageRequest.of(pageRequestDto.getPage() - 1,
+                pageRequestDto.getSize());
+        return ResponseEntity.ok()
+                .body(userAdminService.getUserImageListByIntraId(pageable, intraId));
+    }
 }
