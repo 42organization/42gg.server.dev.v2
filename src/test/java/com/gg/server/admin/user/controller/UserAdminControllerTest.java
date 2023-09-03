@@ -233,6 +233,6 @@ class UserAdminControllerTest {
         //then
         //각 유저의 이미지가 삭제된 이미지인지 확인
         UserImageListAdminResponseDto actureResponse = objectMapper.readValue(contentAsString, UserImageListAdminResponseDto.class);
-        assertThat(actureResponse.getUserImageList().size()).isEqualTo(3);
+        assertThat(actureResponse.getUserImageList().size()).isEqualTo(2);
     }
 }
