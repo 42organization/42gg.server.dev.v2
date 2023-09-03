@@ -136,7 +136,7 @@ public class UserAdminService {
 
     @Transactional(readOnly = true)
     public UserImageListAdminResponseDto getUserImageList(Pageable pageable) {
-        Page<UserImage> userImagePage = userImageAdminRepository.findChanged(pageable);
+        Page<UserImage> userImagePage = userImageAdminRepository.findAllChanged(pageable);
         Page<UserImageAdminDto> userImageAdminDto = userImagePage.map(UserImageAdminDto::new);
 
         return new UserImageListAdminResponseDto(userImageAdminDto.getContent(), userImageAdminDto.getTotalPages());
