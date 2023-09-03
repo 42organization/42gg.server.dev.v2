@@ -28,6 +28,7 @@ import javax.transaction.Transactional;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -192,5 +193,25 @@ class UserAdminControllerTest {
         List<UserImageAdminDto> actureUserImageList = actureResponse.getUserImageList();
         for (UserImageAdminDto userImageDto : actureUserImageList)
             Assertions.assertThat(userImageDto.getIsDeleted()).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("GET /pingpong/admin/users/images")
+    @Transactional
+    public void getUserImageListTest() throws Exception{
+        //given
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
+        String url = "/pingpong/admin/users/images?page=1";
+
+        //when
+        //200 성공
+        String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        //then
+        //각 유저의 이미지가 삭제된 이미지인지 확인
+        UserImageListAdminResponseDto actureResponse = objectMapper.readValue(contentAsString, UserImageListAdminResponseDto.class);
+        assertThat(actureResponse.getUserImageList().size()).isEqualTo(3);
     }
 }
