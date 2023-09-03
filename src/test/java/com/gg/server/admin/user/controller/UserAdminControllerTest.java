@@ -3,9 +3,7 @@ package com.gg.server.admin.user.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.user.data.UserAdminRepository;
 import com.gg.server.admin.user.data.UserImageAdminRepository;
-import com.gg.server.admin.user.dto.UserDetailAdminResponseDto;
-import com.gg.server.admin.user.dto.UserSearchAdminDto;
-import com.gg.server.admin.user.dto.UserSearchAdminResponseDto;
+import com.gg.server.admin.user.dto.*;
 import com.gg.server.admin.user.service.UserAdminService;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserImage;
@@ -169,5 +167,30 @@ class UserAdminControllerTest {
 
         UserImage CurrentUserImage = userImageAdminRepository.findTopByUserAndIsDeletedOrderByIdDesc(user, false).orElseThrow(UserNotFoundException::new);
         Assertions.assertThat(PrevUserImage.getId()).isNotEqualTo(CurrentUserImage.getId());
+    }
+
+    @Test
+    @DisplayName("GET /pingpong/admin/users/delete-list")
+    @Transactional
+    public void getUserImageDeleteListTest() throws Exception{
+        //given
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
+        int page = 1;
+        int size = 30;
+        String url = "/pingpong/admin/users/delete-list?page=1";
+
+        //when
+        //200 성공
+        String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        UserImageListAdminResponseDto actureResponse = objectMapper.readValue(contentAsString, UserImageListAdminResponseDto.class);
+
+        //then
+        //각 유저의 이미지가 삭제된 이미지인지 확인
+        List<UserImageAdminDto> actureUserImageList = actureResponse.getUserImageList();
+        for (UserImageAdminDto userImageDto : actureUserImageList)
+            Assertions.assertThat(userImageDto.getIsDeleted()).isEqualTo(true);
     }
 }
