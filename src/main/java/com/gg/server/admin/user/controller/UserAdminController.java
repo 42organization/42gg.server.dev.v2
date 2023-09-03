@@ -79,8 +79,7 @@ public class UserAdminController {
     @GetMapping("/images")
     public ResponseEntity<UserImageListAdminResponseDto> getUserImageList(@ModelAttribute @Valid PageRequestDto pageRequestDto) {
         Pageable pageable = PageRequest.of(pageRequestDto.getPage() - 1,
-                pageRequestDto.getSize(),
-                Sort.by("id").descending());
+                pageRequestDto.getSize());
         return ResponseEntity.ok()
                 .body(userAdminService.getUserImageList(pageable));
     }
