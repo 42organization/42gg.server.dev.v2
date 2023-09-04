@@ -90,7 +90,7 @@ public class Item {
         this.name = updateRequestDto.getName();
         this.mainContent = updateRequestDto.getMainContent();
         this.subContent = updateRequestDto.getSubContent();
-        this.imageUri = updateRequestDto.getImageUri();
+        this.imageUri = itemImageUri;
         this.price = updateRequestDto.getPrice();
         this.discount = updateRequestDto.getDiscount();
         this.isVisible = true;

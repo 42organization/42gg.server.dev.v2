@@ -2,10 +2,8 @@ package com.gg.server.admin.user.service;
 import com.gg.server.admin.rank.service.RankRedisAdminService;
 import com.gg.server.admin.season.data.SeasonAdminRepository;
 import com.gg.server.admin.user.data.UserAdminRepository;
-import com.gg.server.admin.user.dto.UserDetailAdminResponseDto;
-import com.gg.server.admin.user.dto.UserSearchAdminDto;
-import com.gg.server.admin.user.dto.UserSearchAdminResponseDto;
-import com.gg.server.admin.user.dto.UserUpdateAdminRequestDto;
+import com.gg.server.admin.user.data.UserImageAdminRepository;
+import com.gg.server.admin.user.dto.*;
 import com.gg.server.domain.rank.data.Rank;
 import com.gg.server.domain.rank.data.RankRepository;
 import com.gg.server.domain.rank.exception.RankNotFoundException;
@@ -17,10 +15,8 @@ import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.exception.SeasonNotFoundException;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserImage;
-import com.gg.server.domain.user.data.UserImageRepository;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.domain.user.service.UserFindService;
-import com.gg.server.domain.user.service.UserService;
 import com.gg.server.global.utils.aws.AsyncNewUserImageUploader;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -45,7 +41,7 @@ public class UserAdminService {
     private final RankRedisAdminService rankRedisAdminService;
     private final AsyncNewUserImageUploader asyncNewUserImageUploader;
     private final UserFindService userFindService;
-    private final UserImageRepository userImageRepository;
+    private final UserImageAdminRepository userImageAdminRepository;
 
     @Transactional(readOnly = true)
     public UserSearchAdminResponseDto searchAll(Pageable pageable) {
@@ -119,7 +115,40 @@ public class UserAdminService {
     }
 
     public String getUserImageToString(User user) {
-        UserImage userImage = userImageRepository.findTopByUserAndIsDeletedOrderByIdDesc(user, false).orElse(null);
-        return userImage.toString();
+        UserImage userImage = userImageAdminRepository.findTopByUserAndIsDeletedOrderByIdDesc(user, false).orElse(null);
+        assert userImage != null;
+        return userImage.getImageUri();
+    }
+
+    @Transactional
+    public void deleteUserProfileImage(String intraId) {
+        User user = userAdminRepository.findByIntraId(intraId).orElseThrow(UserNotFoundException::new);
+        UserImage userImage = userImageAdminRepository.findTopByUserAndIsDeletedOrderByIdDesc(user, false).orElseThrow(UserNotFoundException::new);
+        userImage.setIsDeleted(true);
+    }
+
+    @Transactional(readOnly = true)
+    public UserImageListAdminResponseDto getUserImageDeleteList(Pageable pageable) {
+        Page<UserImage> userImagePage = userImageAdminRepository.findAllByIsDeleted(pageable, true);
+        Page<UserImageAdminDto> userImageAdminDto = userImagePage.map(UserImageAdminDto::new);
+
+        return new UserImageListAdminResponseDto(userImageAdminDto.getContent(), userImageAdminDto.getTotalPages());
+    }
+
+    @Transactional(readOnly = true)
+    public UserImageListAdminResponseDto getUserImageList(Pageable pageable) {
+        Page<UserImage> userImagePage = userImageAdminRepository.findAllChanged(pageable);
+        Page<UserImageAdminDto> userImageAdminDto = userImagePage.map(UserImageAdminDto::new);
+
+        return new UserImageListAdminResponseDto(userImageAdminDto.getContent(), userImageAdminDto.getTotalPages());
+    }
+
+    @Transactional(readOnly = true)
+    public UserImageListAdminResponseDto getUserImageListByIntraId(Pageable pageable, String intraId) {
+        User user = userAdminRepository.findByIntraId(intraId).orElseThrow(UserNotFoundException::new);
+        Page<UserImage> userImagePage = userImageAdminRepository.findAllByUserOrderByIdDesc(pageable, user);
+        Page<UserImageAdminDto> userImageAdminDto = userImagePage.map(UserImageAdminDto::new);
+
+        return new UserImageListAdminResponseDto(userImageAdminDto.getContent(), userImageAdminDto.getTotalPages());
     }
 }

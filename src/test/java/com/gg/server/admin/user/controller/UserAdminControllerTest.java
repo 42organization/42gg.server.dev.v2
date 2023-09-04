@@ -2,12 +2,13 @@ package com.gg.server.admin.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.user.data.UserAdminRepository;
-import com.gg.server.admin.user.dto.UserDetailAdminResponseDto;
-import com.gg.server.admin.user.dto.UserSearchAdminDto;
-import com.gg.server.admin.user.dto.UserSearchAdminResponseDto;
+import com.gg.server.admin.user.data.UserImageAdminRepository;
+import com.gg.server.admin.user.dto.*;
 import com.gg.server.admin.user.service.UserAdminService;
 import com.gg.server.domain.user.data.User;
+import com.gg.server.domain.user.data.UserImage;
 import com.gg.server.domain.user.data.UserRepository;
+import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,8 @@ import javax.transaction.Transactional;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -49,6 +52,8 @@ class UserAdminControllerTest {
     MockMvc mockMvc;
     @Autowired
     ObjectMapper objectMapper;
+    @Autowired
+    UserImageAdminRepository userImageAdminRepository;
 
     @Test
     @DisplayName("GET /pingpong/admin/users")
@@ -144,5 +149,90 @@ class UserAdminControllerTest {
         Assertions.assertThat(actureResponse.getRoleType()).isEqualTo(expectedResponse.getRoleType());
         Assertions.assertThat(actureResponse.getExp()).isEqualTo(expectedResponse.getExp());
         Assertions.assertThat(actureResponse.getCoin()).isEqualTo(expectedResponse.getCoin());
+    }
+
+    @Test
+    @DisplayName("DELETE /pingpong/admin/users/{intraId}")
+    @Transactional
+    public void deleteUserProfileImageTest() throws Exception{
+        //given
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
+        User user = userRepository.findByIntraId("klew").get();
+        String url = "/pingpong/admin/users/" + user.getIntraId();
+        UserImage PrevUserImage = userImageAdminRepository.findTopByUserAndIsDeletedOrderByIdDesc(user, false).orElseThrow(UserNotFoundException::new);
+        //when
+        //200 성공
+        mockMvc.perform(delete(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isNoContent());
+
+        UserImage CurrentUserImage = userImageAdminRepository.findTopByUserAndIsDeletedOrderByIdDesc(user, false).orElseThrow(UserNotFoundException::new);
+        Assertions.assertThat(PrevUserImage.getId()).isNotEqualTo(CurrentUserImage.getId());
+    }
+
+    @Test
+    @DisplayName("GET /pingpong/admin/users/delete-list")
+    @Transactional
+    public void getUserImageDeleteListTest() throws Exception{
+        //given
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
+        int page = 1;
+        int size = 30;
+        String url = "/pingpong/admin/users/delete-list?page=1";
+
+        //when
+        //200 성공
+        String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        UserImageListAdminResponseDto actureResponse = objectMapper.readValue(contentAsString, UserImageListAdminResponseDto.class);
+
+        //then
+        //각 유저의 이미지가 삭제된 이미지인지 확인
+        List<UserImageAdminDto> actureUserImageList = actureResponse.getUserImageList();
+        for (UserImageAdminDto userImageDto : actureUserImageList)
+            Assertions.assertThat(userImageDto.getIsDeleted()).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("GET /pingpong/admin/users/images")
+    @Transactional
+    public void getUserImageListTest() throws Exception{
+        //given
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
+        String url = "/pingpong/admin/users/images?page=1";
+
+        //when
+        //200 성공
+        String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        //then
+        //각 유저의 이미지가 삭제된 이미지인지 확인
+        UserImageListAdminResponseDto actureResponse = objectMapper.readValue(contentAsString, UserImageListAdminResponseDto.class);
+        assertThat(actureResponse.getUserImageList().size()).isEqualTo(3);
+    }
+
+    @Test
+    @DisplayName("GET /pingpong/admin/users/images/{intraId}")
+    @Transactional
+    public void getUserImageListByIntraIdTest() throws Exception{
+        //given
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
+        String intraId = "klew";
+        String url = "/pingpong/admin/users/images/" + intraId + "?page=1";
+
+        //when
+        //200 성공
+        String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        //then
+        //각 유저의 이미지가 삭제된 이미지인지 확인
+        UserImageListAdminResponseDto actureResponse = objectMapper.readValue(contentAsString, UserImageListAdminResponseDto.class);
+        assertThat(actureResponse.getUserImageList().size()).isEqualTo(2);
     }
 }

@@ -14,18 +14,22 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 public class RankRedis implements Serializable {
-
     private Long userId;
     private String intraId;
     private int ppp;
     private int wins;
     private int losses;
     private String statusMessage;
+    private String tierImageUrl;
 
     public void updateRank(int changePpp, int wins, int losses) {
         this.ppp += changePpp;
         this.wins = wins;
         this.losses = losses;
+    }
+
+    public void updateTierImage(String tierImageUrl) {
+        this.tierImageUrl = tierImageUrl;
     }
 
     public void changedRank(int ppp, int wins, int losses) {
@@ -46,11 +50,12 @@ public class RankRedis implements Serializable {
                 .wins(0)
                 .losses(0)
                 .statusMessage("")
+                .tierImageUrl("")
                 .build();
         return rankRedis;
     }
 
-    public static RankRedis from(Rank rank){
+    public static RankRedis from(Rank rank) {
         RankRedis rankRedis = RankRedis.builder()
                 .userId(rank.getUser().getId())
                 .intraId(rank.getUser().getIntraId())
@@ -58,6 +63,7 @@ public class RankRedis implements Serializable {
                 .wins(rank.getWins())
                 .losses(rank.getLosses())
                 .statusMessage(rank.getStatusMessage())
+                .tierImageUrl(rank.getTier().getImageUri())
                 .build();
         return rankRedis;
     }
@@ -71,6 +77,7 @@ public class RankRedis implements Serializable {
                 ", wins=" + wins +
                 ", losses=" + losses +
                 ", statusMessage='" + statusMessage + '\'' +
+                ", tierImageUrl='" + tierImageUrl + '\'' +
                 '}';
     }
 }

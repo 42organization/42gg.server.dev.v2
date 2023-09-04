@@ -37,7 +37,7 @@ public class ItemAdminController {
 
     @PostMapping(path="/{itemId}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity updateItem(@PathVariable("itemId") Long itemId,
-                                     @RequestPart @Valid ItemUpdateRequestDto itemRequestDto,
+                                     @RequestPart @Valid ItemUpdateRequestDto updateItemInfo,
                                      @RequestPart(required = false) MultipartFile imgData,
                                      @Parameter(hidden = true) @Login UserDto user) throws IOException {
         if (imgData != null) {
@@ -46,9 +46,9 @@ public class ItemAdminController {
             } else if (imgData.getContentType() == null || !imgData.getContentType().equals("image/jpeg")) {
                 throw new ItemImageTypeException();
             }
-            itemAdminService.updateItem(itemId, itemRequestDto, imgData, user);
+            itemAdminService.updateItem(itemId, updateItemInfo, imgData, user);
         } else {
-            itemAdminService.updateItem(itemId, itemRequestDto, user);
+            itemAdminService.updateItem(itemId, updateItemInfo, user);
         }
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
