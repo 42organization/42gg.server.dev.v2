@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Getter
-@Setter
 public class UserImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,6 +32,7 @@ public class UserImage {
     private LocalDateTime createdAt;
 
     @NotNull
+    @Setter
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 
