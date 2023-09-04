@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public interface UserImageAdminRepository extends JpaRepository<UserImage, Long>{
     Optional<UserImage> findTopByUserAndIsDeletedOrderByIdDesc(User user, Boolean isDeleted);
-
+  
     Page<UserImage> findAllByIsDeleted(Pageable pageable, Boolean isDeleted);
 
     @Query(value = "SELECT * FROM user_image WHERE id NOT IN (" +
