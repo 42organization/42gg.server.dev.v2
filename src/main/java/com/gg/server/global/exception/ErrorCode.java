@@ -42,6 +42,9 @@ public enum ErrorCode {
     ITEM_TYPE_NOT_MATCHED(400, "IT200", "ITEM TYPE NOT MATCHED"),
     ITEM_NOT_PURCHASABLE(400, "IT201", "ITEM NOT PURCHASABLE"),
     INSUFFICIENT_GGCOIN(400,"IT202","INSUFFICIENT GGCOIN"),
+    GUEST_ROLE_PURCHASE_FORBIDDEN(403, "IT203", "Guest role users cannot purchase items."),
+    GUEST_ROLE_GIFT_FORBIDDEN(403, "IT204", "Guest role users cannot gift items."),
+
 
     //receipt
     RECEIPT_NOT_FOUND(404, "RC100", "RECEIPT NOT FOUND"),
