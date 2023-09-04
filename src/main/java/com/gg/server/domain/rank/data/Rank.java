@@ -92,4 +92,8 @@ public class Rank extends BaseTimeEntity implements Serializable {
         this.wins = wins;
         this.losses = losses;
     }
+
+    public void updateTier(Tier tier) {
+        this.tier = tier;
+    }
 }

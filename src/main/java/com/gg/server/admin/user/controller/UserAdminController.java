@@ -1,11 +1,9 @@
 package com.gg.server.admin.user.controller;
 
-import com.gg.server.admin.user.dto.UserDetailAdminResponseDto;
-import com.gg.server.admin.user.dto.UserSearchAdminRequestDto;
-import com.gg.server.admin.user.dto.UserSearchAdminResponseDto;
-import com.gg.server.admin.user.dto.UserUpdateAdminRequestDto;
+import com.gg.server.admin.user.dto.*;
 import com.gg.server.admin.user.service.UserAdminService;
 import com.gg.server.domain.rank.exception.RankUpdateException;
+import com.gg.server.domain.user.dto.UserImageResponseDto;
 import com.gg.server.domain.user.exception.UserImageLargeException;
 import com.gg.server.domain.user.exception.UserImageTypeException;
 import com.gg.server.global.dto.PageRequestDto;
@@ -61,5 +59,36 @@ public class UserAdminController {
         userAdminService.updateUserDetail(intraId, updateUserInfo, imgData);
 
         return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+
+    @DeleteMapping("/{intraId}")
+    public ResponseEntity deleteUserProfileImage(@PathVariable String intraId) {
+        userAdminService.deleteUserProfileImage(intraId);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/delete-list")
+    public ResponseEntity<UserImageListAdminResponseDto> getUserImageDeleteList(@ModelAttribute @Valid PageRequestDto pageRequestDto) {
+        Pageable pageable = PageRequest.of(pageRequestDto.getPage() - 1,
+                pageRequestDto.getSize(),
+                Sort.by("id").descending());
+        return ResponseEntity.ok()
+                .body(userAdminService.getUserImageDeleteList(pageable));
+    }
+
+    @GetMapping("/images")
+    public ResponseEntity<UserImageListAdminResponseDto> getUserImageList(@ModelAttribute @Valid PageRequestDto pageRequestDto) {
+        Pageable pageable = PageRequest.of(pageRequestDto.getPage() - 1,
+                pageRequestDto.getSize());
+        return ResponseEntity.ok()
+                .body(userAdminService.getUserImageList(pageable));
+    }
+
+    @GetMapping("/images/{intraId}")
+    public ResponseEntity<UserImageListAdminResponseDto> getUserImage(@ModelAttribute @Valid PageRequestDto pageRequestDto, @PathVariable String intraId) {
+        Pageable pageable = PageRequest.of(pageRequestDto.getPage() - 1,
+                pageRequestDto.getSize());
+        return ResponseEntity.ok()
+                .body(userAdminService.getUserImageListByIntraId(pageable, intraId));
     }
 }

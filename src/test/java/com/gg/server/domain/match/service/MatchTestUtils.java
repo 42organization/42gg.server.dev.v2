@@ -34,7 +34,6 @@ public class MatchTestUtils {
         User user = User.builder()
                 .eMail("email")
                 .intraId(randomId)
-                .imageUri("image")
                 .racketType(RacketType.PENHOLDER)
                 .snsNotiOpt(SnsType.NONE)
                 .roleType(RoleType.USER)
@@ -49,7 +48,6 @@ public class MatchTestUtils {
         User user = User.builder()
                 .eMail("email")
                 .intraId(randomId)
-                .imageUri("image")
                 .racketType(RacketType.PENHOLDER)
                 .snsNotiOpt(SnsType.NONE)
                 .roleType(RoleType.GUEST)
@@ -61,7 +59,7 @@ public class MatchTestUtils {
 
     public RankRedis addUsertoRankRedis(Long userId, Integer ppp, Long seasonId) {
         String randomId = UUID.randomUUID().toString();
-        RankRedis rankRedis = new RankRedis(userId,  randomId, ppp, 0, 0,"test");
+        RankRedis rankRedis = new RankRedis(userId,  randomId, ppp, 0, 0,"test", "aa");
         rankRedisRepository.addRankData(RedisKeyManager.getHashKey(seasonId), userId, rankRedis);
         rankRedisRepository.addToZSet(RedisKeyManager.getZSetKey(seasonId), userId, ppp);
         return rankRedis;

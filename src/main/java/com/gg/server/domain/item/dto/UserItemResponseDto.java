@@ -1,6 +1,7 @@
 package com.gg.server.domain.item.dto;
 
 import com.gg.server.domain.item.data.Item;
+import com.gg.server.domain.item.type.ItemType;
 import com.gg.server.domain.receipt.data.Receipt;
 import com.gg.server.domain.receipt.type.ItemStatus;
 import lombok.AllArgsConstructor;
@@ -16,6 +17,7 @@ public class UserItemResponseDto {
     private String imageUri;
     private String purchaserIntra;
     private ItemStatus itemStatus;
+    private ItemType itemType;
 
     public UserItemResponseDto(Receipt receipt) {
         Item item = receipt.getItem();
@@ -24,6 +26,7 @@ public class UserItemResponseDto {
         this.imageUri = item.getImageUri();
         this.purchaserIntra = receipt.getPurchaserIntraId();
         this.itemStatus = receipt.getStatus();
+        this.itemType = item.getType();
     }
 
 }

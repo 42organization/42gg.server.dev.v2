@@ -54,7 +54,6 @@ public class TestDataUtils {
         User user = User.builder()
                 .eMail("email")
                 .intraId("intraId")
-                .imageUri("image")
                 .racketType(RacketType.PENHOLDER)
                 .snsNotiOpt(SnsType.NONE)
                 .roleType(RoleType.USER)
@@ -68,7 +67,6 @@ public class TestDataUtils {
         User user = User.builder()
                 .eMail("email")
                 .intraId("intraId")
-                .imageUri("image")
                 .racketType(RacketType.PENHOLDER)
                 .snsNotiOpt(SnsType.NONE)
                 .roleType(RoleType.ADMIN)
@@ -83,7 +81,6 @@ public class TestDataUtils {
         User user = User.builder()
                 .eMail("email")
                 .intraId(randomId)
-                .imageUri("image")
                 .racketType(RacketType.PENHOLDER)
                 .snsNotiOpt(SnsType.NONE)
                 .roleType(RoleType.USER)
@@ -93,12 +90,11 @@ public class TestDataUtils {
         return user;
     }
 
-    public User createNewUser(String intraId, String email, String imageUrl, RacketType racketType,
+    public User createNewUser(String intraId, String email, RacketType racketType,
                               SnsType snsType, RoleType roleType){
         User user = User.builder()
                 .eMail(email)
                 .intraId(intraId)
-                .imageUri(imageUrl)
                 .racketType(racketType)
                 .snsNotiOpt(snsType)
                 .roleType(roleType)
@@ -113,7 +109,6 @@ public class TestDataUtils {
         User user = User.builder()
                 .eMail("email")
                 .intraId(randomId)
-                .imageUri("image")
                 .racketType(RacketType.PENHOLDER)
                 .snsNotiOpt(SnsType.NONE)
                 .roleType(RoleType.USER)
@@ -190,7 +185,7 @@ public class TestDataUtils {
         String zSetKey = RedisKeyManager.getZSetKey(season.getId());
         String hashKey = RedisKeyManager.getHashKey(season.getId());
         redisRepository.addRankData(hashKey, newUser.getId(),
-                new RankRedis(newUser.getId(), "aa", season.getStartPpp(), 0, 0, statusMessage));
+                new RankRedis(newUser.getId(), "aa", season.getStartPpp(), 0, 0, statusMessage, "aa"));
         Rank userRank = Rank.builder()
                         .user(newUser)
                         .season(season)
@@ -208,7 +203,7 @@ public class TestDataUtils {
         String zSetKey = RedisKeyManager.getZSetKey(season.getId());
         String hashKey = RedisKeyManager.getHashKey(season.getId());
         redisRepository.addRankData(hashKey, newUser.getId(),
-                new RankRedis(newUser.getId(), "aa", season.getStartPpp(), 0, 0, statusMessage));
+                new RankRedis(newUser.getId(), "aa", season.getStartPpp(), 0, 0, statusMessage, "aa"));
         Rank userRank = Rank.builder()
                 .user(newUser)
                 .season(season)
@@ -224,9 +219,10 @@ public class TestDataUtils {
     public void createUserRank(User newUser, String statusMessage, Season season, int ppp) {
         String zSetKey = RedisKeyManager.getZSetKey(season.getId());
         String hashKey = RedisKeyManager.getHashKey(season.getId());
+        Tier tier = tierRepository.getById(1L);
         redisRepository.addToZSet(zSetKey, newUser.getId(), ppp);
         redisRepository.addRankData(hashKey, newUser.getId(),
-                new RankRedis(newUser.getId(), "aa", ppp, 1, 0, statusMessage));
+                new RankRedis(newUser.getId(), "aa", ppp, 1, 0, statusMessage, "aa"));
         Rank userRank = Rank.builder()
                 .user(newUser)
                 .season(season)
@@ -234,6 +230,7 @@ public class TestDataUtils {
                 .wins(1)
                 .losses(0)
                 .statusMessage(statusMessage)
+                .tier(tier)
                 .build();
         rankRepository.save(userRank);
     }

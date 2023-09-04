@@ -205,14 +205,14 @@ class PenaltyAdminControllerTest {
         for (int i = 0; i < 20; i++) {
             String intraId = UUID.randomUUID().toString().substring(0, 4) + "test" + UUID.randomUUID().toString()
                     .substring(0, 4);
-            User newUser = testDataUtils.createNewUser(intraId, "test", "test", RacketType.NONE, SnsType.EMAIL,
+            User newUser = testDataUtils.createNewUser(intraId, "test", RacketType.NONE, SnsType.EMAIL,
                     RoleType.USER);
             users.add(newUser);
             penaltyAdminService.givePenalty(newUser.getIntraId(), 3, "test" + String.valueOf(i));
         }
         for (int i = 0; i < 20; i++) {
             String intraId = "dummy" + String.valueOf(i);
-            User newUser = testDataUtils.createNewUser(intraId, "test", "test", RacketType.NONE, SnsType.EMAIL,
+            User newUser = testDataUtils.createNewUser(intraId, "test", RacketType.NONE, SnsType.EMAIL,
                     RoleType.USER);
             users.add(newUser);
             penaltyAdminService.givePenalty(newUser.getIntraId(), 3, "test" + String.valueOf(i));
