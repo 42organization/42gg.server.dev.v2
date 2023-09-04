@@ -1,7 +1,6 @@
 package com.gg.server.domain.rank.redis;
 
 import com.gg.server.domain.rank.exception.RedisDataNotFoundException;
-import com.gg.server.global.exception.ErrorCode;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;

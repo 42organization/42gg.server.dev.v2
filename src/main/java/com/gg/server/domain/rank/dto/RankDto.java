@@ -4,9 +4,11 @@ import com.gg.server.domain.rank.redis.RankRedis;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class RankDto {
     private String intraId;
