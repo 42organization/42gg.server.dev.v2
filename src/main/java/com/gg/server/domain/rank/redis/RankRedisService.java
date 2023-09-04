@@ -43,9 +43,9 @@ public class RankRedisService {
         Integer enemyPPP = enemyTeam.getPpp();
         updatePPP(myTeamUser, myTeam, enemyTeamUser.getTeam().getScore(), myPPP, enemyPPP, game.getSeason().getId());
         updatePPP(enemyTeamUser, enemyTeam, myTeamUser.getTeam().getScore(), enemyPPP, myPPP, game.getSeason().getId());
-//        updateAllTier(key, game.getSeason());
         updateRankUser(key, zsetKey, myTeamUser.getUser().getId(), myTeam);
         updateRankUser(key, zsetKey, enemyTeamUser.getUser().getId(), enemyTeam);
+        updateAllTier(key, game.getSeason());
         pChangeService.addPChange(game, myTeamUser.getUser(), myTeam.getPpp(), true);
         pChangeService.addPChange(game, enemyTeamUser.getUser(), enemyTeam.getPpp(), false);
     }
@@ -88,16 +88,13 @@ public class RankRedisService {
         int top30percentPpp = rankRedisList.get((int) (totalRankPlayers * 0.3)).getPpp();
         int top10percentPpp = rankRedisList.get((int) (totalRankPlayers * 0.1)).getPpp();
 
+        System.out.println(rankRedisList.size());
+
         for (int i = 0; i < rankRedisList.size(); i++) {
             RankRedis rankRedis = rankRedisList.get(i);
             if (rankRedis.getWins() == 0 && rankRedis.getLosses() == 0) {
                 rankRedis.updateTierImage(tierList.get(0).getImageUri());
             } else {
-                if (i < 3) {
-                    // 1, 2, 3등
-                    rankRedis.updateTierImage(tierList.get(6).getImageUri());
-                    continue;
-                }
                 if (rankRedis.getPpp() < 970) {
                     // 970 미만
                     rankRedis.updateTierImage(tierList.get(1).getImageUri());
@@ -120,6 +117,13 @@ public class RankRedisService {
                     }
                 }
             }
+        }
+        for (int i = 0; i < 3; i++) {
+            RankRedis rankRedis = rankRedisList.get(i);
+            rankRedis.updateTierImage(tierList.get(7).getImageUri());
+        }
+        for (RankRedis rankRedis : rankRedisList) {
+            rankRedisRepository.updateRankData(key, rankRedis.getUserId(), rankRedis);
         }
     }
 

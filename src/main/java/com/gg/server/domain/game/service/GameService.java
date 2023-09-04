@@ -186,7 +186,6 @@ public class GameService {
                 expUpdates(game, teams);
                 rankRedisService.updateRankRedis(myTeam, enemyTeam, game);
                 tierService.updateAllTier(game.getSeason());
-                redisUploadService.uploadRedis();
             } else {
                 // score 가 이미 입력됨
                 return false;
