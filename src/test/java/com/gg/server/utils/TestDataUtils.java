@@ -185,7 +185,7 @@ public class TestDataUtils {
         String zSetKey = RedisKeyManager.getZSetKey(season.getId());
         String hashKey = RedisKeyManager.getHashKey(season.getId());
         redisRepository.addRankData(hashKey, newUser.getId(),
-                new RankRedis(newUser.getId(), "aa", season.getStartPpp(), 0, 0, statusMessage));
+                new RankRedis(newUser.getId(), "aa", season.getStartPpp(), 0, 0, statusMessage, "aa"));
         Rank userRank = Rank.builder()
                         .user(newUser)
                         .season(season)
@@ -203,7 +203,7 @@ public class TestDataUtils {
         String zSetKey = RedisKeyManager.getZSetKey(season.getId());
         String hashKey = RedisKeyManager.getHashKey(season.getId());
         redisRepository.addRankData(hashKey, newUser.getId(),
-                new RankRedis(newUser.getId(), "aa", season.getStartPpp(), 0, 0, statusMessage));
+                new RankRedis(newUser.getId(), "aa", season.getStartPpp(), 0, 0, statusMessage, "aa"));
         Rank userRank = Rank.builder()
                 .user(newUser)
                 .season(season)
@@ -219,9 +219,10 @@ public class TestDataUtils {
     public void createUserRank(User newUser, String statusMessage, Season season, int ppp) {
         String zSetKey = RedisKeyManager.getZSetKey(season.getId());
         String hashKey = RedisKeyManager.getHashKey(season.getId());
+        Tier tier = tierRepository.getById(1L);
         redisRepository.addToZSet(zSetKey, newUser.getId(), ppp);
         redisRepository.addRankData(hashKey, newUser.getId(),
-                new RankRedis(newUser.getId(), "aa", ppp, 1, 0, statusMessage));
+                new RankRedis(newUser.getId(), "aa", ppp, 1, 0, statusMessage, "aa"));
         Rank userRank = Rank.builder()
                 .user(newUser)
                 .season(season)
@@ -229,6 +230,7 @@ public class TestDataUtils {
                 .wins(1)
                 .losses(0)
                 .statusMessage(statusMessage)
+                .tier(tier)
                 .build();
         rankRepository.save(userRank);
     }
