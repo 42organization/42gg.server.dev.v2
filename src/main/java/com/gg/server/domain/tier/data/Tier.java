@@ -1,14 +1,17 @@
 package com.gg.server.domain.tier.data;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Tier {
+public class Tier implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

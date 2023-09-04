@@ -1,5 +1,6 @@
 package com.gg.server.admin.item.dto;
 
+import com.gg.server.domain.item.type.ItemType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,11 +14,11 @@ public class ItemUpdateRequestDto {
     @NotNull(message = "plz. itemName")
     private String name;
 
-    @NotNull(message = "plz. content")
-    private String content;
+    @NotNull(message = "plz. mainContent")
+    private String mainContent;
 
-    @NotNull(message = "plz. imageUri")
-    private String imageUri;
+    @NotNull(message = "plz. subContent")
+    private String subContent;
 
     @NotNull(message = "plz. price")
     private Integer price;
@@ -25,18 +26,18 @@ public class ItemUpdateRequestDto {
     @NotNull(message = "plz. discount")
     private Integer discount;
 
-    @NotNull(message = "plz. creatorIntraId")
-    private String creatorIntraId;
+    @NotNull(message = "plz. itemType")
+    private ItemType itemType;
 
     @Override
     public String toString() {
-        return "ItemRequestDto{" +
+        return "ItemUpdateRequestDto{" +
                 "name='" + name + '\'' +
-                ", content='" + content + '\'' +
-                ", imageUri='" + imageUri + '\'' +
+                ", mainContent='" + mainContent + '\'' +
+                ", subContent='" + subContent + '\'' +
                 ", price=" + price +
                 ", discount=" + discount +
-                ", creator='" + creatorIntraId + '\'' +
+                ", itemType='" + itemType + '\'' +
                 '}';
     }
 }

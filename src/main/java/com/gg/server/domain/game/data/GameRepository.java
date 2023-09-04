@@ -37,7 +37,7 @@ public interface GameRepository extends JpaRepository<Game, Long>, GameRepositor
 
     @Query(value = "SELECT teamId, gameId, score, startTime, status, mode, userId, intraId, image, total_exp exp" +
             " FROM v_teamuser where gameId = :gameId", nativeQuery = true)
-    List<GameTeamUserInfo> findTeamGameUser(Long gameId);
+    List<GameTeamUserInfo> findTeamGameUser(@Param("gameId") Long gameId);
     Optional<Game> findByStartTime(LocalDateTime startTime);
     @Query(value = "select g from Game g where g.startTime > :startTime and g.startTime < :endTime")
     List<Game> findAllBetween(@Param("startTime")LocalDateTime startTime, @Param("endTime") LocalDateTime endTime);

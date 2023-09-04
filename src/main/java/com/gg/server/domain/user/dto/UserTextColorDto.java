@@ -10,5 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserTextColorDto {
     @NotNull
+    private Long receiptId;
+    @NotNull
     private String textColor;
 }

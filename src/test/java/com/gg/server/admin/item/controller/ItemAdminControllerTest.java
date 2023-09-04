@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.item.data.ItemAdminRepository;
 import com.gg.server.admin.item.dto.ItemListResponseDto;
 import com.gg.server.admin.item.service.ItemAdminService;
+import com.gg.server.domain.item.data.Item;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
@@ -16,13 +17,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 
 
 import javax.transaction.Transactional;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -68,7 +71,8 @@ class ItemAdminControllerTest {
         System.out.println(result.getHistoryList().get(0));
         assertThat(result.getHistoryList().get(0).getItemId());
         assertThat(result.getHistoryList().get(0).getName());
-        assertThat(result.getHistoryList().get(0).getContent());
+        assertThat(result.getHistoryList().get(0).getMainContent());
+        assertThat(result.getHistoryList().get(0).getSubContent());
         assertThat(result.getHistoryList().get(0).getPrice());
     }
 
@@ -76,27 +80,29 @@ class ItemAdminControllerTest {
     @DisplayName("PUT /pingpong/admin/items/history/{itemId}")
     public void updateItemTest() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
-        String requestJson = "{\"name\" : \"확성기\", \"content\" : \"testing\", \"imageUri\" : \"https://kakao.com\", \"price\" : 42, \"discount\" : 50, \"creatorIntraId\" : \"cheolee\"}";
-        String contentAsString = mockMvc.perform(put("/pingpong/admin/items/{itemId}", 1)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestJson)
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
+        String creatorId = userRepository.getById(userId).getIntraId();
+        MockMultipartFile image = new MockMultipartFile("file", "imagefile.jpeg", "image/jpeg", "<<jpeg data>>".getBytes());
+        MockMultipartFile jsonFile = new MockMultipartFile("itemRequestDto", "", "application/json", "{\"name\": \"TEST\", \"content\": \"TESTING\", \"price\": 42, \"discount\": 50, \"itemType\": \"MEGAPHONE\"}".getBytes());
+        String contentAsString = mockMvc.perform(multipart("/pingpong/admin/items/{itemId}", 1)
+                .file(image)
+                        .file(jsonFile)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isNoContent())
                 .andReturn().getResponse().getContentAsString();
-        System.out.println(contentAsString);
     }
 
     @Test
     @DisplayName("DELETE /pingpong/admin/items/{itemId}")
     public void deleteItemTest() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
-        String requestJson = "{\"deleterIntraId\" : \"sishin\"}";
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
+        String deleterId = userRepository.getById(userId).getIntraId();
         String contentAsString = mockMvc.perform(delete("/pingpong/admin/items/{itemId}", 1)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestJson)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isNoContent())
                 .andReturn().getResponse().getContentAsString();
-        System.out.println(contentAsString);
+        List<Item> list = itemAdminRepository.findAll();
+        assertThat(list.get(0).getDeleterIntraId()).isEqualTo(deleterId);
     }
 }

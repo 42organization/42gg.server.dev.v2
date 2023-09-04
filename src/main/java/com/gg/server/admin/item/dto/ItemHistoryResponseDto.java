@@ -13,7 +13,8 @@ import java.time.LocalDateTime;
 public class ItemHistoryResponseDto {
     private Long itemId;
     private String name;
-    private String content;
+    private String mainContent;
+    private String subContent;
     private String imageUri;
     private Integer price;
     private Integer discount;
@@ -25,7 +26,8 @@ public class ItemHistoryResponseDto {
     public ItemHistoryResponseDto(Item item) {
         this.itemId = item.getId();
         this.name = item.getName();
-        this.content = item.getContent();
+        this.mainContent = item.getMainContent();
+        this.subContent = item.getSubContent();
         this.imageUri = item.getImageUri();
         this.price = item.getPrice();
         this.discount = item.getDiscount();
@@ -40,7 +42,8 @@ public class ItemHistoryResponseDto {
         return "ItemHistoryResponseDto{" +
                 "itemId=" + itemId +
                 ", name='" + name + '\'' +
-                ", content='" + content + '\'' +
+                ", mainContent='" + mainContent + '\'' +
+                ", subContent='" + subContent + '\'' +
                 ", imageUri='" + imageUri + '\'' +
                 ", price=" + price +
                 ", discount=" + discount +
