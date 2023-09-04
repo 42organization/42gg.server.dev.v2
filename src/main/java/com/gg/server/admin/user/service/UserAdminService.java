@@ -116,7 +116,8 @@ public class UserAdminService {
 
     public String getUserImageToString(User user) {
         UserImage userImage = userImageAdminRepository.findTopByUserAndIsDeletedOrderByIdDesc(user, false).orElse(null);
-        return userImage.toString();
+        assert userImage != null;
+        return userImage.getImageUri();
     }
 
     @Transactional
