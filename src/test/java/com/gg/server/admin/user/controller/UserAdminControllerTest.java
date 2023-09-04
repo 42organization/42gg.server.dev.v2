@@ -214,4 +214,25 @@ class UserAdminControllerTest {
         UserImageListAdminResponseDto actureResponse = objectMapper.readValue(contentAsString, UserImageListAdminResponseDto.class);
         assertThat(actureResponse.getUserImageList().size()).isEqualTo(3);
     }
+
+    @Test
+    @DisplayName("GET /pingpong/admin/users/images/{intraId}")
+    @Transactional
+    public void getUserImageListByIntraIdTest() throws Exception{
+        //given
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
+        String intraId = "klew";
+        String url = "/pingpong/admin/users/images/" + intraId + "?page=1";
+
+        //when
+        //200 성공
+        String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        //then
+        //각 유저의 이미지가 삭제된 이미지인지 확인
+        UserImageListAdminResponseDto actureResponse = objectMapper.readValue(contentAsString, UserImageListAdminResponseDto.class);
+        assertThat(actureResponse.getUserImageList().size()).isEqualTo(2);
+    }
 }

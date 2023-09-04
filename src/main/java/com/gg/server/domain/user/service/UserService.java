@@ -360,6 +360,7 @@ public class UserService {
 
     public String getUserImageToString(User user) {
         UserImage userImage = userImageRepository.findTopByUserAndIsDeletedOrderByIdDesc(user, false).orElse(null);
-        return userImage.toString();
+        assert userImage != null;
+        return userImage.getImageUri();
     }
 }
