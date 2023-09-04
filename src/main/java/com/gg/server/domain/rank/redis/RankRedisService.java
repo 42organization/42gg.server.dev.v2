@@ -78,23 +78,11 @@ public class RankRedisService {
         Long totalRankPlayers = rankRepository.countRealRankPlayers(season.getId());
         List<Tier> tierList = tierRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
 
-        for (Tier tier : tierList) {
-            System.out.println(tier);
-        }
-
-        System.out.println("RankRedisService : Update All Tier");
-        System.out.println("전체 활성 랭크 유저 수 : " + totalRankPlayers);
-
         int top30percentPpp = rankRedisList.get((int) (totalRankPlayers * 0.3)).getPpp();
         int top10percentPpp = rankRedisList.get((int) (totalRankPlayers * 0.1)).getPpp();
 
-        System.out.println(rankRedisList.size());
-        System.out.println("top30percentPpp : " + top30percentPpp);
-        System.out.println("top10percentPpp : " + top10percentPpp);
-
         for (int i = 0; i < rankRedisList.size(); i++) {
             RankRedis rankRedis = rankRedisList.get(i);
-            System.out.println("check rankRedis: " + rankRedis);
             if (rankRedis.getWins() == 0 && rankRedis.getLosses() == 0) {
                 rankRedis.updateTierImage(tierList.get(0).getImageUri());
             } else {
