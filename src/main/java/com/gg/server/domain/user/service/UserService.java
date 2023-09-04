@@ -359,12 +359,8 @@ public class UserService {
     }
 
     public String getUserImageToString(User user) {
-<<<<<<< Updated upstream
         UserImage userImage = userImageRepository.findTopByUserAndIsDeletedOrderByIdDesc(user, false).orElse(null);
         assert userImage != null;
-=======
-        UserImage userImage = userImageRepository.findTopByUserAndIsDeletedOrderByIdDesc(user, false).orElse(null);        assert userImage != null;
->>>>>>> Stashed changes
         return userImage.getImageUri();
     }
 }
