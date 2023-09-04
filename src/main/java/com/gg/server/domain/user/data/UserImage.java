@@ -4,6 +4,7 @@ import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -31,6 +32,7 @@ public class UserImage {
     private LocalDateTime createdAt;
 
     @NotNull
+    @Setter
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 

@@ -2,12 +2,15 @@ package com.gg.server.admin.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.user.data.UserAdminRepository;
+import com.gg.server.admin.user.data.UserImageAdminRepository;
 import com.gg.server.admin.user.dto.UserDetailAdminResponseDto;
 import com.gg.server.admin.user.dto.UserSearchAdminDto;
 import com.gg.server.admin.user.dto.UserSearchAdminResponseDto;
 import com.gg.server.admin.user.service.UserAdminService;
 import com.gg.server.domain.user.data.User;
+import com.gg.server.domain.user.data.UserImage;
 import com.gg.server.domain.user.data.UserRepository;
+import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +30,7 @@ import javax.transaction.Transactional;
 
 import java.util.List;
 
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -49,6 +53,8 @@ class UserAdminControllerTest {
     MockMvc mockMvc;
     @Autowired
     ObjectMapper objectMapper;
+    @Autowired
+    UserImageAdminRepository userImageAdminRepository;
 
     @Test
     @DisplayName("GET /pingpong/admin/users")
@@ -144,5 +150,24 @@ class UserAdminControllerTest {
         Assertions.assertThat(actureResponse.getRoleType()).isEqualTo(expectedResponse.getRoleType());
         Assertions.assertThat(actureResponse.getExp()).isEqualTo(expectedResponse.getExp());
         Assertions.assertThat(actureResponse.getCoin()).isEqualTo(expectedResponse.getCoin());
+    }
+
+    @Test
+    @DisplayName("DELETE /pingpong/admin/users/{intraId}")
+    @Transactional
+    public void deleteUserProfileImageTest() throws Exception{
+        //given
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
+        User user = userRepository.findByIntraId("klew").get();
+        String url = "/pingpong/admin/users/" + user.getIntraId();
+        UserImage PrevUserImage = userImageAdminRepository.findTopByUserAndIsDeletedOrderByIdDesc(user, false).orElseThrow(UserNotFoundException::new);
+        //when
+        //200 성공
+        mockMvc.perform(delete(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isNoContent());
+
+        UserImage CurrentUserImage = userImageAdminRepository.findTopByUserAndIsDeletedOrderByIdDesc(user, false).orElseThrow(UserNotFoundException::new);
+        Assertions.assertThat(PrevUserImage.getId()).isNotEqualTo(CurrentUserImage.getId());
     }
 }

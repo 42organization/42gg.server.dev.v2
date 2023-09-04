@@ -2,6 +2,7 @@ package com.gg.server.admin.user.service;
 import com.gg.server.admin.rank.service.RankRedisAdminService;
 import com.gg.server.admin.season.data.SeasonAdminRepository;
 import com.gg.server.admin.user.data.UserAdminRepository;
+import com.gg.server.admin.user.data.UserImageAdminRepository;
 import com.gg.server.admin.user.dto.UserDetailAdminResponseDto;
 import com.gg.server.admin.user.dto.UserSearchAdminDto;
 import com.gg.server.admin.user.dto.UserSearchAdminResponseDto;
@@ -20,7 +21,6 @@ import com.gg.server.domain.user.data.UserImage;
 import com.gg.server.domain.user.data.UserImageRepository;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.domain.user.service.UserFindService;
-import com.gg.server.domain.user.service.UserService;
 import com.gg.server.global.utils.aws.AsyncNewUserImageUploader;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -45,7 +45,7 @@ public class UserAdminService {
     private final RankRedisAdminService rankRedisAdminService;
     private final AsyncNewUserImageUploader asyncNewUserImageUploader;
     private final UserFindService userFindService;
-    private final UserImageRepository userImageRepository;
+    private final UserImageAdminRepository userImageAdminRepository;
 
     @Transactional(readOnly = true)
     public UserSearchAdminResponseDto searchAll(Pageable pageable) {
@@ -119,7 +119,14 @@ public class UserAdminService {
     }
 
     public String getUserImageToString(User user) {
-        UserImage userImage = userImageRepository.findTopByUserAndIsDeletedOrderByIdDesc(user, false).orElse(null);
+        UserImage userImage = userImageAdminRepository.findTopByUserAndIsDeletedOrderByIdDesc(user, false).orElse(null);
         return userImage.toString();
+    }
+
+    @Transactional
+    public void deleteUserProfileImage(String intraId) {
+        User user = userAdminRepository.findByIntraId(intraId).orElseThrow(UserNotFoundException::new);
+        UserImage userImage = userImageAdminRepository.findTopByUserAndIsDeletedOrderByIdDesc(user, false).orElseThrow(UserNotFoundException::new);
+        userImage.setIsDeleted(true);
     }
 }
