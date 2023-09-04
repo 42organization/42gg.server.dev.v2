@@ -71,8 +71,16 @@ public class UserAdminController {
     public ResponseEntity<UserImageListAdminResponseDto> getUserImageDeleteList(@ModelAttribute @Valid PageRequestDto pageRequestDto) {
         Pageable pageable = PageRequest.of(pageRequestDto.getPage() - 1,
                 pageRequestDto.getSize(),
-                Sort.by("createdAt").descending());
+                Sort.by("id").descending());
         return ResponseEntity.ok()
                 .body(userAdminService.getUserImageDeleteList(pageable));
+    }
+
+    @GetMapping("/images")
+    public ResponseEntity<UserImageListAdminResponseDto> getUserImageList(@ModelAttribute @Valid PageRequestDto pageRequestDto) {
+        Pageable pageable = PageRequest.of(pageRequestDto.getPage() - 1,
+                pageRequestDto.getSize());
+        return ResponseEntity.ok()
+                .body(userAdminService.getUserImageList(pageable));
     }
 }

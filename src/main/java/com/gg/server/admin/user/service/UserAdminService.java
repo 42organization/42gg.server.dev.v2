@@ -133,4 +133,12 @@ public class UserAdminService {
 
         return new UserImageListAdminResponseDto(userImageAdminDto.getContent(), userImageAdminDto.getTotalPages());
     }
+
+    @Transactional(readOnly = true)
+    public UserImageListAdminResponseDto getUserImageList(Pageable pageable) {
+        Page<UserImage> userImagePage = userImageAdminRepository.findChanged(pageable);
+        Page<UserImageAdminDto> userImageAdminDto = userImagePage.map(UserImageAdminDto::new);
+
+        return new UserImageListAdminResponseDto(userImageAdminDto.getContent(), userImageAdminDto.getTotalPages());
+    }
 }
