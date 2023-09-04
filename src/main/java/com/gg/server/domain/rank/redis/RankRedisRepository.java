@@ -7,6 +7,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Repository;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -187,11 +188,11 @@ public class RankRedisRepository {
         return objects.stream().map(RankRedis.class::cast).collect(Collectors.toList());
     }
 
-    public List<RankRedis> findAllRanks(String key) {
+    public List<RankRedis> findAllRanksOrderByPppDesc(String key) {
         List<Object> objects = hashOps.values(key);
         if(objects == null)
             throw new RedisDataNotFoundException();
-        return objects.stream().map(RankRedis.class::cast).collect(Collectors.toList());
+        return objects.stream().map(RankRedis.class::cast).sorted(Comparator.comparing(RankRedis::getPpp).reversed()).collect(Collectors.toList());
     }
 
     public Long countTotalRank(String zSetKey) {

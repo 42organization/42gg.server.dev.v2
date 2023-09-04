@@ -77,6 +77,7 @@ public class RankRedis implements Serializable {
                 ", wins=" + wins +
                 ", losses=" + losses +
                 ", statusMessage='" + statusMessage + '\'' +
+                ", tierImageUrl='" + tierImageUrl + '\'' +
                 '}';
     }
 }

@@ -74,7 +74,7 @@ public class RankRedisService {
 
     public void updateAllTier(String key, Season season) {
         // 전체 레디스 랭크 티어 새로고침하는 로직
-        List<RankRedis> rankRedisList = rankRedisRepository.findAllRanks(key);
+        List<RankRedis> rankRedisList = rankRedisRepository.findAllRanksOrderByPppDesc(key);
         Long totalRankPlayers = rankRepository.countRealRankPlayers(season.getId());
         List<Tier> tierList = tierRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
 
@@ -89,12 +89,19 @@ public class RankRedisService {
         int top10percentPpp = rankRedisList.get((int) (totalRankPlayers * 0.1)).getPpp();
 
         System.out.println(rankRedisList.size());
+        System.out.println("top30percentPpp : " + top30percentPpp);
+        System.out.println("top10percentPpp : " + top10percentPpp);
 
         for (int i = 0; i < rankRedisList.size(); i++) {
             RankRedis rankRedis = rankRedisList.get(i);
+            System.out.println("check rankRedis: " + rankRedis);
             if (rankRedis.getWins() == 0 && rankRedis.getLosses() == 0) {
                 rankRedis.updateTierImage(tierList.get(0).getImageUri());
             } else {
+                if (i < 3) {
+                    rankRedis.updateTierImage(tierList.get(6).getImageUri());
+                    continue;
+                }
                 if (rankRedis.getPpp() < 970) {
                     // 970 미만
                     rankRedis.updateTierImage(tierList.get(1).getImageUri());
@@ -117,10 +124,6 @@ public class RankRedisService {
                     }
                 }
             }
-        }
-        for (int i = 0; i < 3; i++) {
-            RankRedis rankRedis = rankRedisList.get(i);
-            rankRedis.updateTierImage(tierList.get(7).getImageUri());
         }
         for (RankRedis rankRedis : rankRedisList) {
             rankRedisRepository.updateRankData(key, rankRedis.getUserId(), rankRedis);

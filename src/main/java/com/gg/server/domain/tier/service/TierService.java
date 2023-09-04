@@ -27,6 +27,9 @@ public class TierService {
         int top30percentPpp = rankList.get((int) (totalRankPlayers * 0.3)).getPpp();
         int top10percentPpp = rankList.get((int) (totalRankPlayers * 0.1)).getPpp();
 
+        System.out.println("Tier-top30percentPpp : " + top30percentPpp);
+        System.out.println("Tier-top10percentPpp : " + top10percentPpp);
+
         for (int i = 0; i < rankList.size(); i++) {
             Rank rank = rankList.get(i);
             if (rank.getWins() == 0 && rank.getLosses() == 0) {
