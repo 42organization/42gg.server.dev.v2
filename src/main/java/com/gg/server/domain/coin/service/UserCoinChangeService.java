@@ -5,6 +5,8 @@ import com.gg.server.domain.coin.data.CoinPolicyRepository;
 import com.gg.server.domain.coin.dto.UserGameCoinResultDto;
 import com.gg.server.domain.coin.type.HistoryType;
 import com.gg.server.domain.game.service.GameFindService;
+import com.gg.server.domain.item.data.Item;
+import com.gg.server.domain.item.exception.InsufficientGgcoinException;
 import com.gg.server.domain.team.data.Team;
 import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.user.data.User;
@@ -35,6 +37,25 @@ public class UserCoinChangeService {
         coinHistoryService.addAttendanceCoinHistory(user);
         return coinIncrement;
     }
+
+    @Transactional
+    public void purchaseItemCoin(Item item, Integer price, Long userId){
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException());
+
+        user.payGgCoin(price);
+
+        coinHistoryService.addPurchaseItemCoinHistory(user, item, price);
+    }
+
+    @Transactional
+    public void giftItemCoin(Item item, Integer price, User user, User giftTarget){
+        user.payGgCoin(price);
+
+        coinHistoryService.addGiftItemCoinHistory(user, giftTarget, item, price);
+    }
+
 
     @Transactional
     public UserGameCoinResultDto addNormalGameCoin(Long userId) {
