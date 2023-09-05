@@ -46,6 +46,7 @@ public class AsyncNewUserImageUploader {
             UserImage userImage = new UserImage(user, (s3ImageUrl != null) ? s3ImageUrl : defaultImageUrl,
                     LocalDateTime.now(), false);
             userImageRepository.save(userImage);
+            user.updateImageUri(userImage.getImageUri());
         });
     }
 
@@ -56,5 +57,6 @@ public class AsyncNewUserImageUploader {
         s3ImageUrl = s3ImageUrl == null ? defaultImageUrl : s3ImageUrl;
         UserImage userImage = new UserImage(user, s3ImageUrl, LocalDateTime.now(), false);
         userImageRepository.saveAndFlush(userImage);
+        user.updateImageUri(s3ImageUrl);
     }
 }

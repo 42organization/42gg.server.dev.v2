@@ -8,10 +8,7 @@ import com.gg.server.domain.item.dto.ItemStoreListResponseDto;
 import com.gg.server.domain.item.dto.ItemStoreResponseDto;
 import com.gg.server.domain.item.dto.UserItemListResponseDto;
 import com.gg.server.domain.item.dto.UserItemResponseDto;
-import com.gg.server.domain.item.exception.InsufficientGgcoinException;
-import com.gg.server.domain.item.exception.ItemNotFoundException;
-import com.gg.server.domain.item.exception.ItemNotPurchasableException;
-import com.gg.server.domain.item.exception.KakaoPurchaseException;
+import com.gg.server.domain.item.exception.*;
 import com.gg.server.domain.noti.service.NotiService;
 import com.gg.server.domain.receipt.data.Receipt;
 import com.gg.server.domain.receipt.data.ReceiptRepository;
@@ -99,10 +96,18 @@ public class ItemService {
         User payUser = userRepository.findById(userDto.getId())
                 .orElseThrow(() -> new UserNotFoundException());
 
+        if (payUser.getRoleType() == RoleType.GUEST) {
+            throw new KakaoPurchaseException();
+        }
+
         User owner = userRepository.findByIntraId(ownerId)
                 .orElseThrow(() -> new UserNotFoundException());
 
-        userCoinChangeService.giftItemCoin(item, finalPrice, payUser, owner);
+        if (owner.getRoleType() == RoleType.GUEST) {
+            throw new KakaoGiftException();
+        }
+
+        payUser.payGgCoin(finalPrice);       //상품 구매에 따른 차감
 
         Receipt receipt = new Receipt(item, userDto.getIntraId(), ownerId,
                 ItemStatus.BEFORE, LocalDateTime.now());
