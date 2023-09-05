@@ -222,6 +222,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserImageResponseDto getRankedUserImagesByPPP(Long seasonId) {
         Season targetSeason;
+
         if (seasonId == 0)
             targetSeason = seasonFindService.findCurrentSeason(LocalDateTime.now());
         else
@@ -233,7 +234,7 @@ public class UserService {
             List<UserImageDto> userImages = new ArrayList<>();
             userIds.forEach(userId -> {
                 User user = users.stream().filter(u -> u.getId().equals(userId)).findFirst().orElseThrow(UserNotFoundException::new);
-                userImages.add(new UserImageDto(user.getId(), user.getImageUri(), LocalDateTime.now(), false));
+                userImages.add(new UserImageDto(user.getId(), user.getIntraId(), user.getImageUri(), LocalDateTime.now(), false));
             });
             return new UserImageResponseDto(userImages);
         } catch (RedisDataNotFoundException ex) {
@@ -245,7 +246,7 @@ public class UserService {
         List<User> users = userRepository.findAll(pageRequest).getContent();
         List<UserImageDto> userImages = new ArrayList<>();
         for (User user : users) {
-            userImages.add(new UserImageDto(user.getId(), user.getImageUri(), LocalDateTime.now(), false));
+            userImages.add(new UserImageDto(user.getId(), user.getIntraId(), user.getImageUri(), LocalDateTime.now(), false));
         }
         return new UserImageResponseDto(userImages);
     }
@@ -312,9 +313,9 @@ public class UserService {
     @Transactional
     public String updateBackground(UserDto user, UserBackgroundDto userBackgroundDto) {
         User userId = userRepository.findById(user.getId()).orElseThrow(UserNotFoundException::new);
+        BackgroundType backgroundType = BackgroundType.getRandomBackgroundType();
         Receipt receipt = receiptRepository.findById(userBackgroundDto.getReceiptId()).orElseThrow(ReceiptNotFoundException::new);
 
-        BackgroundType backgroundType = BackgroundType.getRandomBackgroundType();
         checkOwner(userId, receipt);
         checkItemType(receipt, ItemType.BACKGROUND);
         checkUseStatus(receipt);
