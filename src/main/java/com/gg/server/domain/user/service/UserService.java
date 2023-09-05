@@ -295,7 +295,7 @@ public class UserService {
     }
 
     @Transactional
-    public void updateEdge(UserDto user, UserEdgeDto userEdgeDto) {
+    public String updateEdge(UserDto user, UserEdgeDto userEdgeDto) {
         User userId = userRepository.findById(user.getId()).orElseThrow(UserNotFoundException::new);
         EdgeType edgeType = EdgeType.getRandomEdgeType();
         Receipt receipt = receiptRepository.findById(userEdgeDto.getReceiptId()).orElseThrow(ReceiptNotFoundException::new);
@@ -306,10 +306,12 @@ public class UserService {
 
         userId.updateEdge(edgeType);
         receipt.updateStatus(ItemStatus.USED);
+
+        return edgeType.toString();
     }
 
     @Transactional
-    public void updateBackground(UserDto user, UserBackgroundDto userBackgroundDto) {
+    public String updateBackground(UserDto user, UserBackgroundDto userBackgroundDto) {
         User userId = userRepository.findById(user.getId()).orElseThrow(UserNotFoundException::new);
         Receipt receipt = receiptRepository.findById(userBackgroundDto.getReceiptId()).orElseThrow(ReceiptNotFoundException::new);
 
@@ -320,6 +322,8 @@ public class UserService {
 
         userId.updateBackground(backgroundType);
         receipt.updateStatus(ItemStatus.USED);
+
+        return backgroundType.toString();
     }
 
     @Transactional

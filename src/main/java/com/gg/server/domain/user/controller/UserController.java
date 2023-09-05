@@ -1,8 +1,11 @@
 package com.gg.server.domain.user.controller;
 
 import com.gg.server.domain.game.type.Mode;
+import com.gg.server.domain.user.data.User;
+import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.*;
 import com.gg.server.domain.user.exception.KakaoOauth2AlreadyExistException;
+import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.domain.user.service.*;
 import com.gg.server.domain.user.type.OauthType;
 import com.gg.server.domain.user.type.RoleType;
@@ -37,6 +40,7 @@ public class UserController {
     private final UserAuthenticationService userAuthenticationService;
     private final CookieUtil cookieUtil;
     private final UserCoinService userCoinService;
+    private final UserRepository userRepository;
 
     @PostMapping("/accesstoken")
     public ResponseEntity<UserAccessTokenDto> generateAccessToken(@RequestParam String refreshToken) {
@@ -130,8 +134,8 @@ public class UserController {
 
     @PatchMapping("/edge")
     public ResponseEntity updateEdge(@RequestBody @Valid UserEdgeDto userEdgeDto, @Parameter(hidden = true) @Login UserDto user) {
-        userService.updateEdge(user, userEdgeDto);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        String edge = userService.updateEdge(user, userEdgeDto);
+        return new ResponseEntity(HttpStatus.NO_CONTENT).ok().body("{\"edge\": " + "\"" + edge + "\"" +"}");
     }
 
     @GetMapping("/coin")
@@ -141,8 +145,8 @@ public class UserController {
 
     @PatchMapping("/background")
     public ResponseEntity updateBackground(@RequestBody @Valid UserBackgroundDto userBackgroundDto, @Parameter(hidden = true) @Login UserDto user) {
-        userService.updateBackground(user, userBackgroundDto);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        String background = userService.updateBackground(user, userBackgroundDto);
+        return new ResponseEntity(HttpStatus.NO_CONTENT).ok().body("{\"background\": " + "\"" + background + "\"" +"}");
     }
   
     @GetMapping("/coinhistory")
