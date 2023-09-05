@@ -23,10 +23,10 @@ public class UserDetailAdminResponseDto {
     private Integer exp;
     private Integer coin;
 
-    public UserDetailAdminResponseDto(User user, String userImageUri, RankRedis rank) {
+    public UserDetailAdminResponseDto(User user, RankRedis rank) {
         this.userId = user.getId();
         this.intraId = user.getIntraId();
-        this.userImageUri = userImageUri;
+        this.userImageUri = user.getImageUri();
         this.racketType = user.getRacketType().getCode();
         this.statusMessage = rank.getStatusMessage();
         this.wins = rank.getWins();
@@ -38,10 +38,10 @@ public class UserDetailAdminResponseDto {
         this.coin = user.getGgCoin();
     }
 
-    public UserDetailAdminResponseDto(User user, String userImageUri) {
+    public UserDetailAdminResponseDto(User user) {
         this.userId = user.getId();
         this.intraId = user.getIntraId();
-        this.userImageUri = userImageUri;
+        this.userImageUri = user.getImageUri();
         this.racketType = user.getRacketType().getCode();
         this.statusMessage = "";
         this.wins = 0;

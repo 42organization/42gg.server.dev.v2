@@ -7,14 +7,12 @@ import com.gg.server.domain.user.service.*;
 import com.gg.server.domain.user.type.OauthType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.global.dto.PageRequestDto;
-import com.gg.server.global.security.config.properties.AppProperties;
 import com.gg.server.global.security.cookie.CookieUtil;
 import com.gg.server.global.security.jwt.utils.TokenHeaders;
 import com.gg.server.global.utils.argumentresolver.Login;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -130,8 +128,8 @@ public class UserController {
 
     @PatchMapping("/edge")
     public ResponseEntity updateEdge(@RequestBody @Valid UserEdgeDto userEdgeDto, @Parameter(hidden = true) @Login UserDto user) {
-        userService.updateEdge(user, userEdgeDto);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        String edge = userService.updateEdge(user, userEdgeDto);
+        return new ResponseEntity(HttpStatus.NO_CONTENT).ok().body("{\"edge\": " + "\"" + edge + "\"" +"}");
     }
 
     @GetMapping("/coin")
@@ -141,8 +139,8 @@ public class UserController {
 
     @PatchMapping("/background")
     public ResponseEntity updateBackground(@RequestBody @Valid UserBackgroundDto userBackgroundDto, @Parameter(hidden = true) @Login UserDto user) {
-        userService.updateBackground(user, userBackgroundDto);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        String background = userService.updateBackground(user, userBackgroundDto);
+        return new ResponseEntity(HttpStatus.NO_CONTENT).ok().body("{\"background\": " + "\"" + background + "\"" +"}");
     }
   
     @GetMapping("/coinhistory")

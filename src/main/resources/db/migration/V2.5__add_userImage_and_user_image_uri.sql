@@ -15,5 +15,3 @@ alter table user_image
             references `user` (id);
 
 INSERT INTO user_image (user_id, image_uri, created_at) SELECT id, image_uri, created_at FROM user;
-
-alter table user drop `image_uri`

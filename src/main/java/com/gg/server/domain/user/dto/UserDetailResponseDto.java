@@ -26,10 +26,10 @@ public class UserDetailResponseDto {
     private String tierName;
     private String tierImageUri;
 
-    public UserDetailResponseDto(User user, String userImageUri, String statusMessage, Tier tier) {
+    public UserDetailResponseDto(User user, String statusMessage, Tier tier) {
         this.intraId = user.getIntraId();
-        this.userImageUri = userImageUri;
         this.racketType = user.getRacketType().getCode();
+        this.userImageUri = user.getImageUri();
         this.statusMessage = statusMessage;
         this.snsNotiOpt = user.getSnsNotiOpt();
         this.background= user.getBackground();
