@@ -40,7 +40,6 @@ public class UserController {
     private final UserAuthenticationService userAuthenticationService;
     private final CookieUtil cookieUtil;
     private final UserCoinService userCoinService;
-    private final UserRepository userRepository;
 
     @PostMapping("/accesstoken")
     public ResponseEntity<UserAccessTokenDto> generateAccessToken(@RequestParam String refreshToken) {

@@ -78,9 +78,9 @@ public class UserAdminService {
         try {
             RankRedis userCurrRank = rankRedisRepository.findRankByUserId(RedisKeyManager.getHashKey(currSeason.getId()),
                     user.getId());
-           return new UserDetailAdminResponseDto(user, getUserImageToString(user), userCurrRank);
+           return new UserDetailAdminResponseDto(user, userCurrRank);
         } catch (RedisDataNotFoundException e){
-            return new UserDetailAdminResponseDto(user, getUserImageToString(user));
+            return new UserDetailAdminResponseDto(user);
         }
     }
 
@@ -124,7 +124,9 @@ public class UserAdminService {
     public void deleteUserProfileImage(String intraId) {
         User user = userAdminRepository.findByIntraId(intraId).orElseThrow(UserNotFoundException::new);
         UserImage userImage = userImageAdminRepository.findTopByUserAndIsDeletedOrderByIdDesc(user, false).orElseThrow(UserNotFoundException::new);
-        userImage.setIsDeleted(true);
+        userImage.updateIsDeleted(true);
+        String userImageUri = getUserImageToString(user);
+        user.updateImageUri(userImageUri);
     }
 
     @Transactional(readOnly = true)

@@ -129,9 +129,8 @@ public class UserService {
     public UserDetailResponseDto getUserDetail(String targetUserIntraId) {
         User targetUser = userFindService.findByIntraId(targetUserIntraId);
         String statusMessage = userFindService.getUserStatusMessage(targetUser);
-
         Tier tier = rankFindService.findByUserIdAndSeasonId(targetUser.getId(), seasonFindService.findCurrentSeason(LocalDateTime.now()).getId()).getTier();
-        return new UserDetailResponseDto(targetUser, getUserImageToString(targetUser), statusMessage, tier);
+        return new UserDetailResponseDto(targetUser, statusMessage, tier);
     }
 
     @Transactional
@@ -234,7 +233,7 @@ public class UserService {
             List<UserImageDto> userImages = new ArrayList<>();
             userIds.forEach(userId -> {
                 User user = users.stream().filter(u -> u.getId().equals(userId)).findFirst().orElseThrow(UserNotFoundException::new);
-                userImages.add(new UserImageDto(user.getId(), getUserImageToString(user), LocalDateTime.now(), false));
+                userImages.add(new UserImageDto(user.getId(), user.getImageUri(), LocalDateTime.now(), false));
             });
             return new UserImageResponseDto(userImages);
         } catch (RedisDataNotFoundException ex) {
@@ -246,7 +245,7 @@ public class UserService {
         List<User> users = userRepository.findAll(pageRequest).getContent();
         List<UserImageDto> userImages = new ArrayList<>();
         for (User user : users) {
-            userImages.add(new UserImageDto(user.getId(), getUserImageToString(user), LocalDateTime.now(), false));
+            userImages.add(new UserImageDto(user.getId(), user.getImageUri(), LocalDateTime.now(), false));
         }
         return new UserImageResponseDto(userImages);
     }
@@ -271,11 +270,11 @@ public class UserService {
         if (tier == null) {
             String tierName = "NONE";
             String tierImageUri = "NONE";
-            return new UserNormalDetailResponseDto(loginUser.getIntraId(), getUserImageToString(loginUser), isAdmin, isAttended, tierName, tierImageUri, level);
+            return new UserNormalDetailResponseDto(loginUser.getIntraId(), loginUser.getImageUri(), isAdmin, isAttended, tierName, tierImageUri, level);
         }
         String tierName = tier.getName();
         String tierImageUri = tier.getImageUri();
-        return new UserNormalDetailResponseDto(user.getIntraId(), getUserImageToString(loginUser), isAdmin, isAttended, tierName, tierImageUri, level);
+        return new UserNormalDetailResponseDto(user.getIntraId(), loginUser.getImageUri(), isAdmin, isAttended, tierName, tierImageUri, level);
     }
   
     @Transactional()

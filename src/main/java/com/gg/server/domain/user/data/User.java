@@ -66,6 +66,7 @@ public class User extends BaseTimeEntity implements Serializable {
                 RoleType roleType, Integer totalExp, SnsType snsNotiOpt, Long kakaoId) {
         this.intraId = intraId;
         this.eMail = eMail;
+        this.imageUri = imageUri;
         this.racketType = racketType;
         this.roleType = roleType;
         this.totalExp = totalExp;
