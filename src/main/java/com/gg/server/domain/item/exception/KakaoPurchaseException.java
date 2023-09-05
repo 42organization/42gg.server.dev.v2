@@ -8,3 +8,4 @@ public class KakaoPurchaseException extends BusinessException {
         super("카카오 게스트는 구매할 수 없습니다.", ErrorCode.GUEST_ROLE_PURCHASE_FORBIDDEN);
     }
 }
+
