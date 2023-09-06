@@ -26,12 +26,12 @@ public class CoinHistoryService {
 
     @Transactional
     public void addPurchaseItemCoinHistory(User user, Item item, Integer price) {
-        addCoinHistory(new CoinHistory(user, item.getName()+ "를 구매!", price*(-1)));
+        addCoinHistory(new CoinHistory(user, item.getName()+ " 구매", price*(-1)));
     }
 
     @Transactional
     public void addGiftItemCoinHistory(User user, User giftTarget, Item item, Integer price) {
-        addCoinHistory(new CoinHistory(user, item.getName()+ "를 " + giftTarget.getIntraId() + "에게 선물!", price*(-1)));
+        addCoinHistory(new CoinHistory(user, giftTarget.getIntraId() + "에게 " + item.getName()+ " 선물", price*(-1)));
     }
 
     @Transactional
