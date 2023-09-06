@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 public class UserImageAdminDto {
     Long id;
     Long userId;
+    String userIntraId;
     String imageUri;
     LocalDateTime createdAt;
     Boolean isDeleted;
@@ -20,6 +21,7 @@ public class UserImageAdminDto {
     public UserImageAdminDto(UserImage userImage) {
         this.id = userImage.getId();
         this.userId = userImage.getUser().getId();
+        this.userIntraId = userImage.getUser().getIntraId();
         this.imageUri = userImage.getImageUri();
         this.createdAt = userImage.getCreatedAt();
         this.isDeleted = userImage.getIsDeleted();

@@ -234,7 +234,8 @@ public class UserService {
             List<UserImageDto> userImages = new ArrayList<>();
             userIds.forEach(userId -> {
                 User user = users.stream().filter(u -> u.getId().equals(userId)).findFirst().orElseThrow(UserNotFoundException::new);
-                userImages.add(new UserImageDto(user.getId(), user.getIntraId(), user.getImageUri(), LocalDateTime.now(), false));
+                Tier tier = rankFindService.findByUserIdAndSeasonId(user.getId(), seasonFindService.findCurrentSeason(LocalDateTime.now()).getId()).getTier();
+                userImages.add(new UserImageDto(user.getId(), user.getIntraId(), user.getImageUri(), user.getEdge(), tier.getImageUri(), LocalDateTime.now(), false));
             });
             return new UserImageResponseDto(userImages);
         } catch (RedisDataNotFoundException ex) {
@@ -246,7 +247,8 @@ public class UserService {
         List<User> users = userRepository.findAll(pageRequest).getContent();
         List<UserImageDto> userImages = new ArrayList<>();
         for (User user : users) {
-            userImages.add(new UserImageDto(user.getId(), user.getIntraId(), user.getImageUri(), LocalDateTime.now(), false));
+            Tier tier = rankFindService.findByUserIdAndSeasonId(user.getId(), seasonFindService.findCurrentSeason(LocalDateTime.now()).getId()).getTier();
+            userImages.add(new UserImageDto(user.getId(), user.getIntraId(), user.getImageUri(), user.getEdge(), tier.getImageUri(), LocalDateTime.now(), false));
         }
         return new UserImageResponseDto(userImages);
     }
