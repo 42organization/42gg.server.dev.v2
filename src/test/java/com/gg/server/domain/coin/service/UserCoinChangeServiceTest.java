@@ -91,7 +91,7 @@ class UserCoinChangeServiceTest {
 
         assertThat(beforeCoin).isEqualTo(user.getGgCoin() + item.getPrice());
         System.out.println(coinHistoryRepository.findFirstByOrderByIdDesc().getHistory()+coinHistoryRepository.findFirstByOrderByIdDesc().getAmount());
-
+        System.out.println(coinHistoryRepository.findFirstByOrderByIdDesc().getHistory());
         try{
             userCoinChangeService.purchaseItemCoin(item, item.getPrice(), userId);
         }catch (Exception e){
@@ -117,6 +117,7 @@ class UserCoinChangeServiceTest {
 
         assertThat(beforeCoin).isEqualTo(user.getGgCoin() + item.getPrice());
         System.out.println(coinHistoryRepository.findFirstByOrderByIdDesc().getHistory()+coinHistoryRepository.findFirstByOrderByIdDesc().getAmount());
+        System.out.println(coinHistoryRepository.findFirstByOrderByIdDesc().getHistory());
 
         try{
             userCoinChangeService.giftItemCoin(item, item.getPrice(), user, user);

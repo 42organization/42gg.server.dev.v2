@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum HistoryType {
 
-    ATTENDANCECOIN("출석 입니다."),
+    ATTENDANCECOIN("출석"),
     NORMAL("일반전 코인 획득"),
     RANKWIN("랭크전 승리 코인 획득"),
     RANKLOSE("랭크전 패배 코인 획득");
