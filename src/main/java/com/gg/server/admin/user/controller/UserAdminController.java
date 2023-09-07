@@ -61,7 +61,7 @@ public class UserAdminController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-    @DeleteMapping("/{intraId}")
+    @DeleteMapping("/images/{intraId}")
     public ResponseEntity deleteUserProfileImage(@PathVariable String intraId) {
         userAdminService.deleteUserProfileImage(intraId);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -76,12 +76,21 @@ public class UserAdminController {
                 .body(userAdminService.getUserImageDeleteList(pageable));
     }
 
+    @GetMapping("/delete-list/{intraId}")
+    public ResponseEntity<UserImageListAdminResponseDto> getUserImageDeleteListByIntraId(@ModelAttribute @Valid PageRequestDto pageRequestDto, @PathVariable String intraId) {
+        Pageable pageable = PageRequest.of(pageRequestDto.getPage() - 1,
+                pageRequestDto.getSize(),
+                Sort.by("id").descending());
+        return ResponseEntity.ok()
+                .body(userAdminService.getUserImageDeleteListByIntraId(pageable, intraId));
+    }
+
     @GetMapping("/images")
     public ResponseEntity<UserImageListAdminResponseDto> getUserImageList(@ModelAttribute @Valid PageRequestDto pageRequestDto) {
         Pageable pageable = PageRequest.of(pageRequestDto.getPage() - 1,
                 pageRequestDto.getSize());
         return ResponseEntity.ok()
-                .body(userAdminService.getUserImageList(pageable));
+            .body(userAdminService.getUserImageList(pageable));
     }
 
     @GetMapping("/images/{intraId}")

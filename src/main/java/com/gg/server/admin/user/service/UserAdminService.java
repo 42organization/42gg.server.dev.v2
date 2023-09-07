@@ -136,6 +136,15 @@ public class UserAdminService {
 
         return new UserImageListAdminResponseDto(userImageAdminDto.getContent(), userImageAdminDto.getTotalPages());
     }
+    @Transactional(readOnly = true)
+    public UserImageListAdminResponseDto getUserImageDeleteListByIntraId(Pageable pageable, String intraId) {
+        User user = userAdminRepository.findByIntraId(intraId).orElseThrow(UserNotFoundException::new);
+        Page<UserImage> userImagePage = userImageAdminRepository.findAllByUserAndIsDeletedOrderByIdDesc(user.getId(), pageable);
+        Page<UserImageAdminDto> userImageAdminDto = userImagePage.map(UserImageAdminDto::new);
+
+        return new UserImageListAdminResponseDto(userImageAdminDto.getContent(), userImageAdminDto.getTotalPages());
+    }
+
 
     @Transactional(readOnly = true)
     public UserImageListAdminResponseDto getUserImageList(Pageable pageable) {
@@ -148,7 +157,7 @@ public class UserAdminService {
     @Transactional(readOnly = true)
     public UserImageListAdminResponseDto getUserImageListByIntraId(Pageable pageable, String intraId) {
         User user = userAdminRepository.findByIntraId(intraId).orElseThrow(UserNotFoundException::new);
-        Page<UserImage> userImagePage = userImageAdminRepository.findAllByUserOrderByIdDesc(pageable, user);
+        Page<UserImage> userImagePage = userImageAdminRepository.findAllByUserOrderByIdDesc(user.getId(), pageable);
         Page<UserImageAdminDto> userImageAdminDto = userImagePage.map(UserImageAdminDto::new);
 
         return new UserImageListAdminResponseDto(userImageAdminDto.getContent(), userImageAdminDto.getTotalPages());
