@@ -90,11 +90,7 @@ public class UserAdminController {
         Pageable pageable = PageRequest.of(pageRequestDto.getPage() - 1,
                 pageRequestDto.getSize());
         return ResponseEntity.ok()
-<<<<<<< Updated upstream
-                .body(userAdminService.getUserImageList(pageable));
-=======
             .body(userAdminService.getUserImageList(pageable));
->>>>>>> Stashed changes
     }
 
     @GetMapping("/images/{intraId}")
