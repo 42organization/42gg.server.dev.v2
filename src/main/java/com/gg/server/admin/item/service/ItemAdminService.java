@@ -6,6 +6,7 @@ import com.gg.server.admin.item.dto.ItemListResponseDto;
 import com.gg.server.admin.item.dto.ItemUpdateRequestDto;
 import com.gg.server.admin.item.exception.ItemNotFoundException;
 import com.gg.server.domain.item.data.Item;
+import com.gg.server.domain.item.exception.ItemNotAvailableException;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.utils.aws.AsyncNewItemImageUploader;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,9 @@ public class ItemAdminService {
     public void updateItem(Long itemId, ItemUpdateRequestDto itemUpdateRequestDto,
                            MultipartFile itemImageFile, UserDto user) throws IOException {
         Item item = itemAdminRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException());
+        if (item.getIsVisible() == false) {
+            throw new ItemNotAvailableException();
+        }
         item.setIsVisible(false);
         item.setDeleterIntraId(user.getIntraId());
         Item newItem = new Item(itemUpdateRequestDto, user.getIntraId());
@@ -48,6 +52,9 @@ public class ItemAdminService {
     public void updateItem(Long itemId, ItemUpdateRequestDto itemUpdateRequestDto,
                            UserDto user) {
         Item item = itemAdminRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException());
+        if (item.getIsVisible() == false) {
+            throw new ItemNotAvailableException();
+        }
         item.setIsVisible(false);
         item.setDeleterIntraId(user.getIntraId());
         Item newItem = new Item(itemUpdateRequestDto, user.getIntraId(), item.getImageUri());
