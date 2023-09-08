@@ -273,11 +273,11 @@ public class UserService {
         if (tier == null) {
             String tierName = "NONE";
             String tierImageUri = "NONE";
-            return new UserNormalDetailResponseDto(loginUser.getIntraId(), loginUser.getImageUri(), isAdmin, isAttended, tierName, tierImageUri, level);
+            return new UserNormalDetailResponseDto(loginUser.getIntraId(), loginUser.getImageUri(), isAdmin, isAttended, loginUser.getEdge(), tierName, tierImageUri, level);
         }
         String tierName = tier.getName();
         String tierImageUri = tier.getImageUri();
-        return new UserNormalDetailResponseDto(user.getIntraId(), loginUser.getImageUri(), isAdmin, isAttended, tierName, tierImageUri, level);
+        return new UserNormalDetailResponseDto(user.getIntraId(), loginUser.getImageUri(), isAdmin, isAttended, loginUser.getEdge(), tierName, tierImageUri, level);
     }
   
     @Transactional()
