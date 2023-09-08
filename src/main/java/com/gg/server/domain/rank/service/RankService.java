@@ -16,6 +16,7 @@ import com.gg.server.domain.user.data.UserImageRepository;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.domain.user.exception.UserImageNullException;
+import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.PageNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -119,7 +120,8 @@ public class RankService {
         List<RankDto> rankList = new ArrayList<>();
 
         for (int i = 0; i < userRanks.size(); i++) {
-            rankList.add(RankDto.from(userRanks.get(i), ++startRank));
+            User user = userRepository.findById(userRanks.get(i).getUserId()).orElseThrow(UserNotFoundException::new);
+            rankList.add(RankDto.from(userRanks.get(i), ++startRank, user.getTextColor()));
         }
         return rankList;
     }
