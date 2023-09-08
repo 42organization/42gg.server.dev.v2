@@ -53,6 +53,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         .antMatchers("/pingpong/admin/**").hasRole("ADMIN")
                         .antMatchers(HttpMethod.PUT, "/pingpong/users/{intraId}").hasAnyRole("USER", "ADMIN")
                         .antMatchers(HttpMethod.POST, "/pingpong/match").hasAnyRole("USER", "ADMIN")
+                        .antMatchers(HttpMethod.GET, "/pingpong/items/purchases/{itemId}", "/pingpong/items/gift/{itemId}").hasAnyRole("USER", "ADMIN")
                     .antMatchers("/login", "/oauth2/authorization/**", "/","/pingpong/users/oauth/**",
                             "/pingpong/users/accesstoken", "/actuator/**",
                             "/swagger-ui/**", "/swagger-ui**", "/v3/api-docs/**", "/v3/api-docs**", "/api-docs").permitAll()
