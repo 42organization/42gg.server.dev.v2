@@ -73,6 +73,10 @@ public class ItemService {
         User payUser = userRepository.findById(userDto.getId())
                 .orElseThrow(() -> new UserNotFoundException());
 
+        if (payUser.getRoleType() == RoleType.GUEST) {
+            throw new KakaoPurchaseException();
+        }
+
         payUser.payGgCoin(finalPrice);       //상품 구매에 따른 차감
 
         Receipt receipt = new Receipt(item, userDto.getIntraId(), userDto.getIntraId(),
