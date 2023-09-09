@@ -50,6 +50,8 @@ public class CoinHistoryService {
     @Transactional
     public int addRankLoseCoin(User user){
         int amount = coinPolicyRepository.findTopByOrderByCreatedAtDesc().getRankLose();
+        if (amount == 0)
+            return amount;
         addCoinHistory(new CoinHistory(user, HistoryType.RANKLOSE.getHistory(), amount));
         return amount;
     }
