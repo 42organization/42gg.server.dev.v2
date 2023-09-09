@@ -107,7 +107,7 @@ public class ItemService {
             throw new KakaoGiftException();
         }
 
-        payUser.payGgCoin(finalPrice);       //상품 구매에 따른 차감
+        userCoinChangeService.giftItemCoin(item, finalPrice, payUser, owner);
 
         Receipt receipt = new Receipt(item, userDto.getIntraId(), ownerId,
                 ItemStatus.BEFORE, LocalDateTime.now());
