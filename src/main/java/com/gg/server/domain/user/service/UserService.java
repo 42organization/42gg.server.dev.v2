@@ -345,6 +345,8 @@ public class UserService {
             throw new UserImageTypeException();
         }
 
+        UserImage userImage = userImageRepository.findTopByUserAndIsCurrentIsTrueOrderByIdDesc(userId).orElseThrow(null);
+        userImage.updateIsCurrent(false);
         asyncNewUserImageUploader.update(user.getIntraId(), userImageFile);
         receipt.updateStatus(ItemStatus.USED);
     }
@@ -362,11 +364,5 @@ public class UserService {
     public void checkUseStatus(Receipt receipt) {
         if (!receipt.getStatus().equals(ItemStatus.BEFORE))
             throw new ItemStatusException();
-    }
-
-    public String getUserImageToString(User user) {
-        UserImage userImage = userImageRepository.findTopByUserAndIsDeletedOrderByIdDesc(user, false).orElse(null);
-        assert userImage != null;
-        return userImage.getImageUri();
     }
 }

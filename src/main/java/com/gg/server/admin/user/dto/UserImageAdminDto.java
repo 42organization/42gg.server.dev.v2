@@ -12,18 +12,18 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class UserImageAdminDto {
     Long id;
-    Long userId;
     String userIntraId;
     String imageUri;
     LocalDateTime createdAt;
-    Boolean isDeleted;
+    LocalDateTime deletedAt;
+    Boolean isCurrent;
 
     public UserImageAdminDto(UserImage userImage) {
         this.id = userImage.getId();
-        this.userId = userImage.getUser().getId();
         this.userIntraId = userImage.getUser().getIntraId();
         this.imageUri = userImage.getImageUri();
         this.createdAt = userImage.getCreatedAt();
-        this.isDeleted = userImage.getIsDeleted();
+        this.deletedAt = userImage.getDeletedAt();
+        this.isCurrent = userImage.getIsCurrent();
     }
 }

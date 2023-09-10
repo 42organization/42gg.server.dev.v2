@@ -160,13 +160,13 @@ class UserAdminControllerTest {
         Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
         User user = userRepository.findByIntraId("klew").get();
         String url = "/pingpong/admin/users/" + user.getIntraId();
-        UserImage PrevUserImage = userImageAdminRepository.findTopByUserAndIsDeletedOrderByIdDesc(user, false).orElseThrow(UserNotFoundException::new);
+        UserImage PrevUserImage = userImageAdminRepository.findTopByUserAndDeletedAtNotNullOrderByIdDesc(user).orElseThrow(UserNotFoundException::new);
         //when
         //200 성공
         mockMvc.perform(delete(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isNoContent());
 
-        UserImage CurrentUserImage = userImageAdminRepository.findTopByUserAndIsDeletedOrderByIdDesc(user, false).orElseThrow(UserNotFoundException::new);
+        UserImage CurrentUserImage = userImageAdminRepository.findTopByUserAndDeletedAtNotNullOrderByIdDesc(user).orElseThrow(UserNotFoundException::new);
         Assertions.assertThat(PrevUserImage.getId()).isNotEqualTo(CurrentUserImage.getId());
     }
 

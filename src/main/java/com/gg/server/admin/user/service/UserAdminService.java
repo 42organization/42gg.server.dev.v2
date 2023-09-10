@@ -115,23 +115,27 @@ public class UserAdminService {
     }
 
     public String getUserImageToString(User user) {
-        UserImage userImage = userImageAdminRepository.findTopByUserAndIsDeletedOrderByIdDesc(user, false).orElse(null);
-        assert userImage != null;
-        return userImage.getImageUri();
+        UserImage userImage = userImageAdminRepository.findTopByUserAndDeletedAtIsNullOrderByCreatedAtDesc(user).orElse(null);
+        if (userImage == null)
+            return "null";
+        else {
+            userImage.updateIsCurrent(true);
+            return userImage.getImageUri();
+        }
     }
 
     @Transactional
     public void deleteUserProfileImage(String intraId) {
         User user = userAdminRepository.findByIntraId(intraId).orElseThrow(UserNotFoundException::new);
-        UserImage userImage = userImageAdminRepository.findTopByUserAndIsDeletedOrderByIdDesc(user, false).orElseThrow(UserNotFoundException::new);
-        userImage.updateIsDeleted(true);
+        UserImage userImage = userImageAdminRepository.findTopByUserAndIsCurrentIsTrueOrderByCreatedAtDesc(user).orElseThrow(UserNotFoundException::new);
+        userImage.updateDeletedAt(LocalDateTime.now());
         String userImageUri = getUserImageToString(user);
         user.updateImageUri(userImageUri);
     }
 
     @Transactional(readOnly = true)
     public UserImageListAdminResponseDto getUserImageDeleteList(Pageable pageable) {
-        Page<UserImage> userImagePage = userImageAdminRepository.findAllByIsDeleted(pageable, true);
+        Page<UserImage> userImagePage = userImageAdminRepository.findAllByDeletedAtNotNullOrderByDeletedAtDesc(pageable);
         Page<UserImageAdminDto> userImageAdminDto = userImagePage.map(UserImageAdminDto::new);
 
         return new UserImageListAdminResponseDto(userImageAdminDto.getContent(), userImageAdminDto.getTotalPages());
@@ -139,16 +143,15 @@ public class UserAdminService {
     @Transactional(readOnly = true)
     public UserImageListAdminResponseDto getUserImageDeleteListByIntraId(Pageable pageable, String intraId) {
         User user = userAdminRepository.findByIntraId(intraId).orElseThrow(UserNotFoundException::new);
-        Page<UserImage> userImagePage = userImageAdminRepository.findAllByUserAndIsDeletedOrderByIdDesc(user.getId(), pageable);
+        Page<UserImage> userImagePage = userImageAdminRepository.findAllByUserAndDeletedAtNotNullOrderByDeletedAtDesc(user.getId(), pageable);
         Page<UserImageAdminDto> userImageAdminDto = userImagePage.map(UserImageAdminDto::new);
 
         return new UserImageListAdminResponseDto(userImageAdminDto.getContent(), userImageAdminDto.getTotalPages());
     }
 
-
     @Transactional(readOnly = true)
     public UserImageListAdminResponseDto getUserImageList(Pageable pageable) {
-        Page<UserImage> userImagePage = userImageAdminRepository.findAllChanged(pageable);
+        Page<UserImage> userImagePage = userImageAdminRepository.findAllChangedOrderByCreatedAt(pageable);
         Page<UserImageAdminDto> userImageAdminDto = userImagePage.map(UserImageAdminDto::new);
 
         return new UserImageListAdminResponseDto(userImageAdminDto.getContent(), userImageAdminDto.getTotalPages());
@@ -157,7 +160,24 @@ public class UserAdminService {
     @Transactional(readOnly = true)
     public UserImageListAdminResponseDto getUserImageListByIntraId(Pageable pageable, String intraId) {
         User user = userAdminRepository.findByIntraId(intraId).orElseThrow(UserNotFoundException::new);
-        Page<UserImage> userImagePage = userImageAdminRepository.findAllByUserOrderByIdDesc(user.getId(), pageable);
+        Page<UserImage> userImagePage = userImageAdminRepository.findAllByUserOrderByCreatedAtDesc(user.getId(), pageable);
+        Page<UserImageAdminDto> userImageAdminDto = userImagePage.map(UserImageAdminDto::new);
+
+        return new UserImageListAdminResponseDto(userImageAdminDto.getContent(), userImageAdminDto.getTotalPages());
+    }
+
+    @Transactional(readOnly = true)
+    public UserImageListAdminResponseDto getUserImageCurrent(Pageable pageable) {
+        Page<UserImage> userImagePage = userImageAdminRepository.findAllByIsCurrentTrueOrderByCreatedAtDesc(pageable);
+        Page<UserImageAdminDto> userImageAdminDto = userImagePage.map(UserImageAdminDto::new);
+
+        return new UserImageListAdminResponseDto(userImageAdminDto.getContent(), userImageAdminDto.getTotalPages());
+    }
+
+    @Transactional(readOnly = true)
+    public UserImageListAdminResponseDto getUserImageCurrentByIntraId(Pageable pageable, String intraId) {
+        User user = userAdminRepository.findByIntraId(intraId).orElseThrow(UserNotFoundException::new);
+        Page<UserImage> userImagePage = userImageAdminRepository.findAllByUserAndIsCurrentTrueOrderByCreatedAtDesc(user.getId(), pageable);
         Page<UserImageAdminDto> userImageAdminDto = userImagePage.map(UserImageAdminDto::new);
 
         return new UserImageListAdminResponseDto(userImageAdminDto.getContent(), userImageAdminDto.getTotalPages());

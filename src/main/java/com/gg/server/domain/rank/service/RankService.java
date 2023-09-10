@@ -59,7 +59,7 @@ public class RankService {
         for(int i = 0; i < ranks.size(); i++) {
             RankRedis rank = ranks.get(i);
             User user = users.getContent().get(i);
-            UserImage userImageUri = userImageRepository.findTopByUserAndIsDeletedOrderByIdDesc(user, false).orElseThrow(UserImageNullException::new);
+            UserImage userImageUri = userImageRepository.findTopByUserAndDeletedAtNotNullOrderByIdDesc(user).orElseThrow(UserImageNullException::new);
             expRankDtos.add(ExpRankDto.from(user, userImageUri, startRank + i, rank.getStatusMessage()));
         }
 

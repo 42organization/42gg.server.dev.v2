@@ -79,8 +79,7 @@ public class UserAdminController {
     @GetMapping("/delete-list/{intraId}")
     public ResponseEntity<UserImageListAdminResponseDto> getUserImageDeleteListByIntraId(@ModelAttribute @Valid PageRequestDto pageRequestDto, @PathVariable String intraId) {
         Pageable pageable = PageRequest.of(pageRequestDto.getPage() - 1,
-                pageRequestDto.getSize(),
-                Sort.by("id").descending());
+                pageRequestDto.getSize());
         return ResponseEntity.ok()
                 .body(userAdminService.getUserImageDeleteListByIntraId(pageable, intraId));
     }
@@ -99,5 +98,21 @@ public class UserAdminController {
                 pageRequestDto.getSize());
         return ResponseEntity.ok()
                 .body(userAdminService.getUserImageListByIntraId(pageable, intraId));
+    }
+
+    @GetMapping("/images/current")
+    public ResponseEntity<UserImageListAdminResponseDto> getUserImageCurrent(@ModelAttribute @Valid PageRequestDto pageRequestDto) {
+        Pageable pageable = PageRequest.of(pageRequestDto.getPage() - 1,
+                pageRequestDto.getSize());
+        return ResponseEntity.ok()
+                .body(userAdminService.getUserImageCurrent(pageable));
+    }
+
+    @GetMapping("/images/current/{intraId}")
+    public ResponseEntity<UserImageListAdminResponseDto> getUserImageCurrentByIntraId(@ModelAttribute @Valid PageRequestDto pageRequestDto, @PathVariable String intraId) {
+        Pageable pageable = PageRequest.of(pageRequestDto.getPage() - 1,
+                pageRequestDto.getSize());
+        return ResponseEntity.ok()
+                .body(userAdminService.getUserImageCurrentByIntraId(pageable, intraId));
     }
 }
