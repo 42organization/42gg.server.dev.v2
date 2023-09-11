@@ -42,7 +42,7 @@ public class RankRedis implements Serializable {
         this.statusMessage = msg;
     }
 
-    public static RankRedis from(UserDto user, Integer ppp) {
+    public static RankRedis from(UserDto user, Integer ppp, String tierImageUrl) {
         RankRedis rankRedis = RankRedis.builder()
                 .userId(user.getId())
                 .intraId(user.getIntraId())
@@ -50,7 +50,7 @@ public class RankRedis implements Serializable {
                 .wins(0)
                 .losses(0)
                 .statusMessage("")
-                .tierImageUrl("")
+                .tierImageUrl(tierImageUrl)
                 .build();
         return rankRedis;
     }

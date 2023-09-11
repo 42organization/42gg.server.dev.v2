@@ -54,7 +54,7 @@ public class Rank extends BaseTimeEntity implements Serializable {
     private String statusMessage;
 
 
-    public static Rank from (User user, Season season, Integer ppp) {
+    public static Rank from (User user, Season season, Integer ppp, Tier tier) {
         return Rank.builder()
                 .user(user)
                 .ppp(ppp)
@@ -62,6 +62,7 @@ public class Rank extends BaseTimeEntity implements Serializable {
                 .wins(0)
                 .losses(0)
                 .statusMessage("")
+                .tier(tier)
                 .build();
     }
 

@@ -8,6 +8,8 @@ import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.data.SeasonRepository;
 import com.gg.server.domain.season.exception.SeasonForbiddenException;
 import com.gg.server.domain.season.exception.SeasonTimeBeforeException;
+import com.gg.server.domain.tier.data.Tier;
+import com.gg.server.domain.tier.data.TierRepository;
 import com.gg.server.domain.user.data.User;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,7 @@ public class RankAdminService {
     private final RankRepository rankRepository;
     private final UserAdminRepository userAdminRepository;
     private final SeasonRepository seasonRepository;
+    private final TierRepository tierRepository;
 
     @Transactional
     public void addAllUserRankByNewSeason(SeasonAdminDto seasonAdminDto) {
@@ -34,9 +37,10 @@ public class RankAdminService {
 
         List<Rank> ranks = new ArrayList<>();
         Season season = seasonRepository.findById(seasonAdminDto.getSeasonId()).get();
+        Tier tier = tierRepository.findAll().get(0);
         users.forEach(user -> {
             if (user.getRoleType() != GUEST) {
-                Rank userRank = Rank.from(user, season, seasonAdminDto.getStartPpp());
+                Rank userRank = Rank.from(user, season, seasonAdminDto.getStartPpp(), tier);
                 ranks.add(userRank);
             }
         });
