@@ -6,6 +6,8 @@ import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.SeasonRepository;
+import com.gg.server.domain.tier.data.Tier;
+import com.gg.server.domain.tier.data.TierRepository;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
@@ -38,6 +40,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final RankRepository rankRepository;
     private final SeasonRepository seasonRepository;
     private final RankRedisRepository rankRedisRepository;
+    private final TierRepository tierRepository;
 
     @Value("${info.image.defaultUrl}")
     private String defaultImageUrl;
@@ -79,11 +82,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     private void createUserRank(User savedUser) {
+        Tier tier = tierRepository.findAll().get(0);
         seasonRepository.findCurrentAndNewSeason(LocalDateTime.now()).forEach(
             season -> {
-                Rank userRank = Rank.from(savedUser, season, season.getStartPpp());
+                Rank userRank = Rank.from(savedUser, season, season.getStartPpp(), tier);
                 rankRepository.save(userRank);
-                RankRedis rankRedis = RankRedis.from(UserDto.from(savedUser), season.getStartPpp());
+                RankRedis rankRedis = RankRedis.from(UserDto.from(savedUser), season.getStartPpp(), tier.getImageUri());
                 String hashKey = RedisKeyManager.getHashKey(season.getId());
                 rankRedisRepository.addRankData(hashKey, savedUser.getId(), rankRedis);
             }

@@ -57,7 +57,7 @@ public class RankService {
         for(int i = 0; i < ranks.size(); i++) {
             RankRedis rank = ranks.get(i);
             User user = users.getContent().get(i);
-            expRankDtos.add(ExpRankDto.from(user, startRank + i, rank.getStatusMessage()));
+            expRankDtos.add(ExpRankDto.from(user, startRank + i, rank.getStatusMessage(), user.getTextColor()));
         }
 
         return new ExpRankPageResponseDto(myRank.intValue(), pageRequest.getPageNumber() + 1, users.getTotalPages(), expRankDtos);
