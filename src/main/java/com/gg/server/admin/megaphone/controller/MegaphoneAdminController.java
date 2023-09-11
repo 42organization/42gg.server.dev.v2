@@ -22,7 +22,7 @@ public class MegaphoneAdminController {
     public ResponseEntity<MegaphoneHistoryResponseDto> getMegaphoneHistory(@ModelAttribute @Valid PageRequestDto pageRequestDto,
                                                                            @RequestParam(required = false) String intraId) {
         Pageable pageable = PageRequest.of(pageRequestDto.getPage() - 1, pageRequestDto.getSize(),
-                Sort.by("usedAt").descending());
+                Sort.by("id").descending());
         if (intraId == null)
             return ResponseEntity.ok(megaphoneAdminService.getMegaphoneHistory(pageable));
         return ResponseEntity.ok(megaphoneAdminService.getMegaphoneHistoryByIntraId(intraId, pageable));
