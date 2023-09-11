@@ -15,7 +15,7 @@ import com.gg.server.domain.user.data.UserImage;
 import com.gg.server.domain.user.data.UserImageRepository;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
-import com.gg.server.domain.user.exception.UserImageNullException;
+import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.PageNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +37,6 @@ public class RankService {
     private final UserRepository userRepository;
     private final RankRedisRepository redisRepository;
     private final SeasonFindService seasonFindService;
-    private final UserImageRepository userImageRepository;
 
     @Transactional(readOnly = true)
     public ExpRankPageResponseDto getExpRankPage(PageRequest pageRequest, UserDto curUser) {
@@ -58,8 +57,7 @@ public class RankService {
         for(int i = 0; i < ranks.size(); i++) {
             RankRedis rank = ranks.get(i);
             User user = users.getContent().get(i);
-            UserImage userImageUri = userImageRepository.findTopByUserAndIsDeletedOrderByIdDesc(user, false).orElseThrow(UserImageNullException::new);
-            expRankDtos.add(ExpRankDto.from(user, userImageUri, startRank + i, rank.getStatusMessage()));
+            expRankDtos.add(ExpRankDto.from(user, startRank + i, rank.getStatusMessage()));
         }
 
         return new ExpRankPageResponseDto(myRank.intValue(), pageRequest.getPageNumber() + 1, users.getTotalPages(), expRankDtos);
@@ -119,7 +117,8 @@ public class RankService {
         List<RankDto> rankList = new ArrayList<>();
 
         for (int i = 0; i < userRanks.size(); i++) {
-            rankList.add(RankDto.from(userRanks.get(i), ++startRank));
+            User user = userRepository.findById(userRanks.get(i).getUserId()).orElseThrow(UserNotFoundException::new);
+            rankList.add(RankDto.from(userRanks.get(i), ++startRank, user.getTextColor()));
         }
         return rankList;
     }

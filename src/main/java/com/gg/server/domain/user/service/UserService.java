@@ -234,8 +234,8 @@ public class UserService {
             List<UserImageDto> userImages = new ArrayList<>();
             userIds.forEach(userId -> {
                 User user = users.stream().filter(u -> u.getId().equals(userId)).findFirst().orElseThrow(UserNotFoundException::new);
-                Tier tier = rankFindService.findByUserIdAndSeasonId(user.getId(), seasonFindService.findCurrentSeason(LocalDateTime.now()).getId()).getTier();
-                userImages.add(new UserImageDto(user.getId(), user.getIntraId(), user.getImageUri(), user.getEdge(), tier.getImageUri(), LocalDateTime.now(), false));
+                Tier tier = rankFindService.findByUserIdAndSeasonId(user.getId(), targetSeason.getId()).getTier();
+                userImages.add(new UserImageDto(user.getIntraId(), user.getImageUri(), user.getEdge(), tier.getImageUri()));
             });
             return new UserImageResponseDto(userImages);
         } catch (RedisDataNotFoundException ex) {
@@ -248,7 +248,7 @@ public class UserService {
         List<UserImageDto> userImages = new ArrayList<>();
         for (User user : users) {
             Tier tier = rankFindService.findByUserIdAndSeasonId(user.getId(), seasonFindService.findCurrentSeason(LocalDateTime.now()).getId()).getTier();
-            userImages.add(new UserImageDto(user.getId(), user.getIntraId(), user.getImageUri(), user.getEdge(), tier.getImageUri(), LocalDateTime.now(), false));
+            userImages.add(new UserImageDto(user.getIntraId(), user.getImageUri(), user.getEdge(), tier.getImageUri()));
         }
         return new UserImageResponseDto(userImages);
     }
@@ -273,11 +273,11 @@ public class UserService {
         if (tier == null) {
             String tierName = "NONE";
             String tierImageUri = "NONE";
-            return new UserNormalDetailResponseDto(loginUser.getIntraId(), loginUser.getImageUri(), isAdmin, isAttended, tierName, tierImageUri, level);
+            return new UserNormalDetailResponseDto(loginUser.getIntraId(), loginUser.getImageUri(), isAdmin, isAttended, loginUser.getEdge(), tierName, tierImageUri, level);
         }
         String tierName = tier.getName();
         String tierImageUri = tier.getImageUri();
-        return new UserNormalDetailResponseDto(user.getIntraId(), loginUser.getImageUri(), isAdmin, isAttended, tierName, tierImageUri, level);
+        return new UserNormalDetailResponseDto(user.getIntraId(), loginUser.getImageUri(), isAdmin, isAttended, loginUser.getEdge(), tierName, tierImageUri, level);
     }
   
     @Transactional()
@@ -345,6 +345,8 @@ public class UserService {
             throw new UserImageTypeException();
         }
 
+        UserImage userImage = userImageRepository.findTopByUserAndIsCurrentIsTrueOrderByIdDesc(userId).orElseThrow(null);
+        userImage.updateIsCurrent(false);
         asyncNewUserImageUploader.update(user.getIntraId(), userImageFile);
         receipt.updateStatus(ItemStatus.USED);
     }
@@ -362,11 +364,5 @@ public class UserService {
     public void checkUseStatus(Receipt receipt) {
         if (!receipt.getStatus().equals(ItemStatus.BEFORE))
             throw new ItemStatusException();
-    }
-
-    public String getUserImageToString(User user) {
-        UserImage userImage = userImageRepository.findTopByUserAndIsDeletedOrderByIdDesc(user, false).orElse(null);
-        assert userImage != null;
-        return userImage.getImageUri();
     }
 }

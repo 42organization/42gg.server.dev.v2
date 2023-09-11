@@ -16,14 +16,14 @@ public class ExpRankDto {
     private Integer exp;
     private String userImageUri;
 
-    public static ExpRankDto from (User user, UserImage userImage, Integer rank, String statusMessage){
+    public static ExpRankDto from (User user, Integer rank, String statusMessage){
         ExpRankDto dto = ExpRankDto.builder()
                 .intraId(user.getIntraId())
                 .rank(user.getTotalExp() == 0 ? -1 : rank)
                 .statusMessage(statusMessage)
                 .level(ExpLevelCalculator.getLevel(user.getTotalExp()))
                 .exp(user.getTotalExp())
-                .userImageUri(userImage.getImageUri())
+                .userImageUri(user.getImageUri())
                 .build();
         return dto;
     }

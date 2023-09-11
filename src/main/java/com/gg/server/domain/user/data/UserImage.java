@@ -30,18 +30,27 @@ public class UserImage {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @NotNull
-    @Column(name = "is_deleted")
-    private Boolean isDeleted;
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
-    public UserImage(User user, String imageUri, LocalDateTime createdAt, Boolean isDeleted) {
+    @NotNull
+    @Column(name = "is_current")
+    private Boolean isCurrent;
+
+    public UserImage(User user, String imageUri, LocalDateTime createdAt, LocalDateTime deletedAt, Boolean isCurrent) {
         this.user = user;
         this.imageUri = imageUri;
         this.createdAt = createdAt;
-        this.isDeleted = isDeleted;
+        this.deletedAt = deletedAt;
+        this.isCurrent = isCurrent;
     }
 
-    public void updateIsDeleted(Boolean isDeleted) {
-        this.isDeleted = isDeleted;
+    public void updateIsCurrent(Boolean isCurrent) {
+        this.isCurrent = isCurrent;
+    }
+
+    public void updateDeletedAt(LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
+        updateIsCurrent(false);
     }
 }

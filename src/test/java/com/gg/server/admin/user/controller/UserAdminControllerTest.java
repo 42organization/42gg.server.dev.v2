@@ -160,13 +160,13 @@ class UserAdminControllerTest {
         Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
         User user = userRepository.findByIntraId("klew").get();
         String url = "/pingpong/admin/users/" + user.getIntraId();
-        UserImage PrevUserImage = userImageAdminRepository.findTopByUserAndIsDeletedOrderByIdDesc(user, false).orElseThrow(UserNotFoundException::new);
+        UserImage PrevUserImage = userImageAdminRepository.findTopByUserAndIsCurrentIsTrueOrderByCreatedAtDesc(user).orElseThrow(UserNotFoundException::new);
         //when
         //200 성공
         mockMvc.perform(delete(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isNoContent());
 
-        UserImage CurrentUserImage = userImageAdminRepository.findTopByUserAndIsDeletedOrderByIdDesc(user, false).orElseThrow(UserNotFoundException::new);
+        UserImage CurrentUserImage = userImageAdminRepository.findTopByUserAndIsCurrentIsTrueOrderByCreatedAtDesc(user).orElseThrow(UserNotFoundException::new);
         Assertions.assertThat(PrevUserImage.getId()).isNotEqualTo(CurrentUserImage.getId());
     }
 
@@ -192,7 +192,7 @@ class UserAdminControllerTest {
         //각 유저의 이미지가 삭제된 이미지인지 확인
         List<UserImageAdminDto> actureUserImageList = actureResponse.getUserImageList();
         for (UserImageAdminDto userImageDto : actureUserImageList)
-            Assertions.assertThat(userImageDto.getIsDeleted()).isEqualTo(true);
+            Assertions.assertThat(userImageDto.getDeletedAt()).isNotEqualTo(null);
     }
 
     @Test

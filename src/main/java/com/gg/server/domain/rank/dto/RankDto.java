@@ -16,15 +16,17 @@ public class RankDto {
     private int ppp;
     private String statusMessage;
     private String tierImageUri;
+    private String textColor;
 
 
-    public static RankDto from(RankRedis rankRedis, int rank) {
+    public static RankDto from(RankRedis rankRedis, int rank, String textColor) {
         RankDto dto = RankDto.builder()
                 .intraId(rankRedis.getIntraId())
                 .rank(rank)
                 .ppp(rankRedis.getPpp())
                 .statusMessage(rankRedis.getStatusMessage())
                 .tierImageUri(rankRedis.getTierImageUrl())
+                .textColor(textColor)
                 .build();
         return dto;
     }
