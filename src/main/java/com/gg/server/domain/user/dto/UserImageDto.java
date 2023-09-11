@@ -11,23 +11,16 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class UserImageDto {
-    Long id;
     String intraId;
     String imageUri;
     EdgeType edge;
     String tierImage;
-    LocalDateTime createdAt;
-    Boolean isDeleted;
 
-    public UserImageDto(Long id, String intraId, String imageUri, EdgeType edge, String tierImage, LocalDateTime now, boolean isDeleted) {
-        this.id = id;
+    public UserImageDto(String intraId, String imageUri, EdgeType edge, String tierImage) {
         this.intraId = intraId;
         this.imageUri = imageUri;
         this.edge = edge;
         this.tierImage = tierImage;
-        this.createdAt = now;
-        this.isDeleted = isDeleted;
     }
 }
