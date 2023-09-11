@@ -22,19 +22,19 @@ public interface UserImageAdminRepository extends JpaRepository<UserImage, Long>
 
     @Query(value = "SELECT ui FROM UserImage ui WHERE ui.id NOT IN (" +
             "SELECT MIN(ui.id) FROM UserImage ui GROUP BY ui.user.id" +
-            ") ORDER BY ui.user.createdAt DESC")
-    Page<UserImage> findAllChangedOrderByCreatedAt(Pageable pageable);
+            ") ORDER BY ui.createdAt DESC")
+    Page<UserImage> findAllChangedOrderByCreatedAtDesc(Pageable pageable);
 
     @Query(value = "SELECT ui FROM UserImage ui WHERE ui.id NOT IN (" +
             "SELECT MIN(ui.id) FROM UserImage ui GROUP BY ui.user.id" +
-            ") AND ui.user.id = ?1 ORDER BY ui.user.createdAt DESC")
+            ") AND ui.user.id = ?1 ORDER BY ui.createdAt DESC")
     Page<UserImage> findAllByUserOrderByCreatedAtDesc(Long userId, Pageable pageable);
 
     @Query(value = "SELECT ui FROM UserImage ui WHERE ui.isCurrent IS TRUE" +
-            " ORDER BY ui.user.createdAt DESC")
+            " ORDER BY ui.createdAt DESC")
     Page<UserImage> findAllByIsCurrentTrueOrderByCreatedAtDesc(Pageable pageable);
 
     @Query(value = "SELECT ui FROM UserImage ui WHERE ui.isCurrent IS True" +
-            " AND ui.user.id = ?1 ORDER BY ui.user.createdAt DESC")
+            " AND ui.user.id = ?1 ORDER BY ui.createdAt DESC")
     Page<UserImage> findAllByUserAndIsCurrentTrueOrderByCreatedAtDesc(Long userId, Pageable pageable);
 }
