@@ -17,6 +17,8 @@ import com.gg.server.domain.team.data.Team;
 import com.gg.server.domain.team.data.TeamRepository;
 import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.team.data.TeamUserRepository;
+import com.gg.server.domain.tier.data.Tier;
+import com.gg.server.domain.tier.data.TierRepository;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
@@ -53,6 +55,9 @@ public class GameServiceTest {
     RankRepository rankRepository;
 
     @Autowired
+    TierRepository tierRepository;
+
+    @Autowired
     GameService gameService;
 
     User user1;
@@ -67,6 +72,7 @@ public class GameServiceTest {
     @BeforeEach
     void init() {
         Season season = testDataUtils.createSeason();
+        Tier tier = tierRepository.findAll().get(0);
         user1 = testDataUtils.createNewUser();
         user2 = testDataUtils.createNewUser();
         LocalDateTime now = LocalDateTime.now();
@@ -79,12 +85,12 @@ public class GameServiceTest {
         String statusMsg = "status message test1";
 
         testDataUtils.createUserRank(user1, statusMsg, season);
-        RankRedis userRank = RankRedis.from(UserDto.from(user1), season.getStartPpp());
+        RankRedis userRank = RankRedis.from(UserDto.from(user1), season.getStartPpp(), tier.getImageUri());
         String redisHashKey = RedisKeyManager.getHashKey(season.getId());
         rankRedisRepository.addRankData(redisHashKey, user1.getId(), userRank);
         statusMsg = "status message test2";
         testDataUtils.createUserRank(user2, statusMsg, season);
-        RankRedis userRank2 = RankRedis.from(UserDto.from(user2), season.getStartPpp());
+        RankRedis userRank2 = RankRedis.from(UserDto.from(user2), season.getStartPpp(), tier.getImageUri());
         rankRedisRepository.addRankData(redisHashKey, user2.getId(), userRank2);
     }
     @AfterEach

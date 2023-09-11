@@ -24,6 +24,8 @@ import com.gg.server.domain.team.data.Team;
 import com.gg.server.domain.team.data.TeamRepository;
 import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.team.data.TeamUserRepository;
+import com.gg.server.domain.tier.data.Tier;
+import com.gg.server.domain.tier.data.TierRepository;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.domain.user.type.RacketType;
@@ -69,6 +71,10 @@ public class GameControllerTest {
     TeamUserRepository teamUserRepository;
     @Autowired
     RankRedisRepository rankRedisRepository;
+
+    @Autowired
+    TierRepository tierRepository;
+
     @Autowired
     PChangeRepository pChangeRepository;
     @Autowired
@@ -101,12 +107,13 @@ public class GameControllerTest {
         user1 = testDataUtils.createNewUser("test1", "test1@email", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
         accessToken = tokenProvider.createToken(user1.getId());
         user2 = testDataUtils.createNewUser("test2", "test2@email", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
-        rankRepository.save(Rank.from(user1, season, season.getStartPpp()));
-        rankRepository.save(Rank.from(user2, season, season.getStartPpp()));
-        RankRedis userRank = RankRedis.from(UserDto.from(user1), season.getStartPpp());
+        Tier tier = tierRepository.findAll().get(0);
+        rankRepository.save(Rank.from(user1, season, season.getStartPpp(), tier));
+        rankRepository.save(Rank.from(user2, season, season.getStartPpp(), tier));
+        RankRedis userRank = RankRedis.from(UserDto.from(user1), season.getStartPpp(), tier.getImageUri());
         String redisHashKey = RedisKeyManager.getHashKey(season.getId());
         rankRedisRepository.addRankData(redisHashKey, user1.getId(), userRank);
-        userRank = RankRedis.from(UserDto.from(user2), season.getStartPpp());
+        userRank = RankRedis.from(UserDto.from(user2), season.getStartPpp(), tier.getImageUri());
         rankRedisRepository.addRankData(redisHashKey, user2.getId(), userRank);
         for (int i = 0; i < 10; i++) {
             Game game = gameRepository.save(new Game(season, StatusType.WAIT, Mode.RANK, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
