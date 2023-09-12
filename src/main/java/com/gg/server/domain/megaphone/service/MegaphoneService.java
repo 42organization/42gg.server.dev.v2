@@ -59,9 +59,9 @@ public class MegaphoneService {
 
     @Transactional
     public void setMegaphoneList(LocalDate today) {
-        megaphoneRepository.findAllByUsedAt(today).forEach(megaphone -> megaphone.getReceipt().updateStatus(ItemStatus.USED));
+        megaphoneRepository.findAllByUsedAtAndReceiptStatus(today, ItemStatus.USING).forEach(megaphone -> megaphone.getReceipt().updateStatus(ItemStatus.USED));
         megaphoneRedisRepository.deleteAllMegaphone();
-        List<Megaphone> megaphones = megaphoneRepository.findAllByUsedAt(today.plusDays(1));
+        List<Megaphone> megaphones = megaphoneRepository.findAllByUsedAtAndReceiptStatus(today.plusDays(1), ItemStatus.WAITING);
         for (Megaphone megaphone : megaphones) {
             megaphone.getReceipt().updateStatus(ItemStatus.USING);
             megaphoneRedisRepository.addMegaphone(new MegaphoneRedis(megaphone.getId(), megaphone.getUser().getIntraId(), megaphone.getContent(),
