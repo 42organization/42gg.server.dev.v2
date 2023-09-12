@@ -13,7 +13,7 @@ import java.io.IOException;
 public class AsyncNewItemImageUploader {
     private final ItemImageHandler itemImageHandler;
 
-    @Value("${info.image.defaultUrl}")
+    @Value("${info.image.itemNotFoundUrl}")
     private String defaultImageUrl;
 
     public AsyncNewItemImageUploader(ItemImageHandler itemImageHandler) {
