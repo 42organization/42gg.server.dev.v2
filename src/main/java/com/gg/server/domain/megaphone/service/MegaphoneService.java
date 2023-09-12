@@ -7,6 +7,7 @@ import com.gg.server.domain.megaphone.data.MegaphoneRepository;
 import com.gg.server.domain.megaphone.dto.MegaphoneDetailResponseDto;
 import com.gg.server.domain.megaphone.dto.MegaphoneTodayListResponseDto;
 import com.gg.server.domain.megaphone.dto.MegaphoneUseRequestDto;
+import com.gg.server.domain.megaphone.exception.MegaphoneContentException;
 import com.gg.server.domain.megaphone.exception.MegaphoneNotFoundException;
 import com.gg.server.domain.megaphone.exception.MegaphoneTimeException;
 import com.gg.server.domain.megaphone.redis.MegaphoneRedis;
@@ -52,6 +53,9 @@ public class MegaphoneService {
         if (!receipt.getStatus().equals(ItemStatus.BEFORE)) {
             throw new ItemStatusException();
         }
+        if (megaphoneUseRequestDto.getContent().length() == 0) {
+            throw new MegaphoneContentException();
+        }
         receipt.updateStatus(ItemStatus.WAITING);
         Megaphone megaphone = new Megaphone(loginUser, receipt, megaphoneUseRequestDto.getContent(), LocalDate.now().plusDays(1));
         megaphoneRepository.save(megaphone);
@@ -59,9 +63,9 @@ public class MegaphoneService {
 
     @Transactional
     public void setMegaphoneList(LocalDate today) {
-        megaphoneRepository.findAllByUsedAt(today).forEach(megaphone -> megaphone.getReceipt().updateStatus(ItemStatus.USED));
+        megaphoneRepository.findAllByUsedAtAndReceiptStatus(today, ItemStatus.USING).forEach(megaphone -> megaphone.getReceipt().updateStatus(ItemStatus.USED));
         megaphoneRedisRepository.deleteAllMegaphone();
-        List<Megaphone> megaphones = megaphoneRepository.findAllByUsedAt(today.plusDays(1));
+        List<Megaphone> megaphones = megaphoneRepository.findAllByUsedAtAndReceiptStatus(today.plusDays(1), ItemStatus.WAITING);
         for (Megaphone megaphone : megaphones) {
             megaphone.getReceipt().updateStatus(ItemStatus.USING);
             megaphoneRedisRepository.addMegaphone(new MegaphoneRedis(megaphone.getId(), megaphone.getUser().getIntraId(), megaphone.getContent(),
