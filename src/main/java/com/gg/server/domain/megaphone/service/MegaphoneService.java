@@ -7,6 +7,7 @@ import com.gg.server.domain.megaphone.data.MegaphoneRepository;
 import com.gg.server.domain.megaphone.dto.MegaphoneDetailResponseDto;
 import com.gg.server.domain.megaphone.dto.MegaphoneTodayListResponseDto;
 import com.gg.server.domain.megaphone.dto.MegaphoneUseRequestDto;
+import com.gg.server.domain.megaphone.exception.MegaphoneContentException;
 import com.gg.server.domain.megaphone.exception.MegaphoneNotFoundException;
 import com.gg.server.domain.megaphone.exception.MegaphoneTimeException;
 import com.gg.server.domain.megaphone.redis.MegaphoneRedis;
@@ -51,6 +52,9 @@ public class MegaphoneService {
         checkItemType(receipt);
         if (!receipt.getStatus().equals(ItemStatus.BEFORE)) {
             throw new ItemStatusException();
+        }
+        if (megaphoneUseRequestDto.getContent().length() == 0) {
+            throw new MegaphoneContentException();
         }
         receipt.updateStatus(ItemStatus.WAITING);
         Megaphone megaphone = new Megaphone(loginUser, receipt, megaphoneUseRequestDto.getContent(), LocalDate.now().plusDays(1));
