@@ -200,4 +200,28 @@ class SeasonAdminControllerTest {
         assertThat(seasonAdminRepository.findById(dbSeasonId).get().getSeasonName())
                 .isEqualTo(seasonUpdateRequestDto.getSeasonName());
     }
+
+    @Test
+    @DisplayName("Fail[Put]/pingpong/admin/seasons/{seasonId}")
+    void failUpdateSeasons() throws Exception {//현재 시즌을 변경할 때 400번대 상태코드 반환
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
+
+        Long nowSeasonId = seasonAdminRepository.findCurrentSeason(LocalDateTime.now()).get().getId();
+        SeasonUpdateRequestDto seasonUpdateRequestDto = new SeasonUpdateRequestDto(
+                "putSeasonTestName",
+                LocalDateTime.now().plusHours(25),
+                1000,
+                500);
+
+        String content = objectMapper.writeValueAsString(seasonUpdateRequestDto);
+
+        String contentAsString = mockMvc.perform(MockMvcRequestBuilders.put("/pingpong/admin/seasons/" + nowSeasonId)
+                        .content(content)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().is4xxClientError())//403반환
+                .andReturn().getResponse().getContentAsString();
+
+    }
 }
