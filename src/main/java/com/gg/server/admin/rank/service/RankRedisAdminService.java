@@ -28,12 +28,12 @@ public class RankRedisAdminService {
         List<User> users = userRepository.findAll();
 
         String redisHashKey = RedisKeyManager.getHashKey(seasonAdminDto.getSeasonId());
-        String tierImageUrl = tierRepository.findAll().get(0).getImageUri();
+        String tierImageUri = tierRepository.findAll().get(0).getImageUri();
 
         users.forEach(user -> {
             if (user.getRoleType() != GUEST) {
                 UserDto userDto = UserDto.from(user);
-                RankRedis userRank = RankRedis.from(userDto, seasonAdminDto.getStartPpp(), tierImageUrl);
+                RankRedis userRank = RankRedis.from(userDto, seasonAdminDto.getStartPpp(), tierImageUri);
 
                 rankRedisRepository.addRankData(redisHashKey, user.getId(), userRank);
             }

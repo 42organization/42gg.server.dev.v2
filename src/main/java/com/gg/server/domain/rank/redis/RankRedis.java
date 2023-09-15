@@ -20,7 +20,7 @@ public class RankRedis implements Serializable {
     private int wins;
     private int losses;
     private String statusMessage;
-    private String tierImageUrl;
+    private String tierImageUri;
     private String textColor;
 
     public void updateRank(int changePpp, int wins, int losses) {
@@ -29,8 +29,8 @@ public class RankRedis implements Serializable {
         this.losses = losses;
     }
 
-    public void updateTierImage(String tierImageUrl) {
-        this.tierImageUrl = tierImageUrl;
+    public void updateTierImage(String tierImageUri) {
+        this.tierImageUri = tierImageUri;
     }
 
     public void changedRank(int ppp, int wins, int losses) {
@@ -43,7 +43,7 @@ public class RankRedis implements Serializable {
         this.statusMessage = msg;
     }
 
-    public static RankRedis from(UserDto user, Integer ppp, String tierImageUrl) {
+    public static RankRedis from(UserDto user, Integer ppp, String tierImageUri) {
         RankRedis rankRedis = RankRedis.builder()
                 .userId(user.getId())
                 .intraId(user.getIntraId())
@@ -51,7 +51,7 @@ public class RankRedis implements Serializable {
                 .wins(0)
                 .losses(0)
                 .statusMessage("")
-                .tierImageUrl(tierImageUrl)
+                .tierImageUri(tierImageUri)
                 .textColor(user.getTextColor())
                 .build();
         return rankRedis;
@@ -65,7 +65,7 @@ public class RankRedis implements Serializable {
                 .wins(rank.getWins())
                 .losses(rank.getLosses())
                 .statusMessage(rank.getStatusMessage())
-                .tierImageUrl(rank.getTier().getImageUri())
+                .tierImageUri(rank.getTier().getImageUri())
                 .textColor(rank.getUser().getTextColor())
                 .build();
         return rankRedis;
@@ -80,7 +80,7 @@ public class RankRedis implements Serializable {
                 ", wins=" + wins +
                 ", losses=" + losses +
                 ", statusMessage='" + statusMessage + '\'' +
-                ", tierImageUrl='" + tierImageUrl + '\'' +
+                ", tierImageUri='" + tierImageUri + '\'' +
                 ", textColor='" + textColor + '\'' +
                 '}';
     }
