@@ -11,8 +11,8 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MegaphoneUseRequestDto {
-    @NotNull
+    @NotNull(message = "receiptId는 null이 될 수 없습니다.")
     private Long receiptId;
-    @NotNull @Size(max = 30)
+    @NotNull(message = "content는 null이 될 수 없습니다.") @Size(max = 30)
     private String content;
 }
