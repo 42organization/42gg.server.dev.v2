@@ -2,7 +2,6 @@ package com.gg.server.admin.user.data;
 
 import com.gg.server.domain.user.data.User;
 import org.springframework.data.repository.query.Param;
-import org.checkerframework.checker.interning.qual.CompareToMethod;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
