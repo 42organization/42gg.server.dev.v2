@@ -45,12 +45,12 @@ public class UserImage {
         this.isCurrent = isCurrent;
     }
 
-    public void updateIsCurrent(Boolean isCurrent) {
-        this.isCurrent = isCurrent;
+    public void updateIsCurrent() {
+        this.isCurrent = !this.isCurrent;
     }
 
     public void updateDeletedAt(LocalDateTime deletedAt) {
         this.deletedAt = deletedAt;
-        updateIsCurrent(false);
+        updateIsCurrent();
     }
 }

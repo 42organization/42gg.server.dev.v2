@@ -1,6 +1,6 @@
 package com.gg.server.domain.megaphone.service;
 
-import com.gg.server.domain.item.exception.ItemTypeException;
+import com.gg.server.domain.item.service.ItemService;
 import com.gg.server.domain.item.type.ItemType;
 import com.gg.server.domain.megaphone.data.Megaphone;
 import com.gg.server.domain.megaphone.data.MegaphoneRepository;
@@ -16,7 +16,6 @@ import com.gg.server.domain.receipt.data.Receipt;
 import com.gg.server.domain.receipt.data.ReceiptRepository;
 import com.gg.server.domain.receipt.exception.ItemStatusException;
 import com.gg.server.domain.receipt.exception.ReceiptNotFoundException;
-import com.gg.server.domain.receipt.exception.ReceiptNotOwnerException;
 import com.gg.server.domain.receipt.type.ItemStatus;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
@@ -40,6 +39,7 @@ public class MegaphoneService {
     private final ReceiptRepository receiptRepository;
     private final MegaphoneRepository megaphoneRepository;
     private final MegaphoneRedisRepository megaphoneRedisRepository;
+    private final ItemService itemService;
 
     @Transactional
     public void useMegaphone(MegaphoneUseRequestDto megaphoneUseRequestDto, UserDto user) {
@@ -48,8 +48,8 @@ public class MegaphoneService {
             throw new MegaphoneTimeException();
         }
         Receipt receipt = receiptRepository.findById(megaphoneUseRequestDto.getReceiptId()).orElseThrow(ReceiptNotFoundException::new);
-        checkOwner(loginUser, receipt);
-        checkItemType(receipt);
+        itemService.checkItemType(receipt, ItemType.MEGAPHONE);
+        itemService.checkItemOwner(loginUser, receipt);
         if (!receipt.getStatus().equals(ItemStatus.BEFORE)) {
             throw new ItemStatusException();
         }
@@ -79,9 +79,9 @@ public class MegaphoneService {
         Megaphone megaphone = megaphoneRepository.findById(megaphoneId).orElseThrow(MegaphoneNotFoundException::new);
         Receipt receipt = megaphone.getReceipt();
         if (!user.getRoleType().equals(RoleType.ADMIN)) {
-            checkOwner(loginUser, receipt);
+            itemService.checkItemOwner(loginUser, receipt);
         }
-        checkUseStatus(receipt);
+        itemService.checkItemStatus(receipt);
         if (receipt.getStatus().equals(ItemStatus.USING)) {
             megaphoneRedisRepository.deleteMegaphoneById(megaphone.getId());
         }
@@ -91,29 +91,14 @@ public class MegaphoneService {
     public MegaphoneDetailResponseDto getMegaphoneDetail(Long receiptId, UserDto user) {
         User loginUser = userRepository.findById(user.getId()).orElseThrow(() -> new UsernameNotFoundException("User" + user.getId()));
         Receipt receipt = receiptRepository.findById(receiptId).orElseThrow(ReceiptNotFoundException::new);
-        checkOwner(loginUser, receipt);
-        checkItemType(receipt);
-        checkUseStatus(receipt);
+        itemService.checkItemType(receipt, ItemType.MEGAPHONE);
+        itemService.checkItemOwner(loginUser, receipt);
+        itemService.checkItemStatus(receipt);
         Megaphone megaphone = megaphoneRepository.findByReceipt(receipt).orElseThrow(MegaphoneNotFoundException::new);
         return new MegaphoneDetailResponseDto(megaphone);
     }
 
     public List<MegaphoneTodayListResponseDto> getMegaphoneTodayList() {
         return megaphoneRedisRepository.getAllMegaphone().stream().map(MegaphoneTodayListResponseDto::new).collect(Collectors.toList());
-    }
-
-    private void checkOwner(User loginUser, Receipt receipt) {
-        if (!receipt.getOwnerIntraId().equals(loginUser.getIntraId()))
-            throw new ReceiptNotOwnerException();
-    }
-
-    private void checkItemType(Receipt receipt) {
-        if (!receipt.getItem().getType().equals(ItemType.MEGAPHONE))
-            throw new ItemTypeException();
-    }
-
-    private void checkUseStatus(Receipt receipt) {
-        if (!(receipt.getStatus().equals(ItemStatus.WAITING) || receipt.getStatus().equals(ItemStatus.USING)))
-            throw new ItemStatusException();
     }
 }
