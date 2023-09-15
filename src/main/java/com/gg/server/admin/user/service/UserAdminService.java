@@ -119,7 +119,7 @@ public class UserAdminService {
         if (userImage == null)
             return "null";
         else {
-            userImage.updateIsCurrent(true);
+            userImage.updateIsCurrent();
             return userImage.getImageUri();
         }
     }
