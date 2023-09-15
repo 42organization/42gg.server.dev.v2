@@ -11,22 +11,22 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ItemUpdateRequestDto {
-    @NotNull(message = "plz. itemName")
+    @NotNull(message = "[Request] 아이템 이름은 Null 일 수 없습니다.")
     private String name;
 
-    @NotNull(message = "plz. mainContent")
+    @NotNull(message = "[Request] 주 설명은 Null 일 수 없습니다.")
     private String mainContent;
 
-    @NotNull(message = "plz. subContent")
+    @NotNull(message = "[Request] 부 설명은 Null 일 수 없습니다.")
     private String subContent;
 
-    @NotNull(message = "plz. price")
+    @NotNull(message = "[Request] 가격은 Null 일 수 없습니다.")
     private Integer price;
 
-    @NotNull(message = "plz. discount")
+    @NotNull(message = "[Request] 할인율은 Null 일 수 없습니다.")
     private Integer discount;
 
-    @NotNull(message = "plz. itemType")
+    @NotNull(message = "[Request] 아이템 타입은 Null 일 수 없습니다.")
     private ItemType itemType;
 
     @Override
