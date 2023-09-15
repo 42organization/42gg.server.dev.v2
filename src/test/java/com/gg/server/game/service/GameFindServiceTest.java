@@ -14,6 +14,7 @@ import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.tier.data.Tier;
 import com.gg.server.domain.tier.data.TierRepository;
+import com.gg.server.domain.tier.exception.TierNotFoundException;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
@@ -60,7 +61,7 @@ public class GameFindServiceTest {
     void init() {
         Season season = testDataUtils.createSeason();
         User newUser = testDataUtils.createNewUser();
-        Tier tier = tierRepository.findAll().get(0);
+        Tier tier = tierRepository.findStartTier().orElseThrow(TierNotFoundException::new);
         String accessToken = tokenProvider.createToken(newUser.getId());
         String statusMsg = "status message test1";
 

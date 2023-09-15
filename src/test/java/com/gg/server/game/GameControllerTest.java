@@ -26,6 +26,7 @@ import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.team.data.TeamUserRepository;
 import com.gg.server.domain.tier.data.Tier;
 import com.gg.server.domain.tier.data.TierRepository;
+import com.gg.server.domain.tier.exception.TierNotFoundException;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.domain.user.type.RacketType;
@@ -107,7 +108,7 @@ public class GameControllerTest {
         user1 = testDataUtils.createNewUser("test1", "test1@email", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
         accessToken = tokenProvider.createToken(user1.getId());
         user2 = testDataUtils.createNewUser("test2", "test2@email", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
-        Tier tier = tierRepository.findAll().get(0);
+        Tier tier = tierRepository.findStartTier().orElseThrow(TierNotFoundException::new);
         rankRepository.save(Rank.from(user1, season, season.getStartPpp(), tier));
         rankRepository.save(Rank.from(user2, season, season.getStartPpp(), tier));
         RankRedis userRank = RankRedis.from(UserDto.from(user1), season.getStartPpp(), tier.getImageUri());

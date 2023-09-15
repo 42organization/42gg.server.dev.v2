@@ -10,6 +10,7 @@ import com.gg.server.domain.season.exception.SeasonForbiddenException;
 import com.gg.server.domain.season.exception.SeasonTimeBeforeException;
 import com.gg.server.domain.tier.data.Tier;
 import com.gg.server.domain.tier.data.TierRepository;
+import com.gg.server.domain.tier.exception.TierNotFoundException;
 import com.gg.server.domain.user.data.User;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,7 @@ public class RankAdminService {
 
         List<Rank> ranks = new ArrayList<>();
         Season season = seasonRepository.findById(seasonAdminDto.getSeasonId()).get();
-        Tier tier = tierRepository.findAll().get(0);
+        Tier tier = tierRepository.findStartTier().orElseThrow(TierNotFoundException::new);
         users.forEach(user -> {
             if (user.getRoleType() != GUEST) {
                 Rank userRank = Rank.from(user, season, seasonAdminDto.getStartPpp(), tier);

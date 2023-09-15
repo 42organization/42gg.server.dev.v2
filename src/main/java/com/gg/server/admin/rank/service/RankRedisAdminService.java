@@ -4,7 +4,9 @@ import com.gg.server.admin.season.dto.SeasonAdminDto;
 import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
+import com.gg.server.domain.tier.data.Tier;
 import com.gg.server.domain.tier.data.TierRepository;
+import com.gg.server.domain.tier.exception.TierNotFoundException;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
@@ -28,12 +30,12 @@ public class RankRedisAdminService {
         List<User> users = userRepository.findAll();
 
         String redisHashKey = RedisKeyManager.getHashKey(seasonAdminDto.getSeasonId());
-        String tierImageUri = tierRepository.findAll().get(0).getImageUri();
+        Tier tier = tierRepository.findStartTier().orElseThrow(TierNotFoundException::new);
 
         users.forEach(user -> {
             if (user.getRoleType() != GUEST) {
                 UserDto userDto = UserDto.from(user);
-                RankRedis userRank = RankRedis.from(userDto, seasonAdminDto.getStartPpp(), tierImageUri);
+                RankRedis userRank = RankRedis.from(userDto, seasonAdminDto.getStartPpp(), tier.getImageUri());
 
                 rankRedisRepository.addRankData(redisHashKey, user.getId(), userRank);
             }
