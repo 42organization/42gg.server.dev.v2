@@ -9,6 +9,7 @@ import com.gg.server.domain.item.data.ItemRepository;
 import com.gg.server.domain.item.type.ItemType;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
+import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -144,7 +146,7 @@ class UserCoinChangeServiceTest {
     @Test
     @DisplayName("랭크 게임  승리 재화 증가 서비스 테스트")
     void addRankWinGameService() {
-        User user = userRepository.getUserByIntraId("cheolee");
+        User user = userRepository.getUserByIntraId("cheolee").orElseThrow(UserNotFoundException::new);
 
         UserGameCoinResultDto userGameCoinResultDto = userCoinChangeService.addRankGameCoin(3606L, user.getId());//본인의 게임Id와 id 값
 
@@ -156,7 +158,7 @@ class UserCoinChangeServiceTest {
     @Test
     @DisplayName("랭크 게임 패배 재화 증가 서비스 테스트")
     void addRankLoseGameService() {
-        User user = userRepository.getUserByIntraId("cheolee");
+        User user = userRepository.getUserByIntraId("cheolee").orElseThrow(UserNotFoundException::new);
 
         UserGameCoinResultDto userGameCoinResultDto = userCoinChangeService.addRankGameCoin(3689L, user.getId());
 
