@@ -1,5 +1,6 @@
 package com.gg.server.domain.rank.service;
 
+import com.gg.server.domain.rank.data.Rank;
 import com.gg.server.domain.rank.dto.ExpRankDto;
 import com.gg.server.domain.rank.dto.ExpRankPageResponseDto;
 import com.gg.server.domain.rank.dto.RankDto;
@@ -27,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,7 +59,7 @@ public class RankService {
         for(int i = 0; i < ranks.size(); i++) {
             RankRedis rank = ranks.get(i);
             User user = users.getContent().get(i);
-            expRankDtos.add(ExpRankDto.from(user, startRank + i, rank.getStatusMessage(), user.getTextColor()));
+            expRankDtos.add(ExpRankDto.from(user, startRank + i, rank.getStatusMessage()));
         }
 
         return new ExpRankPageResponseDto(myRank.intValue(), pageRequest.getPageNumber() + 1, users.getTotalPages(), expRankDtos);
@@ -113,12 +115,11 @@ public class RankService {
         String hashKey = RedisKeyManager.getHashKey(season.getId());
 
         List<Long> userIds = redisRepository.getUserIdsByRangeFromZSet(zSetKey, startRank, endRank);
-        List<RankRedis> userRanks = redisRepository.findRanksByUserIds(hashKey, userIds);
+        List<RankRedis>userRanks = redisRepository.findRanksByUserIds(hashKey, userIds);
         List<RankDto> rankList = new ArrayList<>();
 
-        for (int i = 0; i < userRanks.size(); i++) {
-            User user = userRepository.findById(userRanks.get(i).getUserId()).orElseThrow(UserNotFoundException::new);
-            rankList.add(RankDto.from(userRanks.get(i), ++startRank, user.getTextColor()));
+        for (RankRedis userRank : userRanks) {
+            rankList.add(RankDto.from(userRank, ++startRank));
         }
         return rankList;
     }

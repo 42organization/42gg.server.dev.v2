@@ -19,14 +19,14 @@ public class RankDto {
     private String textColor;
 
 
-    public static RankDto from(RankRedis rankRedis, int rank, String textColor) {
+    public static RankDto from(RankRedis rankRedis, int rank) {
         RankDto dto = RankDto.builder()
                 .intraId(rankRedis.getIntraId())
                 .rank(rank)
                 .ppp(rankRedis.getPpp())
                 .statusMessage(rankRedis.getStatusMessage())
                 .tierImageUri(rankRedis.getTierImageUrl())
-                .textColor(textColor)
+                .textColor(rankRedis.getTextColor())
                 .build();
         return dto;
     }

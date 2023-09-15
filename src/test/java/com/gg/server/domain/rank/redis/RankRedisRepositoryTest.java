@@ -157,7 +157,7 @@ class RankRedisRepositoryTest {
         int win = 3;
         int lose = 4;
         String statusMessage = "statusMessage";
-        RankRedis ranking = new RankRedis(userId, "aa", ppp, win, lose, statusMessage, "aa");
+        RankRedis ranking = new RankRedis(userId, "aa", ppp, win, lose, statusMessage, "https://42gg-public-test-image.s3.ap-northeast-2.amazonaws.com/tier/hand.svg", "#000000");
 
         //when
         redisRepository.addRankData(hashKey, userId, ranking);
@@ -181,7 +181,7 @@ class RankRedisRepositoryTest {
         int win = 3;
         int lose = 4;
         String statusMessage = "statusMessage";
-        RankRedis ranking = new RankRedis(userId, "aa", ppp, win, lose, statusMessage, "aa");
+        RankRedis ranking = new RankRedis(userId, "aa", ppp, win, lose, statusMessage, "https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/nheo.jpeg", "#000000");
         redisRepository.addRankData(hashKey, userId, ranking);
 
         //when
@@ -189,7 +189,7 @@ class RankRedisRepositoryTest {
         int newWin = 4;
         int newLose = 5;
         String newStatusMessage = "newStatusMessage";
-        RankRedis newRanking = new RankRedis(userId, "aa", newPpp, newWin, newLose, newStatusMessage, "aa");
+        RankRedis newRanking = new RankRedis(userId, "aa", newPpp, newWin, newLose, newStatusMessage, "https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/nheo.jpeg", "#000000");
 
         redisRepository.updateRankData(hashKey, userId, newRanking);
         //then
@@ -211,7 +211,7 @@ class RankRedisRepositoryTest {
         int win = 3;
         int lose = 4;
         String statusMessage = "statusMessage";
-        RankRedis ranking = new RankRedis(userId, "aa", ppp, win, lose, statusMessage, "aa");
+        RankRedis ranking = new RankRedis(userId, "aa", ppp, win, lose, statusMessage, "https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/nheo.jpeg", "#000000");
         redisRepository.addRankData(hashKey, userId, ranking);
 
         //when
@@ -234,10 +234,10 @@ class RankRedisRepositoryTest {
         int ppp3 = 300;
         int ppp4 = 400;
 
-        RankRedis rank1 = new RankRedis(userId, "aa", ppp,  0, 0, "statusMessage", "aa");
-        RankRedis rank2 = new RankRedis(userId2,"aa", ppp2,  0, 0, "statusMessage", "aa");
-        RankRedis rank3 = new RankRedis(userId3, "aa", ppp3,  0, 0, "statusMessage", "aa");
-        RankRedis rank4 = new RankRedis(userId4, "aa", ppp4,  0, 0, "statusMessage", "aa");
+        RankRedis rank1 = new RankRedis(userId, "aa", ppp,  0, 0, "statusMessage", "https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/nheo.jpeg", "#000000");
+        RankRedis rank2 = new RankRedis(userId2,"aa", ppp2,  0, 0, "statusMessage", "https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/nheo.jpeg", "#000000");
+        RankRedis rank3 = new RankRedis(userId3, "aa", ppp3,  0, 0, "statusMessage", "https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/nheo.jpeg", "#000000");
+        RankRedis rank4 = new RankRedis(userId4, "aa", ppp4,  0, 0, "statusMessage", "https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/nheo.jpeg", "#000000");
         redisRepository.addRankData(hashKey, userId, rank1);
         redisRepository.addRankData(hashKey, userId2, rank2);
         redisRepository.addRankData(hashKey, userId3, rank3);

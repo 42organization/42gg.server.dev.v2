@@ -77,11 +77,11 @@ public class UserController {
     public ResponseEntity doModifyUser (@Valid @RequestBody UserModifyRequestDto userModifyRequestDto,
                                         @PathVariable String intraId, @Parameter(hidden = true) @Login UserDto loginUser) {
         if (!loginUser.getIntraId().equals(intraId)) {
-            return new ResponseEntity(HttpStatus.FORBIDDEN);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         userService.updateUser(userModifyRequestDto.getRacketType(), userModifyRequestDto.getStatusMessage(),
                 userModifyRequestDto.getSnsNotiOpt(), intraId);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/logout")
@@ -118,7 +118,7 @@ public class UserController {
     @PatchMapping("/text-color")
     public ResponseEntity updateTextColor(@RequestBody @Valid UserTextColorDto textColorDto, @Parameter(hidden = true) @Login UserDto user) {
         userService.updateTextColor(user.getId() ,textColorDto);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/attendance")
@@ -127,9 +127,9 @@ public class UserController {
     }
 
     @PatchMapping("/edge")
-    public ResponseEntity updateEdge(@RequestBody @Valid UserEdgeDto userEdgeDto, @Parameter(hidden = true) @Login UserDto user) {
+    public String updateEdge(@RequestBody @Valid UserEdgeDto userEdgeDto, @Parameter(hidden = true) @Login UserDto user) {
         String edge = userService.updateEdge(user, userEdgeDto);
-        return new ResponseEntity(HttpStatus.NO_CONTENT).ok().body("{\"edge\": " + "\"" + edge + "\"" +"}");
+        return "{\"edge\": " + "\"" + edge + "\"" +"}";
     }
 
     @GetMapping("/coin")
@@ -138,17 +138,16 @@ public class UserController {
     }
 
     @PatchMapping("/background")
-    public ResponseEntity updateBackground(@RequestBody @Valid UserBackgroundDto userBackgroundDto, @Parameter(hidden = true) @Login UserDto user) {
+    public String updateBackground(@RequestBody @Valid UserBackgroundDto userBackgroundDto, @Parameter(hidden = true) @Login UserDto user) {
         String background = userService.updateBackground(user, userBackgroundDto);
-        return new ResponseEntity(HttpStatus.NO_CONTENT).ok().body("{\"background\": " + "\"" + background + "\"" +"}");
+        return "{\"background\": " + "\"" + background + "\"" +"}";
     }
   
     @GetMapping("/coinhistory")
-    public ResponseEntity<UserCoinHistoryListResponseDto> getUserCoinHistory(@ModelAttribute @Valid PageRequestDto coReq, @Parameter(hidden = true) @Login UserDto user) {
+    public UserCoinHistoryListResponseDto getUserCoinHistory(@ModelAttribute @Valid PageRequestDto coReq, @Parameter(hidden = true) @Login UserDto user) {
         Pageable pageable = PageRequest.of(coReq.getPage() - 1, coReq.getSize(), Sort.by("createdAt").descending());
 
-        return  ResponseEntity.ok()
-                .body(userCoinService.getUserCoinHistory(pageable ,user.getIntraId()));
+        return userCoinService.getUserCoinHistory(pageable ,user.getIntraId());
     }
 
     @PostMapping(path = "/profile-image", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
@@ -156,6 +155,6 @@ public class UserController {
                                                  @RequestPart @Valid UserProfileImageRequestDto userProfileImageRequestDto,
                                                  @Parameter(hidden = true) @Login UserDto user) throws IOException {
         userService.updateUserProfileImage(user, userProfileImageRequestDto, profileImage);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 }
