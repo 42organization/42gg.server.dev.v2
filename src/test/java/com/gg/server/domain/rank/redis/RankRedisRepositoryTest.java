@@ -157,7 +157,7 @@ class RankRedisRepositoryTest {
         int win = 3;
         int lose = 4;
         String statusMessage = "statusMessage";
-        RankRedis ranking = new RankRedis(userId, "aa", ppp, win, lose, statusMessage, "aa", "aa");
+        RankRedis ranking = new RankRedis(userId, "aa", ppp, win, lose, statusMessage, "https://42gg-public-test-image.s3.ap-northeast-2.amazonaws.com/tier/hand.svg", "#000000");
 
         //when
         redisRepository.addRankData(hashKey, userId, ranking);
