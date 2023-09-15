@@ -17,7 +17,7 @@ public class ExpRankDto {
     private String userImageUri;
     private String textColor;
 
-    public static ExpRankDto from (User user, Integer rank, String statusMessage, String textColor){
+    public static ExpRankDto from (User user, Integer rank, String statusMessage){
         ExpRankDto dto = ExpRankDto.builder()
                 .intraId(user.getIntraId())
                 .rank(user.getTotalExp() == 0 ? -1 : rank)
@@ -25,7 +25,7 @@ public class ExpRankDto {
                 .level(ExpLevelCalculator.getLevel(user.getTotalExp()))
                 .exp(user.getTotalExp())
                 .userImageUri(user.getImageUri())
-                .textColor(textColor)
+                .textColor(user.getTextColor())
                 .build();
         return dto;
     }

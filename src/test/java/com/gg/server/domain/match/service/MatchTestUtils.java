@@ -59,7 +59,7 @@ public class MatchTestUtils {
 
     public RankRedis addUsertoRankRedis(Long userId, Integer ppp, Long seasonId) {
         String randomId = UUID.randomUUID().toString();
-        RankRedis rankRedis = new RankRedis(userId,  randomId, ppp, 0, 0,"test", "aa");
+        RankRedis rankRedis = new RankRedis(userId,  randomId, ppp, 0, 0,"test", "aa", "aa");
         rankRedisRepository.addRankData(RedisKeyManager.getHashKey(seasonId), userId, rankRedis);
         rankRedisRepository.addToZSet(RedisKeyManager.getZSetKey(seasonId), userId, ppp);
         return rankRedis;

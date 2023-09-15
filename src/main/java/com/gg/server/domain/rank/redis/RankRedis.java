@@ -21,6 +21,7 @@ public class RankRedis implements Serializable {
     private int losses;
     private String statusMessage;
     private String tierImageUrl;
+    private String textColor;
 
     public void updateRank(int changePpp, int wins, int losses) {
         this.ppp += changePpp;
@@ -51,6 +52,7 @@ public class RankRedis implements Serializable {
                 .losses(0)
                 .statusMessage("")
                 .tierImageUrl(tierImageUrl)
+                .textColor(user.getTextColor())
                 .build();
         return rankRedis;
     }
@@ -64,6 +66,7 @@ public class RankRedis implements Serializable {
                 .losses(rank.getLosses())
                 .statusMessage(rank.getStatusMessage())
                 .tierImageUrl(rank.getTier().getImageUri())
+                .textColor(rank.getUser().getTextColor())
                 .build();
         return rankRedis;
     }
@@ -78,6 +81,7 @@ public class RankRedis implements Serializable {
                 ", losses=" + losses +
                 ", statusMessage='" + statusMessage + '\'' +
                 ", tierImageUrl='" + tierImageUrl + '\'' +
+                ", textColor='" + textColor + '\'' +
                 '}';
     }
 }
