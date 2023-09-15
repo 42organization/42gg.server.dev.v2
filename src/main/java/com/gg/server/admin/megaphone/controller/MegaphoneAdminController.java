@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -19,13 +18,13 @@ public class MegaphoneAdminController {
     private final MegaphoneAdminService megaphoneAdminService;
 
     @GetMapping("/history")
-    public ResponseEntity<MegaphoneHistoryResponseDto> getMegaphoneHistory(@ModelAttribute @Valid PageRequestDto pageRequestDto,
-                                                                           @RequestParam(required = false) String intraId) {
+    public MegaphoneHistoryResponseDto getMegaphoneHistory(@ModelAttribute @Valid PageRequestDto pageRequestDto,
+                                                           @RequestParam(required = false) String intraId) {
         Pageable pageable = PageRequest.of(pageRequestDto.getPage() - 1, pageRequestDto.getSize(),
                 Sort.by("id").descending());
         if (intraId == null)
-            return ResponseEntity.ok(megaphoneAdminService.getMegaphoneHistory(pageable));
-        return ResponseEntity.ok(megaphoneAdminService.getMegaphoneHistoryByIntraId(intraId, pageable));
+            return megaphoneAdminService.getMegaphoneHistory(pageable);
+        return megaphoneAdminService.getMegaphoneHistoryByIntraId(intraId, pageable);
 
     }
 }
