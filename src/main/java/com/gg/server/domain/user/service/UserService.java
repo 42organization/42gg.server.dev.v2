@@ -1,14 +1,11 @@
 package com.gg.server.domain.user.service;
 
-import com.gg.server.domain.coin.data.CoinHistory;
-import com.gg.server.domain.coin.data.CoinHistoryRepository;
-import com.gg.server.domain.coin.data.CoinPolicyRepository;
 import com.gg.server.domain.coin.service.CoinHistoryService;
 import com.gg.server.domain.coin.service.UserCoinChangeService;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.type.StatusType;
-import com.gg.server.domain.item.exception.ItemTypeException;
+import com.gg.server.domain.item.service.ItemService;
 import com.gg.server.domain.item.type.ItemType;
 import com.gg.server.domain.match.data.RedisMatchUserRepository;
 import com.gg.server.domain.noti.data.NotiRepository;
@@ -23,9 +20,7 @@ import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.rank.service.RankFindService;
 import com.gg.server.domain.receipt.data.Receipt;
 import com.gg.server.domain.receipt.data.ReceiptRepository;
-import com.gg.server.domain.receipt.exception.ItemStatusException;
 import com.gg.server.domain.receipt.exception.ReceiptNotFoundException;
-import com.gg.server.domain.receipt.exception.ReceiptNotOwnerException;
 import com.gg.server.domain.receipt.type.ItemStatus;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.service.SeasonFindService;
@@ -75,6 +70,7 @@ public class UserService {
     private final ReceiptRepository receiptRepository;
     private final AsyncNewUserImageUploader asyncNewUserImageUploader;
     private final UserImageRepository userImageRepository;
+    private final ItemService itemService;
 
     /**
      * @param intraId
@@ -284,29 +280,30 @@ public class UserService {
     public void updateTextColor(Long userId, UserTextColorDto textColorDto) {
         String textColor = textColorDto.getTextColor();
         Receipt receipt = receiptRepository.findById(textColorDto.getReceiptId()).orElseThrow(ReceiptNotFoundException::new);
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        User loginUser = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
         if (!UserTextColorCheckService.check(textColor))
             throw new UserTextColorException();
-        checkOwner(user, receipt);
-        checkItemType(receipt, ItemType.TEXT_COLOR);
-        checkUseStatus(receipt);
 
-        user.updateTextColor(textColor);
+        itemService.checkItemType(receipt, ItemType.TEXT_COLOR);
+        itemService.checkItemOwner(loginUser, receipt);
+        itemService.checkItemStatus(receipt);
+
+        loginUser.updateTextColor(textColor);
         receipt.updateStatus(ItemStatus.USED);
     }
 
     @Transactional
     public String updateEdge(UserDto user, UserEdgeDto userEdgeDto) {
-        User userId = userRepository.findById(user.getId()).orElseThrow(UserNotFoundException::new);
+        User loginUser = userRepository.findById(user.getId()).orElseThrow(UserNotFoundException::new);
         EdgeType edgeType = EdgeType.getRandomEdgeType();
         Receipt receipt = receiptRepository.findById(userEdgeDto.getReceiptId()).orElseThrow(ReceiptNotFoundException::new);
 
-        checkOwner(userId, receipt);
-        checkItemType(receipt, ItemType.EDGE);
-        checkUseStatus(receipt);
+        itemService.checkItemType(receipt, ItemType.EDGE);
+        itemService.checkItemOwner(loginUser, receipt);
+        itemService.checkItemStatus(receipt);
 
-        userId.updateEdge(edgeType);
+        loginUser.updateEdge(edgeType);
         receipt.updateStatus(ItemStatus.USED);
 
         return edgeType.toString();
@@ -314,15 +311,15 @@ public class UserService {
 
     @Transactional
     public String updateBackground(UserDto user, UserBackgroundDto userBackgroundDto) {
-        User userId = userRepository.findById(user.getId()).orElseThrow(UserNotFoundException::new);
+        User loginUser = userRepository.findById(user.getId()).orElseThrow(UserNotFoundException::new);
         BackgroundType backgroundType = BackgroundType.getRandomBackgroundType();
         Receipt receipt = receiptRepository.findById(userBackgroundDto.getReceiptId()).orElseThrow(ReceiptNotFoundException::new);
 
-        checkOwner(userId, receipt);
-        checkItemType(receipt, ItemType.BACKGROUND);
-        checkUseStatus(receipt);
+        itemService.checkItemType(receipt, ItemType.BACKGROUND);
+        itemService.checkItemOwner(loginUser, receipt);
+        itemService.checkItemStatus(receipt);
 
-        userId.updateBackground(backgroundType);
+        loginUser.updateBackground(backgroundType);
         receipt.updateStatus(ItemStatus.USED);
 
         return backgroundType.toString();
@@ -330,12 +327,12 @@ public class UserService {
 
     @Transactional
     public void updateUserProfileImage(UserDto user, UserProfileImageRequestDto userProfileImageRequestDto, MultipartFile userImageFile) throws IOException {
-        User userId = userRepository.findById(user.getId()).orElseThrow(UserNotFoundException::new);
+        User loginUser = userRepository.findById(user.getId()).orElseThrow(UserNotFoundException::new);
         Receipt receipt = receiptRepository.findById(userProfileImageRequestDto.getReceiptId()).orElseThrow(ReceiptNotFoundException::new);
 
-        checkOwner(userId, receipt);
-        checkItemType(receipt, ItemType.PROFILE_IMAGE);
-        checkUseStatus(receipt);
+        itemService.checkItemType(receipt, ItemType.PROFILE_IMAGE);
+        itemService.checkItemOwner(loginUser, receipt);
+        itemService.checkItemStatus(receipt);
 
         if (userImageFile == null)
             throw new UserImageNullException();
@@ -345,24 +342,9 @@ public class UserService {
             throw new UserImageTypeException();
         }
 
-        UserImage userImage = userImageRepository.findTopByUserAndIsCurrentIsTrueOrderByIdDesc(userId).orElseThrow(null);
+        UserImage userImage = userImageRepository.findTopByUserAndIsCurrentIsTrueOrderByIdDesc(loginUser).orElseThrow(null);
         userImage.updateIsCurrent(false);
         asyncNewUserImageUploader.update(user.getIntraId(), userImageFile);
         receipt.updateStatus(ItemStatus.USED);
-    }
-
-    public void checkOwner(User loginUser, Receipt receipt) {
-        if (!receipt.getOwnerIntraId().equals(loginUser.getIntraId()))
-            throw new ReceiptNotOwnerException();
-    }
-
-    public void checkItemType(Receipt receipt, ItemType itemType) {
-        if (!receipt.getItem().getType().equals(itemType))
-            throw new ItemTypeException();
-    }
-
-    public void checkUseStatus(Receipt receipt) {
-        if (!receipt.getStatus().equals(ItemStatus.BEFORE))
-            throw new ItemStatusException();
     }
 }
