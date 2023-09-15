@@ -74,7 +74,7 @@ public class MatchFindService {
         SlotManagement slotManagement = slotManagementRepository.findCurrent(LocalDateTime.now())
                 .orElseThrow(SlotNotFoundException::new);
         Season season = seasonFindService.findCurrentSeason(LocalDateTime.now());
-        Tier tier = tierRepository.findById(1L).orElseThrow(TierNotFoundException::new);
+        Tier tier = tierRepository.findStartTier().orElseThrow(TierNotFoundException::new);
         RankRedis user;
         if (userDto.getRoleType().equals(RoleType.GUEST)) {
             user = RankRedis.from(userDto, season.getStartPpp(), tier.getImageUri());
