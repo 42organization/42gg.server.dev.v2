@@ -10,6 +10,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ItemListResponseDto {
-    List<ItemHistoryResponseDto> historyList;
-    Integer totalPage;
+    private List<ItemHistoryResponseDto> historyList;
+    private Integer totalPage;
 }
