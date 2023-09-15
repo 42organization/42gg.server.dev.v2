@@ -342,8 +342,8 @@ public class UserService {
             throw new UserImageTypeException();
         }
 
-        UserImage userImage = userImageRepository.findTopByUserAndIsCurrentIsTrueOrderByIdDesc(loginUser).orElseThrow(null);
-        userImage.updateIsCurrent(false);
+        UserImage userImage = userImageRepository.findTopByUserAndIsCurrentIsTrueOrderByIdDesc(loginUser).orElseThrow(UserImageNullException::new);
+        userImage.updateIsCurrent();
         asyncNewUserImageUploader.update(user.getIntraId(), userImageFile);
         receipt.updateStatus(ItemStatus.USED);
     }
