@@ -3,9 +3,9 @@ package com.gg.server.domain.item.controller;
 import com.gg.server.domain.item.dto.ItemGiftRequestDto;
 import com.gg.server.domain.item.dto.ItemStoreListResponseDto;
 import com.gg.server.domain.item.dto.UserItemListResponseDto;
-import com.gg.server.domain.item.dto.UserItemPageRequestDto;
 import com.gg.server.domain.item.service.ItemService;
 import com.gg.server.domain.user.dto.UserDto;
+import com.gg.server.global.dto.PageRequestDto;
 import com.gg.server.global.utils.argumentresolver.Login;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +46,7 @@ public class ItemController {
     }
 
     @GetMapping
-    public UserItemListResponseDto getItemByUser(@ModelAttribute @Valid UserItemPageRequestDto req,
+    public UserItemListResponseDto getItemByUser(@ModelAttribute @Valid PageRequestDto req,
                                                  @Parameter(hidden = true) @Login UserDto userDto) {
         Pageable pageable = PageRequest.of(req.getPage() - 1, req.getSize(),
                 Sort.by("createdAt").descending());
