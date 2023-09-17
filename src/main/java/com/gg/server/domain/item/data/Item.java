@@ -35,7 +35,6 @@ public class Item {
 
     @NotNull
     @Column(name = "is_visible")
-    @Setter
     private Boolean isVisible;
 
     @Column(name = "discount")
@@ -55,7 +54,6 @@ public class Item {
     private String creatorIntraId;
 
     @Column(name = "deleter_intra_id", length = 10)
-    @Setter
     private String deleterIntraId;
 
     public Item(String name, String mainContent, String subContent, String imageUri, Integer price,
@@ -114,6 +112,11 @@ public class Item {
 
     public void imageUpdate(String imageUri) {
         this.imageUri = imageUri;
+    }
+
+    public void setVisibility(String intraId) {
+        this.isVisible = false;
+        this.deleterIntraId = intraId;
     }
 
     @Override

@@ -40,8 +40,7 @@ public class ItemAdminService {
         if (item.getIsVisible() == false) {
             throw new ItemNotAvailableException();
         }
-        item.setIsVisible(false);
-        item.setDeleterIntraId(user.getIntraId());
+        item.setVisibility(user.getIntraId());
         Item newItem = new Item(itemUpdateRequestDto, user.getIntraId());
         if (itemImageFile != null)
             asyncNewItemImageUploader.upload(newItem, itemImageFile);
@@ -56,7 +55,7 @@ public class ItemAdminService {
         if (item.getIsVisible() == false) {
             throw new ItemNotAvailableException();
         }
-        setVisibility(item, user.getIntraId());
+        item.setVisibility(user.getIntraId());
         Item newItem = new Item(itemUpdateRequestDto, user.getIntraId(), item.getImageUri());
         itemAdminRepository.save(newItem);
     }
@@ -64,11 +63,6 @@ public class ItemAdminService {
     @Transactional
     public void deleteItem(Long itemId, UserDto user) {
         Item item = itemAdminRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException());
-        setVisibility(item, user.getIntraId());
-    }
-
-    public void setVisibility(Item item, String intraId) {
-        item.setIsVisible(true);
-        item.setDeleterIntraId(intraId);
+        item.setVisibility(user.getIntraId());
     }
 }
