@@ -88,6 +88,5 @@ public interface GameRepository extends JpaRepository<Game, Long>, GameRepositor
     List<GameUser> findAllByStartTimeLessThanEqual(@Param("time") LocalDateTime time);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query(value = "SELECT g FROM Game g WHERE g.id=:id")
-    Optional<Game> findWithPessimisticLockById(@Param("id") Long id);
+    Optional<Game> findWithPessimisticLockById(Long id);
 }
