@@ -29,6 +29,7 @@ import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.user.User;
 import com.gg.server.domain.user.UserRepository;
 import com.gg.server.domain.user.exception.UserNotFoundException;
+import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
@@ -57,7 +58,7 @@ public class GameAdminService {
 
     @Transactional(readOnly = true)
     public GameLogListAdminResponseDto findAllGamesByAdmin(Pageable pageable) {
-        Page<Game> gamePage = gameAdminRepository.findAllByStatus(pageable, StatusType.END); //모든 게임 정보 가져오기
+        Page<Game> gamePage = gameAdminRepository.findAll(pageable); //모든 게임 정보 가져오기
         return new GameLogListAdminResponseDto(getGameLogList(gamePage.getContent().stream().map(Game::getId).collect(Collectors.toList())), gamePage.getTotalPages());
     }
 
