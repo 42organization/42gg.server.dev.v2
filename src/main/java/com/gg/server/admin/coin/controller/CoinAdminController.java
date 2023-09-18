@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 public class CoinAdminController {
     private final CoinAdminService coinAdminService;
 
-    @PutMapping(value = "")
+    @PutMapping()
     public ResponseEntity updateUserCoin(@RequestBody CoinUpdateRequestDto coinUpdateRequestDto) {
         coinAdminService.updateUserCoin(coinUpdateRequestDto);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
