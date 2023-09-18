@@ -4,6 +4,7 @@ import com.gg.server.domain.coin.data.CoinHistoryRepository;
 import com.gg.server.domain.coin.data.CoinPolicy;
 import com.gg.server.domain.coin.data.CoinPolicyRepository;
 import com.gg.server.domain.coin.dto.UserGameCoinResultDto;
+import com.gg.server.domain.coin.exception.CoinHistoryNotFoundException;
 import com.gg.server.domain.coin.exception.CoinPolicyNotFoundException;
 import com.gg.server.domain.item.data.Item;
 import com.gg.server.domain.item.data.ItemRepository;
@@ -68,7 +69,8 @@ class UserCoinChangeServiceTest {
         assertThat(beforeCoin + coinIncrement).isEqualTo(user.getGgCoin());
         assertThat(coinPolicyRepository.findTopByOrderByCreatedAtDesc()
                 .orElseThrow(() -> new CoinPolicyNotFoundException()).getAttendance()).isEqualTo(coinIncrement);
-        System.out.println(coinHistoryRepository.findFirstByOrderByIdDesc().getHistory());
+        System.out.println(coinHistoryRepository.findFirstByOrderByIdDesc()
+                .orElseThrow(() -> new CoinHistoryNotFoundException()).getHistory());
 
         try{
             coinIncrement = userCoinChangeService.addAttendanceCoin(user);
@@ -94,8 +96,11 @@ class UserCoinChangeServiceTest {
         userCoinChangeService.purchaseItemCoin(item, item.getPrice(), userId);
 
         assertThat(beforeCoin).isEqualTo(user.getGgCoin() + item.getPrice());
-        System.out.println(coinHistoryRepository.findFirstByOrderByIdDesc().getHistory()+coinHistoryRepository.findFirstByOrderByIdDesc().getAmount());
-        System.out.println(coinHistoryRepository.findFirstByOrderByIdDesc().getHistory());
+        System.out.println(coinHistoryRepository.findFirstByOrderByIdDesc()
+                .orElseThrow(() -> new CoinHistoryNotFoundException()).getHistory()+coinHistoryRepository.findFirstByOrderByIdDesc()
+                .orElseThrow(() -> new CoinHistoryNotFoundException()).getAmount());
+        System.out.println(coinHistoryRepository.findFirstByOrderByIdDesc()
+                .orElseThrow(() -> new CoinHistoryNotFoundException()).getHistory());
         try{
             userCoinChangeService.purchaseItemCoin(item, item.getPrice(), userId);
         }catch (Exception e){
@@ -120,8 +125,12 @@ class UserCoinChangeServiceTest {
         userCoinChangeService.giftItemCoin(item, item.getPrice(), user, user);
 
         assertThat(beforeCoin).isEqualTo(user.getGgCoin() + item.getPrice());
-        System.out.println(coinHistoryRepository.findFirstByOrderByIdDesc().getHistory()+coinHistoryRepository.findFirstByOrderByIdDesc().getAmount());
-        System.out.println(coinHistoryRepository.findFirstByOrderByIdDesc().getHistory());
+        System.out.println(coinHistoryRepository.findFirstByOrderByIdDesc()
+                .orElseThrow(() -> new CoinHistoryNotFoundException()).getHistory()
+                +coinHistoryRepository.findFirstByOrderByIdDesc()
+                .orElseThrow(() -> new CoinHistoryNotFoundException()).getAmount());
+        System.out.println(coinHistoryRepository.findFirstByOrderByIdDesc()
+                .orElseThrow(() -> new CoinHistoryNotFoundException()).getHistory());
 
         try{
             userCoinChangeService.giftItemCoin(item, item.getPrice(), user, user);
@@ -143,7 +152,8 @@ class UserCoinChangeServiceTest {
         assertThat(user.getGgCoin()).isEqualTo(userGameCoinResultDto.getAfterCoin());
         assertThat(coinPolicyRepository.findTopByOrderByCreatedAtDesc()
                 .orElseThrow(() -> new CoinPolicyNotFoundException()).getNormal()).isEqualTo(userGameCoinResultDto.getCoinIncrement());
-        System.out.println(coinHistoryRepository.findFirstByOrderByIdDesc().getHistory());
+        System.out.println(coinHistoryRepository.findFirstByOrderByIdDesc()
+                .orElseThrow(() -> new CoinHistoryNotFoundException()).getHistory());
     }
 
     @Test
@@ -156,7 +166,8 @@ class UserCoinChangeServiceTest {
         assertThat(user.getGgCoin()).isEqualTo(userGameCoinResultDto.getAfterCoin());
         assertThat(coinPolicyRepository.findTopByOrderByCreatedAtDesc()
                 .orElseThrow(() -> new CoinPolicyNotFoundException()).getRankWin()).isEqualTo(userGameCoinResultDto.getCoinIncrement());
-        System.out.println(coinHistoryRepository.findFirstByOrderByIdDesc().getHistory());
+        System.out.println(coinHistoryRepository.findFirstByOrderByIdDesc()
+                .orElseThrow(() -> new CoinHistoryNotFoundException()).getHistory());
     }
 
     @Test
@@ -169,6 +180,7 @@ class UserCoinChangeServiceTest {
         assertThat(user.getGgCoin()).isEqualTo(userGameCoinResultDto.getAfterCoin());
         assertThat(coinPolicyRepository.findTopByOrderByCreatedAtDesc()
                 .orElseThrow(() -> new CoinPolicyNotFoundException()).getRankLose()).isEqualTo(userGameCoinResultDto.getCoinIncrement());
-        System.out.println(coinHistoryRepository.findFirstByOrderByIdDesc().getHistory());
+        System.out.println(coinHistoryRepository.findFirstByOrderByIdDesc()
+                .orElseThrow(() -> new CoinHistoryNotFoundException()).getHistory());
     }
 }
