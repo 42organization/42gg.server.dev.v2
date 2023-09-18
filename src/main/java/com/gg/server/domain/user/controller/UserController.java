@@ -105,7 +105,7 @@ public class UserController {
         return new UserOauthDto(OauthType.of(user.getRoleType(), user.getKakaoId()).getCode());
     }
 
-    @GetMapping("/images")
+    @GetMapping("/top3")
     public UserImageResponseDto getUserImage(@RequestParam(required = false) Long seasonId, Mode mode) {
         if (mode == Mode.RANK)
             return userService.getRankedUserImagesByPPP(seasonId);

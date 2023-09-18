@@ -8,6 +8,7 @@ import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.SeasonRepository;
 import com.gg.server.domain.tier.data.Tier;
 import com.gg.server.domain.tier.data.TierRepository;
+import com.gg.server.domain.tier.exception.TierNotFoundException;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
@@ -82,7 +83,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     private void createUserRank(User savedUser) {
-        Tier tier = tierRepository.findAll().get(0);
+        Tier tier = tierRepository.findStartTier().orElseThrow(TierNotFoundException::new);
         seasonRepository.findCurrentAndNewSeason(LocalDateTime.now()).forEach(
             season -> {
                 Rank userRank = Rank.from(savedUser, season, season.getStartPpp(), tier);

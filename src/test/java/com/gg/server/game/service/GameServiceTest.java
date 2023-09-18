@@ -19,6 +19,7 @@ import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.team.data.TeamUserRepository;
 import com.gg.server.domain.tier.data.Tier;
 import com.gg.server.domain.tier.data.TierRepository;
+import com.gg.server.domain.tier.exception.TierNotFoundException;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
@@ -72,7 +73,7 @@ public class GameServiceTest {
     @BeforeEach
     void init() {
         Season season = testDataUtils.createSeason();
-        Tier tier = tierRepository.findAll().get(0);
+        Tier tier = tierRepository.findStartTier().orElseThrow(TierNotFoundException::new);
         user1 = testDataUtils.createNewUser();
         user2 = testDataUtils.createNewUser();
         LocalDateTime now = LocalDateTime.now();

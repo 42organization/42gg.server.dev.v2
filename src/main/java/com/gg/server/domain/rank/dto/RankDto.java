@@ -25,7 +25,7 @@ public class RankDto {
                 .rank(rank)
                 .ppp(rankRedis.getPpp())
                 .statusMessage(rankRedis.getStatusMessage())
-                .tierImageUri(rankRedis.getTierImageUrl())
+                .tierImageUri(rankRedis.getTierImageUri())
                 .textColor(rankRedis.getTextColor())
                 .build();
         return dto;

@@ -32,22 +32,22 @@ public class ItemAdminService {
         return new ItemListResponseDto(responseDtos.getContent(), responseDtos.getTotalPages());
     }
 
+    // 아이템 수정 시 신규 이미지가 존재하는 경우
     @Transactional
-    //TODO 삭제된 경우 에러처리
     public void updateItem(Long itemId, ItemUpdateRequestDto itemUpdateRequestDto,
                            MultipartFile itemImageFile, UserDto user) throws IOException {
         Item item = itemAdminRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException());
         if (item.getIsVisible() == false) {
             throw new ItemNotAvailableException();
         }
-        item.setIsVisible(false);
-        item.setDeleterIntraId(user.getIntraId());
+        item.setVisibility(user.getIntraId());
         Item newItem = new Item(itemUpdateRequestDto, user.getIntraId());
         if (itemImageFile != null)
             asyncNewItemImageUploader.upload(newItem, itemImageFile);
         itemAdminRepository.save(newItem);
     }
 
+    // 아이템 수정 시 신규 이미지가 존재하지 않는 경우
     @Transactional
     public void updateItem(Long itemId, ItemUpdateRequestDto itemUpdateRequestDto,
                            UserDto user) {
@@ -55,8 +55,7 @@ public class ItemAdminService {
         if (item.getIsVisible() == false) {
             throw new ItemNotAvailableException();
         }
-        item.setIsVisible(false);
-        item.setDeleterIntraId(user.getIntraId());
+        item.setVisibility(user.getIntraId());
         Item newItem = new Item(itemUpdateRequestDto, user.getIntraId(), item.getImageUri());
         itemAdminRepository.save(newItem);
     }
@@ -64,7 +63,6 @@ public class ItemAdminService {
     @Transactional
     public void deleteItem(Long itemId, UserDto user) {
         Item item = itemAdminRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException());
-        item.setIsVisible(false);
-        item.setDeleterIntraId(user.getIntraId());
+        item.setVisibility(user.getIntraId());
     }
 }

@@ -172,7 +172,6 @@ public class GameService {
         throw new TeamIdNotMatchException();
     }
 
-    @Transactional
     public Boolean updateScore(Game game, RankResultReqDto scoreDto, Long userId) {
         List<TeamUser> teams = teamUserRepository.findAllByGameId(game.getId());
         TeamUser myTeam = findTeamId(scoreDto.getMyTeamId(), teams);
