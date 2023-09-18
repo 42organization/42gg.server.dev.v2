@@ -13,6 +13,7 @@ import com.gg.server.domain.pchange.data.PChange;
 import com.gg.server.domain.pchange.data.PChangeRepository;
 import com.gg.server.domain.pchange.exception.PChangeNotExistException;
 import com.gg.server.domain.rank.data.Rank;
+import com.gg.server.domain.rank.exception.RankNotFoundException;
 import com.gg.server.domain.rank.exception.RedisDataNotFoundException;
 import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
@@ -264,16 +265,16 @@ public class UserService {
         Boolean isAdmin = user.getRoleType() == RoleType.ADMIN;
         Boolean isAttended = coinHistoryService.hasAttendedToday(loginUser);
         Integer level = ExpLevelCalculator.getLevel(user.getTotalExp());
-        Tier tier = rankFindService.findByUserIdAndSeasonId(user.getId(), seasonFindService.findCurrentSeason(LocalDateTime.now()).getId()).getTier();
-        /* 티어가 존재하지 않는 일반 유저일때 : None, None 처리해서 보내기*/
-        if (tier == null) {
-            String tierName = "NONE";
-            String tierImageUri = "NONE";
-            return new UserNormalDetailResponseDto(loginUser.getIntraId(), loginUser.getImageUri(), isAdmin, isAttended, loginUser.getEdge(), tierName, tierImageUri, level);
+        if (user.getKakaoId() != null) {
+
         }
-        String tierName = tier.getName();
-        String tierImageUri = tier.getImageUri();
-        return new UserNormalDetailResponseDto(user.getIntraId(), loginUser.getImageUri(), isAdmin, isAttended, loginUser.getEdge(), tierName, tierImageUri, level);
+        try {
+            Tier tier = rankFindService.findByUserIdAndSeasonId(user.getId(), seasonFindService.findCurrentSeason(LocalDateTime.now()).getId()).getTier();
+            return new UserNormalDetailResponseDto(user.getIntraId(), loginUser.getImageUri(), isAdmin, isAttended, loginUser.getEdge(), tier.getName(), tier.getImageUri(), level);
+        } catch (RankNotFoundException ex) {
+            // 카카오 유저나 Rank가 없는 유저
+            return new UserNormalDetailResponseDto(user.getIntraId(), loginUser.getImageUri(), isAdmin, isAttended, loginUser.getEdge(), "NONE", "NONE", level);
+        }
     }
   
     @Transactional()
