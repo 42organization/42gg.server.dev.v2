@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByIntraId(String intraId);
 
-    User getUserByIntraId(String IntraId);
+    Optional<User> getUserByIntraId(String IntraId);
 
     Page<User> findByIntraIdContains(Pageable pageable, String intraId);
 
