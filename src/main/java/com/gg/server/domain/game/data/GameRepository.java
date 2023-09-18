@@ -72,6 +72,5 @@ public interface GameRepository extends JpaRepository<Game, Long>, GameRepositor
             "WHERE g.id=t.game_id AND t.id = tu.team_id AND tu.user_id=u.id AND g.status = 'BEFORE'", nativeQuery = true)
     List<GameUser> findAllByStartTimeLessThanEqual(@Param("time") LocalDateTime time);
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query(value = "SELECT g FROM Game g WHERE g.id=:gamdId")
-    Optional<Game> findWithPessimisticLockById(@Param("gameId") Long gameId);
+    Optional<Game> findWithPessimisticLockById(Long gameId);
 }
