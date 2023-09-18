@@ -26,29 +26,29 @@ public class CoinHistoryService {
 
     @Transactional
     public void addPurchaseItemCoinHistory(User user, Item item, Integer price) {
-        addCoinHistory(new CoinHistory(user, item.getName()+ " 구매", price*(-1)));
+        addCoinHistory(new CoinHistory(user, item.getName() + " 구매", price * (-1)));
     }
 
     @Transactional
     public void addGiftItemCoinHistory(User user, User giftTarget, Item item, Integer price) {
-        addCoinHistory(new CoinHistory(user, giftTarget.getIntraId() + "에게 " + item.getName()+ " 선물", price*(-1)));
+        addCoinHistory(new CoinHistory(user, giftTarget.getIntraId() + "에게 " + item.getName() + " 선물", price * (-1)));
     }
 
     @Transactional
-    public void addNormalCoin(User user){
+    public void addNormalCoin(User user) {
         int amount = coinPolicyRepository.findTopByOrderByCreatedAtDesc().getNormal();
         addCoinHistory(new CoinHistory(user, HistoryType.NORMAL.getHistory(), amount));
     }
 
     @Transactional
-    public int addRankWinCoin(User user){
+    public int addRankWinCoin(User user) {
         int amount = coinPolicyRepository.findTopByOrderByCreatedAtDesc().getRankWin();
         addCoinHistory(new CoinHistory(user, HistoryType.RANKWIN.getHistory(), amount));
         return amount;
     }
 
     @Transactional
-    public int addRankLoseCoin(User user){
+    public int addRankLoseCoin(User user) {
         int amount = coinPolicyRepository.findTopByOrderByCreatedAtDesc().getRankLose();
         if (amount == 0)
             return amount;
@@ -64,7 +64,7 @@ public class CoinHistoryService {
                 user, HistoryType.ATTENDANCECOIN.getHistory(), startOfDay, endOfDay);
     }
 
-    private void addCoinHistory(CoinHistory coinHistory){
+    public void addCoinHistory(CoinHistory coinHistory) {
         coinHistoryRepository.save(coinHistory);
     }
 
