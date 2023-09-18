@@ -18,9 +18,9 @@ public interface UserImageAdminRepository extends JpaRepository<UserImage, Long>
   
     Page<UserImage> findAllByDeletedAtNotNullOrderByDeletedAtDesc(Pageable pageable);
 
-    @Query(value = "SELECT ui FROM UserImage ui WHERE ui.user.id = ?1 " +
+    @Query(value = "SELECT ui FROM UserImage ui WHERE ui.user.id = :user_id " +
             "AND ui.deletedAt != NULL ORDER BY ui.deletedAt DESC")
-    Page<UserImage> findAllByUserAndDeletedAtNotNullOrderByDeletedAtDesc(Long userId, Pageable pageable);
+    Page<UserImage> findAllByUserAndDeletedAtNotNullOrderByDeletedAtDesc(@Param("user_id") Long userId, Pageable pageable);
 
     @Query(value = "SELECT ui FROM UserImage ui WHERE ui.id NOT IN (" +
             "SELECT MIN(ui.id) FROM UserImage ui GROUP BY ui.user.id" +
