@@ -4,6 +4,7 @@ import com.gg.server.domain.coin.data.CoinHistoryRepository;
 import com.gg.server.domain.coin.data.CoinPolicy;
 import com.gg.server.domain.coin.data.CoinPolicyRepository;
 import com.gg.server.domain.coin.dto.UserGameCoinResultDto;
+import com.gg.server.domain.coin.exception.CoinPolicyNotFoundException;
 import com.gg.server.domain.item.data.Item;
 import com.gg.server.domain.item.data.ItemRepository;
 import com.gg.server.domain.item.type.ItemType;
@@ -65,7 +66,8 @@ class UserCoinChangeServiceTest {
         int coinIncrement = userCoinChangeService.addAttendanceCoin(user);
 
         assertThat(beforeCoin + coinIncrement).isEqualTo(user.getGgCoin());
-        assertThat(coinPolicyRepository.findTopByOrderByCreatedAtDesc().getAttendance()).isEqualTo(coinIncrement);
+        assertThat(coinPolicyRepository.findTopByOrderByCreatedAtDesc()
+                .orElseThrow(() -> new CoinPolicyNotFoundException()).getAttendance()).isEqualTo(coinIncrement);
         System.out.println(coinHistoryRepository.findFirstByOrderByIdDesc().getHistory());
 
         try{
@@ -139,7 +141,8 @@ class UserCoinChangeServiceTest {
         UserGameCoinResultDto userGameCoinResultDto = userCoinChangeService.addNormalGameCoin(userId);
 
         assertThat(user.getGgCoin()).isEqualTo(userGameCoinResultDto.getAfterCoin());
-        assertThat(coinPolicyRepository.findTopByOrderByCreatedAtDesc().getNormal()).isEqualTo(userGameCoinResultDto.getCoinIncrement());
+        assertThat(coinPolicyRepository.findTopByOrderByCreatedAtDesc()
+                .orElseThrow(() -> new CoinPolicyNotFoundException()).getNormal()).isEqualTo(userGameCoinResultDto.getCoinIncrement());
         System.out.println(coinHistoryRepository.findFirstByOrderByIdDesc().getHistory());
     }
 
@@ -151,7 +154,8 @@ class UserCoinChangeServiceTest {
         UserGameCoinResultDto userGameCoinResultDto = userCoinChangeService.addRankGameCoin(3606L, user.getId());//본인의 게임Id와 id 값
 
         assertThat(user.getGgCoin()).isEqualTo(userGameCoinResultDto.getAfterCoin());
-        assertThat(coinPolicyRepository.findTopByOrderByCreatedAtDesc().getRankWin()).isEqualTo(userGameCoinResultDto.getCoinIncrement());
+        assertThat(coinPolicyRepository.findTopByOrderByCreatedAtDesc()
+                .orElseThrow(() -> new CoinPolicyNotFoundException()).getRankWin()).isEqualTo(userGameCoinResultDto.getCoinIncrement());
         System.out.println(coinHistoryRepository.findFirstByOrderByIdDesc().getHistory());
     }
 
@@ -163,7 +167,8 @@ class UserCoinChangeServiceTest {
         UserGameCoinResultDto userGameCoinResultDto = userCoinChangeService.addRankGameCoin(3689L, user.getId());
 
         assertThat(user.getGgCoin()).isEqualTo(userGameCoinResultDto.getAfterCoin());
-        assertThat(coinPolicyRepository.findTopByOrderByCreatedAtDesc().getRankLose()).isEqualTo(userGameCoinResultDto.getCoinIncrement());
+        assertThat(coinPolicyRepository.findTopByOrderByCreatedAtDesc()
+                .orElseThrow(() -> new CoinPolicyNotFoundException()).getRankLose()).isEqualTo(userGameCoinResultDto.getCoinIncrement());
         System.out.println(coinHistoryRepository.findFirstByOrderByIdDesc().getHistory());
     }
 }
