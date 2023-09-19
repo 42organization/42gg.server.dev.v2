@@ -1,12 +1,9 @@
 package com.gg.server.domain.coin.service;
 
-import com.gg.server.domain.coin.data.CoinHistoryRepository;
 import com.gg.server.domain.coin.data.CoinPolicyRepository;
 import com.gg.server.domain.coin.dto.UserGameCoinResultDto;
-import com.gg.server.domain.coin.type.HistoryType;
 import com.gg.server.domain.game.service.GameFindService;
 import com.gg.server.domain.item.data.Item;
-import com.gg.server.domain.item.exception.InsufficientGgcoinException;
 import com.gg.server.domain.team.data.Team;
 import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.user.data.User;
@@ -17,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
