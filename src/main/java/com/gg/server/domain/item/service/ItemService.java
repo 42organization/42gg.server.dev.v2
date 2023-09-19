@@ -94,14 +94,14 @@ public class ItemService {
         }
 
         User payUser = userRepository.findById(userDto.getId())
-                .orElseThrow(() -> new UserNotFoundException());
+                .orElseThrow(UserNotFoundException::new);
 
         if (payUser.getRoleType() == RoleType.GUEST) {
             throw new KakaoPurchaseException();
         }
 
         User owner = userRepository.findByIntraId(ownerId)
-                .orElseThrow(() -> new UserNotFoundException());
+                .orElseThrow(UserNotFoundException::new);
 
         if (owner.getRoleType() == RoleType.GUEST) {
             throw new KakaoGiftException();

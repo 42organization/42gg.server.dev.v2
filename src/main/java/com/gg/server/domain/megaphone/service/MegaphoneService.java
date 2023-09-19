@@ -20,9 +20,9 @@ import com.gg.server.domain.receipt.type.ItemStatus;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
+import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.domain.user.type.RoleType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,7 +43,7 @@ public class MegaphoneService {
 
     @Transactional
     public void useMegaphone(MegaphoneUseRequestDto megaphoneUseRequestDto, UserDto user) {
-        User loginUser = userRepository.findById(user.getId()).orElseThrow(() -> new UsernameNotFoundException("User" + user.getId()));
+        User loginUser = userRepository.findById(user.getId()).orElseThrow(UserNotFoundException::new);
         if (LocalTime.now().isAfter(LocalTime.of(23, 55)) || LocalTime.now().isBefore(LocalTime.of(0, 5))) {
             throw new MegaphoneTimeException();
         }
@@ -75,7 +75,7 @@ public class MegaphoneService {
 
     @Transactional
     public void deleteMegaphone(Long megaphoneId, UserDto user) {
-        User loginUser = userRepository.findById(user.getId()).orElseThrow(() -> new UsernameNotFoundException("User" + user.getId()));
+        User loginUser = userRepository.findById(user.getId()).orElseThrow(UserNotFoundException::new);
         Megaphone megaphone = megaphoneRepository.findById(megaphoneId).orElseThrow(MegaphoneNotFoundException::new);
         Receipt receipt = megaphone.getReceipt();
         if (!user.getRoleType().equals(RoleType.ADMIN)) {
@@ -89,7 +89,7 @@ public class MegaphoneService {
     }
 
     public MegaphoneDetailResponseDto getMegaphoneDetail(Long receiptId, UserDto user) {
-        User loginUser = userRepository.findById(user.getId()).orElseThrow(() -> new UsernameNotFoundException("User" + user.getId()));
+        User loginUser = userRepository.findById(user.getId()).orElseThrow(UserNotFoundException::new);
         Receipt receipt = receiptRepository.findById(receiptId).orElseThrow(ReceiptNotFoundException::new);
         itemService.checkItemType(receipt, ItemType.MEGAPHONE);
         itemService.checkItemOwner(loginUser, receipt);

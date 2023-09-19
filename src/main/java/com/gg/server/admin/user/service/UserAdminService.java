@@ -73,7 +73,7 @@ public class UserAdminService {
 
     @Transactional(readOnly = true)
     public UserDetailAdminResponseDto getUserDetailByIntraId(String intraId) {
-        User user = userAdminRepository.findByIntraId(intraId).orElseThrow(() -> new UserNotFoundException());
+        User user = userAdminRepository.findByIntraId(intraId).orElseThrow(UserNotFoundException::new);
         Season currSeason = seasonAdminRepository.findCurrentSeason(LocalDateTime.now()).orElseThrow(() -> new SeasonNotFoundException());
         try {
             RankRedis userCurrRank = rankRedisRepository.findRankByUserId(RedisKeyManager.getHashKey(currSeason.getId()),
@@ -89,7 +89,7 @@ public class UserAdminService {
                                  UserUpdateAdminRequestDto userUpdateAdminRequestDto,
                                  MultipartFile userImageFile) throws IOException{
         Season currSeason = seasonAdminRepository.findCurrentSeason(LocalDateTime.now()).orElseThrow(() -> new SeasonNotFoundException());
-        User user = userAdminRepository.findByIntraId(intraId).orElseThrow(() -> new UserNotFoundException());
+        User user = userAdminRepository.findByIntraId(intraId).orElseThrow(UserNotFoundException::new);
 
         user.modifyUserDetail(userUpdateAdminRequestDto);
         if (userImageFile != null)
