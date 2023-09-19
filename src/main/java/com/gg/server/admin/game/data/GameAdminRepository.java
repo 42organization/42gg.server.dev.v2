@@ -23,8 +23,6 @@ public interface GameAdminRepository extends JpaRepository<Game, Long> {
             "from v_rank_game_detail t1, v_rank_game_detail t2 " +
             "where t1.gameId IN (:games) and t1.teamId <t2.teamId and t1.gameId=t2.gameId order by t1.startTime desc;", nativeQuery = true)
     List<GameTeamUser> findTeamsByGameIsIn(@Param("games") List<Long> games);
-
-    Page<Game> findAllByStatus(Pageable pageable, StatusType status);
     @Query(value = "SELECT g FROM Game g, Team t, TeamUser tu WHERE g.status = :status AND g.id = t.game.id"
             + " AND t.id = tu.team.id AND tu.user.id = :userId")
     Optional<Game> findByStatusTypeAndUserId(@Param("status") StatusType status, @Param("userId") Long userId);

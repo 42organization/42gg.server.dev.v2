@@ -2,9 +2,7 @@ package com.gg.server.domain.rank.redis;
 
 import com.gg.server.domain.rank.data.Rank;
 import com.gg.server.domain.user.dto.UserDto;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import org.springframework.data.redis.core.RedisHash;
 
 import java.io.Serializable;
@@ -13,6 +11,7 @@ import java.io.Serializable;
 @Getter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RankRedis implements Serializable {
     private Long userId;
     private String intraId;
