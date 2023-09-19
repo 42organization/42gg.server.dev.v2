@@ -88,6 +88,7 @@ public class RankRedisService {
             } else {
                 if (i < 3) {
                     rankRedis.updateTierImage(tierList.get(6).getImageUri());
+                    updateRankUser(key, zSetKey, rankRedis.getUserId(), rankRedis);
                     continue;
                 }
                 if (rankRedis.getPpp() < 970) {
@@ -112,8 +113,6 @@ public class RankRedisService {
                     }
                 }
             }
-        }
-        for (RankRedis rankRedis : rankRedisList) {
             updateRankUser(key, zSetKey, rankRedis.getUserId(), rankRedis);
         }
     }
