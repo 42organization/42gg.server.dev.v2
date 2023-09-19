@@ -30,7 +30,7 @@ public class UserCoinChangeService {
         if (coinHistoryService.hasAttendedToday(user))
             throw new UserAlreadyAttendanceException();
         int coinIncrement = coinPolicyRepository.findTopByOrderByCreatedAtDesc()
-                .orElseThrow(() -> new CoinPolicyNotFoundException()).getAttendance();
+                .orElseThrow(CoinPolicyNotFoundException::new).getAttendance();
         user.addGgCoin(coinIncrement);
         coinHistoryService.addAttendanceCoinHistory(user);
         return coinIncrement;
@@ -58,7 +58,8 @@ public class UserCoinChangeService {
     @Transactional
     public UserGameCoinResultDto addNormalGameCoin(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        int coinIncrement = coinPolicyRepository.findTopByOrderByCreatedAtDesc().getNormal();
+        int coinIncrement = coinPolicyRepository.findTopByOrderByCreatedAtDesc()
+                .orElseThrow(CoinPolicyNotFoundException::new).getNormal();
 
         user.addGgCoin(coinIncrement);
         coinHistoryService.addNormalCoin(user);
@@ -84,9 +85,9 @@ public class UserCoinChangeService {
 
         for(Team team: teams) {
             for (TeamUser teamUser : team.getTeamUsers()){
-                if (teamUser.getUser().getId() == user.getId() && team.getWin() == true)
+                if (teamUser.getUser().getId() == user.getId() && team.getWin())
                     return true;
-                else if (teamUser.getUser().getId() == user.getId() && team.getWin() == false)
+                else if (teamUser.getUser().getId() == user.getId() && !team.getWin())
                     return false;
             }
         }
