@@ -20,11 +20,7 @@ public class FeedbackService {
     public void addFeedback(FeedbackRequestDto feedbackRequestDto, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User" + userId));
 
-        Feedback feedback = Feedback.builder()
-                .user(user)
-                .category(feedbackRequestDto.getCategory())
-                .content(feedbackRequestDto.getContent())
-                .build();
+        Feedback feedback = new Feedback(user, feedbackRequestDto.getCategory(), feedbackRequestDto.getContent());
         feedbackRepository.save(feedback);
     }
 }

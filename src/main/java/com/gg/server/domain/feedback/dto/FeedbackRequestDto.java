@@ -11,9 +11,9 @@ import javax.validation.constraints.NotNull;
 @Getter
 @NoArgsConstructor
 public class FeedbackRequestDto {
-    @NotNull(message = "plz. content")
+    @NotNull(message = "plz. not null FeedbackType")
     private FeedbackType category;
-    @NotNull(message = "plz. content")
+    @NotNull(message = "plz.  not null content")
     @Length(max = 600, message = "plz. maxSizeMessage 600")
     private String content;
 
