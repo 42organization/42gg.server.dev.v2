@@ -58,7 +58,8 @@ public class UserCoinChangeService {
     @Transactional
     public UserGameCoinResultDto addNormalGameCoin(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        int coinIncrement = coinPolicyRepository.findTopByOrderByCreatedAtDesc().getNormal();
+        int coinIncrement = coinPolicyRepository.findTopByOrderByCreatedAtDesc()
+                .orElseThrow(() -> new CoinPolicyNotFoundException()).getNormal();
 
         user.addGgCoin(coinIncrement);
         coinHistoryService.addNormalCoin(user);
