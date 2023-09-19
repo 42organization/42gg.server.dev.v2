@@ -42,7 +42,7 @@ public class UserCoinChangeService {
     public void purchaseItemCoin(Item item, Integer price, Long userId){
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException());
+                .orElseThrow(UserNotFoundException::new);
 
         user.payGgCoin(price);
 
@@ -59,7 +59,7 @@ public class UserCoinChangeService {
 
     @Transactional
     public UserGameCoinResultDto addNormalGameCoin(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         int coinIncrement = coinPolicyRepository.findTopByOrderByCreatedAtDesc().getNormal();
 
         user.addGgCoin(coinIncrement);
@@ -69,7 +69,7 @@ public class UserCoinChangeService {
 
     @Transactional
     public UserGameCoinResultDto addRankGameCoin(Long gameId, Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         int coinIncrement;
 
         if (userIsWinner(gameId, user))

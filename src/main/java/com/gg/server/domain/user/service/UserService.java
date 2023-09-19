@@ -39,7 +39,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -206,12 +205,12 @@ public class UserService {
     }
 
     public User getUser(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User" + userId));
+        return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
     }
 
     @Transactional
     public void deleteKakaoId(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         user.updateKakaoId(null);
     }
 
@@ -251,7 +250,7 @@ public class UserService {
 
     @Transactional
     public UserAttendanceResponseDto attendUser(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User" + userId));
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
         int plus = userCoinChangeService.addAttendanceCoin(user);
 
@@ -260,7 +259,7 @@ public class UserService {
 
     @Transactional
     public UserNormalDetailResponseDto getUserNormalDetail(UserDto user) {
-        User loginUser = userRepository.findById(user.getId()).orElseThrow(() -> new UsernameNotFoundException("User" + user.getId()));
+        User loginUser = userRepository.findById(user.getId()).orElseThrow(UserNotFoundException::new);
         Boolean isAdmin = user.getRoleType() == RoleType.ADMIN;
         Boolean isAttended = coinHistoryService.hasAttendedToday(loginUser);
         Integer level = ExpLevelCalculator.getLevel(user.getTotalExp());

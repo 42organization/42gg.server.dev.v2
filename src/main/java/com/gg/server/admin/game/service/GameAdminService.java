@@ -68,7 +68,7 @@ public class GameAdminService {
 
     @Transactional(readOnly = true)
     public GameLogListAdminResponseDto findGamesByIntraId(String intraId, Pageable pageable){
-        User user = userAdminRepository.findByIntraId(intraId).orElseThrow(() -> new UserNotFoundException());
+        User user = userAdminRepository.findByIntraId(intraId).orElseThrow(UserNotFoundException::new);
         List<PChange> pChangeList = pChangeRepository.findAllByUserId(user.getId());
         List<Game> gameList = new ArrayList<>();
 
