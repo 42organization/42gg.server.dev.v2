@@ -49,7 +49,7 @@ public class GameAdminService {
 
     @Transactional(readOnly = true)
     public GameLogListAdminResponseDto findAllGamesByAdmin(Pageable pageable) {
-        Page<Game> gamePage = gameAdminRepository.findAllByStatus(pageable); //모든 게임 정보 가져오기
+        Page<Game> gamePage = gameAdminRepository.findAll(pageable); //모든 게임 정보 가져오기
         return new GameLogListAdminResponseDto(getGameLogList(gamePage.getContent().stream().map(Game::getId).collect(Collectors.toList())), gamePage.getTotalPages());
     }
 
