@@ -10,6 +10,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReceiptListResponseDto {
-    List<ReceiptResponseDto> receiptList;
-    Integer totalPage;
+    private List<ReceiptResponseDto> receiptList;
+    private Integer totalPage;
 }
