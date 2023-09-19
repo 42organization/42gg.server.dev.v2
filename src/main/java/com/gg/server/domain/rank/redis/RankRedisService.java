@@ -45,7 +45,7 @@ public class RankRedisService {
         updatePPP(enemyTeamUser, enemyTeam, myTeamUser.getTeam().getScore(), enemyPPP, myPPP, game.getSeason().getId());
         updateRankUser(key, zsetKey, myTeamUser.getUser().getId(), myTeam);
         updateRankUser(key, zsetKey, enemyTeamUser.getUser().getId(), enemyTeam);
-        updateAllTier(key, game.getSeason());
+        updateAllTier(key, zsetKey, game.getSeason());
         pChangeService.addPChange(game, myTeamUser.getUser(), myTeam.getPpp(), true);
         pChangeService.addPChange(game, enemyTeamUser.getUser(), enemyTeam.getPpp(), false);
     }
@@ -72,7 +72,7 @@ public class RankRedisService {
 
     }
 
-    public void updateAllTier(String key, Season season) {
+    public void updateAllTier(String key, String zSetKey, Season season) {
         // 전체 레디스 랭크 티어 새로고침하는 로직
         List<RankRedis> rankRedisList = rankRedisRepository.findAllRanksOrderByPppDesc(key);
         Long totalRankPlayers = rankRepository.countRealRankPlayers(season.getId());
@@ -114,7 +114,7 @@ public class RankRedisService {
             }
         }
         for (RankRedis rankRedis : rankRedisList) {
-            rankRedisRepository.updateRankData(key, rankRedis.getUserId(), rankRedis);
+            updateRankUser(key, zSetKey, rankRedis.getUserId(), rankRedis);
         }
     }
 
