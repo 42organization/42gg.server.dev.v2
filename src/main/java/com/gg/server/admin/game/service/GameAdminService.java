@@ -6,6 +6,7 @@ import com.gg.server.admin.game.data.GameAdminRepository;
 import com.gg.server.admin.game.dto.RankGamePPPModifyReqDto;
 import com.gg.server.admin.game.exception.NotRecentlyGameException;
 import com.gg.server.admin.pchange.data.PChangeAdminRepository;
+import com.gg.server.admin.pchange.exception.PChangeNotExistException;
 import com.gg.server.admin.season.data.SeasonAdminRepository;
 import com.gg.server.admin.team.data.TeamUserAdminRepository;
 import com.gg.server.admin.user.data.UserAdminRepository;
@@ -112,6 +113,9 @@ public class GameAdminService {
         for (TeamUser teamUser :
                 teamUsers) {
             List<PChange> pChanges = pChangeAdminRepository.findByTeamUser(teamUser.getUser().getId());
+            if (!pChanges.get(0).getGame().getId().equals(gameId)) {
+                throw new PChangeNotExistException();
+            }
             rollbackGameResult(reqDto, season, teamUser, pChanges);
             pChangeAdminRepository.delete(pChanges.get(0));
         }
@@ -124,17 +128,17 @@ public class GameAdminService {
         // rank zset 도 update
         // 이전 ppp, exp 되돌리기
         // rank data 에 있는 ppp 되돌리기
-        if (teamUser.getTeam().getId().equals(reqDto.getTeam1Id())) {
-            teamUser.getTeam().updateScore(reqDto.getTeam1Score(), reqDto.getTeam1Score() > reqDto.getTeam2Score());
-        } else if (teamUser.getTeam().getId().equals(reqDto.getTeam2Id())) {
-            teamUser.getTeam().updateScore(reqDto.getTeam2Score(), reqDto.getTeam2Score() > reqDto.getTeam1Score());
-        }
         if (pChanges.size() == 1) {
             rankRedisService.rollbackRank(teamUser, season.getStartPpp(), season.getId());
             teamUser.getUser().updateExp(0);
         } else {
             rankRedisService.rollbackRank(teamUser, pChanges.get(1).getPppResult(), season.getId());
             teamUser.getUser().updateExp(pChanges.get(1).getExp());
+        }
+        if (teamUser.getTeam().getId().equals(reqDto.getTeam1Id())) {
+            teamUser.getTeam().updateScore(reqDto.getTeam1Score(), reqDto.getTeam1Score() > reqDto.getTeam2Score());
+        } else if (teamUser.getTeam().getId().equals(reqDto.getTeam2Id())) {
+            teamUser.getTeam().updateScore(reqDto.getTeam2Score(), reqDto.getTeam2Score() > reqDto.getTeam1Score());
         }
     }
 
