@@ -115,7 +115,7 @@ public class RankService {
         String hashKey = RedisKeyManager.getHashKey(season.getId());
 
         List<Long> userIds = redisRepository.getUserIdsByRangeFromZSet(zSetKey, startRank, endRank);
-        List<RankRedis>userRanks = redisRepository.findRanksByUserIds(hashKey, userIds);
+        List<RankRedis> userRanks = redisRepository.findRanksByUserIds(hashKey, userIds);
         List<RankDto> rankList = new ArrayList<>();
 
         for (RankRedis userRank : userRanks) {
