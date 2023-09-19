@@ -24,6 +24,9 @@ public enum ErrorCode {
     //coinPolicy
     CoinPolicy_NOT_FOUND(404, "CP100", "COINPOLICY NOT FOUND"),
 
+    //coinHistory
+    COIN_HISTORY_NOT_FOUND(404, "CH100", "COIN HISTORY NOT FOUND"),
+
     //season
     SEASON_NOT_FOUND(404, "SE100", "SEASON NOT FOUND"),
     SEASON_FORBIDDEN(400, "SE500", "SEASON FORBIDDEN ERROR"),

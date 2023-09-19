@@ -3,6 +3,7 @@ package com.gg.server.domain.coin.service;
 import com.gg.server.domain.coin.data.CoinHistory;
 import com.gg.server.domain.coin.data.CoinHistoryRepository;
 import com.gg.server.domain.coin.data.CoinPolicyRepository;
+import com.gg.server.domain.coin.exception.CoinPolicyNotFoundException;
 import com.gg.server.domain.coin.type.HistoryType;
 import com.gg.server.domain.item.data.Item;
 import com.gg.server.domain.user.data.User;
@@ -20,7 +21,8 @@ public class CoinHistoryService {
 
     @Transactional
     public void addAttendanceCoinHistory(User user) {
-        int amount = coinPolicyRepository.findTopByOrderByCreatedAtDesc().getAttendance();
+        int amount = coinPolicyRepository.findTopByOrderByCreatedAtDesc()
+                .orElseThrow(() -> new CoinPolicyNotFoundException()).getAttendance();
         addCoinHistory(new CoinHistory(user, HistoryType.ATTENDANCECOIN.getHistory(), amount));
     }
 
@@ -36,20 +38,23 @@ public class CoinHistoryService {
 
     @Transactional
     public void addNormalCoin(User user) {
-        int amount = coinPolicyRepository.findTopByOrderByCreatedAtDesc().getNormal();
+        int amount = coinPolicyRepository.findTopByOrderByCreatedAtDesc()
+                .orElseThrow(() -> new CoinPolicyNotFoundException()).getNormal();
         addCoinHistory(new CoinHistory(user, HistoryType.NORMAL.getHistory(), amount));
     }
 
     @Transactional
     public int addRankWinCoin(User user) {
-        int amount = coinPolicyRepository.findTopByOrderByCreatedAtDesc().getRankWin();
+        int amount = coinPolicyRepository.findTopByOrderByCreatedAtDesc()
+                .orElseThrow(() -> new CoinPolicyNotFoundException()).getRankWin();
         addCoinHistory(new CoinHistory(user, HistoryType.RANKWIN.getHistory(), amount));
         return amount;
     }
 
     @Transactional
     public int addRankLoseCoin(User user) {
-        int amount = coinPolicyRepository.findTopByOrderByCreatedAtDesc().getRankLose();
+        int amount = coinPolicyRepository.findTopByOrderByCreatedAtDesc()
+                .orElseThrow(() -> new CoinPolicyNotFoundException()).getRankLose();
         if (amount == 0)
             return amount;
         addCoinHistory(new CoinHistory(user, HistoryType.RANKLOSE.getHistory(), amount));

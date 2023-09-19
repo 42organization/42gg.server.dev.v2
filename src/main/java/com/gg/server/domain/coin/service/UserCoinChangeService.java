@@ -2,6 +2,7 @@ package com.gg.server.domain.coin.service;
 
 import com.gg.server.domain.coin.data.CoinPolicyRepository;
 import com.gg.server.domain.coin.dto.UserGameCoinResultDto;
+import com.gg.server.domain.coin.exception.CoinPolicyNotFoundException;
 import com.gg.server.domain.game.service.GameFindService;
 import com.gg.server.domain.item.data.Item;
 import com.gg.server.domain.team.data.Team;
@@ -28,7 +29,8 @@ public class UserCoinChangeService {
     public int addAttendanceCoin(User user){
         if (coinHistoryService.hasAttendedToday(user))
             throw new UserAlreadyAttendanceException();
-        int coinIncrement = coinPolicyRepository.findTopByOrderByCreatedAtDesc().getAttendance();
+        int coinIncrement = coinPolicyRepository.findTopByOrderByCreatedAtDesc()
+                .orElseThrow(() -> new CoinPolicyNotFoundException()).getAttendance();
         user.addGgCoin(coinIncrement);
         coinHistoryService.addAttendanceCoinHistory(user);
         return coinIncrement;

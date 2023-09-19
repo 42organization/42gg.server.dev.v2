@@ -56,19 +56,6 @@ public class Item {
     private String deleterIntraId;
 
     public Item(String name, String mainContent, String subContent, String imageUri, Integer price,
-                Boolean isVisible, Integer discount, ItemType type, LocalDateTime createdAt) {
-        this.name = name;
-        this.mainContent = mainContent;
-        this.subContent = subContent;
-        this.imageUri = imageUri;
-        this.price = price;
-        this.isVisible = isVisible;
-        this.discount = discount;
-        this.type = type;
-        this.createdAt = createdAt;
-    }
-
-    public Item(String name, String mainContent, String subContent, String imageUri, Integer price,
                 Boolean isVisible, Integer discount, ItemType type, LocalDateTime createdAt, String creatorIntraId) {
         this.name = name;
         this.mainContent = mainContent;
@@ -88,19 +75,6 @@ public class Item {
         this.mainContent = updateRequestDto.getMainContent();
         this.subContent = updateRequestDto.getSubContent();
         this.imageUri = itemImageUri;
-        this.price = updateRequestDto.getPrice();
-        this.discount = updateRequestDto.getDiscount();
-        this.isVisible = true;
-        this.creatorIntraId = creatorIntraId;
-        this.createdAt = LocalDateTime.now();
-        this.type = updateRequestDto.getItemType();
-    }
-
-    @Builder
-    public Item(ItemUpdateRequestDto updateRequestDto, String creatorIntraId) {
-        this.name = updateRequestDto.getName();
-        this.mainContent = updateRequestDto.getMainContent();
-        this.subContent = updateRequestDto.getSubContent();
         this.price = updateRequestDto.getPrice();
         this.discount = updateRequestDto.getDiscount();
         this.isVisible = true;
