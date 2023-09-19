@@ -112,8 +112,8 @@ public class RankRedisService {
                         rankRedis.updateTierImage(tierList.get(3).getImageUri());
                     }
                 }
+                updateRankUser(key, zSetKey, rankRedis.getUserId(), rankRedis);
             }
-            updateRankUser(key, zSetKey, rankRedis.getUserId(), rankRedis);
         }
     }
 
