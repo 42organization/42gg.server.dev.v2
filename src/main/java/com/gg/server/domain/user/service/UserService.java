@@ -26,6 +26,8 @@ import com.gg.server.domain.receipt.type.ItemStatus;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.service.SeasonFindService;
 import com.gg.server.domain.tier.data.Tier;
+import com.gg.server.domain.tier.data.TierRepository;
+import com.gg.server.domain.tier.exception.TierNotFoundException;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserImage;
 import com.gg.server.domain.user.data.UserImageRepository;
@@ -72,6 +74,7 @@ public class UserService {
     private final AsyncNewUserImageUploader asyncNewUserImageUploader;
     private final UserImageRepository userImageRepository;
     private final ItemService itemService;
+    private final TierRepository tierRepository;
 
     /**
      * @param intraId
@@ -270,7 +273,8 @@ public class UserService {
             return new UserNormalDetailResponseDto(user.getIntraId(), loginUser.getImageUri(), isAdmin, isAttended, loginUser.getEdge(), tier.getName(), tier.getImageUri(), level);
         } catch (RankNotFoundException ex) {
             // 카카오 유저나 Rank가 없는 유저
-            return new UserNormalDetailResponseDto(user.getIntraId(), loginUser.getImageUri(), isAdmin, isAttended, loginUser.getEdge(), "NONE", "NONE", level);
+            Tier tier = tierRepository.findStartTier().orElseThrow(TierNotFoundException::new);
+            return new UserNormalDetailResponseDto(user.getIntraId(), loginUser.getImageUri(), isAdmin, isAttended, loginUser.getEdge(), tier.getName(), tier.getImageUri(), level);
         }
     }
   
