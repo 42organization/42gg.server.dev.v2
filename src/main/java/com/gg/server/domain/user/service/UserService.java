@@ -268,14 +268,14 @@ public class UserService {
         Boolean isAdmin = user.getRoleType() == RoleType.ADMIN;
         Boolean isAttended = coinHistoryService.hasAttendedToday(loginUser);
         Integer level = ExpLevelCalculator.getLevel(user.getTotalExp());
+        Tier tier;
         try {
-            Tier tier = rankFindService.findByUserIdAndSeasonId(user.getId(), seasonFindService.findCurrentSeason(LocalDateTime.now()).getId()).getTier();
-            return new UserNormalDetailResponseDto(user.getIntraId(), loginUser.getImageUri(), isAdmin, isAttended, loginUser.getEdge(), tier.getName(), tier.getImageUri(), level);
+            tier = rankFindService.findByUserIdAndSeasonId(user.getId(), seasonFindService.findCurrentSeason(LocalDateTime.now()).getId()).getTier();
         } catch (RankNotFoundException ex) {
             // 카카오 유저나 Rank가 없는 유저
-            Tier tier = tierRepository.findStartTier().orElseThrow(TierNotFoundException::new);
-            return new UserNormalDetailResponseDto(user.getIntraId(), loginUser.getImageUri(), isAdmin, isAttended, loginUser.getEdge(), tier.getName(), tier.getImageUri(), level);
+            tier = tierRepository.findStartTier().orElseThrow(TierNotFoundException::new);
         }
+        return new UserNormalDetailResponseDto(user.getIntraId(), loginUser.getImageUri(), isAdmin, isAttended, loginUser.getEdge(), tier.getName(), tier.getImageUri(), level);
     }
   
     @Transactional()
