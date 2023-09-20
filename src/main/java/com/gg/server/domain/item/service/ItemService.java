@@ -68,6 +68,13 @@ public class ItemService {
             finalPrice = item.getPrice();
         }
 
+        User payUser = userRepository.findById(userDto.getId())
+                .orElseThrow(() -> new UserNotFoundException());
+
+        if (payUser.getRoleType() == RoleType.GUEST) {
+            throw new KakaoPurchaseException();
+        }
+
         userCoinChangeService.purchaseItemCoin(item, finalPrice, userDto.getId());
 
         Receipt receipt = new Receipt(item, userDto.getIntraId(), userDto.getIntraId(),
