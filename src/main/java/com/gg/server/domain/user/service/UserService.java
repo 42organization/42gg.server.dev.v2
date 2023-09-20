@@ -128,7 +128,12 @@ public class UserService {
     public UserDetailResponseDto getUserDetail(String targetUserIntraId) {
         User targetUser = userFindService.findByIntraId(targetUserIntraId);
         String statusMessage = userFindService.getUserStatusMessage(targetUser);
-        Tier tier = rankFindService.findByUserIdAndSeasonId(targetUser.getId(), seasonFindService.findCurrentSeason(LocalDateTime.now()).getId()).getTier();
+        Tier tier;
+        try{
+            tier = rankFindService.findByUserIdAndSeasonId(targetUser.getId(), seasonFindService.findCurrentSeason(LocalDateTime.now()).getId()).getTier();
+        } catch (TierNotFoundException e) {
+            tier = tierRepository.findStartTier().orElseThrow(TierNotFoundException::new);
+        }
         return new UserDetailResponseDto(targetUser, statusMessage, tier);
     }
 
