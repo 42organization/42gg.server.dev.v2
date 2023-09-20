@@ -1,6 +1,7 @@
 package com.gg.server.domain.rank.dto;
 
 import com.gg.server.domain.rank.redis.RankRedis;
+import com.gg.server.domain.user.data.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,14 +20,14 @@ public class RankDto {
     private String textColor;
 
 
-    public static RankDto from(RankRedis rankRedis, int rank) {
+    public static RankDto from(User user, RankRedis rankRedis, Integer rank) {
         RankDto dto = RankDto.builder()
-                .intraId(rankRedis.getIntraId())
+                .intraId(user.getIntraId())
                 .rank(rank)
                 .ppp(rankRedis.getPpp())
                 .statusMessage(rankRedis.getStatusMessage())
                 .tierImageUri(rankRedis.getTierImageUri())
-                .textColor(rankRedis.getTextColor())
+                .textColor(user.getTextColor())
                 .build();
         return dto;
     }
