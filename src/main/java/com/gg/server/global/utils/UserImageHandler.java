@@ -2,10 +2,12 @@ package com.gg.server.global.utils;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.gg.server.domain.user.User;
+import com.gg.server.domain.user.data.User;
+import com.gg.server.domain.user.data.UserImage;
+import com.gg.server.domain.user.data.UserImageRepository;
+import com.gg.server.domain.user.exception.UserImageNullException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,9 +21,11 @@ public class UserImageHandler {
     private final AmazonS3 amazonS3;
     private final FileDownloader fileDownloader;
 
-    public UserImageHandler(AmazonS3 amazonS3, FileDownloader fileDownloader) {
+    public UserImageHandler(AmazonS3 amazonS3, FileDownloader fileDownloader,
+                            UserImageRepository userImageRepository) {
         this.amazonS3 = amazonS3;
         this.fileDownloader = fileDownloader;
+        this.userImageRepository = userImageRepository;
     }
 
     @Value("${cloud.aws.s3.bucket}")
@@ -32,6 +36,7 @@ public class UserImageHandler {
 
     @Value("${info.image.defaultUrl}")
     private String defaultImageUrl;
+    private final UserImageRepository userImageRepository;
 
     public String uploadAndGetS3ImageUri(String intraId, String imageUrl) {
         if (!isStringValid(intraId) || !isStringValid(imageUrl)) {
@@ -49,18 +54,15 @@ public class UserImageHandler {
 
     public String updateAndGetS3ImageUri(MultipartFile multipartFile, User user) throws IOException
     {
-        String imageUrl = user.getImageUri();
-        String userFileName = imageUrl.split("/")[imageUrl.split("/").length - 1];
         String updateFileName = user.getIntraId() + "-" + UUID.randomUUID().toString() + ".jpeg";
         if (updateFileName.equals("small_default.jpeg"))
             return defaultImageUrl;
         else {
             String s3ImageUrl = uploadToS3(multipartFile, updateFileName);;
-            if (!imageUrl.equals(defaultImageUrl))
-                amazonS3.deleteObject(new DeleteObjectRequest(bucketName, dir + userFileName));
             return s3ImageUrl;
         }
     }
+
     private Boolean isStringValid(String intraId) {
         return intraId != null && intraId.length() != 0;
     }

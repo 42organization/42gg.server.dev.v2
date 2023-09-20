@@ -20,8 +20,11 @@ import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.service.SeasonFindService;
 import com.gg.server.domain.slotmanagement.SlotManagement;
 import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
-import com.gg.server.domain.user.User;
-import com.gg.server.domain.user.UserRepository;
+import com.gg.server.domain.tier.data.Tier;
+import com.gg.server.domain.tier.data.TierRepository;
+import com.gg.server.domain.tier.exception.TierNotFoundException;
+import com.gg.server.domain.user.data.User;
+import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.domain.user.type.RoleType;
 import java.time.LocalDateTime;
@@ -44,6 +47,7 @@ public class MatchFindService {
     private final SeasonFindService seasonFindService;
     private final RankRedisRepository rankRedisRepository;
     private final RedisMatchTimeRepository redisMatchTimeRepository;
+    private final TierRepository tierRepository;
 
 
     @Transactional(readOnly = true)
@@ -70,9 +74,10 @@ public class MatchFindService {
         SlotManagement slotManagement = slotManagementRepository.findCurrent(LocalDateTime.now())
                 .orElseThrow(SlotNotFoundException::new);
         Season season = seasonFindService.findCurrentSeason(LocalDateTime.now());
+        Tier tier = tierRepository.findStartTier().orElseThrow(TierNotFoundException::new);
         RankRedis user;
         if (userDto.getRoleType().equals(RoleType.GUEST)) {
-            user = RankRedis.from(userDto, season.getStartPpp());
+            user = RankRedis.from(userDto, season.getStartPpp(), tier.getImageUri());
         } else {
             user = rankRedisRepository.
                     findRankByUserId(RedisKeyManager.getHashKey(season.getId()), userDto.getId());

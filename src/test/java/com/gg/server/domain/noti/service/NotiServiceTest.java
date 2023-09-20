@@ -3,15 +3,14 @@ package com.gg.server.domain.noti.service;
 import com.gg.server.domain.noti.data.Noti;
 import com.gg.server.domain.noti.data.NotiRepository;
 import com.gg.server.domain.noti.type.NotiType;
-import com.gg.server.domain.user.User;
-import com.gg.server.domain.user.UserRepository;
+import com.gg.server.domain.user.data.User;
+import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +21,6 @@ import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @RequiredArgsConstructor
 @SpringBootTest

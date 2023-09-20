@@ -1,7 +1,6 @@
 package com.gg.server.domain.feedback.dto;
 
 import com.gg.server.domain.feedback.type.FeedbackType;
-import com.gg.server.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,9 +11,9 @@ import javax.validation.constraints.NotNull;
 @Getter
 @NoArgsConstructor
 public class FeedbackRequestDto {
-    @NotNull(message = "plz. content")
+    @NotNull(message = "plz. not null FeedbackType")
     private FeedbackType category;
-    @NotNull(message = "plz. content")
+    @NotNull(message = "plz.  not null content")
     @Length(max = 600, message = "plz. maxSizeMessage 600")
     private String content;
 

@@ -86,4 +86,8 @@ public class GameFindService {
         return gameRepository.findById(gameId)
                 .orElseThrow(GameNotExistException::new);
     }
+    public Game findGameWithPessimisticLockById(Long id) {
+        return gameRepository.findWithPessimisticLockById(id)
+                .orElseThrow(GameNotExistException::new);
+    }
 }

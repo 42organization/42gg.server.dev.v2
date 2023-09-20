@@ -1,5 +1,7 @@
 package com.gg.server.domain.game.service;
 
+import com.gg.server.domain.coin.dto.UserGameCoinResultDto;
+import com.gg.server.domain.coin.service.UserCoinChangeService;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.dto.*;
@@ -12,16 +14,16 @@ import com.gg.server.domain.pchange.exception.PChangeNotExistException;
 import com.gg.server.domain.pchange.service.PChangeService;
 import com.gg.server.domain.rank.redis.RankRedisService;
 import com.gg.server.domain.game.type.StatusType;
+import com.gg.server.domain.rank.service.RedisUploadService;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.team.data.TeamUserRepository;
 import com.gg.server.domain.team.exception.TeamIdNotMatchException;
-import com.gg.server.domain.user.User;
+import com.gg.server.domain.tier.service.TierService;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.InvalidParameterException;
 import com.gg.server.global.utils.ExpLevelCalculator;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
@@ -32,15 +34,16 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class GameService {
     private final GameRepository gameRepository;
     private final TeamUserRepository teamUserRepository;
     private final RankRedisService rankRedisService;
     private final PChangeService pChangeService;
     private final PChangeRepository pChangeRepository;
-
     private final GameFindService gameFindService;
+    private final UserCoinChangeService userCoinChangeService;
+    private final TierService tierService;
+    private final RedisUploadService redisUploadService;
 
     @Transactional(readOnly = true)
     public GameTeamInfo getUserGameInfo(Long gameId, Long userId) {
@@ -60,8 +63,7 @@ public class GameService {
     })
     public Boolean createRankResult(RankResultReqDto scoreDto, Long userId) {
         // 현재 게임 id
-        Game game = gameRepository.findWithPessimisticLockById(scoreDto.getGameId())
-                .orElseThrow(GameNotExistException::new);
+        Game game = gameFindService.findGameWithPessimisticLockById(scoreDto.getGameId());
         if (game.getStatus() != StatusType.WAIT && game.getStatus() != StatusType.LIVE) {
             return false;
         }
@@ -75,8 +77,8 @@ public class GameService {
             @CacheEvict(value = "allGameList", allEntries = true),
             @CacheEvict(value = "allGameListByUser", allEntries = true)
     })
-    public synchronized Boolean normalExpResult(NormalResultReqDto normalResultReqDto, Long loginUserId) {
-        Game game = gameFindService.findByGameId(normalResultReqDto.getGameId());
+    public Boolean normalExpResult(NormalResultReqDto normalResultReqDto, Long loginUserId) {
+        Game game = gameFindService.findGameWithPessimisticLockById(normalResultReqDto.getGameId());
         List<TeamUser> teamUsers = teamUserRepository.findAllByGameId(game.getId());
         if (teamUsers.size() == 2 &&
                 (game.getStatus() == StatusType.WAIT || game.getStatus() == StatusType.LIVE)) {
@@ -111,26 +113,28 @@ public class GameService {
                 rankRedisService.getUserPpp(team2UserId, game.getSeason().getId()), team2UserId.equals(loginUserId));
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public ExpChangeResultResDto expChangeResult(Long gameId, Long userId) {
         List<PChange> pChanges = pChangeService.findExpChangeHistory(gameId, userId);
+        UserGameCoinResultDto userGameCoinResultDto = userCoinChangeService.addNormalGameCoin(userId);
+
         if (pChanges.size() == 1) {
-            return new ExpChangeResultResDto(0, pChanges.get(0).getExp());
+            return new ExpChangeResultResDto(0, pChanges.get(0).getExp(), userGameCoinResultDto);
         } else {
-            log.info("before:", pChanges.get(1).getExp(), ", after: ", pChanges.get(0).getExp());
-            return new ExpChangeResultResDto(pChanges.get(1).getExp(), pChanges.get(0).getExp());
+            return new ExpChangeResultResDto(pChanges.get(1).getExp(), pChanges.get(0).getExp(), userGameCoinResultDto);
         }
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public PPPChangeResultResDto pppChangeResult(Long gameId, Long userId) throws PChangeNotExistException {
         Season season = gameFindService.findByGameId(gameId).getSeason();
         List<PChange> pppHistory = pChangeService.findPPPChangeHistory(gameId, userId, season.getId());
         List<PChange> expHistory = pChangeService.findExpChangeHistory(gameId, userId);
+        UserGameCoinResultDto userGameCoinResultDto = userCoinChangeService.addRankGameCoin(gameId, userId);
         return new PPPChangeResultResDto(expHistory.size() <= 1 ? 0 : expHistory.get(1).getExp(),
                 pppHistory.get(0).getExp(),
                 pppHistory.size() <= 1 ? season.getStartPpp() : pppHistory.get(1).getPppResult(),
-                pppHistory.get(0).getPppResult());
+                pppHistory.get(0).getPppResult(), userGameCoinResultDto);
     }
 
     public void expUpdates(Game game, List<TeamUser> teamUsers) {
@@ -168,7 +172,7 @@ public class GameService {
         throw new TeamIdNotMatchException();
     }
 
-    private Boolean updateScore(Game game, RankResultReqDto scoreDto, Long userId) {
+    public Boolean updateScore(Game game, RankResultReqDto scoreDto, Long userId) {
         List<TeamUser> teams = teamUserRepository.findAllByGameId(game.getId());
         TeamUser myTeam = findTeamId(scoreDto.getMyTeamId(), teams);
         TeamUser enemyTeam = findTeamId(scoreDto.getEnemyTeamId(), teams);
@@ -180,6 +184,7 @@ public class GameService {
                 setTeamScore(enemyTeam, scoreDto.getEnemyTeamScore(), scoreDto.getMyTeamScore() < scoreDto.getEnemyTeamScore());
                 expUpdates(game, teams);
                 rankRedisService.updateRankRedis(myTeam, enemyTeam, game);
+                tierService.updateAllTier(game.getSeason());
             } else {
                 // score 가 이미 입력됨
                 return false;

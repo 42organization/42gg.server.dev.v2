@@ -2,46 +2,33 @@ package com.gg.server.admin.user.service;
 import com.gg.server.admin.rank.service.RankRedisAdminService;
 import com.gg.server.admin.season.data.SeasonAdminRepository;
 import com.gg.server.admin.user.data.UserAdminRepository;
-import com.gg.server.admin.user.dto.UserDetailAdminResponseDto;
-import com.gg.server.admin.user.dto.UserSearchAdminDto;
-import com.gg.server.admin.user.dto.UserSearchAdminRequestDto;
-import com.gg.server.admin.user.dto.UserSearchAdminResponseDto;
-import com.gg.server.admin.user.dto.UserUpdateAdminRequestDto;
-import com.gg.server.domain.match.type.Option;
+import com.gg.server.admin.user.data.UserImageAdminRepository;
+import com.gg.server.admin.user.dto.*;
 import com.gg.server.domain.rank.data.Rank;
 import com.gg.server.domain.rank.data.RankRepository;
 import com.gg.server.domain.rank.exception.RankNotFoundException;
-import com.gg.server.domain.rank.exception.RankUpdateException;
 import com.gg.server.domain.rank.exception.RedisDataNotFoundException;
 import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.exception.SeasonNotFoundException;
-import com.gg.server.domain.user.User;
+import com.gg.server.domain.user.data.User;
+import com.gg.server.domain.user.data.UserImage;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.domain.user.service.UserFindService;
-import com.gg.server.domain.user.type.RacketType;
-import com.gg.server.domain.user.type.RoleType;
-import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.utils.aws.AsyncNewUserImageUploader;
 import lombok.AllArgsConstructor;
-import org.apache.tomcat.jni.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.redis.core.convert.RedisData;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.webjars.NotFoundException;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -54,6 +41,7 @@ public class UserAdminService {
     private final RankRedisAdminService rankRedisAdminService;
     private final AsyncNewUserImageUploader asyncNewUserImageUploader;
     private final UserFindService userFindService;
+    private final UserImageAdminRepository userImageAdminRepository;
 
     @Transactional(readOnly = true)
     public UserSearchAdminResponseDto searchAll(Pageable pageable) {
@@ -85,7 +73,7 @@ public class UserAdminService {
 
     @Transactional(readOnly = true)
     public UserDetailAdminResponseDto getUserDetailByIntraId(String intraId) {
-        User user = userAdminRepository.findByIntraId(intraId).orElseThrow(() -> new UserNotFoundException());
+        User user = userAdminRepository.findByIntraId(intraId).orElseThrow(UserNotFoundException::new);
         Season currSeason = seasonAdminRepository.findCurrentSeason(LocalDateTime.now()).orElseThrow(() -> new SeasonNotFoundException());
         try {
             RankRedis userCurrRank = rankRedisRepository.findRankByUserId(RedisKeyManager.getHashKey(currSeason.getId()),
@@ -101,7 +89,7 @@ public class UserAdminService {
                                  UserUpdateAdminRequestDto userUpdateAdminRequestDto,
                                  MultipartFile userImageFile) throws IOException{
         Season currSeason = seasonAdminRepository.findCurrentSeason(LocalDateTime.now()).orElseThrow(() -> new SeasonNotFoundException());
-        User user = userAdminRepository.findByIntraId(intraId).orElseThrow(() -> new UserNotFoundException());
+        User user = userAdminRepository.findByIntraId(intraId).orElseThrow(UserNotFoundException::new);
 
         user.modifyUserDetail(userUpdateAdminRequestDto);
         if (userImageFile != null)
@@ -124,5 +112,74 @@ public class UserAdminService {
         rankRedisAdminService.updateRankUser(RedisKeyManager.getHashKey(currSeasonId),
                 RedisKeyManager.getZSetKey(currSeasonId),
                 userId, userCurrRankRedis);
+    }
+
+    public String getUserImageToString(User user) {
+        UserImage userImage = userImageAdminRepository.findTopByUserAndDeletedAtIsNullOrderByCreatedAtDesc(user).orElse(null);
+        if (userImage == null)
+            return "null";
+        else {
+            userImage.updateIsCurrent();
+            return userImage.getImageUri();
+        }
+    }
+
+    @Transactional
+    public void deleteUserProfileImage(String intraId) {
+        User user = userAdminRepository.findByIntraId(intraId).orElseThrow(UserNotFoundException::new);
+        UserImage userImage = userImageAdminRepository.findTopByUserAndIsCurrentIsTrueOrderByCreatedAtDesc(user).orElseThrow(UserNotFoundException::new);
+        userImage.updateDeletedAt(LocalDateTime.now());
+        String userImageUri = getUserImageToString(user);
+        user.updateImageUri(userImageUri);
+    }
+
+    @Transactional(readOnly = true)
+    public UserImageListAdminResponseDto getUserImageDeleteList(Pageable pageable) {
+        Page<UserImage> userImagePage = userImageAdminRepository.findAllByDeletedAtNotNullOrderByDeletedAtDesc(pageable);
+        Page<UserImageAdminDto> userImageAdminDto = userImagePage.map(UserImageAdminDto::new);
+
+        return new UserImageListAdminResponseDto(userImageAdminDto.getContent(), userImageAdminDto.getTotalPages());
+    }
+    @Transactional(readOnly = true)
+    public UserImageListAdminResponseDto getUserImageDeleteListByIntraId(Pageable pageable, String intraId) {
+        User user = userAdminRepository.findByIntraId(intraId).orElseThrow(UserNotFoundException::new);
+        Page<UserImage> userImagePage = userImageAdminRepository.findAllByUserAndDeletedAtNotNullOrderByDeletedAtDesc(user.getId(), pageable);
+        Page<UserImageAdminDto> userImageAdminDto = userImagePage.map(UserImageAdminDto::new);
+
+        return new UserImageListAdminResponseDto(userImageAdminDto.getContent(), userImageAdminDto.getTotalPages());
+    }
+
+    @Transactional(readOnly = true)
+    public UserImageListAdminResponseDto getUserImageList(Pageable pageable) {
+        Page<UserImage> userImagePage = userImageAdminRepository.findAllChangedOrderByCreatedAtDesc(pageable);
+        Page<UserImageAdminDto> userImageAdminDto = userImagePage.map(UserImageAdminDto::new);
+
+        return new UserImageListAdminResponseDto(userImageAdminDto.getContent(), userImageAdminDto.getTotalPages());
+    }
+
+    @Transactional(readOnly = true)
+    public UserImageListAdminResponseDto getUserImageListByIntraId(Pageable pageable, String intraId) {
+        User user = userAdminRepository.findByIntraId(intraId).orElseThrow(UserNotFoundException::new);
+        Page<UserImage> userImagePage = userImageAdminRepository.findAllByUserOrderByCreatedAtDesc(user.getId(), pageable);
+        Page<UserImageAdminDto> userImageAdminDto = userImagePage.map(UserImageAdminDto::new);
+
+        return new UserImageListAdminResponseDto(userImageAdminDto.getContent(), userImageAdminDto.getTotalPages());
+    }
+
+    @Transactional(readOnly = true)
+    public UserImageListAdminResponseDto getUserImageCurrent(Pageable pageable) {
+        Page<UserImage> userImagePage = userImageAdminRepository.findAllByIsCurrentTrueOrderByCreatedAtDesc(pageable);
+        Page<UserImageAdminDto> userImageAdminDto = userImagePage.map(UserImageAdminDto::new);
+
+        return new UserImageListAdminResponseDto(userImageAdminDto.getContent(), userImageAdminDto.getTotalPages());
+    }
+
+    @Transactional(readOnly = true)
+    public UserImageListAdminResponseDto getUserImageCurrentByIntraId(Pageable pageable, String intraId) {
+        User user = userAdminRepository.findByIntraId(intraId).orElseThrow(UserNotFoundException::new);
+        Page<UserImage> userImagePage = userImageAdminRepository.findAllByUserAndIsCurrentTrueOrderByCreatedAtDesc(user.getId(), pageable);
+        Page<UserImageAdminDto> userImageAdminDto = userImagePage.map(UserImageAdminDto::new);
+
+        return new UserImageListAdminResponseDto(userImageAdminDto.getContent(), userImageAdminDto.getTotalPages());
     }
 }

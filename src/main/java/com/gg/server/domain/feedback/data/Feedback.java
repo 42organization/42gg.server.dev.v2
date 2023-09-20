@@ -1,6 +1,6 @@
 package com.gg.server.domain.feedback.data;
 
-import com.gg.server.domain.user.User;
+import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.feedback.type.FeedbackType;
 import com.gg.server.global.utils.BaseTimeEntity;
 import lombok.*;

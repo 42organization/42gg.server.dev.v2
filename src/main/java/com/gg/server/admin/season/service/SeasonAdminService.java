@@ -83,6 +83,9 @@ public class SeasonAdminService {
         Season season = seasonAdminRepository.findById(seasonId)
                 .orElseThrow(() -> new SeasonNotFoundException());
 
+        if (LocalDateTime.now().isAfter(season.getStartTime()))
+            throw new SeasonForbiddenException();
+
         if (LocalDateTime.now().isBefore(season.getStartTime())) {
             detach(season);
             season.setSeasonName(updateDto.getSeasonName());

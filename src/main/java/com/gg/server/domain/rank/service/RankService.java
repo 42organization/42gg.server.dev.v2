@@ -1,5 +1,6 @@
 package com.gg.server.domain.rank.service;
 
+import com.gg.server.domain.rank.data.Rank;
 import com.gg.server.domain.rank.dto.ExpRankDto;
 import com.gg.server.domain.rank.dto.ExpRankPageResponseDto;
 import com.gg.server.domain.rank.dto.RankDto;
@@ -10,9 +11,12 @@ import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.service.SeasonFindService;
-import com.gg.server.domain.user.User;
-import com.gg.server.domain.user.UserRepository;
+import com.gg.server.domain.user.data.User;
+import com.gg.server.domain.user.data.UserImage;
+import com.gg.server.domain.user.data.UserImageRepository;
+import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
+import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.PageNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -113,8 +118,8 @@ public class RankService {
         List<RankRedis> userRanks = redisRepository.findRanksByUserIds(hashKey, userIds);
         List<RankDto> rankList = new ArrayList<>();
 
-        for (int i = 0; i < userRanks.size(); i++) {
-            rankList.add(RankDto.from(userRanks.get(i), ++startRank));
+        for (RankRedis userRank : userRanks) {
+            rankList.add(RankDto.from(userRank, ++startRank));
         }
         return rankList;
     }

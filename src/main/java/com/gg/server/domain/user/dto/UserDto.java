@@ -1,6 +1,6 @@
 package com.gg.server.domain.user.dto;
 
-import com.gg.server.domain.user.User;
+import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
@@ -13,12 +13,13 @@ public class UserDto {
     private Long id;
     private String intraId;
     private String eMail;
-    private String imageUri;
     private RacketType racketType;
     private RoleType roleType;
     private Integer totalExp;
     private SnsType snsNotiOpt;
     private Long kakaoId;
+    private String textColor;
+    private Integer ggCoin;
 
     static public UserDto from (User user) {
         UserDto userDto;
@@ -29,12 +30,12 @@ public class UserDto {
                     .id(user.getId())
                     .intraId(user.getIntraId())
                     .eMail(user.getEMail())
-                    .imageUri(user.getImageUri())
                     .racketType(user.getRacketType())
                     .roleType(user.getRoleType())
                     .totalExp(user.getTotalExp())
                     .snsNotiOpt(user.getSnsNotiOpt())
                     .kakaoId(user.getKakaoId())
+                    .ggCoin(user.getGgCoin())
                     .build();
         }
         return userDto;
@@ -46,7 +47,6 @@ public class UserDto {
                 "id=" + id +
                 ", intraId='" + intraId + '\'' +
                 ", eMail='" + eMail + '\'' +
-                ", imageUri='" + imageUri + '\'' +
                 ", racketType=" + racketType +
                 ", roleType=" + roleType +
                 ", totalExp=" + totalExp +

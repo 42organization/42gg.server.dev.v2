@@ -4,13 +4,11 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.match.data.RedisMatchTime;
 import com.gg.server.domain.slotmanagement.SlotManagement;
-import com.gg.server.domain.user.User;
-import com.gg.server.domain.user.dto.UserDto;
+
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
+
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

@@ -6,10 +6,9 @@ import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.service.SeasonFindService;
-import com.gg.server.domain.user.User;
-import com.gg.server.domain.user.UserRepository;
+import com.gg.server.domain.user.data.User;
+import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.exception.UserNotFoundException;
-import com.gg.server.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,12 +24,12 @@ public class UserFindService {
 
     @Transactional(readOnly = true)
     public User findUserById(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
+        return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
     }
 
     @Transactional(readOnly = true)
     public User findByIntraId(String intraId){
-        return userRepository.findByIntraId(intraId).orElseThrow(() -> new UserNotFoundException());
+        return userRepository.findByIntraId(intraId).orElseThrow(UserNotFoundException::new);
     }
 
     @Transactional(readOnly = true)

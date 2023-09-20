@@ -24,7 +24,10 @@ import com.gg.server.domain.team.data.Team;
 import com.gg.server.domain.team.data.TeamRepository;
 import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.team.data.TeamUserRepository;
-import com.gg.server.domain.user.User;
+import com.gg.server.domain.tier.data.Tier;
+import com.gg.server.domain.tier.data.TierRepository;
+import com.gg.server.domain.tier.exception.TierNotFoundException;
+import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
@@ -69,6 +72,10 @@ public class GameControllerTest {
     TeamUserRepository teamUserRepository;
     @Autowired
     RankRedisRepository rankRedisRepository;
+
+    @Autowired
+    TierRepository tierRepository;
+
     @Autowired
     PChangeRepository pChangeRepository;
     @Autowired
@@ -96,17 +103,18 @@ public class GameControllerTest {
 
     @BeforeEach
     void init() {
-        season = seasonRepository.save(new Season("test season", LocalDateTime.of(2023, 5, 14, 0, 0), LocalDateTime.of(2999, 12, 31, 23, 59),
+        season = seasonRepository.save(new Season("test season", LocalDateTime.of(2023, 7, 14, 0, 0), LocalDateTime.of(2999, 12, 31, 23, 59),
                 1000, 100));
-        user1 = testDataUtils.createNewUser("test1", "test1@email", "null1", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
+        user1 = testDataUtils.createNewUser("test1", "test1@email", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
         accessToken = tokenProvider.createToken(user1.getId());
-        user2 = testDataUtils.createNewUser("test2", "test2@email", "null1", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
-        rankRepository.save(Rank.from(user1, season, season.getStartPpp()));
-        rankRepository.save(Rank.from(user2, season, season.getStartPpp()));
-        RankRedis userRank = RankRedis.from(UserDto.from(user1), season.getStartPpp());
+        user2 = testDataUtils.createNewUser("test2", "test2@email", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
+        Tier tier = tierRepository.findStartTier().orElseThrow(TierNotFoundException::new);
+        rankRepository.save(Rank.from(user1, season, season.getStartPpp(), tier));
+        rankRepository.save(Rank.from(user2, season, season.getStartPpp(), tier));
+        RankRedis userRank = RankRedis.from(UserDto.from(user1), season.getStartPpp(), tier.getImageUri());
         String redisHashKey = RedisKeyManager.getHashKey(season.getId());
         rankRedisRepository.addRankData(redisHashKey, user1.getId(), userRank);
-        userRank = RankRedis.from(UserDto.from(user2), season.getStartPpp());
+        userRank = RankRedis.from(UserDto.from(user2), season.getStartPpp(), tier.getImageUri());
         rankRedisRepository.addRankData(redisHashKey, user2.getId(), userRank);
         for (int i = 0; i < 10; i++) {
             Game game = gameRepository.save(new Game(season, StatusType.WAIT, Mode.RANK, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));

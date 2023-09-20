@@ -7,12 +7,11 @@ import com.gg.server.admin.noti.dto.SendNotiAdminRequestDto;
 import com.gg.server.admin.user.data.UserAdminRepository;
 import com.gg.server.domain.noti.data.Noti;
 import com.gg.server.domain.noti.type.NotiType;
-import com.gg.server.domain.user.User;
+import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +27,7 @@ public class NotiAdminService {
         String intraId = sendNotiAdminRequestDto.getIntraId();
 
         User user = userAdminRepository.findByIntraId(intraId)
-                .orElseThrow(() -> new UserNotFoundException());
+                .orElseThrow(UserNotFoundException::new);
         notiAdminRepository.save(new Noti(user, NotiType.ANNOUNCE, message, false));
     }
 

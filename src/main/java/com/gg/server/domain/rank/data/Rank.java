@@ -2,7 +2,8 @@ package com.gg.server.domain.rank.data;
 
 import com.gg.server.admin.user.dto.UserUpdateAdminRequestDto;
 import com.gg.server.domain.season.data.Season;
-import com.gg.server.domain.user.User;
+import com.gg.server.domain.tier.data.Tier;
+import com.gg.server.domain.user.data.User;
 import com.gg.server.global.utils.BaseTimeEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,6 +34,10 @@ public class Rank extends BaseTimeEntity implements Serializable {
     @JoinColumn(name = "season_id")
     private Season season;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tier_id")
+    private Tier tier;
+
     @NotNull
     @Column(name = "ppp")
     private Integer ppp;
@@ -49,7 +54,7 @@ public class Rank extends BaseTimeEntity implements Serializable {
     private String statusMessage;
 
 
-    public static Rank from (User user, Season season, Integer ppp) {
+    public static Rank from (User user, Season season, Integer ppp, Tier tier) {
         return Rank.builder()
                 .user(user)
                 .ppp(ppp)
@@ -57,18 +62,20 @@ public class Rank extends BaseTimeEntity implements Serializable {
                 .wins(0)
                 .losses(0)
                 .statusMessage("")
+                .tier(tier)
                 .build();
     }
 
     @Builder
     public Rank(User user, Season season, Integer ppp, Integer wins,
-                Integer losses, String statusMessage) {
+                Integer losses, String statusMessage, Tier tier) {
         this.user = user;
         this.season = season;
         this.ppp = ppp;
         this.wins = wins;
         this.losses = losses;
         this.statusMessage = statusMessage;
+        this.tier = tier;
     }
 
     public void setStatusMessage(String statusMessage) {
@@ -85,5 +92,9 @@ public class Rank extends BaseTimeEntity implements Serializable {
         this.ppp = ppp;
         this.wins = wins;
         this.losses = losses;
+    }
+
+    public void updateTier(Tier tier) {
+        this.tier = tier;
     }
 }

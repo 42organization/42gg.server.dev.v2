@@ -1,6 +1,7 @@
 package com.gg.server.admin.user.dto;
 
-import com.gg.server.domain.user.User;
+import com.gg.server.domain.user.data.User;
+import com.gg.server.domain.user.data.UserImage;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
@@ -19,7 +20,7 @@ public class UserAdminDto {
     private Integer totalExp;
     private SnsType snsNotiOpt;
 
-    static public UserAdminDto from (User user) {
+    static public UserAdminDto from (User user, UserImage userImage) {
         UserAdminDto userDto;
         if (user == null) {
             userDto = null;
@@ -28,7 +29,7 @@ public class UserAdminDto {
                     .id(user.getId())
                     .intraId(user.getIntraId())
                     .eMail(user.getEMail())
-                    .imageUri(user.getImageUri())
+                    .imageUri(userImage.getImageUri())
                     .racketType(user.getRacketType())
                     .roleType(user.getRoleType())
                     .totalExp(user.getTotalExp())
