@@ -75,7 +75,7 @@ public class GameController {
         if (!gameService.createRankResult(reqDto, user.getId())) {
             throw new ScoreNotMatchedException();
         }
-        rankRedisService.updateAllTier();
+        rankRedisService.updateAllTier(reqDto.getGameId());
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
