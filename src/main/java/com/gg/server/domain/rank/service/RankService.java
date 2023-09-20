@@ -118,9 +118,14 @@ public class RankService {
         List<RankRedis> userRanks = redisRepository.findRanksByUserIds(hashKey, userIds);
         List<RankDto> rankList = new ArrayList<>();
 
-        for (RankRedis userRank : userRanks) {
-            rankList.add(RankDto.from(userRank, ++startRank));
+        for (int i = 0; i <  userRanks.size(); i++) {
+            User user = userRepository.findById(userIds.get(i)).orElseThrow(UserNotFoundException::new);
+            rankList.add(RankDto.from(user, userRanks.get(i), ++startRank));
         }
+//        for (RankRedis userRank : userRanks) {
+//            rankList.add(RankDto.from())
+//            rankList.add(RankDto.from(userRank, ++startRank));
+//        }
         return rankList;
     }
 }
