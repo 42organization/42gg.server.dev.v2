@@ -131,7 +131,7 @@ public class UserService {
         Tier tier;
         try{
             tier = rankFindService.findByUserIdAndSeasonId(targetUser.getId(), seasonFindService.findCurrentSeason(LocalDateTime.now()).getId()).getTier();
-        } catch (TierNotFoundException e) {
+        } catch (RankNotFoundException e) {
             tier = tierRepository.findStartTier().orElseThrow(TierNotFoundException::new);
         }
         return new UserDetailResponseDto(targetUser, statusMessage, tier);
