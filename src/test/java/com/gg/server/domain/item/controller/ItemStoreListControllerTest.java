@@ -16,6 +16,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.boot.test.mock.mockito.MockBean;
+
+import static com.gg.server.domain.item.type.ItemType.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import javax.transaction.Transactional;
 import java.util.Arrays;
@@ -54,9 +56,9 @@ class ItemStoreListControllerTest {
 
         //given
         List<ItemStoreResponseDto> testItems = Arrays.asList(
-                new ItemStoreResponseDto(1L, "itemName 1", "mainContent 1","subContent 1", "MEGAPHONE", "ImageUrl 1", 1000, 10, 900),
-                new ItemStoreResponseDto(2L, "itemName 2", "mainContent 2","subContent 2", "PROFILE_IMAGE", "ImageUrl 2", 2000, 20, 1800),
-                new ItemStoreResponseDto(3L, "itemName 3", "mainContent 2","subContent 2", "TEXT_COLOR", "ImageUrl 3", 3000, 30, 2700)
+                new ItemStoreResponseDto(1L, "itemName 1", "mainContent 1","subContent 1", MEGAPHONE, "ImageUrl 1", 1000, 10, 900),
+                new ItemStoreResponseDto(2L, "itemName 2", "mainContent 2","subContent 2", PROFILE_IMAGE, "ImageUrl 2", 2000, 20, 1800),
+                new ItemStoreResponseDto(3L, "itemName 3", "mainContent 2","subContent 2", TEXT_COLOR, "ImageUrl 3", 3000, 30, 2700)
         );
         ItemStoreListResponseDto testResponse = new ItemStoreListResponseDto(testItems);
         when(itemService.getAllItems()).thenReturn(testResponse);

@@ -33,7 +33,7 @@ public class UserCoinService {
 
     @Transactional(readOnly = true)
     public UserCoinHistoryListResponseDto getUserCoinHistory(Pageable pageable, String intraId) {
-        User user = userRepository.findByIntraId(intraId).orElseThrow(() -> new UserNotFoundException());
+        User user = userRepository.findByIntraId(intraId).orElseThrow(UserNotFoundException::new);
 
         Page<CoinHistory> coinHistories = coinHistoryRepository.findAllByUserOrderByIdDesc(user, pageable);
         Page<CoinHistoryResponseDto> coinHistoryResponseDtos = coinHistories.map(CoinHistoryResponseDto::new);

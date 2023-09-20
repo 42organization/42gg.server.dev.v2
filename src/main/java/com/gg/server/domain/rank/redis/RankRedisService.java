@@ -6,6 +6,7 @@ import com.gg.server.domain.rank.data.Rank;
 import com.gg.server.domain.rank.data.RankRepository;
 import com.gg.server.domain.rank.exception.RankNotFoundException;
 import com.gg.server.domain.season.data.Season;
+import com.gg.server.domain.season.service.SeasonFindService;
 import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.tier.data.Tier;
 import com.gg.server.domain.tier.data.TierRepository;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -28,6 +30,7 @@ public class RankRedisService {
     private final TierRepository tierRepository;
     private final PChangeService pChangeService;
     private final RankRepository rankRepository;
+    private final SeasonFindService seasonFindService;
 
     public Integer getUserPpp(Long userId, Long seasonId) {
         String hashKey = RedisKeyManager.getHashKey(seasonId);
@@ -45,7 +48,6 @@ public class RankRedisService {
         updatePPP(enemyTeamUser, enemyTeam, myTeamUser.getTeam().getScore(), enemyPPP, myPPP, game.getSeason().getId());
         updateRankUser(key, zsetKey, myTeamUser.getUser().getId(), myTeam);
         updateRankUser(key, zsetKey, enemyTeamUser.getUser().getId(), enemyTeam);
-        updateAllTier(key, game.getSeason());
         pChangeService.addPChange(game, myTeamUser.getUser(), myTeam.getPpp(), true);
         pChangeService.addPChange(game, enemyTeamUser.getUser(), enemyTeam.getPpp(), false);
     }
@@ -72,10 +74,14 @@ public class RankRedisService {
 
     }
 
-    public void updateAllTier(String key, Season season) {
+    @Transactional
+    public void updateAllTier(Long gameId) {
         // 전체 레디스 랭크 티어 새로고침하는 로직
+        Season targetSeason = seasonFindService.findSeasonByGameId(gameId);
+        String key = RedisKeyManager.getHashKey(targetSeason.getId());
+        String zSetKey = RedisKeyManager.getZSetKey(targetSeason.getId());
         List<RankRedis> rankRedisList = rankRedisRepository.findAllRanksOrderByPppDesc(key);
-        Long totalRankPlayers = rankRepository.countRealRankPlayers(season.getId());
+        Long totalRankPlayers = rankRepository.countRealRankPlayers(targetSeason.getId());
         List<Tier> tierList = tierRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
 
         int top30percentPpp = rankRedisList.get((int) (totalRankPlayers * 0.3)).getPpp();
@@ -88,6 +94,7 @@ public class RankRedisService {
             } else {
                 if (i < 3) {
                     rankRedis.updateTierImage(tierList.get(6).getImageUri());
+                    updateRankUser(key, zSetKey, rankRedis.getUserId(), rankRedis);
                     continue;
                 }
                 if (rankRedis.getPpp() < 970) {
@@ -111,10 +118,8 @@ public class RankRedisService {
                         rankRedis.updateTierImage(tierList.get(3).getImageUri());
                     }
                 }
+                updateRankUser(key, zSetKey, rankRedis.getUserId(), rankRedis);
             }
-        }
-        for (RankRedis rankRedis : rankRedisList) {
-            rankRedisRepository.updateRankData(key, rankRedis.getUserId(), rankRedis);
         }
     }
 

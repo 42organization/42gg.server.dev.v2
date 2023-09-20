@@ -24,12 +24,12 @@ public class UserFindService {
 
     @Transactional(readOnly = true)
     public User findUserById(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
+        return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
     }
 
     @Transactional(readOnly = true)
     public User findByIntraId(String intraId){
-        return userRepository.findByIntraId(intraId).orElseThrow(() -> new UserNotFoundException());
+        return userRepository.findByIntraId(intraId).orElseThrow(UserNotFoundException::new);
     }
 
     @Transactional(readOnly = true)

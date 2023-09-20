@@ -35,7 +35,7 @@ public class CoinPolicyAdminService {
 
     @Transactional
     public void addCoinPolicy(UserDto userDto, CoinPolicyAdminAddDto addDto){
-        User user = userAdminRepository.findByIntraId(userDto.getIntraId()).orElseThrow(() -> new UserNotFoundException());
+        User user = userAdminRepository.findByIntraId(userDto.getIntraId()).orElseThrow(UserNotFoundException::new);
 
         CoinPolicy coinPolicy = CoinPolicy.from(user, addDto);
         coinPolicyAdminRepository.save(coinPolicy);

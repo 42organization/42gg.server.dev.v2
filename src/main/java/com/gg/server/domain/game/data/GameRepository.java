@@ -8,9 +8,9 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import com.gg.server.domain.team.dto.GameUser;
-
 import javax.persistence.LockModeType;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.gg.server.domain.game.dto.GameTeamUser;
 import org.springframework.data.domain.Pageable;
@@ -88,5 +88,9 @@ public interface GameRepository extends JpaRepository<Game, Long>, GameRepositor
     List<GameUser> findAllByStartTimeLessThanEqual(@Param("time") LocalDateTime time);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    Optional<Game> findWithPessimisticLockById(Long id);
+    Optional<Game> findWithPessimisticLockById(Long gameId);
+
+    @Override
+    @EntityGraph(attributePaths = {"season"})
+    Optional<Game> findById(Long gameId);
 }

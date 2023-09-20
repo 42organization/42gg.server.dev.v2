@@ -13,6 +13,7 @@ import com.gg.server.domain.pchange.data.PChange;
 import com.gg.server.domain.pchange.data.PChangeRepository;
 import com.gg.server.domain.pchange.exception.PChangeNotExistException;
 import com.gg.server.domain.rank.data.Rank;
+import com.gg.server.domain.rank.exception.RankNotFoundException;
 import com.gg.server.domain.rank.exception.RedisDataNotFoundException;
 import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
@@ -25,6 +26,8 @@ import com.gg.server.domain.receipt.type.ItemStatus;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.service.SeasonFindService;
 import com.gg.server.domain.tier.data.Tier;
+import com.gg.server.domain.tier.data.TierRepository;
+import com.gg.server.domain.tier.exception.TierNotFoundException;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserImage;
 import com.gg.server.domain.user.data.UserImageRepository;
@@ -39,7 +42,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -71,6 +73,7 @@ public class UserService {
     private final AsyncNewUserImageUploader asyncNewUserImageUploader;
     private final UserImageRepository userImageRepository;
     private final ItemService itemService;
+    private final TierRepository tierRepository;
 
     /**
      * @param intraId
@@ -125,7 +128,12 @@ public class UserService {
     public UserDetailResponseDto getUserDetail(String targetUserIntraId) {
         User targetUser = userFindService.findByIntraId(targetUserIntraId);
         String statusMessage = userFindService.getUserStatusMessage(targetUser);
-        Tier tier = rankFindService.findByUserIdAndSeasonId(targetUser.getId(), seasonFindService.findCurrentSeason(LocalDateTime.now()).getId()).getTier();
+        Tier tier;
+        try{
+            tier = rankFindService.findByUserIdAndSeasonId(targetUser.getId(), seasonFindService.findCurrentSeason(LocalDateTime.now()).getId()).getTier();
+        } catch (RankNotFoundException e) {
+            tier = tierRepository.findStartTier().orElseThrow(TierNotFoundException::new);
+        }
         return new UserDetailResponseDto(targetUser, statusMessage, tier);
     }
 
@@ -206,12 +214,12 @@ public class UserService {
     }
 
     public User getUser(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User" + userId));
+        return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
     }
 
     @Transactional
     public void deleteKakaoId(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         user.updateKakaoId(null);
     }
 
@@ -251,7 +259,7 @@ public class UserService {
 
     @Transactional
     public UserAttendanceResponseDto attendUser(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User" + userId));
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
         int plus = userCoinChangeService.addAttendanceCoin(user);
 
@@ -260,20 +268,18 @@ public class UserService {
 
     @Transactional
     public UserNormalDetailResponseDto getUserNormalDetail(UserDto user) {
-        User loginUser = userRepository.findById(user.getId()).orElseThrow(() -> new UsernameNotFoundException("User" + user.getId()));
+        User loginUser = userRepository.findById(user.getId()).orElseThrow(UserNotFoundException::new);
         Boolean isAdmin = user.getRoleType() == RoleType.ADMIN;
         Boolean isAttended = coinHistoryService.hasAttendedToday(loginUser);
         Integer level = ExpLevelCalculator.getLevel(user.getTotalExp());
-        Tier tier = rankFindService.findByUserIdAndSeasonId(user.getId(), seasonFindService.findCurrentSeason(LocalDateTime.now()).getId()).getTier();
-        /* 티어가 존재하지 않는 일반 유저일때 : None, None 처리해서 보내기*/
-        if (tier == null) {
-            String tierName = "NONE";
-            String tierImageUri = "NONE";
-            return new UserNormalDetailResponseDto(loginUser.getIntraId(), loginUser.getImageUri(), isAdmin, isAttended, loginUser.getEdge(), tierName, tierImageUri, level);
+        Tier tier;
+        try {
+            tier = rankFindService.findByUserIdAndSeasonId(user.getId(), seasonFindService.findCurrentSeason(LocalDateTime.now()).getId()).getTier();
+        } catch (RankNotFoundException ex) {
+            // 카카오 유저나 Rank가 없는 유저
+            tier = tierRepository.findStartTier().orElseThrow(TierNotFoundException::new);
         }
-        String tierName = tier.getName();
-        String tierImageUri = tier.getImageUri();
-        return new UserNormalDetailResponseDto(user.getIntraId(), loginUser.getImageUri(), isAdmin, isAttended, loginUser.getEdge(), tierName, tierImageUri, level);
+        return new UserNormalDetailResponseDto(user.getIntraId(), loginUser.getImageUri(), isAdmin, isAttended, loginUser.getEdge(), tier.getName(), tier.getImageUri(), level);
     }
   
     @Transactional()

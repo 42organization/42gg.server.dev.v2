@@ -36,12 +36,12 @@ public class ItemAdminService {
     @Transactional
     public void updateItem(Long itemId, ItemUpdateRequestDto itemUpdateRequestDto,
                            MultipartFile itemImageFile, UserDto user) throws IOException {
-        Item item = itemAdminRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException());
-        if (item.getIsVisible() == false) {
+        Item item = itemAdminRepository.findById(itemId).orElseThrow(ItemNotFoundException::new);
+        if (!item.getIsVisible()) {
             throw new ItemNotAvailableException();
         }
         item.setVisibility(user.getIntraId());
-        Item newItem = new Item(itemUpdateRequestDto, user.getIntraId());
+        Item newItem = new Item(itemUpdateRequestDto, user.getIntraId(), null);
         if (itemImageFile != null)
             asyncNewItemImageUploader.upload(newItem, itemImageFile);
         itemAdminRepository.save(newItem);
@@ -51,8 +51,8 @@ public class ItemAdminService {
     @Transactional
     public void updateItem(Long itemId, ItemUpdateRequestDto itemUpdateRequestDto,
                            UserDto user) {
-        Item item = itemAdminRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException());
-        if (item.getIsVisible() == false) {
+        Item item = itemAdminRepository.findById(itemId).orElseThrow(ItemNotFoundException::new);
+        if (!item.getIsVisible()) {
             throw new ItemNotAvailableException();
         }
         item.setVisibility(user.getIntraId());
@@ -62,7 +62,7 @@ public class ItemAdminService {
 
     @Transactional
     public void deleteItem(Long itemId, UserDto user) {
-        Item item = itemAdminRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException());
+        Item item = itemAdminRepository.findById(itemId).orElseThrow(ItemNotFoundException::new);
         item.setVisibility(user.getIntraId());
     }
 }

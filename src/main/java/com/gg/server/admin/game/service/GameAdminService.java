@@ -49,7 +49,7 @@ public class GameAdminService {
 
     @Transactional(readOnly = true)
     public GameLogListAdminResponseDto findAllGamesByAdmin(Pageable pageable) {
-        Page<Game> gamePage = gameAdminRepository.findAllByStatus(pageable, StatusType.END); //모든 게임 정보 가져오기
+        Page<Game> gamePage = gameAdminRepository.findAll(pageable); //모든 게임 정보 가져오기
         return new GameLogListAdminResponseDto(getGameLogList(gamePage.getContent().stream().map(Game::getId).collect(Collectors.toList())), gamePage.getTotalPages());
     }
 
@@ -114,11 +114,6 @@ public class GameAdminService {
         // rank zset 도 update
         // 이전 ppp, exp 되돌리기
         // rank data 에 있는 ppp 되돌리기
-        if (teamUser.getTeam().getId().equals(reqDto.getTeam1Id())) {
-            teamUser.getTeam().updateScore(reqDto.getTeam1Score(), reqDto.getTeam1Score() > reqDto.getTeam2Score());
-        } else if (teamUser.getTeam().getId().equals(reqDto.getTeam2Id())) {
-            teamUser.getTeam().updateScore(reqDto.getTeam2Score(), reqDto.getTeam2Score() > reqDto.getTeam1Score());
-        }
         if (pChanges.size() == 1) {
             rankRedisService.rollbackRank(teamUser, season.getStartPpp(), season.getId());
             teamUser.getUser().updateExp(0);
@@ -126,8 +121,13 @@ public class GameAdminService {
             rankRedisService.rollbackRank(teamUser, pChanges.get(1).getPppResult(), season.getId());
             teamUser.getUser().updateExp(pChanges.get(1).getExp());
         }
+        if (teamUser.getTeam().getId().equals(reqDto.getTeam1Id())) {
+            teamUser.getTeam().updateScore(reqDto.getTeam1Score(), reqDto.getTeam1Score() > reqDto.getTeam2Score());
+        } else if (teamUser.getTeam().getId().equals(reqDto.getTeam2Id())) {
+            teamUser.getTeam().updateScore(reqDto.getTeam2Score(), reqDto.getTeam2Score() > reqDto.getTeam1Score());
+        }
     }
-
+  
     private Boolean isRecentlyGame(List<TeamUser> teamUsers, Long gameId) {
         for (TeamUser teamUser : teamUsers) {
             List<PChange> pChanges = pChangeAdminRepository.findByTeamUser(teamUser.getUser().getId());

@@ -64,7 +64,7 @@ public class CoinHistoryService {
     @Transactional(readOnly = true)
     public boolean hasAttendedToday(User user) {
         LocalDateTime startOfDay = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0);
-        LocalDateTime endOfDay = LocalDateTime.now().withHour(23).withMinute(59).withSecond(59);
+        LocalDateTime endOfDay = startOfDay.plusDays(1);
         return coinHistoryRepository.existsUserAttendedCheckToday(
                 user, HistoryType.ATTENDANCECOIN.getHistory(), startOfDay, endOfDay);
     }

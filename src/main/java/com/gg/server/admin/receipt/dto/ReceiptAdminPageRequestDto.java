@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 public class ReceiptAdminPageRequestDto extends PageRequestDto {
-    String intraId;
+    private String intraId;
 
     public ReceiptAdminPageRequestDto(String intraId, Integer page, Integer size) {
         super(page, size);

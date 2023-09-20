@@ -8,6 +8,7 @@ import com.gg.server.domain.game.dto.GameListResDto;
 import com.gg.server.domain.game.exception.ScoreNotMatchedException;
 import com.gg.server.domain.game.service.GameFindService;
 import com.gg.server.domain.game.service.GameService;
+import com.gg.server.domain.rank.redis.RankRedisService;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.InvalidParameterException;
@@ -29,6 +30,7 @@ import javax.validation.Valid;
 public class GameController {
     private final GameService gameService;
     private final GameFindService gameFindService;
+    private final RankRedisService rankRedisService;
 
     @GetMapping
     GameListResDto allGameList(@Valid GameListReqDto gameReq) {
@@ -66,13 +68,14 @@ public class GameController {
     }
 
     @PostMapping("/rank")
-    ResponseEntity createRankResult(@Valid @RequestBody RankResultReqDto reqDto, @Parameter(hidden = true) @Login UserDto user) {
+    synchronized ResponseEntity createRankResult(@Valid @RequestBody RankResultReqDto reqDto, @Parameter(hidden = true) @Login UserDto user) {
         if (reqDto.getMyTeamScore() + reqDto.getEnemyTeamScore() > 3 || reqDto.getMyTeamScore() == reqDto.getEnemyTeamScore()) {
             throw new InvalidParameterException("점수를 잘못 입력했습니다.", ErrorCode.VALID_FAILED);
         }
         if (!gameService.createRankResult(reqDto, user.getId())) {
             throw new ScoreNotMatchedException();
         }
+        rankRedisService.updateAllTier(reqDto.getGameId());
         return new ResponseEntity(HttpStatus.CREATED);
     }
 

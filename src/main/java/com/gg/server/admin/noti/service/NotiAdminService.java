@@ -27,7 +27,7 @@ public class NotiAdminService {
         String intraId = sendNotiAdminRequestDto.getIntraId();
 
         User user = userAdminRepository.findByIntraId(intraId)
-                .orElseThrow(() -> new UserNotFoundException());
+                .orElseThrow(UserNotFoundException::new);
         notiAdminRepository.save(new Noti(user, NotiType.ANNOUNCE, message, false));
     }
 
