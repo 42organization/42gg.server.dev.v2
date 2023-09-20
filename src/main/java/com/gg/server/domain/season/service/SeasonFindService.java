@@ -1,5 +1,8 @@
 package com.gg.server.domain.season.service;
 
+import com.gg.server.domain.game.data.Game;
+import com.gg.server.domain.game.data.GameRepository;
+import com.gg.server.domain.game.exception.GameNotExistException;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.data.SeasonRepository;
 import com.gg.server.domain.season.exception.SeasonNotFoundException;
@@ -15,6 +18,7 @@ import java.time.LocalDateTime;
 
 public class SeasonFindService {
     private final SeasonRepository seasonRepository;
+    private final GameRepository gameRepository;
 
     @Transactional(readOnly = true)
     public Season findCurrentSeason(LocalDateTime now){
@@ -24,5 +28,11 @@ public class SeasonFindService {
     @Transactional(readOnly = true)
     public Season findSeasonById(Long seasonId){
         return seasonRepository.findById(seasonId).orElseThrow(() -> new SeasonNotFoundException());
+    }
+
+    @Transactional(readOnly = true)
+    public Season findSeasonByGameId(Long gameId){
+        Game game = gameRepository.findById(gameId).orElseThrow(() -> new GameNotExistException());
+        return game.getSeason();
     }
 }

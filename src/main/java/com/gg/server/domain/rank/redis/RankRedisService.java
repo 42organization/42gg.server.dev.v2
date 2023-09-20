@@ -75,13 +75,13 @@ public class RankRedisService {
     }
 
     @Transactional
-    public void updateAllTier() {
+    public void updateAllTier(Long gameId) {
         // 전체 레디스 랭크 티어 새로고침하는 로직
-        Season currentSeason = seasonFindService.findCurrentSeason(LocalDateTime.now());
-        String key = RedisKeyManager.getHashKey(currentSeason.getId());
-        String zSetKey = RedisKeyManager.getZSetKey(currentSeason.getId());
+        Season targetSeason = seasonFindService.findSeasonByGameId(gameId);
+        String key = RedisKeyManager.getHashKey(targetSeason.getId());
+        String zSetKey = RedisKeyManager.getZSetKey(targetSeason.getId());
         List<RankRedis> rankRedisList = rankRedisRepository.findAllRanksOrderByPppDesc(key);
-        Long totalRankPlayers = rankRepository.countRealRankPlayers(currentSeason.getId());
+        Long totalRankPlayers = rankRepository.countRealRankPlayers(targetSeason.getId());
         List<Tier> tierList = tierRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
 
         int top30percentPpp = rankRedisList.get((int) (totalRankPlayers * 0.3)).getPpp();
