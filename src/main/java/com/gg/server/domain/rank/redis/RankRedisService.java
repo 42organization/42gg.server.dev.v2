@@ -48,7 +48,6 @@ public class RankRedisService {
         updatePPP(enemyTeamUser, enemyTeam, myTeamUser.getTeam().getScore(), enemyPPP, myPPP, game.getSeason().getId());
         updateRankUser(key, zsetKey, myTeamUser.getUser().getId(), myTeam);
         updateRankUser(key, zsetKey, enemyTeamUser.getUser().getId(), enemyTeam);
-//        updateAllTier(key, zsetKey, game.getSeason());
         pChangeService.addPChange(game, myTeamUser.getUser(), myTeam.getPpp(), true);
         pChangeService.addPChange(game, enemyTeamUser.getUser(), enemyTeam.getPpp(), false);
     }
