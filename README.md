@@ -1,8 +1,10 @@
 # 42arcade.gg.server.v2
 
+https://42gg.kr/
+
 
 ## ⚡️ 프로젝트 소개
-42 서울 내에서 탁구 경기 매칭, 전적 서비스를 제공하는 프로젝트 입니다.
+42 서울 내에서 탁구 경기 매칭, 전적, 상점 서비스를 제공하는 프로젝트 입니다.
 <br>
 향후 추가 서비스 확장 예정
 <br>
@@ -31,12 +33,14 @@
 <img src="https://img.shields.io/badge/JIRA-0052CC?style=for-the-badge&logo=jirasoftware&logoColor=white">
 
 ## ⚡️ 프로젝트 개발기간
-- 2023.04.16 ~ 2023.06.23
+- 3기: 2023.04.16 ~ 2023.06.23
+
+- 4기: 2023.08.01 ~ 2023.09.21
 
 ## ⚡️ 프로젝트 아키텍처
 <img alt="systemArchitecture" src="https://github.com/42organization/42gg.server.dev.v2/assets/67796301/c51e8d73-d8f2-4f5e-935c-325ec263857e" >&nbsp;&nbsp;&nbsp;&nbsp;
 
-## ⚡️ V1과 달라진 점
+## ⚡️ 3기 진행 사항
 
 ### ⚡️⚡ 로그인 연동 추가
 - v1에서 지원하지 않던 카카오계정 연동 기능 추가(좌 : v1, 우: v2) </br></br>
@@ -46,7 +50,7 @@
 
 ### ⚡️⚡ DB table 구조 변경
 - v1에서 확장을 위해 열어둔 구조나 테이블마다 여러 곳에 있던 중복된 속성 제거
-- 테이블 수 감소 :  14 -> 12
+- v1 -> v2 테이블 수 감소 :  14 -> 12
 
 <img width=90% alt="erdv1" src="https://github.com/42organization/42gg.server.dev.v2/assets/67796301/4570fa91-1311-4d6f-a5ee-b356bcd95fbc" >&nbsp;&nbsp;&nbsp;&nbsp;
 </br>
@@ -73,8 +77,30 @@
 <img width=80% alt="dockerPs" src="https://github.com/42organization/42gg.server.dev.v2/assets/67796301/7da03342-14ed-47c7-9183-a68ad663109c" >&nbsp;&nbsp;&nbsp;&nbsp;
  </div>
 
-## ⚡️ 팀소개
+## ⚡️ 4기 진행 사항
+### ⚡️⚡ DB table 구조 변경
+- 상점, 티어 등 서비스 확장을 위한 DB 재설계
+<img width="1103" alt="ERD V3" src="https://github.com/8luerose/42GG_Server/assets/105616046/a1eb2c31-53cc-4c12-94ff-5ca51ec2d522">
 
+### ⚡️⚡ 재화 시스템 추가
+- 출석, 게임 승패에 연관해 재화 시스템 추가
+<img width="400" alt="attendance" src="https://github.com/42organization/42gg.server.dev.v2/assets/95139402/caa564c8-cb1b-45eb-975c-9e685911e764">
+
+### ⚡️⚡ 상점, 아이템 서비스 추가
+- 유저 요구사항을 반영한 기능 확장
+<img width="629" alt="스크린샷 2023-09-23 오후 11 48 01" src="https://github.com/8luerose/42GG_Server/assets/105616046/77ce958b-5901-4638-9833-ab27cc182e88">
+<img width="689" alt="스크린샷 2023-09-23 오후 11 48 18" src="https://github.com/8luerose/42GG_Server/assets/105616046/f953cbc4-9d97-4485-b318-4fe73e3e3222">
+
+### ⚡️⚡ 티어 시스템 추가
+- 랭킹전 활성화를 위한 티어 시스템 추가
+<img width="400" alt="tier" src="https://github.com/42organization/42gg.server.dev.v2/assets/95139402/342e0013-13e0-4482-84b5-4381df0498cf">
+
+### ⚡️⚡ 관리자 페이지 구현
+- 원활한 운영을 위한 관리자 기능 추가
+<img width="400" alt="admin" src="https://github.com/42organization/42gg.server.dev.v2/assets/95139402/59756773-48f3-463a-91e4-6bb263aac2f5">
+
+## ⚡️ 팀소개
+### 3기
 <table>
   <thead>
     <tr>
@@ -103,6 +129,33 @@
 
 </table>
 
+### 4기
+<table>
+  <thead>
+    <tr>
+        <td align=center>👩🏻‍💻</td>
+        <td align=center>🏓</td>
+        <td align=center>🏓</td>
+        <td align=center>🏓</td>
+        <td align=center>🏓</td>
+    </tr>
+  </thead>
+    <tr>
+        <td align=center><a href="https://github.com/rrrmina">류민아 @mryoo</a></td>
+        <td align=center><a href="https://github.com/Sion99">신시온 @sishin</a></td>
+        <td align=center><a href="https://github.com/kylew1004">류경엽 @klew</a></td>
+        <td align=center><a href="https://github.com/8luerose">권태현 @taehkwon</a></td>
+        <td align=center><a href="https://github.com/FeFe2200">이 철 @cheolee</a></td>
+    </tr>
+    <tr>
+        <td align=center>PM<br> 확성기,출석 기능 담당</td>
+        <td align=center>티어, 상품 관리자 기능,<br>인프라 담당</td>
+        <td align=center>유저 이미지,<br>유저 프로필 장식 기능 담당</td>
+        <td align=center>상점 기능 담당</td>
+        <td align=center>재화 기능 담당</td>
+    </tr>
+
+</table>
 
 
 ## ⚡️ 필요 파일
@@ -178,6 +231,7 @@ app:
 info:
   image:
     defaultUrl: '유저 기본 이미지 경로'
+    itemNotFoundUrl: 'not_found 이미지 경로'
 
 ---
 spring.config.activate.on-profile: main
