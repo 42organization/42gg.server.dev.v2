@@ -37,6 +37,7 @@ public class AsyncNewUserImageUploader {
     }
 
     @Async("asyncExecutor")
+    @Transactional
     public void upload(String intraId, String imageUrl) {
         String s3ImageUrl = userImageHandler.uploadAndGetS3ImageUri(intraId, imageUrl);
         if (defaultImageUrl.equals(s3ImageUrl)) {
@@ -46,7 +47,7 @@ public class AsyncNewUserImageUploader {
             UserImage userImage = new UserImage(user, (s3ImageUrl != null) ? s3ImageUrl : defaultImageUrl,
                     LocalDateTime.now(), null, true);
             userImageRepository.save(userImage);
-            user.updateImageUri(userImage.getImageUri());
+            userRepository.updateUserImage(user.getId(), userImage.getImageUri());
         });
     }
 
