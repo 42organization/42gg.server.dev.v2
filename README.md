@@ -159,7 +159,7 @@ https://42gg.kr/
 
 
 ## ⚡️ 필요 파일
-다음과 같은 양식의 "application.xml"파일이 "src/main/resources/"경로에 필요합니다.
+다음과 같은 양식의 "application.yml"파일이 "src/main/resources/"경로에 필요합니다.
 ```
 spring:
   profiles:
