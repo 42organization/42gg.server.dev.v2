@@ -52,3 +52,6 @@ pingping.pem
 
 ###  logs  ###
 ./logs/*
+
+### git commit message convention file ###
+.gitmessage.txt
