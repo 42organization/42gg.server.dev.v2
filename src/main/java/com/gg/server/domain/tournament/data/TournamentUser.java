@@ -1,4 +1,4 @@
-package com.gg.server.domain.touranment.data;
+package com.gg.server.domain.tournament.data;
 
 import com.gg.server.domain.user.data.User;
 import com.gg.server.global.utils.BaseTimeEntity;
@@ -16,7 +16,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor

@@ -1,7 +1,7 @@
-package com.gg.server.domain.touranment.type;
+package com.gg.server.domain.tournament.type;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.gg.server.domain.game.type.StatusType;
+
 import java.util.Locale;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

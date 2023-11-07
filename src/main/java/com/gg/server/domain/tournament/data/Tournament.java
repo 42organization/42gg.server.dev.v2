@@ -1,7 +1,7 @@
-package com.gg.server.domain.touranment.data;
+package com.gg.server.domain.tournament.data;
 
-import com.gg.server.domain.touranment.type.TournamentStatus;
-import com.gg.server.domain.touranment.type.TournamentType;
+import com.gg.server.domain.tournament.type.TournamentStatus;
+import com.gg.server.domain.tournament.type.TournamentType;
 import com.gg.server.global.utils.BaseTimeEntity;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
@@ -14,7 +14,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor

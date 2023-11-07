@@ -1,4 +1,4 @@
-package com.gg.server.domain.touranment.type;
+package com.gg.server.domain.tournament.type;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Locale;
