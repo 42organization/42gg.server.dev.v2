@@ -1,50 +1,45 @@
-package com.gg.server.domain.touranment.data;
+package com.gg.server.domain.tournament.data;
 
-import com.gg.server.domain.touranment.type.TournamentStatus;
-import com.gg.server.domain.touranment.type.TournamentType;
+import com.gg.server.domain.user.data.User;
 import com.gg.server.global.utils.BaseTimeEntity;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
 @Entity
-public class Tournament extends BaseTimeEntity {
+public class TournamentUser extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
-    @Column(name = "title")
-    private String title;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @NotNull
-    @Column(name = "comments")
-    private String comments;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tournament_id")
+    private Tournament tournament;
 
     @NotNull
-    @Column(name = "start_time")
-    private LocalDateTime startTime;
+    @Column(name = "is_joined")
+    private boolean isJoined;
 
     @NotNull
-    @Column(name = "end_time")
-    private LocalDateTime endTime;
-
-    @NotNull
-    @Column(name = "type")
-    private TournamentType type;
-
-    @NotNull
-    @Column(name = "status")
-    private TournamentStatus status;
+    @Column(name = "register_time")
+    private LocalDateTime registerTime;
 }
