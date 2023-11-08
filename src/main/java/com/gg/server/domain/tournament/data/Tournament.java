@@ -10,10 +10,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+
+import lombok.*;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -28,8 +26,8 @@ public class Tournament extends BaseTimeEntity {
     private String title;
 
     @NotNull
-    @Column(name = "comments")
-    private String comments;
+    @Column(name = "contents")
+    private String contents;
 
     @NotNull
     @Column(name = "start_time")
@@ -46,4 +44,37 @@ public class Tournament extends BaseTimeEntity {
     @NotNull
     @Column(name = "status")
     private TournamentStatus status;
+
+    @Builder
+    public Tournament(String title, String contents, LocalDateTime startTime, LocalDateTime endTime, TournamentType type, TournamentStatus status) {
+        this.title = title;
+        this.contents = contents;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.type = type;
+        this.status = status;
+    }
+
+    static public Tournament of(String title, String contents, LocalDateTime startTime, LocalDateTime endTime, TournamentType type, TournamentStatus status) {
+        return Tournament.builder()
+                .title(title)
+                .contents(contents)
+                .startTime(startTime)
+                .endTime(endTime)
+                .type(type)
+                .status(status)
+                .build();
+    }
+
+    // TODO TournamentDto 사용할 건지 고민해보기
+//    static public Tournament from(TournamentDto tournamentDto) {
+//        return Tournament.builder()
+//                .title(tournamentDto.getTitle())
+//                .contents(tournamentDto.getContents())
+//                .startTime(tournamentDto.getStartTime())
+//                .endTime(tournamentDto.getEndTime())
+//                .type(tournamentDto.getType())
+//                .status(tournamentDto.getStatus())
+//                .build();
+//    }
 }
