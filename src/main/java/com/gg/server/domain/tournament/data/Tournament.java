@@ -3,12 +3,9 @@ package com.gg.server.domain.tournament.data;
 import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.tournament.type.TournamentType;
 import com.gg.server.global.utils.BaseTimeEntity;
+
 import java.time.LocalDateTime;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import lombok.*;
@@ -38,11 +35,13 @@ public class Tournament extends BaseTimeEntity {
     private LocalDateTime endTime;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     @Column(name = "type")
     private TournamentType type;
 
     @NotNull
     @Column(name = "status")
+    @Enumerated(EnumType.STRING)
     private TournamentStatus status;
 
     @Builder
