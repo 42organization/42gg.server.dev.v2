@@ -22,12 +22,8 @@ CREATE TABLE tournament_user (
     created_at      DATETIME NOT NULL,
     modified_at      DATETIME NOT NULL,
     PRIMARY KEY (id),
-    FOREIGN KEY (tournament_id) REFERENCES tournament(id)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE ,
-    FOREIGN KEY (user_id) REFERENCES user(id)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE
+    FOREIGN KEY (tournament_id) REFERENCES tournament(id),
+    FOREIGN KEY (user_id)       REFERENCES user(id)
 );
 
 ### TournamentGame ###
@@ -39,10 +35,6 @@ CREATE TABLE tournament_game (
     created_at          DATETIME NOT NULL,
     modified_at          DATETIME NOT NULL,
     PRIMARY KEY (id),
-    FOREIGN KEY (tournament_id) REFERENCES tournament(id)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
-    FOREIGN KEY (game_id) REFERENCES game(id)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE
+    FOREIGN KEY (tournament_id) REFERENCES tournament(id),
+    FOREIGN KEY (game_id)       REFERENCES game(id)
 );
