@@ -9,5 +9,5 @@ import java.util.Optional;
 public interface TournamentAdminRepository extends JpaRepository<Tournament, Long> {
     Optional<Tournament> findByTitle(String title);
 
-    boolean existsByTitle(String title);
+//    boolean existsByTitle(String title);
 }

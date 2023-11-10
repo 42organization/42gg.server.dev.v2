@@ -3,8 +3,6 @@ package com.gg.server.admin.tournament.service;
 import com.gg.server.admin.tournament.dto.TournamentAdminAddUserRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminAddUserResponseDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
-import com.gg.server.admin.tournament.exception.TournamentDupException;
-import com.gg.server.admin.tournament.data.TournamentAdminRepository;
 import com.gg.server.admin.tournament.dto.TournamentCreateRequestDto;
 import com.gg.server.admin.tournament.exception.TournamentTitleDupException;
 import com.gg.server.domain.tournament.data.Tournament;
@@ -27,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import com.gg.server.admin.tournament.dto.TournamentCreateRequestDto;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service

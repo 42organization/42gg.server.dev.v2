@@ -19,4 +19,6 @@ public interface TournamentRepository extends JpaRepository<Tournament, Long> {
     Page<Tournament> findAllByStatus(@NotNull TournamentStatus status, Pageable pageable);
 
     Page<Tournament> findAllByType(@NotNull TournamentType type, Pageable pageable);
+
+    boolean existsByTitle(String title);
 }
