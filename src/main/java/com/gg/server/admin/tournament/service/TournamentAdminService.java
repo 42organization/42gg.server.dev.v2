@@ -3,6 +3,7 @@ package com.gg.server.admin.tournament.service;
 import com.gg.server.admin.tournament.dto.TournamentAdminAddUserRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminAddUserResponseDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
+import com.gg.server.admin.tournament.exception.TournamentDupException;
 import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentGameRepository;
@@ -23,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import com.gg.server.admin.tournament.dto.TournamentCreateRequestDto;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -178,5 +181,26 @@ public class TournamentAdminService {
             }
         }
         return result;
+    }
+
+    //이미 존재하는 토너먼트인지, 시간이 올바른지, 타입이 올바른지 체크
+    @Transactional
+    public void createTournament(TournamentCreateRequestDto tournamentCreateRequestDto) {
+        if (findTournamentExist(tournamentCreateRequestDto.getTitle()))
+            throw new TournamentDupException();
+
+        Tournament tournament = new Tournament(
+                tournamentCreateRequestDto.getTitle(),
+                tournamentCreateRequestDto.getContents(),
+                tournamentCreateRequestDto.getStartTime(),
+                tournamentCreateRequestDto.getEndTime(),
+                tournamentCreateRequestDto.getType(),
+                TournamentStatus.BEFORE
+        );
+    }
+
+    private boolean findTournamentExist(String tournamentTitle) {
+//        Tournament tournament = tournamentRepository.exByTitle(tournamentTitle);
+        return true;
     }
 }
