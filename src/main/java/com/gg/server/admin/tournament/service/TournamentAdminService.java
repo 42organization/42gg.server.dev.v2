@@ -4,6 +4,9 @@ import com.gg.server.admin.tournament.dto.TournamentAdminAddUserRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminAddUserResponseDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
 import com.gg.server.admin.tournament.exception.TournamentDupException;
+import com.gg.server.admin.tournament.data.TournamentAdminRepository;
+import com.gg.server.admin.tournament.dto.TournamentCreateRequestDto;
+import com.gg.server.admin.tournament.exception.TournamentTitleDupException;
 import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentGameRepository;
@@ -186,8 +189,15 @@ public class TournamentAdminService {
     //이미 존재하는 토너먼트인지, 시간이 올바른지, 타입이 올바른지 체크
     @Transactional
     public void createTournament(TournamentCreateRequestDto tournamentCreateRequestDto) {
-        if (findTournamentExist(tournamentCreateRequestDto.getTitle()))
-            throw new TournamentDupException();
+//        이미 존재하는 토너먼트인지 체크
+        if (checkTournamentTitle(tournamentCreateRequestDto.getTitle()))
+            throw new TournamentTitleDupException();
+
+//        시간이 올바른지 체크
+//        - 시작 시간만 입력하기
+//        - 시작시간과 종료시간 범위에 속하는지 체크
+//        - 토너먼트 개최 시간에 일반/랭킹 게임 막기
+//        if (tournamentCreateRequestDto.getStartTime())
 
         Tournament tournament = new Tournament(
                 tournamentCreateRequestDto.getTitle(),
@@ -199,8 +209,13 @@ public class TournamentAdminService {
         );
     }
 
-    private boolean findTournamentExist(String tournamentTitle) {
-//        Tournament tournament = tournamentRepository.exByTitle(tournamentTitle);
-        return true;
+    private boolean checkTournamentTitle(String tournamentTitle) {
+        return tournamentRepository.existsByTitle(tournamentTitle);
     }
+
+    /* 토너먼트 개최 시간 겹치는지 체크
+    private boolean checkTournamentTime() {
+        return
+    }
+    */
 }
