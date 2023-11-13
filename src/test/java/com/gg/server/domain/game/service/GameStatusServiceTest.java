@@ -1,4 +1,4 @@
-package com.gg.server.game.service;
+package com.gg.server.domain.game.service;
 
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;

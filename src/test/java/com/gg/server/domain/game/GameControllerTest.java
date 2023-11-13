@@ -1,4 +1,4 @@
-package com.gg.server.game;
+package com.gg.server.domain.game;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.domain.game.service.GameFindService;
