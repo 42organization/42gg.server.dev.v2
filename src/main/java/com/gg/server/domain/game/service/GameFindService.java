@@ -63,14 +63,6 @@ public class GameFindService {
         return new GameListResDto(getGameResultList(games.getContent().stream().map(Game::getId).collect(Collectors.toList())), games.isLast());
     }
 
-    private List<GameResultResDto> getGameResultList(List<Long> games) {
-        List<GameTeamUser> teamViews = gameRepository.findTeamsByGameIsIn(games);
-        return teamViews.stream().map(GameResultResDto::new).collect(Collectors.toList());
-    }
-    private List<GameResultResDto> getNormalGameResultList(List<Long> games) {
-        List<GameTeamUser> teamViews = gameRepository.findTeamsByGameIsInAndNormalMode(games);
-        return teamViews.stream().map(GameResultResDto::new).collect(Collectors.toList());
-    }
     @Transactional(readOnly = true)
     @Cacheable(value = "allGameListByUser", cacheManager = "gameCacheManager", key = "#pageable.pageNumber + #pageable.pageSize + #pageable.sort.toString() + #status + #intra")
     public GameListResDto allGameListUser(Pageable pageable, String intra, String status) {
@@ -86,8 +78,21 @@ public class GameFindService {
         return gameRepository.findById(gameId)
                 .orElseThrow(GameNotExistException::new);
     }
+
     public Game findGameWithPessimisticLockById(Long id) {
         return gameRepository.findWithPessimisticLockById(id)
                 .orElseThrow(GameNotExistException::new);
+    }
+
+    /**
+     * private method
+     */
+    private List<GameResultResDto> getGameResultList(List<Long> games) {
+        List<GameTeamUser> teamViews = gameRepository.findTeamsByGameIsIn(games);
+        return teamViews.stream().map(GameResultResDto::new).collect(Collectors.toList());
+    }
+    private List<GameResultResDto> getNormalGameResultList(List<Long> games) {
+        List<GameTeamUser> teamViews = gameRepository.findTeamsByGameIsInAndNormalMode(games);
+        return teamViews.stream().map(GameResultResDto::new).collect(Collectors.toList());
     }
 }
