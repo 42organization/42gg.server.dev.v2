@@ -1,47 +1,53 @@
-package com.gg.server.season;
+package com.gg.server.domain.season;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gg.server.domain.season.data.Season;
-import com.gg.server.domain.season.data.SeasonRepository;
 import com.gg.server.domain.season.service.SeasonService;
+import com.gg.server.domain.season.data.*;
+import com.gg.server.domain.season.dto.*;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Assertions;
+import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cglib.proxy.UndeclaredThrowableException;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
 import java.time.LocalDateTime;
+import java.util.List;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+
+//@WebMvcTest(SeasonController.class)
+//@MockBeans({
+//        @MockBean(UserRepository.class)
+//})
 @RequiredArgsConstructor
 @SpringBootTest
 @AutoConfigureMockMvc
-@Slf4j
-public class SeasonTriggerTest {
+public class SeasonTestController {
 
     @Autowired
     MockMvc mvc;
+    @Autowired
+    private SeasonService seasonService;
     @Autowired
     TestDataUtils testDataUtils;
     @Autowired
     AuthTokenProvider tokenProvider;
     @Autowired
     ObjectMapper objectMapper;
-    @Autowired
-    EntityManager em;
 
     @Autowired
     private SeasonRepository seasonRepository;
+
 
     @BeforeEach
     @Transactional
@@ -55,16 +61,20 @@ public class SeasonTriggerTest {
     }
 
     @Test
-    @DisplayName("시즌 삭제 방지 Test")
+    @DisplayName("시즌 조회 Test")
     @Transactional
-    public void 시즌삭제방지Test() throws Exception {
-        Long id = 3L;
-        log.info("ID : " + id);
-        Throwable thrownException = Assertions.assertThrows(UndeclaredThrowableException.class, () -> {
-            seasonRepository.deleteById(id);
-            em.flush();
-        });
-
-        log.info("에러 메시지: " + thrownException.getMessage());
+    void season_list_test() throws Exception {
+        //given
+        String accessToken = testDataUtils.getLoginAccessToken();
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
+        String url = "/pingpong/seasons";
+        List<SeasonResDto> list = seasonService.seasonList();
+        //when
+        String contentAsString = mvc.perform(RestDocumentationRequestBuilders.get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        //then
+        SeasonListResDto result = objectMapper.readValue(contentAsString, SeasonListResDto.class);
+        assertThat(list.size()).isEqualTo(result.getSeasonList().size());
     }
 }
