@@ -114,6 +114,12 @@ public enum ErrorCode {
     SLACK_CH_NOT_FOUND(404, "SL002", "fail to get user dm channel id"),
     SLACK_JSON_PARSE_ERR(400, "SL002", "json parse error"),
     SLACK_SEND_FAIL(400, "SL003","fail to send notification" ),
+
+    // Tournament
+    TOURNAMENT_NOT_FOUND(404, "TN001", "tournament not found"),
+    TOURNAMENT_TIME_INVALID(400, "TN002", "tournament time invalid"),
+    TOURNAMENT_TIME_OVERLAP(400, "TN003", "tournament time overlapped"),
+    TOURNAMENT_NOT_BEFORE(400, "TN004", "tournament status is not before")
     ;
     private int status;
     private String errCode;
