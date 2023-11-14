@@ -117,9 +117,8 @@ public enum ErrorCode {
 
     // Tournament
     TOURNAMENT_NOT_FOUND(404, "TN001", "tournament not found"),
-    TOURNAMENT_TIME_INVALID(400, "TN002", "tournament time invalid"),
-    TOURNAMENT_TIME_OVERLAP(400, "TN003", "tournament time overlapped"),
-    TOURNAMENT_NOT_BEFORE(400, "TN004", "tournament status is not before")
+    TOURNAMENT_TIME_CONFLICT(409, "TN002", "tournament time conflicted"),
+    TOURNAMENT_NOT_BEFORE(400, "TN003", "tournament status is not before")
     ;
     private int status;
     private String errCode;
