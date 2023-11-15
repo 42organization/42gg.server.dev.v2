@@ -1,5 +1,6 @@
 package com.gg.server.utils;
 
+import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.noti.data.Noti;
@@ -20,6 +21,10 @@ import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.team.data.TeamUserRepository;
 import com.gg.server.domain.tier.data.Tier;
 import com.gg.server.domain.tier.data.TierRepository;
+import com.gg.server.domain.tournament.data.Tournament;
+import com.gg.server.domain.tournament.data.TournamentRepository;
+import com.gg.server.domain.tournament.type.TournamentStatus;
+import com.gg.server.domain.tournament.type.TournamentType;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.controller.dto.GameInfoDto;
@@ -49,6 +54,7 @@ public class TestDataUtils {
     private final PChangeRepository pChangeRepository;
     private final RankRepository rankRepository;
     private final TierRepository tierRepository;
+    private final TournamentRepository tournamentRepository;
 
     public String getLoginAccessToken() {
         User user = User.builder()
@@ -253,5 +259,26 @@ public class TestDataUtils {
 
         pChangeRepository.save(pChange1);
         pChangeRepository.save(pChange2);
+    }
+
+    public Tournament createTournament(LocalDateTime startTime, LocalDateTime endTime, TournamentStatus status) {
+        Tournament tournament = Tournament.builder()
+            .title("title")
+            .contents("contents")
+            .startTime(startTime)
+            .endTime(endTime)
+            .type(TournamentType.ROOKIE)
+            .status(status).build();
+        tournamentRepository.save(tournament);
+        return  tournament;
+    }
+
+    public TournamentAdminUpdateRequestDto createUpdateRequestDto(LocalDateTime startTime, LocalDateTime endTime, TournamentType type) {
+        return new TournamentAdminUpdateRequestDto(
+            "title",
+            "contents",
+            startTime,
+            endTime,
+            type);
     }
 }
