@@ -88,4 +88,25 @@ public class Tournament extends BaseTimeEntity {
 //                .status(tournamentDto.getStatus())
 //                .build();
 //    }
+
+    public void update(String title, String contents, LocalDateTime startTime, LocalDateTime endTime, TournamentType type, TournamentStatus status) {
+        this.title = title;
+        this.contents = contents;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.type = type;
+        this.status = status;
+    }
+
+    public String toString() {
+        return "Tournament{" +
+            "id=" + id +
+            ", title=" + title +
+            ", contents=" + contents +
+            ", startTime=" + startTime +
+            ", endTime=" + endTime +
+            ", type=" + type +
+            ", status=" + status +
+            '}';
+    }
 }
