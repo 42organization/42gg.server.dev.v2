@@ -33,7 +33,7 @@ class TournamentAdminControllerTest {
     TestDataUtils testDataUtils;
 
     @Autowired
-    private MockMvc mockMvc;
+    MockMvc mockMvc;
 
     @Autowired
     ObjectMapper objectMapper;
