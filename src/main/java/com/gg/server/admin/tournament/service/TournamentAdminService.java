@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 public class TournamentAdminService {
     private final TournamentRepository tournamentRepository;
     public static final long ALLOWED_MINIMAL_START_TIME = 2;
+    public static final long MINIMUM_TOURNAMENT_DURATION = 2;
     /**
      * 토너먼트 업데이트 Method
      * @param tournamentId  업데이트할 토너먼트 id
@@ -49,6 +50,7 @@ public class TournamentAdminService {
      * [ 현재 시간 + 최소 2일 ],
      * [ 현재시간 보다 미래 ],
      * [ 시작 시간이 종료시간보다 현재시에 가까움 ]
+     * [ 진행 시간 최소 2시간 ]
      * @param startTime 업데이트할 토너먼트 시작 시간
      * @param endTime 업데이트할 토너먼트 종료 시간
      * @throws InvalidParameterException 토너먼트 시간으로 부적합 할 때
@@ -56,7 +58,8 @@ public class TournamentAdminService {
     private void checkValidTournamentTime(LocalDateTime startTime, LocalDateTime endTime) {
 
         if (startTime.isAfter(endTime) || startTime.isEqual(endTime) ||
-            startTime.isBefore(LocalDateTime.now().plusDays(ALLOWED_MINIMAL_START_TIME))) {
+            startTime.isBefore(LocalDateTime.now().plusDays(ALLOWED_MINIMAL_START_TIME)) ||
+            startTime.plusHours(MINIMUM_TOURNAMENT_DURATION).isAfter(endTime)) {
             throw new InvalidParameterException("invalid tournament time", ErrorCode.VALID_FAILED);
         }
     }
