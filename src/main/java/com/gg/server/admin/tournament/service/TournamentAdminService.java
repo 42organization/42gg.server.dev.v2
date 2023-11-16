@@ -41,7 +41,7 @@ public class TournamentAdminService {
             requestDto.getEndTime(),
             requestDto.getType(),
             TournamentStatus.BEFORE);
-        return targetTournament;
+        return tournamentRepository.save(targetTournament);
     }
 
     /**
