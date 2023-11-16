@@ -11,14 +11,14 @@ import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.InvalidParameterException;
 import java.time.LocalDateTime;
 import java.util.List;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TournamentAdminService {
     private final TournamentRepository tournamentRepository;
-
+    public static final long ALLOWED_MINIMAL_START_TIME = 2;
     /**
      * 토너먼트 업데이트 Method
      * @param tournamentId  업데이트할 토너먼트 id
@@ -53,8 +53,10 @@ public class TournamentAdminService {
      * @param endTime 업데이트할 토너먼트 종료 시간
      * @throws InvalidParameterException 토너먼트 시간으로 부적합 할 때
      */
-    public void checkValidTournamentTime(LocalDateTime startTime, LocalDateTime endTime) {
-        if (startTime.isAfter(endTime) || startTime.isEqual(endTime) || startTime.isBefore(LocalDateTime.now().plusDays(2))) {
+    private void checkValidTournamentTime(LocalDateTime startTime, LocalDateTime endTime) {
+
+        if (startTime.isAfter(endTime) || startTime.isEqual(endTime) ||
+            startTime.isBefore(LocalDateTime.now().plusDays(ALLOWED_MINIMAL_START_TIME))) {
             throw new InvalidParameterException("invalid tournament time", ErrorCode.VALID_FAILED);
         }
     }
@@ -66,7 +68,7 @@ public class TournamentAdminService {
      * @param endTime 업데이트할 토너먼트 종료 시간
      * @throws TournamentConflictException 업데이트 하고자 하는 토너먼트의 시간이 겹칠 때
      */
-    public void checkConflictedTournament(Long targetTournamentId, LocalDateTime startTime, LocalDateTime endTime) {
+    private void checkConflictedTournament(Long targetTournamentId, LocalDateTime startTime, LocalDateTime endTime) {
         List<Tournament> tournamentList = tournamentRepository.findAllByStatus(TournamentStatus.BEFORE);
         for (Tournament tournament : tournamentList) {
             if (targetTournamentId.equals(tournament.getId())) {
