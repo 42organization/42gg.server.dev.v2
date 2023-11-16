@@ -4,6 +4,7 @@ import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
 import com.gg.server.admin.tournament.service.TournamentAdminService;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.checkerframework.checker.index.qual.Positive;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/pingpong/admin")
+@RequestMapping("/pingpong/admin/tournament")
 @Validated
 public class TournamentAdminController {
     private final TournamentAdminService tournamentAdminService;
@@ -26,11 +27,11 @@ public class TournamentAdminController {
      * @param tournamentAdminUpdateRequestDto 요청 데이터
      * @return
      */
-    @PatchMapping("/tournament/{tournamentId}")
-    public ResponseEntity updateTournamentInfo(@PathVariable Long tournamentId,
+    @PatchMapping("/{tournamentId}")
+    public ResponseEntity<TournamentAdminUpdateRequestDto> updateTournamentInfo(@PathVariable @Positive Long tournamentId,
         @Valid @RequestBody TournamentAdminUpdateRequestDto tournamentAdminUpdateRequestDto) {
         tournamentAdminService.updateTournamentInfo(tournamentId, tournamentAdminUpdateRequestDto);
 
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
