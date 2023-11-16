@@ -2,6 +2,7 @@ package com.gg.server.admin.tournament.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
@@ -41,6 +42,7 @@ class TournamentAdminServiceTest {
             getTargetTime(3, 1), getTargetTime(3, 3));
         given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
         given(tournamentRepository.findAllByStatus(TournamentStatus.BEFORE)).willReturn(tournamentList);
+        given(tournamentRepository.save(any(Tournament.class))).willReturn(tournament);
         // when
         Tournament changedTournament = tournamentAdminService.updateTournamentInfo(1L, updateRequestDto);
         // then
