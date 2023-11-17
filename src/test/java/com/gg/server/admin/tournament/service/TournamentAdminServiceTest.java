@@ -36,7 +36,7 @@ class TournamentAdminServiceTest {
 
     // 토너먼트 수정 서비스 테스트
     @Nested
-    @DisplayName("[Patch] /pingpong/admin/tournament/{tournamentId}")
+    @DisplayName("토너먼트 관리자 서비스 수정 테스트")
     class TournamentAdminServiceUpdateTest {
         @Test
         @DisplayName("토너먼트_업데이트_성공")
