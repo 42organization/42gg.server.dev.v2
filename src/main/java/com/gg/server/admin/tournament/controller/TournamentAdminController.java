@@ -28,10 +28,11 @@ public class TournamentAdminController {
      * @return
      */
     @PatchMapping("/{tournamentId}")
-    public ResponseEntity<TournamentAdminUpdateRequestDto> updateTournamentInfo(@PathVariable @Positive Long tournamentId,
+    public ResponseEntity<Void> updateTournamentInfo(@PathVariable @Positive Long tournamentId,
         @Valid @RequestBody TournamentAdminUpdateRequestDto tournamentAdminUpdateRequestDto) {
         tournamentAdminService.updateTournamentInfo(tournamentId, tournamentAdminUpdateRequestDto);
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }
+
 }
