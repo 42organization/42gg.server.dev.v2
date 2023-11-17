@@ -78,7 +78,7 @@ class TournamentAdminServiceTest {
 
         @Test
         @DisplayName("토너먼트_업데이트_불가_상태")
-        public void canNotUpadate() {
+        public void canNotUpdate() {
             // given
             Tournament tournamentLive = makeTournament(1L, TournamentStatus.LIVE,
                 getTargetTime(0, -1), getTargetTime(0, 1));
@@ -161,7 +161,11 @@ class TournamentAdminServiceTest {
             startTime,
             endTime,
             TournamentType.ROOKIE,
-            status);
+            status,
+            null,
+            null,
+            null
+            );
     }
 
     /**
