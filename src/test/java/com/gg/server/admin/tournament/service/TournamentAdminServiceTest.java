@@ -33,6 +33,8 @@ class TournamentAdminServiceTest {
     @InjectMocks
     TournamentAdminService tournamentAdminService;
 
+
+    // 토너먼트 수정 서비스 테스트
     @Nested
     @DisplayName("[Patch] /pingpong/admin/tournament/{tournamentId}")
     class TournamentAdminServiceUpdateTest {
@@ -139,7 +141,7 @@ class TournamentAdminServiceTest {
      * @param hours
      * @return
      */
-    LocalDateTime getTargetTime(long days, long hours) {
+    private LocalDateTime getTargetTime(long days, long hours) {
         return LocalDateTime.now().plusDays(days).plusHours(hours);
     }
 
@@ -151,7 +153,7 @@ class TournamentAdminServiceTest {
      * @param endTime
      * @return
      */
-    Tournament makeTournament(Long id, TournamentStatus status, LocalDateTime startTime, LocalDateTime endTime) {
+    private Tournament makeTournament(Long id, TournamentStatus status, LocalDateTime startTime, LocalDateTime endTime) {
         return new Tournament(
             id,
             id + "st tournament",
@@ -170,7 +172,7 @@ class TournamentAdminServiceTest {
      * @param startTime
      * @return
      */
-    List<Tournament> makeTournaments(Long id, long cnt, LocalDateTime startTime) {
+    private List<Tournament> makeTournaments(Long id, long cnt, LocalDateTime startTime) {
         List<Tournament> tournamentList = new ArrayList<>();
         for (long i=0; i<cnt; i++) {
             tournamentList.add(makeTournament(id++, TournamentStatus.BEFORE,
@@ -185,7 +187,7 @@ class TournamentAdminServiceTest {
      * @param endTime
      * @return
      */
-    TournamentAdminUpdateRequestDto makeTournamentAdminUpdateRequestDto(LocalDateTime startTime, LocalDateTime endTime) {
+    private TournamentAdminUpdateRequestDto makeTournamentAdminUpdateRequestDto(LocalDateTime startTime, LocalDateTime endTime) {
         return new TournamentAdminUpdateRequestDto(
             "tournament changed",
             "changed",
