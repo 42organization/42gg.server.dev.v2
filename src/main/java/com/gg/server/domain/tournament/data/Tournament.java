@@ -16,6 +16,7 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Entity
+@ToString
 public class Tournament extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -98,15 +99,4 @@ public class Tournament extends BaseTimeEntity {
         this.status = status;
     }
 
-    public String toString() {
-        return "Tournament{" +
-            "id=" + id +
-            ", title=" + title +
-            ", contents=" + contents +
-            ", startTime=" + startTime +
-            ", endTime=" + endTime +
-            ", type=" + type +
-            ", status=" + status +
-            '}';
-    }
 }
