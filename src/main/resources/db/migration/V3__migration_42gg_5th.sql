@@ -8,8 +8,10 @@ CREATE TABLE tournament (
     type                VARCHAR(15) NOT NULL,
     status              VARCHAR(10) NOT NULL DEFAULT 'BEFORE',
     created_at          DATETIME NOT NULL,
-    modified_at          DATETIME NOT NULL,
-    PRIMARY KEY (id)
+    modified_at         DATETIME NOT NULL,
+    winner_id           BIGINT,
+    PRIMARY KEY (id),
+    FOREIGN KEY (winner_id) REFERENCES user(id)
 );
 
 ### TournamentUser ###
@@ -30,7 +32,7 @@ CREATE TABLE tournament_user (
 CREATE TABLE tournament_game (
     id                  BIGINT NOT NULL AUTO_INCREMENT,
     tournament_id       BIGINT NOT NULL,
-    game_id             BIGINT NOT NULL,
+    game_id             BIGINT,
     round               VARCHAR(10) NOT NULL,
     created_at          DATETIME NOT NULL,
     modified_at          DATETIME NOT NULL,

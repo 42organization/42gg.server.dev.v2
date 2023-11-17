@@ -2,9 +2,11 @@ package com.gg.server.domain.tournament.data;
 
 import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.tournament.type.TournamentType;
+import com.gg.server.domain.user.data.User;
 import com.gg.server.global.utils.BaseTimeEntity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -43,6 +45,16 @@ public class Tournament extends BaseTimeEntity {
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private TournamentStatus status;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "winner_id")
+    private User winner;
+
+    @OneToMany(mappedBy = "tournament")
+    private List<TournamentGame> tournamentGames;
+
+    @OneToMany(mappedBy = "tournament")
+    private List<TournamentUser> tournamentUsers;
 
     @Builder
     public Tournament(String title, String contents, LocalDateTime startTime, LocalDateTime endTime, TournamentType type, TournamentStatus status) {
