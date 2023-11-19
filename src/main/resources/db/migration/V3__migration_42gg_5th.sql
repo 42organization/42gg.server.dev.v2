@@ -1,7 +1,7 @@
 ### Tournament ###
 CREATE TABLE tournament (
     id                  BIGINT NOT NULL AUTO_INCREMENT,
-    title               VARCHAR(20) NOT NULL,
+    title               VARCHAR(30) NOT NULL,
     contents            VARCHAR(1000) NOT NULL,
     start_time          DATETIME NOT NULL,
     end_time            DATETIME NOT NULL,
@@ -33,7 +33,7 @@ CREATE TABLE tournament_game (
     id                  BIGINT NOT NULL AUTO_INCREMENT,
     tournament_id       BIGINT NOT NULL,
     game_id             BIGINT,
-    round               VARCHAR(10) NOT NULL,
+    round               VARCHAR(20) NOT NULL,
     created_at          DATETIME NOT NULL,
     modified_at          DATETIME NOT NULL,
     PRIMARY KEY (id),
