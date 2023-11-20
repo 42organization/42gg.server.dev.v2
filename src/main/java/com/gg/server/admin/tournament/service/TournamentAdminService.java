@@ -25,6 +25,7 @@ public class TournamentAdminService {
     private static final long ALLOWED_MINIMAL_START_DAYS = 2;
     // 토너먼트 최소 진행 시간 (n시간)
     private static final long MINIMUM_TOURNAMENT_DURATION = 2;
+
     /**
      * 토너먼트 업데이트 Method
      * @param tournamentId  업데이트할 토너먼트 id
