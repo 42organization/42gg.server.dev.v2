@@ -30,7 +30,14 @@ public class TournamentGame extends BaseTimeEntity {
     private Tournament tournament;
 
     @NotNull
-    @Column(name = "round")
+    @Column(name = "round", length = 30)
     @Enumerated(EnumType.STRING)
     private TournamentRound tournamentRound;
+
+
+    public TournamentGame(Game game, Tournament tournament, TournamentRound tournamentRound) {
+        this.game = game;
+        this.tournament = tournament;
+        this.tournamentRound = tournamentRound;
+    }
 }

@@ -2,6 +2,8 @@ package com.gg.server.admin.tournament.service;
 
 import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
 import com.gg.server.domain.tournament.data.Tournament;
+import com.gg.server.domain.tournament.data.TournamentGame;
+import com.gg.server.domain.tournament.data.TournamentGameRepository;
 import com.gg.server.domain.tournament.data.TournamentRepository;
 import com.gg.server.domain.tournament.exception.TournamentConflictException;
 import com.gg.server.domain.tournament.exception.TournamentNotFoundException;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class TournamentAdminService {
     private final TournamentRepository tournamentRepository;
+    private final TournamentGameRepository tournamentGameRepository;
     // 토너먼트 최소 시작 날짜 (n일 후)
     private static final long ALLOWED_MINIMAL_START_DAYS = 2;
     // 토너먼트 최소 진행 시간 (n시간)
@@ -45,6 +48,23 @@ public class TournamentAdminService {
             requestDto.getType(),
             TournamentStatus.BEFORE);
         return tournamentRepository.save(targetTournament);
+    }
+
+    /**
+     * 토너먼트 삭제 매서드
+     * @param tournamentId 타겟 토너먼트 id
+     * @throws TournamentNotFoundException 찾을 수 없는 토너먼트 일 때
+     * @throws TournamentUpdateException 업데이트 할 수 없는 토너먼트 일 때
+     */
+    public void deleteTournamentInfo(Long tournamentId) {
+        Tournament targetTournament = tournamentRepository.findById(tournamentId)
+            .orElseThrow(() -> new TournamentNotFoundException("target tournament not found", ErrorCode.TOURNAMENT_NOT_FOUND));
+        if (targetTournament.getStatus() != TournamentStatus.BEFORE) {
+            throw new TournamentUpdateException("already started or ended", ErrorCode.TOURNAMENT_NOT_BEFORE);
+        }
+        List<TournamentGame> tournamentGameList = tournamentGameRepository.findAllByTournamentId(targetTournament.getId());
+        tournamentGameRepository.deleteAll(tournamentGameList);
+        tournamentRepository.deleteById(tournamentId);
     }
 
     /**

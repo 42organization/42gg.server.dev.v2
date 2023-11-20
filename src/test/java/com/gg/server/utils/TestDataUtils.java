@@ -23,6 +23,10 @@ import com.gg.server.domain.tier.data.Tier;
 import com.gg.server.domain.tier.data.TierRepository;
 import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentRepository;
+import com.gg.server.domain.tournament.data.TournamentGame;
+import com.gg.server.domain.tournament.data.TournamentGameRepository;
+import com.gg.server.domain.tournament.data.TournamentRepository;
+import com.gg.server.domain.tournament.type.TournamentRound;
 import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.tournament.type.TournamentType;
 import com.gg.server.domain.user.data.User;
@@ -34,6 +38,8 @@ import com.gg.server.domain.user.type.SnsType;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -55,6 +61,7 @@ public class TestDataUtils {
     private final RankRepository rankRepository;
     private final TierRepository tierRepository;
     private final TournamentRepository tournamentRepository;
+    private final TournamentGameRepository tournamentGameRepository;
 
     public String getLoginAccessToken() {
         User user = User.builder()
@@ -261,6 +268,13 @@ public class TestDataUtils {
         pChangeRepository.save(pChange2);
     }
 
+    /**
+     * 테스트용 토너먼트 반환. 매개변수 값들만 초기화
+     * @param startTime
+     * @param endTime
+     * @param status
+     * @return
+     */
     public Tournament createTournament(LocalDateTime startTime, LocalDateTime endTime, TournamentStatus status) {
         Tournament tournament = Tournament.builder()
             .title("title")
@@ -269,10 +283,16 @@ public class TestDataUtils {
             .endTime(endTime)
             .type(TournamentType.ROOKIE)
             .status(status).build();
-        tournamentRepository.save(tournament);
-        return  tournament;
+        return  tournamentRepository.save(tournament);
     }
 
+    /**
+     * 테스트용 토너먼트 RequestDto 반환. 매개변수 값들만 초기화
+     * @param startTime
+     * @param endTime
+     * @param type
+     * @return
+     */
     public TournamentAdminUpdateRequestDto createUpdateRequestDto(LocalDateTime startTime, LocalDateTime endTime, TournamentType type) {
         return new TournamentAdminUpdateRequestDto(
             "title",
@@ -280,5 +300,21 @@ public class TestDataUtils {
             startTime,
             endTime,
             type);
+    }
+
+    /**
+     * 테스트용 토너먼트 게임 리스트 반환. 매개변수 값들만 초기화
+     * @param tournament
+     * @param cnt
+     * @return
+     */
+    public List<TournamentGame> createTournamentGameList(Tournament tournament, int cnt) {
+        List<TournamentGame> tournamentGameList = new ArrayList<>();
+        TournamentRound [] values = TournamentRound.values();
+
+        while (--cnt >= 0) {
+            tournamentGameList.add(new TournamentGame(null, tournament, values[cnt]));
+        }
+        return tournamentGameRepository.saveAll(tournamentGameList);
     }
 }

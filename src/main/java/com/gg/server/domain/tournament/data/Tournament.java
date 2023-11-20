@@ -98,5 +98,4 @@ public class Tournament extends BaseTimeEntity {
         this.type = type;
         this.status = status;
     }
-
 }
