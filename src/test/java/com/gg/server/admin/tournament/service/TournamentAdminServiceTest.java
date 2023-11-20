@@ -30,6 +30,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import com.gg.server.admin.tournament.dto.TournamentCreateRequestDto;
+import com.gg.server.domain.tournament.data.Tournament;
+import com.gg.server.domain.tournament.data.TournamentRepository;
+import com.gg.server.domain.tournament.type.TournamentType;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -51,6 +56,8 @@ class TournamentAdminServiceTest {
     @InjectMocks
     TournamentAdminService tournamentAdminService;
 
+
+    // 토너먼트 수정 서비스 테스트
     @Nested
     @DisplayName("토너먼트 관리자 서비스 수정 테스트")
     class TournamentAdminServiceUpdateTest {
@@ -348,6 +355,44 @@ class TournamentAdminServiceTest {
             endTime,
             TournamentType.ROOKIE
         );
+    }
+
+    @Nested
+    @DisplayName("토너먼트 관리자 생성 서비스 테스트")
+    class TournamentAdminServiceCreateTest {
+        @Test
+        @DisplayName("토너먼트 생성 성공")
+        void createTournament_Success(){
+        // given
+
+        TournamentCreateRequestDto tournamentCreateRequestDto = new TournamentCreateRequestDto(
+                LocalDateTime.now(),
+                LocalDateTime.now().plusHours(2),
+                "제 1회 루키전",
+                "제 1회 루키전 많관부!!",
+                TournamentType.ROOKIE
+        );
+        Tournament newTournament = new Tournament(tournamentCreateRequestDto);
+        //tournamentRepository에 tournament의 id를 통해 찾은 결과는 empty를 return -> 즉, tournament id가 레포지토리에 저장되지 않음
+        given(tournamentRepository.findById(tournament.getId())).willReturn(Optional.empty());
+        Assertions.assertFalse(tournamentRepository.existsByTitle(tournamentCreateRequestDto.getTitle()));
+        given(tournamentRepository.save(Mockito.any(Tournament.class))).willReturn(newTournament);
+        //토너먼트를 레포지토리에서 저장한다면 토너먼트 return
+//        given(tournamentRepository.save(Mockito.any(Tournament.class))).willReturn(tournament);
+        // when
+        Tournament tournament = tournamentAdminService.createTournament(tournamentCreateRequestDto);
+        // then
+        //tournamentRepository에 tournament의 id로 찾은 tournament가 있다!
+//        Assertions.assertFalse(tournamentRepository.existsByTitle(tournamentCreateRequestDto.getTitle()));
+        assertThat(tournament.getStartTime()).isEqualTo(tournamentCreateRequestDto.getStartTime());
+        assertThat(tournament.getEndTime()).isEqualTo(tournamentCreateRequestDto.getEndTime());
+        assertThat(tournament.getTitle()).isEqualTo(tournamentCreateRequestDto.getTitle());
+        assertThat(tournament.getContents()).isEqualTo(tournamentCreateRequestDto.getContents());
+        assertThat(tournament.getType()).isEqualTo(tournamentCreateRequestDto.getType());
+//        verify(tournamentRepository).existsByTitle(tournamentCreateRequestDto.getTitle());
+//        verify(tournamentRepository).save(any(Tournament.class));
+//        when(tournamentRepository.existsByTitle(tournamentCreateRequestDto.getTitle())).thenReturn(false);
+        }
     }
 
     /**

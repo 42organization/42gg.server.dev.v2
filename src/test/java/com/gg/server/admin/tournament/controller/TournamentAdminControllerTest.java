@@ -36,6 +36,38 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gg.server.admin.tournament.dto.TournamentCreateRequestDto;
+import com.gg.server.admin.tournament.service.TournamentAdminService;
+import com.gg.server.domain.tournament.data.Tournament;
+import com.gg.server.domain.tournament.data.TournamentRepository;
+import com.gg.server.domain.tournament.type.TournamentType;
+import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
+import com.gg.server.utils.TestDataUtils;
+import io.jsonwebtoken.lang.Assert;
+import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+
+import static org.mockito.Mockito.*;
+import static org.springframework.mock.http.server.reactive.MockServerHttpRequest.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @RequiredArgsConstructor
@@ -581,4 +613,37 @@ class TournamentAdminControllerTest {
 
     }
 
+
+    @Test
+    @DisplayName("토너먼트 생성 - 성공")
+    void createTournament_Success() throws Exception {
+
+//        // given
+//        TournamentCreateRequestDto tournamentCreateRequestDto = new TournamentCreateRequestDto(
+//                LocalDateTime.now(),
+//                LocalDateTime.now().plusHours(2),
+//                "제 1회 루키전",
+//                "환영합니다!",
+//                TournamentType.ROOKIE
+//        );
+//
+//        // when
+//        Tournament tournament = tournamentAdminService.createTournament(tournamentCreateRequestDto);
+//
+//        // then
+////        Assertions.assertFalse(tournamentRepository.existsByTitle(tournamentCreateRequestDto.getTitle()));
+////        verify(tournamentRepository).existsByTitle(tournamentCreateRequestDto.getTitle());
+////        verify(tournamentRepository).save(any(Tournament.class));
+//
+////        when(tournamentRepository.existsByTitle(tournamentCreateRequestDto.getTitle())).thenReturn(false);
+//
+//        String contentAsString = mockMvc.perform(MockMvcRequestBuilders.post("/pingpong/admin/tournament")
+//                        .content(objectMapper.writeValueAsString(tournamentCreateRequestDto))
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+//                .andExpect(status().isCreated())
+//                .andReturn().getResponse().getContentAsString();
+//
+//        System.out.println(contentAsString);
+    }
 }
