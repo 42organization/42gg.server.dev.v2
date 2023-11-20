@@ -24,7 +24,7 @@ public class TournamentAdminController {
 
     /**
      * 토너먼트 정보 수정
-     * @param tournamentId 업데이트 하고자 하는 토너먼트 id
+     * @param tournamentId 업데이트하고자 하는 토너먼트 id
      * @param tournamentAdminUpdateRequestDto 요청 데이터
      */
     @PatchMapping("/{tournamentId}")
@@ -37,7 +37,7 @@ public class TournamentAdminController {
 
     /**
      * 토너먼트 정보 삭제
-     * @param tournamentId 삭제 하고자 하는 토너먼트 id
+     * @param tournamentId 삭제하고자 하는 토너먼트 id
      */
     @DeleteMapping("/{tournamentId}")
     public ResponseEntity<Void> deleteTournamentInfo(@PathVariable @Positive Long tournamentId) {
