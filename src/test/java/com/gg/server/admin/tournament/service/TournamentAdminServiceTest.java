@@ -145,7 +145,7 @@ class TournamentAdminServiceTest {
         @DisplayName("토너먼트_삭제_성공")
         void success() {
             // given
-            long tournamentGameCnt = 7;
+            int tournamentGameCnt = 7;
             Tournament tournament = makeTournament(1L, TournamentStatus.BEFORE,
                 getTargetTime(2, 1), getTargetTime(2, 3));
             List<TournamentGame> tournamentGameList = makeTournamentGames(1L, tournament, tournamentGameCnt);
@@ -252,26 +252,17 @@ class TournamentAdminServiceTest {
     }
 
     /**
-     * 토너먼트 게임 생성(테스트에 상관없는 부분들은 임의의 값)
-     * @param id 토너먼트 게임 id
-     * @param tournament 해당 토너먼트
-     * @return
-     */
-    private TournamentGame makeTournamentGame(Long id, Tournament tournament) {
-        return new TournamentGame(id, null, tournament, TournamentRound.THE_FINAL);
-    }
-
-    /**
      * cnt 사이즈의 토너먼트 게임 리스트 생성
      * @param id 토너먼트 게임 id
      * @param tournament 해당 토너먼트
      * @param cnt 토너먼트 게임 수
      * @return
      */
-    private List<TournamentGame> makeTournamentGames(Long id, Tournament tournament, long cnt) {
+    private List<TournamentGame> makeTournamentGames(Long id, Tournament tournament, int cnt) {
         List<TournamentGame> tournamentGameList = new ArrayList<>();
-        for (long i=0; i<cnt; i++) {
-            tournamentGameList.add(makeTournamentGame(id++, tournament));
+        TournamentRound [] values = TournamentRound.values();
+        while (--cnt >= 0) {
+            tournamentGameList.add(new TournamentGame(id, null, tournament, values[cnt]));
         }
         return tournamentGameList;
     }

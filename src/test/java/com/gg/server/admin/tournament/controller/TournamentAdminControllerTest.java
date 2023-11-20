@@ -74,15 +74,9 @@ class TournamentAdminControllerTest {
 
             // when, then
             String contentAsString = mockMvc.perform(patch(url)
-<<<<<<< HEAD
-                    .content(content)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
-=======
                 .content(content)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
->>>>>>> 8786b173 (:green_heart: chore: Add tmp commit for rebase)
                 .andExpect(status().isNoContent())
                 .andReturn().getResponse().getContentAsString();
 
@@ -193,9 +187,9 @@ class TournamentAdminControllerTest {
 
             // when ended tournament test, then
             contentAsString = mockMvc.perform(patch(url)
-                    .content(content)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .content(content)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString();
 
@@ -229,9 +223,9 @@ class TournamentAdminControllerTest {
             String content = objectMapper.writeValueAsString(updateDto1);
 
             String contentAsString = mockMvc.perform(patch(url)
-                    .content(content)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .content(content)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString();
 
@@ -272,9 +266,9 @@ class TournamentAdminControllerTest {
             String content = objectMapper.writeValueAsString(updateDto1);
 
             String contentAsString = mockMvc.perform(patch(url)
-                    .content(content)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .content(content)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString();
 
@@ -303,8 +297,8 @@ class TournamentAdminControllerTest {
 
             // when, then
             String contentAsString = mockMvc.perform(delete(url)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isNoContent())
                 .andReturn().getResponse().getContentAsString();
 
