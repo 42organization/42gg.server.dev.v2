@@ -35,6 +35,12 @@ public class TournamentGame extends BaseTimeEntity {
     private TournamentRound tournamentRound;
 
 
+    /**
+     * id 값 제외한 생성자
+     * @param game
+     * @param tournament
+     * @param tournamentRound
+     */
     public TournamentGame(Game game, Tournament tournament, TournamentRound tournamentRound) {
         this.game = game;
         this.tournament = tournament;
