@@ -117,7 +117,7 @@ public enum ErrorCode {
 
     // Tournament
     TOURNAMENT_NOT_FOUND(404, "TN001", "tournament not found"),
-    TOURNAMENT_TIME_CONFLICT(409, "TN002", "tournament time conflicted"),
+    TOURNAMENT_TIME_CONFLICT(409, "TN002", "tournament conflicted"),
     TOURNAMENT_NOT_BEFORE(400, "TN003", "tournament status is not before")
     ;
     private int status;
