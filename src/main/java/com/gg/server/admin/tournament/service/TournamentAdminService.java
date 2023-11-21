@@ -79,7 +79,6 @@ public class TournamentAdminService {
      * @throws InvalidParameterException 토너먼트 시간으로 부적합 할 때
      */
     private void checkValidTournamentTime(LocalDateTime startTime, LocalDateTime endTime) {
-
         if (startTime.isAfter(endTime) || startTime.isEqual(endTime) ||
             startTime.isBefore(LocalDateTime.now().plusDays(ALLOWED_MINIMAL_START_DAYS)) ||
             startTime.plusHours(MINIMUM_TOURNAMENT_DURATION).isAfter(endTime)) {
@@ -95,7 +94,7 @@ public class TournamentAdminService {
      * @throws TournamentConflictException 업데이트 하고자 하는 토너먼트의 시간이 겹칠 때
      */
     private void checkConflictedTournament(Long targetTournamentId, LocalDateTime startTime, LocalDateTime endTime) {
-        List<Tournament> tournamentList = tournamentRepository.findAllByStatus(TournamentStatus.BEFORE);
+        List<Tournament> tournamentList = tournamentRepository.findAllByStatusBeforeAndLive();
         for (Tournament tournament : tournamentList) {
             if (targetTournamentId.equals(tournament.getId())) {
                 continue;
