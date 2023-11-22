@@ -1,5 +1,6 @@
 package com.gg.server.admin.tournament.controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -9,8 +10,11 @@ import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
 import com.gg.server.admin.tournament.service.TournamentAdminService;
 import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentGame;
+import com.gg.server.domain.tournament.data.TournamentRepository;
 import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.tournament.type.TournamentType;
+import com.gg.server.global.exception.ErrorCode;
+import com.gg.server.global.exception.custom.CustomRuntimeException;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import java.time.LocalDateTime;
@@ -48,6 +52,9 @@ class TournamentAdminControllerTest {
     @Autowired
     TournamentAdminService tournamentAdminService;
 
+    @Autowired
+    TournamentRepository tournamentRepository;
+
     @Nested
     @DisplayName("토너먼트 관리 수정 컨트롤러 테스트")
     class TournamentAdminControllerUpdateTest {
@@ -72,7 +79,7 @@ class TournamentAdminControllerTest {
 
             String content = objectMapper.writeValueAsString(updateDto);
 
-            // when, then
+            // when
             String contentAsString = mockMvc.perform(patch(url)
                 .content(content)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -81,6 +88,15 @@ class TournamentAdminControllerTest {
                 .andReturn().getResponse().getContentAsString();
 
             System.out.println(contentAsString);
+
+            // then
+            Tournament result = tournamentRepository.findById(tournament.getId()).get();
+            assertThat(result.getTitle()).isEqualTo(tournament.getTitle());
+            assertThat(result.getContents()).isEqualTo(tournament.getContents());
+            assertThat(result.getStartTime()).isEqualTo(updateDto.getStartTime());
+            assertThat(result.getEndTime()).isEqualTo(updateDto.getEndTime());
+            assertThat(result.getType()).isEqualTo(updateDto.getType());
+            assertThat(result.getStatus()).isEqualTo(tournament.getStatus());
         }
 
         @Test
@@ -295,7 +311,7 @@ class TournamentAdminControllerTest {
 
             String url = "/pingpong/admin/tournament/" + tournament.getId();
 
-            // when, then
+            // when
             String contentAsString = mockMvc.perform(delete(url)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
@@ -303,6 +319,10 @@ class TournamentAdminControllerTest {
                 .andReturn().getResponse().getContentAsString();
 
             System.out.println(contentAsString);
+
+            // then
+            tournamentRepository.findById(tournament.getId()).ifPresent(
+                a-> {throw new CustomRuntimeException("삭제되지 않았습니다.", ErrorCode.BAD_REQUEST);});
         }
 
         @Test
