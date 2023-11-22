@@ -52,7 +52,8 @@ public class TournamentAdminService {
     }
 
     /**
-     * 토너먼트 삭제 매서드
+     * 토너먼트 삭제 매서드:
+     * 토너먼트는 BEFORE 인 경우에만 삭제 가능하다.
      * @param tournamentId 타겟 토너먼트 id
      * @throws TournamentNotFoundException 찾을 수 없는 토너먼트 일 때
      * @throws TournamentUpdateException 업데이트 할 수 없는 토너먼트 일 때
@@ -94,7 +95,7 @@ public class TournamentAdminService {
      * @throws TournamentConflictException 업데이트 하고자 하는 토너먼트의 시간이 겹칠 때
      */
     private void checkConflictedTournament(Long targetTournamentId, LocalDateTime startTime, LocalDateTime endTime) {
-        List<Tournament> tournamentList = tournamentRepository.findAllByStatusBeforeAndLive();
+        List<Tournament> tournamentList = tournamentRepository.findAllByStatusIsNot(TournamentStatus.END);
         for (Tournament tournament : tournamentList) {
             if (targetTournamentId.equals(tournament.getId())) {
                 continue;

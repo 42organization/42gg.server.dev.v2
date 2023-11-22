@@ -8,6 +8,5 @@ import org.springframework.data.jpa.repository.Query;
 public interface TournamentRepository extends JpaRepository<Tournament, Long> {
     List<Tournament> findAllByStatus(TournamentStatus status);
 
-    @Query(value = "select t from Tournament t where  t.status='before' or t.status='live'")
-    List<Tournament> findAllByStatusBeforeAndLive();
+    List<Tournament> findAllByStatusIsNot(TournamentStatus status);
 }

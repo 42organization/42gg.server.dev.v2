@@ -50,7 +50,7 @@ class TournamentAdminServiceTest {
             TournamentAdminUpdateRequestDto updateRequestDto = makeTournamentAdminUpdateRequestDto(
                 getTargetTime(3, 1), getTargetTime(3, 3));
             given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
-            given(tournamentRepository.findAllByStatus(TournamentStatus.BEFORE)).willReturn(tournamentList);
+            given(tournamentRepository.findAllByStatusIsNot(TournamentStatus.END)).willReturn(tournamentList);
             given(tournamentRepository.save(any(Tournament.class))).willReturn(tournament);
             // when
             Tournament changedTournament = tournamentAdminService.updateTournamentInfo(1L, updateRequestDto);
@@ -130,7 +130,7 @@ class TournamentAdminServiceTest {
             TournamentAdminUpdateRequestDto updateRequestDto = makeTournamentAdminUpdateRequestDto(
                 LocalDateTime.now().plusDays(2).plusHours(3), LocalDateTime.now().plusDays(2).plusHours(5));
             given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
-            given(tournamentRepository.findAllByStatus(TournamentStatus.BEFORE)).willReturn(tournamentList);
+            given(tournamentRepository.findAllByStatusIsNot(TournamentStatus.END)).willReturn(tournamentList);
             // when, then
             assertThatThrownBy(() -> tournamentAdminService.updateTournamentInfo(tournament.getId(), updateRequestDto))
                 .isInstanceOf(TournamentConflictException.class);
