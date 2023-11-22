@@ -104,7 +104,7 @@ public class TournamentAdminService {
                 (startTime.isBefore(tournament.getStartTime()) && endTime.isAfter(tournament.getEndTime())) ||
                 startTime.isEqual(tournament.getStartTime()) || startTime.isEqual(tournament.getEndTime()) ||
                 endTime.isEqual(tournament.getEndTime()) || endTime.isEqual(tournament.getStartTime())) {
-                throw new TournamentConflictException("tournament conflicted", ErrorCode.TOURNAMENT_TIME_CONFLICT);
+                throw new TournamentConflictException("tournament conflicted", ErrorCode.TOURNAMENT_CONFLICT);
             }
         }
     }
