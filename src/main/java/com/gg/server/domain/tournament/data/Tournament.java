@@ -100,6 +100,15 @@ public class Tournament extends BaseTimeEntity {
         this.status = status;
     }
 
+    public void addTournamentUser(TournamentUser tournamentUser) {
+        this.getTournamentUsers().add((tournamentUser));
+    }
+
+    public void deleteTournamentUser(TournamentUser tournamentUser) {
+        this.getTournamentUsers().remove(tournamentUser);
+    }
+
+
     public void update_winner(User winner) {
         this.winner = winner;
     }
