@@ -11,6 +11,8 @@ import com.gg.server.admin.tournament.dto.TournamentAdminAddUserRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
 import com.gg.server.admin.tournament.service.TournamentAdminService;
 import com.gg.server.domain.tournament.data.Tournament;
+import com.gg.server.domain.tournament.data.TournamentUser;
+import com.gg.server.domain.tournament.data.TournamentUserRepository;
 import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentRepository;
 import com.gg.server.domain.tournament.data.TournamentUser;
