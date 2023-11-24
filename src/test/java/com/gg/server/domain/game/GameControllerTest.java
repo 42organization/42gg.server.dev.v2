@@ -59,6 +59,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @RequiredArgsConstructor
+@Transactional
 public class GameControllerTest {
     @Autowired
     GameRepository gameRepository;
@@ -114,36 +115,15 @@ public class GameControllerTest {
         rankRedisRepository.addRankData(redisHashKey, user1.getId(), userRank);
         userRank = RankRedis.from(UserDto.from(user2), season.getStartPpp(), tier.getImageUri());
         rankRedisRepository.addRankData(redisHashKey, user2.getId(), userRank);
-        for (int i = 0; i < 10; i++) {
-            Game game = gameRepository.save(new Game(season, StatusType.WAIT, Mode.RANK, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
-            Team team1 = teamRepository.save(new Team(game, 1, false));
-            Team team2 = teamRepository.save(new Team(game, 2, true));
-            List<TeamUser> teams = new ArrayList<>();
-            teams.add(teamUserRepository.save(new TeamUser(team1, user1)));
-            teams.add(teamUserRepository.save(new TeamUser(team2, user2)));
-            gameService.expUpdates(game, teams);
-            rankRedisService.updateRankRedis(teams.get(0), teams.get(1), game);
-            game = gameRepository.save(new Game(season, StatusType.WAIT, Mode.NORMAL, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
-            team1 = teamRepository.save(new Team(game, 0, false));
-            team2 = teamRepository.save(new Team(game, 0, false));
-            teamUserRepository.save(new TeamUser(team1, user1));
-            teamUserRepository.save(new TeamUser(team2, user2));
-            teams.clear();
-            teams.add(teamUserRepository.save(new TeamUser(team1, user1)));
-            teams.add(teamUserRepository.save(new TeamUser(team2, user2)));
-            game.updateStatus();
-            gameService.expUpdates(game, teams);
-            pChangeRepository.save(new PChange(game, user1, 0, true));
-            pChangeRepository.save(new PChange(game, user2, 0, true));
-        }
+
         game1 = gameRepository.save(new Game(season, StatusType.WAIT, Mode.RANK, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
         Team team1 = teamRepository.save(new Team(game1, 1, false));
         Team team2 = teamRepository.save(new Team(game1, 2, true));
         teamUserRepository.save(new TeamUser(team1, user1));
         teamUserRepository.save(new TeamUser(team2, user2));
         game2 = gameRepository.save(new Game(season, StatusType.WAIT, Mode.RANK, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
-        team1 = teamRepository.save(new Team(game1, 1, false));
-        team2 = teamRepository.save(new Team(game1, 2, true));
+        team1 = teamRepository.save(new Team(game2, 1, false));
+        team2 = teamRepository.save(new Team(game2, 2, true));
         List<TeamUser> teams = new ArrayList<>();
         teams.add(teamUserRepository.save(new TeamUser(team1, user1)));
         teams.add(teamUserRepository.save(new TeamUser(team2, user2)));
@@ -156,16 +136,15 @@ public class GameControllerTest {
         rankRedisRepository.deleteAll();
     }
 
+    // GET /pingpong/games/{gameId}
     @Nested
     @DisplayName("게임 조회 테스트")
-    class GameFindTest {
+    class GetGameInfoTest {
         /**
-         * GET /pingpong/games/{gameId}
          * getGameInfo() -> GameFindService.getGameInfo()
          */
         @Test
-        @Transactional
-        @DisplayName("유저 게임 정보 조회 테스트 성공")
+        @DisplayName("유저 쿼리 포함 성공")
         public void getGameInfoTest() throws Exception {
             //given
             String url = "/pingpong/games/" + game1.getId().toString();
@@ -184,17 +163,17 @@ public class GameControllerTest {
         }
     }
 
+    // GET /pingpong/games/normal
     @Nested
     @DisplayName("normal 게임 조회")
-    class NormalGame {
+    class NormalGameListTest {
         /**
          * GET /pingpong/games/normal?page=1&size=10
          * normalGameList() -> GameFindService.normalGameList()
          */
         @Test
-        @Transactional
-        @DisplayName("일반 게임 목록 조회")
-        public void normalGameListTest1() throws Exception {
+        @DisplayName("조회 성공")
+        public void success() throws Exception {
             //given
             String url = "/pingpong/games/normal?page=1&size=10";
             Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startTime"));
@@ -218,11 +197,33 @@ public class GameControllerTest {
          * normalGameList() -> GameFindService.normalGameListByIntra()
          */
         @Test
-        @Transactional
-        @DisplayName("유저 일반 게임 목록 조회")
-        public void normalGameListTest2() throws Exception {
+        @DisplayName("유저 쿼리 포함 성공")
+        public void successUserQuery() throws Exception {
             //given
             String url = "/pingpong/games/normal?page=1&size=10&intraId=test1";
+            for (int i = 0; i < 10; i++) {
+                Game game = gameRepository.save(new Game(season, StatusType.WAIT, Mode.RANK, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
+                Team team1 = teamRepository.save(new Team(game, 1, false));
+                Team team2 = teamRepository.save(new Team(game, 2, true));
+                List<TeamUser> teams = new ArrayList<>();
+                teams.add(teamUserRepository.save(new TeamUser(team1, user1)));
+                teams.add(teamUserRepository.save(new TeamUser(team2, user2)));
+                gameService.expUpdates(game, teams);
+                rankRedisService.updateRankRedis(teams.get(0), teams.get(1), game);
+                game = gameRepository.save(new Game(season, StatusType.WAIT, Mode.NORMAL, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
+                team1 = teamRepository.save(new Team(game, 0, false));
+                team2 = teamRepository.save(new Team(game, 0, false));
+                teamUserRepository.save(new TeamUser(team1, user1));
+                teamUserRepository.save(new TeamUser(team2, user2));
+                teams.clear();
+                teams.add(teamUserRepository.save(new TeamUser(team1, user1)));
+                teams.add(teamUserRepository.save(new TeamUser(team2, user2)));
+                game.updateStatus();
+                gameService.expUpdates(game, teams);
+                pChangeRepository.save(new PChange(game, user1, 0, true));
+                pChangeRepository.save(new PChange(game, user2, 0, true));
+            }
+
             Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startTime"));
             GameListResDto expect = gameFindService.normalGameListByIntra(pageable, "test1");
             //when
@@ -240,17 +241,17 @@ public class GameControllerTest {
         }
     }
 
+    // GET /pingpong/games/rank
     @Nested
     @DisplayName("rank 게임 조회")
-    class RankGame {
+    class RankGameListTest {
         /**
          * GET /pingpong/games/rank?page=1&size=10&seasonId=1
          * rankGameList() -> GameFindService.rankGameList()
          */
         @Test
-        @Transactional
-        @DisplayName("랭크 게임 목록 조회")
-        public void rankGameListTest1() throws Exception {
+        @DisplayName("조회 성공")
+        public void success() throws Exception {
             //given
             String url = "/pingpong/games/rank?page=1&size=10&seasonId=" + season.getId();
             Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startTime"));
@@ -274,9 +275,8 @@ public class GameControllerTest {
          * rankGameList() -> GameFindService.rankGameListByIntra()
          */
         @Test
-        @Transactional
-        @DisplayName("유저 랭크 게임 목록 조회")
-        public void rankGameListTest2() throws Exception {
+        @DisplayName("nickname 쿼리 포함 조회 성공")
+        public void successNicknameQuery() throws Exception {
             //given
             String url = "/pingpong/games/rank?page=1&size=10&seasonId=" + season.getId() + "&nickname=" + "test1";
             Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startTime"));
@@ -300,27 +300,27 @@ public class GameControllerTest {
          * allGameList() -> GameFindService.allGameList()
          */
         @Test
-        @Transactional
-        @DisplayName("랭크 게임 목록 조회 에러 테스트")
-        public void 랭크게임목록error조회() throws Exception {
+        @DisplayName("Bad Request exception 발생")
+        public void failBadRequest() throws Exception {
             //given
             String url = "/pingpong/games/rank?page=1&size=0";
             //then
             mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
-                .andExpect(status().is4xxClientError())
+                .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString();
         }
     }
 
+    // GET /pingpong/games
     @Nested
-    @DisplayName("전체 게임 조회")
-    class GameReulst {
+    @DisplayName("전체 게임 목록 조회")
+    class AllGameListTest {
         /**
          * GET /pingpong/games?page=1&size=10
          */
         @Test
-        @Transactional
-        public void 전체게임목록조회() throws Exception {
+        @DisplayName("조회 성공")
+        public void success() throws Exception {
             //given
             String url = "/pingpong/games?page=1&size=10";
             Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startTime"));
@@ -339,9 +339,12 @@ public class GameControllerTest {
             assertThat(result.getIsLast()).isEqualTo(expect.getIsLast());
         }
 
+        /**
+         * GET /pingpong/games?page=1&size=10&nickname=test1
+         */
         @Test
-        @Transactional
-        public void user전체게임목록조회() throws Exception {
+        @DisplayName("nickname 쿼리 포함 조회 성공")
+        public void suceessNicknameQuery() throws Exception {
             //given
             String url = "/pingpong/games?page=1&size=10&nickname=test1";
             Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startTime"));
@@ -359,87 +362,157 @@ public class GameControllerTest {
             assertThat(result.getGames().get(result.getGames().size() - 1).getGameId()).isEqualTo(expect.getGames().get(expect.getGames().size() - 1).getGameId());
             assertThat(result.getIsLast()).isEqualTo(expect.getIsLast());
         }
-    }
 
-
-    /**
-     * GET /pingpong/games?pageNum=1&pageSize=10&status=live
-     */
-    @Test
-    @Transactional
-    void 게임목록조회에러테스트() throws Exception {
-        String url = "/pingpong/games?pageNum=1&pageSize=10&status=live";
-        mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+        /**
+         * GET /pingpong/games?pageNum=1&pageSize=10&status=live
+         */
+        @Test
+        @DisplayName("잘못된 query parameter인 경우, Bad Request exception 발생")
+        public void failBadRequest() throws Exception {
+            String url = "/pingpong/games?pageNum=1&pageSize=10&status=live";   // LIVE 대문자여야 함
+            mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString();
-    }
+        }
 
-    /**
-     * GET /pingpong/games?page=1&size=10&status=2
-     */
-
-    /**
-     * GET /pingpong/games?page=1&size=10&status=2
-     */
-    @Test
-    @Transactional
-    void 게임목록조회에러테스트2() throws Exception {
-        String url = "/pingpong/games?page=1&size=10&status=2";
-        mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+        /**
+         * GET /pingpong/games?page=1&size=10&status=2
+         */
+        @Test
+        @DisplayName("잘못된 query parameter인 경우, Bad Request exception 발생")
+        public void failBadRequest2() throws Exception {
+            String url = "/pingpong/games?page=1&size=10&status=2";
+            mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString();
+        }
     }
 
-    /**
-     * POST /pingpong/games/rank
-     */
-    @Test
-    @Transactional
-    void 랭크게임결과입력테스트() throws Exception {
-        String url = "/pingpong/games/rank";
-        Game game = gameRepository.save(new Game(season, StatusType.WAIT, Mode.RANK, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
-        Team team1 = teamRepository.save(new Team(game, -1, false));
-        Team team2 = teamRepository.save(new Team(game, -1, false));
-        String ac1 = tokenProvider.createToken(user1.getId());
-        String ac2 = tokenProvider.createToken(user2.getId());
-        teamUserRepository.save(new TeamUser(team1, user1));
-        teamUserRepository.save(new TeamUser(team2, user2));
-        teamUserRepository.flush();
-        gameRepository.flush();
-        teamRepository.flush();
-        String content = objectMapper.writeValueAsString(new RankResultReqDto(game.getId(), team1.getId(), 1, team2.getId(), 2));
-        System.out.println(user1.getTotalExp());
-        System.out.println(user2.getTotalExp());
-        // then
-        System.out.println("=======================");
-        mockMvc.perform(post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + ac1)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(content))
+    // POST /pingpong/games/rank
+    @Nested
+    @DisplayName("랭크 게임 점수 결과 입력")
+    class CreateRankResultTest {
+        /**
+         * POST /pingpong/games/rank
+         */
+        @Test
+        @DisplayName("둘 중 한명 입력 후 나머지 한 명이 입력할 경우 conflict exception 발생")
+        public void success() throws Exception {
+            String url = "/pingpong/games/rank";
+            Game game = gameRepository.save(new Game(season, StatusType.WAIT, Mode.RANK, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
+            Team team1 = teamRepository.save(new Team(game, -1, false));
+            Team team2 = teamRepository.save(new Team(game, -1, false));
+            String ac1 = tokenProvider.createToken(user1.getId());
+            String ac2 = tokenProvider.createToken(user2.getId());
+            teamUserRepository.save(new TeamUser(team1, user1));
+            teamUserRepository.save(new TeamUser(team2, user2));
+            teamUserRepository.flush();
+            gameRepository.flush();
+            teamRepository.flush();
+            String content = objectMapper.writeValueAsString(new RankResultReqDto(game.getId(), team1.getId(), 1, team2.getId(), 2));
+            System.out.println(user1.getTotalExp());
+            System.out.println(user2.getTotalExp());
+            // then
+            System.out.println("=======================");
+            mockMvc.perform(post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + ac1)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(content))
                 .andExpect(status().isCreated())
                 .andReturn().getResponse();
-        System.out.println("=======================");
-        content = objectMapper.writeValueAsString(new RankResultReqDto(game.getId(), team2.getId(), 2, team1.getId(), 1));
-        mockMvc.perform(post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + ac2)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(content))
+            System.out.println("=======================");
+            content = objectMapper.writeValueAsString(new RankResultReqDto(game.getId(), team2.getId(), 2, team1.getId(), 1));
+            mockMvc.perform(post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + ac2)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(content))
                 .andExpect(status().isConflict())
                 .andReturn().getResponse();
-        System.out.println(user1.getTotalExp());
-        System.out.println(user2.getTotalExp());
+            System.out.println(user1.getTotalExp());
+            System.out.println(user2.getTotalExp());
+        }
+
+        // TODO : 랭크 게임 결과 입력 실패 테스트 (잘못된 점수 입력할 경우 InvalidParameterException 발생)
     }
 
-    /**
-     * GET /pingpong/games/{gameId}/result/rank
-     */
-    @Test
-    @Transactional
+    // POST /pingpong/games/normal
+    @Nested
+    @DisplayName("일반 게임 종료 버튼 클릭")
+    class CreateNormalResultTest {
+        /**
+         * POST /pingpong/games/normal
+         */
+        @Test
+        @DisplayName("게임 종료")
+        public void success() throws Exception {
+            String url = "/pingpong/games/normal";
+            Game game = gameRepository.save(new Game(season, StatusType.WAIT, Mode.NORMAL, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
+            Team team1 = teamRepository.save(new Team(game, -1, false));
+            Team team2 = teamRepository.save(new Team(game, -1, false));
+            String ac1 = tokenProvider.createToken(user1.getId());
+            String ac2 = tokenProvider.createToken(user2.getId());
+            teamUserRepository.save(new TeamUser(team1, user1));
+            teamUserRepository.save(new TeamUser(team2, user2));
+            teamUserRepository.flush();
+            gameRepository.flush();
+            teamRepository.flush();
+            String content = objectMapper.writeValueAsString(new RankResultReqDto(game.getId(), team1.getId(), 1, team2.getId(), 2));
+            System.out.println(user1.getTotalExp());
+            System.out.println(user2.getTotalExp());
+            // then
+            System.out.println("=======================");
+            mockMvc.perform(post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + ac1)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(content))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse();
+            System.out.println("=======================");
+            content = objectMapper.writeValueAsString(new RankResultReqDto(game.getId(), team2.getId(), 2, team1.getId(), 1));
+            mockMvc.perform(post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + ac2)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(content))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse();
+            System.out.println(user1.getTotalExp());
+            System.out.println(user2.getTotalExp());
+        }
+        // TODO HttpStatus.ACCEPTED 테스트 - service 함수에서 BEFORE 상태일 때 false 리턴할 경우
+    }
+
+    // GET /pingpong/games/{gameId}/result/rank
+    @Nested
     @DisplayName("랭크 게임 결과 조회")
-    public void rankGameResult() throws Exception {
-        String url = "/pingpong/games/" + game2.getId() + "/result/rank";
-        String content = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                        .contentType(MediaType.APPLICATION_JSON))
+    class GetRankPPPChangeTest {
+        /**
+         * GET /pingpong/games/{gameId}/result/rank
+         */
+        @Test
+        @DisplayName("랭크 게임 결과 조회")
+        public void successGetRankPPPChange() throws Exception {
+            String url = "/pingpong/games/" + game2.getId() + "/result/rank";
+            String content = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                    .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
-        System.out.println("result: " + content);
+            System.out.println("result: " + content);
+        }
+    }
+
+    // GET /pingpong/games/{gameId}/result/normal
+    @Nested
+    @DisplayName("일반 게임 결과 조회")
+    class GetNormalExpChangeTest {
+        /**
+         * GET /pingpong/games/{gameId}/result/normal
+         */
+        @Test
+        @DisplayName("일반 게임 결과 조회")
+        @Disabled
+        public void normalGameResult() throws Exception {
+            String url = "/pingpong/games/" + game1.getId() + "/result/normal";
+            String content = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+            System.out.println("result: " + content);
+        }
     }
 }
