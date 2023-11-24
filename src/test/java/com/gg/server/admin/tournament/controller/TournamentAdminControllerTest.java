@@ -3,16 +3,21 @@ package com.gg.server.admin.tournament.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
+import com.gg.server.admin.tournament.dto.TournamentAdminUserAddRequestDto;
 import com.gg.server.admin.tournament.service.TournamentAdminService;
 import com.gg.server.domain.tournament.data.Tournament;
+import com.gg.server.domain.tournament.data.TournamentUser;
+import com.gg.server.domain.tournament.data.TournamentUserRepository;
 import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentRepository;
 import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.tournament.type.TournamentType;
+import com.gg.server.domain.user.data.User;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.CustomRuntimeException;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
@@ -55,8 +60,11 @@ class TournamentAdminControllerTest {
     @Autowired
     TournamentRepository tournamentRepository;
 
+    @Autowired
+    TournamentUserRepository tournamentUserRepository;
+
     @Nested
-    @DisplayName("토너먼트 관리 수정 컨트롤러 테스트")
+    @DisplayName("토너먼트_관리_수정_컨트롤러_테스트")
     class TournamentAdminControllerUpdateTest {
         @Test
         @DisplayName("토너먼트_업데이트_성공")
@@ -81,9 +89,9 @@ class TournamentAdminControllerTest {
 
             // when
             String contentAsString = mockMvc.perform(patch(url)
-                .content(content)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                    .content(content)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isNoContent())
                 .andReturn().getResponse().getContentAsString();
 
@@ -116,9 +124,9 @@ class TournamentAdminControllerTest {
             String content = objectMapper.writeValueAsString(updateDto);
             // when, then
             String contentAsString = mockMvc.perform(patch(url)
-                .content(content)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                    .content(content)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isNotFound())
                 .andReturn().getResponse().getContentAsString();
 
@@ -154,9 +162,9 @@ class TournamentAdminControllerTest {
 
             // when, then
             String contentAsString = mockMvc.perform(patch(url)
-                .content(content)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                    .content(content)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isConflict())
                 .andReturn().getResponse().getContentAsString();
 
@@ -191,9 +199,9 @@ class TournamentAdminControllerTest {
 
             // when live tournament test, then
             String contentAsString = mockMvc.perform(patch(url)
-                .content(content)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                    .content(content)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString();
 
@@ -203,9 +211,9 @@ class TournamentAdminControllerTest {
 
             // when ended tournament test, then
             contentAsString = mockMvc.perform(patch(url)
-                .content(content)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                    .content(content)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString();
 
@@ -239,9 +247,9 @@ class TournamentAdminControllerTest {
             String content = objectMapper.writeValueAsString(updateDto1);
 
             String contentAsString = mockMvc.perform(patch(url)
-                .content(content)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                    .content(content)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString();
 
@@ -282,9 +290,9 @@ class TournamentAdminControllerTest {
             String content = objectMapper.writeValueAsString(updateDto1);
 
             String contentAsString = mockMvc.perform(patch(url)
-                .content(content)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                    .content(content)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString();
 
@@ -385,4 +393,191 @@ class TournamentAdminControllerTest {
         }
     }
 
+    @Nested
+    @DisplayName("관리자_토너먼트_유저_추가_컨트롤러_테스트")
+    class TournamentAdminControllerAddUserTest {
+        @Test
+        @DisplayName("유저_추가_성공")
+        void success() throws Exception {
+            // given
+            String accessToken = testDataUtils.getAdminLoginAccessToken();
+            tokenProvider.getUserIdFromAccessToken(accessToken);
+
+            Tournament tournament1 = testDataUtils.createTournament(
+                LocalDateTime.now().plusDays(2).plusHours(1),
+                LocalDateTime.now().plusDays(2).plusHours(3),
+                TournamentStatus.BEFORE);
+            Tournament tournament2 = testDataUtils.createTournament(
+                LocalDateTime.now().plusDays(3).plusHours(1),
+                LocalDateTime.now().plusDays(3).plusHours(3),
+                TournamentStatus.BEFORE);
+            User user = testDataUtils.createNewUser("test");
+            testDataUtils.createTournamentUser(user, tournament2, true);
+
+            TournamentAdminUserAddRequestDto requestDto = new TournamentAdminUserAddRequestDto(user.getIntraId());
+
+            String url = "/pingpong/admin/tournament/" + tournament1.getId() + "/users";
+            String content = objectMapper.writeValueAsString(requestDto);
+
+            // when
+            String contentAsString = mockMvc.perform(post(url)
+                    .content(content)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isNoContent())
+                .andReturn().getResponse().getContentAsString();
+
+            // then
+            System.out.println(contentAsString);
+            tournament1.getTournamentUsers().stream().filter(tu->tu.getUser().equals(user)).findAny()
+                .orElseThrow(()->new CustomRuntimeException("토너먼트 유저 리스트에 추가 안됨", ErrorCode.BAD_REQUEST));
+            tournamentUserRepository.findAllByTournamentId(tournament1.getId())
+                .stream().filter(tu-> tu.getUser().getIntraId().equals(requestDto.getIntraId()))
+                .findAny().orElseThrow(()->new CustomRuntimeException("토너먼트 유저 테이블에 추가 안됨", ErrorCode.BAD_REQUEST));
+        }
+
+        @Test
+        @DisplayName("토너먼트_없는_경우")
+        void tournamentNotFound() throws Exception {
+            // given
+            String accessToken = testDataUtils.getAdminLoginAccessToken();
+            tokenProvider.getUserIdFromAccessToken(accessToken);
+
+            User user = testDataUtils.createNewUser("test");
+
+            TournamentAdminUserAddRequestDto requestDto = new TournamentAdminUserAddRequestDto(user.getIntraId());
+
+            String url = "/pingpong/admin/tournament/" + 9999 + "/users";
+
+            String content = objectMapper.writeValueAsString(requestDto);
+
+            // when, then
+            String contentAsString = mockMvc.perform(post(url)
+                    .content(content)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isNotFound())
+                .andReturn().getResponse().getContentAsString();
+
+        }
+
+        @Test
+        @DisplayName("이미_시작했거나_종료된_토너먼트_수정")
+        void canNotUpdate() throws Exception {
+            // given
+            String accessToken = testDataUtils.getAdminLoginAccessToken();
+            tokenProvider.getUserIdFromAccessToken(accessToken);
+
+            Tournament tournament = testDataUtils.createTournament(
+                LocalDateTime.now().plusDays(0).plusHours(-1),
+                LocalDateTime.now().plusDays(0).plusHours(1),
+                TournamentStatus.LIVE);
+            User user = testDataUtils.createNewUser("test");
+
+            TournamentAdminUserAddRequestDto requestDto = new TournamentAdminUserAddRequestDto(user.getIntraId());
+
+            String url = "/pingpong/admin/tournament/" + tournament.getId() + "/users";
+
+            String content = objectMapper.writeValueAsString(requestDto);
+
+            // when, then
+            String contentAsString = mockMvc.perform(post(url)
+                    .content(content)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isBadRequest())
+                .andReturn().getResponse().getContentAsString();
+        }
+
+        @Test
+        @DisplayName("찾을_수_없는_유저")
+        void userNotFound() throws Exception {
+            // given
+            String accessToken = testDataUtils.getAdminLoginAccessToken();
+            tokenProvider.getUserIdFromAccessToken(accessToken);
+
+            Tournament tournament = testDataUtils.createTournament(
+                LocalDateTime.now().plusDays(2).plusHours(1),
+                LocalDateTime.now().plusDays(2).plusHours(3),
+                TournamentStatus.BEFORE);
+
+            TournamentAdminUserAddRequestDto requestDto = new TournamentAdminUserAddRequestDto("nobody");
+
+            String url = "/pingpong/admin/tournament/" + tournament.getId() + "/users";
+
+            String content = objectMapper.writeValueAsString(requestDto);
+
+            // when, then
+            String contentAsString = mockMvc.perform(post(url)
+                    .content(content)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isNotFound())
+                .andReturn().getResponse().getContentAsString();
+        }
+
+        @Test
+        @DisplayName("해당_토너먼트_참가자인_경우")
+        void alreadyTournamentParticipant() throws Exception {
+            // given
+            String accessToken = testDataUtils.getAdminLoginAccessToken();
+            tokenProvider.getUserIdFromAccessToken(accessToken);
+
+            Tournament tournament = testDataUtils.createTournament(
+                LocalDateTime.now().plusDays(2).plusHours(1),
+                LocalDateTime.now().plusDays(2).plusHours(3),
+                TournamentStatus.BEFORE);
+
+            User user = testDataUtils.createNewUser("test");
+            TournamentUser participant = testDataUtils.createTournamentUser(user, tournament, false);
+            TournamentAdminUserAddRequestDto requestDto = new TournamentAdminUserAddRequestDto(user.getIntraId());
+
+            String url = "/pingpong/admin/tournament/" + tournament.getId() + "/users";
+            String content = objectMapper.writeValueAsString(requestDto);
+
+            // when, then
+            String contentAsString = mockMvc.perform(post(url)
+                    .content(content)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isConflict())
+                .andReturn().getResponse().getContentAsString();
+        }
+
+        @Test
+        @DisplayName("토너먼트_대기자_신청")
+        void waitUserTest() throws Exception {
+            // given
+            String accessToken = testDataUtils.getAdminLoginAccessToken();
+            tokenProvider.getUserIdFromAccessToken(accessToken);
+
+            Tournament tournament = testDataUtils.createTournament(
+                LocalDateTime.now().plusDays(2).plusHours(1),
+                LocalDateTime.now().plusDays(2).plusHours(3),
+                TournamentStatus.BEFORE);
+
+            User user = testDataUtils.createNewUser("test0");
+            for (int i=1; i<=8; i++) {
+                testDataUtils.createTournamentUser(testDataUtils.createNewUser("test" + i), tournament, true);
+            }
+            TournamentAdminUserAddRequestDto requestDto = new TournamentAdminUserAddRequestDto(user.getIntraId());
+
+            String url = "/pingpong/admin/tournament/" + tournament.getId() + "/users";
+            String content = objectMapper.writeValueAsString(requestDto);
+
+            // when
+            String contentAsString = mockMvc.perform(post(url)
+                    .content(content)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isNoContent())
+                .andReturn().getResponse().getContentAsString();
+
+            // then
+            tournamentUserRepository.findAllByTournamentId(tournament.getId()).stream()
+                .filter(tu->tu.getUser().getIntraId().equals(user.getIntraId())).findAny()
+                .filter(tu->!tu.isJoined()).orElseThrow(()->new CustomRuntimeException("waitlist 제대로 등록 안됨", ErrorCode.BAD_REQUEST));
+        }
+
+    }
 }
