@@ -5,13 +5,16 @@ import java.time.LocalDateTime;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TournamentAdminUpdateRequestDto {
     @NotNull(message = "제목이 필요합니다.")
     private String title;

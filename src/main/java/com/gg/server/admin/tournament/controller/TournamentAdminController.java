@@ -8,6 +8,7 @@ import org.checkerframework.checker.index.qual.Positive;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,9 +24,8 @@ public class TournamentAdminController {
 
     /**
      * 토너먼트 정보 수정
-     * @param tournamentId 업데이트 하고자 하는 토너먼트 id
+     * @param tournamentId 업데이트하고자 하는 토너먼트 id
      * @param tournamentAdminUpdateRequestDto 요청 데이터
-     * @return
      */
     @PatchMapping("/{tournamentId}")
     public ResponseEntity<Void> updateTournamentInfo(@PathVariable @Positive Long tournamentId,
@@ -35,4 +35,14 @@ public class TournamentAdminController {
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }
 
+    /**
+     * 토너먼트 정보 삭제
+     * @param tournamentId 삭제하고자 하는 토너먼트 id
+     */
+    @DeleteMapping("/{tournamentId}")
+    public ResponseEntity<Void> deleteTournamentInfo(@PathVariable @Positive Long tournamentId) {
+        tournamentAdminService.deleteTournamentInfo(tournamentId);
+
+        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+    }
 }

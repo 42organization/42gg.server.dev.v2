@@ -7,10 +7,13 @@ import static org.mockito.BDDMockito.given;
 
 import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
 import com.gg.server.domain.tournament.data.Tournament;
+import com.gg.server.domain.tournament.data.TournamentGame;
+import com.gg.server.domain.tournament.data.TournamentGameRepository;
 import com.gg.server.domain.tournament.data.TournamentRepository;
 import com.gg.server.domain.tournament.exception.TournamentConflictException;
 import com.gg.server.domain.tournament.exception.TournamentNotFoundException;
 import com.gg.server.domain.tournament.exception.TournamentUpdateException;
+import com.gg.server.domain.tournament.type.TournamentRound;
 import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.tournament.type.TournamentType;
 import com.gg.server.global.exception.custom.InvalidParameterException;
@@ -30,11 +33,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class TournamentAdminServiceTest {
     @Mock
     TournamentRepository tournamentRepository;
+    @Mock
+    TournamentGameRepository tournamentGameRepository;
     @InjectMocks
     TournamentAdminService tournamentAdminService;
 
-
-    // 토너먼트 수정 서비스 테스트
     @Nested
     @DisplayName("토너먼트 관리자 서비스 수정 테스트")
     class TournamentAdminServiceUpdateTest {
@@ -47,7 +50,7 @@ class TournamentAdminServiceTest {
             TournamentAdminUpdateRequestDto updateRequestDto = makeTournamentAdminUpdateRequestDto(
                 getTargetTime(3, 1), getTargetTime(3, 3));
             given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
-            given(tournamentRepository.findAllByStatus(TournamentStatus.BEFORE)).willReturn(tournamentList);
+            given(tournamentRepository.findAllByStatusIsNot(TournamentStatus.END)).willReturn(tournamentList);
             given(tournamentRepository.save(any(Tournament.class))).willReturn(tournament);
             // when
             Tournament changedTournament = tournamentAdminService.updateTournamentInfo(1L, updateRequestDto);
@@ -127,13 +130,60 @@ class TournamentAdminServiceTest {
             TournamentAdminUpdateRequestDto updateRequestDto = makeTournamentAdminUpdateRequestDto(
                 LocalDateTime.now().plusDays(2).plusHours(3), LocalDateTime.now().plusDays(2).plusHours(5));
             given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
-            given(tournamentRepository.findAllByStatus(TournamentStatus.BEFORE)).willReturn(tournamentList);
+            given(tournamentRepository.findAllByStatusIsNot(TournamentStatus.END)).willReturn(tournamentList);
             // when, then
             assertThatThrownBy(() -> tournamentAdminService.updateTournamentInfo(tournament.getId(), updateRequestDto))
                 .isInstanceOf(TournamentConflictException.class);
         }
     }
 
+    // 토너먼트 삭제 서비스 테스트
+    @Nested
+    @DisplayName("토너먼트 관리자 서비스 삭제 테스트")
+    class TournamentAdminServiceDeleteTest {
+        @Test
+        @DisplayName("토너먼트_삭제_성공")
+        void success() {
+            // given
+            int tournamentGameCnt = 7;
+            Tournament tournament = makeTournament(1L, TournamentStatus.BEFORE,
+                getTargetTime(2, 1), getTargetTime(2, 3));
+            List<TournamentGame> tournamentGameList = makeTournamentGames(1L, tournament, tournamentGameCnt);
+            given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
+            given(tournamentGameRepository.findAllByTournamentId(tournament.getId())).willReturn(tournamentGameList);
+            // when, then
+            tournamentAdminService.deleteTournamentInfo(tournament.getId());
+        }
+        @Test
+        @DisplayName("타겟_토너먼트_없음")
+        public void tournamentNotFound() {
+            // given
+            Tournament tournament = makeTournament(1L, TournamentStatus.BEFORE,
+                getTargetTime(2, 1), getTargetTime(2, 3));
+            given(tournamentRepository.findById(1L)).willReturn(Optional.empty());
+            // when, then
+            assertThatThrownBy(() -> tournamentAdminService.deleteTournamentInfo(tournament.getId()))
+                .isInstanceOf(TournamentNotFoundException.class);
+        }
+
+        @Test
+        @DisplayName("토너먼트_삭제_불가_상태")
+        public void canNotDelete() {
+            // given
+            Tournament liveTournament = makeTournament(1L, TournamentStatus.LIVE,
+                getTargetTime(0, -1), getTargetTime(0, 1));
+            Tournament endTournament = makeTournament(1L, TournamentStatus.END,
+                getTargetTime(-2, 5), getTargetTime(-2, 7));
+            given(tournamentRepository.findById(liveTournament.getId())).willReturn(Optional.of(liveTournament));
+            given(tournamentRepository.findById(endTournament.getId())).willReturn(Optional.of(endTournament));
+            // when, then
+            assertThatThrownBy(() -> tournamentAdminService.deleteTournamentInfo(liveTournament.getId()))
+                .isInstanceOf(TournamentUpdateException.class);
+            assertThatThrownBy(() -> tournamentAdminService.deleteTournamentInfo(endTournament.getId()))
+                .isInstanceOf(TournamentUpdateException.class);
+        }
+
+    }
 
     /**
      * 현재 시간에서 days hours, 만큼 차이나는 시간을 구한다.
@@ -199,5 +249,21 @@ class TournamentAdminServiceTest {
             endTime,
             TournamentType.ROOKIE
         );
+    }
+
+    /**
+     * cnt 사이즈의 토너먼트 게임 리스트 생성
+     * @param id 토너먼트 게임 id
+     * @param tournament 해당 토너먼트
+     * @param cnt 토너먼트 게임 수
+     * @return
+     */
+    private List<TournamentGame> makeTournamentGames(Long id, Tournament tournament, int cnt) {
+        List<TournamentGame> tournamentGameList = new ArrayList<>();
+        TournamentRound [] values = TournamentRound.values();
+        while (--cnt >= 0) {
+            tournamentGameList.add(new TournamentGame(id, null, tournament, values[cnt]));
+        }
+        return tournamentGameList;
     }
 }

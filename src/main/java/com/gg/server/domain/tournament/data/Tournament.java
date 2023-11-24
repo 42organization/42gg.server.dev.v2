@@ -6,6 +6,7 @@ import com.gg.server.domain.user.data.User;
 import com.gg.server.global.utils.BaseTimeEntity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -52,10 +53,10 @@ public class Tournament extends BaseTimeEntity {
     private User winner;
 
     @OneToMany(mappedBy = "tournament")
-    private List<TournamentGame> tournamentGames;
+    private List<TournamentGame> tournamentGames = new ArrayList<>();
 
     @OneToMany(mappedBy = "tournament")
-    private List<TournamentUser> tournamentUsers;
+    private List<TournamentUser> tournamentUsers = new ArrayList<>();
 
     @Builder
     public Tournament(String title, String contents, LocalDateTime startTime, LocalDateTime endTime, TournamentType type, TournamentStatus status) {
@@ -98,5 +99,4 @@ public class Tournament extends BaseTimeEntity {
         this.type = type;
         this.status = status;
     }
-
 }
