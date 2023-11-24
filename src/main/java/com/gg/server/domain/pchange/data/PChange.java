@@ -47,10 +47,6 @@ public class PChange extends BaseTimeEntity {
         this.isChecked = isChecked;
     }
 
-    public void userCheckResult() {
-        this.isChecked = true;
-    }
-
     public void checkPChange() {
         this.isChecked = true;
     }
