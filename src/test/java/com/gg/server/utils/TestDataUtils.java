@@ -24,7 +24,13 @@ import com.gg.server.domain.tier.data.TierRepository;
 import com.gg.server.domain.tournament.data.*;
 import com.gg.server.domain.tournament.data.TournamentRepository;
 import com.gg.server.domain.tournament.dto.TournamentResponseDto;
+import com.gg.server.domain.tournament.data.Tournament;
+import com.gg.server.domain.tournament.data.TournamentRepository;
+import com.gg.server.domain.tournament.data.TournamentGame;
+import com.gg.server.domain.tournament.data.TournamentGameRepository;
 import com.gg.server.domain.tournament.type.TournamentRound;
+import com.gg.server.domain.tournament.data.TournamentUser;
+import com.gg.server.domain.tournament.data.TournamentUserRepository;
 import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.tournament.type.TournamentType;
 import com.gg.server.domain.user.data.User;
@@ -99,6 +105,19 @@ public class TestDataUtils {
                 .roleType(RoleType.USER)
                 .totalExp(1000)
                 .build();
+        userRepository.save(user);
+        return user;
+    }
+
+    public User createNewUser(String intraId){
+        User user = User.builder()
+            .eMail("email")
+            .intraId(intraId)
+            .racketType(RacketType.PENHOLDER)
+            .snsNotiOpt(SnsType.NONE)
+            .roleType(RoleType.USER)
+            .totalExp(1000)
+            .build();
         userRepository.save(user);
         return user;
     }
@@ -270,10 +289,10 @@ public class TestDataUtils {
 
     /**
      * 테스트용 토너먼트 반환. 매개변수 값들만 초기화
-     * @param startTime
-     * @param endTime
-     * @param status
-     * @return
+     * @param startTime 시작 시간
+     * @param endTime 종료 시간
+     * @param status 토너먼트 상태
+     * @return 테스트용 토너먼트
      */
     public Tournament createTournament(LocalDateTime startTime, LocalDateTime endTime, TournamentStatus status) {
         Tournament tournament = Tournament.builder()
@@ -305,10 +324,10 @@ public class TestDataUtils {
 
     /**
      * 테스트용 토너먼트 RequestDto 반환. 매개변수 값들만 초기화
-     * @param startTime
-     * @param endTime
-     * @param type
-     * @return
+     * @param startTime 시작 시간
+     * @param endTime 종료 시간
+     * @param type 토너먼트 종류
+     * @return 테스트용 토너먼트 RequestDto
      */
     public TournamentAdminUpdateRequestDto createUpdateRequestDto(LocalDateTime startTime, LocalDateTime endTime, TournamentType type) {
         return new TournamentAdminUpdateRequestDto(
@@ -320,10 +339,10 @@ public class TestDataUtils {
     }
 
     /**
-     * 테스트용 토너먼트 게임 리스트 반환. 매개변수 값들만 초기화
-     * @param tournament
-     * @param cnt
-     * @return
+     * <p>테스트용 토너먼트 게임 리스트 반환. 매개변수 값들만 초기화</p>
+     * @param tournament 토너먼트 게임에 넣어 줄 토너먼트
+     * @param cnt 반환 리스트 크기, 8강기준 7개
+     * @return 토너먼트 게임 리스트
      */
     public List<TournamentGame> createTournamentGameList(Tournament tournament, int cnt) {
         List<TournamentGame> tournamentGameList = new ArrayList<>();
@@ -368,5 +387,18 @@ public class TestDataUtils {
             }
         }
         return tournamentResponseDtos;
+    }
+
+    /**
+     * <p>토너먼트 유저 생성 및 저장</p>
+     * @param user 토너먼트 참가 신청 유저
+     * @param tournament 해당 토너먼트
+     * @param isJoined 참가자 1, 대기자 0
+     * @return
+     */
+    public TournamentUser createTournamentUser(User user, Tournament tournament, boolean isJoined) {
+        TournamentUser tournamentUser = new TournamentUser(user, tournament, isJoined);
+        tournament.getTournamentUsers().add(tournamentUser);
+        return tournamentUserRepository.save(tournamentUser);
     }
 }
