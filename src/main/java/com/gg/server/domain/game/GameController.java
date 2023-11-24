@@ -68,7 +68,7 @@ public class GameController {
     }
 
     @PostMapping("/rank")
-    synchronized ResponseEntity createRankResult(@Valid @RequestBody RankResultReqDto reqDto, @Parameter(hidden = true) @Login UserDto user) {
+    synchronized ResponseEntity<Void> createRankResult(@Valid @RequestBody RankResultReqDto reqDto, @Parameter(hidden = true) @Login UserDto user) {
         if (reqDto.getMyTeamScore() + reqDto.getEnemyTeamScore() > 3 || reqDto.getMyTeamScore() == reqDto.getEnemyTeamScore()) {
             throw new InvalidParameterException("점수를 잘못 입력했습니다.", ErrorCode.VALID_FAILED);
         }
@@ -76,14 +76,14 @@ public class GameController {
             throw new ScoreNotMatchedException();
         }
         rankRedisService.updateAllTier(reqDto.getGameId());
-        return new ResponseEntity(HttpStatus.CREATED);
+        return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
 
     @PostMapping("/normal")
-    ResponseEntity createNormalResult(@Valid @RequestBody NormalResultReqDto reqDto, @Parameter(hidden = true) @Login UserDto user) {
+    ResponseEntity<Void> createNormalResult(@Valid @RequestBody NormalResultReqDto reqDto, @Parameter(hidden = true) @Login UserDto user) {
         if (gameService.normalExpResult(reqDto, user.getId()))
-            return new ResponseEntity(HttpStatus.CREATED);
-        return new ResponseEntity(HttpStatus.ACCEPTED);
+            return new ResponseEntity<Void>(HttpStatus.CREATED);
+        return new ResponseEntity<Void>(HttpStatus.ACCEPTED);
     }
 
     @GetMapping("/{gameId}/result/normal")
