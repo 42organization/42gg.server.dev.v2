@@ -1,7 +1,6 @@
 package com.gg.server.admin.tournament.service;
 
 import com.gg.server.admin.tournament.dto.TournamentAdminAddUserRequestDto;
-import com.gg.server.admin.tournament.dto.TournamentAdminAddUserResponseDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
 import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentGame;
@@ -38,7 +37,6 @@ public class TournamentAdminService {
     private static final long ALLOWED_MINIMAL_START_DAYS = 2;
     // 토너먼트 최소 진행 시간 (n시간)
     private static final long MINIMUM_TOURNAMENT_DURATION = 2;
-
     /**
      * <p>토너먼트 업데이트 Method</p>
      * @param tournamentId  업데이트할 토너먼트 id
