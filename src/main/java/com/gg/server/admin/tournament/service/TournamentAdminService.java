@@ -3,17 +3,18 @@ package com.gg.server.admin.tournament.service;
 import com.gg.server.admin.tournament.dto.TournamentAdminAddUserRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminAddUserResponseDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
-import com.gg.server.admin.tournament.dto.TournamentCreateRequestDto;
-import com.gg.server.admin.tournament.exception.TournamentTitleDupException;
-import com.gg.server.domain.tournament.data.Tournament;
+import com.gg.server.admin.tournament.dto.TournamentAdminCreateRequestDto;
 import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentGameRepository;
+import com.gg.server.domain.tournament.exception.TournamentTitleConflictException;
+import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentRepository;
 import com.gg.server.domain.tournament.data.TournamentUser;
 import com.gg.server.domain.tournament.data.TournamentUserRepository;
 import com.gg.server.domain.tournament.exception.TournamentConflictException;
 import com.gg.server.domain.tournament.exception.TournamentNotFoundException;
 import com.gg.server.domain.tournament.exception.TournamentUpdateException;
+import com.gg.server.domain.tournament.type.TournamentRound;
 import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
@@ -41,6 +42,32 @@ public class TournamentAdminService {
     private static final long ALLOWED_MINIMAL_START_DAYS = 2;
     // 토너먼트 최소 진행 시간 (n시간)
     private static final long MINIMUM_TOURNAMENT_DURATION = 2;
+
+    /***
+     * 토너먼트 생성 Method
+     * @param tournamentAdminCreateRequestDto 토너먼트 생성에 필요한 데이터
+     * @return 새로 생성된 tournament
+     */
+    @Transactional
+    public Tournament createTournament(TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto) {
+        Tournament tournament = new Tournament(
+                tournamentAdminCreateRequestDto.getTitle(),
+                tournamentAdminCreateRequestDto.getContents(),
+                tournamentAdminCreateRequestDto.getStartTime(),
+                tournamentAdminCreateRequestDto.getEndTime(),
+                tournamentAdminCreateRequestDto.getType(),
+                null,
+                null,
+                null,
+                TournamentStatus.BEFORE
+        );
+        checkTournamentTitle(tournamentAdminCreateRequestDto.getTitle());
+        checkValidTournamentTime(tournamentAdminCreateRequestDto.getStartTime(), tournamentAdminCreateRequestDto.getEndTime());
+        checkConflictedTournament(-1L, tournamentAdminCreateRequestDto.getStartTime(), tournamentAdminCreateRequestDto.getEndTime());
+        createTournamentGame(tournament);
+        return tournamentRepository.save(tournament);
+    }
+
     /**
      * <p>토너먼트 업데이트 Method</p>
      * @param tournamentId  업데이트할 토너먼트 id
@@ -66,6 +93,19 @@ public class TournamentAdminService {
         return tournamentRepository.save(targetTournament);
     }
 
+    /***
+     * 토너먼트 게임 테이블 생성 Method
+     * @param tournament 토너먼트 게임에 매칭될 토너먼트
+     */
+    private void createTournamentGame(Tournament tournament) {
+        TournamentRound[] rounds = TournamentRound.values();
+        for (TournamentRound round : rounds) {
+            TournamentGame tournamentGame = new TournamentGame(null, tournament, round);
+            tournament.addTournamentGame(tournamentGame);
+            tournamentGameRepository.save(tournamentGame);
+        }
+    }
+
     /**
      * <p>토너먼트 삭제 매서드</p>
      * <p>토너먼트는 BEFORE 인 경우에만 삭제 가능하다.</p>
@@ -82,6 +122,16 @@ public class TournamentAdminService {
         List<TournamentGame> tournamentGameList = tournamentGameRepository.findAllByTournamentId(targetTournament.getId());
         tournamentGameRepository.deleteAll(tournamentGameList);
         tournamentRepository.deleteById(tournamentId);
+    }
+
+    /***
+     * 토너먼트 제목 중복 체크
+     * @param tournamentTitle 요청 데이터에서 받아온 토너먼트 제목
+     * @throws TournamentTitleConflictException 토너먼트의 제목이 겹칠 때
+     */
+    private void checkTournamentTitle(String tournamentTitle) {
+        tournamentRepository.findByTitle(tournamentTitle).ifPresent(
+                a-> {throw new TournamentTitleConflictException();});
     }
 
     /**
