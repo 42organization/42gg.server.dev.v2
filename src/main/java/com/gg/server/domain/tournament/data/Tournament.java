@@ -68,6 +68,18 @@ public class Tournament extends BaseTimeEntity {
         this.status = status;
     }
 
+    @Builder
+    public Tournament(String title, String contents, LocalDateTime startTime, LocalDateTime endTime, TournamentType type, User winner, List<TournamentGame> tournamentGames, List<TournamentUser> tournamentUsers, TournamentStatus status) {
+        this.title = title;
+        this.contents = contents;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.type = type;
+        this.status = status;
+        this.tournamentGames = tournamentGames != null ? tournamentGames : new ArrayList<>();
+        this.tournamentUsers = tournamentUsers != null ? tournamentUsers : new ArrayList<>();
+    }
+
     static public Tournament of(String title, String contents, LocalDateTime startTime, LocalDateTime endTime, TournamentType type, TournamentStatus status) {
         return Tournament.builder()
                 .title(title)
@@ -98,6 +110,10 @@ public class Tournament extends BaseTimeEntity {
         this.endTime = endTime;
         this.type = type;
         this.status = status;
+    }
+
+    public void addTournamentGame(TournamentGame tournamentGame) {
+        this.tournamentGames.add(tournamentGame);
     }
 
     public void addTournamentUser(@NotNull TournamentUser tournamentUser) {
