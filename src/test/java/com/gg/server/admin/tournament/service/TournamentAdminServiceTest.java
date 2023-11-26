@@ -1,10 +1,10 @@
 package com.gg.server.admin.tournament.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
+import com.gg.server.admin.tournament.dto.TournamentAdminCreateRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminAddUserRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
 import com.gg.server.domain.tournament.data.Tournament;
@@ -15,6 +15,7 @@ import com.gg.server.domain.tournament.data.TournamentUser;
 import com.gg.server.domain.tournament.data.TournamentUserRepository;
 import com.gg.server.domain.tournament.exception.TournamentConflictException;
 import com.gg.server.domain.tournament.exception.TournamentNotFoundException;
+import com.gg.server.domain.tournament.exception.TournamentTitleConflictException;
 import com.gg.server.domain.tournament.exception.TournamentUpdateException;
 import com.gg.server.domain.tournament.type.TournamentRound;
 import com.gg.server.domain.tournament.type.TournamentStatus;
@@ -30,17 +31,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import com.gg.server.admin.tournament.dto.TournamentCreateRequestDto;
-import com.gg.server.domain.tournament.data.Tournament;
-import com.gg.server.domain.tournament.data.TournamentRepository;
-import com.gg.server.domain.tournament.type.TournamentType;
-import org.junit.jupiter.api.Assertions;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -56,6 +54,134 @@ class TournamentAdminServiceTest {
     @InjectMocks
     TournamentAdminService tournamentAdminService;
 
+    // 토너먼트 생성 서비스 테스트
+    @Nested
+    @DisplayName("토너먼트 관리자 생성 서비스 테스트")
+    class TournamentAdminServiceCreateTest {
+        @Test
+        @DisplayName("토너먼트 생성 성공")
+        void success() {
+            // given
+            TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto = makeTournamentCreateRequestDto(
+                    "1st tournament",
+                    getTargetTime(3, 1), getTargetTime(3, 3));
+            List<Tournament> tournamentList = makeTournaments(1L, 2, getTargetTime(2, 1));
+            Tournament tournament = tournamentList.get(0);
+            TournamentGame tournamentGame = createTournamentGame(tournament, TournamentRound.THE_FINAL);
+
+            given(tournamentRepository.findByTitle(tournament.getTitle())).willReturn(Optional.empty());
+            given(tournamentRepository.findAllByStatusIsNot(TournamentStatus.END)).willReturn(tournamentList);
+            given(tournamentRepository.save(Mockito.any(Tournament.class))).willReturn(tournament);
+            given(tournamentGameRepository.save(Mockito.any(TournamentGame.class))).willReturn(tournamentGame);
+
+            // when
+            Tournament newTournament = tournamentAdminService.createTournament(tournamentAdminCreateRequestDto);
+
+            // then
+            assertThat(tournament.getTitle()).isEqualTo(newTournament.getTitle());
+            assertThat(tournament.getContents()).isEqualTo(newTournament.getContents());
+            assertThat(tournament.getStartTime()).isEqualTo(newTournament.getStartTime());
+            assertThat(tournament.getEndTime()).isEqualTo(newTournament.getEndTime());
+            assertThat(tournament.getType()).isEqualTo(newTournament.getType());
+            assertThat(tournament.getWinner()).isEqualTo(newTournament.getWinner());
+            assertThat(tournament.getTournamentGames()).isEqualTo(newTournament.getTournamentGames());
+            assertThat(tournament.getTournamentUsers()).isEqualTo(newTournament.getTournamentUsers());
+        }
+
+        @Test
+        @DisplayName("토너먼트 제목 중복")
+        public void titleDup() {
+            //given
+            Tournament tournament = makeTournament(1L, TournamentStatus.BEFORE,
+                getTargetTime(0, -1), getTargetTime(0, 1));
+            TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto = makeTournamentCreateRequestDto(
+                    "1st tournament",
+                    getTargetTime(3, 1), getTargetTime(3, 3));
+            given(tournamentRepository.findByTitle(tournament.getTitle())).willReturn(Optional.of(tournament));
+            // when, then
+            assertThatThrownBy(() -> tournamentAdminService.createTournament(tournamentAdminCreateRequestDto))
+                    .isInstanceOf(TournamentTitleConflictException.class);
+        }
+
+        @Test
+        @DisplayName("유효하지 않은 시간 입력")
+        public void invalidTime() {
+            //given
+            Tournament tournament = makeTournament(1L, TournamentStatus.BEFORE,
+                    getTargetTime(0, 0), getTargetTime(0, 1));
+
+            TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto1 = makeTournamentCreateRequestDto(
+                    "1st tournament",
+                    getTargetTime(1, 1), getTargetTime(1, 3));
+            TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto2 = makeTournamentCreateRequestDto(
+                    "1st tournament",
+                    getTargetTime(3, 3), getTargetTime(3, 1));
+            TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto3 = makeTournamentCreateRequestDto(
+                    "1st tournament",
+                    getTargetTime(3, 3), getTargetTime(3, 3));
+            TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto4 = makeTournamentCreateRequestDto(
+                    "1st tournament",
+                    getTargetTime(3, 1), getTargetTime(3, 2));
+
+            given(tournamentRepository.findByTitle(tournament.getTitle())).willReturn(Optional.empty());
+            // when, then
+            assertThatThrownBy(() -> tournamentAdminService.createTournament(tournamentAdminCreateRequestDto1))
+                    .isInstanceOf(InvalidParameterException.class);
+            assertThatThrownBy(() -> tournamentAdminService.createTournament(tournamentAdminCreateRequestDto2))
+                    .isInstanceOf(InvalidParameterException.class);
+            assertThatThrownBy(() -> tournamentAdminService.createTournament(tournamentAdminCreateRequestDto3))
+                    .isInstanceOf(InvalidParameterException.class);
+            assertThatThrownBy(() -> tournamentAdminService.createTournament(tournamentAdminCreateRequestDto4))
+                    .isInstanceOf(InvalidParameterException.class);
+        }
+
+        @Test
+        @DisplayName("기존에 있는 토너먼트와 겹치는 토너먼트 시간")
+        public void tournamentTimeConflict() {
+            // given
+            List<Tournament> tournamentList = makeTournaments(1L, 2, getTargetTime(3, 1));
+            Tournament tournament = tournamentList.get(0);
+            TournamentAdminCreateRequestDto createRequestDto1 = makeTournamentCreateRequestDto(
+                    "1st tournament",
+                    getTargetTime(3, 2), getTargetTime(3, 5));
+            TournamentAdminCreateRequestDto createRequestDto2 = makeTournamentCreateRequestDto(
+                    "1st tournament",
+                    getTargetTime(3, 0), getTargetTime(3, 2));
+            TournamentAdminCreateRequestDto createRequestDto3 = makeTournamentCreateRequestDto(
+                    "1st tournament",
+                    getTargetTime(3, 0), getTargetTime(3, 4));
+            TournamentAdminCreateRequestDto createRequestDto4 = makeTournamentCreateRequestDto(
+                    "1st tournament",
+                    getTargetTime(3, 1), getTargetTime(3, 5));
+            TournamentAdminCreateRequestDto createRequestDto5 = makeTournamentCreateRequestDto(
+                    "1st tournament",
+                    getTargetTime(2, 3), getTargetTime(3, 1));
+            TournamentAdminCreateRequestDto createRequestDto6 = makeTournamentCreateRequestDto(
+                    "1st tournament",
+                    getTargetTime(2, 3), getTargetTime(3, 3));
+            TournamentAdminCreateRequestDto createRequestDto7 = makeTournamentCreateRequestDto(
+                    "1st tournament",
+                    LocalDateTime.now().plusDays(2).plusMinutes(30), LocalDateTime.now().plusDays(3).plusHours(1));
+            given(tournamentRepository.findByTitle(tournament.getTitle())).willReturn(Optional.empty());
+            given(tournamentRepository.findAllByStatusIsNot(TournamentStatus.END)).willReturn(tournamentList);
+
+            // when, then
+            assertThatThrownBy(() -> tournamentAdminService.createTournament(createRequestDto1))
+                    .isInstanceOf(TournamentConflictException.class);
+            assertThatThrownBy(() -> tournamentAdminService.createTournament(createRequestDto2))
+                    .isInstanceOf(TournamentConflictException.class);
+            assertThatThrownBy(() -> tournamentAdminService.createTournament(createRequestDto3))
+                    .isInstanceOf(TournamentConflictException.class);
+            assertThatThrownBy(() -> tournamentAdminService.createTournament(createRequestDto4))
+                    .isInstanceOf(TournamentConflictException.class);
+            assertThatThrownBy(() -> tournamentAdminService.createTournament(createRequestDto5))
+                    .isInstanceOf(TournamentConflictException.class);
+            assertThatThrownBy(() -> tournamentAdminService.createTournament(createRequestDto6))
+                    .isInstanceOf(TournamentConflictException.class);
+            assertThatThrownBy(() -> tournamentAdminService.createTournament(createRequestDto7))
+                    .isInstanceOf(TournamentConflictException.class);
+        }
+    }
 
     // 토너먼트 수정 서비스 테스트
     @Nested
@@ -292,6 +418,33 @@ class TournamentAdminServiceTest {
     }
 
     /**
+     * 토너먼트 생성 requestDto
+     * @param startTime 토너먼트 시작 시간
+     * @param endTime 토너먼트 종료 시간
+     * @return
+     */
+    private TournamentAdminCreateRequestDto makeTournamentCreateRequestDto(String title, LocalDateTime startTime, LocalDateTime endTime) {
+        return new TournamentAdminCreateRequestDto(
+                title,
+                "제 1회 루키전 많관부!!",
+                startTime,
+                endTime,
+                TournamentType.ROOKIE
+        );
+    }
+
+    /**
+     * 토너먼트 게임 테이블 생성
+     * @param tournament 토너먼트
+     * @param round 몇 번째 게임인지에 대한 정보
+     * @return 새로 생성된 토너먼트 게임
+     */
+    private TournamentGame createTournamentGame(Tournament tournament, TournamentRound round) {
+        TournamentGame tournamentGame = new TournamentGame(null, tournament, round);
+        return tournamentGameRepository.save(tournamentGame);
+    }
+
+    /**
      * 현재 시간에서 days hours, 만큼 차이나는 시간을 구한다.
      * @param days
      * @param hours
@@ -355,44 +508,6 @@ class TournamentAdminServiceTest {
             endTime,
             TournamentType.ROOKIE
         );
-    }
-
-    @Nested
-    @DisplayName("토너먼트 관리자 생성 서비스 테스트")
-    class TournamentAdminServiceCreateTest {
-        @Test
-        @DisplayName("토너먼트 생성 성공")
-        void createTournament_Success(){
-        // given
-
-        TournamentCreateRequestDto tournamentCreateRequestDto = new TournamentCreateRequestDto(
-                LocalDateTime.now(),
-                LocalDateTime.now().plusHours(2),
-                "제 1회 루키전",
-                "제 1회 루키전 많관부!!",
-                TournamentType.ROOKIE
-        );
-        Tournament newTournament = new Tournament(tournamentCreateRequestDto);
-        //tournamentRepository에 tournament의 id를 통해 찾은 결과는 empty를 return -> 즉, tournament id가 레포지토리에 저장되지 않음
-        given(tournamentRepository.findById(tournament.getId())).willReturn(Optional.empty());
-        Assertions.assertFalse(tournamentRepository.existsByTitle(tournamentCreateRequestDto.getTitle()));
-        given(tournamentRepository.save(Mockito.any(Tournament.class))).willReturn(newTournament);
-        //토너먼트를 레포지토리에서 저장한다면 토너먼트 return
-//        given(tournamentRepository.save(Mockito.any(Tournament.class))).willReturn(tournament);
-        // when
-        Tournament tournament = tournamentAdminService.createTournament(tournamentCreateRequestDto);
-        // then
-        //tournamentRepository에 tournament의 id로 찾은 tournament가 있다!
-//        Assertions.assertFalse(tournamentRepository.existsByTitle(tournamentCreateRequestDto.getTitle()));
-        assertThat(tournament.getStartTime()).isEqualTo(tournamentCreateRequestDto.getStartTime());
-        assertThat(tournament.getEndTime()).isEqualTo(tournamentCreateRequestDto.getEndTime());
-        assertThat(tournament.getTitle()).isEqualTo(tournamentCreateRequestDto.getTitle());
-        assertThat(tournament.getContents()).isEqualTo(tournamentCreateRequestDto.getContents());
-        assertThat(tournament.getType()).isEqualTo(tournamentCreateRequestDto.getType());
-//        verify(tournamentRepository).existsByTitle(tournamentCreateRequestDto.getTitle());
-//        verify(tournamentRepository).save(any(Tournament.class));
-//        when(tournamentRepository.existsByTitle(tournamentCreateRequestDto.getTitle())).thenReturn(false);
-        }
     }
 
     /**
