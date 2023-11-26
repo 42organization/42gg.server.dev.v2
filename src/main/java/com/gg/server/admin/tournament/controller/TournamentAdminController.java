@@ -15,15 +15,10 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import com.gg.server.admin.tournament.dto.TournamentCreateRequestDto;
-import com.gg.server.admin.tournament.service.TournamentAdminService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import javax.validation.Valid;
 
 @RestController
 @AllArgsConstructor
@@ -31,6 +26,17 @@ import javax.validation.Valid;
 @Validated
 public class TournamentAdminController {
     private final TournamentAdminService tournamentAdminService;
+
+    /***
+     * 토너먼트 생성
+     * @param tournamentCreateRequestDto 생성에 필요한 데이터
+     * @return "CREATED" 응답 코드
+     */
+    @PostMapping()
+    public ResponseEntity<Void> createTournament(@RequestBody @Valid TournamentCreateRequestDto tournamentCreateRequestDto) {
+        tournamentAdminService.createTournament(tournamentCreateRequestDto);
+        return new ResponseEntity<Void>(HttpStatus.CREATED);
+    }
 
     /**
      * <p>토너먼트 정보 수정</p>
@@ -56,11 +62,6 @@ public class TournamentAdminController {
         tournamentAdminService.deleteTournament(tournamentId);
 
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
-    }
-    @PostMapping()
-    public ResponseEntity createTournament(@RequestBody @Valid TournamentCreateRequestDto tournamentCreateRequestDto) {
-        tournamentAdminService.createTournament(tournamentCreateRequestDto);
-        return new ResponseEntity(HttpStatus.CREATED);
     }
 
     /**
