@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -50,7 +51,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({DuplicationException.class})
     public ResponseEntity<ErrorResponse> duplicatedException(DuplicationException ex) {
-        log.error("Duplicated", ex.getStackTrace());
+        log.error("Duplicated", ex);
         return new ResponseEntity<>(new ErrorResponse(ex.getErrorCode()), HttpStatus.CONFLICT);
     }
 
@@ -105,6 +106,11 @@ public class GlobalExceptionHandler {
         log.error("!!!!!! SERVER ERROR !!!!!!", ex.getMessage());
         ErrorResponse response = new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERR);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    protected ResponseEntity handleException(MethodArgumentNotValidException e) {
+        return ResponseEntity.badRequest().body(e.getFieldError().getDefaultMessage());
     }
 
 }

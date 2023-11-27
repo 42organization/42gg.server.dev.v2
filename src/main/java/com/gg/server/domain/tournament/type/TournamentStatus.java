@@ -18,6 +18,7 @@ public enum TournamentStatus {
 
     @JsonCreator
     public static TournamentStatus getEnumFromValue(String value) {
+        if (value == null) return null;
         for(TournamentStatus e : values()) {
             if (e.name().equals(value)) {
                 return e;
