@@ -50,6 +50,9 @@ public class TournamentAdminService {
      */
     @Transactional
     public Tournament createTournament(TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto) {
+        checkTournamentTitle(tournamentAdminCreateRequestDto.getTitle());
+        checkValidTournamentTime(tournamentAdminCreateRequestDto.getStartTime(), tournamentAdminCreateRequestDto.getEndTime());
+        checkConflictedTournament(-1L, tournamentAdminCreateRequestDto.getStartTime(), tournamentAdminCreateRequestDto.getEndTime());
         Tournament tournament = new Tournament(
                 tournamentAdminCreateRequestDto.getTitle(),
                 tournamentAdminCreateRequestDto.getContents(),
@@ -61,9 +64,6 @@ public class TournamentAdminService {
                 null,
                 TournamentStatus.BEFORE
         );
-        checkTournamentTitle(tournamentAdminCreateRequestDto.getTitle());
-        checkValidTournamentTime(tournamentAdminCreateRequestDto.getStartTime(), tournamentAdminCreateRequestDto.getEndTime());
-        checkConflictedTournament(-1L, tournamentAdminCreateRequestDto.getStartTime(), tournamentAdminCreateRequestDto.getEndTime());
         createTournamentGame(tournament);
         return tournamentRepository.save(tournament);
     }
