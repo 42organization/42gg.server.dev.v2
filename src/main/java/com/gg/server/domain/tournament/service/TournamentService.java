@@ -20,6 +20,13 @@ import org.springframework.stereotype.Service;
 public class TournamentService {
     private final TournamentRepository tournamentRepository;
 
+    /**
+     * 토너먼트 리스트 조회
+     * @param pageRequest 페이지 정보
+     * @param type 토너먼트 타입
+     * @param status 토너먼트 상태
+     * @return 토너먼트 리스트
+     */
     public TournamentListResponseDto getAllTournamentList(PageRequest pageRequest, String type, String status) {
 
         Page<TournamentResponseDto> tournaments;
@@ -43,11 +50,21 @@ public class TournamentService {
         return new TournamentListResponseDto(tournaments.getContent(), tournaments.getTotalPages());
     }
 
+    /**
+     * 토너먼트 우승자 조회
+     * @param tournament 토너먼트
+     * @return 토너먼트 우승자 정보
+     */
     private UserImageDto findTournamentWinner(Tournament tournament) {
         User winner = tournament.getWinner();
         return new UserImageDto(winner);
     }
 
+    /**
+     * 토너먼트 참가자 수 조회
+     * @param tournament 토너먼트
+     * @return 토너먼트 참가자 수
+     */
     private int findPlayerCnt(Tournament tournament) {
         int player_cnt = 0;
         for (TournamentUser tournamentUser : tournament.getTournamentUsers()) {

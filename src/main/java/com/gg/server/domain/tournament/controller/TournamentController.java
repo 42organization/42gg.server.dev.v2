@@ -20,6 +20,12 @@ public class TournamentController {
 
     private final TournamentService tournamentService;
 
+    /**
+     * 토너먼트 리스트 조회
+     * @param pageRequestDto 페이지 정보
+     * @param tournamentFilterRequestDto Enum 필터 정보
+     * @return 토너먼트 리스트
+     */
     @GetMapping
     TournamentListResponseDto getAllTournamentList(@Valid PageRequestDto pageRequestDto,
                                                    @Valid TournamentFilterRequestDto tournamentFilterRequestDto){
