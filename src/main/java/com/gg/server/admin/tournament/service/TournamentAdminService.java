@@ -64,7 +64,7 @@ public class TournamentAdminService {
                 null,
                 TournamentStatus.BEFORE
         );
-        createTournamentGame(tournament);
+        createTournamentGameList(tournament, 7);
         return tournamentRepository.save(tournament);
     }
 
@@ -96,11 +96,12 @@ public class TournamentAdminService {
     /***
      * 토너먼트 게임 테이블 생성 Method
      * @param tournament 토너먼트 게임에 매칭될 토너먼트
+     * @param cnt 토너먼트 전체 라운드 수
      */
-    private void createTournamentGame(Tournament tournament) {
+    private void createTournamentGameList(Tournament tournament, int cnt) {
         TournamentRound[] rounds = TournamentRound.values();
-        for (TournamentRound round : rounds) {
-            TournamentGame tournamentGame = new TournamentGame(null, tournament, round);
+        while (--cnt >= 0) {
+            TournamentGame tournamentGame = new TournamentGame(null, tournament, rounds[cnt]);
             tournament.addTournamentGame(tournamentGame);
             tournamentGameRepository.save(tournamentGame);
         }
