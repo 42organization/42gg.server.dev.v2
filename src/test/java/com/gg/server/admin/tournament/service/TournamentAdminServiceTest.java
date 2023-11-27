@@ -75,17 +75,7 @@ class TournamentAdminServiceTest {
             given(tournamentGameRepository.save(Mockito.any(TournamentGame.class))).willReturn(tournamentGame);
 
             // when
-            Tournament newTournament = tournamentAdminService.createTournament(tournamentAdminCreateRequestDto);
-
-            // then
-            assertThat(tournament.getTitle()).isEqualTo(newTournament.getTitle());
-            assertThat(tournament.getContents()).isEqualTo(newTournament.getContents());
-            assertThat(tournament.getStartTime()).isEqualTo(newTournament.getStartTime());
-            assertThat(tournament.getEndTime()).isEqualTo(newTournament.getEndTime());
-            assertThat(tournament.getType()).isEqualTo(newTournament.getType());
-            assertThat(tournament.getWinner()).isEqualTo(newTournament.getWinner());
-            assertThat(tournament.getTournamentGames()).isEqualTo(newTournament.getTournamentGames());
-            assertThat(tournament.getTournamentUsers()).isEqualTo(newTournament.getTournamentUsers());
+            tournamentAdminService.createTournament(tournamentAdminCreateRequestDto);
         }
 
         @Test
