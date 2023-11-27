@@ -1,5 +1,6 @@
 package com.gg.server.domain.user.dto;
 
+import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.type.EdgeType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,5 +23,10 @@ public class UserImageDto {
         this.imageUri = imageUri;
         this.edge = edge;
         this.tierImage = tierImage;
+    }
+
+    public UserImageDto(User user){
+        this.intraId = (user == null)? null : user.getIntraId();
+        this.imageUri = (user == null)? null : user.getImageUri();
     }
 }
