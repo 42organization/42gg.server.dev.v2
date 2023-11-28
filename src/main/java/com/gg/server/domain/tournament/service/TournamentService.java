@@ -3,6 +3,7 @@ package com.gg.server.domain.tournament.service;
 import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentRepository;
 import com.gg.server.domain.tournament.data.TournamentUser;
+import com.gg.server.domain.tournament.data.TournamentUserRepository;
 import com.gg.server.domain.tournament.dto.TournamentListResponseDto;
 import com.gg.server.domain.tournament.dto.TournamentResponseDto;
 import com.gg.server.domain.tournament.type.TournamentStatus;
@@ -13,12 +14,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class TournamentService {
     private final TournamentRepository tournamentRepository;
+    private final TournamentUserRepository tournamentUserRepository;
 
     /**
      * 토너먼트 리스트 조회
@@ -27,7 +30,7 @@ public class TournamentService {
      * @param status 토너먼트 상태
      * @return 토너먼트 리스트
      */
-    public TournamentListResponseDto getAllTournamentList(PageRequest pageRequest, String type, String status) {
+    public TournamentListResponseDto getAllTournamentList(Pageable pageRequest, String type, String status) {
 
         Page<TournamentResponseDto> tournaments;
 
@@ -36,16 +39,16 @@ public class TournamentService {
 
         if (type == null && status == null) {
             tournaments = tournamentRepository.findAll(pageRequest).
-                    map(o-> new TournamentResponseDto(o, findTournamentWinner(o), findPlayerCnt(o)));
+                    map(o-> new TournamentResponseDto(o, findTournamentWinner(o), findJoinedPlayerCnt(o)));
         } else if (type == null){
             tournaments = tournamentRepository.findAllByStatus(tournamentStatus, pageRequest).
-                    map(o-> new TournamentResponseDto(o, findTournamentWinner(o), findPlayerCnt(o)));
+                    map(o-> new TournamentResponseDto(o, findTournamentWinner(o), findJoinedPlayerCnt(o)));
         } else if (status == null) {
             tournaments = tournamentRepository.findAllByType(tournamentType, pageRequest).
-                    map(o-> new TournamentResponseDto(o, findTournamentWinner(o), findPlayerCnt(o)));
+                    map(o-> new TournamentResponseDto(o, findTournamentWinner(o), findJoinedPlayerCnt(o)));
         } else {
             tournaments = tournamentRepository.findAllByTypeAndStatus(tournamentType, tournamentStatus, pageRequest).
-                    map(o-> new TournamentResponseDto(o, findTournamentWinner(o), findPlayerCnt(o)));
+                    map(o-> new TournamentResponseDto(o, findTournamentWinner(o), findJoinedPlayerCnt(o)));
         }
         return new TournamentListResponseDto(tournaments.getContent(), tournaments.getTotalPages());
     }
@@ -65,13 +68,7 @@ public class TournamentService {
      * @param tournament 토너먼트
      * @return 토너먼트 참가자 수
      */
-    private int findPlayerCnt(Tournament tournament) {
-        int player_cnt = 0;
-        for (TournamentUser tournamentUser : tournament.getTournamentUsers()) {
-            if (tournamentUser.isJoined()){
-                player_cnt++;
-            }
-        }
-        return player_cnt;
+    private int findJoinedPlayerCnt(Tournament tournament) {
+        return tournamentUserRepository.countByTournamentAndIsJoined(tournament, true);
     }
 }

@@ -13,10 +13,10 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 public class UserImageDto {
-    String intraId;
-    String imageUri;
-    EdgeType edge;
-    String tierImage;
+    private String intraId;
+    private String imageUri;
+    private EdgeType edge;
+    private String tierImage;
 
     public UserImageDto(String intraId, String imageUri, EdgeType edge, String tierImage) {
         this.intraId = intraId;
