@@ -7,6 +7,7 @@ import com.gg.server.global.dto.PageRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,7 +30,7 @@ public class TournamentController {
     @GetMapping
     TournamentListResponseDto getAllTournamentList(@Valid PageRequestDto pageRequestDto,
                                                    @Valid TournamentFilterRequestDto tournamentFilterRequestDto){
-        PageRequest pageRequest = PageRequest.of(pageRequestDto.getPage() - 1, pageRequestDto.getSize());
+        Pageable pageRequest = PageRequest.of(pageRequestDto.getPage() - 1, pageRequestDto.getSize());
 
         return tournamentService.getAllTournamentList(pageRequest, tournamentFilterRequestDto.getType(), tournamentFilterRequestDto.getStatus());
     }

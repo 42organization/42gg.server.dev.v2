@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 public enum TournamentStatus {
     BEFORE("before", "토너먼트 시작 전"),
     LIVE("live", "토너먼트 진행 중"),
+    READY("ready", "토너먼트 준비 중"),
     END("end", "토너먼트 종료");
 
     private final String code;
