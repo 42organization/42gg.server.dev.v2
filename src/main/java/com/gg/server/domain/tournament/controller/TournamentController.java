@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,14 +24,12 @@ public class TournamentController {
 
     /**
      * 토너먼트 리스트 조회
-     * @param pageRequestDto 페이지 정보
-     * @param tournamentFilterRequestDto Enum 필터 정보
+     * @param tournamentFilterRequestDto Enum 필터 정보 (page, size, type, status)
      * @return 토너먼트 리스트
      */
     @GetMapping
-    TournamentListResponseDto getAllTournamentList(@Valid PageRequestDto pageRequestDto,
-                                                   @Valid TournamentFilterRequestDto tournamentFilterRequestDto){
-        Pageable pageRequest = PageRequest.of(pageRequestDto.getPage() - 1, pageRequestDto.getSize());
+    TournamentListResponseDto getAllTournamentList(@ModelAttribute @Valid TournamentFilterRequestDto tournamentFilterRequestDto){
+        Pageable pageRequest = PageRequest.of(tournamentFilterRequestDto.getPage() - 1, tournamentFilterRequestDto.getSize());
 
         return tournamentService.getAllTournamentList(pageRequest, tournamentFilterRequestDto.getType(), tournamentFilterRequestDto.getStatus());
     }
