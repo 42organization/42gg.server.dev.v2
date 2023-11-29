@@ -51,6 +51,16 @@ public class GameFindService {
         return new GameListResDto(getGameResultList(games.getContent().stream().map(Game::getId).collect(Collectors.toList())), games.isLast());
     }
 
+    /**
+     * NORMAL, RANDOM 모드의 게임 목록 조회
+     * <p>
+     * status가 "LIVE" -> 진행중인 게임도 포함해서 조회 (END, LIVE, WAIT) <br>
+     * status가 null -> 종료된 게임만 조회 (END)
+     * </p>
+     * @param pageable
+     * @param status - "LIVE" or null
+     * @return GameListResDto - games isLast
+     */
     @Transactional(readOnly = true)
     @Cacheable(value = "allGameList", cacheManager = "gameCacheManager", key = "#pageable.pageNumber + #pageable.pageSize + #pageable.sort.toString() + #status")
     public GameListResDto allGameList(Pageable pageable, String status) {
@@ -63,6 +73,14 @@ public class GameFindService {
         return new GameListResDto(getGameResultList(games.getContent().stream().map(Game::getId).collect(Collectors.toList())), games.isLast());
     }
 
+    /**
+     * allGameList()와 동일한 로직 + intraId로 조회
+     * @param pageable
+     * @param intra - 조회할 intraId
+     * @param status - "LIVE" or null
+     * @return GameListResDto - games isLast
+     * @throws GameNotExistException - intraId로 조회한 게임이 없을 경우
+     */
     @Transactional(readOnly = true)
     @Cacheable(value = "allGameListByUser", cacheManager = "gameCacheManager", key = "#pageable.pageNumber + #pageable.pageSize + #pageable.sort.toString() + #status + #intra")
     public GameListResDto allGameListUser(Pageable pageable, String intra, String status) {
