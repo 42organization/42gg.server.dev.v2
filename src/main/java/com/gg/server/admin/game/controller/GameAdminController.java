@@ -24,15 +24,6 @@ import javax.validation.constraints.Positive;
 public class GameAdminController {
     private final GameAdminService gameAdminService;
 
-    @GetMapping
-    public GameLogListAdminResponseDto gameFindBySeasonId(@ModelAttribute @Valid PageRequestDto pageRequestDto) {
-        int page = pageRequestDto.getPage();
-        int size = pageRequestDto.getSize();
-
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("startTime").descending());
-        return gameAdminService.findAllGamesByAdmin(pageable);
-    }
-
     @GetMapping("/users")
     public GameLogListAdminResponseDto gameFindByIntraId(@ModelAttribute GameUserLogAdminReqDto reqDto) {
 
