@@ -23,13 +23,25 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class GameFindService {
     private final GameRepository gameRepository;
+
+    /**
+     * 특정 User의 NORMAL 모드의 END 상태의 게임 목록 조회
+     * @param pageable
+     * @param intra - 조회할 유저의 intraId
+     * @return GameListResDto - games isLast
+     */
     @Transactional(readOnly = true)
     @Cacheable(value = "normalGameListByIntra", cacheManager = "gameCacheManager")
     public GameListResDto normalGameListByIntra(Pageable pageable, String intra) {
-        Slice<Long> games = gameRepository.findGamesByUserAndMode(intra, Mode.NORMAL.name(), StatusType.END.name(), pageable);
+        Slice<Long> games = gameRepository.findGamesByUserAndModeAndStatus(intra, Mode.NORMAL.name(), StatusType.END.name(), pageable);
         return new GameListResDto(getNormalGameResultList(games.getContent()), games.isLast());
     }
 
+    /**
+     * NORMAL 모드의 END 상태의 게임 목록 조회
+     * @param pageable
+     * @return
+     */
     @Transactional(readOnly = true)
     @Cacheable(value = "normalGameList", cacheManager = "gameCacheManager")
     public GameListResDto getNormalGameList(Pageable pageable) {
@@ -37,6 +49,13 @@ public class GameFindService {
         return new GameListResDto(getNormalGameResultList(games.getContent().stream().map(Game::getId).collect(Collectors.toList())), games.isLast());
     }
 
+    /**
+     * 특정 User의 RANK 모드의 END 상태의 게임 목록 조회
+     * @param pageable
+     * @param seasonId - 조회할 시즌의 id
+     * @param intra - 조회할 유저의 intraId
+     * @return GameListResDto - games isLast
+     */
     @Transactional(readOnly = true)
     @Cacheable(value = "rankGameListByIntra", cacheManager = "gameCacheManager")
     public GameListResDto rankGameListByIntra(Pageable pageable, Long seasonId, String intra) {
@@ -44,6 +63,12 @@ public class GameFindService {
         return new GameListResDto(getGameResultList(games.getContent()), games.isLast());
     }
 
+    /**
+     * RANK 모드의 END 상태의 게임 목록 조회
+     * @param pageable
+     * @param seasonId - 조회할 시즌의 id
+     * @return GameListResDto - games isLast
+     */
     @Transactional(readOnly = true)
     @Cacheable(value = "rankGameList", cacheManager = "gameCacheManager")
     public GameListResDto rankGameList(Pageable pageable, Long seasonId) {
@@ -66,9 +91,9 @@ public class GameFindService {
     public GameListResDto allGameList(Pageable pageable, String status) {
         Slice<Game> games;
         if (status != null && status.equals("LIVE")) {
-            games = gameRepository.findAllByAndStatusIn(Arrays.asList(StatusType.END, StatusType.LIVE, StatusType.WAIT), pageable);
+            games = gameRepository.findAllByModeInAndStatusIn(Arrays.asList(Mode.RANK, Mode.NORMAL), Arrays.asList(StatusType.END, StatusType.LIVE, StatusType.WAIT), pageable);
         } else {
-            games = gameRepository.findAllByAndStatus(StatusType.END, pageable);
+            games = gameRepository.findAllByModeInAndStatus(Arrays.asList(Mode.RANK, Mode.NORMAL), StatusType.END, pageable);
         }
         return new GameListResDto(getGameResultList(games.getContent().stream().map(Game::getId).collect(Collectors.toList())), games.isLast());
     }
@@ -89,7 +114,7 @@ public class GameFindService {
             statusTypes.add(StatusType.LIVE.name());
             statusTypes.add(StatusType.WAIT.name());
         }
-        Slice<Long> games = gameRepository.findGamesByUser(intra, statusTypes, pageable);
+        Slice<Long> games = gameRepository.findGamesByUserAndModeInAndStatusIn(intra, Arrays.asList(Mode.RANK.name(), Mode.NORMAL.name()), statusTypes, pageable);
         return new GameListResDto(getGameResultList(games.getContent()), games.isLast());
     }
     public Game findByGameId(Long gameId) {
