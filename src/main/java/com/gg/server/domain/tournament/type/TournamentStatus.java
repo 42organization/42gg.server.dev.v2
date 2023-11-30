@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 public enum TournamentStatus {
     BEFORE("before", "토너먼트 시작 전"),
     LIVE("live", "토너먼트 진행 중"),
+    READY("ready", "토너먼트 준비 중"),
     END("end", "토너먼트 종료");
 
     private final String code;
@@ -18,6 +19,7 @@ public enum TournamentStatus {
 
     @JsonCreator
     public static TournamentStatus getEnumFromValue(String value) {
+        if (value == null) return null;
         for(TournamentStatus e : values()) {
             if (e.name().equals(value)) {
                 return e;

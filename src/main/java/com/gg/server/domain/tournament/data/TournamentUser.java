@@ -42,4 +42,11 @@ public class TournamentUser extends BaseTimeEntity {
     @NotNull
     @Column(name = "register_time")
     private LocalDateTime registerTime;
+
+    public TournamentUser(User user, Tournament tournament, boolean isJoined, LocalDateTime registerTime) {
+        this.user = user;
+        this.tournament = tournament;
+        this.isJoined = isJoined;
+        this.registerTime = registerTime;
+    }
 }

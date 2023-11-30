@@ -16,6 +16,7 @@ public enum TournamentType {
 
     @JsonCreator
     public static TournamentType getEnumFromValue(String value) {
+        if (value == null) return null;
         for(TournamentType e : values()) {
             if (e.name().equals(value)) {
                 return e;
