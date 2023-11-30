@@ -1,5 +1,7 @@
 package com.gg.server.admin.tournament.controller;
 
+import com.gg.server.admin.tournament.dto.TournamentAdminAddUserRequestDto;
+import com.gg.server.admin.tournament.dto.TournamentAdminAddUserResponseDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminUserAddRequestDto;
 import com.gg.server.admin.tournament.service.TournamentAdminService;
@@ -44,8 +46,8 @@ public class TournamentAdminController {
      * @return HttpStatus.NO_CONTENT
      */
     @DeleteMapping("/{tournamentId}")
-    public ResponseEntity<Void> deleteTournamentInfo(@PathVariable @Positive Long tournamentId) {
-        tournamentAdminService.deleteTournamentInfo(tournamentId);
+    public ResponseEntity<Void> deleteTournament(@PathVariable @Positive Long tournamentId) {
+        tournamentAdminService.deleteTournament(tournamentId);
 
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }
@@ -58,10 +60,10 @@ public class TournamentAdminController {
      * @return HttpStatus.NO_CONTENT
      */
     @PostMapping("/{tournamentId}/users")
-    public ResponseEntity<Void> addTournamentUser(@PathVariable @Positive Long tournamentId,
-        @Valid @RequestBody TournamentAdminUserAddRequestDto tournamentAdminUserAddRequestDto) {
-        tournamentAdminService.addTournamentUser(tournamentId, tournamentAdminUserAddRequestDto);
+    public ResponseEntity<TournamentAdminAddUserResponseDto> addTournamentUser(@PathVariable @Positive Long tournamentId,
+        @Valid @RequestBody TournamentAdminAddUserRequestDto tournamentAdminUserAddRequestDto) {
+        TournamentAdminAddUserResponseDto responseDto = tournamentAdminService.addTournamentUser(tournamentId, tournamentAdminUserAddRequestDto);
 
-        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<TournamentAdminAddUserResponseDto>(responseDto, HttpStatus.CREATED);
     }
 }
