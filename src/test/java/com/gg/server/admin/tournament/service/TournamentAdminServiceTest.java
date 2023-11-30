@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
+import com.gg.server.admin.tournament.dto.TournamentAdminAddUserRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
-import com.gg.server.admin.tournament.dto.TournamentAdminUserAddRequestDto;
 import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentGameRepository;
@@ -150,92 +150,6 @@ class TournamentAdminServiceTest {
         }
     }
 
-    @Nested
-    @DisplayName("관리자_토너먼트_유저_추가_테스트")
-    class TournamentAdminServiceAddUserTest {
-        @Test
-        @DisplayName("유저_추가_성공")
-        public void success() {
-            // given
-            List<Tournament> tournamentList = createTournaments(1L, 2, getTargetTime(2, 1));
-            Tournament tournament = tournamentList.get(0);
-            TournamentAdminUserAddRequestDto requestDto = new TournamentAdminUserAddRequestDto("test");
-            User user = createUser("user");
-            TournamentUser tournamentUser = new TournamentUser(user, tournament, true);
-            given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
-            given(userRepository.findByIntraId("test")).willReturn(Optional.of(user));
-            given(tournamentRepository.findAllByStatusIsNot(TournamentStatus.END)).willReturn(tournamentList);
-            given(tournamentUserRepository.save(any(TournamentUser.class))).willReturn(tournamentUser);
-
-            // when, then
-            tournamentAdminService.addTournamentUser(1L, requestDto);
-        }
-
-        @Test
-        @DisplayName("타겟_토너먼트_없음")
-        public void tournamentNotFound() {
-            // given
-            TournamentAdminUserAddRequestDto requestDto = new TournamentAdminUserAddRequestDto("test");
-
-            given(tournamentRepository.findById(any(Long.class))).willReturn(Optional.empty());
-            // when, then
-            assertThatThrownBy(() -> tournamentAdminService.addTournamentUser(1L, requestDto))
-                .isInstanceOf(TournamentNotFoundException.class);
-        }
-
-        @Test
-        @DisplayName("토너먼트_업데이트_불가_상태")
-        public void canNotAdd() {
-            // given
-            Tournament tournamentLive = createTournament(1L, TournamentStatus.LIVE,
-                getTargetTime(0, -1), getTargetTime(0, 1));
-            Tournament tournamentEnd = createTournament(2L, TournamentStatus.END,
-                getTargetTime(0, -3), getTargetTime(0, -1));
-            TournamentAdminUserAddRequestDto requestDto = new TournamentAdminUserAddRequestDto("test");
-            given(tournamentRepository.findById(tournamentLive.getId())).willReturn(Optional.of(tournamentLive));
-            given(tournamentRepository.findById(tournamentEnd.getId())).willReturn(Optional.of(tournamentEnd));
-            // when, then
-            assertThatThrownBy(() -> tournamentAdminService.addTournamentUser(tournamentLive.getId(), requestDto))
-                .isInstanceOf(TournamentUpdateException.class);
-            assertThatThrownBy(() -> tournamentAdminService.addTournamentUser(tournamentEnd.getId(), requestDto))
-                .isInstanceOf(TournamentUpdateException.class);
-        }
-
-        @Test
-        @DisplayName("찾을_수_없는_유저")
-        public void userNotFound() {
-            // given
-            Tournament tournament = createTournament(1L, TournamentStatus.BEFORE,
-                getTargetTime(0, -1), getTargetTime(0, 1));
-            TournamentAdminUserAddRequestDto requestDto = new TournamentAdminUserAddRequestDto("test");
-            given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
-            given(userRepository.findByIntraId("test")).willReturn(Optional.empty());
-
-            // when then
-            assertThatThrownBy(() -> tournamentAdminService.addTournamentUser(tournament.getId(), requestDto))
-                .isInstanceOf(UserNotFoundException.class);
-        }
-
-        @Test
-        @DisplayName("이미_해당_토너먼트_참가중인_유저")
-        public void alreadyTournamentParticipant() {
-            // given
-            List<Tournament> tournamentList = createTournaments(1L, 2, getTargetTime(2, 1));
-            Tournament tournament = tournamentList.get(0);
-            TournamentAdminUserAddRequestDto requestDto = new TournamentAdminUserAddRequestDto("test");
-            User user = createUser("user");
-            TournamentUser tournamentUser = new TournamentUser(user, tournament, true);
-            tournament.addTournamentUser(tournamentUser);
-            given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
-            given(userRepository.findByIntraId("test")).willReturn(Optional.of(user));
-            given(tournamentRepository.findAllByStatusIsNot(TournamentStatus.END)).willReturn(tournamentList);
-
-            // when, then
-            assertThatThrownBy(() -> tournamentAdminService.addTournamentUser(tournament.getId(), requestDto))
-                .isInstanceOf(TournamentConflictException.class);
-        }
-    }
-
     // 토너먼트 삭제 서비스 테스트
     @Nested
     @DisplayName("토너먼트 관리자 서비스 삭제 테스트")
@@ -251,7 +165,7 @@ class TournamentAdminServiceTest {
             given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
             given(tournamentGameRepository.findAllByTournamentId(tournament.getId())).willReturn(tournamentGameList);
             // when, then
-            tournamentAdminService.deleteTournamentInfo(tournament.getId());
+            tournamentAdminService.deleteTournament(tournament.getId());
         }
         @Test
         @DisplayName("타겟_토너먼트_없음")
@@ -261,7 +175,7 @@ class TournamentAdminServiceTest {
                 getTargetTime(2, 1), getTargetTime(2, 3));
             given(tournamentRepository.findById(1L)).willReturn(Optional.empty());
             // when, then
-            assertThatThrownBy(() -> tournamentAdminService.deleteTournamentInfo(tournament.getId()))
+            assertThatThrownBy(() -> tournamentAdminService.deleteTournament(tournament.getId()))
                 .isInstanceOf(TournamentNotFoundException.class);
         }
 
@@ -276,12 +190,98 @@ class TournamentAdminServiceTest {
             given(tournamentRepository.findById(liveTournament.getId())).willReturn(Optional.of(liveTournament));
             given(tournamentRepository.findById(endTournament.getId())).willReturn(Optional.of(endTournament));
             // when, then
-            assertThatThrownBy(() -> tournamentAdminService.deleteTournamentInfo(liveTournament.getId()))
+            assertThatThrownBy(() -> tournamentAdminService.deleteTournament(liveTournament.getId()))
                 .isInstanceOf(TournamentUpdateException.class);
-            assertThatThrownBy(() -> tournamentAdminService.deleteTournamentInfo(endTournament.getId()))
+            assertThatThrownBy(() -> tournamentAdminService.deleteTournament(endTournament.getId()))
                 .isInstanceOf(TournamentUpdateException.class);
         }
 
+    }
+
+    @Nested
+    @DisplayName("관리자_토너먼트_유저_추가_테스트")
+    class TournamentAdminServiceAddUserTest {
+        @Test
+        @DisplayName("유저_추가_성공")
+        public void success() {
+            // given
+            List<Tournament> tournamentList = createTournaments(1L, 2, getTargetTime(2, 1));
+            Tournament tournament = tournamentList.get(0);
+            TournamentAdminAddUserRequestDto requestDto = new TournamentAdminAddUserRequestDto("testUser");
+            User user = createUser("testUser");
+            TournamentUser tournamentUser = new TournamentUser(user, tournament, true, LocalDateTime.now());
+            given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
+            given(userRepository.findByIntraId("testUser")).willReturn(Optional.of(user));
+            given(tournamentRepository.findAllByStatusIsNot(TournamentStatus.END)).willReturn(tournamentList);
+            given(tournamentUserRepository.save(any(TournamentUser.class))).willReturn(tournamentUser);
+
+            // when, then
+            tournamentAdminService.addTournamentUser(1L, requestDto);
+        }
+
+        @Test
+        @DisplayName("타겟_토너먼트_없음")
+        public void tournamentNotFound() {
+            // given
+            TournamentAdminAddUserRequestDto requestDto = new TournamentAdminAddUserRequestDto("test");
+
+            given(tournamentRepository.findById(any(Long.class))).willReturn(Optional.empty());
+            // when, then
+            assertThatThrownBy(() -> tournamentAdminService.addTournamentUser(1L, requestDto))
+                .isInstanceOf(TournamentNotFoundException.class);
+        }
+
+        @Test
+        @DisplayName("토너먼트_업데이트_불가_상태")
+        public void canNotAdd() {
+            // given
+            Tournament tournamentLive = createTournament(1L, TournamentStatus.LIVE,
+                getTargetTime(0, -1), getTargetTime(0, 1));
+            Tournament tournamentEnd = createTournament(2L, TournamentStatus.END,
+                getTargetTime(0, -3), getTargetTime(0, -1));
+            TournamentAdminAddUserRequestDto requestDto = new TournamentAdminAddUserRequestDto("test");
+            given(tournamentRepository.findById(tournamentLive.getId())).willReturn(Optional.of(tournamentLive));
+            given(tournamentRepository.findById(tournamentEnd.getId())).willReturn(Optional.of(tournamentEnd));
+            // when, then
+            assertThatThrownBy(() -> tournamentAdminService.addTournamentUser(tournamentLive.getId(), requestDto))
+                .isInstanceOf(TournamentUpdateException.class);
+            assertThatThrownBy(() -> tournamentAdminService.addTournamentUser(tournamentEnd.getId(), requestDto))
+                .isInstanceOf(TournamentUpdateException.class);
+        }
+
+        @Test
+        @DisplayName("찾을_수_없는_유저")
+        public void userNotFound() {
+            // given
+            Tournament tournament = createTournament(1L, TournamentStatus.BEFORE,
+                getTargetTime(0, -1), getTargetTime(0, 1));
+            TournamentAdminAddUserRequestDto requestDto = new TournamentAdminAddUserRequestDto("test");
+            given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
+            given(userRepository.findByIntraId("test")).willReturn(Optional.empty());
+
+            // when then
+            assertThatThrownBy(() -> tournamentAdminService.addTournamentUser(tournament.getId(), requestDto))
+                .isInstanceOf(UserNotFoundException.class);
+        }
+
+        @Test
+        @DisplayName("이미_해당_토너먼트_참가중인_유저")
+        public void alreadyTournamentParticipant() {
+            // given
+            List<Tournament> tournamentList = createTournaments(1L, 2, getTargetTime(2, 1));
+            Tournament tournament = tournamentList.get(0);
+            TournamentAdminAddUserRequestDto requestDto = new TournamentAdminAddUserRequestDto("testUser");
+            User user = createUser("testUser");
+            TournamentUser tournamentUser = new TournamentUser(user, tournament, true, LocalDateTime.now());
+            tournament.addTournamentUser(tournamentUser);
+            given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
+            given(userRepository.findByIntraId("testUser")).willReturn(Optional.of(user));
+            given(tournamentRepository.findAllByStatusIsNot(TournamentStatus.END)).willReturn(tournamentList);
+
+            // when, then
+            assertThatThrownBy(() -> tournamentAdminService.addTournamentUser(tournament.getId(), requestDto))
+                .isInstanceOf(TournamentConflictException.class);
+        }
     }
 
     /**
@@ -329,7 +329,7 @@ class TournamentAdminServiceTest {
         List<Tournament> tournamentList = new ArrayList<>();
         for (long i=0; i<cnt; i++) {
             tournamentList.add(createTournament(id++, TournamentStatus.BEFORE,
-                startTime.plusHours(i*2), startTime.plusHours((i*2+1))));
+                startTime.plusHours(i*2), startTime.plusHours((i*2+2))));
         }
         return tournamentList;
     }

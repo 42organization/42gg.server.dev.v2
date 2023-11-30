@@ -7,14 +7,14 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gg.server.admin.tournament.dto.TournamentAdminAddUserRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
-import com.gg.server.admin.tournament.dto.TournamentAdminUserAddRequestDto;
 import com.gg.server.admin.tournament.service.TournamentAdminService;
 import com.gg.server.domain.tournament.data.Tournament;
-import com.gg.server.domain.tournament.data.TournamentUser;
-import com.gg.server.domain.tournament.data.TournamentUserRepository;
 import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentRepository;
+import com.gg.server.domain.tournament.data.TournamentUser;
+import com.gg.server.domain.tournament.data.TournamentUserRepository;
 import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.tournament.type.TournamentType;
 import com.gg.server.domain.user.data.User;
@@ -301,7 +301,7 @@ class TournamentAdminControllerTest {
     }
 
     @Nested
-    @DisplayName("토너먼트 관리 삭제 컨트롤러 테스트")
+    @DisplayName("토너먼트_관리_삭제_컨트롤러_테스트")
     class TournamentAdminControllerDeleteTest {
         @Test
         @DisplayName("토너먼트_삭제_성공")
@@ -321,8 +321,8 @@ class TournamentAdminControllerTest {
 
             // when
             String contentAsString = mockMvc.perform(delete(url)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isNoContent())
                 .andReturn().getResponse().getContentAsString();
 
@@ -344,8 +344,8 @@ class TournamentAdminControllerTest {
 
             // when, then
             String contentAsString = mockMvc.perform(delete(url)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isNotFound())
                 .andReturn().getResponse().getContentAsString();
 
@@ -373,8 +373,8 @@ class TournamentAdminControllerTest {
 
             // when live tournament test, then
             String contentAsString = mockMvc.perform(delete(url)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString();
 
@@ -411,10 +411,10 @@ class TournamentAdminControllerTest {
                 LocalDateTime.now().plusDays(3).plusHours(1),
                 LocalDateTime.now().plusDays(3).plusHours(3),
                 TournamentStatus.BEFORE);
-            User user = testDataUtils.createNewUser("test");
+            User user = testDataUtils.createNewUser("testUser");
             testDataUtils.createTournamentUser(user, tournament2, true);
 
-            TournamentAdminUserAddRequestDto requestDto = new TournamentAdminUserAddRequestDto(user.getIntraId());
+            TournamentAdminAddUserRequestDto requestDto = new TournamentAdminAddUserRequestDto(user.getIntraId());
 
             String url = "/pingpong/admin/tournament/" + tournament1.getId() + "/users";
             String content = objectMapper.writeValueAsString(requestDto);
@@ -424,7 +424,7 @@ class TournamentAdminControllerTest {
                     .content(content)
                     .contentType(MediaType.APPLICATION_JSON)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
-                .andExpect(status().isNoContent())
+                .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
 
             // then
@@ -445,7 +445,7 @@ class TournamentAdminControllerTest {
 
             User user = testDataUtils.createNewUser("test");
 
-            TournamentAdminUserAddRequestDto requestDto = new TournamentAdminUserAddRequestDto(user.getIntraId());
+            TournamentAdminAddUserRequestDto requestDto = new TournamentAdminAddUserRequestDto(user.getIntraId());
 
             String url = "/pingpong/admin/tournament/" + 9999 + "/users";
 
@@ -474,7 +474,7 @@ class TournamentAdminControllerTest {
                 TournamentStatus.LIVE);
             User user = testDataUtils.createNewUser("test");
 
-            TournamentAdminUserAddRequestDto requestDto = new TournamentAdminUserAddRequestDto(user.getIntraId());
+            TournamentAdminAddUserRequestDto requestDto = new TournamentAdminAddUserRequestDto(user.getIntraId());
 
             String url = "/pingpong/admin/tournament/" + tournament.getId() + "/users";
 
@@ -501,7 +501,7 @@ class TournamentAdminControllerTest {
                 LocalDateTime.now().plusDays(2).plusHours(3),
                 TournamentStatus.BEFORE);
 
-            TournamentAdminUserAddRequestDto requestDto = new TournamentAdminUserAddRequestDto("nobody");
+            TournamentAdminAddUserRequestDto requestDto = new TournamentAdminAddUserRequestDto("nobody");
 
             String url = "/pingpong/admin/tournament/" + tournament.getId() + "/users";
 
@@ -530,7 +530,7 @@ class TournamentAdminControllerTest {
 
             User user = testDataUtils.createNewUser("test");
             TournamentUser participant = testDataUtils.createTournamentUser(user, tournament, false);
-            TournamentAdminUserAddRequestDto requestDto = new TournamentAdminUserAddRequestDto(user.getIntraId());
+            TournamentAdminAddUserRequestDto requestDto = new TournamentAdminAddUserRequestDto(user.getIntraId());
 
             String url = "/pingpong/admin/tournament/" + tournament.getId() + "/users";
             String content = objectMapper.writeValueAsString(requestDto);
@@ -556,11 +556,11 @@ class TournamentAdminControllerTest {
                 LocalDateTime.now().plusDays(2).plusHours(3),
                 TournamentStatus.BEFORE);
 
-            User user = testDataUtils.createNewUser("test0");
+            User user = testDataUtils.createNewUser("testUser0");
             for (int i=1; i<=8; i++) {
-                testDataUtils.createTournamentUser(testDataUtils.createNewUser("test" + i), tournament, true);
+                testDataUtils.createTournamentUser(testDataUtils.createNewUser("testUser" + i), tournament, true);
             }
-            TournamentAdminUserAddRequestDto requestDto = new TournamentAdminUserAddRequestDto(user.getIntraId());
+            TournamentAdminAddUserRequestDto requestDto = new TournamentAdminAddUserRequestDto(user.getIntraId());
 
             String url = "/pingpong/admin/tournament/" + tournament.getId() + "/users";
             String content = objectMapper.writeValueAsString(requestDto);
@@ -570,7 +570,7 @@ class TournamentAdminControllerTest {
                     .content(content)
                     .contentType(MediaType.APPLICATION_JSON)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
-                .andExpect(status().isNoContent())
+                .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
 
             // then
@@ -580,4 +580,5 @@ class TournamentAdminControllerTest {
         }
 
     }
+
 }
