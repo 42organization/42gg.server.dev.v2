@@ -1,7 +1,8 @@
 package com.gg.server.admin.tournament.service;
 
+import com.gg.server.admin.tournament.dto.TournamentAdminAddUserRequestDto;
+import com.gg.server.admin.tournament.dto.TournamentAdminAddUserResponseDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
-import com.gg.server.admin.tournament.dto.TournamentAdminUserAddRequestDto;
 import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentGameRepository;
@@ -37,6 +38,7 @@ public class TournamentAdminService {
     private static final long ALLOWED_MINIMAL_START_DAYS = 2;
     // 토너먼트 최소 진행 시간 (n시간)
     private static final long MINIMUM_TOURNAMENT_DURATION = 2;
+
     /**
      * <p>토너먼트 업데이트 Method</p>
      * @param tournamentId  업데이트할 토너먼트 id
@@ -47,7 +49,7 @@ public class TournamentAdminService {
     public Tournament updateTournamentInfo(Long tournamentId, TournamentAdminUpdateRequestDto requestDto) {
         Tournament targetTournament = tournamentRepository.findById(tournamentId)
             .orElseThrow(() -> new TournamentNotFoundException("target tournament not found", ErrorCode.TOURNAMENT_NOT_FOUND));
-        if (targetTournament.getStatus() != TournamentStatus.BEFORE) {
+        if (targetTournament.getStatus() != TournamentStatus.BEFORE && !targetTournament.getStatus().equals(TournamentStatus.READY)) {
             throw new TournamentUpdateException("already started or ended", ErrorCode.TOURNAMENT_NOT_BEFORE);
         }
         checkValidTournamentTime(requestDto.getStartTime(), requestDto.getEndTime());
@@ -69,10 +71,10 @@ public class TournamentAdminService {
      * @throws TournamentNotFoundException 찾을 수 없는 토너먼트 일 때
      * @throws TournamentUpdateException 업데이트 할 수 없는 토너먼트 일 때
      */
-    public void deleteTournamentInfo(Long tournamentId) {
+    public void deleteTournament(Long tournamentId) {
         Tournament targetTournament = tournamentRepository.findById(tournamentId)
             .orElseThrow(() -> new TournamentNotFoundException("target tournament not found", ErrorCode.TOURNAMENT_NOT_FOUND));
-        if (targetTournament.getStatus() != TournamentStatus.BEFORE) {
+        if (targetTournament.getStatus() != TournamentStatus.BEFORE && !targetTournament.getStatus().equals(TournamentStatus.READY)) {
             throw new TournamentUpdateException("already started or ended", ErrorCode.TOURNAMENT_NOT_BEFORE);
         }
         List<TournamentGame> tournamentGameList = tournamentGameRepository.findAllByTournamentId(targetTournament.getId());
@@ -90,10 +92,10 @@ public class TournamentAdminService {
      * @throws UserNotFoundException 유저 없음
      * @throws TournamentConflictException 이미 참가자인 토너먼트가 존재
      */
-    public void addTournamentUser(Long tournamentId, TournamentAdminUserAddRequestDto requestDto) {
+    public TournamentAdminAddUserResponseDto addTournamentUser(Long tournamentId, TournamentAdminAddUserRequestDto requestDto) {
         Tournament targetTournament = tournamentRepository.findById(tournamentId)
             .orElseThrow(() -> new TournamentNotFoundException("target tournament not found", ErrorCode.TOURNAMENT_NOT_FOUND));
-        if (!targetTournament.getStatus().equals(TournamentStatus.BEFORE)) {
+        if (!targetTournament.getStatus().equals(TournamentStatus.BEFORE) && !targetTournament.getStatus().equals(TournamentStatus.READY)) {
             throw new TournamentUpdateException("already started or ended", ErrorCode.TOURNAMENT_NOT_BEFORE);
         }
 
@@ -108,17 +110,23 @@ public class TournamentAdminService {
         }
 
         TournamentUser tournamentUser = new TournamentUser(targetUser, targetTournament,
-            targetTournament.getTournamentUsers().size() < ALLOWED_JOINED_NUMBER);
+            targetTournament.getTournamentUsers().size() < ALLOWED_JOINED_NUMBER, LocalDateTime.now());
         targetTournament.addTournamentUser(tournamentUser);
         tournamentUserRepository.save(tournamentUser);
+
+        return new TournamentAdminAddUserResponseDto(
+            targetUser.getId(),
+            targetUser.getIntraId(),
+            tournamentUser.isJoined()
+        );
     }
 
     /**
-     * <p>토너먼트 시간 체크 매서드</p>
-     * <p>1. 현재 시간 + 최소 2일</p>
-     * <p>2. 현재시간 보다 미래</p>
-     * <p>3. 시작 시간이 종료시간보다 현재시에 가까움</p>
-     * <p>4. 진행 시간 최소 2시간</p>
+     * 토너먼트 시간 체크 :
+     * [ 현재 시간 + 최소 2일 ],
+     * [ 현재시간 보다 미래 ],
+     * [ 시작 시간이 종료시간보다 현재시에 가까움 ]
+     * [ 진행 시간 최소 2시간 ]
      * @param startTime 업데이트할 토너먼트 시작 시간
      * @param endTime 업데이트할 토너먼트 종료 시간
      * @throws InvalidParameterException 토너먼트 시간으로 부적합 할 때
