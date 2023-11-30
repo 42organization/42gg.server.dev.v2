@@ -28,8 +28,6 @@ import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentRepository;
 import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentGameRepository;
-import com.gg.server.domain.tournament.data.*;
-import com.gg.server.domain.tournament.data.TournamentRepository;
 import com.gg.server.domain.tournament.dto.TournamentResponseDto;
 import com.gg.server.domain.tournament.type.TournamentRound;
 import com.gg.server.domain.tournament.data.TournamentUser;
@@ -291,7 +289,7 @@ public class TestDataUtils {
     }
 
     /**
-     * 테스트용 토너먼트 반환. 매개변수 값들만 초기화
+     * <p>테스트용 토너먼트 반환. 매개변수 값들만 초기화</p>
      * @param startTime 시작 시간
      * @param endTime 종료 시간
      * @param status 토너먼트 상태
@@ -309,7 +307,7 @@ public class TestDataUtils {
     }
 
     /**
-     * 테스트용 토너먼트 반환. 매개변수 값들만 초기화
+     * <p>테스트용 토너먼트 반환. 매개변수 값들만 초기화</p>
      * @param tournamentType
      * @param tournamentStatus
      * @return
@@ -400,7 +398,7 @@ public class TestDataUtils {
      * @return
      */
     public TournamentUser createTournamentUser(User user, Tournament tournament, boolean isJoined) {
-        TournamentUser tournamentUser = new TournamentUser(user, tournament, isJoined);
+        TournamentUser tournamentUser = new TournamentUser(user, tournament, isJoined, LocalDateTime.now());
         tournament.getTournamentUsers().add(tournamentUser);
         return tournamentUserRepository.save(tournamentUser);
     }
