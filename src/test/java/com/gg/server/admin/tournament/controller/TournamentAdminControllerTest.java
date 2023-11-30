@@ -75,7 +75,7 @@ class TournamentAdminControllerTest {
                 LocalDateTime.now().plusDays(2).plusHours(4),
                 TournamentType.MASTER);
 
-            String url = "/pingpong/admin/tournament/" + tournament.getId();
+            String url = "/pingpong/admin/tournaments/" + tournament.getId();
 
             String content = objectMapper.writeValueAsString(updateDto);
 
@@ -111,7 +111,7 @@ class TournamentAdminControllerTest {
                 LocalDateTime.now().plusDays(2).plusHours(4),
                 TournamentType.MASTER);
 
-            String url = "/pingpong/admin/tournament/" + 1111;
+            String url = "/pingpong/admin/tournaments/" + 1111;
 
             String content = objectMapper.writeValueAsString(updateDto);
             // when, then
@@ -148,7 +148,7 @@ class TournamentAdminControllerTest {
                 tournamentAlreadyExist.getEndTime().plusMinutes(2),
                 TournamentType.MASTER);
 
-            String url = "/pingpong/admin/tournament/" + tournamentToChange.getId();
+            String url = "/pingpong/admin/tournaments/" + tournamentToChange.getId();
 
             String content = objectMapper.writeValueAsString(updateDto);
 
@@ -185,7 +185,7 @@ class TournamentAdminControllerTest {
                 LocalDateTime.now().plusDays(2).plusHours(3),
                 TournamentType.MASTER);
 
-            String url = "/pingpong/admin/tournament/" + liveTournament.getId();
+            String url = "/pingpong/admin/tournaments/" + liveTournament.getId();
 
             String content = objectMapper.writeValueAsString(updateTournamentDto);
 
@@ -199,7 +199,7 @@ class TournamentAdminControllerTest {
 
             System.out.println(contentAsString);
 
-            url = "/pingpong/admin/tournament/" + endedTournament.getId();
+            url = "/pingpong/admin/tournaments/" + endedTournament.getId();
 
             // when ended tournament test, then
             contentAsString = mockMvc.perform(patch(url)
@@ -234,7 +234,7 @@ class TournamentAdminControllerTest {
                 tournamentToChange.getStartTime(),
                 TournamentType.MASTER);
 
-            String url = "/pingpong/admin/tournament/" + tournamentToChange.getId();
+            String url = "/pingpong/admin/tournaments/" + tournamentToChange.getId();
             // when startTime == endTime, then
             String content = objectMapper.writeValueAsString(updateDto1);
 
@@ -277,7 +277,7 @@ class TournamentAdminControllerTest {
                 tournamentToChange.getStartTime(),
                 null);
 
-            String url = "/pingpong/admin/tournament/" + tournamentToChange.getId();
+            String url = "/pingpong/admin/tournaments/" + tournamentToChange.getId();
             // when startTime == endTime, then
             String content = objectMapper.writeValueAsString(updateDto1);
 
@@ -309,7 +309,7 @@ class TournamentAdminControllerTest {
 
             List<TournamentGame> tournamentGameList = testDataUtils.createTournamentGameList(tournament, 7);
 
-            String url = "/pingpong/admin/tournament/" + tournament.getId();
+            String url = "/pingpong/admin/tournaments/" + tournament.getId();
 
             // when
             String contentAsString = mockMvc.perform(delete(url)
@@ -332,7 +332,7 @@ class TournamentAdminControllerTest {
             String accessToken = testDataUtils.getAdminLoginAccessToken();
             tokenProvider.getUserIdFromAccessToken(accessToken);
 
-            String url = "/pingpong/admin/tournament/" + 1111;
+            String url = "/pingpong/admin/tournaments/" + 1111;
 
             // when, then
             String contentAsString = mockMvc.perform(delete(url)
@@ -361,7 +361,7 @@ class TournamentAdminControllerTest {
                 LocalDateTime.now().minusHours(1),
                 TournamentStatus.END);
 
-            String url = "/pingpong/admin/tournament/" + liveTournament.getId();
+            String url = "/pingpong/admin/tournaments/" + liveTournament.getId();
 
             // when live tournament test, then
             String contentAsString = mockMvc.perform(delete(url)
@@ -372,7 +372,7 @@ class TournamentAdminControllerTest {
 
             System.out.println(contentAsString);
 
-            url = "/pingpong/admin/tournament/" + endedTournament.getId();
+            url = "/pingpong/admin/tournaments/" + endedTournament.getId();
 
             // when ended tournament test, then
             contentAsString = mockMvc.perform(delete(url)

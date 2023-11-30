@@ -17,7 +17,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/pingpong/tournament")
+@RequestMapping("/pingpong/tournaments")
 public class TournamentController {
 
     private final TournamentService tournamentService;

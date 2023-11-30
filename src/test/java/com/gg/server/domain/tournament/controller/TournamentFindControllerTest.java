@@ -69,7 +69,7 @@ public class TournamentFindControllerTest {
             // given
             int page = 2;
             int size = 20;
-            String url = "/pingpong/tournament/?page=" + page + "&size=" + size;
+            String url = "/pingpong/tournaments/?page=" + page + "&size=" + size;
 
             // when
             String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
@@ -101,7 +101,7 @@ public class TournamentFindControllerTest {
             // given
             int page = 1;
             int size = 10;
-            String url = "/pingpong/tournament/?page=" + page + "&size=" + size + "&status=" + TournamentStatus.BEFORE.getCode();
+            String url = "/pingpong/tournaments/?page=" + page + "&size=" + size + "&status=" + TournamentStatus.BEFORE.getCode();
 
             // when
             String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
@@ -123,7 +123,7 @@ public class TournamentFindControllerTest {
             // given
             int page = 1;
             int size = 10;
-            String url = "/pingpong/tournament/?page=" + page + "&size=" + size + "&type=" + TournamentType.ROOKIE.getCode();
+            String url = "/pingpong/tournaments/?page=" + page + "&size=" + size + "&type=" + TournamentType.ROOKIE.getCode();
 
             // when
             String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
@@ -144,7 +144,7 @@ public class TournamentFindControllerTest {
             // given
             int page = 1;
             int size = 10;
-            String url = "/pingpong/tournament/?page=" + page + "&size=" + size + "&type=" + TournamentType.ROOKIE.getCode() + "&status=" + TournamentStatus.BEFORE.getCode();
+            String url = "/pingpong/tournaments/?page=" + page + "&size=" + size + "&type=" + TournamentType.ROOKIE.getCode() + "&status=" + TournamentStatus.BEFORE.getCode();
 
             // when
             String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
@@ -166,7 +166,7 @@ public class TournamentFindControllerTest {
             // given
             int page = 1;
             int size = 10;
-            String url = "/pingpong/tournament/?page=" + page + "&size=" + size + "&type=" + "rookie123" + "&status=" + TournamentStatus.BEFORE.getCode();
+            String url = "/pingpong/tournaments/?page=" + page + "&size=" + size + "&type=" + "rookie123" + "&status=" + TournamentStatus.BEFORE.getCode();
 
             // when
             String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
@@ -183,7 +183,7 @@ public class TournamentFindControllerTest {
             // given
             int page = 1;
             int size = 10;
-            String url = "/pingpong/tournament/?page=" + page + "&size=" + size + "&type=" + TournamentType.ROOKIE.getCode() + "&status=" + "wrongStatus";
+            String url = "/pingpong/tournaments/?page=" + page + "&size=" + size + "&type=" + TournamentType.ROOKIE.getCode() + "&status=" + "wrongStatus";
 
             // when
             String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
