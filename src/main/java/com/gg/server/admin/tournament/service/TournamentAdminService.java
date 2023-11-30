@@ -1,6 +1,7 @@
 package com.gg.server.admin.tournament.service;
 
 import com.gg.server.admin.tournament.dto.TournamentAdminAddUserRequestDto;
+import com.gg.server.admin.tournament.dto.TournamentAdminAddUserResponseDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
 import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentGame;
@@ -83,8 +84,9 @@ public class TournamentAdminService {
     /**
      * <p>관리자 토너먼트 참가 유저 추가 매서드</p>
      * <p>해당 토너먼트에 이미 신청 되어 있으면 추가 불가</p>
-     * @param tournamentId
-     * @param requestDto
+     * @param tournamentId 타겟 토너먼트
+     * @param requestDto 요청 dto
+     * @return TournamentAdminAddUserResponseDto dto 반환
      * @throws TournamentNotFoundException 타겟 토너먼트 없음
      * @throws TournamentUpdateException 이미 시작했거나 종료된 토너먼트
      * @throws UserNotFoundException 유저 없음
