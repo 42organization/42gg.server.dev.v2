@@ -28,6 +28,9 @@ import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentRepository;
 import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentGameRepository;
+import com.gg.server.domain.tournament.data.*;
+import com.gg.server.domain.tournament.data.TournamentRepository;
+import com.gg.server.domain.tournament.dto.TournamentResponseDto;
 import com.gg.server.domain.tournament.type.TournamentRound;
 import com.gg.server.domain.tournament.data.TournamentUser;
 import com.gg.server.domain.tournament.data.TournamentUserRepository;
@@ -400,5 +403,40 @@ public class TestDataUtils {
         TournamentUser tournamentUser = new TournamentUser(user, tournament, isJoined);
         tournament.getTournamentUsers().add(tournamentUser);
         return tournamentUserRepository.save(tournamentUser);
+    }
+
+    public List<TournamentResponseDto> makeTournamentList() {
+        int joinUserCnt = 8;
+        int notJoinUserCnt = 4;
+        List<TournamentResponseDto> tournamentResponseDtos = new ArrayList<>();
+
+        User winner = createNewUser("winner_sgo", "winner@gmail.com", RacketType.PENHOLDER, SnsType.NONE, RoleType.USER);
+        UserImageDto winnerImage = new UserImageDto(winner);
+        for (int i = 0; i < joinUserCnt + notJoinUserCnt; i++) {
+            User newUser = createNewUser("42gg_tester" + i, "tester" + i + "@gmail.com", RacketType.PENHOLDER, SnsType.NONE, RoleType.USER);
+            userRepository.save(newUser);
+        }
+
+        for (TournamentType type : TournamentType.values()) {
+            for (TournamentStatus status : TournamentStatus.values()) {
+                for (int i = 0; i < 5; i++) {
+                    Tournament tournament = createTournamentByEnum(type, status);
+                    tournamentResponseDtos.add(new TournamentResponseDto(tournament, winnerImage, joinUserCnt));
+                    tournament.update_winner(winner);
+                    for (int j = 0; j < joinUserCnt; j++) {
+                        TournamentUser tournamentUser = new TournamentUser(userRepository.findByIntraId("42gg_tester" + j).get(), tournament, true, LocalDateTime.now());
+                        tournamentUserRepository.save(tournamentUser);
+                        tournament.getTournamentUsers().add(tournamentUser);
+                    }
+                    for (int j = joinUserCnt; j < joinUserCnt + notJoinUserCnt; j++) {
+                        TournamentUser tournamentUser = new TournamentUser(userRepository.findByIntraId("42gg_tester" + j).get(), tournament, false, LocalDateTime.now());
+                        tournamentUserRepository.save(tournamentUser);
+                        tournament.getTournamentUsers().add(tournamentUser);
+                    }
+                    tournamentRepository.save(tournament);
+                }
+            }
+        }
+        return tournamentResponseDtos;
     }
 }
