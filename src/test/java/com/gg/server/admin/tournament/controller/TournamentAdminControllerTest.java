@@ -416,7 +416,7 @@ class TournamentAdminControllerTest {
 
             TournamentAdminAddUserRequestDto requestDto = new TournamentAdminAddUserRequestDto(user.getIntraId());
 
-            String url = "/pingpong/admin/tournament/" + tournament1.getId() + "/users";
+            String url = "/pingpong/admin/tournaments/" + tournament1.getId() + "/users";
             String content = objectMapper.writeValueAsString(requestDto);
 
             // when
@@ -447,7 +447,7 @@ class TournamentAdminControllerTest {
 
             TournamentAdminAddUserRequestDto requestDto = new TournamentAdminAddUserRequestDto(user.getIntraId());
 
-            String url = "/pingpong/admin/tournament/" + 9999 + "/users";
+            String url = "/pingpong/admin/tournaments/" + 9999 + "/users";
 
             String content = objectMapper.writeValueAsString(requestDto);
 
@@ -476,7 +476,7 @@ class TournamentAdminControllerTest {
 
             TournamentAdminAddUserRequestDto requestDto = new TournamentAdminAddUserRequestDto(user.getIntraId());
 
-            String url = "/pingpong/admin/tournament/" + tournament.getId() + "/users";
+            String url = "/pingpong/admin/tournaments/" + tournament.getId() + "/users";
 
             String content = objectMapper.writeValueAsString(requestDto);
 
@@ -503,7 +503,7 @@ class TournamentAdminControllerTest {
 
             TournamentAdminAddUserRequestDto requestDto = new TournamentAdminAddUserRequestDto("nobody");
 
-            String url = "/pingpong/admin/tournament/" + tournament.getId() + "/users";
+            String url = "/pingpong/admin/tournaments/" + tournament.getId() + "/users";
 
             String content = objectMapper.writeValueAsString(requestDto);
 
@@ -532,7 +532,7 @@ class TournamentAdminControllerTest {
             TournamentUser participant = testDataUtils.createTournamentUser(user, tournament, false);
             TournamentAdminAddUserRequestDto requestDto = new TournamentAdminAddUserRequestDto(user.getIntraId());
 
-            String url = "/pingpong/admin/tournament/" + tournament.getId() + "/users";
+            String url = "/pingpong/admin/tournaments/" + tournament.getId() + "/users";
             String content = objectMapper.writeValueAsString(requestDto);
 
             // when, then
@@ -562,7 +562,7 @@ class TournamentAdminControllerTest {
             }
             TournamentAdminAddUserRequestDto requestDto = new TournamentAdminAddUserRequestDto(user.getIntraId());
 
-            String url = "/pingpong/admin/tournament/" + tournament.getId() + "/users";
+            String url = "/pingpong/admin/tournaments/" + tournament.getId() + "/users";
             String content = objectMapper.writeValueAsString(requestDto);
 
             // when

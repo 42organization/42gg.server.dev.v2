@@ -56,7 +56,7 @@ public class TournamentAdminController {
      * <p>이미 해당 토너먼트에 참여중이거나 대기자인 유저는 신청할 수 없다.</p>
      * @param tournamentId 유저를 추가할 토너먼트 id
      * @param tournamentAdminUserAddRequestDto 요청 데이터
-     * @return HttpStatus.NO_CONTENT
+     * @return TournamentAdminAddUserResponseDto, HttpStatus.CREATED
      */
     @PostMapping("/{tournamentId}/users")
     public ResponseEntity<TournamentAdminAddUserResponseDto> addTournamentUser(@PathVariable @Positive Long tournamentId,
