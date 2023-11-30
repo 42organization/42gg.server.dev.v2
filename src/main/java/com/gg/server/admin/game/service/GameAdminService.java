@@ -66,9 +66,16 @@ public class GameAdminService {
         return teamViews.stream().map(GameLogAdminDto::new).collect(Collectors.toList());
     }
 
+    /**
+     * 특정 유저의 게임 목록 조회
+     * @param intraId 조회할 유저의 intraId
+     * @param pageable page size
+     * @return GameLogListAdminResponseDto
+     * @throws UserNotFoundException intraId에 해당하는 유저가 없을 경우
+     */
     @Transactional(readOnly = true)
     public GameLogListAdminResponseDto findGamesByIntraId(String intraId, Pageable pageable){
-        User user = userAdminRepository.findByIntraId(intraId).orElseThrow(() -> new UserNotFoundException());
+        User user = userAdminRepository.findByIntraId(intraId).orElseThrow(UserNotFoundException::new);
         List<PChange> pChangeList = pChangeRepository.findAllByUserId(user.getId());
         List<Game> gameList = new ArrayList<>();
 
@@ -81,6 +88,14 @@ public class GameAdminService {
         return new GameLogListAdminResponseDto(getGameLogList(games.getContent().stream().map(Game::getId).collect(Collectors.toList())), games.getTotalPages());
     }
 
+    /**
+     * 랭킹 점수 수정
+     * @param reqDto team1Id team1Score team2Id team2Score
+     * @param gameId 수정할 게임 id
+     * @throws GameNotExistException gameId에 해당하는 게임이 없을 경우
+     * @throws SeasonNotFoundException 게임에 해당하는 시즌이 없을 경우
+     * @throws NotRecentlyGameException 게임이 두명 다 가장 마지막 게임이 아닐 경우
+     */
     @Transactional
     @Caching(evict = {
             @CacheEvict(value = "rankGameListByIntra", allEntries = true),
