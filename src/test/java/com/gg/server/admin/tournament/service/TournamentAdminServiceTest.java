@@ -65,14 +65,13 @@ class TournamentAdminServiceTest {
             TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto = makeTournamentCreateRequestDto(
                     "1st tournament",
                     getTargetTime(3, 1), getTargetTime(3, 3));
-            List<Tournament> tournamentList = makeTournaments(1L, 2, getTargetTime(2, 1));
+            List<Tournament> tournamentList = createTournaments(1L, 2, getTargetTime(2, 1));
             Tournament tournament = tournamentList.get(0);
             TournamentGame tournamentGame = createTournamentGame(tournament, TournamentRound.THE_FINAL);
 
             given(tournamentRepository.findByTitle(tournament.getTitle())).willReturn(Optional.empty());
             given(tournamentRepository.findAllByStatusIsNot(TournamentStatus.END)).willReturn(tournamentList);
-            given(tournamentRepository.save(Mockito.any(Tournament.class))).willReturn(tournament);
-            given(tournamentGameRepository.save(Mockito.any(TournamentGame.class))).willReturn(tournamentGame);
+            given(tournamentRepository.save(any(Tournament.class))).willReturn(tournament);
 
             // when
             tournamentAdminService.createTournament(tournamentAdminCreateRequestDto);
@@ -82,7 +81,7 @@ class TournamentAdminServiceTest {
         @DisplayName("토너먼트 제목 중복")
         public void titleDup() {
             //given
-            Tournament tournament = makeTournament(1L, TournamentStatus.BEFORE,
+            Tournament tournament = createTournament(1L, TournamentStatus.BEFORE,
                 getTargetTime(0, -1), getTargetTime(0, 1));
             TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto = makeTournamentCreateRequestDto(
                     "1st tournament",
@@ -97,7 +96,7 @@ class TournamentAdminServiceTest {
         @DisplayName("유효하지 않은 시간 입력")
         public void invalidTime() {
             //given
-            Tournament tournament = makeTournament(1L, TournamentStatus.BEFORE,
+            Tournament tournament = createTournament(1L, TournamentStatus.BEFORE,
                     getTargetTime(0, 0), getTargetTime(0, 1));
 
             TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto1 = makeTournamentCreateRequestDto(
@@ -129,7 +128,7 @@ class TournamentAdminServiceTest {
         @DisplayName("기존에 있는 토너먼트와 겹치는 토너먼트 시간")
         public void tournamentTimeConflict() {
             // given
-            List<Tournament> tournamentList = makeTournaments(1L, 2, getTargetTime(3, 1));
+            List<Tournament> tournamentList = createTournaments(1L, 2, getTargetTime(3, 1));
             Tournament tournament = tournamentList.get(0);
             TournamentAdminCreateRequestDto createRequestDto1 = makeTournamentCreateRequestDto(
                     "1st tournament",
