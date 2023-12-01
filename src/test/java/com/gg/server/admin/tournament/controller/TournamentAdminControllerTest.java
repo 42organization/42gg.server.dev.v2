@@ -649,6 +649,7 @@ class TournamentAdminControllerTest {
         @DisplayName("유저_삭제_성공")
         void success() throws Exception {
             // given
+            int maxTournamentUser = 8;
             String accessToken = testDataUtils.getAdminLoginAccessToken();
 
             Tournament tournament = testDataUtils.createTournament(
@@ -656,15 +657,18 @@ class TournamentAdminControllerTest {
                 LocalDateTime.now().plusDays(2).plusHours(3),
                 TournamentStatus.BEFORE);
 
-            for (int i=0; i<8; i++) {
+            for (int i=0; i<maxTournamentUser-1; i++) {
                 TournamentUser tournamentUser = testDataUtils.createTournamentUser(
                     testDataUtils.createNewUser("testUser" + i), tournament, true);
             }
-            for (int i=8; i<12; i++) {
+            for (int i=maxTournamentUser-1; i<maxTournamentUser+4; i++) {
                 TournamentUser tournamentUser = testDataUtils.createTournamentUser(
                     testDataUtils.createNewUser("testUser" + i), tournament, false);
             }
-            User user = tournament.getTournamentUsers().get(7).getUser();
+            TournamentUser tournamentUser = testDataUtils.createTournamentUser(
+                testDataUtils.createNewUser("testUser12"), tournament, true);
+
+            User user = tournament.getTournamentUsers().get(6).getUser();
 
             String url = "/pingpong/admin/tournaments/" + tournament.getId() + "/users/" + user.getId();
             // when
@@ -676,20 +680,20 @@ class TournamentAdminControllerTest {
 
             // then
             System.out.println(contentAsString);
-            tournament.getTournamentUsers().stream().filter(tu->tu.getUser().equals(user)).findAny()
+            List<TournamentUser> tournamentUserList = tournament.getTournamentUsers();
+            tournamentUserList.stream().filter(tu->tu.getUser().equals(user)).findAny()
                 .ifPresent(a->{throw new CustomRuntimeException("토너먼트 유저 리스트에 삭제 안됨", ErrorCode.BAD_REQUEST);});
             tournamentUserRepository.findByTournamentIdAndUserId(tournament.getId(), user.getId())
                 .ifPresent(a->{throw new CustomRuntimeException("토너먼트 유저 레포에서 삭제 안됨", ErrorCode.BAD_REQUEST);});
-            List<TournamentUser> tournamentUserList = tournament.getTournamentUsers();
-            for (int i=0; i<tournamentUserList.size() && i<8; i++) {
-                if (!tournamentUserList.get(i).isJoined()) {
-                    throw new CustomRuntimeException("토너먼트 유저 참여자 제대로 설정 안됨", ErrorCode.BAD_REQUEST);
+            int participantCnt = 0;
+            for (TournamentUser tu : tournamentUserList) {
+                System.out.println(tu.getUser().getIntraId() + ": " + tu.isJoined() + ", " + tu.getRegisterTime() + "\n");
+                if (tu.isJoined()) {
+                    participantCnt++;
                 }
             }
-            for (int i=8; i<tournamentUserList.size(); i++) {
-                if (tournamentUserList.get(i).isJoined()) {
-                    throw new CustomRuntimeException("토너먼트 유저 참여자 제대로 설정 안됨", ErrorCode.BAD_REQUEST);
-                }
+            if (participantCnt > maxTournamentUser) {
+                throw new CustomRuntimeException("토너먼트 유저 참여자 제대로 설정 안됨", ErrorCode.BAD_REQUEST);
             }
         }
 
