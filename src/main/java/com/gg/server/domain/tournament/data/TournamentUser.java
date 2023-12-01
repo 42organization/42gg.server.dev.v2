@@ -3,6 +3,7 @@ package com.gg.server.domain.tournament.data;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.global.utils.BaseTimeEntity;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -48,5 +49,9 @@ public class TournamentUser extends BaseTimeEntity {
         this.tournament = tournament;
         this.isJoined = isJoined;
         this.registerTime = registerTime;
+    }
+
+    public void changeIsJoined(boolean isJoined) {
+        this.isJoined = isJoined;
     }
 }
