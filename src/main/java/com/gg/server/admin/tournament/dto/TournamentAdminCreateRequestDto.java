@@ -1,6 +1,7 @@
 package com.gg.server.admin.tournament.dto;
 
 import com.gg.server.domain.tournament.type.TournamentType;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +10,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class TournamentAdminCreateRequestDto {
     @NotNull(message = "제목이 필요합니다.")
