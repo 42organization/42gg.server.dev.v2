@@ -163,6 +163,33 @@ public class TournamentAdminService {
     }
 
     /**
+     * <p>토너먼트 유저 삭제 매서드</p>
+     * <p>참가자를 삭제하고 남은 인원이 ALLOWED_JOINED_NUMBER(토너먼트 최대 참가자수) 보다 크거나 같다면</p>
+     * <p>조건대로 정렬된 순서에서 대기인원을 참가자로 바꾸어 준다.</p>
+     * @param tournamentId 타겟 토너먼트 id
+     * @param userId 타겟 유저 id
+     */
+    public void deleteTournamentUser(Long tournamentId, Long userId) {
+        Tournament targetTournament = tournamentRepository.findById(tournamentId)
+            .orElseThrow(() -> new TournamentNotFoundException("target tournament not found", ErrorCode.TOURNAMENT_NOT_FOUND));
+        if (!targetTournament.getStatus().equals(TournamentStatus.BEFORE) && !targetTournament.getStatus().equals(TournamentStatus.READY)) {
+            throw new TournamentUpdateException("already started or ended", ErrorCode.TOURNAMENT_NOT_BEFORE);
+        }
+        TournamentUser targetTournamentUser = tournamentUserRepository.findByTournamentIdAndUserId(tournamentId, userId)
+            .orElseThrow(UserNotFoundException::new);
+        List<TournamentUser> tournamentUserList = targetTournament.getTournamentUsers();
+
+        targetTournament.deleteTournamentUser(targetTournamentUser);
+        if (targetTournamentUser.isJoined() && targetTournament.getTournamentUsers().size()>=ALLOWED_JOINED_NUMBER) {
+            targetTournament.sortTournamentUsers();
+            for (int i=0; i<ALLOWED_JOINED_NUMBER; i++) {
+                tournamentUserList.get(i).changeIsJoined(true);
+            }
+        }
+        tournamentUserRepository.delete(targetTournamentUser);
+    }
+
+    /**
      * 토너먼트 시간 체크 :
      * [ 현재 시간 + 최소 2일 ],
      * [ 현재시간 보다 미래 ],
