@@ -640,6 +640,5 @@ class TournamentAdminControllerTest {
                 .filter(tu->tu.getUser().getIntraId().equals(user.getIntraId())).findAny()
                 .filter(tu->!tu.isJoined()).orElseThrow(()->new CustomRuntimeException("waitlist 제대로 등록 안됨", ErrorCode.BAD_REQUEST));
         }
-
     }
 }
