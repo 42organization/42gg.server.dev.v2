@@ -641,4 +641,133 @@ class TournamentAdminControllerTest {
                 .filter(tu->!tu.isJoined()).orElseThrow(()->new CustomRuntimeException("waitlist 제대로 등록 안됨", ErrorCode.BAD_REQUEST));
         }
     }
+
+    @Nested
+    @DisplayName("관리자_토너먼트_유저_삭제_컨트롤러_테스트")
+    class TournamentAdminControllerDeleteUserTest {
+        @Test
+        @DisplayName("유저_삭제_성공")
+        void success() throws Exception {
+            // given
+            String accessToken = testDataUtils.getAdminLoginAccessToken();
+
+            Tournament tournament = testDataUtils.createTournament(
+                LocalDateTime.now().plusDays(2).plusHours(1),
+                LocalDateTime.now().plusDays(2).plusHours(3),
+                TournamentStatus.BEFORE);
+
+            for (int i=0; i<8; i++) {
+                TournamentUser tournamentUser = testDataUtils.createTournamentUser(
+                    testDataUtils.createNewUser("testUser" + i), tournament, true);
+            }
+            for (int i=8; i<12; i++) {
+                TournamentUser tournamentUser = testDataUtils.createTournamentUser(
+                    testDataUtils.createNewUser("testUser" + i), tournament, false);
+            }
+            User user = tournament.getTournamentUsers().get(7).getUser();
+
+            String url = "/pingpong/admin/tournaments/" + tournament.getId() + "/users/" + user.getId();
+            // when
+            String contentAsString = mockMvc.perform(delete(url)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isNoContent())
+                .andReturn().getResponse().getContentAsString();
+
+            // then
+            System.out.println(contentAsString);
+            tournament.getTournamentUsers().stream().filter(tu->tu.getUser().equals(user)).findAny()
+                .ifPresent(a->{throw new CustomRuntimeException("토너먼트 유저 리스트에 삭제 안됨", ErrorCode.BAD_REQUEST);});
+            tournamentUserRepository.findByTournamentIdAndUserId(tournament.getId(), user.getId())
+                .ifPresent(a->{throw new CustomRuntimeException("토너먼트 유저 레포에서 삭제 안됨", ErrorCode.BAD_REQUEST);});
+            List<TournamentUser> tournamentUserList = tournament.getTournamentUsers();
+            for (int i=0; i<tournamentUserList.size() && i<8; i++) {
+                if (!tournamentUserList.get(i).isJoined()) {
+                    throw new CustomRuntimeException("토너먼트 유저 참여자 제대로 설정 안됨", ErrorCode.BAD_REQUEST);
+                }
+            }
+            for (int i=8; i<tournamentUserList.size(); i++) {
+                if (tournamentUserList.get(i).isJoined()) {
+                    throw new CustomRuntimeException("토너먼트 유저 참여자 제대로 설정 안됨", ErrorCode.BAD_REQUEST);
+                }
+            }
+        }
+
+        @Test
+        @DisplayName("토너먼트_없는_경우")
+        void tournamentNotFound() throws Exception {
+            // given
+            String accessToken = testDataUtils.getAdminLoginAccessToken();
+
+            User user = testDataUtils.createNewUser("testUser");
+
+            TournamentAdminAddUserRequestDto requestDto = new TournamentAdminAddUserRequestDto(user.getIntraId());
+
+            String url = "/pingpong/admin/tournaments/" + 1234 + "/users/" + user.getId();
+
+            String content = objectMapper.writeValueAsString(requestDto);
+
+            // when, then
+            String contentAsString = mockMvc.perform(delete(url)
+                    .content(content)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isNotFound())
+                .andReturn().getResponse().getContentAsString();
+
+        }
+
+        @Test
+        @DisplayName("이미_시작했거나_종료된_토너먼트_수정")
+        void canNotUpdate() throws Exception {
+            // given
+            String accessToken = testDataUtils.getAdminLoginAccessToken();
+
+            Tournament tournament = testDataUtils.createTournament(
+                LocalDateTime.now().plusDays(0).plusHours(-1),
+                LocalDateTime.now().plusDays(0).plusHours(1),
+                TournamentStatus.LIVE);
+            User user = testDataUtils.createNewUser("testUser");
+
+            TournamentAdminAddUserRequestDto requestDto = new TournamentAdminAddUserRequestDto(user.getIntraId());
+
+            String url = "/pingpong/admin/tournaments/" + tournament.getId() + "/users/" + user.getId();
+
+            String content = objectMapper.writeValueAsString(requestDto);
+
+            // when, then
+            String contentAsString = mockMvc.perform(delete(url)
+                    .content(content)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isBadRequest())
+                .andReturn().getResponse().getContentAsString();
+        }
+
+        @Test
+        @DisplayName("찾을_수_없는_유저")
+        void userNotFound() throws Exception {
+            // given
+            String accessToken = testDataUtils.getAdminLoginAccessToken();
+
+            Tournament tournament = testDataUtils.createTournament(
+                LocalDateTime.now().plusDays(2).plusHours(1),
+                LocalDateTime.now().plusDays(2).plusHours(3),
+                TournamentStatus.BEFORE);
+
+            TournamentAdminAddUserRequestDto requestDto = new TournamentAdminAddUserRequestDto("nobody");
+
+            String url = "/pingpong/admin/tournaments/" + tournament.getId() + "/users/" + "4321";
+
+            String content = objectMapper.writeValueAsString(requestDto);
+
+            // when, then
+            String contentAsString = mockMvc.perform(delete(url)
+                    .content(content)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isNotFound())
+                .andReturn().getResponse().getContentAsString();
+        }
+    }
 }
