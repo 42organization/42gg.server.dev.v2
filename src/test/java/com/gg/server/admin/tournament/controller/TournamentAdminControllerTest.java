@@ -1,12 +1,14 @@
 package com.gg.server.admin.tournament.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gg.server.admin.tournament.dto.TournamentAdminCreateRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminAddUserRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
 import com.gg.server.admin.tournament.service.TournamentAdminService;
@@ -388,6 +390,35 @@ class TournamentAdminControllerTest {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString();
+
+            System.out.println(contentAsString);
+        }
+    }
+
+    @Nested
+    @DisplayName("토너먼트 관리 생성 컨트롤러 테스트")
+    class TournamentAdminControllerCreateTest {
+        @Test
+        @DisplayName("토너먼트 생성 성공")
+        void success() throws Exception {
+            //given
+            String accessToken = testDataUtils.getAdminLoginAccessToken();
+
+            TournamentAdminCreateRequestDto createDto = testDataUtils.createRequestDto(
+                    LocalDateTime.now().plusDays(10).plusHours(3),
+                    LocalDateTime.now().plusDays(10).plusHours(5),
+                    TournamentType.ROOKIE);
+
+            String url = "/pingpong/admin/tournament";
+            String content = objectMapper.writeValueAsString(createDto);
+
+            //when, then
+            String contentAsString = mockMvc.perform(post(url)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(content))
+                    .andExpect(status().isCreated())
+                    .andReturn().getResponse().getContentAsString();
 
             System.out.println(contentAsString);
         }
