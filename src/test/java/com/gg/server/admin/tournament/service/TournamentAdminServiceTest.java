@@ -38,7 +38,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -62,7 +61,7 @@ class TournamentAdminServiceTest {
         @DisplayName("토너먼트 생성 성공")
         void success() {
             // given
-            TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto = makeTournamentCreateRequestDto(
+            TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto = createTournamentCreateRequestDto(
                     "1st tournament",
                     getTargetTime(3, 1), getTargetTime(3, 3));
             List<Tournament> tournamentList = createTournaments(1L, 2, getTargetTime(2, 1));
@@ -83,7 +82,7 @@ class TournamentAdminServiceTest {
             //given
             Tournament tournament = createTournament(1L, TournamentStatus.BEFORE,
                 getTargetTime(0, -1), getTargetTime(0, 1));
-            TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto = makeTournamentCreateRequestDto(
+            TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto = createTournamentCreateRequestDto(
                     "1st tournament",
                     getTargetTime(3, 1), getTargetTime(3, 3));
             given(tournamentRepository.findByTitle(tournament.getTitle())).willReturn(Optional.of(tournament));
@@ -99,16 +98,16 @@ class TournamentAdminServiceTest {
             Tournament tournament = createTournament(1L, TournamentStatus.BEFORE,
                     getTargetTime(0, 0), getTargetTime(0, 1));
 
-            TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto1 = makeTournamentCreateRequestDto(
+            TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto1 = createTournamentCreateRequestDto(
                     "1st tournament",
                     getTargetTime(1, 1), getTargetTime(1, 3));
-            TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto2 = makeTournamentCreateRequestDto(
+            TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto2 = createTournamentCreateRequestDto(
                     "1st tournament",
                     getTargetTime(3, 3), getTargetTime(3, 1));
-            TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto3 = makeTournamentCreateRequestDto(
+            TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto3 = createTournamentCreateRequestDto(
                     "1st tournament",
                     getTargetTime(3, 3), getTargetTime(3, 3));
-            TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto4 = makeTournamentCreateRequestDto(
+            TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto4 = createTournamentCreateRequestDto(
                     "1st tournament",
                     getTargetTime(3, 1), getTargetTime(3, 2));
 
@@ -130,25 +129,25 @@ class TournamentAdminServiceTest {
             // given
             List<Tournament> tournamentList = createTournaments(1L, 2, getTargetTime(3, 1));
             Tournament tournament = tournamentList.get(0);
-            TournamentAdminCreateRequestDto createRequestDto1 = makeTournamentCreateRequestDto(
+            TournamentAdminCreateRequestDto createRequestDto1 = createTournamentCreateRequestDto(
                     "1st tournament",
                     getTargetTime(3, 2), getTargetTime(3, 5));
-            TournamentAdminCreateRequestDto createRequestDto2 = makeTournamentCreateRequestDto(
+            TournamentAdminCreateRequestDto createRequestDto2 = createTournamentCreateRequestDto(
                     "1st tournament",
                     getTargetTime(3, 0), getTargetTime(3, 2));
-            TournamentAdminCreateRequestDto createRequestDto3 = makeTournamentCreateRequestDto(
+            TournamentAdminCreateRequestDto createRequestDto3 = createTournamentCreateRequestDto(
                     "1st tournament",
                     getTargetTime(3, 0), getTargetTime(3, 4));
-            TournamentAdminCreateRequestDto createRequestDto4 = makeTournamentCreateRequestDto(
+            TournamentAdminCreateRequestDto createRequestDto4 = createTournamentCreateRequestDto(
                     "1st tournament",
                     getTargetTime(3, 1), getTargetTime(3, 5));
-            TournamentAdminCreateRequestDto createRequestDto5 = makeTournamentCreateRequestDto(
+            TournamentAdminCreateRequestDto createRequestDto5 = createTournamentCreateRequestDto(
                     "1st tournament",
                     getTargetTime(2, 3), getTargetTime(3, 1));
-            TournamentAdminCreateRequestDto createRequestDto6 = makeTournamentCreateRequestDto(
+            TournamentAdminCreateRequestDto createRequestDto6 = createTournamentCreateRequestDto(
                     "1st tournament",
                     getTargetTime(2, 3), getTargetTime(3, 3));
-            TournamentAdminCreateRequestDto createRequestDto7 = makeTournamentCreateRequestDto(
+            TournamentAdminCreateRequestDto createRequestDto7 = createTournamentCreateRequestDto(
                     "1st tournament",
                     LocalDateTime.now().plusDays(2).plusMinutes(30), LocalDateTime.now().plusDays(3).plusHours(1));
             given(tournamentRepository.findByTitle(tournament.getTitle())).willReturn(Optional.empty());
@@ -412,7 +411,7 @@ class TournamentAdminServiceTest {
      * @param endTime 토너먼트 종료 시간
      * @return
      */
-    private TournamentAdminCreateRequestDto makeTournamentCreateRequestDto(String title, LocalDateTime startTime, LocalDateTime endTime) {
+    private TournamentAdminCreateRequestDto createTournamentCreateRequestDto(String title, LocalDateTime startTime, LocalDateTime endTime) {
         return new TournamentAdminCreateRequestDto(
                 title,
                 "제 1회 루키전 많관부!!",
