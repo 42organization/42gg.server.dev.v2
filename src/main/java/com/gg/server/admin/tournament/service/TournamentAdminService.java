@@ -53,43 +53,40 @@ public class TournamentAdminService {
         checkTournamentTitle(tournamentAdminCreateRequestDto.getTitle());
         checkValidTournamentTime(tournamentAdminCreateRequestDto.getStartTime(), tournamentAdminCreateRequestDto.getEndTime());
         checkConflictedTournament(-1L, tournamentAdminCreateRequestDto.getStartTime(), tournamentAdminCreateRequestDto.getEndTime());
-        Tournament tournament = new Tournament(
-                tournamentAdminCreateRequestDto.getTitle(),
-                tournamentAdminCreateRequestDto.getContents(),
-                tournamentAdminCreateRequestDto.getStartTime(),
-                tournamentAdminCreateRequestDto.getEndTime(),
-                tournamentAdminCreateRequestDto.getType(),
-                TournamentStatus.BEFORE,
-                null,
-                new ArrayList<>(),
-                new ArrayList<>()
-        );
+
+        Tournament tournament = Tournament.builder()
+                .title(tournamentAdminCreateRequestDto.getTitle())
+                .contents(tournamentAdminCreateRequestDto.getContents())
+                .startTime(tournamentAdminCreateRequestDto.getStartTime())
+                .endTime(tournamentAdminCreateRequestDto.getEndTime())
+                .type(tournamentAdminCreateRequestDto.getType())
+                .status(TournamentStatus.BEFORE).build();
         createTournamentGameList(tournament, 7);
         return tournamentRepository.save(tournament);
     }
 
     /**
      * <p>토너먼트 업데이트 Method</p>
-     * @param tournamentId  업데이트할 토너먼트 id
-     * @param requestDto 요청한 Dto
+     * @param tournamentId 업데이트할 토너먼트 id
+     * @param requestDto   요청한 Dto
      * @throws TournamentNotFoundException 찾을 수 없는 토너먼트 일 때
-     * @throws TournamentUpdateException 업데이트 할 수 없는 토너먼트 일 때
+     * @throws TournamentUpdateException   업데이트 할 수 없는 토너먼트 일 때
      */
     public Tournament updateTournamentInfo(Long tournamentId, TournamentAdminUpdateRequestDto requestDto) {
         Tournament targetTournament = tournamentRepository.findById(tournamentId)
-            .orElseThrow(() -> new TournamentNotFoundException("target tournament not found", ErrorCode.TOURNAMENT_NOT_FOUND));
+                .orElseThrow(() -> new TournamentNotFoundException("target tournament not found", ErrorCode.TOURNAMENT_NOT_FOUND));
         if (targetTournament.getStatus() != TournamentStatus.BEFORE && !targetTournament.getStatus().equals(TournamentStatus.READY)) {
             throw new TournamentUpdateException("already started or ended", ErrorCode.TOURNAMENT_NOT_BEFORE);
         }
         checkValidTournamentTime(requestDto.getStartTime(), requestDto.getEndTime());
         checkConflictedTournament(targetTournament.getId(), requestDto.getStartTime(), requestDto.getEndTime());
         targetTournament.update(
-            requestDto.getTitle(),
-            requestDto.getContents(),
-            requestDto.getStartTime(),
-            requestDto.getEndTime(),
-            requestDto.getType(),
-            TournamentStatus.BEFORE);
+                requestDto.getTitle(),
+                requestDto.getContents(),
+                requestDto.getStartTime(),
+                requestDto.getEndTime(),
+                requestDto.getType(),
+                TournamentStatus.BEFORE);
         return tournamentRepository.save(targetTournament);
     }
 
@@ -111,11 +108,11 @@ public class TournamentAdminService {
      * <p>토너먼트는 BEFORE 인 경우에만 삭제 가능하다.</p>
      * @param tournamentId 타겟 토너먼트 id
      * @throws TournamentNotFoundException 찾을 수 없는 토너먼트 일 때
-     * @throws TournamentUpdateException 업데이트 할 수 없는 토너먼트 일 때
+     * @throws TournamentUpdateException   업데이트 할 수 없는 토너먼트 일 때
      */
     public void deleteTournament(Long tournamentId) {
         Tournament targetTournament = tournamentRepository.findById(tournamentId)
-            .orElseThrow(() -> new TournamentNotFoundException("target tournament not found", ErrorCode.TOURNAMENT_NOT_FOUND));
+                .orElseThrow(() -> new TournamentNotFoundException("target tournament not found", ErrorCode.TOURNAMENT_NOT_FOUND));
         if (targetTournament.getStatus() != TournamentStatus.BEFORE && !targetTournament.getStatus().equals(TournamentStatus.READY)) {
             throw new TournamentUpdateException("already started or ended", ErrorCode.TOURNAMENT_NOT_BEFORE);
         }
@@ -124,30 +121,20 @@ public class TournamentAdminService {
         tournamentRepository.deleteById(tournamentId);
     }
 
-    /***
-     * 토너먼트 제목 중복 체크
-     * @param tournamentTitle 요청 데이터에서 받아온 토너먼트 제목
-     * @throws TournamentTitleConflictException 토너먼트의 제목이 겹칠 때
-     */
-    private void checkTournamentTitle(String tournamentTitle) {
-        tournamentRepository.findByTitle(tournamentTitle).ifPresent(
-                a-> {throw new TournamentTitleConflictException();});
-    }
-
     /**
      * <p>관리자 토너먼트 참가 유저 추가 매서드</p>
      * <p>해당 토너먼트에 이미 신청 되어 있으면 추가 불가</p>
      * @param tournamentId 타겟 토너먼트
-     * @param requestDto 요청 dto
+     * @param requestDto   요청 dto
      * @return TournamentAdminAddUserResponseDto dto 반환
      * @throws TournamentNotFoundException 타겟 토너먼트 없음
-     * @throws TournamentUpdateException 이미 시작했거나 종료된 토너먼트
-     * @throws UserNotFoundException 유저 없음
+     * @throws TournamentUpdateException   이미 시작했거나 종료된 토너먼트
+     * @throws UserNotFoundException       유저 없음
      * @throws TournamentConflictException 이미 참가자인 토너먼트가 존재
      */
     public TournamentAdminAddUserResponseDto addTournamentUser(Long tournamentId, TournamentAdminAddUserRequestDto requestDto) {
         Tournament targetTournament = tournamentRepository.findById(tournamentId)
-            .orElseThrow(() -> new TournamentNotFoundException("target tournament not found", ErrorCode.TOURNAMENT_NOT_FOUND));
+                .orElseThrow(() -> new TournamentNotFoundException("target tournament not found", ErrorCode.TOURNAMENT_NOT_FOUND));
         if (!targetTournament.getStatus().equals(TournamentStatus.BEFORE) && !targetTournament.getStatus().equals(TournamentStatus.READY)) {
             throw new TournamentUpdateException("already started or ended", ErrorCode.TOURNAMENT_NOT_BEFORE);
         }
@@ -163,14 +150,14 @@ public class TournamentAdminService {
         }
 
         TournamentUser tournamentUser = new TournamentUser(targetUser, targetTournament,
-            targetTournament.getTournamentUsers().size() < ALLOWED_JOINED_NUMBER, LocalDateTime.now());
+                targetTournament.getTournamentUsers().size() < ALLOWED_JOINED_NUMBER, LocalDateTime.now());
         targetTournament.addTournamentUser(tournamentUser);
         tournamentUserRepository.save(tournamentUser);
 
         return new TournamentAdminAddUserResponseDto(
-            targetUser.getId(),
-            targetUser.getIntraId(),
-            tournamentUser.isJoined()
+                targetUser.getId(),
+                targetUser.getIntraId(),
+                tournamentUser.isJoined()
         );
     }
 
@@ -180,14 +167,15 @@ public class TournamentAdminService {
      * [ 현재시간 보다 미래 ],
      * [ 시작 시간이 종료시간보다 현재시에 가까움 ]
      * [ 진행 시간 최소 2시간 ]
+     *
      * @param startTime 업데이트할 토너먼트 시작 시간
-     * @param endTime 업데이트할 토너먼트 종료 시간
+     * @param endTime   업데이트할 토너먼트 종료 시간
      * @throws InvalidParameterException 토너먼트 시간으로 부적합 할 때
      */
     private void checkValidTournamentTime(LocalDateTime startTime, LocalDateTime endTime) {
         if (startTime.isAfter(endTime) || startTime.isEqual(endTime) ||
-            startTime.isBefore(LocalDateTime.now().plusDays(ALLOWED_MINIMAL_START_DAYS)) ||
-            startTime.plusHours(MINIMUM_TOURNAMENT_DURATION).isAfter(endTime)) {
+                startTime.isBefore(LocalDateTime.now().plusDays(ALLOWED_MINIMAL_START_DAYS)) ||
+                startTime.plusHours(MINIMUM_TOURNAMENT_DURATION).isAfter(endTime)) {
             throw new InvalidParameterException("invalid tournament time", ErrorCode.VALID_FAILED);
         }
     }
@@ -195,8 +183,8 @@ public class TournamentAdminService {
     /**
      * <p>tournamentList 에서 targetTournament을 제외한 토너먼트 중 겹치는 시간대 존재 유무 확인</p>
      * @param targetTournamentId 업데이트할 토너먼트 id
-     * @param startTime 업데이트할 토너먼트 시작 시간
-     * @param endTime 업데이트할 토너먼트 종료 시간
+     * @param startTime          업데이트할 토너먼트 시작 시간
+     * @param endTime            업데이트할 토너먼트 종료 시간
      * @throws TournamentConflictException 업데이트 하고자 하는 토너먼트의 시간이 겹칠 때
      */
     private void checkConflictedTournament(Long targetTournamentId, LocalDateTime startTime, LocalDateTime endTime) {
@@ -206,10 +194,10 @@ public class TournamentAdminService {
                 continue;
             }
             if ((startTime.isAfter(tournament.getStartTime()) && startTime.isBefore(tournament.getEndTime())) ||
-                (endTime.isAfter(tournament.getStartTime()) && endTime.isBefore(tournament.getEndTime())) ||
-                (startTime.isBefore(tournament.getStartTime()) && endTime.isAfter(tournament.getEndTime())) ||
-                startTime.isEqual(tournament.getStartTime()) || startTime.isEqual(tournament.getEndTime()) ||
-                endTime.isEqual(tournament.getEndTime()) || endTime.isEqual(tournament.getStartTime())) {
+                    (endTime.isAfter(tournament.getStartTime()) && endTime.isBefore(tournament.getEndTime())) ||
+                    (startTime.isBefore(tournament.getStartTime()) && endTime.isAfter(tournament.getEndTime())) ||
+                    startTime.isEqual(tournament.getStartTime()) || startTime.isEqual(tournament.getEndTime()) ||
+                    endTime.isEqual(tournament.getEndTime()) || endTime.isEqual(tournament.getStartTime())) {
                 throw new TournamentConflictException("tournament conflicted", ErrorCode.TOURNAMENT_CONFLICT);
             }
         }
@@ -217,7 +205,7 @@ public class TournamentAdminService {
 
     /**
      * <p>tournamentList 에서 intraId 가 타겟 intraID인 TournamentUser 리스트 반환 매서드</p>
-     * @param intraId 타겟 유저 intraId
+     * @param intraId        타겟 유저 intraId
      * @param tournamentList 토너먼트 리스트
      * @return intraId 가 타겟 intraID인 TournamentUser 리스트
      */
@@ -233,36 +221,15 @@ public class TournamentAdminService {
         return result;
     }
 
-    //이미 존재하는 토너먼트인지, 시간이 올바른지, 타입이 올바른지 체크
-    @Transactional
-    public void createTournament(TournamentCreateRequestDto tournamentCreateRequestDto) {
-//        이미 존재하는 토너먼트인지 체크
-        if (checkTournamentTitle(tournamentCreateRequestDto.getTitle()))
-            throw new TournamentTitleDupException();
-
-//        시간이 올바른지 체크
-//        - 시작 시간만 입력하기
-//        - 시작시간과 종료시간 범위에 속하는지 체크
-//        - 토너먼트 개최 시간에 일반/랭킹 게임 막기
-//        if (tournamentCreateRequestDto.getStartTime())
-
-        Tournament tournament = new Tournament(
-                tournamentCreateRequestDto.getTitle(),
-                tournamentCreateRequestDto.getContents(),
-                tournamentCreateRequestDto.getStartTime(),
-                tournamentCreateRequestDto.getEndTime(),
-                tournamentCreateRequestDto.getType(),
-                TournamentStatus.BEFORE
-        );
+    /***
+     * 토너먼트 제목 중복 체크
+     * @param tournamentTitle 요청 데이터에서 받아온 토너먼트 제목
+     * @throws TournamentTitleConflictException 토너먼트의 제목이 겹칠 때
+     */
+    private void checkTournamentTitle(String tournamentTitle) {
+        tournamentRepository.findByTitle(tournamentTitle).ifPresent(
+                a -> {
+                    throw new TournamentTitleConflictException();
+                });
     }
-
-    private boolean checkTournamentTitle(String tournamentTitle) {
-        return tournamentRepository.existsByTitle(tournamentTitle);
-    }
-
-    /* 토너먼트 개최 시간 겹치는지 체크
-    private boolean checkTournamentTime() {
-        return
-    }
-    */
 }
