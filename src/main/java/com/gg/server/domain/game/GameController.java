@@ -32,6 +32,14 @@ public class GameController {
     private final GameFindService gameFindService;
     private final RankRedisService rankRedisService;
 
+    /**
+     * 전체 게임 목록 조회 API
+     * @param gameReq - page size [status] [intraId]
+     *                  <p> status가 "LIVE" -> 진행중인 게임도 포함해서 조회 </p>
+     *                  <p>          null  -> 종료된 게임만 조회 </p>
+     * @return GameListResDto - games isLast
+     * @throws InvalidParameterException - status가 "LIVE"가 아닌데 다른 값이 들어올 경우
+     */
     @GetMapping
     GameListResDto allGameList(@Valid GameListReqDto gameReq) {
         if (gameReq.getStatus() != null && !gameReq.getStatus().name().equals("LIVE")) {
@@ -68,7 +76,7 @@ public class GameController {
     }
 
     @PostMapping("/rank")
-    synchronized ResponseEntity createRankResult(@Valid @RequestBody RankResultReqDto reqDto, @Parameter(hidden = true) @Login UserDto user) {
+    synchronized ResponseEntity<Void> createRankResult(@Valid @RequestBody RankResultReqDto reqDto, @Parameter(hidden = true) @Login UserDto user) {
         if (reqDto.getMyTeamScore() + reqDto.getEnemyTeamScore() > 3 || reqDto.getMyTeamScore() == reqDto.getEnemyTeamScore()) {
             throw new InvalidParameterException("점수를 잘못 입력했습니다.", ErrorCode.VALID_FAILED);
         }
@@ -76,14 +84,14 @@ public class GameController {
             throw new ScoreNotMatchedException();
         }
         rankRedisService.updateAllTier(reqDto.getGameId());
-        return new ResponseEntity(HttpStatus.CREATED);
+        return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
 
     @PostMapping("/normal")
-    ResponseEntity createNormalResult(@Valid @RequestBody NormalResultReqDto reqDto, @Parameter(hidden = true) @Login UserDto user) {
+    ResponseEntity<Void> createNormalResult(@Valid @RequestBody NormalResultReqDto reqDto, @Parameter(hidden = true) @Login UserDto user) {
         if (gameService.normalExpResult(reqDto, user.getId()))
-            return new ResponseEntity(HttpStatus.CREATED);
-        return new ResponseEntity(HttpStatus.ACCEPTED);
+            return new ResponseEntity<Void>(HttpStatus.CREATED);
+        return new ResponseEntity<Void>(HttpStatus.ACCEPTED);
     }
 
     @GetMapping("/{gameId}/result/normal")

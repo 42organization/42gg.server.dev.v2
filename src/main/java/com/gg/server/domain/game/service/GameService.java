@@ -45,10 +45,18 @@ public class GameService {
     private final TierService tierService;
     private final RedisUploadService redisUploadService;
 
+  /**
+   * 게임 정보를 가져온다.
+   *
+   * @param gameId
+   * @param userId
+   * @return GameTeamInfo 게임 정보
+   * @throws GameNotExistException 게임이 존재하지 않음
+   */
     @Transactional(readOnly = true)
     public GameTeamInfo getUserGameInfo(Long gameId, Long userId) {
         List<GameTeamUserInfo> infos = gameRepository.findTeamGameUser(gameId);
-        if (infos.size() == 0) {
+        if (infos.isEmpty()) {
             throw new GameNotExistException();
         }
         return new GameTeamInfo(infos, userId);
@@ -61,6 +69,12 @@ public class GameService {
             @CacheEvict(value = "allGameList", allEntries = true),
             @CacheEvict(value = "allGameListByUser", allEntries = true)
     })
+
+    /**
+     * rank 게임 결과를 입력한다.
+     * WAIT, LIVE 상태일 때만 입력 가능
+     * @return Boolean 입력 성공 여부
+     */
     public Boolean createRankResult(RankResultReqDto scoreDto, Long userId) {
         // 현재 게임 id
         Game game = gameFindService.findGameWithPessimisticLockById(scoreDto.getGameId());
@@ -70,6 +84,13 @@ public class GameService {
         return updateScore(game, scoreDto, userId);
     }
 
+
+    /**
+     * normal 게임을 종료하고 exp(경험치)를 부여한다.
+     * @return Boolean 입력 성공 여부: false
+     * @throws InvalidParameterException team 정보가 잘못되었을 때
+     * @throws PChangeNotExistException pchange 정보가 없을 때
+     */
     @Transactional
     @Caching(evict = {
             @CacheEvict(value = "normalGameListByIntra", allEntries = true),
@@ -91,28 +112,16 @@ public class GameService {
         } else if (teamUsers.size() != 2) {
             throw new InvalidParameterException("team 이 잘못되었습니다.", ErrorCode.VALID_FAILED);
         }
+        // BEFORE 상태일 때 false
         return false;
     }
 
-    private void updatePchangeIsChecked(Game game, Long loginUserId) {
-        pChangeRepository.findPChangeByUserIdAndGameId(loginUserId, game.getId())
-                .ifPresentOrElse(pChange -> {
-                    pChange.userCheckResult();
-                    pChangeRepository.save(pChange);
-                }, () -> {
-                    throw new PChangeNotExistException();
-                });
-    }
-
-    private void savePChange(Game game, List<TeamUser> teamUsers, Long loginUserId) {
-        Long team1UserId = teamUsers.get(0).getUser().getId();
-        Long team2UserId = teamUsers.get(1).getUser().getId();
-        pChangeService.addPChange(game, teamUsers.get(0).getUser(),
-                rankRedisService.getUserPpp(team1UserId, game.getSeason().getId()), team1UserId.equals(loginUserId));
-        pChangeService.addPChange(game, teamUsers.get(1).getUser(),
-                rankRedisService.getUserPpp(team2UserId, game.getSeason().getId()), team2UserId.equals(loginUserId));
-    }
-
+    /**
+     * normal 게임에 대한 exp 변화 결과를 가져온다.
+     * @param gameId
+     * @param userId
+     * @return ExpChangeResultResDto 경험치 변화 결과
+     */
     @Transactional
     public ExpChangeResultResDto expChangeResult(Long gameId, Long userId) {
         List<PChange> pChanges = pChangeService.findExpChangeHistory(gameId, userId);
@@ -125,6 +134,13 @@ public class GameService {
         }
     }
 
+    /**
+     * rank 게임에 대한 exp, ppp 변화 결과를 가져온다.
+     * @param gameId 게임 id
+     * @param userId 게임에 참여한 유저 id
+     * @return PPPChangeResultResDto 경험치 변화 결과
+     * @throws PChangeNotExistException
+     */
     @Transactional
     public PPPChangeResultResDto pppChangeResult(Long gameId, Long userId) throws PChangeNotExistException {
         Season season = gameFindService.findByGameId(gameId).getSeason();
@@ -147,6 +163,28 @@ public class GameService {
             game.updateStatus();
         }
         game.updateStatus();
+    }
+
+    /**
+     * PRIVATE METHOD
+     */
+    private void updatePchangeIsChecked(Game game, Long loginUserId) {
+        pChangeRepository.findPChangeByUserIdAndGameId(loginUserId, game.getId())
+                .ifPresentOrElse(pChange -> {
+                    pChange.checkPChange();
+                    pChangeRepository.save(pChange);
+                }, () -> {
+                    throw new PChangeNotExistException();
+                });
+    }
+
+    private void savePChange(Game game, List<TeamUser> teamUsers, Long loginUserId) {
+        Long team1UserId = teamUsers.get(0).getUser().getId();
+        Long team2UserId = teamUsers.get(1).getUser().getId();
+        pChangeService.addPChange(game, teamUsers.get(0).getUser(),
+                rankRedisService.getUserPpp(team1UserId, game.getSeason().getId()), team1UserId.equals(loginUserId));
+        pChangeService.addPChange(game, teamUsers.get(1).getUser(),
+                rankRedisService.getUserPpp(team2UserId, game.getSeason().getId()), team2UserId.equals(loginUserId));
     }
 
     private void expUpdate(TeamUser teamUser, LocalDateTime time) {
@@ -172,7 +210,7 @@ public class GameService {
         throw new TeamIdNotMatchException();
     }
 
-    public Boolean updateScore(Game game, RankResultReqDto scoreDto, Long userId) {
+    private Boolean updateScore(Game game, RankResultReqDto scoreDto, Long userId) {
         List<TeamUser> teams = teamUserRepository.findAllByGameId(game.getId());
         TeamUser myTeam = findTeamId(scoreDto.getMyTeamId(), teams);
         TeamUser enemyTeam = findTeamId(scoreDto.getEnemyTeamId(), teams);

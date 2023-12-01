@@ -12,7 +12,7 @@ import java.util.Locale;
 @Getter
 @RequiredArgsConstructor
 public enum Mode {
-    NORMAL("normal"), RANK("rank");
+    NORMAL("normal"), RANK("rank"), TOURNAMENT("tournament");
     private final String code;
 
     @JsonCreator(mode = JsonCreator.Mode.DELEGATING)

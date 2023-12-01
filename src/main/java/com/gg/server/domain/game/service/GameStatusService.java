@@ -85,6 +85,9 @@ public class GameStatusService {
         }
     }
 
+  /**
+   * private method
+   */
     private void notiProcess(GameUser game, String enemyIntra, Integer gameOpenMinute) {
         Noti noti = notiService.createImminentNoti(userService.getUser(game.getUserId()), enemyIntra, NotiType.IMMINENT, gameOpenMinute);
         snsNotiService.sendSnsNotification(noti, new UserNotiDto(game));
