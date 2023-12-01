@@ -1,7 +1,6 @@
 package com.gg.server.admin.tournament.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
@@ -409,15 +408,47 @@ class TournamentAdminControllerTest {
                     LocalDateTime.now().plusDays(10).plusHours(5),
                     TournamentType.ROOKIE);
 
-            String url = "/pingpong/admin/tournament";
+            String url = "/pingpong/admin/tournaments";
             String content = objectMapper.writeValueAsString(createDto);
 
-            //when, then
+            //when
             String contentAsString = mockMvc.perform(post(url)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(content))
                     .andExpect(status().isCreated())
+                    .andReturn().getResponse().getContentAsString();
+
+            System.out.println(contentAsString);
+
+            // then
+            tournamentRepository.findByTitle(createDto.getTitle()).orElseThrow(()->
+                    new CustomRuntimeException("토너먼트 생성 안 됨", ErrorCode.BAD_REQUEST));
+        }
+
+        @Test
+        @DisplayName("토너먼트 제목 중복")
+        void titleDup() throws Exception {
+            //given
+            String accessToken = testDataUtils.getAdminLoginAccessToken();
+
+            TournamentAdminCreateRequestDto createDto = testDataUtils.createRequestDto(
+                    LocalDateTime.now().plusDays(10).plusHours(3),
+                    LocalDateTime.now().plusDays(10).plusHours(5),
+                    TournamentType.ROOKIE);
+
+            testDataUtils.createTournament(createDto.getTitle(), LocalDateTime.now(),
+                    LocalDateTime.now().plusHours(2), TournamentStatus.BEFORE);
+
+            String url = "/pingpong/admin/tournaments";
+            String content = objectMapper.writeValueAsString(createDto);
+
+            //when, then
+            String contentAsString = mockMvc.perform(post(url)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(content))
+                    .andExpect(status().isConflict())
                     .andReturn().getResponse().getContentAsString();
 
             System.out.println(contentAsString);
@@ -610,39 +641,5 @@ class TournamentAdminControllerTest {
                 .filter(tu->!tu.isJoined()).orElseThrow(()->new CustomRuntimeException("waitlist 제대로 등록 안됨", ErrorCode.BAD_REQUEST));
         }
 
-    }
-
-
-    @Test
-    @DisplayName("토너먼트 생성 - 성공")
-    void createTournament_Success() throws Exception {
-
-//        // given
-//        TournamentCreateRequestDto tournamentCreateRequestDto = new TournamentCreateRequestDto(
-//                LocalDateTime.now(),
-//                LocalDateTime.now().plusHours(2),
-//                "제 1회 루키전",
-//                "환영합니다!",
-//                TournamentType.ROOKIE
-//        );
-//
-//        // when
-//        Tournament tournament = tournamentAdminService.createTournament(tournamentCreateRequestDto);
-//
-//        // then
-////        Assertions.assertFalse(tournamentRepository.existsByTitle(tournamentCreateRequestDto.getTitle()));
-////        verify(tournamentRepository).existsByTitle(tournamentCreateRequestDto.getTitle());
-////        verify(tournamentRepository).save(any(Tournament.class));
-//
-////        when(tournamentRepository.existsByTitle(tournamentCreateRequestDto.getTitle())).thenReturn(false);
-//
-//        String contentAsString = mockMvc.perform(MockMvcRequestBuilders.post("/pingpong/admin/tournament")
-//                        .content(objectMapper.writeValueAsString(tournamentCreateRequestDto))
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
-//                .andExpect(status().isCreated())
-//                .andReturn().getResponse().getContentAsString();
-//
-//        System.out.println(contentAsString);
     }
 }
