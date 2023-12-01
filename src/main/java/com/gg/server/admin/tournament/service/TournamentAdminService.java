@@ -59,10 +59,10 @@ public class TournamentAdminService {
                 tournamentAdminCreateRequestDto.getStartTime(),
                 tournamentAdminCreateRequestDto.getEndTime(),
                 tournamentAdminCreateRequestDto.getType(),
+                TournamentStatus.BEFORE,
                 null,
-                null,
-                null,
-                TournamentStatus.BEFORE
+                new ArrayList<>(),
+                new ArrayList<>()
         );
         createTournamentGameList(tournament, 7);
         return tournamentRepository.save(tournament);
@@ -103,7 +103,6 @@ public class TournamentAdminService {
         while (--cnt >= 0) {
             TournamentGame tournamentGame = new TournamentGame(null, tournament, rounds[cnt]);
             tournament.addTournamentGame(tournamentGame);
-            tournamentGameRepository.save(tournamentGame);
         }
     }
 
