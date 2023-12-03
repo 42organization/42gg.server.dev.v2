@@ -12,10 +12,11 @@ import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.slotmanagement.SlotManagement;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+
+import com.gg.server.domain.tournament.data.Tournament;
+import com.gg.server.domain.tournament.data.TournamentRepository;
+import com.gg.server.domain.tournament.type.TournamentStatus;
 import lombok.Getter;
 
 
@@ -35,8 +36,9 @@ public class SlotGenerator {
     private final RedisMatchUser matchUser;
     private final MatchCalculator matchCalculator;
     private final Option option;
+    private final TournamentRepository tournamentRepository;
 
-    public SlotGenerator(RankRedis user, SlotManagement slotManagement, Season season, Option option) {
+    public SlotGenerator(RankRedis user, SlotManagement slotManagement, Season season, Option option, TournamentRepository tournamentRepository) {
         this.interval = slotManagement.getGameInterval();
         this.now = LocalDateTime.now();
         this.minTime = LocalDateTime.of(
@@ -47,6 +49,7 @@ public class SlotGenerator {
         this.slots = new HashMap<LocalDateTime, SlotStatusDto>();
         this.matchUser = new RedisMatchUser(user.getUserId(), user.getPpp(), option);
         this.matchCalculator = new MatchCalculator(season.getPppGap(), matchUser);
+        this.tournamentRepository = tournamentRepository;
     }
 
     public void addPastSlots() {
@@ -59,6 +62,21 @@ public class SlotGenerator {
         games.stream().forEach(e -> slots.put(e.getStartTime(),
                 new SlotStatusDto(e.getStartTime(), SlotStatus.CLOSE, interval)));
     }
+
+    /**
+     * BEFORE, READY, LIVE 상태의 토너먼트 진행 시간에 슬롯을 blocked함
+     */
+    public void addTournamentSlots() {
+        List<Tournament> tournaments = tournamentRepository.findAllByStatusIsNot(TournamentStatus.END);
+        for (Tournament tournament : tournaments) {
+            LocalDateTime startTime = tournament.getStartTime();
+            LocalDateTime endTime = tournament.getEndTime();
+            for (LocalDateTime time = startTime; time.isBefore(endTime); time = time.plusMinutes(interval)) {
+                slots.put(time, new SlotStatusDto(time, SlotStatus.CLOSE, interval));
+            }
+        }
+    }
+
     public void addMySlots(Game myGame) {
         slots.put(myGame.getStartTime(),
                 new SlotStatusDto(myGame.getStartTime(), myGame.getEndTime(),
