@@ -1,4 +1,4 @@
-package com.gg.server.domain.tournament.exception;
+package com.gg.server.admin.tournament.exception;
 
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.DuplicationException;
