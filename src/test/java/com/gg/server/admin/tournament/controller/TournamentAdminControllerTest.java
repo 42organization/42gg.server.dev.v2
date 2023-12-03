@@ -7,6 +7,7 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gg.server.admin.tournament.dto.TournamentAdminCreateRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminAddUserRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
 import com.gg.server.admin.tournament.service.TournamentAdminService;
@@ -394,6 +395,67 @@ class TournamentAdminControllerTest {
     }
 
     @Nested
+    @DisplayName("토너먼트 관리 생성 컨트롤러 테스트")
+    class TournamentAdminControllerCreateTest {
+        @Test
+        @DisplayName("토너먼트 생성 성공")
+        void success() throws Exception {
+            //given
+            String accessToken = testDataUtils.getAdminLoginAccessToken();
+
+            TournamentAdminCreateRequestDto createDto = testDataUtils.createRequestDto(
+                    LocalDateTime.now().plusDays(10).plusHours(3),
+                    LocalDateTime.now().plusDays(10).plusHours(5),
+                    TournamentType.ROOKIE);
+
+            String url = "/pingpong/admin/tournaments";
+            String content = objectMapper.writeValueAsString(createDto);
+
+            //when
+            String contentAsString = mockMvc.perform(post(url)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(content))
+                    .andExpect(status().isCreated())
+                    .andReturn().getResponse().getContentAsString();
+
+            System.out.println(contentAsString);
+
+            // then
+            tournamentRepository.findByTitle(createDto.getTitle()).orElseThrow(()->
+                    new CustomRuntimeException("토너먼트 생성 안 됨", ErrorCode.BAD_REQUEST));
+        }
+
+        @Test
+        @DisplayName("토너먼트 제목 중복")
+        void titleDup() throws Exception {
+            //given
+            String accessToken = testDataUtils.getAdminLoginAccessToken();
+
+            TournamentAdminCreateRequestDto createDto = testDataUtils.createRequestDto(
+                    LocalDateTime.now().plusDays(10).plusHours(3),
+                    LocalDateTime.now().plusDays(10).plusHours(5),
+                    TournamentType.ROOKIE);
+
+            testDataUtils.createTournament(createDto.getTitle(), LocalDateTime.now(),
+                    LocalDateTime.now().plusHours(2), TournamentStatus.BEFORE);
+
+            String url = "/pingpong/admin/tournaments";
+            String content = objectMapper.writeValueAsString(createDto);
+
+            //when, then
+            String contentAsString = mockMvc.perform(post(url)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(content))
+                    .andExpect(status().isConflict())
+                    .andReturn().getResponse().getContentAsString();
+
+            System.out.println(contentAsString);
+        }
+    }
+
+    @Nested
     @DisplayName("관리자_토너먼트_유저_추가_컨트롤러_테스트")
     class TournamentAdminControllerAddUserTest {
         @Test
@@ -578,7 +640,5 @@ class TournamentAdminControllerTest {
                 .filter(tu->tu.getUser().getIntraId().equals(user.getIntraId())).findAny()
                 .filter(tu->!tu.isJoined()).orElseThrow(()->new CustomRuntimeException("waitlist 제대로 등록 안됨", ErrorCode.BAD_REQUEST));
         }
-
     }
-
 }

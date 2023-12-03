@@ -118,7 +118,8 @@ public enum ErrorCode {
     // Tournament
     TOURNAMENT_NOT_FOUND(404, "TN001", "tournament not found"),
     TOURNAMENT_CONFLICT(409, "TN002", "tournament conflicted"),
-    TOURNAMENT_NOT_BEFORE(400, "TN003", "tournament status is not before")
+    TOURNAMENT_NOT_BEFORE(400, "TN003", "tournament status is not before"),
+    TOURNAMENT_TITLE_CONFLICT(409, "TN004", "tournament title conflicted"),
     ;
     private int status;
     private String errCode;

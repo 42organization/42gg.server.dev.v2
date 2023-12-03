@@ -52,7 +52,7 @@ public class Tournament extends BaseTimeEntity {
     @JoinColumn(name = "winner_id")
     private User winner;
 
-    @OneToMany(mappedBy = "tournament")
+    @OneToMany(mappedBy = "tournament", cascade = CascadeType.PERSIST)
     private List<TournamentGame> tournamentGames = new ArrayList<>();
 
     @OneToMany(mappedBy = "tournament")
@@ -66,6 +66,18 @@ public class Tournament extends BaseTimeEntity {
         this.endTime = endTime;
         this.type = type;
         this.status = status;
+    }
+
+    @Builder
+    public Tournament(String title, String contents, LocalDateTime startTime, LocalDateTime endTime, TournamentType type, TournamentStatus status, User winner, List<TournamentGame> tournamentGames, List<TournamentUser> tournamentUsers) {
+        this.title = title;
+        this.contents = contents;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.type = type;
+        this.status = status;
+        this.tournamentGames = tournamentGames != null ? tournamentGames : new ArrayList<>();
+        this.tournamentUsers = tournamentUsers != null ? tournamentUsers : new ArrayList<>();
     }
 
     static public Tournament of(String title, String contents, LocalDateTime startTime, LocalDateTime endTime, TournamentType type, TournamentStatus status) {
@@ -98,6 +110,10 @@ public class Tournament extends BaseTimeEntity {
         this.endTime = endTime;
         this.type = type;
         this.status = status;
+    }
+
+    public void addTournamentGame(TournamentGame tournamentGame) {
+        this.tournamentGames.add(tournamentGame);
     }
 
     public void addTournamentUser(@NotNull TournamentUser tournamentUser) {

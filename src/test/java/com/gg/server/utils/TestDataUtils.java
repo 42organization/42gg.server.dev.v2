@@ -1,5 +1,6 @@
 package com.gg.server.utils;
 
+import com.gg.server.admin.tournament.dto.TournamentAdminCreateRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
@@ -301,6 +302,41 @@ public class TestDataUtils {
             .type(TournamentType.ROOKIE)
             .status(status).build();
         return  tournamentRepository.save(tournament);
+    }
+
+    /**
+     * 테스트용 토너먼트 반환.
+     * @param title 제목
+     * @param startTime 시작 시간
+     * @param endTime 종료 시간
+     * @param status 상태
+     * @return 테스트용 토너먼트
+     */
+    public Tournament createTournament(String title, LocalDateTime startTime, LocalDateTime endTime, TournamentStatus status) {
+        Tournament tournament = Tournament.builder()
+                .title(title)
+                .contents("contents")
+                .startTime(startTime)
+                .endTime(endTime)
+                .type(TournamentType.ROOKIE)
+                .status(status).build();
+        return  tournamentRepository.save(tournament);
+    }
+
+    /**
+     * 테스트용 토너먼트 생성 RequestDto 반환.
+     * @param startTime
+     * @param endTime
+     * @param type
+     * @return
+     */
+    public TournamentAdminCreateRequestDto createRequestDto(LocalDateTime startTime, LocalDateTime endTime, TournamentType type) {
+        return new TournamentAdminCreateRequestDto(
+                "1st rookie tournament",
+                "welcome !",
+                startTime,
+                endTime,
+                type);
     }
 
     /**
