@@ -164,8 +164,7 @@ public class TournamentAdminService {
 
     /**
      * <p>토너먼트 유저 삭제 매서드</p>
-     * <p>참가자를 삭제하고 남은 인원이 ALLOWED_JOINED_NUMBER(토너먼트 최대 참가자수) 보다 크거나 같다면</p>
-     * <p>조건대로 정렬된 순서에서 대기인원을 참가자로 바꾸어 준다.</p>
+     * <p>삭제하고자 하는 유저가 참가자이고, 현재 대기자가 있다면 참가신청이 빠른 대기자를 참가자로 변경해준다.</p>
      * @param tournamentId 타겟 토너먼트 id
      * @param userId 타겟 유저 id
      */
@@ -181,10 +180,7 @@ public class TournamentAdminService {
 
         targetTournament.deleteTournamentUser(targetTournamentUser);
         if (targetTournamentUser.isJoined() && targetTournament.getTournamentUsers().size()>=ALLOWED_JOINED_NUMBER) {
-            targetTournament.sortTournamentUsers();
-            for (int i=0; i<ALLOWED_JOINED_NUMBER; i++) {
-                tournamentUserList.get(i).changeIsJoined(true);
-            }
+            tournamentUserList.get(Long.valueOf(ALLOWED_JOINED_NUMBER).intValue()-1).changeIsJoined(true);
         }
         tournamentUserRepository.delete(targetTournamentUser);
     }
