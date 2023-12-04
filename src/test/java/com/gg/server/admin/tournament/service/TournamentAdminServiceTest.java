@@ -445,31 +445,6 @@ class TournamentAdminServiceTest {
             assertThatThrownBy(() -> tournamentAdminService.deleteTournamentUser(tournament.getId(), user.getId()))
                 .isInstanceOf(UserNotFoundException.class);
         }
-
-        @Test
-        @DisplayName("토너먼트_유저_정렬_테스트")
-        public void sortTest() {
-            // given
-            int maxTournamentUser = 8;
-            Tournament tournament = createTournament(1L, TournamentStatus.BEFORE,
-                getTargetTime(1, 1), getTargetTime(1, 3));
-            for (int i=0; i<maxTournamentUser-1; i++) {
-                tournament.getTournamentUsers().add(new TournamentUser(createUser("testUser"+i),
-                    tournament, true, LocalDateTime.now()));
-            }
-            for (int i=maxTournamentUser-1; i<maxTournamentUser+5; i++) {
-                tournament.getTournamentUsers().add(new TournamentUser(createUser("testUser"+i),
-                    tournament, false, LocalDateTime.now()));
-            }
-            tournament.getTournamentUsers().add(new TournamentUser(createUser("testUser11"),
-                tournament, true, LocalDateTime.now()));
-
-            // when
-            // then
-            for (int i=0; i<maxTournamentUser; i++) {
-
-            }
-        }
     }
 
     /**

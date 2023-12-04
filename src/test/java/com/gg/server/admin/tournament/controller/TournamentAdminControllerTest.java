@@ -657,16 +657,14 @@ class TournamentAdminControllerTest {
                 LocalDateTime.now().plusDays(2).plusHours(3),
                 TournamentStatus.BEFORE);
 
-            for (int i=0; i<maxTournamentUser-1; i++) {
+            for (int i=0; i<maxTournamentUser; i++) {
                 TournamentUser tournamentUser = testDataUtils.createTournamentUser(
                     testDataUtils.createNewUser("testUser" + i), tournament, true);
             }
-            for (int i=maxTournamentUser-1; i<maxTournamentUser+4; i++) {
+            for (int i=maxTournamentUser; i<maxTournamentUser+4; i++) {
                 TournamentUser tournamentUser = testDataUtils.createTournamentUser(
                     testDataUtils.createNewUser("testUser" + i), tournament, false);
             }
-            TournamentUser tournamentUser = testDataUtils.createTournamentUser(
-                testDataUtils.createNewUser("testUser12"), tournament, true);
 
             User user = tournament.getTournamentUsers().get(6).getUser();
 
@@ -685,15 +683,15 @@ class TournamentAdminControllerTest {
                 .ifPresent(a->{throw new CustomRuntimeException("토너먼트 유저 리스트에 삭제 안됨", ErrorCode.BAD_REQUEST);});
             tournamentUserRepository.findByTournamentIdAndUserId(tournament.getId(), user.getId())
                 .ifPresent(a->{throw new CustomRuntimeException("토너먼트 유저 레포에서 삭제 안됨", ErrorCode.BAD_REQUEST);});
-            int participantCnt = 0;
-            for (TournamentUser tu : tournamentUserList) {
-                System.out.println(tu.getUser().getIntraId() + ": " + tu.isJoined() + ", " + tu.getRegisterTime() + "\n");
-                if (tu.isJoined()) {
-                    participantCnt++;
+            for (int i=0; i<maxTournamentUser; i++) {
+                if (!tournamentUserList.get(i).isJoined()) {
+                    throw new CustomRuntimeException("대기자 => 참여자 전환 제대로 안됨", ErrorCode.BAD_REQUEST);
                 }
             }
-            if (participantCnt > maxTournamentUser) {
-                throw new CustomRuntimeException("토너먼트 유저 참여자 제대로 설정 안됨", ErrorCode.BAD_REQUEST);
+            for (int i=maxTournamentUser; i<tournamentUserList.size(); i++) {
+                if (tournamentUserList.get(i).isJoined()) {
+                    throw new CustomRuntimeException("정해진 참가자 수보다 참가자가 많음", ErrorCode.BAD_REQUEST);
+                }
             }
         }
 
