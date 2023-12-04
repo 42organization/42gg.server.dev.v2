@@ -11,6 +11,7 @@ import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentRepository;
 import com.gg.server.domain.tournament.data.TournamentUser;
 import com.gg.server.domain.tournament.data.TournamentUserRepository;
+import com.gg.server.domain.tournament.dto.TournamentUserListResponseDto;
 import com.gg.server.domain.tournament.exception.TournamentConflictException;
 import com.gg.server.domain.tournament.exception.TournamentNotFoundException;
 import com.gg.server.domain.tournament.exception.TournamentUpdateException;
@@ -231,5 +232,22 @@ public class TournamentAdminService {
                 a -> {
                     throw new TournamentTitleConflictException();
                 });
+    }
+
+    /**
+     * <p>토너먼트 유저 리스트 조회</p>
+     * @param tournamentId 토너먼트 id
+     * @param isJoined     참가자인지 대기자인지 여부
+     * @return TournamentUserListResponseDto
+     * @throws TournamentNotFoundException 토너먼트가 존재하지 않을 때
+     */
+    public TournamentUserListResponseDto getTournamentUserList(Long tournamentId, Boolean isJoined) {
+        Tournament tournament = tournamentRepository.findById(tournamentId).
+                orElseThrow(() -> new TournamentNotFoundException(ErrorCode.TOURNAMENT_NOT_FOUND.getMessage(), ErrorCode.TOURNAMENT_NOT_FOUND));
+        if (isJoined == null){
+            return new TournamentUserListResponseDto(tournamentUserRepository.findAllByTournament(tournament));
+        } else {
+            return new TournamentUserListResponseDto(tournamentUserRepository.findAllByTournamentAndIsJoined(tournament, isJoined));
+        }
     }
 }
