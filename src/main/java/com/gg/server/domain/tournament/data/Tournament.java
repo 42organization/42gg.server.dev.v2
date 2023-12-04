@@ -127,19 +127,4 @@ public class Tournament extends BaseTimeEntity {
     public void update_winner(User winner) {
         this.winner = winner;
     }
-
-    /**
-     * <p>TournamentUser 정렬 매서드</p>
-     * <p>참가자 대기자 순으로 정렬 되며, 같다면 신청시간으로 오름차순 정렬 한다.</p>
-     *
-     */
-    public void sortTournamentUsers() {
-        tournamentUsers.sort((tu1, tu2) -> {
-            if (tu1.isJoined() == tu2.isJoined()) {
-                return String.valueOf(tu1.getRegisterTime())
-                    .compareTo(String.valueOf(tu2.getRegisterTime()));
-            }
-            return tu1.isJoined() ? -1 : 1;
-        });
-    }
 }
