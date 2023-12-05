@@ -5,19 +5,15 @@ import com.gg.server.admin.tournament.dto.TournamentAdminAddUserResponseDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
 import com.gg.server.admin.tournament.service.TournamentAdminService;
 import javax.validation.Valid;
+
+import com.gg.server.domain.tournament.dto.TournamentUserListResponseDto;
 import lombok.AllArgsConstructor;
 import org.checkerframework.checker.index.qual.Positive;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 import com.gg.server.admin.tournament.dto.TournamentAdminCreateRequestDto;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @AllArgsConstructor
@@ -76,5 +72,18 @@ public class TournamentAdminController {
         TournamentAdminAddUserResponseDto responseDto = tournamentAdminService.addTournamentUser(tournamentId, tournamentAdminUserAddRequestDto);
 
         return new ResponseEntity<TournamentAdminAddUserResponseDto>(responseDto, HttpStatus.CREATED);
+    }
+
+    /**
+     * <p>토너먼트 유저 조회</p>
+     * @param tournamentId 유저를 조회할 토너먼트 id
+     * @param isJoined 참여중인 유저만 조회할지 여부
+     * @return TournamentUserListResponseDto
+     */
+    @GetMapping("/{tournamentId}/users")
+    public ResponseEntity<TournamentUserListResponseDto> getTournamentUserList(@PathVariable @Positive Long tournamentId,
+                                                                               @RequestParam(required = false) Boolean isJoined) {
+        TournamentUserListResponseDto responseDto = tournamentAdminService.getTournamentUserList(tournamentId, isJoined);
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 }
