@@ -97,4 +97,10 @@ dependencies {
 
 	//prometheus 추가
 	implementation 'io.micrometer:micrometer-registry-prometheus'
+
+	//testcontainers 추가
+	testImplementation "org.testcontainers:mysql:1.19.3"
+	testImplementation "org.junit.jupiter:junit-jupiter:5.8.1"
+	testImplementation "org.testcontainers:testcontainers:1.19.3"
+	testImplementation "org.testcontainers:junit-jupiter:1.19.3"
 }
