@@ -6,7 +6,6 @@ import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.data.SeasonRepository;
-import com.gg.server.domain.season.exception.SeasonNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -28,11 +27,10 @@ public class RedisUploadService {
     @PostConstruct
     @Transactional
     public void uploadRedis() {
-        Season currentSeason = seasonRepository.findCurrentSeason(LocalDateTime.now())
-                .orElseThrow(() -> new SeasonNotFoundException());
-        String hashKey = RedisKeyManager.getHashKey(currentSeason.getId());
-        if(redisRepository.isEmpty(hashKey))
-            upload();
+        seasonRepository.findCurrentSeason(LocalDateTime.now()).ifPresent( currentSeason -> {
+            String hashKey = RedisKeyManager.getHashKey(currentSeason.getId());
+            if(redisRepository.isEmpty(hashKey)) upload();
+        });
     }
 
     private void upload() {
