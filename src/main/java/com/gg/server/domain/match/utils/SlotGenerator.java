@@ -64,7 +64,7 @@ public class SlotGenerator {
     }
 
     /**
-     * BEFORE, READY, LIVE 상태의 토너먼트 진행 시간에 슬롯을 blocked함
+     * BEFORE, LIVE 상태의 토너먼트 진행 시간에 슬롯을 block함
      */
     public void addTournamentSlots() {
         List<Tournament> tournaments = tournamentRepository.findAllByStatusIsNot(TournamentStatus.END);
