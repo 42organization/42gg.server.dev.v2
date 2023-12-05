@@ -37,7 +37,7 @@ public class TournamentUser extends BaseTimeEntity {
 
     @NotNull
     @Column(name = "is_joined")
-    private boolean isJoined;
+    private Boolean isJoined;
 
     @NotNull
     @Column(name = "register_time")

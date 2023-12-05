@@ -158,7 +158,7 @@ public class TournamentAdminService {
         return new TournamentAdminAddUserResponseDto(
                 targetUser.getId(),
                 targetUser.getIntraId(),
-                tournamentUser.isJoined()
+                tournamentUser.getIsJoined()
         );
     }
 
@@ -179,7 +179,7 @@ public class TournamentAdminService {
         List<TournamentUser> tournamentUserList = targetTournament.getTournamentUsers();
 
         targetTournament.deleteTournamentUser(targetTournamentUser);
-        if (targetTournamentUser.isJoined() && targetTournament.getTournamentUsers().size()>=ALLOWED_JOINED_NUMBER) {
+        if (targetTournamentUser.getIsJoined() && targetTournament.getTournamentUsers().size()>=ALLOWED_JOINED_NUMBER) {
             tournamentUserList.get(Long.valueOf(ALLOWED_JOINED_NUMBER).intValue()-1).updateIsJoined(true);
         }
         tournamentUserRepository.delete(targetTournamentUser);

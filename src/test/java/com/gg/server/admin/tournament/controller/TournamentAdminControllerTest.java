@@ -638,7 +638,7 @@ class TournamentAdminControllerTest {
             // then
             tournamentUserRepository.findAllByTournamentId(tournament.getId()).stream()
                 .filter(tu->tu.getUser().getIntraId().equals(user.getIntraId())).findAny()
-                .filter(tu->!tu.isJoined()).orElseThrow(()->new CustomRuntimeException("waitlist 제대로 등록 안됨", ErrorCode.BAD_REQUEST));
+                .filter(tu->!tu.getIsJoined()).orElseThrow(()->new CustomRuntimeException("waitlist 제대로 등록 안됨", ErrorCode.BAD_REQUEST));
         }
     }
 
@@ -684,12 +684,12 @@ class TournamentAdminControllerTest {
             tournamentUserRepository.findByTournamentIdAndUserId(tournament.getId(), user.getId())
                 .ifPresent(a->{throw new CustomRuntimeException("토너먼트 유저 레포에서 삭제 안됨", ErrorCode.BAD_REQUEST);});
             for (int i=0; i<maxTournamentUser; i++) {
-                if (!tournamentUserList.get(i).isJoined()) {
+                if (!tournamentUserList.get(i).getIsJoined()) {
                     throw new CustomRuntimeException("대기자 => 참여자 전환 제대로 안됨", ErrorCode.BAD_REQUEST);
                 }
             }
             for (int i=maxTournamentUser; i<tournamentUserList.size(); i++) {
-                if (tournamentUserList.get(i).isJoined()) {
+                if (tournamentUserList.get(i).getIsJoined()) {
                     throw new CustomRuntimeException("정해진 참가자 수보다 참가자가 많음", ErrorCode.BAD_REQUEST);
                 }
             }
