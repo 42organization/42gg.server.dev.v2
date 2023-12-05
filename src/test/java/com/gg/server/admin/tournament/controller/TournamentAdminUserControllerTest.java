@@ -41,8 +41,8 @@ public class TournamentAdminUserControllerTest {
     AuthTokenProvider tokenProvider;
 
     String accessToken;
-    int joinUserCnt = 8;
-    int notJoinUserCnt = 4;
+    final int joinUserCnt = 8;
+    final int notJoinUserCnt = 4;
     String testName = "42_gg_tester_";
     Tournament tournament;
     String adminUrl = "/pingpong/admin/tournaments/";

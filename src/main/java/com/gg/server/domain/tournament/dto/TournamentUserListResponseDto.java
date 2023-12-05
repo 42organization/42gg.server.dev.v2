@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @Getter
 public class TournamentUserListResponseDto {
-    List<TournamentUserResponseDto> users;
+    private List<TournamentUserResponseDto> users;
 
     public TournamentUserListResponseDto(List<TournamentUser> tournamentUsers){
         users = new ArrayList<>();
