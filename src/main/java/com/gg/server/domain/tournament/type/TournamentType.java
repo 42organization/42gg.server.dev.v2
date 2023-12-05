@@ -9,7 +9,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum TournamentType {
     ROOKIE("rookie", "초보"),
-    MASTER("master", "고수");
+    MASTER("master", "고수"),
+    CUSTOM("custom", "커스텀");
 
     private final String code;
     private final String desc;
