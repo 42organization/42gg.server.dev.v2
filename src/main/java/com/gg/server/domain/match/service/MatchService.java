@@ -21,6 +21,8 @@ import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.service.SeasonFindService;
+import com.gg.server.domain.tournament.exception.TournamentConflictException;
+import com.gg.server.domain.tournament.service.TournamentService;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
@@ -45,6 +47,7 @@ public class MatchService {
     private final PenaltyService penaltyService;
     private final GameUpdateService gameUpdateService;
     private final UserRepository userRepository;
+    private final TournamentService tournamentService;
 
     /**
      * 1) 매칭 가능한 유저 있을 경우 : 게임 생성
@@ -124,9 +127,23 @@ public class MatchService {
         }
     }
 
+    /**
+     * 매칭 요청 시 유효성 검사
+     * @param userDto 매칭 요청한 유저
+     * @param startTime 매칭 요청 시간
+     * @throws PenaltyUserSlotException 패널티 유저일 경우
+     * @throws TournamentConflictException 토너먼트가 존재할 경우
+     * @throws GameAlreadyExistException 게임이 이미 존재할 경우
+     * @throws EnrolledSlotException 매칭된 게임이 이미 있을 경우 || 유저 이미 큐에 등록할 경우
+     * @throws SlotCountException 4번 이상 매치 넣을 경우
+     *
+     */
     private void checkValid(UserDto userDto, LocalDateTime startTime) {
         if (penaltyService.isPenaltyUser(userDto.getIntraId())) {
             throw new PenaltyUserSlotException();
+        }
+        if (tournamentService.isNotEndedTournament(startTime)) {
+            throw new TournamentConflictException();
         }
         if (gameRepository.findByStartTime(startTime).isPresent()) {
             throw new GameAlreadyExistException();
