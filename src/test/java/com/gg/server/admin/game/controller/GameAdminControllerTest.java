@@ -20,18 +20,22 @@ import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpHeaders;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static java.lang.Thread.sleep;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -40,6 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+@DisplayName("[Admin] Game Admin Controller Integration Test")
 class GameAdminControllerTest {
     @Autowired
     TestDataUtils testDataUtils;
@@ -71,30 +76,77 @@ class GameAdminControllerTest {
     @Autowired
     RankRedisRepository rankRedisRepository;
 
+    @Nested
+    @DisplayName("[GET] /pingpong/admin/games/users?intraId=${intraId}&page=${pageNumber}&size={sizeNum}")
+    class GetUserGameList {
+        String accessToken;
+        Long userId;
+        User user;
+        Season season;
 
-    @Test
-    @DisplayName("[Get]/pingpong/admin/games/users?intraId=${intraId}&page=${pageNumber}&size={sizeNum}")
-    void getUserGameList() throws Exception {
-        String accessToken = testDataUtils.getAdminLoginAccessToken();
-        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
+        static final int TOTAL_PAGE_SIZE = 18;
 
-        Integer currentPage = 2;
-        Integer pageSize = 5;//페이지 사이즈 크기가 실제 디비 정보보다 큰지 확인할 것
+        static final String INTRA_ID = "nheo";
 
-        String url = "/pingpong/admin/games/users?intraId="
-         + "nheo" + "&page=" + currentPage + "&size=" + pageSize;
+        @BeforeEach
+        void setUp() {
+            accessToken = testDataUtils.getAdminLoginAccessToken();
+            userId = tokenProvider.getUserIdFromAccessToken(accessToken);
+            user = testDataUtils.createNewUser(INTRA_ID);
+            season = testDataUtils.createSeason();
+            testDataUtils.createUserRank(user, "status message", season);
+            for (int i = 0; i < TOTAL_PAGE_SIZE; i++) {
+                testDataUtils.createMockMatchWithMockRank(user, season, LocalDateTime.now().minusMinutes(20 + i * 15), LocalDateTime.now().minusMinutes(5 + i * 15));
+            }
+        }
+        private GameLogListAdminResponseDto getPageResult(int currentPage, int pageSize)
+            throws Exception {
+            String url = "/pingpong/admin/games/users?intraId="
+                + INTRA_ID + "&page=" + currentPage + "&size=" + pageSize;
 
-        String contentAsString = mockMvc.perform(get(url)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+            String contentAsString = mockMvc
+                .perform(get(url)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
-        GameLogListAdminResponseDto result = objectMapper.readValue(contentAsString, GameLogListAdminResponseDto.class);
-        assertThat(result.getGameLogList().size()).isEqualTo(pageSize);
-        System.out.println(result.getGameLogList().get(0).getGameId());
-        System.out.println(result.getGameLogList().get(0).getStartAt());
-        System.out.println(result.getGameLogList().get(0).getMode());
+            return objectMapper.readValue(contentAsString, GameLogListAdminResponseDto.class);
+        }
+        @Test
+        @Transactional
+        @DisplayName("First page")
+        void getUserGameListFirstPage() throws Exception {
+            //given
+            int pageSize = 5;
+            //when
+            GameLogListAdminResponseDto result = getPageResult(1, 5);
+            //then
+            assertThat(result.getGameLogList().size()).isEqualTo(pageSize);
+        }
 
+        @Test
+        @Transactional
+        @DisplayName("Middle page")
+        void getUserGameListMidPage() throws Exception {
+            //given
+            int pageSize = 5;
+            //when
+            GameLogListAdminResponseDto result = getPageResult(2, 5);
+            //then
+            assertThat(result.getGameLogList().size()).isEqualTo(pageSize);
+        }
+
+        @Test
+        @Transactional
+        @DisplayName("End page")
+        void getUserGameListEndPage() throws Exception {
+            //given
+            int pageSize = 5;
+            //when
+            GameLogListAdminResponseDto result = getPageResult(4, 5);
+            //then
+            assertThat(result.getGameLogList().size()).isEqualTo(TOTAL_PAGE_SIZE % pageSize);
+        }
     }
 
     @Test
@@ -141,7 +193,7 @@ class GameAdminControllerTest {
         System.out.println("MANGO ENEMY1 after DB PPP : " + enemyUser1Rank.getPpp());
 
         //////////////////////////////
-        Thread.sleep(1000);
+        sleep(1000);
         //////////////////////////////
         GameInfoDto game2Info = testDataUtils.createGame(adminUser, LocalDateTime.now().minusMinutes(4), LocalDateTime.now().plusMinutes(6), season, currentMatchMode);
         User enemyUser2 = userRepository.findById(game2Info.getEnemyUserId()).get();
