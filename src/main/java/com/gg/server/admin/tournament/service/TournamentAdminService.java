@@ -91,19 +91,6 @@ public class TournamentAdminService {
         return tournamentRepository.save(targetTournament);
     }
 
-    /***
-     * 토너먼트 게임 테이블 생성 Method
-     * @param tournament 토너먼트 게임에 매칭될 토너먼트
-     * @param cnt 토너먼트 전체 라운드 수
-     */
-    private void createTournamentGameList(Tournament tournament, int cnt) {
-        TournamentRound[] rounds = TournamentRound.values();
-        while (--cnt >= 0) {
-            TournamentGame tournamentGame = new TournamentGame(null, tournament, rounds[cnt]);
-            tournament.addTournamentGame(tournamentGame);
-        }
-    }
-
     /**
      * <p>토너먼트 삭제 매서드</p>
      * <p>토너먼트는 BEFORE 인 경우에만 삭제 가능하다.</p>
@@ -117,8 +104,6 @@ public class TournamentAdminService {
         if (targetTournament.getStatus() != TournamentStatus.BEFORE) {
             throw new TournamentUpdateException("already started or ended", ErrorCode.TOURNAMENT_NOT_BEFORE);
         }
-        List<TournamentGame> tournamentGameList = tournamentGameRepository.findAllByTournamentId(targetTournament.getId());
-        tournamentGameRepository.deleteAll(tournamentGameList);
         tournamentRepository.deleteById(tournamentId);
     }
 
@@ -183,6 +168,19 @@ public class TournamentAdminService {
             tournamentUserList.get(Long.valueOf(ALLOWED_JOINED_NUMBER).intValue()-1).updateIsJoined(true);
         }
         tournamentUserRepository.delete(targetTournamentUser);
+    }
+
+    /***
+     * 토너먼트 게임 테이블 생성 Method
+     * @param tournament 토너먼트 게임에 매칭될 토너먼트
+     * @param cnt 토너먼트 전체 라운드 수
+     */
+    private void createTournamentGameList(Tournament tournament, int cnt) {
+        TournamentRound[] rounds = TournamentRound.values();
+        while (--cnt >= 0) {
+            TournamentGame tournamentGame = new TournamentGame(null, tournament, rounds[cnt]);
+            tournament.addTournamentGame(tournamentGame);
+        }
     }
 
     /**

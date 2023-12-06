@@ -288,7 +288,6 @@ class TournamentAdminServiceTest {
                 getTargetTime(2, 1), getTargetTime(2, 3));
             List<TournamentGame> tournamentGameList = createTournamentGames(1L, tournament, tournamentGameCnt);
             given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
-            given(tournamentGameRepository.findAllByTournamentId(tournament.getId())).willReturn(tournamentGameList);
             // when, then
             tournamentAdminService.deleteTournament(tournament.getId());
         }

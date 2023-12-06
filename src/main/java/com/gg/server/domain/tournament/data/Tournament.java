@@ -52,10 +52,10 @@ public class Tournament extends BaseTimeEntity {
     @JoinColumn(name = "winner_id")
     private User winner;
 
-    @OneToMany(mappedBy = "tournament", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "tournament", cascade = CascadeType.ALL)
     private List<TournamentGame> tournamentGames = new ArrayList<>();
 
-    @OneToMany(mappedBy = "tournament")
+    @OneToMany(mappedBy = "tournament", cascade = CascadeType.ALL)
     private List<TournamentUser> tournamentUsers = new ArrayList<>();
 
     @Builder
