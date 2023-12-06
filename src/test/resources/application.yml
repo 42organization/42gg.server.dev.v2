@@ -1,0 +1,192 @@
+spring:
+  application:
+    name: 42gg
+
+  profiles:
+    active: local
+
+  security:
+    oauth2.client:
+      authenticationScheme: header
+      registration:
+        42:
+          redirect-uri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
+          authorization-grant-type: authorization_code
+          scope: public
+        kakao:
+          redirect-uri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
+          authorization-grant-type: authorization_code
+          scope: profile_nickname, profile_image, account_email
+      provider:
+        42:
+          authorization-uri: "https://api.intra.42.fr/oauth/authorize"
+          token-uri: "https://api.intra.42.fr/oauth/token"
+          user-info-uri: "https://api.intra.42.fr/v2/me"
+          user-name-attribute: id
+        kakao:
+          authorization-uri: "https://kauth.kakao.com/oauth/authorize"
+          token-uri: "https://kauth.kakao.com/oauth/token"
+          user-info-uri: "https://kapi.kakao.com/v2/user/me"
+          user-name-attribute: id
+
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+  data:
+    web:
+      pageable:
+        default-page-size: 20
+        one-indexed-parameters: false
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: dummy
+    password: dummy
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+            required: true
+          auth: true
+
+  # Message 설정
+  messages:
+    basename: 'messages/validation'
+    encoding: UTF-8
+
+springdoc:
+  swagger-ui:
+    path: /api-docs
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+
+app:
+  auth:
+    tokenSecret: authdummydummydummydummydummydummydummydummydummy
+    refreshTokenSecret: refreshdummydummydummydummydummydummydummydummydummy
+
+info:
+  image:
+    defaultUrl: 'https://42gg-public-test-image.s3.ap-northeast-2.amazonaws.com/images/small_default.jpeg'
+    itemNotFoundUrl: 'https://42gg-public-test-image.s3.ap-northeast-2.amazonaws.com/images/not_found.svg'
+
+# -- actuator
+
+management:
+  server:
+    port: 8081
+
+  info:
+    java:
+      enabled: true
+    os:
+      enabled: true
+    env:
+      enabled: true
+
+    health:
+      show-details: always
+
+  endpoints:
+    jmx:
+      exposure:
+        exclude: "*"
+
+    web:
+      exposure:
+        include: "prometheus"
+
+server:
+  tomcat:
+    mbeanregistry:
+      enabled: true
+
+---
+spring.config.activate.on-profile: local
+
+# =========================== LOCAL  ===========================
+spring:
+  datasource:
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    url: jdbc:tc:mysql:8.0:///testdb?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: root
+    password: 1234
+
+  flyway:
+    enabled: false
+    baselineOnMigrate: true
+    locations: classpath:db/migration/test
+    url: jdbc:tc:mysql:8.0:///testdb?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    user: root
+    password: 1234
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        use_sql_comments: false
+
+  security:
+    oauth2.client:
+      registration:
+        42:
+          client-id: "dummy"
+          client-secret: "dummy"
+        kakao:
+          client-id: "dummy"
+          client-secret: "dummy"
+          client-authentication-method: POST
+
+  # Redis 설정
+  cache:
+    type: redis
+  redis:
+    host: 127.0.0.1
+    port: 6379
+  sql:
+    init:
+      mode: always
+
+# cors 설정
+cors:
+  allowed-origins: 'http://localhost:8080,http://127.0.0.1:8081'
+  allowed-methods: GET,POST,PUT,DELETE,OPTIONS,PATCH
+  allowed-headers: '*'
+  allowed-Credentials: false
+  max-age: 3600
+
+logging-level:
+  org.hibernate.SQL: debug
+
+slack:
+  xoxbToken: "dummy"
+
+info:
+  web:
+    frontUrl: 'http://localhost:8080'
+    domain: "localhost"
+
+cloud:
+  aws:
+    credentials:
+      accessKey: dummy
+      secretKey: dummy
+    s3:
+      bucket: 42gg-public-test-image
+      dir: images/
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+
+app:
+  auth:
+    refreshTokenExpiry: 604800000
+    tokenExpiry: 604800000
