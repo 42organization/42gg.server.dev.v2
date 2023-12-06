@@ -1,9 +1,13 @@
 package com.gg.server.domain.tournament.controller;
 
+import com.gg.server.domain.tournament.dto.TournamentCheckParticipationResponseDto;
 import com.gg.server.domain.tournament.dto.TournamentFilterRequestDto;
 import com.gg.server.domain.tournament.dto.TournamentListResponseDto;
 import com.gg.server.domain.tournament.dto.TournamentResponseDto;
 import com.gg.server.domain.tournament.service.TournamentService;
+import com.gg.server.domain.user.dto.UserDto;
+import com.gg.server.global.utils.argumentresolver.Login;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.checkerframework.checker.index.qual.Positive;
 import org.springframework.data.domain.PageRequest;
@@ -11,6 +15,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
@@ -31,6 +41,12 @@ public class TournamentController {
         Pageable pageRequest = PageRequest.of(tournamentFilterRequestDto.getPage() - 1, tournamentFilterRequestDto.getSize());
 
         return tournamentService.getAllTournamentList(pageRequest, tournamentFilterRequestDto.getType(), tournamentFilterRequestDto.getStatus());
+    }
+
+    @GetMapping("/{tournamentId}/users")
+    ResponseEntity<TournamentCheckParticipationResponseDto> getUserStatusInTournament(@PathVariable Long tournamentId, @Parameter(hidden = true) @Login UserDto user) {
+
+        return ResponseEntity.ok().body(tournamentService.getUserStatusInTournament(tournamentId, user));
     }
 
     /**
