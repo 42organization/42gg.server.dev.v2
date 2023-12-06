@@ -26,6 +26,12 @@ import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.slotmanagement.SlotManagement;
+import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
+import com.gg.server.domain.tournament.data.Tournament;
+import com.gg.server.domain.tournament.data.TournamentRepository;
+import com.gg.server.domain.tournament.exception.TournamentConflictException;
+import com.gg.server.domain.tournament.type.TournamentStatus;
+import com.gg.server.domain.tournament.type.TournamentType;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.dto.UserDto;
 import java.time.LocalDateTime;
@@ -75,6 +81,10 @@ class MatchServiceTest {
     PenaltyAdminRepository penaltyRepository;
     @Autowired
     PenaltyUserRedisRepository penaltyUserRedisRepository;
+    @Autowired
+    TournamentRepository tournamentRepository;
+    @Autowired
+    SlotManagementRepository slotManagementRepository;
     List<User> users;
     List<LocalDateTime> slotTimes;
 
@@ -88,17 +98,23 @@ class MatchServiceTest {
         Integer pppGap = random.nextInt(100) + 50;
         Season season = matchTestSetting.makeTestSeason(pppGap);
         testSeason = season;
-        List<User> users = new ArrayList<User>();
+        users = new ArrayList<User>();
         for(int i = 0; i < userCount; i++) {
             User user = matchTestSetting.createUser();
             users.add(user);
         }
-        users = users;
         users.stream().forEach(user ->
                 matchTestSetting.addUsertoRankRedis(user.getId(), random.nextInt(season.getPppGap()), season.getId()));
+        slotManagementRepository.save(SlotManagement.builder()
+                .pastSlotTime(0)
+                .futureSlotTime(12)
+                .openMinute(15)
+                .gameInterval(15)
+                .startTime(LocalDateTime.now())
+                .build());
+
         SlotManagement slotManagement = matchTestSetting.makeTestSlotManagement(15);
-        List<LocalDateTime> slotTimes = matchTestSetting.getTestSlotTimes(slotManagement.getGameInterval());
-        slotTimes = slotTimes;
+        slotTimes = matchTestSetting.getTestSlotTimes(slotManagement.getGameInterval());
     }
     @AfterEach
     void clear() {
@@ -225,6 +241,26 @@ class MatchServiceTest {
             Optional<Game> game = gameRepository.findByStartTime(slotTimes.get(0));
             Assertions.assertThat(game.isEmpty()).isEqualTo(false);
             Assertions.assertThat(game.get().getMode()).isEqualTo(Mode.RANK);
+        }
+
+        @DisplayName("토너먼트 시간과 겹칠 경우 게임 생성 안됨")
+        @Test
+        void addMatchTournamentTime() {
+            // given
+            Tournament tournament = Tournament.builder()
+                .title("test tournament")
+                .contents("test contents")
+                .startTime(LocalDateTime.now().plusHours(1))
+                .endTime(LocalDateTime.now().plusHours(2))
+                .type(TournamentType.MASTER)
+                .status(TournamentStatus.BEFORE)
+                .build();
+            tournamentRepository.save(tournament);
+
+            // when, then
+            Assertions.assertThatThrownBy(() -> matchService.makeMatch(UserDto.from(users.get(1)), Option.NORMAL, tournament.getStartTime()))
+                .isInstanceOf(TournamentConflictException.class);
+
         }
     }
 
