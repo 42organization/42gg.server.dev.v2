@@ -2,6 +2,8 @@ package com.gg.server.domain.tournament.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.domain.tournament.data.Tournament;
+import com.gg.server.domain.tournament.data.Tournament;
+import com.gg.server.domain.tournament.data.TournamentUserRepository;
 import com.gg.server.domain.tournament.dto.TournamentListResponseDto;
 import com.gg.server.domain.tournament.dto.TournamentResponseDto;
 import com.gg.server.domain.tournament.type.TournamentStatus;
@@ -10,8 +12,11 @@ import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
+import com.gg.server.global.exception.ErrorCode;
+import com.gg.server.global.exception.custom.CustomRuntimeException;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHeaders;
@@ -22,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,11 +53,15 @@ public class TournamentFindControllerTest {
     ObjectMapper objectMapper;
     @Autowired
     AuthTokenProvider tokenProvider;
+    @Autowired
+    TournamentUserRepository tournamentUserRepository;
 
     List<TournamentResponseDto> tournamentList;
     String accessToken;
 
     User tester;
+
+
 
     @Nested
     @DisplayName("토너먼트_리스트_조회")
@@ -62,7 +72,6 @@ public class TournamentFindControllerTest {
             accessToken = tokenProvider.createToken(tester.getId());
             tournamentList = testDataUtils.makeTournamentList();
         }
-
         @Test
         @DisplayName("전체_조회")
         public void getTournamentList() throws Exception {
@@ -257,5 +266,85 @@ public class TournamentFindControllerTest {
             //then
             System.out.println(contentAsString);
         }
+    }
+
+    @Nested
+    @DisplayName("토너먼트_유저_참가_상태_조회")
+    class UserStatusInTournamentTest {
+        @BeforeEach
+        void beforeEach() {
+            tester = testDataUtils.createNewUser("findControllerTester", "findControllerTester", RacketType.DUAL, SnsType.SLACK, RoleType.ADMIN);
+            accessToken = tokenProvider.createToken(tester.getId());
+        }
+        @Test
+        @DisplayName("유저_상태_조회_성공")
+        void success() throws Exception {
+            // given 1
+            Tournament tournament = testDataUtils.createTournament(LocalDateTime.now(), LocalDateTime.now(), TournamentStatus.BEFORE);
+            String url = "/pingpong/tournaments/" + tournament.getId() + "/users";
+            String expected1 = "{\"status\":\"BEFORE\"}";
+
+            // when 1
+            String contentAsString = mockMvc.perform(get(url)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+            // then 1
+            if (expected1.compareTo(contentAsString) != 0) {
+                throw new CustomRuntimeException("상태 오류", ErrorCode.BAD_REQUEST);
+            }
+
+            // given 2
+            testDataUtils.createTournamentUser(tester, tournament, false);
+            String expected2 = "{\"status\":\"WAIT\"}";
+
+            // when 2
+            contentAsString = mockMvc.perform(get(url)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+            // then 2
+            if (expected2.compareTo(contentAsString) != 0) {
+                throw new CustomRuntimeException("상태 오류", ErrorCode.BAD_REQUEST);
+            }
+
+            // given 3
+            tournamentUserRepository.findByTournamentIdAndUserId(tournament.getId(), tester.getId())
+                .get().updateIsJoined(true);
+            String expected3 = "{\"status\":\"PLAYER\"}";
+
+            // when 3
+            contentAsString = mockMvc.perform(get(url)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+            // then 3
+            if (expected3.compareTo(contentAsString) != 0) {
+                throw new CustomRuntimeException("상태 오류", ErrorCode.BAD_REQUEST);
+            }
+        }
+
+        @Test
+        @DisplayName("토너먼트_없음")
+        void tournamentNotFound() throws Exception {
+            // given
+            String url = "/pingpong/tournaments/" + 9999 + "/users";
+
+            // when, then
+            String contentAsString = mockMvc.perform(get(url)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isNotFound())
+                .andReturn().getResponse().getContentAsString();
+
+            System.out.println(contentAsString);
+        }
+
     }
 }
