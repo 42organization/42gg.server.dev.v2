@@ -267,6 +267,26 @@ public class TestDataUtils {
         rankRepository.save(userRank);
     }
 
+    public void createMockMatchWithMockRank(User newUser, Season season, LocalDateTime startTime, LocalDateTime endTime) {
+        Game game = new Game(season, StatusType.END, Mode.RANK, startTime, endTime);
+        gameRepository.save(game);
+        Team myTeam = new Team(game, 0, false);
+        TeamUser teamUser = new TeamUser(myTeam, newUser);
+        Team enemyTeam = new Team(game, 0, false);
+        User enemyUser = createNewUser();
+        createUserRank(enemyUser, "status message", season);
+        TeamUser enemyTeamUser = new TeamUser(enemyTeam, enemyUser);
+        teamRepository.save(myTeam);
+        teamRepository.save(enemyTeam);
+        teamUserRepository.save(teamUser);
+        teamUserRepository.save(enemyTeamUser);
+
+        PChange pChange1 = new PChange(game, newUser, 1100, true);
+        PChange pChange2 = new PChange(game, enemyUser, 900, true);
+        pChangeRepository.save(pChange1);
+        pChangeRepository.save(pChange2);
+    }
+
     public void createMockMatch(User newUser, Season season, LocalDateTime startTime, LocalDateTime endTime) {
         Game game = new Game(season, StatusType.END, Mode.RANK, startTime, endTime);
         gameRepository.save(game);
