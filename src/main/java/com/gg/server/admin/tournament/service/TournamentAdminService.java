@@ -76,7 +76,7 @@ public class TournamentAdminService {
     public Tournament updateTournamentInfo(Long tournamentId, TournamentAdminUpdateRequestDto requestDto) {
         Tournament targetTournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException("target tournament not found", ErrorCode.TOURNAMENT_NOT_FOUND));
-        if (targetTournament.getStatus() != TournamentStatus.BEFORE && !targetTournament.getStatus().equals(TournamentStatus.READY)) {
+        if (targetTournament.getStatus() != TournamentStatus.BEFORE) {
             throw new TournamentUpdateException("already started or ended", ErrorCode.TOURNAMENT_NOT_BEFORE);
         }
         checkValidTournamentTime(requestDto.getStartTime(), requestDto.getEndTime());
@@ -114,7 +114,7 @@ public class TournamentAdminService {
     public void deleteTournament(Long tournamentId) {
         Tournament targetTournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException("target tournament not found", ErrorCode.TOURNAMENT_NOT_FOUND));
-        if (targetTournament.getStatus() != TournamentStatus.BEFORE && !targetTournament.getStatus().equals(TournamentStatus.READY)) {
+        if (targetTournament.getStatus() != TournamentStatus.BEFORE) {
             throw new TournamentUpdateException("already started or ended", ErrorCode.TOURNAMENT_NOT_BEFORE);
         }
         List<TournamentGame> tournamentGameList = tournamentGameRepository.findAllByTournamentId(targetTournament.getId());
@@ -136,7 +136,7 @@ public class TournamentAdminService {
     public TournamentAdminAddUserResponseDto addTournamentUser(Long tournamentId, TournamentAdminAddUserRequestDto requestDto) {
         Tournament targetTournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException("target tournament not found", ErrorCode.TOURNAMENT_NOT_FOUND));
-        if (!targetTournament.getStatus().equals(TournamentStatus.BEFORE) && !targetTournament.getStatus().equals(TournamentStatus.READY)) {
+        if (!targetTournament.getStatus().equals(TournamentStatus.BEFORE)) {
             throw new TournamentUpdateException("already started or ended", ErrorCode.TOURNAMENT_NOT_BEFORE);
         }
 
@@ -158,8 +158,31 @@ public class TournamentAdminService {
         return new TournamentAdminAddUserResponseDto(
                 targetUser.getId(),
                 targetUser.getIntraId(),
-                tournamentUser.isJoined()
+                tournamentUser.getIsJoined()
         );
+    }
+
+    /**
+     * <p>토너먼트 유저 삭제 매서드</p>
+     * <p>삭제하고자 하는 유저가 참가자이고, 현재 대기자가 있다면 참가신청이 빠른 대기자를 참가자로 변경해준다.</p>
+     * @param tournamentId 타겟 토너먼트 id
+     * @param userId 타겟 유저 id
+     */
+    public void deleteTournamentUser(Long tournamentId, Long userId) {
+        Tournament targetTournament = tournamentRepository.findById(tournamentId)
+            .orElseThrow(() -> new TournamentNotFoundException("target tournament not found", ErrorCode.TOURNAMENT_NOT_FOUND));
+        if (!targetTournament.getStatus().equals(TournamentStatus.BEFORE)) {
+            throw new TournamentUpdateException("already started or ended", ErrorCode.TOURNAMENT_NOT_BEFORE);
+        }
+        TournamentUser targetTournamentUser = tournamentUserRepository.findByTournamentIdAndUserId(tournamentId, userId)
+            .orElseThrow(UserNotFoundException::new);
+        List<TournamentUser> tournamentUserList = targetTournament.getTournamentUsers();
+
+        targetTournament.deleteTournamentUser(targetTournamentUser);
+        if (targetTournamentUser.getIsJoined() && targetTournament.getTournamentUsers().size()>=ALLOWED_JOINED_NUMBER) {
+            tournamentUserList.get(Long.valueOf(ALLOWED_JOINED_NUMBER).intValue()-1).updateIsJoined(true);
+        }
+        tournamentUserRepository.delete(targetTournamentUser);
     }
 
     /**

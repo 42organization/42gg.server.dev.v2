@@ -86,4 +86,18 @@ public class TournamentAdminController {
         TournamentUserListResponseDto responseDto = tournamentAdminService.getTournamentUserList(tournamentId, isJoined);
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
+
+    /**
+     * <p>관리자 토너먼트 유저 삭제</p>
+     * <p>토너먼트 유저를 삭제시켜 주며, 참가자가 삭제되는 경우 상황에 따라 대기자를 참가자로 바꾸어준다.</p>
+     * @param tournamentId 타겟 토너먼트 id
+     * @param userId 타겟 유저 id
+     */
+    @DeleteMapping("/{tournamentId}/users/{userId}")
+    public ResponseEntity<Void> deleteTournamentUser(@PathVariable @Positive Long tournamentId,
+        @PathVariable @Positive Long userId) {
+        tournamentAdminService.deleteTournamentUser(tournamentId, userId);
+
+        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+    }
 }

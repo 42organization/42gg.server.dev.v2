@@ -19,7 +19,7 @@ public class TournamentUserResponseDto {
     public TournamentUserResponseDto(TournamentUser tournamentUser) {
         this.userId = tournamentUser.getUser().getId();
         this.intraId = tournamentUser.getUser().getIntraId();
-        this.isJoined = tournamentUser.isJoined();
+        this.isJoined = tournamentUser.getIsJoined();
         this.registeredDate = tournamentUser.getRegisterTime();
     }
 }

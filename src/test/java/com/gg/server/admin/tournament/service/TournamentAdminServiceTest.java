@@ -29,9 +29,13 @@ import com.gg.server.domain.user.type.SnsType;
 import com.gg.server.global.exception.custom.InvalidParameterException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.constraints.NotNull;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -402,6 +406,44 @@ class TournamentAdminServiceTest {
             // when, then
             assertThatThrownBy(() -> tournamentAdminService.addTournamentUser(tournament.getId(), requestDto))
                 .isInstanceOf(TournamentConflictException.class);
+        }
+    }
+
+    @Nested
+    @DisplayName("관리자_토너먼트_유저_삭제_테스트")
+    class TournamentAdminServiceDeleteUserTest {
+        @Test
+        @DisplayName("유저_삭제_성공")
+        public void success() {
+            // given
+            List<Tournament> tournamentList = createTournaments(1L, 2, getTargetTime(2, 1));
+            Tournament tournament = tournamentList.get(0);
+            TournamentAdminAddUserRequestDto requestDto = new TournamentAdminAddUserRequestDto("test");
+            User user = createUser("user");
+            TournamentUser tournamentUser = new TournamentUser(user, tournament, true, LocalDateTime.now());
+            given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
+            given(tournamentUserRepository.findByTournamentIdAndUserId(tournament.getId(), user.getId()))
+                .willReturn(Optional.of(tournamentUser));
+
+            // when, then
+            tournamentAdminService.deleteTournamentUser(tournament.getId(), user.getId());
+        }
+
+        @Test
+        @DisplayName("찾을_수_없는_유저")
+        public void userNotFound() {
+            //given
+            List<Tournament> tournamentList = createTournaments(1L, 2, getTargetTime(2, 1));
+            Tournament tournament = tournamentList.get(0);
+            TournamentAdminAddUserRequestDto requestDto = new TournamentAdminAddUserRequestDto("test");
+            User user = createUser("user");
+            TournamentUser tournamentUser = new TournamentUser(user, tournament, true, LocalDateTime.now());
+            given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
+            given(tournamentUserRepository.findByTournamentIdAndUserId(tournament.getId(), user.getId()))
+                .willReturn(Optional.empty());
+            // when, then
+            assertThatThrownBy(() -> tournamentAdminService.deleteTournamentUser(tournament.getId(), user.getId()))
+                .isInstanceOf(UserNotFoundException.class);
         }
     }
 

@@ -397,7 +397,7 @@ public class TestDataUtils {
      */
     public TournamentUser createTournamentUser(User user, Tournament tournament, boolean isJoined) {
         TournamentUser tournamentUser = new TournamentUser(user, tournament, isJoined, LocalDateTime.now());
-        tournament.getTournamentUsers().add(tournamentUser);
+        tournament.addTournamentUser(tournamentUser);
         return tournamentUserRepository.save(tournamentUser);
     }
 
