@@ -155,9 +155,10 @@ public class TournamentAdminService {
         if (!targetTournament.getStatus().equals(TournamentStatus.BEFORE)) {
             throw new TournamentUpdateException("already started or ended", ErrorCode.TOURNAMENT_NOT_BEFORE);
         }
+        User targetUser = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
         List<TournamentUser> tournamentUserList = targetTournament.getTournamentUsers();
-        TournamentUser targetTournamentUser = tournamentUserList.stream().filter(tu->tu.getUser().getId().equals(userId))
+        TournamentUser targetTournamentUser = tournamentUserList.stream().filter(tu->tu.getUser().getId().equals(targetUser.getId()))
             .findAny().orElseThrow(UserNotFoundException::new);
         targetTournament.deleteTournamentUser(targetTournamentUser);
         if (targetTournamentUser.getIsJoined() && targetTournament.getTournamentUsers().size()>=ALLOWED_JOINED_NUMBER) {
