@@ -43,6 +43,12 @@ public class TournamentController {
         return tournamentService.getAllTournamentList(pageRequest, tournamentFilterRequestDto.getType(), tournamentFilterRequestDto.getStatus());
     }
 
+    /**
+     * <p>유저 해당 토너먼트 참여 여부 확인 매서드</p>
+     * @param tournamentId 타겟 토너먼트
+     * @param user 확인하고자 하는 유저(로그인한 유저 본인)
+     * @return
+     */
     @GetMapping("/{tournamentId}/users")
     ResponseEntity<TournamentCheckParticipationResponseDto> getUserStatusInTournament(@PathVariable Long tournamentId, @Parameter(hidden = true) @Login UserDto user) {
 

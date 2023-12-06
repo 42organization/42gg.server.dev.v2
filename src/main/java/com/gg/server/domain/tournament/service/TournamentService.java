@@ -64,6 +64,12 @@ public class TournamentService {
         return new TournamentListResponseDto(tournaments.getContent(), tournaments.getTotalPages());
     }
 
+    /**
+     * <p>유저 해당 토너먼트 참여 여부 확인 매서드</p>
+     * @param tournamentId 타겟 토너먼트
+     * @param user 해당 유저
+     * @return
+     */
     public TournamentCheckParticipationResponseDto getUserStatusInTournament(Long tournamentId, UserDto user) {
         Tournament targetTournament = tournamentRepository.findById(tournamentId).orElseThrow(() ->
             new TournamentNotFoundException("target tournament not found", ErrorCode.TOURNAMENT_NOT_FOUND));
