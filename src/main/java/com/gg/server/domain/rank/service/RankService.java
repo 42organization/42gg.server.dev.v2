@@ -1,10 +1,12 @@
 package com.gg.server.domain.rank.service;
 
-import com.gg.server.domain.rank.data.Rank;
+import com.gg.server.domain.rank.data.RankRepository;
 import com.gg.server.domain.rank.dto.ExpRankDto;
 import com.gg.server.domain.rank.dto.ExpRankPageResponseDto;
+import com.gg.server.domain.rank.dto.ExpRankV2Dto;
 import com.gg.server.domain.rank.dto.RankDto;
 import com.gg.server.domain.rank.dto.RankPageResponseDto;
+import com.gg.server.domain.rank.dto.RankV2Dto;
 import com.gg.server.domain.rank.exception.RedisDataNotFoundException;
 import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
@@ -12,8 +14,6 @@ import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.service.SeasonFindService;
 import com.gg.server.domain.user.data.User;
-import com.gg.server.domain.user.data.UserImage;
-import com.gg.server.domain.user.data.UserImageRepository;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.domain.user.exception.UserNotFoundException;
@@ -23,12 +23,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,9 +39,10 @@ public class RankService {
     private final UserRepository userRepository;
     private final RankRedisRepository redisRepository;
     private final SeasonFindService seasonFindService;
+    private final RankRepository rankRepository;
 
     @Transactional(readOnly = true)
-    public ExpRankPageResponseDto getExpRankPage(PageRequest pageRequest, UserDto curUser) {
+    public ExpRankPageResponseDto getExpRankPageByRedis(PageRequest pageRequest, UserDto curUser) {
 
         Long myRank = curUser.getTotalExp() == 0 ? -1 : userRepository.findExpRankingByIntraId(curUser.getIntraId());
         Page<User> users = userRepository.findAllByTotalExpGreaterThan(pageRequest, 0);
@@ -63,6 +64,58 @@ public class RankService {
         }
 
         return new ExpRankPageResponseDto(myRank.intValue(), pageRequest.getPageNumber() + 1, users.getTotalPages(), expRankDtos);
+    }
+
+    /**
+     * ExpRankPage v2 (redis 조회 제거 - db 조회로만 하는 기능)
+     * @param pageRequest
+     * @param curUser
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public ExpRankPageResponseDto getExpRankPage(PageRequest pageRequest, UserDto curUser) {
+
+        Long myRank = curUser.getTotalExp() == 0 ? -1 : userRepository.findExpRankingByIntraId(curUser.getIntraId());
+        Page<User> users = userRepository.findAllByTotalExpGreaterThan(pageRequest, 0);
+        if(pageRequest.getPageNumber() + 1 > users.getTotalPages())
+            throw new PageNotFoundException("페이지가 존재하지 않습니다.", ErrorCode.PAGE_NOT_FOUND);
+        Season curSeason = seasonFindService.findCurrentSeason(LocalDateTime.now());
+
+        List<ExpRankV2Dto> expRankV2Dtos = userRepository.findExpRank(pageRequest.getPageNumber(), pageRequest.getPageSize(), curSeason.getId());
+        List<ExpRankDto> expRankDtos = expRankV2Dtos.stream().map(ExpRankDto::from).collect(Collectors.toList());
+
+        return new ExpRankPageResponseDto(myRank.intValue(),
+                pageRequest.getPageNumber() + 1,
+                users.getTotalPages(),
+                expRankDtos);
+    }
+
+    /**
+     * rank 페이지 조회 v2
+     * @param pageRequest
+     * @param curUser
+     * @param seasonId
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public RankPageResponseDto getRankPageV2(PageRequest pageRequest, UserDto curUser, Long seasonId) {
+        Season season;
+        if (seasonId == null || seasonId == 0) {
+            season = seasonFindService.findCurrentSeason(LocalDateTime.now());
+        } else {
+            season = seasonFindService.findSeasonById(seasonId);
+        }
+        int totalPage = calcTotalPageV2(season, pageRequest.getPageSize());
+        if (totalPage == 0)
+            return returnEmptyRankPage();
+        if (pageRequest.getPageNumber() + 1 > totalPage)
+            throw new PageNotFoundException("페이지가 존재하지 않습니다.", ErrorCode.PAGE_NOT_FOUND);
+
+        int myRank = rankRepository.findRankByUserIdAndSeasonId(curUser.getId(), season.getId())
+                .orElse(-1);
+        List<RankDto> rankList = rankRepository.findPppRankBySeasonId(pageRequest.getPageNumber(), pageRequest.getPageSize(), season.getId())
+                .stream().map(RankDto::from).collect(Collectors.toList());
+        return new RankPageResponseDto(myRank, pageRequest.getPageNumber() + 1, totalPage, rankList);
     }
 
     @Transactional(readOnly = true)
@@ -89,7 +142,6 @@ public class RankService {
     private RankPageResponseDto returnEmptyRankPage() {
         return new RankPageResponseDto(-1, 1, 1, new ArrayList<>());
     }
-
     private int findMyRank(UserDto curUser, Season season) {
         String zSetKey = RedisKeyManager.getZSetKey(season.getId());
         try {
@@ -99,7 +151,6 @@ public class RankService {
             return -1;
         }
     }
-
     private int calcTotalPage(Season season, int pageSize) {
         String zSetKey = RedisKeyManager.getZSetKey(season.getId());
         try{
@@ -109,7 +160,15 @@ public class RankService {
             return 0;
         }
     }
-
+    private int calcTotalPageV2(Season season, int pageSize) {
+        String zSetKey = RedisKeyManager.getZSetKey(season.getId());
+        try{
+            Integer totalUserCount = rankRepository.countRankUserBySeasonId(season.getId());
+            return (int) Math.ceil((double) totalUserCount / pageSize);
+        } catch (RedisDataNotFoundException e) {
+            return 0;
+        }
+    }
     private List<RankDto> createRankList(int startRank, int endRank, Season season) {
         String zSetKey = RedisKeyManager.getZSetKey(season.getId());
         String hashKey = RedisKeyManager.getHashKey(season.getId());

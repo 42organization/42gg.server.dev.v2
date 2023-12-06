@@ -1,7 +1,6 @@
 package com.gg.server.domain.rank.dto;
 
 import com.gg.server.domain.user.data.User;
-import com.gg.server.domain.user.data.UserImage;
 import com.gg.server.global.utils.ExpLevelCalculator;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,5 +27,16 @@ public class ExpRankDto {
                 .textColor(user.getTextColor())
                 .build();
         return dto;
+    }
+    public static ExpRankDto from(ExpRankV2Dto dto) {
+        return ExpRankDto.builder()
+                .intraId(dto.getIntraId())
+                .rank(dto.getRanking())
+                .statusMessage(dto.getStatusMessage())
+                .level(ExpLevelCalculator.getLevel(dto.getTotalExp()))
+                .exp(dto.getTotalExp())
+                .userImageUri(dto.getImageUri())
+                .textColor(dto.getTextColor())
+                .build();
     }
 }

@@ -43,7 +43,7 @@ public class GameService {
     private final GameFindService gameFindService;
     private final UserCoinChangeService userCoinChangeService;
     private final TierService tierService;
-    private final RedisUploadService redisUploadService;
+    //private final RedisUploadService redisUploadService;
 
   /**
    * 게임 정보를 가져온다.
