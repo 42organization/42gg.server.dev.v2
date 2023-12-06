@@ -27,6 +27,8 @@ import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.slotmanagement.SlotManagement;
 import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
+import com.gg.server.domain.tier.data.Tier;
+import com.gg.server.domain.tier.data.TierRepository;
 import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentRepository;
 import com.gg.server.domain.tournament.exception.TournamentConflictException;
@@ -85,6 +87,8 @@ class MatchServiceTest {
     TournamentRepository tournamentRepository;
     @Autowired
     SlotManagementRepository slotManagementRepository;
+    @Autowired
+    TierRepository tierRepository;
     List<User> users;
     List<LocalDateTime> slotTimes;
 
@@ -105,14 +109,6 @@ class MatchServiceTest {
         }
         users.stream().forEach(user ->
                 matchTestSetting.addUsertoRankRedis(user.getId(), random.nextInt(season.getPppGap()), season.getId()));
-        slotManagementRepository.save(SlotManagement.builder()
-                .pastSlotTime(0)
-                .futureSlotTime(12)
-                .openMinute(15)
-                .gameInterval(15)
-                .startTime(LocalDateTime.now())
-                .build());
-
         SlotManagement slotManagement = matchTestSetting.makeTestSlotManagement(15);
         slotTimes = matchTestSetting.getTestSlotTimes(slotManagement.getGameInterval());
     }
@@ -421,6 +417,44 @@ class MatchServiceTest {
                     }
                 }
             }
+        }
+
+        @DisplayName("토너먼트 시간에 대한 슬롯 블락")
+        @Test
+        void getClosedStatusOfTournament() {
+            // given
+            Tournament tournament = Tournament.builder()
+                .title("test tournament")
+                .contents("test contents")
+                .startTime(LocalDateTime.now().plusHours(1))
+                .endTime(LocalDateTime.now().plusHours(2))
+                .type(TournamentType.MASTER)
+                .status(TournamentStatus.BEFORE)
+                .build();
+            tournamentRepository.save(tournament);
+            tierRepository.save(new Tier("image url"));
+
+            //
+            tierRepository.flush();
+            List<Tier> all = tierRepository.findAll();
+            System.out.println("all = " + all);
+
+            // when
+            SlotStatusResponseListDto allMatchStatus = matchFindService.getAllMatchStatus(UserDto.from(users.get(0)),
+                Option.NORMAL);
+
+            // then
+            for (List<SlotStatusDto> dtos : allMatchStatus.getMatchBoards()) {
+                for (SlotStatusDto dto: dtos) {
+                    if (dto.getStartTime().isBefore(tournament.getStartTime()) ||
+                        dto.getEndTime().isAfter(tournament.getEndTime())) {
+                        Assertions.assertThat(dto.getStatus()).isEqualTo(SlotStatus.OPEN.getCode());
+                    } else {
+                        Assertions.assertThat(dto.getStatus()).isEqualTo(SlotStatus.CLOSE.getCode());
+                    }
+                }
+            }
+
         }
     }
 
