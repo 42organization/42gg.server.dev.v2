@@ -29,8 +29,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.ArrayList;
 
 @Service
 @RequiredArgsConstructor
@@ -98,6 +99,22 @@ public class TournamentService {
             tournamentUserStatus = tournamentUser.get().getIsJoined() ? TournamentUserStatus.PLAYER : TournamentUserStatus.WAIT;
         }
         return new TournamentUserRegistrationResponseDto(tournamentUserStatus);
+    }
+
+    /**
+     * 진행중인 토너먼트 유무 확인
+     * @param time 현재 시간
+     * @return 종료되지 않은 토너먼트 있으면 true, 없으면 false
+     */
+    public boolean isNotEndedTournament(LocalDateTime time) {
+        List<Tournament> tournamentList = tournamentRepository.findAllByStatusIsNot(TournamentStatus.END);
+        for (Tournament tournament : tournamentList) {
+            if (time.isAfter(tournament.getStartTime()) &&
+                time.isBefore(tournament.getEndTime())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
