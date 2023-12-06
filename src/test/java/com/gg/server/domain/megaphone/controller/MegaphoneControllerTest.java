@@ -121,6 +121,7 @@ class MegaphoneControllerTest {
     }
 
     @Test
+    @Transactional
     @DisplayName("[GET] /pingpong/megaphones")
     void getMegaphoneTodayListTest() throws Exception {
         String accessToken = testDataUtils.getLoginAccessToken();

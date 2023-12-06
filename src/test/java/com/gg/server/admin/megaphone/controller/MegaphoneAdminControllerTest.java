@@ -2,6 +2,7 @@ package com.gg.server.admin.megaphone.controller;
 
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.DisplayName;
@@ -17,6 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RequiredArgsConstructor
 @SpringBootTest
 @AutoConfigureMockMvc
+@Transactional
 class MegaphoneAdminControllerTest {
     @Autowired
     TestDataUtils testDataUtils;
