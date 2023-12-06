@@ -4,18 +4,23 @@ import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentRepository;
 import com.gg.server.domain.tournament.data.TournamentUser;
 import com.gg.server.domain.tournament.data.TournamentUserRepository;
+import com.gg.server.domain.tournament.dto.TournamentCheckParticipationResponseDto;
 import com.gg.server.domain.tournament.dto.TournamentListResponseDto;
 import com.gg.server.domain.tournament.dto.TournamentResponseDto;
 import com.gg.server.domain.tournament.exception.TournamentNotFoundException;
 import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.tournament.type.TournamentType;
+import com.gg.server.domain.tournament.type.TournamentUserStatus;
 import com.gg.server.domain.user.data.User;
+import com.gg.server.domain.user.data.UserRepository;
+import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.domain.user.dto.UserImageDto;
+import com.gg.server.domain.user.exception.UserNotFoundException;
+import com.gg.server.global.exception.ErrorCode;
+import java.util.Optional;
 import com.gg.server.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +32,7 @@ import java.util.Optional;
 public class TournamentService {
     private final TournamentRepository tournamentRepository;
     private final TournamentUserRepository tournamentUserRepository;
+    private final UserRepository userRepository;
 
     /**
      * 토너먼트 리스트 조회
@@ -56,6 +62,18 @@ public class TournamentService {
                     map(o-> new TournamentResponseDto(o, findTournamentWinner(o), findJoinedPlayerCnt(o)));
         }
         return new TournamentListResponseDto(tournaments.getContent(), tournaments.getTotalPages());
+    }
+
+    public TournamentCheckParticipationResponseDto getUserStatusInTournament(Long tournamentId, UserDto user) {
+        Tournament targetTournament = tournamentRepository.findById(tournamentId).orElseThrow(() ->
+            new TournamentNotFoundException("target tournament not found", ErrorCode.TOURNAMENT_NOT_FOUND));
+        User loginUser = userRepository.findById(user.getId()).orElseThrow(UserNotFoundException::new);
+        TournamentUserStatus tournamentUserStatus = TournamentUserStatus.BEFORE;
+        Optional<TournamentUser> tournamentUser = tournamentUserRepository.findByTournamentIdAndUserId(tournamentId, user.getId());
+        if (tournamentUser.isPresent()) {
+            tournamentUserStatus = tournamentUser.get().getIsJoined() ? TournamentUserStatus.PLAYER : TournamentUserStatus.WAIT;
+        }
+        return new TournamentCheckParticipationResponseDto(tournamentUserStatus);
     }
 
     /**
