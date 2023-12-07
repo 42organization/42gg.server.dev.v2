@@ -31,7 +31,7 @@ public interface RankRepository extends JpaRepository<Rank, Long> {
 
     @Query(value = "SELECT u.intra_id intraId, r.status_message statusMessage, r.ppp, "
             + "t.image_uri tierImageUri, u.text_color textColor, "
-            + "RANK() OVER(ORDER BY r.ppp DESC, pg.created_at DESC, u.total_exp DESC) AS ranking "
+            + "RANK() OVER(ORDER BY r.ppp DESC, pg.created_at ASC, u.total_exp DESC) AS ranking "
             + "FROM Ranks r "
             + "INNER JOIN Tier t "
             + "ON r.tier_id = t.id "
@@ -57,7 +57,7 @@ public interface RankRepository extends JpaRepository<Rank, Long> {
 
     @Query(value = "SELECT ranked.ranking "
             + "FROM ("
-                + "SELECT u.id userId, RANK() OVER(ORDER BY r.ppp DESC, pg.created_at DESC, u.total_exp DESC) AS ranking "
+                + "SELECT u.id userId, RANK() OVER(ORDER BY r.ppp DESC, pg.created_at ASC, u.total_exp DESC) AS ranking "
                 + "FROM Ranks r "
                 + "INNER JOIN User u "
                 + "ON r.user_id = u.id "
