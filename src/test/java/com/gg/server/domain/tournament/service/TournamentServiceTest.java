@@ -11,7 +11,7 @@ import com.gg.server.domain.tournament.data.TournamentGameRepository;
 import com.gg.server.domain.tournament.data.TournamentRepository;
 import com.gg.server.domain.tournament.data.TournamentUser;
 import com.gg.server.domain.tournament.data.TournamentUserRepository;
-import com.gg.server.domain.tournament.dto.TournamentCheckParticipationResponseDto;
+import com.gg.server.domain.tournament.dto.TournamentUserRegistrationResponseDto;
 import com.gg.server.domain.tournament.exception.TournamentNotFoundException;
 import com.gg.server.domain.tournament.type.TournamentRound;
 import com.gg.server.domain.tournament.type.TournamentStatus;
@@ -65,7 +65,7 @@ class TournamentServiceTest {
                 .willReturn(Optional.of(tournamentUser));
 
             // when, then
-            TournamentCheckParticipationResponseDto responseDto =
+            TournamentUserRegistrationResponseDto responseDto =
                 tournamentService.getUserStatusInTournament(tournament.getId(), UserDto.from(user));
         }
 

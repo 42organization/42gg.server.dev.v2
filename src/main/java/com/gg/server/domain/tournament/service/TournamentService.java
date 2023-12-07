@@ -4,7 +4,7 @@ import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentRepository;
 import com.gg.server.domain.tournament.data.TournamentUser;
 import com.gg.server.domain.tournament.data.TournamentUserRepository;
-import com.gg.server.domain.tournament.dto.TournamentCheckParticipationResponseDto;
+import com.gg.server.domain.tournament.dto.TournamentUserRegistrationResponseDto;
 import com.gg.server.domain.tournament.dto.TournamentListResponseDto;
 import com.gg.server.domain.tournament.dto.TournamentResponseDto;
 import com.gg.server.domain.tournament.exception.TournamentNotFoundException;
@@ -70,7 +70,7 @@ public class TournamentService {
      * @param user 해당 유저
      * @return
      */
-    public TournamentCheckParticipationResponseDto getUserStatusInTournament(Long tournamentId, UserDto user) {
+    public TournamentUserRegistrationResponseDto getUserStatusInTournament(Long tournamentId, UserDto user) {
         Tournament targetTournament = tournamentRepository.findById(tournamentId).orElseThrow(() ->
             new TournamentNotFoundException("target tournament not found", ErrorCode.TOURNAMENT_NOT_FOUND));
         User loginUser = userRepository.findById(user.getId()).orElseThrow(UserNotFoundException::new);
@@ -79,7 +79,7 @@ public class TournamentService {
         if (tournamentUser.isPresent()) {
             tournamentUserStatus = tournamentUser.get().getIsJoined() ? TournamentUserStatus.PLAYER : TournamentUserStatus.WAIT;
         }
-        return new TournamentCheckParticipationResponseDto(tournamentUserStatus);
+        return new TournamentUserRegistrationResponseDto(tournamentUserStatus);
     }
 
     /**

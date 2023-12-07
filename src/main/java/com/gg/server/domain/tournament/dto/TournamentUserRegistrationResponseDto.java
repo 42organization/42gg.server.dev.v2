@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @Getter
-public class TournamentCheckParticipationResponseDto {
+public class TournamentUserRegistrationResponseDto {
     private TournamentUserStatus status;
 }

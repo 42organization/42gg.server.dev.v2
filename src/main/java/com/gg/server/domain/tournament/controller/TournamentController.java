@@ -1,6 +1,6 @@
 package com.gg.server.domain.tournament.controller;
 
-import com.gg.server.domain.tournament.dto.TournamentCheckParticipationResponseDto;
+import com.gg.server.domain.tournament.dto.TournamentUserRegistrationResponseDto;
 import com.gg.server.domain.tournament.dto.TournamentFilterRequestDto;
 import com.gg.server.domain.tournament.dto.TournamentListResponseDto;
 import com.gg.server.domain.tournament.dto.TournamentResponseDto;
@@ -50,7 +50,7 @@ public class TournamentController {
      * @return
      */
     @GetMapping("/{tournamentId}/users")
-    ResponseEntity<TournamentCheckParticipationResponseDto> getUserStatusInTournament(@PathVariable Long tournamentId, @Parameter(hidden = true) @Login UserDto user) {
+    ResponseEntity<TournamentUserRegistrationResponseDto> getUserStatusInTournament(@PathVariable Long tournamentId, @Parameter(hidden = true) @Login UserDto user) {
 
         return ResponseEntity.ok().body(tournamentService.getUserStatusInTournament(tournamentId, user));
     }
