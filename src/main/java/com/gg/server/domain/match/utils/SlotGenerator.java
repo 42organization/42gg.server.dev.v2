@@ -36,9 +36,8 @@ public class SlotGenerator {
     private final RedisMatchUser matchUser;
     private final MatchCalculator matchCalculator;
     private final Option option;
-    private final TournamentRepository tournamentRepository;
 
-    public SlotGenerator(RankRedis user, SlotManagement slotManagement, Season season, Option option, TournamentRepository tournamentRepository) {
+    public SlotGenerator(RankRedis user, SlotManagement slotManagement, Season season, Option option) {
         this.interval = slotManagement.getGameInterval();
         this.now = LocalDateTime.now();
         this.minTime = LocalDateTime.of(
@@ -49,7 +48,6 @@ public class SlotGenerator {
         this.slots = new HashMap<LocalDateTime, SlotStatusDto>();
         this.matchUser = new RedisMatchUser(user.getUserId(), user.getPpp(), option);
         this.matchCalculator = new MatchCalculator(season.getPppGap(), matchUser);
-        this.tournamentRepository = tournamentRepository;
     }
 
     public void addPastSlots() {
@@ -66,8 +64,7 @@ public class SlotGenerator {
     /**
      * BEFORE, LIVE 상태의 토너먼트 진행 시간에 슬롯을 block함
      */
-    public void addTournamentSlots() {
-        List<Tournament> tournaments = tournamentRepository.findAllByStatusIsNot(TournamentStatus.END);
+    public void addTournamentSlots(List<Tournament> tournaments) {
         for (Tournament tournament : tournaments) {
             LocalDateTime startTime = tournament.getStartTime();
             LocalDateTime endTime = tournament.getEndTime();

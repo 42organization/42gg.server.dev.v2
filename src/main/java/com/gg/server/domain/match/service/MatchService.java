@@ -21,8 +21,10 @@ import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.service.SeasonFindService;
+import com.gg.server.domain.tournament.data.Tournament;
+import com.gg.server.domain.tournament.data.TournamentRepository;
 import com.gg.server.domain.tournament.exception.TournamentConflictException;
-import com.gg.server.domain.tournament.service.TournamentService;
+import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
@@ -47,7 +49,7 @@ public class MatchService {
     private final PenaltyService penaltyService;
     private final GameUpdateService gameUpdateService;
     private final UserRepository userRepository;
-    private final TournamentService tournamentService;
+    private final TournamentRepository tournamentRepository;
 
     /**
      * 1) 매칭 가능한 유저 있을 경우 : 게임 생성
@@ -142,7 +144,7 @@ public class MatchService {
         if (penaltyService.isPenaltyUser(userDto.getIntraId())) {
             throw new PenaltyUserSlotException();
         }
-        if (tournamentService.isNotEndedTournament(startTime)) {
+        if (isNotEndedTournament(startTime)) {
             throw new TournamentConflictException();
         }
         if (gameRepository.findByStartTime(startTime).isPresent()) {
@@ -193,4 +195,19 @@ public class MatchService {
         }
     }
 
+    /**
+     * 진행중인 토너먼트 유무 확인
+     * @param time 현재 시간
+     * @return 종료되지 않은 토너먼트 있으면 true, 없으면 false
+     */
+    private boolean isNotEndedTournament(LocalDateTime time) {
+        List<Tournament> tournamentList = tournamentRepository.findAllByStatusIsNot(TournamentStatus.END);
+        for (Tournament tournament : tournamentList) {
+            if (time.isAfter(tournament.getStartTime()) &&
+                time.isBefore(tournament.getEndTime())) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

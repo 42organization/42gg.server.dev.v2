@@ -23,7 +23,9 @@ import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
 import com.gg.server.domain.tier.data.Tier;
 import com.gg.server.domain.tier.data.TierRepository;
 import com.gg.server.domain.tier.exception.TierNotFoundException;
+import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentRepository;
+import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
@@ -84,11 +86,12 @@ public class MatchFindService {
             user = rankRedisRepository.
                     findRankByUserId(RedisKeyManager.getHashKey(season.getId()), userDto.getId());
         }
-        SlotGenerator slotGenerator = new SlotGenerator(user, slotManagement, season, option, tournamentRepository);
+        SlotGenerator slotGenerator = new SlotGenerator(user, slotManagement, season, option);
         List<Game> games = gameRepository.findAllBetween(slotGenerator.getNow(), slotGenerator.getMaxTime());
         slotGenerator.addPastSlots();
         slotGenerator.addMatchedSlots(games);
-        slotGenerator.addTournamentSlots();
+        List<Tournament> tournaments = tournamentRepository.findAllByStatusIsNot(TournamentStatus.END);
+        slotGenerator.addTournamentSlots(tournaments);
 
         Optional<Game> myGame = gameRepository.findByStatusTypeAndUserId(StatusType.BEFORE, userDto.getId());
         Set<LocalDateTime> gameTimes = games.stream().map(Game::getStartTime).collect(Collectors.toSet());
