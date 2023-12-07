@@ -9,6 +9,6 @@ public class TournamentConflictException extends DuplicationException {
     }
 
     public TournamentConflictException() {
-        super("이미 토너먼트가 존재합니다.", ErrorCode.TOURNAMENT_CONFLICT);
+        super(ErrorCode.TOURNAMENT_CONFLICT.getMessage(), ErrorCode.TOURNAMENT_CONFLICT);
     }
 }
