@@ -24,6 +24,7 @@ import com.gg.server.domain.penalty.redis.RedisPenaltyUser;
 import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
+import com.gg.server.domain.rank.service.RedisUploadService;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.slotmanagement.SlotManagement;
 import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
@@ -89,6 +90,8 @@ class MatchServiceTest {
     SlotManagementRepository slotManagementRepository;
     @Autowired
     TierRepository tierRepository;
+    @Autowired
+    RedisUploadService redisUploadService;
     List<User> users;
     List<LocalDateTime> slotTimes;
 
@@ -434,11 +437,8 @@ class MatchServiceTest {
             tournamentRepository.save(tournament);
             tierRepository.save(new Tier("image url"));
 
-            //
-            tierRepository.flush();
-            List<Tier> all = tierRepository.findAll();
-            System.out.println("all = " + all);
-
+            // TODO 현재 upload redis해도 redis 데이터 없다는 에러 발생함
+            redisUploadService.uploadRedis();
             // when
             SlotStatusResponseListDto allMatchStatus = matchFindService.getAllMatchStatus(UserDto.from(users.get(0)),
                 Option.NORMAL);
