@@ -24,6 +24,10 @@ import com.gg.server.domain.user.dto.UserImageDto;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.global.exception.ErrorCode;
 import java.util.Optional;
+import com.gg.server.domain.user.exception.UserNotFoundException;
+import com.gg.server.global.exception.ErrorCode;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -99,6 +103,26 @@ public class TournamentService {
             tournamentUserStatus = tournamentUser.get().getIsJoined() ? TournamentUserStatus.PLAYER : TournamentUserStatus.WAIT;
         }
         return new TournamentUserRegistrationResponseDto(tournamentUserStatus);
+    }
+
+    /**
+     * <p>유저 토너먼트 참가 신청 취소 매서드</p>
+     * <p>참가자가 WAIT 이거나 PLAYER 로 해당 토너먼트에 신청을 한 상태일때만 취소해 준다.</p>
+     * @param tournamentId 타겟 토너먼트
+     * @param user 타겟 유저(사용자 본인)
+     * @return
+     */
+    public TournamentUserRegistrationResponseDto cancelTournamentUserRegistration(Long tournamentId, UserDto user) {
+        Tournament targetTournament = tournamentRepository.findById(tournamentId).orElseThrow(() ->
+            new TournamentNotFoundException("target tournament not found", ErrorCode.TOURNAMENT_NOT_FOUND));
+        User loginUser = userRepository.findById(user.getId()).orElseThrow(UserNotFoundException::new);
+
+        List<TournamentUser> tournamentUserList = targetTournament.getTournamentUsers();
+        TournamentUser targetTournamentUser = tournamentUserList.stream().filter(tu->(tu.getUser().equals(loginUser))).findAny()
+            .orElseThrow(()->new TournamentNotFoundException("토너먼트 신청자가 아닙니다.", ErrorCode.TOURNAMENT_NOT_FOUND));
+        tournamentUserList.remove(targetTournamentUser);
+        tournamentUserRepository.delete(targetTournamentUser);
+        return new TournamentUserRegistrationResponseDto(TournamentUserStatus.BEFORE);
     }
 
     /**
