@@ -5,6 +5,7 @@ import com.gg.server.domain.tournament.dto.TournamentListResponseDto;
 import com.gg.server.domain.tournament.dto.TournamentResponseDto;
 import com.gg.server.domain.tournament.service.TournamentService;
 import lombok.RequiredArgsConstructor;
+import org.checkerframework.checker.index.qual.Positive;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -38,7 +39,7 @@ public class TournamentController {
      * @return 토너먼트
      */
     @GetMapping("/{tournamentId}")
-    public ResponseEntity<TournamentResponseDto> getTournnament(@PathVariable Long tournamentId) {
+    public ResponseEntity<TournamentResponseDto> getTournnament(@PathVariable @Positive Long tournamentId) {
         TournamentResponseDto tournamentResponseDto = tournamentService.getTournament(tournamentId);
             return ResponseEntity.status(HttpStatus.OK).body(tournamentResponseDto);
     }
