@@ -324,6 +324,26 @@ public class TestDataUtils {
     }
 
     /**
+     * 테스트용 토너먼트 반환.
+     * @param title 제목
+     * @param contents 내용
+     * @param startTime 시작 시간
+     * @param endTime 종료 시간
+     * @param type 타입
+     * @param status 상태
+     * @return 테스트용 토너먼트
+     */
+    public Tournament createTournament(String title, String contents, LocalDateTime startTime, LocalDateTime endTime, TournamentType type, TournamentStatus status) {
+        Tournament tournament = Tournament.builder()
+                .title(title)
+                .contents(contents)
+                .startTime(startTime)
+                .endTime(endTime)
+                .type(type)
+                .status(status).build();
+        return  tournamentRepository.save(tournament);
+    }
+    /**
      * 테스트용 토너먼트 생성 RequestDto 반환.
      * @param startTime
      * @param endTime
