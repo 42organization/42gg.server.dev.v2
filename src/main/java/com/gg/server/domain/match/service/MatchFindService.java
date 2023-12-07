@@ -71,7 +71,6 @@ public class MatchFindService {
         return new MatchStatusResponseListDto(dtos);
     }
 
-    // TODO tournament slot block
     @Transactional(readOnly = true)
     public SlotStatusResponseListDto getAllMatchStatus(UserDto userDto, Option option) {
         SlotManagement slotManagement = slotManagementRepository.findCurrent(LocalDateTime.now())
