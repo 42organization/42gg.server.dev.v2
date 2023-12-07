@@ -84,7 +84,7 @@ public class TournamentService {
      */
     public TournamentResponseDto getTournament(long tournamentId) {
         Tournament tournament = tournamentRepository.findById(tournamentId)
-                .orElseThrow(() -> new TournamentNotFoundException("Tournament no found with ID: " + tournamentId, ErrorCode.TOURNAMENT_NOT_FOUND));
+                .orElseThrow(() -> new TournamentNotFoundException(ErrorCode.TOURNAMENT_NOT_FOUND.getMessage(), ErrorCode.TOURNAMENT_NOT_FOUND));
         return (new TournamentResponseDto(tournament, findTournamentWinner(tournament), findJoinedPlayerCnt(tournament)));
     }
 }
