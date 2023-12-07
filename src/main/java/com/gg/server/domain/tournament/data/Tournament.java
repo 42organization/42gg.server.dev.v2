@@ -18,7 +18,6 @@ import lombok.*;
 @Getter
 @Entity
 @ToString
-@Builder
 public class Tournament extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -70,18 +69,6 @@ public class Tournament extends BaseTimeEntity {
         this.tournamentGames = tournamentGames != null ? tournamentGames : new ArrayList<>();
         this.tournamentUsers = tournamentUsers != null ? tournamentUsers : new ArrayList<>();
     }
-
-    // TODO TournamentDto 사용할 건지 고민해보기
-//    static public Tournament from(TournamentDto tournamentDto) {
-//        return Tournament.builder()
-//                .title(tournamentDto.getTitle())
-//                .contents(tournamentDto.getContents())
-//                .startTime(tournamentDto.getStartTime())
-//                .endTime(tournamentDto.getEndTime())
-//                .type(tournamentDto.getType())
-//                .status(tournamentDto.getStatus())
-//                .build();
-//    }
 
     public void update(String title, String contents, LocalDateTime startTime, LocalDateTime endTime, TournamentType type, TournamentStatus status) {
         this.title = title;
