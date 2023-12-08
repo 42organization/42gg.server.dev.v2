@@ -503,4 +503,52 @@ public class TestDataUtils {
         tournamentGameRepository.save(tournamentGame);
         return tournamentGame;
     }
+
+    /**
+     * 티어 생성
+     */
+    public Tier createTier(String url) {
+        Tier tier = new Tier(url);
+        tierRepository.save(tier);
+        return tier;
+    }
+
+    /**
+     * 현재 시스템에 맞는 티어 7개를 생성
+     */
+    public ArrayList<Tier> createTierSystem(String url) {
+        ArrayList<Tier> tiers = new ArrayList<>();
+        for (int i = 0; i < 7; i++) {
+            Tier tier = new Tier(url + i);
+            tierRepository.save(tier);
+            tiers.add(tier);
+        }
+        return tiers;
+    }
+
+    public GameInfoDto createGameWithTierAndRank(User curUser, LocalDateTime startTime, LocalDateTime endTime, Season season, Mode mode, Tier tier) {
+        LocalDateTime now = LocalDateTime.now();
+        Game game;
+        if (now.isBefore(startTime))
+            game = new Game(season, StatusType.BEFORE, mode, startTime, endTime);
+        else if (now.isAfter(startTime) && now.isBefore(endTime))
+            game = new Game(season, StatusType.LIVE, mode, startTime, endTime);
+        else
+            game = new Game(season, StatusType.END, mode, startTime, endTime);
+        gameRepository.save(game);
+        Team myTeam = new Team(game, -1, false);
+        TeamUser teamUser = new TeamUser(myTeam, curUser);
+        Team enemyTeam = new Team(game, -1, false);
+        User enemyUser = createNewUser();
+        createUserRank(curUser, "statusMessage", season, tier);
+        createUserRank(enemyUser, "enemyUserMeassage", season, tier);
+        TeamUser enemyTeamUser = new TeamUser(enemyTeam, enemyUser);
+        teamRepository.save(myTeam);
+        teamRepository.save(enemyTeam);
+        teamUserRepository.save(teamUser);
+        teamUserRepository.save(enemyTeamUser);
+
+        return new GameInfoDto(game.getId(), myTeam.getId(), curUser.getId(), enemyTeam.getId(),
+            enemyUser.getId());
+    }
 }
