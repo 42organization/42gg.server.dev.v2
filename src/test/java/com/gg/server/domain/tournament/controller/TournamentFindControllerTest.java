@@ -53,16 +53,15 @@ public class TournamentFindControllerTest {
 
     User tester;
 
-    @BeforeEach
-    void beforeEach() {
-        tester = testDataUtils.createNewUser("findControllerTester", "findControllerTester", RacketType.DUAL, SnsType.SLACK, RoleType.ADMIN);
-        accessToken = tokenProvider.createToken(tester.getId());
-        tournamentList = testDataUtils.makeTournamentList();
-    }
-
     @Nested
     @DisplayName("토너먼트_리스트_조회")
     class findTournamentListTest {
+        @BeforeEach
+        void beforeEach() {
+            tester = testDataUtils.createNewUser("findControllerTester", "findControllerTester", RacketType.DUAL, SnsType.SLACK, RoleType.ADMIN);
+            accessToken = tokenProvider.createToken(tester.getId());
+            tournamentList = testDataUtils.makeTournamentList();
+        }
 
         @Test
         @DisplayName("전체_조회")
@@ -199,6 +198,11 @@ public class TournamentFindControllerTest {
     @Nested
     @DisplayName("토너먼트_단일_조회")
     class findTournamentTest {
+        @BeforeEach
+        void beforeEach() {
+            tester = testDataUtils.createNewUser("findControllerTester", "findControllerTester", RacketType.DUAL, SnsType.SLACK, RoleType.ADMIN);
+            accessToken = tokenProvider.createToken(tester.getId());
+        }
         @Test
         @DisplayName("조회_성공")
         public void success() throws Exception {
