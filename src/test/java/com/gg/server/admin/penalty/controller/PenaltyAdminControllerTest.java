@@ -1,19 +1,19 @@
 package com.gg.server.admin.penalty.controller;
 
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.penalty.data.PenaltyAdminRepository;
-import com.gg.server.domain.penalty.data.Penalty;
-import com.gg.server.domain.penalty.redis.RedisPenaltyUser;
 import com.gg.server.admin.penalty.data.PenaltyUserAdminRedisRepository;
 import com.gg.server.admin.penalty.dto.PenaltyListResponseDto;
 import com.gg.server.admin.penalty.dto.PenaltyRequestDto;
 import com.gg.server.admin.penalty.service.PenaltyAdminService;
+import com.gg.server.config.TestRedisConfig;
+import com.gg.server.domain.penalty.data.Penalty;
+import com.gg.server.domain.penalty.redis.RedisPenaltyUser;
 import com.gg.server.domain.penalty.type.PenaltyType;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
@@ -37,16 +37,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
+@Import(TestRedisConfig.class)
 @AutoConfigureMockMvc
-@ActiveProfiles("local")
 @Transactional
 class PenaltyAdminControllerTest {
     @Autowired
