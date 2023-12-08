@@ -13,6 +13,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
@@ -56,6 +61,12 @@ public class TournamentController {
     public ResponseEntity<TournamentResponseDto> getTournnament(@PathVariable @Positive Long tournamentId) {
         TournamentResponseDto tournamentResponseDto = tournamentService.getTournament(tournamentId);
             return ResponseEntity.status(HttpStatus.OK).body(tournamentResponseDto);
+    }
+
+    @DeleteMapping("/{tournamentId}/users")
+    ResponseEntity<TournamentUserRegistrationResponseDto> cancelTournamentUserRegistration(@PathVariable Long tournamentId, @Parameter(hidden = true) @Login UserDto user) {
+
+        return ResponseEntity.ok().body(tournamentService.cancelTournamentUserRegistration(tournamentId, user));
     }
 
     /**
