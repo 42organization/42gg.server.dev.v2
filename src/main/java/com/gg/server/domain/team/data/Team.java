@@ -1,6 +1,7 @@
 package com.gg.server.domain.team.data;
 
 import com.gg.server.domain.game.data.Game;
+import java.util.ArrayList;
 import lombok.*;
 
 import javax.persistence.*;
@@ -28,16 +29,21 @@ public class Team {
     private Boolean win;
 
     @OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
-    private List<TeamUser> teamUsers;
+    private List<TeamUser> teamUsers = new ArrayList<>();
 
     public Team(Game game, Integer score, Boolean win) {
         this.game = game;
         this.score = score;
         this.win = win;
+        game.addTeam(this);
     }
 
     public void updateScore(int score, Boolean win) {
         this.score = score;
         this.win = win;
+    }
+
+    public void addTeamUser(TeamUser teamUser) {
+        this.teamUsers.add(teamUser);
     }
 }

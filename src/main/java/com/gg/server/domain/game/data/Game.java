@@ -5,6 +5,7 @@ import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.team.data.Team;
+import java.util.ArrayList;
 import lombok.*;
 
 import javax.persistence.*;
@@ -44,7 +45,7 @@ public class Game {
     private LocalDateTime endTime;
 
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
-    private List<Team> teams;
+    private List<Team> teams = new ArrayList<>();
 
     public Game(Season season, StatusType status, Mode mode, LocalDateTime startTime, LocalDateTime endTime) {
         this.season = season;
@@ -82,5 +83,9 @@ public class Game {
         } else {
             this.status = StatusType.END;
         }
+    }
+
+    public void addTeam(Team team) {
+        this.teams.add(team);
     }
 }
