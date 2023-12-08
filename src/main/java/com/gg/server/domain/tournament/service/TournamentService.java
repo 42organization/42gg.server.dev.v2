@@ -1,5 +1,14 @@
 package com.gg.server.domain.tournament.service;
 
+import com.gg.server.domain.match.data.RedisMatchUser;
+import com.gg.server.domain.match.dto.GameAddDto;
+import com.gg.server.domain.match.exception.SlotNotFoundException;
+import com.gg.server.domain.match.service.GameUpdateService;
+import com.gg.server.domain.match.type.Option;
+import com.gg.server.domain.season.data.Season;
+import com.gg.server.domain.season.service.SeasonFindService;
+import com.gg.server.domain.slotmanagement.SlotManagement;
+import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
 import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentRepository;
 import com.gg.server.domain.tournament.data.TournamentUser;
@@ -31,6 +40,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.ArrayList;
@@ -43,6 +53,9 @@ public class TournamentService {
     private final UserRepository userRepository;
     private final TournamentGameRepository tournamentGameRepository;
     private final GameRepository gameRepository;
+    private final SlotManagementRepository slotManagementRepository;
+    private final GameUpdateService gameUpdateService;
+    private final SeasonFindService seasonFindService;
 
     private static final long ALLOWED_JOINED_NUMBER = 8;
     /**
@@ -144,6 +157,66 @@ public class TournamentService {
         }
         return true;
     }
+
+
+    /**
+     * 오늘 시작하는 토너먼트가 있으면 해당 토너먼트 status를 LIVE로 변경하고 8강 경기 매칭
+     * 참가자가 ALLOWED_JOINED_NUMBER보다 적으면 토너먼트 취소
+     */
+    public void startTournament() {
+        LocalDate date = LocalDate.now();
+        Optional<Tournament> tournament = findImminentTournament(date);
+
+        if (tournament.isPresent()) {
+            List<TournamentUser> tournamentUsers = tournament.get().getTournamentUsers();
+            if (tournamentUsers.size() < Tournament.ALLOWED_JOINED_NUMBER) {
+                // TODO 취소 알림
+                tournamentRepository.delete(tournament.get());
+                return;
+            }
+            tournament.get().updateStatus(TournamentStatus.LIVE);
+            matchTournamentGames(tournament.get());
+            // TODO 시작 알림?
+        }
+    }
+
+    /**
+     * TODO 리팩토링
+     * 토너먼트 8강 경기 매칭 (game 생성)
+     */
+    private void matchTournamentGames(Tournament tournament) {
+        Season season = seasonFindService.findCurrentSeason(tournament.getStartTime());
+        SlotManagement slotManagement = slotManagementRepository.findCurrent(tournament.getStartTime())
+                .orElseThrow(SlotNotFoundException::new);
+        int gameInterval = slotManagement.getGameInterval();
+
+        for (int i = 0; i < Tournament.ALLOWED_JOINED_NUMBER / 2; ++i) {
+            User user1 = tournament.getTournamentUsers().get(i).getUser();
+            User user2 = tournament.getTournamentUsers().get(i + 1).getUser();
+            RedisMatchUser player1 = new RedisMatchUser(user1.getId(), null, Option.TOURNAMENT);
+            RedisMatchUser player2 = new RedisMatchUser(user2.getId(), null, Option.TOURNAMENT);
+            LocalDateTime startTime = tournament.getStartTime().plusMinutes((long) gameInterval * i);
+            GameAddDto gameDto = new GameAddDto(startTime, season, player1, player2);
+            gameUpdateService.make(gameDto, -1L);
+        }
+    }
+
+    /**
+     * 시작 임박한(오늘 시작하는) 토너먼트 조회
+     * @param date 조회하려는 토너먼트의 시작 날짜
+     * @return date 날짜에 시작하는 토너먼트
+     */
+    private Optional<Tournament> findImminentTournament(LocalDate date) {
+        List<Tournament> tournaments = tournamentRepository.findAllByStatus(TournamentStatus.BEFORE);
+        for (Tournament tournament : tournaments) {
+            LocalDate startDate = tournament.getStartTime().toLocalDate();
+            if (startDate.isEqual(date)) {
+                return Optional.of(tournament);
+            }
+        }
+        return Optional.empty();
+    }
+
 
     /**
      * 토너먼트 우승자 조회
