@@ -37,13 +37,6 @@ public class TournamentAdminService {
     private final TournamentUserRepository tournamentUserRepository;
     private final UserRepository userRepository;
 
-    // 토너먼트 참가자 수 => 현재는 8강 고정
-    private static final long ALLOWED_JOINED_NUMBER = 8;
-    // 토너먼트 최소 시작 날짜 (n일 후)
-    private static final long ALLOWED_MINIMAL_START_DAYS = 2;
-    // 토너먼트 최소 진행 시간 (n시간)
-    private static final long MINIMUM_TOURNAMENT_DURATION = 2;
-
     /***
      * 토너먼트 생성 Method
      * @param tournamentAdminCreateRequestDto 토너먼트 생성에 필요한 데이터
@@ -135,7 +128,7 @@ public class TournamentAdminService {
             .findAny().ifPresent(a->{throw new TournamentConflictException("user is already participant", ErrorCode.TOURNAMENT_CONFLICT);});
 
         TournamentUser tournamentUser = new TournamentUser(targetUser, targetTournament,
-            tournamentList.size() < ALLOWED_JOINED_NUMBER, LocalDateTime.now());
+            tournamentList.size() < Tournament.ALLOWED_JOINED_NUMBER, LocalDateTime.now());
         targetTournament.addTournamentUser(tournamentUser);
         tournamentUserRepository.save(tournamentUser);
 
@@ -165,8 +158,8 @@ public class TournamentAdminService {
         TournamentUser targetTournamentUser = tournamentUserList.stream().filter(tu->tu.getUser().getId().equals(targetUser.getId()))
             .findAny().orElseThrow(UserNotFoundException::new);
         targetTournament.deleteTournamentUser(targetTournamentUser);
-        if (targetTournamentUser.getIsJoined() && tournamentUserList.size()>=ALLOWED_JOINED_NUMBER) {
-            tournamentUserList.get(Long.valueOf(ALLOWED_JOINED_NUMBER).intValue()-1).updateIsJoined(true);
+        if (targetTournamentUser.getIsJoined() && tournamentUserList.size() >= Tournament.ALLOWED_JOINED_NUMBER) {
+            tournamentUserList.get(Long.valueOf(Tournament.ALLOWED_JOINED_NUMBER).intValue()-1).updateIsJoined(true);
         }
         tournamentUserRepository.delete(targetTournamentUser);
     }
@@ -197,8 +190,8 @@ public class TournamentAdminService {
      */
     private void checkValidTournamentTime(LocalDateTime startTime, LocalDateTime endTime) {
         if (startTime.isAfter(endTime) || startTime.isEqual(endTime) ||
-                startTime.isBefore(LocalDateTime.now().plusDays(ALLOWED_MINIMAL_START_DAYS)) ||
-                startTime.plusHours(MINIMUM_TOURNAMENT_DURATION).isAfter(endTime)) {
+                startTime.isBefore(LocalDateTime.now().plusDays(Tournament.ALLOWED_MINIMAL_START_DAYS)) ||
+                startTime.plusHours(Tournament.MINIMUM_TOURNAMENT_DURATION).isAfter(endTime)) {
             throw new InvalidParameterException("invalid tournament time", ErrorCode.VALID_FAILED);
         }
     }
