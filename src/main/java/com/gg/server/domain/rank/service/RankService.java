@@ -20,6 +20,7 @@ import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.PageNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -73,6 +74,8 @@ public class RankService {
      * @return
      */
     @Transactional(readOnly = true)
+    @Cacheable(value = "expRanking", cacheManager = "gameCacheManager",
+            key = "#pageRequest.pageNumber + #pageRequest.pageSize + #curUser.id")
     public ExpRankPageResponseDto getExpRankPage(PageRequest pageRequest, UserDto curUser) {
 
         Long myRank = curUser.getTotalExp() == 0 ? -1 : userRepository.findExpRankingByIntraId(curUser.getIntraId());
@@ -98,6 +101,8 @@ public class RankService {
      * @return
      */
     @Transactional(readOnly = true)
+    @Cacheable(value = "ranking", cacheManager = "gameCacheManager",
+            key = "#pageRequest.pageSize + #pageRequest.pageNumber + #curUser.id + #seasonId")
     public RankPageResponseDto getRankPageV2(PageRequest pageRequest, UserDto curUser, Long seasonId) {
         Season season;
         if (seasonId == null || seasonId == 0) {
@@ -161,7 +166,6 @@ public class RankService {
         }
     }
     private int calcTotalPageV2(Season season, int pageSize) {
-        String zSetKey = RedisKeyManager.getZSetKey(season.getId());
         try{
             Integer totalUserCount = rankRepository.countRankUserBySeasonId(season.getId());
             return (int) Math.ceil((double) totalUserCount / pageSize);

@@ -24,6 +24,7 @@ import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.InvalidParameterException;
 import com.gg.server.global.utils.ExpLevelCalculator;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.Cache;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
@@ -67,7 +68,9 @@ public class GameService {
             @CacheEvict(value = "rankGameListByIntra", allEntries = true),
             @CacheEvict(value = "rankGameList", allEntries = true),
             @CacheEvict(value = "allGameList", allEntries = true),
-            @CacheEvict(value = "allGameListByUser", allEntries = true)
+            @CacheEvict(value = "allGameListByUser", allEntries = true),
+            @CacheEvict(value = "ranking", allEntries = true),
+            @CacheEvict(value = "expRanking", allEntries = true)
     })
 
     /**
@@ -96,7 +99,9 @@ public class GameService {
             @CacheEvict(value = "normalGameListByIntra", allEntries = true),
             @CacheEvict(value = "normalGameList", allEntries = true),
             @CacheEvict(value = "allGameList", allEntries = true),
-            @CacheEvict(value = "allGameListByUser", allEntries = true)
+            @CacheEvict(value = "allGameListByUser", allEntries = true),
+            @CacheEvict(value = "ranking", allEntries = true),
+            @CacheEvict(value = "expRanking", allEntries = true)
     })
     public Boolean normalExpResult(NormalResultReqDto normalResultReqDto, Long loginUserId) {
         Game game = gameFindService.findGameWithPessimisticLockById(normalResultReqDto.getGameId());
