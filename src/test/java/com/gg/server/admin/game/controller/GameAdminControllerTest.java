@@ -3,6 +3,7 @@ package com.gg.server.admin.game.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.game.dto.GameLogListAdminResponseDto;
 import com.gg.server.admin.game.dto.RankGamePPPModifyReqDto;
+import com.gg.server.config.TestRedisConfig;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.dto.GameTeamUser;
 import com.gg.server.domain.game.dto.req.RankResultReqDto;
@@ -13,13 +14,16 @@ import com.gg.server.domain.rank.data.Rank;
 import com.gg.server.domain.rank.data.RankRepository;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.season.data.Season;
+import com.gg.server.domain.tier.data.Tier;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.controller.dto.GameInfoDto;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
+import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpHeaders;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -27,9 +31,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -42,6 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RequiredArgsConstructor
 @SpringBootTest
+@Import(TestRedisConfig.class)
 @AutoConfigureMockMvc
 @Transactional
 @DisplayName("[Admin] Game Admin Controller Integration Test")
@@ -75,6 +80,11 @@ class GameAdminControllerTest {
 
     @Autowired
     RankRedisRepository rankRedisRepository;
+
+    @AfterEach
+    void redisDown() {
+        rankRedisRepository.deleteAll();
+    }
 
     @Nested
     @DisplayName("[GET] /pingpong/admin/games/users?intraId=${intraId}&page=${pageNumber}&size={sizeNum}")
@@ -159,11 +169,10 @@ class GameAdminControllerTest {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long adminUserId = tokenProvider.getUserIdFromAccessToken(accessToken);
         User adminUser = userRepository.findById(adminUserId).get();
-        GameInfoDto game1Info = testDataUtils.createGame(adminUser, LocalDateTime.now().minusMinutes(5), LocalDateTime.now().plusMinutes(5), season, currentMatchMode);
+        ArrayList<Tier> tierList = testDataUtils.createTierSystem("pinpong");
+        GameInfoDto game1Info = testDataUtils.createGameWithTierAndRank(adminUser, LocalDateTime.now().minusMinutes(5), LocalDateTime.now().plusMinutes(5), season, currentMatchMode, tierList.get(0));
 
         User enemyUser1 = userRepository.findById(game1Info.getEnemyUserId()).get();
-        testDataUtils.createUserRank(adminUser, "adminUserMessage", season);
-        testDataUtils.createUserRank(enemyUser1, "enemy111UserMessage", season);
 
         RankResultReqDto rankResultReqDto = new RankResultReqDto(game1Info.getGameId(),
                 game1Info.getMyTeamId(),
@@ -195,10 +204,8 @@ class GameAdminControllerTest {
         //////////////////////////////
         sleep(1000);
         //////////////////////////////
-        GameInfoDto game2Info = testDataUtils.createGame(adminUser, LocalDateTime.now().minusMinutes(4), LocalDateTime.now().plusMinutes(6), season, currentMatchMode);
+        GameInfoDto game2Info = testDataUtils.createGameWithTierAndRank(adminUser, LocalDateTime.now().minusMinutes(4), LocalDateTime.now().plusMinutes(6), season, currentMatchMode, tierList.get(0));
         User enemyUser2 = userRepository.findById(game2Info.getEnemyUserId()).get();
-        testDataUtils.createUserRank(adminUser, "adminUserMessage", season);
-        testDataUtils.createUserRank(enemyUser2, "enemy222UserMessage", season);
 
         rankResultReqDto = new RankResultReqDto(game2Info.getGameId(),
                 game2Info.getMyTeamId(),
