@@ -2,9 +2,13 @@ package com.gg.server.utils;
 
 import com.gg.server.admin.tournament.dto.TournamentAdminCreateRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
+import com.gg.server.domain.coin.data.CoinPolicy;
+import com.gg.server.domain.coin.data.CoinPolicyRepository;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.exception.GameNotExistException;
+import com.gg.server.domain.game.type.Mode;
+import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.noti.data.Noti;
 import com.gg.server.domain.noti.data.NotiRepository;
 import com.gg.server.domain.noti.type.NotiType;
@@ -23,33 +27,30 @@ import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.team.data.TeamUserRepository;
 import com.gg.server.domain.tier.data.Tier;
 import com.gg.server.domain.tier.data.TierRepository;
-import com.gg.server.domain.tournament.data.TournamentRepository;
-import com.gg.server.domain.tournament.dto.TournamentResponseDto;
 import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentGameRepository;
-import com.gg.server.domain.tournament.type.TournamentRound;
+import com.gg.server.domain.tournament.data.TournamentRepository;
 import com.gg.server.domain.tournament.data.TournamentUser;
 import com.gg.server.domain.tournament.data.TournamentUserRepository;
+import com.gg.server.domain.tournament.dto.TournamentResponseDto;
+import com.gg.server.domain.tournament.type.TournamentRound;
 import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.tournament.type.TournamentType;
+import com.gg.server.domain.user.controller.dto.GameInfoDto;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
-import com.gg.server.domain.user.controller.dto.GameInfoDto;
 import com.gg.server.domain.user.dto.UserImageDto;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
-import com.gg.server.domain.game.type.Mode;
-import com.gg.server.domain.game.type.StatusType;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -68,6 +69,8 @@ public class TestDataUtils {
     private final TournamentRepository tournamentRepository;
     private final TournamentGameRepository tournamentGameRepository;
     private final TournamentUserRepository tournamentUserRepository;
+
+    private final CoinPolicyRepository coinPolicyRepository;
 
     public String getLoginAccessToken() {
         User user = User.builder()
@@ -274,8 +277,8 @@ public class TestDataUtils {
         TeamUser teamUser = new TeamUser(myTeam, newUser);
         Team enemyTeam = new Team(game, 0, false);
         User enemyUser = createNewUser();
-        createUserRank(enemyUser, "status message", season);
         TeamUser enemyTeamUser = new TeamUser(enemyTeam, enemyUser);
+        createUserRank(enemyUser, "status message", season);
         teamRepository.save(myTeam);
         teamRepository.save(enemyTeam);
         teamUserRepository.save(teamUser);
@@ -305,6 +308,27 @@ public class TestDataUtils {
 
         pChangeRepository.save(pChange1);
         pChangeRepository.save(pChange2);
+    }
+
+    public Game createMockMatch(User newUser, Season season, LocalDateTime startTime, LocalDateTime endTime, Mode mode) {
+        Game game = new Game(season, StatusType.END, mode, startTime, endTime);
+        gameRepository.save(game);
+        Team myTeam = new Team(game, 0, false);
+        TeamUser teamUser = new TeamUser(myTeam, newUser);
+        Team enemyTeam = new Team(game, 0, false);
+        User enemyUser = createNewUser();
+        TeamUser enemyTeamUser = new TeamUser(enemyTeam, enemyUser);
+        teamRepository.save(myTeam);
+        teamRepository.save(enemyTeam);
+        teamUserRepository.save(teamUser);
+        teamUserRepository.save(enemyTeamUser);
+
+        PChange pChange1 = new PChange(game, newUser, 1100, true);
+        PChange pChange2 = new PChange(game, enemyUser, 900, true);
+
+        pChangeRepository.save(pChange1);
+        pChangeRepository.save(pChange2);
+        return game;
     }
 
     /**
@@ -536,13 +560,14 @@ public class TestDataUtils {
         else
             game = new Game(season, StatusType.END, mode, startTime, endTime);
         gameRepository.save(game);
-        Team myTeam = new Team(game, -1, false);
-        TeamUser teamUser = new TeamUser(myTeam, curUser);
-        Team enemyTeam = new Team(game, -1, false);
+
         User enemyUser = createNewUser();
+        Team myTeam = new Team(game, -1, false);
+        Team enemyTeam = new Team(game, -1, false);
+        TeamUser teamUser = new TeamUser(myTeam, curUser);
+        TeamUser enemyTeamUser = new TeamUser(enemyTeam, enemyUser);
         createUserRank(curUser, "statusMessage", season, tier);
         createUserRank(enemyUser, "enemyUserMeassage", season, tier);
-        TeamUser enemyTeamUser = new TeamUser(enemyTeam, enemyUser);
         teamRepository.save(myTeam);
         teamRepository.save(enemyTeam);
         teamUserRepository.save(teamUser);
@@ -550,5 +575,17 @@ public class TestDataUtils {
 
         return new GameInfoDto(game.getId(), myTeam.getId(), curUser.getId(), enemyTeam.getId(),
             enemyUser.getId());
+    }
+
+    public CoinPolicy createCoinPolicy(User user, int attendance, int normal, int rankWin, int rankLose) {
+        CoinPolicy coinPolicy = CoinPolicy.builder()
+            .user(user)
+            .attendance(attendance)
+            .normal(normal)
+            .rankWin(rankWin)
+            .rankLose(rankLose)
+            .build();
+        coinPolicyRepository.save(coinPolicy);
+        return coinPolicy;
     }
 }

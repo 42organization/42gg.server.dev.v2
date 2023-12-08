@@ -1,13 +1,19 @@
 package com.gg.server.domain.game;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gg.server.domain.game.service.GameFindService;
-import com.gg.server.domain.game.service.GameService;
+import com.gg.server.config.TestRedisConfig;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.dto.GameListResDto;
 import com.gg.server.domain.game.dto.GameTeamInfo;
 import com.gg.server.domain.game.dto.req.RankResultReqDto;
+import com.gg.server.domain.game.service.GameFindService;
+import com.gg.server.domain.game.service.GameService;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.pchange.data.PChange;
@@ -26,7 +32,6 @@ import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.team.data.TeamUserRepository;
 import com.gg.server.domain.tier.data.Tier;
 import com.gg.server.domain.tier.data.TierRepository;
-import com.gg.server.domain.tier.exception.TierNotFoundException;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.domain.user.type.RacketType;
@@ -34,12 +39,20 @@ import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpHeaders;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -47,16 +60,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @SpringBootTest
+@Import(TestRedisConfig.class)
 @AutoConfigureMockMvc
 @RequiredArgsConstructor
 @Transactional
@@ -99,15 +104,17 @@ public class GameControllerTest {
     private User user2;
     private Game game1;
     private Game game2;
+    ArrayList<Tier> tiers;
 
     @BeforeEach
     void init() {
+        tiers = testDataUtils.createTierSystem("pingpong");
         season = seasonRepository.save(new Season("test season", LocalDateTime.of(2023, 7, 14, 0, 0), LocalDateTime.of(2999, 12, 31, 23, 59),
                 1000, 100));
         user1 = testDataUtils.createNewUser("test1", "test1@email", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
         accessToken = tokenProvider.createToken(user1.getId());
         user2 = testDataUtils.createNewUser("test2", "test2@email", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
-        Tier tier = tierRepository.findStartTier().orElseThrow(TierNotFoundException::new);
+        Tier tier = tiers.get(0);
         rankRepository.save(Rank.from(user1, season, season.getStartPpp(), tier));
         rankRepository.save(Rank.from(user2, season, season.getStartPpp(), tier));
         RankRedis userRank = RankRedis.from(UserDto.from(user1), season.getStartPpp(), tier.getImageUri());
@@ -116,7 +123,7 @@ public class GameControllerTest {
         userRank = RankRedis.from(UserDto.from(user2), season.getStartPpp(), tier.getImageUri());
         rankRedisRepository.addRankData(redisHashKey, user2.getId(), userRank);
 
-        game1 = gameRepository.save(new Game(season, StatusType.WAIT, Mode.RANK, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
+        game1 = gameRepository.save(new Game(season, StatusType.END, Mode.RANK, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
         Team team1 = teamRepository.save(new Team(game1, 1, false));
         Team team2 = teamRepository.save(new Team(game1, 2, true));
         teamUserRepository.save(new TeamUser(team1, user1));
@@ -175,6 +182,8 @@ public class GameControllerTest {
         @DisplayName("조회 성공")
         public void success() throws Exception {
             //given
+            testDataUtils.createGame(user1, LocalDateTime.now().minusMinutes(16),
+                LocalDateTime.now().minusMinutes(1), season, Mode.NORMAL);
             String url = "/pingpong/games/normal?page=1&size=10";
             Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startTime"));
             GameListResDto expect = gameFindService.getNormalGameList(pageable);
@@ -487,7 +496,13 @@ public class GameControllerTest {
         @Test
         @DisplayName("랭크 게임 결과 조회")
         public void successGetRankPPPChange() throws Exception {
-            String url = "/pingpong/games/" + game2.getId() + "/result/rank";
+            Game mockMatch = testDataUtils.createMockMatch(user1, season,
+                LocalDateTime.now().minusMinutes(16),
+                LocalDateTime.now().minusMinutes(1), Mode.RANK);
+            testDataUtils.createUserRank(user1, "hello", season, tiers.get(0));
+            testDataUtils.createCoinPolicy(user1, 0, 0, 1, 0);
+
+            String url = "/pingpong/games/" + mockMatch.getId() + "/result/rank";
             String content = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                     .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -505,9 +520,12 @@ public class GameControllerTest {
          */
         @Test
         @DisplayName("일반 게임 결과 조회")
-        @Disabled
         public void normalGameResult() throws Exception {
-            String url = "/pingpong/games/" + game1.getId() + "/result/normal";
+            Game mockMatch = testDataUtils.createMockMatch(user1, season,
+                LocalDateTime.now().minusMinutes(16),
+                LocalDateTime.now().minusMinutes(1), Mode.NORMAL);
+            testDataUtils.createCoinPolicy(user1, 0, 1, 0, 0);
+            String url = "/pingpong/games/" + mockMatch.getId() + "/result/normal";
             String content = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                     .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
