@@ -10,6 +10,7 @@ import org.checkerframework.checker.index.qual.Positive;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,9 +29,8 @@ public class TournamentController {
      * @return 토너먼트 리스트
      */
     @GetMapping
-    TournamentListResponseDto getAllTournamentList(@ModelAttribute @Valid TournamentFilterRequestDto tournamentFilterRequestDto){
-        Pageable pageRequest = PageRequest.of(tournamentFilterRequestDto.getPage() - 1, tournamentFilterRequestDto.getSize());
-
+    public TournamentListResponseDto getAllTournamentList(@ModelAttribute @Valid TournamentFilterRequestDto tournamentFilterRequestDto){
+        Pageable pageRequest = PageRequest.of(tournamentFilterRequestDto.getPage() - 1, tournamentFilterRequestDto.getSize(), Sort.by("startTime").descending());
         return tournamentService.getAllTournamentList(pageRequest, tournamentFilterRequestDto.getType(), tournamentFilterRequestDto.getStatus());
     }
 
