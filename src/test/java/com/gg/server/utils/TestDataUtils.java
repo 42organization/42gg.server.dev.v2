@@ -4,6 +4,7 @@ import com.gg.server.admin.tournament.dto.TournamentAdminCreateRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
+import com.gg.server.domain.game.exception.GameNotExistException;
 import com.gg.server.domain.noti.data.Noti;
 import com.gg.server.domain.noti.data.NotiRepository;
 import com.gg.server.domain.noti.type.NotiType;
@@ -365,12 +366,12 @@ public class TestDataUtils {
      * @param tournamentStatus
      * @return
      */
-    public Tournament createTournamentByEnum(TournamentType tournamentType, TournamentStatus tournamentStatus) {
+    public Tournament createTournamentByEnum(TournamentType tournamentType, TournamentStatus tournamentStatus, LocalDateTime startTime) {
         Tournament tournament = Tournament.builder()
             .title("testTournament")
             .contents("contents")
-            .startTime(LocalDateTime.now())
-            .endTime(LocalDateTime.now().plusDays(1))
+            .startTime(startTime)
+            .endTime(startTime.plusDays(1))
             .type(tournamentType)
             .status(tournamentStatus).build();
         return  tournamentRepository.save(tournament);
@@ -432,11 +433,11 @@ public class TestDataUtils {
             User newUser = createNewUser("42gg_tester" + i, "tester" + i + "@gmail.com", RacketType.PENHOLDER, SnsType.NONE, RoleType.USER);
             userRepository.save(newUser);
         }
-
+        int day = 100;
         for (TournamentType type : TournamentType.values()) {
             for (TournamentStatus status : TournamentStatus.values()) {
                 for (int i = 0; i < 5; i++) {
-                    Tournament tournament = createTournamentByEnum(type, status);
+                    Tournament tournament = createTournamentByEnum(type, status, LocalDateTime.now().plusDays(day++));
                     tournamentResponseDtos.add(new TournamentResponseDto(tournament, winnerImage, joinUserCnt));
                     tournament.update_winner(winner);
                     for (int j = 0; j < joinUserCnt; j++) {
@@ -453,11 +454,12 @@ public class TestDataUtils {
                 }
             }
         }
+        tournamentResponseDtos.sort((o1, o2) -> o2.getStartTime().compareTo(o1.getStartTime()));
         return tournamentResponseDtos;
     }
 
     public Tournament createTournamentWithUser(int joinUserCnt, int notJoinUserCnt, String testName) {
-        Tournament tournament = createTournamentByEnum(TournamentType.ROOKIE, TournamentStatus.BEFORE);
+        Tournament tournament = createTournamentByEnum(TournamentType.ROOKIE, TournamentStatus.BEFORE, LocalDateTime.now());
         tournamentRepository.save(tournament);
         for (int i = 0; i < joinUserCnt + notJoinUserCnt; i++) {
             User newUser = createNewUser(testName + i, "tester" + i + "@gmail.com", RacketType.PENHOLDER, SnsType.NONE, RoleType.USER);
@@ -476,4 +478,9 @@ public class TestDataUtils {
         return tournament;
     }
 
+    public TournamentGame createTournamentGame(Tournament tournament, TournamentRound round, GameInfoDto gameInfoDto) {
+        TournamentGame tournamentGame = new TournamentGame(gameRepository.findById(gameInfoDto.getGameId()).orElseThrow(GameNotExistException::new), tournament, round);
+        tournamentGameRepository.save(tournamentGame);
+        return tournamentGame;
+    }
 }
