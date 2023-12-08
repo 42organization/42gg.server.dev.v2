@@ -226,24 +226,6 @@ public class TournamentAdminService {
         }
     }
 
-    /**
-     * <p>tournamentList 에서 intraId 가 타겟 intraID인 TournamentUser 리스트 반환 매서드</p>
-     * @param intraId        타겟 유저 intraId
-     * @param tournamentList 토너먼트 리스트
-     * @return intraId 가 타겟 intraID인 TournamentUser 리스트
-     */
-    private List<TournamentUser> getTournamentsContainingUser(String intraId, List<Tournament> tournamentList) {
-        List<TournamentUser> result = new ArrayList<>();
-        for (Tournament t : tournamentList) {
-            for (TournamentUser tu : t.getTournamentUsers()) {
-                if (tu.getUser().getIntraId().equals(intraId)) {
-                    result.add(tu);
-                }
-            }
-        }
-        return result;
-    }
-
     /***
      * 토너먼트 제목 중복 체크
      * @param tournamentTitle 요청 데이터에서 받아온 토너먼트 제목
