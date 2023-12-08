@@ -29,9 +29,10 @@ public class TournamentController {
      * @return 토너먼트 리스트
      */
     @GetMapping
-    public TournamentListResponseDto getAllTournamentList(@ModelAttribute @Valid TournamentFilterRequestDto tournamentFilterRequestDto){
+    public ResponseEntity<TournamentListResponseDto> getAllTournamentList(@ModelAttribute @Valid TournamentFilterRequestDto tournamentFilterRequestDto){
         Pageable pageRequest = PageRequest.of(tournamentFilterRequestDto.getPage() - 1, tournamentFilterRequestDto.getSize(), Sort.by("startTime").descending());
-        return tournamentService.getAllTournamentList(pageRequest, tournamentFilterRequestDto.getType(), tournamentFilterRequestDto.getStatus());
+        return ResponseEntity.ok().
+                body(tournamentService.getAllTournamentList(pageRequest, tournamentFilterRequestDto.getType(), tournamentFilterRequestDto.getStatus()));
     }
 
     /**
