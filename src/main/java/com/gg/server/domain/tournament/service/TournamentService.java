@@ -18,14 +18,10 @@ import com.gg.server.domain.user.dto.UserImageDto;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.global.exception.ErrorCode;
 import java.util.Optional;
-import com.gg.server.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import javax.persistence.EntityNotFoundException;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -65,6 +61,17 @@ public class TournamentService {
     }
 
     /**
+     * 토너먼트 단일 조회
+     * @param tournamentId
+     * @return 토너먼트
+     */
+    public TournamentResponseDto getTournament(long tournamentId) {
+        Tournament tournament = tournamentRepository.findById(tournamentId)
+            .orElseThrow(() -> new TournamentNotFoundException(ErrorCode.TOURNAMENT_NOT_FOUND.getMessage(), ErrorCode.TOURNAMENT_NOT_FOUND));
+        return (new TournamentResponseDto(tournament, findTournamentWinner(tournament), findJoinedPlayerCnt(tournament)));
+    }
+
+    /**
      * <p>유저 해당 토너먼트 참여 여부 확인 매서드</p>
      * @param tournamentId 타겟 토너먼트
      * @param user 해당 유저
@@ -101,14 +108,5 @@ public class TournamentService {
         return tournamentUserRepository.countByTournamentAndIsJoined(tournament, true);
     }
 
-    /**
-     * 토너먼트 단일 조회
-     * @param tournamentId
-     * @return 토너먼트
-     */
-    public TournamentResponseDto getTournament(long tournamentId) {
-        Tournament tournament = tournamentRepository.findById(tournamentId)
-                .orElseThrow(() -> new TournamentNotFoundException(ErrorCode.TOURNAMENT_NOT_FOUND.getMessage(), ErrorCode.TOURNAMENT_NOT_FOUND));
-        return (new TournamentResponseDto(tournament, findTournamentWinner(tournament), findJoinedPlayerCnt(tournament)));
-    }
+
 }
