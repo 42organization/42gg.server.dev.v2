@@ -5,9 +5,15 @@ import com.gg.server.domain.tournament.data.TournamentRepository;
 import com.gg.server.domain.tournament.data.TournamentUser;
 import com.gg.server.domain.tournament.data.TournamentUserRepository;
 import com.gg.server.domain.tournament.dto.TournamentUserRegistrationResponseDto;
+import com.gg.server.domain.game.data.GameRepository;
+import com.gg.server.domain.game.dto.GameTeamUser;
+import com.gg.server.domain.tournament.data.*;
+import com.gg.server.domain.tournament.dto.TournamentGameListResponseDto;
+import com.gg.server.domain.tournament.dto.TournamentGameResDto;
 import com.gg.server.domain.tournament.dto.TournamentListResponseDto;
 import com.gg.server.domain.tournament.dto.TournamentResponseDto;
 import com.gg.server.domain.tournament.exception.TournamentNotFoundException;
+import com.gg.server.domain.tournament.type.TournamentRound;
 import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.tournament.type.TournamentType;
 import com.gg.server.domain.tournament.type.TournamentUserStatus;
@@ -23,12 +29,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class TournamentService {
     private final TournamentRepository tournamentRepository;
     private final TournamentUserRepository tournamentUserRepository;
     private final UserRepository userRepository;
+    private final TournamentGameRepository tournamentGameRepository;
+    private final GameRepository gameRepository;
 
     /**
      * 토너먼트 리스트 조회
@@ -108,5 +119,47 @@ public class TournamentService {
         return tournamentUserRepository.countByTournamentAndIsJoined(tournament, true);
     }
 
+    /**
+     * 토너먼트 게임 목록 조회
+     * @param tournamentId 토너먼트 id
+     * @return 토너먼트 게임 목록
+     */
+    public TournamentGameListResponseDto getTournamentGames(Long tournamentId) {
+        List<TournamentGameResDto> tournamentGameResDtoList = getTournamentGameResDtoList(tournamentId);
+        return new TournamentGameListResponseDto(tournamentId, tournamentGameResDtoList);
+    }
 
+    /**
+     * TournamentGameResDto list 반환
+     * @param tournamentId 토너먼트 id
+     * @return List<TournamentGameResDto>
+     *     - tournamentGameId: 토너먼트 게임 id
+     *     - NextTournamentGameId: 다음 토너먼트 게임 id
+     *     - tournamentRound: 토너먼트 라운드
+     *     - game: 게임 정보
+     */
+    private List<TournamentGameResDto> getTournamentGameResDtoList(Long tournamentId){
+        List<TournamentGame> tournamentGames = tournamentGameRepository.findAllByTournamentId(tournamentId);
+        List<TournamentGameResDto> tournamentGameResDtoList = new ArrayList<>();
+        for (TournamentGame tournamentGame : tournamentGames) {
+            TournamentGame nextTournamentGame = findNextTournamentGame(tournamentId, tournamentGame);
+            GameTeamUser gameTeamUser = null;
+            if (tournamentGame.getGame() != null) {
+                gameTeamUser = gameRepository.findTeamsByGameId(tournamentGame.getGame().getId());
+            }
+            tournamentGameResDtoList.add(new TournamentGameResDto(tournamentGame, gameTeamUser, tournamentGame.getTournamentRound(), nextTournamentGame));
+        }
+        return tournamentGameResDtoList;
+    }
+
+    /**
+     * 다음 토너먼트 게임 조회
+     * @param tournamentId 토너먼트 id
+     * @param tournamentGame 현재 토너먼트 게임
+     * @return 다음 토너먼트 게임
+     */
+    private TournamentGame findNextTournamentGame(Long tournamentId, TournamentGame tournamentGame) {
+        TournamentRound tournamentRound = tournamentGame.getTournamentRound();
+        return tournamentGameRepository.findByTournamentIdAndTournamentRound(tournamentId, tournamentRound.getNextRound());
+    }
 }
