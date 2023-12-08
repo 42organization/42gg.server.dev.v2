@@ -1,7 +1,7 @@
 package com.gg.server.domain.tournament.controller;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.dto.TournamentListResponseDto;
 import com.gg.server.domain.tournament.dto.TournamentResponseDto;
 import com.gg.server.domain.tournament.type.TournamentStatus;
@@ -25,6 +25,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -52,16 +53,15 @@ public class TournamentFindControllerTest {
 
     User tester;
 
-    @BeforeEach
-    void beforeEach() {
-        tester = testDataUtils.createNewUser("findControllerTester", "findControllerTester", RacketType.DUAL, SnsType.SLACK, RoleType.ADMIN);
-        accessToken = tokenProvider.createToken(tester.getId());
-        tournamentList = testDataUtils.makeTournamentList();
-    }
-
     @Nested
     @DisplayName("토너먼트_리스트_조회")
-    class findTournamentTest {
+    class findTournamentListTest {
+        @BeforeEach
+        void beforeEach() {
+            tester = testDataUtils.createNewUser("findControllerTester", "findControllerTester", RacketType.DUAL, SnsType.SLACK, RoleType.ADMIN);
+            accessToken = tokenProvider.createToken(tester.getId());
+            tournamentList = testDataUtils.makeTournamentList();
+        }
 
         @Test
         @DisplayName("전체_조회")
@@ -192,6 +192,70 @@ public class TournamentFindControllerTest {
 
             // then
             log.info(contentAsString);
+        }
+    }
+
+    @Nested
+    @DisplayName("토너먼트_단일_조회")
+    class findTournamentTest {
+        @BeforeEach
+        void beforeEach() {
+            tester = testDataUtils.createNewUser("findControllerTester", "findControllerTester", RacketType.DUAL, SnsType.SLACK, RoleType.ADMIN);
+            accessToken = tokenProvider.createToken(tester.getId());
+        }
+        @Test
+        @DisplayName("조회_성공")
+        public void success() throws Exception {
+            //given
+            Tournament tournament = testDataUtils.createTournament("string1", "string",
+                    LocalDateTime.now().plusDays(2).plusHours(1), LocalDateTime.now().plusDays(2).plusHours(3),
+                    TournamentType.ROOKIE, TournamentStatus.BEFORE);
+            User user = testDataUtils.createNewUser("test");
+            testDataUtils.createTournamentUser(user, tournament, true);
+            tournament.update_winner(user);
+
+            Long tournamentId = tournament.getId();
+            String url = "/pingpong/tournaments/" + tournamentId;
+
+            //when
+            String contentAsString = mockMvc.perform(get(url)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                    .andExpect(status().isOk())
+                    .andReturn().getResponse().getContentAsString();
+
+            TournamentResponseDto responseDto = objectMapper.readValue(contentAsString, TournamentResponseDto.class);
+
+            //then
+            assertThat(tournament.getTitle()).isEqualTo(responseDto.getTitle());
+            assertThat(tournament.getContents()).isEqualTo(responseDto.getContents());
+            assertThat(tournament.getType()).isEqualTo(responseDto.getType());
+            assertThat(tournament.getStatus()).isEqualTo(responseDto.getStatus());
+            if (tournament.getWinner() == null) {
+                assertThat(responseDto.getWinnerIntraId()).isEqualTo(null);
+                assertThat(responseDto.getWinnerImageUrl()).isEqualTo(null);
+            }
+            else {
+                assertThat(tournament.getWinner().getIntraId()).isEqualTo(responseDto.getWinnerIntraId());
+                assertThat(tournament.getWinner().getImageUri()).isEqualTo(responseDto.getWinnerImageUrl());
+            }
+            assertThat(tournament.getTournamentUsers().size()).isEqualTo(responseDto.getPlayer_cnt());
+        }
+
+        @Test
+        @DisplayName("잘못된_토너먼트_ID")
+        public void tournamentNotExist() throws Exception {
+            //given
+            Long tournamentId = 1L;
+            String url = "/pingpong/tournaments/" + tournamentId;
+
+            //when
+            String contentAsString = mockMvc.perform(get(url)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                    .andExpect(status().isNotFound())
+                    .andReturn().getResponse().getContentAsString();
+
+            //then
+            System.out.println(contentAsString);
         }
     }
 }

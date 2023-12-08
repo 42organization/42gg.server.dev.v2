@@ -2,14 +2,15 @@ package com.gg.server.domain.tournament.controller;
 
 import com.gg.server.domain.tournament.dto.TournamentFilterRequestDto;
 import com.gg.server.domain.tournament.dto.TournamentListResponseDto;
+import com.gg.server.domain.tournament.dto.TournamentResponseDto;
 import com.gg.server.domain.tournament.service.TournamentService;
 import lombok.RequiredArgsConstructor;
+import org.checkerframework.checker.index.qual.Positive;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -30,5 +31,16 @@ public class TournamentController {
         Pageable pageRequest = PageRequest.of(tournamentFilterRequestDto.getPage() - 1, tournamentFilterRequestDto.getSize());
 
         return tournamentService.getAllTournamentList(pageRequest, tournamentFilterRequestDto.getType(), tournamentFilterRequestDto.getStatus());
+    }
+
+    /**
+     * 토너먼트 단일 조회
+     * @param tournamentId 토너먼트 id
+     * @return 토너먼트
+     */
+    @GetMapping("/{tournamentId}")
+    public ResponseEntity<TournamentResponseDto> getTournnament(@PathVariable @Positive Long tournamentId) {
+        TournamentResponseDto tournamentResponseDto = tournamentService.getTournament(tournamentId);
+            return ResponseEntity.status(HttpStatus.OK).body(tournamentResponseDto);
     }
 }
