@@ -4,29 +4,31 @@ import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentRepository;
 import com.gg.server.domain.tournament.data.TournamentUser;
 import com.gg.server.domain.tournament.data.TournamentUserRepository;
+import com.gg.server.domain.tournament.dto.TournamentUserRegistrationResponseDto;
 import com.gg.server.domain.tournament.dto.TournamentListResponseDto;
 import com.gg.server.domain.tournament.dto.TournamentResponseDto;
 import com.gg.server.domain.tournament.exception.TournamentNotFoundException;
 import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.tournament.type.TournamentType;
+import com.gg.server.domain.tournament.type.TournamentUserStatus;
 import com.gg.server.domain.user.data.User;
+import com.gg.server.domain.user.data.UserRepository;
+import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.domain.user.dto.UserImageDto;
+import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.global.exception.ErrorCode;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import javax.persistence.EntityNotFoundException;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class TournamentService {
     private final TournamentRepository tournamentRepository;
     private final TournamentUserRepository tournamentUserRepository;
+    private final UserRepository userRepository;
 
     /**
      * 토너먼트 리스트 조회
@@ -59,6 +61,35 @@ public class TournamentService {
     }
 
     /**
+     * 토너먼트 단일 조회
+     * @param tournamentId
+     * @return 토너먼트
+     */
+    public TournamentResponseDto getTournament(long tournamentId) {
+        Tournament tournament = tournamentRepository.findById(tournamentId)
+            .orElseThrow(() -> new TournamentNotFoundException(ErrorCode.TOURNAMENT_NOT_FOUND.getMessage(), ErrorCode.TOURNAMENT_NOT_FOUND));
+        return (new TournamentResponseDto(tournament, findTournamentWinner(tournament), findJoinedPlayerCnt(tournament)));
+    }
+
+    /**
+     * <p>유저 해당 토너먼트 참여 여부 확인 매서드</p>
+     * @param tournamentId 타겟 토너먼트
+     * @param user 해당 유저
+     * @return
+     */
+    public TournamentUserRegistrationResponseDto getUserStatusInTournament(Long tournamentId, UserDto user) {
+        Tournament targetTournament = tournamentRepository.findById(tournamentId).orElseThrow(() ->
+            new TournamentNotFoundException("target tournament not found", ErrorCode.TOURNAMENT_NOT_FOUND));
+        User loginUser = userRepository.findById(user.getId()).orElseThrow(UserNotFoundException::new);
+        TournamentUserStatus tournamentUserStatus = TournamentUserStatus.BEFORE;
+        Optional<TournamentUser> tournamentUser = tournamentUserRepository.findByTournamentIdAndUserId(tournamentId, user.getId());
+        if (tournamentUser.isPresent()) {
+            tournamentUserStatus = tournamentUser.get().getIsJoined() ? TournamentUserStatus.PLAYER : TournamentUserStatus.WAIT;
+        }
+        return new TournamentUserRegistrationResponseDto(tournamentUserStatus);
+    }
+
+    /**
      * 토너먼트 우승자 조회
      * @param tournament 토너먼트
      * @return 토너먼트 우승자 정보
@@ -77,14 +108,5 @@ public class TournamentService {
         return tournamentUserRepository.countByTournamentAndIsJoined(tournament, true);
     }
 
-    /**
-     * 토너먼트 단일 조회
-     * @param tournamentId
-     * @return 토너먼트
-     */
-    public TournamentResponseDto getTournament(long tournamentId) {
-        Tournament tournament = tournamentRepository.findById(tournamentId)
-                .orElseThrow(() -> new TournamentNotFoundException(ErrorCode.TOURNAMENT_NOT_FOUND.getMessage(), ErrorCode.TOURNAMENT_NOT_FOUND));
-        return (new TournamentResponseDto(tournament, findTournamentWinner(tournament), findJoinedPlayerCnt(tournament)));
-    }
+
 }

@@ -165,7 +165,7 @@ public class TournamentAdminService {
         TournamentUser targetTournamentUser = tournamentUserList.stream().filter(tu->tu.getUser().getId().equals(targetUser.getId()))
             .findAny().orElseThrow(UserNotFoundException::new);
         targetTournament.deleteTournamentUser(targetTournamentUser);
-        if (targetTournamentUser.getIsJoined() && targetTournament.getTournamentUsers().size()>=ALLOWED_JOINED_NUMBER) {
+        if (targetTournamentUser.getIsJoined() && tournamentUserList.size()>=ALLOWED_JOINED_NUMBER) {
             tournamentUserList.get(Long.valueOf(ALLOWED_JOINED_NUMBER).intValue()-1).updateIsJoined(true);
         }
         tournamentUserRepository.delete(targetTournamentUser);
