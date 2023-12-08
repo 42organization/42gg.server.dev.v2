@@ -73,6 +73,7 @@ public class TournamentAdminService {
      * @throws TournamentNotFoundException 찾을 수 없는 토너먼트 일 때
      * @throws TournamentUpdateException   업데이트 할 수 없는 토너먼트 일 때
      */
+    @Transactional
     public Tournament updateTournamentInfo(Long tournamentId, TournamentAdminUpdateRequestDto requestDto) {
         Tournament targetTournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException("target tournament not found", ErrorCode.TOURNAMENT_NOT_FOUND));
@@ -98,6 +99,7 @@ public class TournamentAdminService {
      * @throws TournamentNotFoundException 찾을 수 없는 토너먼트 일 때
      * @throws TournamentUpdateException   업데이트 할 수 없는 토너먼트 일 때
      */
+    @Transactional
     public void deleteTournament(Long tournamentId) {
         Tournament targetTournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException("target tournament not found", ErrorCode.TOURNAMENT_NOT_FOUND));
@@ -118,6 +120,7 @@ public class TournamentAdminService {
      * @throws UserNotFoundException       유저 없음
      * @throws TournamentConflictException 이미 참가자인 토너먼트가 존재
      */
+    @Transactional
     public TournamentAdminAddUserResponseDto addTournamentUser(Long tournamentId, TournamentAdminAddUserRequestDto requestDto) {
         Tournament targetTournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException("target tournament not found", ErrorCode.TOURNAMENT_NOT_FOUND));
@@ -149,6 +152,7 @@ public class TournamentAdminService {
      * @param tournamentId 타겟 토너먼트 id
      * @param userId 타겟 유저 id
      */
+    @Transactional
     public void deleteTournamentUser(Long tournamentId, Long userId) {
         Tournament targetTournament = tournamentRepository.findById(tournamentId)
             .orElseThrow(() -> new TournamentNotFoundException("target tournament not found", ErrorCode.TOURNAMENT_NOT_FOUND));
