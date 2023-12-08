@@ -142,7 +142,7 @@ public class TournamentService {
         List<TournamentGame> tournamentGames = tournamentGameRepository.findAllByTournamentId(tournamentId);
         List<TournamentGameResDto> tournamentGameResDtoList = new ArrayList<>();
         for (TournamentGame tournamentGame : tournamentGames) {
-            TournamentGame nextTournamentGame = findNextTournamentGame(tournamentId, tournamentGame);
+            TournamentGame nextTournamentGame = findNextTournamentGame(tournamentGames, tournamentGame);
             GameTeamUser gameTeamUser = null;
             if (tournamentGame.getGame() != null) {
                 gameTeamUser = gameRepository.findTeamsByGameId(tournamentGame.getGame().getId());
@@ -154,12 +154,15 @@ public class TournamentService {
 
     /**
      * 다음 토너먼트 게임 조회
-     * @param tournamentId 토너먼트 id
+     * @param tournamentGames tournamentGames 토너먼트 게임 리스트
      * @param tournamentGame 현재 토너먼트 게임
      * @return 다음 토너먼트 게임
      */
-    private TournamentGame findNextTournamentGame(Long tournamentId, TournamentGame tournamentGame) {
+    private TournamentGame findNextTournamentGame(List<TournamentGame> tournamentGames, TournamentGame tournamentGame) {
         TournamentRound tournamentRound = tournamentGame.getTournamentRound();
-        return tournamentGameRepository.findByTournamentIdAndTournamentRound(tournamentId, tournamentRound.getNextRound());
+        return tournamentGames.stream()
+            .filter(tournamentGame1 -> tournamentGame1.getTournamentRound().equals(tournamentRound.getNextRound()))
+            .findFirst()
+            .orElse(null);
     }
 }
