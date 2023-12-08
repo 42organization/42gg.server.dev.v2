@@ -19,7 +19,7 @@ CREATE TABLE `user` (
 `text_color` varchar(10) DEFAULT NULL,
 PRIMARY KEY (`id`),
 UNIQUE KEY `UK_l5220ph2ndjh75g6ya39wy519` (`intra_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2802 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 DROP TABLE IF EXISTS `season`;
@@ -31,7 +31,7 @@ CREATE TABLE `season` (
   `start_ppp` int NOT NULL,
   `start_time` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=119 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 DROP TABLE IF EXISTS `tier`;
@@ -40,7 +40,7 @@ CREATE TABLE `tier` (
 `image_uri` varchar(255) DEFAULT NULL,
 `name` varchar(255) DEFAULT NULL,
 PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 DROP TABLE IF EXISTS `announcement`;
@@ -53,7 +53,7 @@ CREATE TABLE `announcement` (
   `deleted_at` datetime DEFAULT NULL,
   `modified_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 DROP TABLE IF EXISTS `coin_history`;
@@ -66,7 +66,7 @@ CREATE TABLE `coin_history` (
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `coin_history_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=1870 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 DROP TABLE IF EXISTS `coin_policy`;
@@ -81,7 +81,7 @@ CREATE TABLE `coin_policy` (
   PRIMARY KEY (`id`),
   KEY `fk_coin_policy_user_user_id` (`user_id`),
   CONSTRAINT `fk_coin_policy_user_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 DROP TABLE IF EXISTS `feedback`;
@@ -96,24 +96,7 @@ CREATE TABLE `feedback` (
   PRIMARY KEY (`id`),
   KEY `fk_feedback_user_user_id` (`user_id`),
   CONSTRAINT `fk_feedback_user_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=66 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-
--- DROP TABLE IF EXISTS `flyway_schema_history`;
--- CREATE TABLE `flyway_schema_history` (
---   `installed_rank` int NOT NULL,
---   `version` varchar(50) DEFAULT NULL,
---   `description` varchar(200) NOT NULL,
---   `type` varchar(20) NOT NULL,
---   `script` varchar(1000) NOT NULL,
---   `checksum` int DEFAULT NULL,
---   `installed_by` varchar(100) NOT NULL,
---   `installed_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
---   `execution_time` int NOT NULL,
---   `success` tinyint(1) NOT NULL,
---   PRIMARY KEY (`installed_rank`),
---   KEY `flyway_schema_history_s_idx` (`success`)
--- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 DROP TABLE IF EXISTS `game`;
@@ -127,7 +110,7 @@ CREATE TABLE `game` (
   PRIMARY KEY (`id`),
   KEY `fk_game_season_season_id` (`season_id`),
   CONSTRAINT `fk_game_season_season_id` FOREIGN KEY (`season_id`) REFERENCES `season` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4982 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 DROP TABLE IF EXISTS `item`;
@@ -145,7 +128,7 @@ CREATE TABLE `item` (
   `main_content` varchar(255) DEFAULT NULL,
   `sub_content` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=78 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 DROP TABLE IF EXISTS `receipt`;
@@ -159,7 +142,7 @@ CREATE TABLE `receipt` (
 PRIMARY KEY (`id`),
 KEY `fk_receipt_item_item_id` (`item_id`),
 CONSTRAINT `fk_receipt_item_item_id` FOREIGN KEY (`item_id`) REFERENCES `item` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=447 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 
@@ -175,7 +158,7 @@ CREATE TABLE `megaphone` (
   KEY `fk_megaphone_receipt_receipt_id` (`receipt_id`),
   CONSTRAINT `fk_megaphone_receipt_receipt_id` FOREIGN KEY (`receipt_id`) REFERENCES `receipt` (`id`),
   CONSTRAINT `fk_megaphone_user_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 DROP TABLE IF EXISTS `noti`;
@@ -190,7 +173,7 @@ CREATE TABLE `noti` (
   PRIMARY KEY (`id`),
   KEY `fk_noti_user_user_id` (`user_id`),
   CONSTRAINT `fk_noti_user_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4373 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 DROP TABLE IF EXISTS `pchange`;
@@ -208,7 +191,7 @@ CREATE TABLE `pchange` (
   KEY `fk_pchange_game_game_id` (`game_id`),
   CONSTRAINT `fk_pchange_game_game_id` FOREIGN KEY (`game_id`) REFERENCES `game` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `fk_pchange_user_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=9590 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 DROP TABLE IF EXISTS `penalty`;
@@ -224,7 +207,7 @@ CREATE TABLE `penalty` (
   PRIMARY KEY (`id`),
   KEY `fk_penalty_user_user_id_idx` (`user_id`),
   CONSTRAINT `fk_penalty_user_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=55 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 DROP TABLE IF EXISTS `ranks`;
@@ -246,7 +229,7 @@ CREATE TABLE `ranks` (
   CONSTRAINT `fk_ranks_season_season_id` FOREIGN KEY (`season_id`) REFERENCES `season` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `fk_ranks_tier_tier_id` FOREIGN KEY (`tier_id`) REFERENCES `tier` (`id`),
   CONSTRAINT `fk_ranks_user_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5030 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 DROP TABLE IF EXISTS `slot_management`;
@@ -261,7 +244,7 @@ CREATE TABLE `slot_management` (
   `start_time` datetime NOT NULL,
   `end_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 DROP TABLE IF EXISTS `team`;
@@ -273,7 +256,7 @@ CREATE TABLE `team` (
   PRIMARY KEY (`id`),
   KEY `fk_team_game_game_id` (`game_id`),
   CONSTRAINT `fk_team_game_game_id` FOREIGN KEY (`game_id`) REFERENCES `game` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=38749 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 DROP TABLE IF EXISTS `team_user`;
@@ -286,7 +269,7 @@ CREATE TABLE `team_user` (
   KEY `fk_team_user_user_user_id` (`user_id`),
   CONSTRAINT `fk_team_user_team_team_id` FOREIGN KEY (`team_id`) REFERENCES `team` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_team_user_user_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=12275 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 DROP TABLE IF EXISTS `tournament`;
@@ -317,7 +300,7 @@ CREATE TABLE tournament_user (
  PRIMARY KEY (id),
  FOREIGN KEY (tournament_id) REFERENCES tournament(id),
  FOREIGN KEY (user_id)       REFERENCES user(id)
-);
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;;
 
 DROP TABLE IF EXISTS `tournament_game`;
 CREATE TABLE tournament_game (
@@ -330,7 +313,7 @@ CREATE TABLE tournament_game (
  PRIMARY KEY (id),
  FOREIGN KEY (tournament_id) REFERENCES tournament(id),
  FOREIGN KEY (game_id)       REFERENCES game(id)
-);
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;;
 
 
 DROP TABLE IF EXISTS `user_image`;
@@ -344,7 +327,7 @@ CREATE TABLE `user_image` (
   PRIMARY KEY (`id`),
   KEY `fk_user_image_user_user_id` (`user_id`),
   CONSTRAINT `fk_user_image_user_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1100 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 create or replace view v_teamuser as
