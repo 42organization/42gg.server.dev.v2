@@ -112,6 +112,23 @@ public class TestDataUtils {
         return user;
     }
 
+    /**
+     * Item 에는 인트라 ID가 현재 10자로 제한되어 있음
+     */
+    public User createAdminUserForItem(){
+        String randomId = UUID.randomUUID().toString().substring(0, 10);
+        User user = User.builder()
+            .eMail("email")
+            .intraId(randomId)
+            .racketType(RacketType.PENHOLDER)
+            .snsNotiOpt(SnsType.NONE)
+            .roleType(RoleType.ADMIN)
+            .totalExp(1000)
+            .build();
+        userRepository.save(user);
+        return user;
+    }
+
     public User createNewUser(){
         String randomId = UUID.randomUUID().toString().substring(0, 30);
         User user = User.builder()
