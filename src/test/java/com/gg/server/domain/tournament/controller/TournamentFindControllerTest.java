@@ -2,9 +2,7 @@ package com.gg.server.domain.tournament.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.domain.tournament.data.Tournament;
-import com.gg.server.domain.tournament.data.Tournament;
-import com.gg.server.domain.tournament.data.TournamentUserRepository;
-import com.gg.server.domain.tournament.data.Tournament;
+import com.gg.server.domain.tournament.data.TournamentUser;
 import com.gg.server.domain.tournament.data.TournamentUserRepository;
 import com.gg.server.domain.tournament.dto.TournamentListResponseDto;
 import com.gg.server.domain.tournament.dto.TournamentResponseDto;
@@ -33,7 +31,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -221,8 +218,15 @@ public class TournamentFindControllerTest {
         @DisplayName("유저_신청_취소_성공")
         void success() throws Exception {
             // given
+            int maxTournamentUser = 8;
             Tournament tournament = testDataUtils.createTournament(LocalDateTime.now(), LocalDateTime.now(), TournamentStatus.BEFORE);
+            for (int i=0; i<maxTournamentUser-1; i++) {
+                testDataUtils.createTournamentUser(testDataUtils.createNewUser("testUser"+i), tournament, true);
+            }
             testDataUtils.createTournamentUser(tester, tournament, true);
+            for (int i=maxTournamentUser; i<maxTournamentUser+4; i++) {
+                testDataUtils.createTournamentUser(testDataUtils.createNewUser("testUser"+i), tournament, false);
+            }
             String url = "/pingpong/tournaments/" + tournament.getId() + "/users";
             String expected = "{\"status\":\"BEFORE\"}";
 
@@ -240,6 +244,17 @@ public class TournamentFindControllerTest {
             }
             tournamentUserRepository.findByTournamentIdAndUserId(tournament.getId(), tester.getId()).ifPresent(
                 a->{throw new CustomRuntimeException("", ErrorCode.BAD_REQUEST);});
+            List<TournamentUser> tournamentUserList = tournament.getTournamentUsers();
+            for (int i=0; i<maxTournamentUser; i++) {
+                if (!tournamentUserList.get(i).getIsJoined()) {
+                    throw new CustomRuntimeException("참가자 오류", ErrorCode.BAD_REQUEST);
+                }
+            }
+            for (int i=maxTournamentUser; i<tournamentUserList.size(); i++) {
+                if (tournamentUserList.get(i).getIsJoined()) {
+                    throw new CustomRuntimeException("대기자 오류", ErrorCode.BAD_REQUEST);
+                }
+            }
         }
         @Test
         @DisplayName("유저_없음")
