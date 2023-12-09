@@ -430,6 +430,7 @@ class TournamentAdminServiceTest {
             Tournament tournament = tournamentList.get(0);
             User user = createUser("user");
             given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
+            given(userRepository.findById(null)).willReturn(Optional.empty());
 
             // when, then
             assertThatThrownBy(() -> tournamentAdminService.deleteTournamentUser(tournament.getId(), user.getId()))
