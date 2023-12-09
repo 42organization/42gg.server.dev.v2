@@ -44,6 +44,7 @@ public class TournamentService {
     private final TournamentGameRepository tournamentGameRepository;
     private final GameRepository gameRepository;
 
+    private static final long ALLOWED_JOINED_NUMBER = 8;
     /**
      * 토너먼트 리스트 조회
      * @param pageRequest 페이지 정보
@@ -120,6 +121,9 @@ public class TournamentService {
         TournamentUser targetTournamentUser = tournamentUserList.stream().filter(tu->(tu.getUser().equals(loginUser))).findAny()
             .orElseThrow(()->new TournamentNotFoundException("토너먼트 신청자가 아닙니다.", ErrorCode.TOURNAMENT_NOT_FOUND));
         tournamentUserList.remove(targetTournamentUser);
+        if (targetTournamentUser.getIsJoined() && tournamentUserList.size()>=ALLOWED_JOINED_NUMBER) {
+            tournamentUserList.get(Long.valueOf(ALLOWED_JOINED_NUMBER).intValue()-1).updateIsJoined(true);
+        }
         tournamentUserRepository.delete(targetTournamentUser);
         return new TournamentUserRegistrationResponseDto(TournamentUserStatus.BEFORE);
     }
