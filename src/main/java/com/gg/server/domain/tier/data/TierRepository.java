@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface TierRepository extends JpaRepository<Tier, Long> {
 
-    @Query("SELECT t FROM Tier t WHERE t.id = 1L")
+    @Query("SELECT t FROM Tier t WHERE t.id = (SELECT MIN(t.id) FROM Tier t)")
     Optional<Tier> findStartTier();
 
     Optional<Tier> findByName(String name);
