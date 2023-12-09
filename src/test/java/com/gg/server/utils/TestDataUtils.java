@@ -98,6 +98,20 @@ public class TestDataUtils {
         return tokenProvider.createToken(user.getId());
     }
 
+    public User createAdminUser(){
+        String randomId = UUID.randomUUID().toString().substring(0, 30);
+        User user = User.builder()
+            .eMail("email")
+            .intraId(randomId)
+            .racketType(RacketType.PENHOLDER)
+            .snsNotiOpt(SnsType.NONE)
+            .roleType(RoleType.ADMIN)
+            .totalExp(1000)
+            .build();
+        userRepository.save(user);
+        return user;
+    }
+
     public User createNewUser(){
         String randomId = UUID.randomUUID().toString().substring(0, 30);
         User user = User.builder()
@@ -316,6 +330,28 @@ public class TestDataUtils {
         Team myTeam = new Team(game, 0, false);
         TeamUser teamUser = new TeamUser(myTeam, newUser);
         Team enemyTeam = new Team(game, 0, false);
+        User enemyUser = createNewUser();
+        TeamUser enemyTeamUser = new TeamUser(enemyTeam, enemyUser);
+        teamRepository.save(myTeam);
+        teamRepository.save(enemyTeam);
+        teamUserRepository.save(teamUser);
+        teamUserRepository.save(enemyTeamUser);
+
+        PChange pChange1 = new PChange(game, newUser, 1100, true);
+        PChange pChange2 = new PChange(game, enemyUser, 900, true);
+
+        pChangeRepository.save(pChange1);
+        pChangeRepository.save(pChange2);
+        return game;
+    }
+
+    public Game createMockMatch(User newUser, Season season, LocalDateTime startTime,
+        LocalDateTime endTime, Mode mode, int myScore, int enemyScore) {
+        Game game = new Game(season, StatusType.END, mode, startTime, endTime);
+        gameRepository.save(game);
+        Team myTeam = new Team(game, myScore, myScore > enemyScore);
+        TeamUser teamUser = new TeamUser(myTeam, newUser);
+        Team enemyTeam = new Team(game, enemyScore, enemyScore > myScore);
         User enemyUser = createNewUser();
         TeamUser enemyTeamUser = new TeamUser(enemyTeam, enemyUser);
         teamRepository.save(myTeam);
