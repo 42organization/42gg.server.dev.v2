@@ -2,6 +2,8 @@ package com.gg.server.utils;
 
 import com.gg.server.admin.tournament.dto.TournamentAdminCreateRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
+import com.gg.server.domain.announcement.data.Announcement;
+import com.gg.server.domain.announcement.data.AnnouncementRepository;
 import com.gg.server.domain.coin.data.CoinPolicy;
 import com.gg.server.domain.coin.data.CoinPolicyRepository;
 import com.gg.server.domain.game.data.Game;
@@ -49,6 +51,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -69,6 +73,7 @@ public class TestDataUtils {
     private final TournamentRepository tournamentRepository;
     private final TournamentGameRepository tournamentGameRepository;
     private final TournamentUserRepository tournamentUserRepository;
+    private final AnnouncementRepository announcementRepository;
 
     private final CoinPolicyRepository coinPolicyRepository;
 
@@ -640,5 +645,32 @@ public class TestDataUtils {
             .build();
         coinPolicyRepository.save(coinPolicy);
         return coinPolicy;
+    }
+
+    public Announcement createAnnouncement(User creator, String content) {
+        Announcement announcement = Announcement.builder()
+            .creatorIntraId(creator.getIntraId())
+            .content(content)
+            .build();
+        announcementRepository.save(announcement);
+        return announcement;
+    }
+
+    /**
+     * 공지사항 여러개 생성.
+     * 가장 최신 이외는 갱신처리.
+     *
+     * @param creator
+     * @param cnt
+     * @return 생성된 공지사항 리스트
+     */
+    public ArrayList<Announcement> createAnnouncements(User creator, int cnt) {
+        return IntStream.range(0, cnt)
+            .mapToObj(i -> {
+                Announcement announcement = createAnnouncement(creator, "content" + i);
+                if (i != cnt - 1) announcement.update(creator.getIntraId(), LocalDateTime.now());
+                return announcement;
+            })
+            .collect(Collectors.toCollection(ArrayList::new));
     }
 }
