@@ -41,6 +41,8 @@ import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.tournament.type.TournamentType;
 import com.gg.server.domain.user.controller.dto.GameInfoDto;
 import com.gg.server.domain.user.data.User;
+import com.gg.server.domain.user.data.UserImage;
+import com.gg.server.domain.user.data.UserImageRepository;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserImageDto;
 import com.gg.server.domain.user.type.RacketType;
@@ -74,8 +76,8 @@ public class TestDataUtils {
     private final TournamentGameRepository tournamentGameRepository;
     private final TournamentUserRepository tournamentUserRepository;
     private final AnnouncementRepository announcementRepository;
-
     private final CoinPolicyRepository coinPolicyRepository;
+    private final UserImageRepository userImageRepository;
 
     public String getLoginAccessToken() {
         User user = User.builder()
@@ -670,6 +672,23 @@ public class TestDataUtils {
                 Announcement announcement = createAnnouncement(creator, "content" + i);
                 if (i != cnt - 1) announcement.update(creator.getIntraId(), LocalDateTime.now());
                 return announcement;
+            })
+            .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public UserImage createUserImage(User user) {
+        UserImage userImage = new UserImage(user, "testUrl",
+            LocalDateTime.now(), null, true);
+        userImageRepository.save(userImage);
+        return userImage;
+    }
+
+    public ArrayList<UserImage> createUserImages(User user, int cnt) {
+        return IntStream.range(0, cnt)
+            .mapToObj(i -> {
+                UserImage userImage = createUserImage(user);
+                if (i != cnt - 1) userImage.updateDeletedAt(LocalDateTime.now());
+                return userImage;
             })
             .collect(Collectors.toCollection(ArrayList::new));
     }
