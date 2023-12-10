@@ -1,13 +1,17 @@
 package com.gg.server.domain.rank.dto;
 
 import com.gg.server.domain.user.data.User;
-import com.gg.server.domain.user.data.UserImage;
 import com.gg.server.global.utils.ExpLevelCalculator;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ExpRankDto {
     private String intraId;
     private Integer rank;

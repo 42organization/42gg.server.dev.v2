@@ -247,7 +247,7 @@ public class TestDataUtils {
         LocalDateTime endTime = startTime.plusMonths(1);
         Season season = seasonRepository.findCurrentSeason(LocalDateTime.now()).orElse(null);
         if (season == null)
-            season = new Season("name", startTime, endTime, 1000, 300);
+            season = new Season("name", startTime.minusMinutes(1), endTime, 1000, 300);
         seasonRepository.save(season);
         return season;
     }
@@ -292,7 +292,7 @@ public class TestDataUtils {
     public void createUserRank(User newUser, String statusMessage, Season season, int ppp) {
         String zSetKey = RedisKeyManager.getZSetKey(season.getId());
         String hashKey = RedisKeyManager.getHashKey(season.getId());
-        Tier tier = tierRepository.getById(1L);
+        Tier tier = tierRepository.findStartTier().get();
         redisRepository.addToZSet(zSetKey, newUser.getId(), ppp);
         redisRepository.addRankData(hashKey, newUser.getId(),
                 new RankRedis(newUser.getId(), "aa", ppp, 1, 0, statusMessage, "https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/nheo.jpeg", "#000000"));
