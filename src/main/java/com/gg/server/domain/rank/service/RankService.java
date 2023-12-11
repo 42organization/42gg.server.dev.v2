@@ -74,23 +74,25 @@ public class RankService {
      * @return
      */
     @Transactional(readOnly = true)
-    @Cacheable(value = "expRanking", cacheManager = "gameCacheManager",
-            key = "#pageRequest.pageNumber + #pageRequest.pageSize + #curUser.id")
     public ExpRankPageResponseDto getExpRankPage(PageRequest pageRequest, UserDto curUser) {
 
         Long myRank = curUser.getTotalExp() == 0 ? -1 : userRepository.findExpRankingByIntraId(curUser.getIntraId());
         Page<User> users = userRepository.findAllByTotalExpGreaterThan(pageRequest, 0);
         if(pageRequest.getPageNumber() + 1 > users.getTotalPages())
             throw new PageNotFoundException("페이지가 존재하지 않습니다.", ErrorCode.PAGE_NOT_FOUND);
-        Season curSeason = seasonFindService.findCurrentSeason(LocalDateTime.now());
-
-        List<ExpRankV2Dto> expRankV2Dtos = userRepository.findExpRank(pageRequest.getPageNumber(), pageRequest.getPageSize(), curSeason.getId());
-        List<ExpRankDto> expRankDtos = expRankV2Dtos.stream().map(ExpRankDto::from).collect(Collectors.toList());
+        List<ExpRankDto> expRankDtos = getExpRankList(pageRequest);
 
         return new ExpRankPageResponseDto(myRank.intValue(),
                 pageRequest.getPageNumber() + 1,
                 users.getTotalPages(),
                 expRankDtos);
+    }
+    @Cacheable(value = "expRanking", cacheManager = "gameCacheManager",
+            key = "#pageRequest.pageNumber + #pageRequest.pageSize")
+    public List<ExpRankDto> getExpRankList(PageRequest pageRequest) {
+        Season curSeason = seasonFindService.findCurrentSeason(LocalDateTime.now());
+        List<ExpRankV2Dto> expRankV2Dtos = userRepository.findExpRank(pageRequest.getPageNumber(), pageRequest.getPageSize(), curSeason.getId());
+        return expRankV2Dtos.stream().map(ExpRankDto::from).collect(Collectors.toList());
     }
 
     /**
