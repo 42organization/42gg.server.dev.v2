@@ -81,14 +81,6 @@ class MatchBothServiceTest {
     void init() {
         testDataUtils.createTierSystem("pingpong");
         testDataUtils.createSeason();
-        SlotManagement preSlot = SlotManagement.builder()
-            .futureSlotTime(12)
-            .pastSlotTime(0)
-            .openMinute(5)
-            .gameInterval(15)
-            .startTime(LocalDateTime.now().minusDays(1))
-            .build();
-        slotManagementRepository.save(preSlot);
         Random random = new Random();
         Integer userCount = random.nextInt(10) + 5;
         Integer pppGap = random.nextInt(100) + 50;
