@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Configuration
 @RequiredArgsConstructor
 public class RankService {
     private final UserRepository userRepository;
