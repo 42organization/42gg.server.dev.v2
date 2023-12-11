@@ -2,6 +2,7 @@ package com.gg.server.domain.match.service;
 
 import com.gg.server.admin.penalty.data.PenaltyAdminRepository;
 import com.gg.server.admin.penalty.type.PenaltyKey;
+import com.gg.server.config.TestRedisConfig;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.match.data.RedisMatchTimeRepository;
@@ -13,8 +14,10 @@ import com.gg.server.domain.penalty.redis.PenaltyUserRedisRepository;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.slotmanagement.SlotManagement;
+import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.dto.UserDto;
+import com.gg.server.utils.TestDataUtils;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,16 +32,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
+@Import(TestRedisConfig.class)
 @Transactional
 @AutoConfigureMockMvc
-@ActiveProfiles("local")
 @RequiredArgsConstructor
 class MatchBothServiceTest {
     @Autowired
@@ -65,14 +68,27 @@ class MatchBothServiceTest {
     PenaltyAdminRepository penaltyAdminRepository;
     @Autowired
     PenaltyUserRedisRepository penaltyUserRedisRepository;
+    @Autowired
+    SlotManagementRepository slotManagementRepository;
+    @Autowired
+    TestDataUtils testDataUtils;
     List<User> users;
     List<LocalDateTime> slotTimes;
 
     Season testSeason;
 
-
     @BeforeEach
     void init() {
+        testDataUtils.createTierSystem("pingpong");
+        testDataUtils.createSeason();
+        SlotManagement preSlot = SlotManagement.builder()
+            .futureSlotTime(12)
+            .pastSlotTime(0)
+            .openMinute(5)
+            .gameInterval(15)
+            .startTime(LocalDateTime.now().minusDays(1))
+            .build();
+        slotManagementRepository.save(preSlot);
         Random random = new Random();
         Integer userCount = random.nextInt(10) + 5;
         Integer pppGap = random.nextInt(100) + 50;
@@ -132,5 +148,4 @@ class MatchBothServiceTest {
             matchService.cancelMatch(UserDto.from(users.get(2)), this.slotTimes.get(2));
         });
     }
-
 }
