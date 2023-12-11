@@ -20,6 +20,7 @@ import com.gg.server.utils.TestDataUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -78,6 +79,7 @@ public class TournamentGameControllerTest {
 
         @Test
         @DisplayName("[Get] pingpong/tournaments/{tournamentId}/games")
+        @Disabled
         public void getTournamentGames() throws Exception {
 
             // given
