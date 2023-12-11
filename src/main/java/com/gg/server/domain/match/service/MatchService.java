@@ -144,7 +144,7 @@ public class MatchService {
         if (penaltyService.isPenaltyUser(userDto.getIntraId())) {
             throw new PenaltyUserSlotException();
         }
-        if (isNotEndedTournament(startTime)) {
+        if (isExistTournamentNotEnded(startTime)) {
             throw new TournamentConflictException();
         }
         if (gameRepository.findByStartTime(startTime).isPresent()) {
@@ -196,15 +196,19 @@ public class MatchService {
     }
 
     /**
-     * 진행중인 토너먼트 유무 확인
+     * LIVE, BEFORE 상태인 토너먼트와 진행 시간이 겹치지 않으면 true, 겹치면 false
      * @param time 현재 시간
      * @return 종료되지 않은 토너먼트 있으면 true, 없으면 false
      */
-    private boolean isNotEndedTournament(LocalDateTime time) {
+    private boolean isExistTournamentNotEnded(LocalDateTime time) {
         List<Tournament> tournamentList = tournamentRepository.findAllByStatusIsNot(TournamentStatus.END);
         for (Tournament tournament : tournamentList) {
             if (time.isAfter(tournament.getStartTime()) &&
                 time.isBefore(tournament.getEndTime())) {
+                return false;
+            }
+            if (time.isEqual(tournament.getStartTime()) ||
+                time.isEqual(tournament.getEndTime())) {
                 return false;
             }
         }
