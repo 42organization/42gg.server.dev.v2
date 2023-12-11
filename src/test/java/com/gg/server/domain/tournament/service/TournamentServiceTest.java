@@ -98,6 +98,54 @@ class TournamentServiceTest {
         }
     }
 
+    @Nested
+    @DisplayName("토너먼트_유저_참가_취소_테스트")
+    class cancelTournamentUserRegistration {
+        @Test
+        @DisplayName("유저_참가_취소_성공")
+        void success() {
+            // given
+            Tournament tournament = createTournament(1L, TournamentStatus.BEFORE,
+                LocalDateTime.now(), LocalDateTime.now().plusHours(2));
+            User user = createUser("testUser");
+            TournamentUser tournamentUser = new TournamentUser(user, tournament, true, LocalDateTime.now());
+            tournament.addTournamentUser(tournamentUser);
+            given(tournamentRepository.findById(tournament.getId())).willReturn(Optional.of(tournament));
+            given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
+
+            // when, then
+            tournamentService.cancelTournamentUserRegistration(tournament.getId(), UserDto.from(user));
+        }
+
+        @Test
+        @DisplayName("찾을_수_없는_토너먼트")
+        void tournamentNotFound() {
+            // given
+            Long tournamentId = 1L;
+            User user = createUser("testUser");
+            given(tournamentRepository.findById(tournamentId)).willReturn(Optional.empty());
+
+            // when, then
+            assertThatThrownBy(()->tournamentService.cancelTournamentUserRegistration(tournamentId, UserDto.from(user)))
+                .isInstanceOf(TournamentNotFoundException.class);
+        }
+
+        @Test
+        @DisplayName("db에_없는_유저")
+        void userNotFound() {
+            // given
+            UserDto userDto = UserDto.builder().id(1L).intraId("testUser").build();
+            Tournament tournament = createTournament(1L, TournamentStatus.BEFORE,
+                LocalDateTime.now(), LocalDateTime.now().plusHours(2));
+            given(tournamentRepository.findById(tournament.getId())).willReturn(Optional.of(tournament));
+            given(userRepository.findById(userDto.getId())).willReturn(Optional.empty());
+
+            // when, then
+            assertThatThrownBy(()->tournamentService.cancelTournamentUserRegistration(tournament.getId(), userDto))
+                .isInstanceOf(UserNotFoundException.class);
+        }
+    }
+
     /**
      * 토너먼트 생성 requestDto
      * @param startTime 토너먼트 시작 시간

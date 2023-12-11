@@ -24,10 +24,12 @@ import com.gg.server.domain.user.dto.UserImageDto;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.global.exception.ErrorCode;
 import java.util.Optional;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -42,6 +44,7 @@ public class TournamentService {
     private final TournamentGameRepository tournamentGameRepository;
     private final GameRepository gameRepository;
 
+    private static final long ALLOWED_JOINED_NUMBER = 8;
     /**
      * 토너먼트 리스트 조회
      * @param pageRequest 페이지 정보
@@ -99,6 +102,31 @@ public class TournamentService {
             tournamentUserStatus = tournamentUser.get().getIsJoined() ? TournamentUserStatus.PLAYER : TournamentUserStatus.WAIT;
         }
         return new TournamentUserRegistrationResponseDto(tournamentUserStatus);
+    }
+
+    /**
+     * <p>유저 토너먼트 참가 신청 취소 매서드</p>
+     * <p>참가자가 WAIT 이거나 PLAYER 로 해당 토너먼트에 신청을 한 상태일때만 취소해 준다.</p>
+     * @param tournamentId 타겟 토너먼트
+     * @param user 타겟 유저(사용자 본인)
+     * @return
+     */
+    @Transactional
+    public TournamentUserRegistrationResponseDto cancelTournamentUserRegistration(Long tournamentId, UserDto user) {
+        Tournament targetTournament = tournamentRepository.findById(tournamentId)
+            .orElseThrow(() -> new TournamentNotFoundException("target tournament not found", ErrorCode.TOURNAMENT_NOT_FOUND));
+
+        List<TournamentUser> tournamentUserList = targetTournament.getTournamentUsers();
+        TournamentUser targetTournamentUser = tournamentUserList.stream()
+            .filter(tu -> (tu.getUser().getId().equals(user.getId())))
+            .findAny()
+            .orElseThrow(()-> new TournamentNotFoundException("토너먼트 신청자가 아닙니다.", ErrorCode.TOURNAMENT_NOT_FOUND));
+        tournamentUserList.remove(targetTournamentUser);
+        if (targetTournamentUser.getIsJoined() && tournamentUserList.size() >= ALLOWED_JOINED_NUMBER) {
+            tournamentUserList.get(Long.valueOf(ALLOWED_JOINED_NUMBER).intValue() - 1).updateIsJoined(true);
+        }
+        tournamentUserRepository.delete(targetTournamentUser);
+        return new TournamentUserRegistrationResponseDto(TournamentUserStatus.BEFORE);
     }
 
     /**
