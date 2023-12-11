@@ -430,7 +430,7 @@ public class TestDataUtils {
                 .endTime(endTime)
                 .type(TournamentType.ROOKIE)
                 .status(status).build();
-        return  tournamentRepository.save(tournament);
+        return tournamentRepository.save(tournament);
     }
 
     /**
@@ -451,8 +451,9 @@ public class TestDataUtils {
                 .endTime(endTime)
                 .type(type)
                 .status(status).build();
-        return  tournamentRepository.save(tournament);
+        return tournamentRepository.save(tournament);
     }
+
     /**
      * 테스트용 토너먼트 생성 RequestDto 반환.
      * @param startTime
@@ -591,6 +592,26 @@ public class TestDataUtils {
         TournamentGame tournamentGame = new TournamentGame(gameRepository.findById(gameInfoDto.getGameId()).orElseThrow(GameNotExistException::new), tournament, round);
         tournamentGameRepository.save(tournamentGame);
         return tournamentGame;
+    }
+    /**
+     * 테스트용 게임 생성 및 반환
+     * @param season
+     * @param status
+     * @param mode
+     * @param startTime
+     * @param endTime
+     * @return 테스트용 게임
+     */
+    public Game createGame(Long id, Season season, StatusType status, Mode mode, LocalDateTime startTime, LocalDateTime endTime) {
+        Game game = Game.builder()
+                .id(id)
+                .season(season)
+                .status(status)
+                .mode(mode)
+                .startTime(startTime)
+                .endTime(endTime)
+                .build();
+        return (gameRepository.save(game));
     }
 
     /**
