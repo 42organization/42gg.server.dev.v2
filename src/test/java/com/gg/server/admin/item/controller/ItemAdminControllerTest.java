@@ -15,6 +15,7 @@ import com.gg.server.domain.item.data.Item;
 import com.gg.server.domain.item.type.ItemType;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
+import com.gg.server.global.utils.ItemImageHandler;
 import com.gg.server.utils.ItemTestUtils;
 import com.gg.server.utils.TestDataUtils;
 import java.util.List;
@@ -23,9 +24,11 @@ import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -52,6 +55,8 @@ class ItemAdminControllerTest {
     MockMvc mockMvc;
     @Autowired
     ItemTestUtils itemTestUtils;
+    @MockBean
+    ItemImageHandler ItemImageHandler;
 
     Item item;
     @BeforeEach
@@ -88,28 +93,32 @@ class ItemAdminControllerTest {
         assertThat(result.getHistoryList().get(0).getPrice());
     }
 
-//    @Test
-//    @DisplayName("POST /pingpong/admin/items/history/{itemId}")
-//    public void updateItemTest() throws Exception {
-//        String accessToken = testDataUtils.getAdminLoginAccessToken();
-//        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
-//        String creatorId = userRepository.getById(userId).getIntraId();
-//        MockMultipartFile image = new MockMultipartFile("file", "imagefile.jpeg", "image/jpeg", "<<jpeg data>>".getBytes());
-//        MockMultipartFile jsonFile = new MockMultipartFile("itemRequestDto", "",
-//            "application/json",
-//            ("{\"name\": \"TEST\", "
-//                + "\"mainContent\": \"TESTING\", "
-//                + "\"subContent\": \"TESTING\", "
-//                + "\"price\": 42, "
-//                + "\"discount\": 50, "
-//                + "\"itemType\": \"MEGAPHONE\"}").getBytes());
-//        String contentAsString = mockMvc.perform(multipart("/pingpong/admin/items/{itemId}", item.getId())
-////                .file(image)
-//                .file(jsonFile)
-//                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
-//                .andExpect(status().isNoContent())
-//                .andReturn().getResponse().getContentAsString();
-//    }
+    @Test
+    @DisplayName("POST /pingpong/admin/items/history/{itemId}")
+    public void updateItemTest() throws Exception {
+        Mockito.when(ItemImageHandler.uploadToS3(Mockito.any(), Mockito.anyString()))
+            .thenAnswer(invocation -> invocation.getArgument(1, String.class));
+
+
+        String accessToken = testDataUtils.getAdminLoginAccessToken();
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
+        String creatorId = userRepository.getById(userId).getIntraId();
+        MockMultipartFile image = new MockMultipartFile("imgData", "imagefile.jpeg", "image/jpeg", "<<jpeg data>>".getBytes());
+        MockMultipartFile jsonFile = new MockMultipartFile("updateItemInfo", "",
+            "application/json",
+            ("{\"name\": \"TEST\", "
+                + "\"mainContent\": \"TESTING\", "
+                + "\"subContent\": \"TESTING\", "
+                + "\"price\": 42, "
+                + "\"discount\": 50, "
+                + "\"itemType\": \"MEGAPHONE\"}").getBytes());
+        String contentAsString = mockMvc.perform(multipart("/pingpong/admin/items/{itemId}", item.getId())
+                .file(image)
+                .file(jsonFile)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isNoContent())
+                .andReturn().getResponse().getContentAsString();
+    }
 
     @Test
     @DisplayName("DELETE /pingpong/admin/items/{itemId}")
@@ -117,6 +126,7 @@ class ItemAdminControllerTest {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
         String deleterId = userRepository.getById(userId).getIntraId();
+
         String contentAsString = mockMvc.perform(delete("/pingpong/admin/items/{itemId}", item.getId())
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isNoContent())

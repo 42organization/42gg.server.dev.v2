@@ -92,6 +92,11 @@ public class TestDataUtils {
         return tokenProvider.createToken(user.getId());
     }
 
+    public String getLoginAccessTokenFromUser(User user) {
+        return tokenProvider.createToken(user.getId());
+    }
+
+
     public String getAdminLoginAccessToken() {
         User user = User.builder()
                 .eMail("email")
