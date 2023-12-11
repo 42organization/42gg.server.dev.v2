@@ -26,17 +26,24 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/pingpong/")
+@RequestMapping("/pingpong/match")
 public class MatchController {
     private final MatchService matchService;
     private final MatchFindService matchFindService;
-    @PostMapping("match")
+
+    /**
+     * 유저 슬롯 입장 요청 API (== 매칭 요청 API)
+     * @param matchRequestDto
+     * @param user 매칭 요청한 유저
+     * @return 201 (Created)
+     */
+    @PostMapping
     public ResponseEntity createUserMatch(@RequestBody @Valid MatchRequestDto matchRequestDto,
                                           @Parameter(hidden = true) @Login UserDto user) {
         matchService.makeMatch(user, matchRequestDto.getOption(), matchRequestDto.getStartTime());
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
-    @DeleteMapping("match")
+    @DeleteMapping
     public ResponseEntity deleteUserMatch(@RequestParam("startTime")
                                               @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime startTime,
                                           @Parameter(hidden = true) @Login UserDto user) {
@@ -44,13 +51,19 @@ public class MatchController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @GetMapping("match/time/scope")
+    /**
+     * 특정 시간대의 경기 매칭 가능 상태 조회 API
+     * @param mode : BOTH, NORMAL, RANK
+     * @param user
+     * @return
+     */
+    @GetMapping("/time/scope")
     public SlotStatusResponseListDto getMatchTimeScope(@RequestParam (required = true) String mode,
                                                        @Parameter(hidden = true) @Login UserDto user){
         return matchFindService.getAllMatchStatus(user, Option.getEnumValue(mode));
     }
 
-    @GetMapping("match")
+    @GetMapping
     public MatchStatusResponseListDto getCurrentMatch(@Parameter(hidden = true) @Login UserDto user) {
         return matchFindService.getCurrentMatch(user);
     }

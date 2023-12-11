@@ -59,16 +59,6 @@ public class Tournament extends BaseTimeEntity {
     private List<TournamentUser> tournamentUsers = new ArrayList<>();
 
     @Builder
-    public Tournament(String title, String contents, LocalDateTime startTime, LocalDateTime endTime, TournamentType type, TournamentStatus status) {
-        this.title = title;
-        this.contents = contents;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.type = type;
-        this.status = status;
-    }
-
-    @Builder
     public Tournament(String title, String contents, LocalDateTime startTime, LocalDateTime endTime, TournamentType type, TournamentStatus status, User winner, List<TournamentGame> tournamentGames, List<TournamentUser> tournamentUsers) {
         this.title = title;
         this.contents = contents;
@@ -79,29 +69,6 @@ public class Tournament extends BaseTimeEntity {
         this.tournamentGames = tournamentGames != null ? tournamentGames : new ArrayList<>();
         this.tournamentUsers = tournamentUsers != null ? tournamentUsers : new ArrayList<>();
     }
-
-    static public Tournament of(String title, String contents, LocalDateTime startTime, LocalDateTime endTime, TournamentType type, TournamentStatus status) {
-        return Tournament.builder()
-                .title(title)
-                .contents(contents)
-                .startTime(startTime)
-                .endTime(endTime)
-                .type(type)
-                .status(status)
-                .build();
-    }
-
-    // TODO TournamentDto 사용할 건지 고민해보기
-//    static public Tournament from(TournamentDto tournamentDto) {
-//        return Tournament.builder()
-//                .title(tournamentDto.getTitle())
-//                .contents(tournamentDto.getContents())
-//                .startTime(tournamentDto.getStartTime())
-//                .endTime(tournamentDto.getEndTime())
-//                .type(tournamentDto.getType())
-//                .status(tournamentDto.getStatus())
-//                .build();
-//    }
 
     public void update(String title, String contents, LocalDateTime startTime, LocalDateTime endTime, TournamentType type, TournamentStatus status) {
         this.title = title;
