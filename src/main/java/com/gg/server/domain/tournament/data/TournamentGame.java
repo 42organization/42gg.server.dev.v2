@@ -6,10 +6,8 @@ import com.gg.server.global.utils.BaseTimeEntity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+
+import lombok.*;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -41,9 +39,18 @@ public class TournamentGame extends BaseTimeEntity {
      * @param tournament
      * @param tournamentRound
      */
+    @Builder
     public TournamentGame(Game game, Tournament tournament, TournamentRound tournamentRound) {
         this.game = game;
         this.tournament = tournament;
         this.tournamentRound = tournamentRound;
+    }
+
+    /**
+     * TournamentGame의 게임 정보를 업데이트한다.
+     * @param game
+     */
+    public void updateGame(Game game) {
+        this.game = game;
     }
 }
