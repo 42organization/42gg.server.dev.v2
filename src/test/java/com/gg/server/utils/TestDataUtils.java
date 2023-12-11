@@ -95,7 +95,7 @@ public class TestDataUtils {
         return tokenProvider.createToken(user.getId());
     }
 
-    public User createNewUser(){
+    public User createNewUser() {
         String randomId = UUID.randomUUID().toString().substring(0, 30);
         User user = User.builder()
                 .eMail("email")
@@ -109,21 +109,21 @@ public class TestDataUtils {
         return user;
     }
 
-    public User createNewUser(String intraId){
+    public User createNewUser(String intraId) {
         User user = User.builder()
-            .eMail("email")
-            .intraId(intraId)
-            .racketType(RacketType.PENHOLDER)
-            .snsNotiOpt(SnsType.NONE)
-            .roleType(RoleType.USER)
-            .totalExp(1000)
-            .build();
+                .eMail("email")
+                .intraId(intraId)
+                .racketType(RacketType.PENHOLDER)
+                .snsNotiOpt(SnsType.NONE)
+                .roleType(RoleType.USER)
+                .totalExp(1000)
+                .build();
         userRepository.save(user);
         return user;
     }
 
     public User createNewUser(String intraId, String email, RacketType racketType,
-                              SnsType snsType, RoleType roleType){
+                              SnsType snsType, RoleType roleType) {
         User user = User.builder()
                 .eMail(email)
                 .intraId(intraId)
@@ -136,7 +136,7 @@ public class TestDataUtils {
         return user;
     }
 
-    public User createNewUser(int totalExp){
+    public User createNewUser(int totalExp) {
         String randomId = UUID.randomUUID().toString().substring(0, 30);
         User user = User.builder()
                 .eMail("email")
@@ -159,15 +159,15 @@ public class TestDataUtils {
         LocalDateTime startTime, endTime;
         Season season = createSeason();
         createUserRank(curUser, "testUserMessage", season);
-        Mode mode = (currentMatchMode == "RANK")? Mode.RANK : Mode.NORMAL;
+        Mode mode = (currentMatchMode == "RANK") ? Mode.RANK : Mode.NORMAL;
         createGame(curUser, LocalDateTime.now().minusMinutes(100), LocalDateTime.now().minusMinutes(85), season, mode);
         createGame(curUser, LocalDateTime.now().minusMinutes(50), LocalDateTime.now().minusMinutes(35), season, mode);
         LocalDateTime now = LocalDateTime.now();
-        if (event.equals("match")){
+        if (event.equals("match")) {
             startTime = now.plusMinutes(10);
             endTime = startTime.plusMinutes(15);
             return createGame(curUser, startTime, endTime, season, mode);
-        }else if (event.equals("game")){
+        } else if (event.equals("game")) {
             startTime = now.minusMinutes(5);
             endTime = startTime.plusMinutes(15);
             return createGame(curUser, startTime, endTime, season, mode);
@@ -201,7 +201,7 @@ public class TestDataUtils {
     }
 
 
-    public Season createSeason(){
+    public Season createSeason() {
         LocalDateTime startTime = LocalDateTime.now();
         LocalDateTime endTime = startTime.plusMonths(1);
         Season season = seasonRepository.findCurrentSeason(LocalDateTime.now()).orElse(null);
@@ -213,25 +213,25 @@ public class TestDataUtils {
 
     public void createUserRank(User newUser, String statusMessage, Season season) {
         if (rankRepository.findByUserIdAndSeasonId(newUser.getId(), season.getId()).isPresent())
-            return ;
+            return;
         String zSetKey = RedisKeyManager.getZSetKey(season.getId());
         String hashKey = RedisKeyManager.getHashKey(season.getId());
         redisRepository.addRankData(hashKey, newUser.getId(),
                 new RankRedis(newUser.getId(), "aa", season.getStartPpp(), 0, 0, statusMessage, "https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/nheo.jpeg", "#000000"));
         Rank userRank = Rank.builder()
-                        .user(newUser)
-                        .season(season)
-                        .ppp(season.getStartPpp())
-                        .wins(0)
-                        .losses(0)
-                        .statusMessage(statusMessage)
-                        .build();
+                .user(newUser)
+                .season(season)
+                .ppp(season.getStartPpp())
+                .wins(0)
+                .losses(0)
+                .statusMessage(statusMessage)
+                .build();
         rankRepository.save(userRank);
     }
 
     public void createUserRank(User newUser, String statusMessage, Season season, Tier tier) {
         if (rankRepository.findByUserIdAndSeasonId(newUser.getId(), season.getId()).isPresent())
-            return ;
+            return;
         String zSetKey = RedisKeyManager.getZSetKey(season.getId());
         String hashKey = RedisKeyManager.getHashKey(season.getId());
         redisRepository.addRankData(hashKey, newUser.getId(),
@@ -290,27 +290,27 @@ public class TestDataUtils {
     /**
      * <p>테스트용 토너먼트 반환. 매개변수 값들만 초기화</p>
      * @param startTime 시작 시간
-     * @param endTime 종료 시간
-     * @param status 토너먼트 상태
+     * @param endTime   종료 시간
+     * @param status    토너먼트 상태
      * @return 테스트용 토너먼트
      */
     public Tournament createTournament(LocalDateTime startTime, LocalDateTime endTime, TournamentStatus status) {
         Tournament tournament = Tournament.builder()
-            .title("title")
-            .contents("contents")
-            .startTime(startTime)
-            .endTime(endTime)
-            .type(TournamentType.ROOKIE)
-            .status(status).build();
-        return  tournamentRepository.save(tournament);
+                .title("title")
+                .contents("contents")
+                .startTime(startTime)
+                .endTime(endTime)
+                .type(TournamentType.ROOKIE)
+                .status(status).build();
+        return tournamentRepository.save(tournament);
     }
 
     /**
      * 테스트용 토너먼트 반환.
-     * @param title 제목
+     * @param title     제목
      * @param startTime 시작 시간
-     * @param endTime 종료 시간
-     * @param status 상태
+     * @param endTime   종료 시간
+     * @param status    상태
      * @return 테스트용 토너먼트
      */
     public Tournament createTournament(String title, LocalDateTime startTime, LocalDateTime endTime, TournamentStatus status) {
@@ -321,17 +321,17 @@ public class TestDataUtils {
                 .endTime(endTime)
                 .type(TournamentType.ROOKIE)
                 .status(status).build();
-        return  tournamentRepository.save(tournament);
+        return tournamentRepository.save(tournament);
     }
 
     /**
      * 테스트용 토너먼트 반환.
-     * @param title 제목
-     * @param contents 내용
+     * @param title     제목
+     * @param contents  내용
      * @param startTime 시작 시간
-     * @param endTime 종료 시간
-     * @param type 타입
-     * @param status 상태
+     * @param endTime   종료 시간
+     * @param type      타입
+     * @param status    상태
      * @return 테스트용 토너먼트
      */
     public Tournament createTournament(String title, String contents, LocalDateTime startTime, LocalDateTime endTime, TournamentType type, TournamentStatus status) {
@@ -342,8 +342,9 @@ public class TestDataUtils {
                 .endTime(endTime)
                 .type(type)
                 .status(status).build();
-        return  tournamentRepository.save(tournament);
+        return tournamentRepository.save(tournament);
     }
+
     /**
      * 테스트용 토너먼트 생성 RequestDto 반환.
      * @param startTime
@@ -368,40 +369,40 @@ public class TestDataUtils {
      */
     public Tournament createTournamentByEnum(TournamentType tournamentType, TournamentStatus tournamentStatus, LocalDateTime startTime) {
         Tournament tournament = Tournament.builder()
-            .title("testTournament")
-            .contents("contents")
-            .startTime(startTime)
-            .endTime(startTime.plusDays(1))
-            .type(tournamentType)
-            .status(tournamentStatus).build();
-        return  tournamentRepository.save(tournament);
+                .title("testTournament")
+                .contents("contents")
+                .startTime(LocalDateTime.now())
+                .endTime(LocalDateTime.now().plusDays(1))
+                .type(tournamentType)
+                .status(tournamentStatus).build();
+        return tournamentRepository.save(tournament);
     }
 
     /**
      * 테스트용 토너먼트 RequestDto 반환. 매개변수 값들만 초기화
      * @param startTime 시작 시간
-     * @param endTime 종료 시간
-     * @param type 토너먼트 종류
+     * @param endTime   종료 시간
+     * @param type      토너먼트 종류
      * @return 테스트용 토너먼트 RequestDto
      */
     public TournamentAdminUpdateRequestDto createUpdateRequestDto(LocalDateTime startTime, LocalDateTime endTime, TournamentType type) {
         return new TournamentAdminUpdateRequestDto(
-            "title",
-            "contents",
-            startTime,
-            endTime,
-            type);
+                "title",
+                "contents",
+                startTime,
+                endTime,
+                type);
     }
 
     /**
      * <p>테스트용 토너먼트 게임 리스트 반환. 매개변수 값들만 초기화</p>
      * @param tournament 토너먼트 게임에 넣어 줄 토너먼트
-     * @param cnt 반환 리스트 크기, 8강기준 7개
+     * @param cnt        반환 리스트 크기, 8강기준 7개
      * @return 토너먼트 게임 리스트
      */
     public List<TournamentGame> createTournamentGameList(Tournament tournament, int cnt) {
         List<TournamentGame> tournamentGameList = new ArrayList<>();
-        TournamentRound [] values = TournamentRound.values();
+        TournamentRound[] values = TournamentRound.values();
 
         while (--cnt >= 0) {
             tournamentGameList.add(new TournamentGame(null, tournament, values[cnt]));
@@ -411,9 +412,10 @@ public class TestDataUtils {
 
     /**
      * <p>토너먼트 유저 생성 및 저장</p>
-     * @param user 토너먼트 참가 신청 유저
+     *
+     * @param user       토너먼트 참가 신청 유저
      * @param tournament 해당 토너먼트
-     * @param isJoined 참가자 1, 대기자 0
+     * @param isJoined   참가자 1, 대기자 0
      * @return
      */
     public TournamentUser createTournamentUser(User user, Tournament tournament, boolean isJoined) {
@@ -482,5 +484,25 @@ public class TestDataUtils {
         TournamentGame tournamentGame = new TournamentGame(gameRepository.findById(gameInfoDto.getGameId()).orElseThrow(GameNotExistException::new), tournament, round);
         tournamentGameRepository.save(tournamentGame);
         return tournamentGame;
+    }
+    /**
+     * 테스트용 게임 생성 및 반환
+     * @param season
+     * @param status
+     * @param mode
+     * @param startTime
+     * @param endTime
+     * @return 테스트용 게임
+     */
+    public Game createGame(Long id, Season season, StatusType status, Mode mode, LocalDateTime startTime, LocalDateTime endTime) {
+        Game game = Game.builder()
+                .id(id)
+                .season(season)
+                .status(status)
+                .mode(mode)
+                .startTime(startTime)
+                .endTime(endTime)
+                .build();
+        return (gameRepository.save(game));
     }
 }
