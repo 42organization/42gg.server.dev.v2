@@ -1,34 +1,30 @@
 package com.gg.server.domain.game;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gg.server.domain.game.dto.request.TournamentResultReqDto;
 import com.gg.server.domain.game.service.GameFindService;
 import com.gg.server.domain.game.service.GameService;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.dto.GameListResDto;
 import com.gg.server.domain.game.dto.GameTeamInfo;
-import com.gg.server.domain.game.dto.req.RankResultReqDto;
+import com.gg.server.domain.game.dto.request.RankResultReqDto;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.pchange.data.PChange;
 import com.gg.server.domain.pchange.data.PChangeRepository;
-import com.gg.server.domain.rank.data.Rank;
 import com.gg.server.domain.rank.data.RankRepository;
-import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RankRedisService;
-import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.data.SeasonRepository;
 import com.gg.server.domain.team.data.Team;
 import com.gg.server.domain.team.data.TeamRepository;
 import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.team.data.TeamUserRepository;
-import com.gg.server.domain.tier.data.Tier;
 import com.gg.server.domain.tier.data.TierRepository;
-import com.gg.server.domain.tier.exception.TierNotFoundException;
+import com.gg.server.domain.tournament.data.TournamentRepository;
 import com.gg.server.domain.user.data.User;
-import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
@@ -78,6 +74,8 @@ public class GameControllerTest {
     @Autowired
     PChangeRepository pChangeRepository;
     @Autowired
+    TournamentRepository tournamentRepository;
+    @Autowired
     RankRedisService rankRedisService;
     @Autowired
     RankRepository rankRepository;
@@ -97,38 +95,39 @@ public class GameControllerTest {
     private Season season;
     private User user1;
     private User user2;
+    private User user3;
     private Game game1;
     private Game game2;
 
     @BeforeEach
     void init() {
-        season = seasonRepository.save(new Season("test season", LocalDateTime.of(2023, 7, 14, 0, 0), LocalDateTime.of(2999, 12, 31, 23, 59),
-                1000, 100));
-        user1 = testDataUtils.createNewUser("test1", "test1@email", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
-        accessToken = tokenProvider.createToken(user1.getId());
-        user2 = testDataUtils.createNewUser("test2", "test2@email", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
-        Tier tier = tierRepository.findStartTier().orElseThrow(TierNotFoundException::new);
-        rankRepository.save(Rank.from(user1, season, season.getStartPpp(), tier));
-        rankRepository.save(Rank.from(user2, season, season.getStartPpp(), tier));
-        RankRedis userRank = RankRedis.from(UserDto.from(user1), season.getStartPpp(), tier.getImageUri());
-        String redisHashKey = RedisKeyManager.getHashKey(season.getId());
-        rankRedisRepository.addRankData(redisHashKey, user1.getId(), userRank);
-        userRank = RankRedis.from(UserDto.from(user2), season.getStartPpp(), tier.getImageUri());
-        rankRedisRepository.addRankData(redisHashKey, user2.getId(), userRank);
-
-        game1 = gameRepository.save(new Game(season, StatusType.WAIT, Mode.RANK, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
-        Team team1 = teamRepository.save(new Team(game1, 1, false));
-        Team team2 = teamRepository.save(new Team(game1, 2, true));
-        teamUserRepository.save(new TeamUser(team1, user1));
-        teamUserRepository.save(new TeamUser(team2, user2));
-        game2 = gameRepository.save(new Game(season, StatusType.WAIT, Mode.RANK, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
-        team1 = teamRepository.save(new Team(game2, 1, false));
-        team2 = teamRepository.save(new Team(game2, 2, true));
-        List<TeamUser> teams = new ArrayList<>();
-        teams.add(teamUserRepository.save(new TeamUser(team1, user1)));
-        teams.add(teamUserRepository.save(new TeamUser(team2, user2)));
-        gameService.expUpdates(game2, teams);
-        rankRedisService.updateRankRedis(teams.get(0), teams.get(1), game2);
+//        season = seasonRepository.save(new Season("test season", LocalDateTime.of(2023, 7, 14, 0, 0), LocalDateTime.of(2999, 12, 31, 23, 59),
+//                1000, 100));
+//        user1 = testDataUtils.createNewUser("test1", "test1@email", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
+//        accessToken = tokenProvider.createToken(user1.getId());
+//        user2 = testDataUtils.createNewUser("test2", "test2@email", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
+//        Tier tier = tierRepository.findStartTier().orElseThrow(TierNotFoundException::new);
+//        rankRepository.save(Rank.from(user1, season, season.getStartPpp(), tier));
+//        rankRepository.save(Rank.from(user2, season, season.getStartPpp(), tier));
+//        RankRedis userRank = RankRedis.from(UserDto.from(user1), season.getStartPpp(), tier.getImageUri());
+//        String redisHashKey = RedisKeyManager.getHashKey(season.getId());
+//        rankRedisRepository.addRankData(redisHashKey, user1.getId(), userRank);
+//        userRank = RankRedis.from(UserDto.from(user2), season.getStartPpp(), tier.getImageUri());
+//        rankRedisRepository.addRankData(redisHashKey, user2.getId(), userRank);
+//
+//        game1 = gameRepository.save(new Game(season, StatusType.WAIT, Mode.RANK, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
+//        Team team1 = teamRepository.save(new Team(game1, 1, false));
+//        Team team2 = teamRepository.save(new Team(game1, 2, true));
+//        teamUserRepository.save(new TeamUser(team1, user1));
+//        teamUserRepository.save(new TeamUser(team2, user2));
+//        game2 = gameRepository.save(new Game(season, StatusType.WAIT, Mode.RANK, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
+//        team1 = teamRepository.save(new Team(game2, 1, false));
+//        team2 = teamRepository.save(new Team(game2, 2, true));
+//        List<TeamUser> teams = new ArrayList<>();
+//        teams.add(teamUserRepository.save(new TeamUser(team1, user1)));
+//        teams.add(teamUserRepository.save(new TeamUser(team2, user2)));
+//        gameService.expUpdates(game2, teams);
+//        rankRedisService.updateRankRedis(teams.get(0), teams.get(1), game2);
     }
 
     @AfterEach
@@ -431,6 +430,225 @@ public class GameControllerTest {
         }
 
         // TODO : 랭크 게임 결과 입력 실패 테스트 (잘못된 점수 입력할 경우 InvalidParameterException 발생)
+    }
+
+    @Nested
+    @DisplayName("토너먼트 게임 점수 결과 입력")
+    class CreateTournamentResultTest {
+        @BeforeEach
+        void init() {
+            season = seasonRepository.save(new Season("test season", LocalDateTime.of(2023, 7, 14, 0, 0), LocalDateTime.of(2999, 12, 31, 23, 59),
+                    1000, 100));
+            user1 = testDataUtils.createNewUser("test1", "test1@email", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
+            user2 = testDataUtils.createNewUser("test2", "test2@email", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
+        }
+        @Test
+        @DisplayName("입력 성공")
+        public void success() throws Exception {
+            //given
+            String url = "/pingpong/games/tournament";
+            Game game = gameRepository.save(new Game(season, StatusType.WAIT, Mode.TOURNAMENT, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
+            Team team1 = teamRepository.save(new Team(game, -1, false));
+            Team team2 = teamRepository.save(new Team(game, -1, false));
+            String ac1 = tokenProvider.createToken(user1.getId());
+            teamUserRepository.save(new TeamUser(team1, user1));
+            teamUserRepository.save(new TeamUser(team2, user2));
+            String content = objectMapper.writeValueAsString(new TournamentResultReqDto(game.getId(), team1.getId(), 1, team2.getId(), 2));
+            //when
+            String contentAsString = mockMvc.perform(post(url)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + ac1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                    .andExpect(status().isCreated())
+                    .andReturn().getResponse().getContentAsString();
+            //then
+            System.out.println(contentAsString);
+        }
+
+        @Test
+        @DisplayName("잘못된 Game Id")
+        public void invalidGameId() throws Exception {
+            //given
+            String url = "/pingpong/games/tournament";
+            Game game = gameRepository.save(testDataUtils.createGame(99999999L, season, StatusType.WAIT, Mode.TOURNAMENT, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
+            Team team1 = teamRepository.save(new Team(game, -1, false));
+            Team team2 = teamRepository.save(new Team(game, -1, false));
+            String ac1 = tokenProvider.createToken(user1.getId());
+            teamUserRepository.save(new TeamUser(team1, user1));
+            teamUserRepository.save(new TeamUser(team2, user2));
+            String content = objectMapper.writeValueAsString(new TournamentResultReqDto(99999999L, team1.getId(), 1, team2.getId(), 2));
+            //when
+            String contentAsString = mockMvc.perform(post(url)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + ac1)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(content))
+                    .andExpect(status().isNotFound())
+                    .andReturn().getResponse().getContentAsString();
+            //then
+            System.out.println(contentAsString);
+        }
+
+        @Test
+        @DisplayName("잘못된 Team Id")
+        public void invalidTeamId() throws Exception {
+            //given
+            String url = "/pingpong/games/tournament";
+            Game game = gameRepository.save(new Game(season, StatusType.WAIT, Mode.TOURNAMENT, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
+            Game game2 = gameRepository.save(new Game(season, StatusType.WAIT, Mode.TOURNAMENT, LocalDateTime.now().minusMinutes(30), LocalDateTime.now().minusMinutes(15)));
+            Team team1 = teamRepository.save(new Team(game, -1, false));
+            Team team2 = teamRepository.save(new Team(game, -1, false));
+            Team team3 = teamRepository.save(new Team(game2, -1, false));
+            String ac1 = tokenProvider.createToken(user1.getId());
+            teamUserRepository.save(new TeamUser(team1, user1));
+            teamUserRepository.save(new TeamUser(team2, user2));
+            String content1 = objectMapper.writeValueAsString(new TournamentResultReqDto(game.getId(), -1L, 1, team2.getId(), 2));
+            String content2 = objectMapper.writeValueAsString(new TournamentResultReqDto(game.getId(), team1.getId(), 1, -1L, 2));
+            String content3 = objectMapper.writeValueAsString(new TournamentResultReqDto(game.getId(), team1.getId(), 1, team3.getId(), 2));
+            //when1 - 존재하지 않는 myTeamId
+            String contentAsString1 = mockMvc.perform(post(url)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + ac1)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(content1))
+                    .andExpect(status().isBadRequest())
+                    .andReturn().getResponse().getContentAsString();
+            //then
+            System.out.println(contentAsString1);
+
+            //when2 - 존재하지 않는 enemyTeamId
+            String contentAsString2 = mockMvc.perform(post(url)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + ac1)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(content2))
+                    .andExpect(status().isBadRequest())
+                    .andReturn().getResponse().getContentAsString();
+            //then2
+            System.out.println(contentAsString2);
+
+            //when3 - game에 존재하지 않은 TeamId
+            String contentAsString3 = mockMvc.perform(post(url)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + ac1)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(content3))
+                    .andExpect(status().isNotFound())
+                    .andReturn().getResponse().getContentAsString();
+            //then3
+            System.out.println(contentAsString2);
+        }
+
+        @Test
+        @DisplayName("잘못된 점수")
+        public void invalidScore() throws Exception {
+            //given
+            String url = "/pingpong/games/tournament";
+            Game game = gameRepository.save(new Game(season, StatusType.WAIT, Mode.TOURNAMENT, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
+            Team team1 = teamRepository.save(new Team(game, -1, false));
+            Team team2 = teamRepository.save(new Team(game, -1, false));
+            String ac1 = tokenProvider.createToken(user1.getId());
+            teamUserRepository.save(new TeamUser(team1, user1));
+            teamUserRepository.save(new TeamUser(team2, user2));
+            String content1 = objectMapper.writeValueAsString(new TournamentResultReqDto(game.getId(), team1.getId(), -1, team2.getId(), 2));
+            String content2 = objectMapper.writeValueAsString(new TournamentResultReqDto(game.getId(), team1.getId(), 1, team2.getId(), 1));
+            String content3 = objectMapper.writeValueAsString(new TournamentResultReqDto(game.getId(), team1.getId(), 3, team2.getId(), 0));
+            //when1
+            String contentAsString1 = mockMvc.perform(post(url)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + ac1)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(content1))
+                    .andExpect(status().isBadRequest())
+                    .andReturn().getResponse().getContentAsString();
+            //then1
+            System.out.println(contentAsString1);
+
+            //when2
+            String contentAsString2 = mockMvc.perform(post(url)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + ac1)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(content2))
+                    .andExpect(status().isBadRequest())
+                    .andReturn().getResponse().getContentAsString();
+            //then2
+            System.out.println(contentAsString2);
+
+            //when3
+            String contentAsString3 = mockMvc.perform(post(url)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + ac1)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(content3))
+                    .andExpect(status().isBadRequest())
+                    .andReturn().getResponse().getContentAsString();
+            //then3
+            System.out.println(contentAsString3);
+        }
+
+        @Test
+        @DisplayName("잘못된 Game Status")
+        public void invalidStatus() throws Exception {
+            //given
+            String url = "/pingpong/games/tournament";
+            Game game = gameRepository.save(new Game(season, StatusType.END, Mode.TOURNAMENT, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
+            Team team1 = teamRepository.save(new Team(game, -1, false));
+            Team team2 = teamRepository.save(new Team(game, -1, false));
+            String ac1 = tokenProvider.createToken(user1.getId());
+            teamUserRepository.save(new TeamUser(team1, user1));
+            teamUserRepository.save(new TeamUser(team2, user2));
+            String content = objectMapper.writeValueAsString(new TournamentResultReqDto(game.getId(), team1.getId(), 1, team2.getId(), 2));
+            //when
+            String contentAsString = mockMvc.perform(post(url)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + ac1)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(content))
+                    .andExpect(status().isBadRequest())
+                    .andReturn().getResponse().getContentAsString();
+            //then
+            System.out.println(contentAsString);
+        }
+
+        @Test
+        @DisplayName("이미 점수 입력이 완료된 게임")
+        public void scoreAlreadyEntered() throws Exception {
+            //given
+            String url = "/pingpong/games/tournament";
+            Game game = gameRepository.save(new Game(season, StatusType.BEFORE, Mode.TOURNAMENT, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
+            Team team1 = teamRepository.save(new Team(game, 2, true));
+            Team team2 = teamRepository.save(new Team(game, 1, false));
+            String ac1 = tokenProvider.createToken(user1.getId());
+            teamUserRepository.save(new TeamUser(team1, user1));
+            teamUserRepository.save(new TeamUser(team2, user2));
+            String content = objectMapper.writeValueAsString(new TournamentResultReqDto(game.getId(), team1.getId(), 2, team2.getId(), 1));
+            //when
+            String contentAsString = mockMvc.perform(post(url)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + ac1)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(content))
+                    .andExpect(status().isBadRequest())
+                    .andReturn().getResponse().getContentAsString();
+            //then
+            System.out.println(contentAsString);
+        }
+
+        @Test
+        @DisplayName("잘못된 Team User")
+        public void invalidTeamUser() throws Exception {
+            //given
+            String url = "/pingpong/games/tournament";
+            user3 = testDataUtils.createNewUser("test3", "test3@email", RacketType.NONE, SnsType.EMAIL, RoleType.USER);
+            Game game = gameRepository.save(new Game(season, StatusType.WAIT, Mode.TOURNAMENT, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
+            Team team1 = teamRepository.save(new Team(game, -1, false));
+            Team team2 = teamRepository.save(new Team(game, -1, false));
+            String ac1 = tokenProvider.createToken(user1.getId());
+            teamUserRepository.save(new TeamUser(team1, user3));
+            teamUserRepository.save(new TeamUser(team2, user2));
+            String content = objectMapper.writeValueAsString(new TournamentResultReqDto(game.getId(), team1.getId(), 1, team2.getId(), 2));
+            //when
+            String contentAsString1 = mockMvc.perform(post(url)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + ac1)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(content))
+                    .andExpect(status().isBadRequest())
+                    .andReturn().getResponse().getContentAsString();
+            //then
+            System.out.println(contentAsString1);
+        }
     }
 
     // POST /pingpong/games/normal
