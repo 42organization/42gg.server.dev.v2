@@ -307,7 +307,7 @@ public class TournamentFindControllerTest {
                     TournamentType.ROOKIE, TournamentStatus.BEFORE);
             User user = testDataUtils.createNewUser("test");
             testDataUtils.createTournamentUser(user, tournament, true);
-            tournament.update_winner(user);
+            tournament.updateWinner(user);
 
             Long tournamentId = tournament.getId();
             String url = "/pingpong/tournaments/" + tournamentId;
