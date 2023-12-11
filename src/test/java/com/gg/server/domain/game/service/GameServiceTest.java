@@ -2,8 +2,7 @@ package com.gg.server.domain.game.service;
 
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
-import com.gg.server.domain.game.dto.req.RankResultReqDto;
-import com.gg.server.domain.game.service.GameService;
+import com.gg.server.domain.game.dto.request.RankResultReqDto;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.rank.data.Rank;
