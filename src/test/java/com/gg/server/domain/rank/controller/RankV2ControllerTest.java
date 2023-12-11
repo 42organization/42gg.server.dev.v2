@@ -50,14 +50,6 @@ class RankV2ControllerTest {
     @MockBean
     private AuthTokenProvider authTokenProvider;
 
-    @BeforeEach
-    void setUp() {
-    }
-
-    @AfterEach
-    void tearDown() {
-    }
-
     @Test
     @WithMockUser(username = "TestUser")
     void getExpRankPage() throws Exception {
