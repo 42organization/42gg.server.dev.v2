@@ -113,16 +113,17 @@ public class TournamentService {
      */
     @Transactional
     public TournamentUserRegistrationResponseDto cancelTournamentUserRegistration(Long tournamentId, UserDto user) {
-        Tournament targetTournament = tournamentRepository.findById(tournamentId).orElseThrow(() ->
-            new TournamentNotFoundException("target tournament not found", ErrorCode.TOURNAMENT_NOT_FOUND));
-        User loginUser = userRepository.findById(user.getId()).orElseThrow(UserNotFoundException::new);
+        Tournament targetTournament = tournamentRepository.findById(tournamentId)
+            .orElseThrow(() -> new TournamentNotFoundException("target tournament not found", ErrorCode.TOURNAMENT_NOT_FOUND));
 
         List<TournamentUser> tournamentUserList = targetTournament.getTournamentUsers();
-        TournamentUser targetTournamentUser = tournamentUserList.stream().filter(tu->(tu.getUser().equals(loginUser))).findAny()
-            .orElseThrow(()->new TournamentNotFoundException("토너먼트 신청자가 아닙니다.", ErrorCode.TOURNAMENT_NOT_FOUND));
+        TournamentUser targetTournamentUser = tournamentUserList.stream()
+            .filter(tu -> (tu.getUser().getId().equals(user.getId())))
+            .findAny()
+            .orElseThrow(()-> new TournamentNotFoundException("토너먼트 신청자가 아닙니다.", ErrorCode.TOURNAMENT_NOT_FOUND));
         tournamentUserList.remove(targetTournamentUser);
-        if (targetTournamentUser.getIsJoined() && tournamentUserList.size()>=ALLOWED_JOINED_NUMBER) {
-            tournamentUserList.get(Long.valueOf(ALLOWED_JOINED_NUMBER).intValue()-1).updateIsJoined(true);
+        if (targetTournamentUser.getIsJoined() && tournamentUserList.size() >= ALLOWED_JOINED_NUMBER) {
+            tournamentUserList.get(Long.valueOf(ALLOWED_JOINED_NUMBER).intValue() - 1).updateIsJoined(true);
         }
         tournamentUserRepository.delete(targetTournamentUser);
         return new TournamentUserRegistrationResponseDto(TournamentUserStatus.BEFORE);
