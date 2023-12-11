@@ -205,7 +205,7 @@ public class TestDataUtils {
         LocalDateTime startTime, endTime;
         Season season = createSeason();
         createUserRank(curUser, "testUserMessage", season);
-        Mode mode = (currentMatchMode == "RANK")? Mode.RANK : Mode.NORMAL;
+        Mode mode = (currentMatchMode.equals(Mode.RANK.getCode()))? Mode.RANK : Mode.NORMAL;
         createGame(curUser, LocalDateTime.now().minusMinutes(100), LocalDateTime.now().minusMinutes(85), season, mode);
         createGame(curUser, LocalDateTime.now().minusMinutes(50), LocalDateTime.now().minusMinutes(35), season, mode);
         LocalDateTime now = LocalDateTime.now();
