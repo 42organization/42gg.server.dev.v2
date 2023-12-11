@@ -78,6 +78,10 @@ public class MatchTestUtils {
         return sampleSlots;
     }
     public Season makeTestSeason(Integer pppGap) {
+        Optional<Season> currentSeason = seasonRepository.findCurrentSeason(LocalDateTime.now());
+        if (currentSeason.isPresent()) {
+            return currentSeason.get();
+        }
         Season season = new Season(
                 "test",
                 LocalDateTime.now().minusDays(1),
