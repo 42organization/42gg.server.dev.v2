@@ -94,6 +94,22 @@ public class GameController {
         return new ResponseEntity<Void>(HttpStatus.ACCEPTED);
     }
 
+    /**
+     * 토너먼트 게임 결과 등록
+     * @param reqDto 요청 Dto
+     * @param user 사용자
+     * @exception InvalidParameterException 유효하지 않은 점수 입력할 경우
+     * @return 201 created
+     */
+    @PostMapping("/tournament")
+    synchronized ResponseEntity<Void> createTournamentResult(@Valid @RequestBody TournamentResultReqDto reqDto, @Parameter(hidden = true) @Login UserDto user) {
+        if (reqDto.getMyTeamScore() + reqDto.getEnemyTeamScore() > 3 || reqDto.getMyTeamScore() == reqDto.getEnemyTeamScore()) {
+            throw new InvalidParameterException("점수를 잘못 입력했습니다.", ErrorCode.VALID_FAILED);
+        }
+        gameService.createTournamentResult(reqDto, user.getId());
+        return new ResponseEntity<Void>(HttpStatus.CREATED);
+    }
+
     @GetMapping("/{gameId}/result/normal")
     ExpChangeResultResDto getNormalExpChange(@PathVariable Long gameId, @Parameter(hidden = true) @Login UserDto user) {
         return gameService.expChangeResult(gameId, user.getId());
