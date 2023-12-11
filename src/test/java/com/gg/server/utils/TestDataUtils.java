@@ -248,7 +248,7 @@ public class TestDataUtils {
 
 
     public Season createSeason(){
-        LocalDateTime startTime = LocalDateTime.now();
+        LocalDateTime startTime = LocalDateTime.now().minusMinutes(5);
         LocalDateTime endTime = startTime.plusMonths(1);
         Season season = seasonRepository.findCurrentSeason(LocalDateTime.now()).orElse(null);
         if (season == null)
@@ -548,7 +548,7 @@ public class TestDataUtils {
                 for (int i = 0; i < 5; i++) {
                     Tournament tournament = createTournamentByEnum(type, status, LocalDateTime.now().plusDays(day++));
                     tournamentResponseDtos.add(new TournamentResponseDto(tournament, winnerImage, joinUserCnt));
-                    tournament.update_winner(winner);
+                    tournament.updateWinner(winner);
                     for (int j = 0; j < joinUserCnt; j++) {
                         TournamentUser tournamentUser = new TournamentUser(userRepository.findByIntraId("42gg_tester" + j).get(), tournament, true, LocalDateTime.now());
                         tournamentUserRepository.save(tournamentUser);
