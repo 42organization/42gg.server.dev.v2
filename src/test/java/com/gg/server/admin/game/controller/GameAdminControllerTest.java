@@ -6,7 +6,7 @@ import com.gg.server.admin.game.dto.RankGamePPPModifyReqDto;
 import com.gg.server.config.TestRedisConfig;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.dto.GameTeamUser;
-import com.gg.server.domain.game.dto.req.RankResultReqDto;
+import com.gg.server.domain.game.dto.request.RankResultReqDto;
 import com.gg.server.domain.game.service.GameService;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.match.service.GameUpdateService;
