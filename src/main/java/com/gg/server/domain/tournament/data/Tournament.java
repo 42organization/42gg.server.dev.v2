@@ -94,4 +94,8 @@ public class Tournament extends BaseTimeEntity {
     public void update_winner(User winner) {
         this.winner = winner;
     }
+
+    public void updateStatus(TournamentStatus status) {
+        this.status = status;
+    }
 }
