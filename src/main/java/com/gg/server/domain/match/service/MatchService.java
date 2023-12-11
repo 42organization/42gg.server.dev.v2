@@ -5,8 +5,8 @@ import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.exception.GameAlreadyExistException;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.match.data.RedisMatchTime;
-import com.gg.server.domain.match.data.RedisMatchUser;
 import com.gg.server.domain.match.data.RedisMatchTimeRepository;
+import com.gg.server.domain.match.data.RedisMatchUser;
 import com.gg.server.domain.match.data.RedisMatchUserRepository;
 import com.gg.server.domain.match.dto.GameAddDto;
 import com.gg.server.domain.match.exception.EnrolledSlotException;
@@ -202,6 +202,9 @@ public class MatchService {
      */
     private boolean isExistTournamentNotEnded(LocalDateTime time) {
         List<Tournament> tournamentList = tournamentRepository.findAllByStatusIsNot(TournamentStatus.END);
+        if (tournamentList.isEmpty()) {
+            return false;
+        }
         for (Tournament tournament : tournamentList) {
             if (time.isAfter(tournament.getStartTime()) &&
                 time.isBefore(tournament.getEndTime())) {
