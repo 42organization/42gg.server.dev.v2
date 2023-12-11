@@ -76,7 +76,7 @@ public class TournamentFindControllerTest {
         @DisplayName("전체_조회")
         public void getTournamentList() throws Exception {
             // given
-            int page = 2;
+            int page = 1;
             int size = 20;
             String url = "/pingpong/tournaments/?page=" + page + "&size=" + size;
 
@@ -100,6 +100,8 @@ public class TournamentFindControllerTest {
                     assertThat(tournamentInfoList.get(i).getWinnerImageUrl()).isEqualTo(tournamentResponseDto.getWinnerImageUrl());
                     assertThat(tournamentInfoList.get(i).getPlayer_cnt()).isEqualTo(tournamentResponseDto.getPlayer_cnt());
                 }
+                if (i > 0)
+                    assertThat(tournamentInfoList.get(i).getStartTime()).isBefore(tournamentInfoList.get(i - 1).getEndTime());
             }
         }
 

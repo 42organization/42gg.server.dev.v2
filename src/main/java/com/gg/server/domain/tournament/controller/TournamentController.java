@@ -1,9 +1,6 @@
 package com.gg.server.domain.tournament.controller;
 
-import com.gg.server.domain.tournament.dto.TournamentUserRegistrationResponseDto;
-import com.gg.server.domain.tournament.dto.TournamentFilterRequestDto;
-import com.gg.server.domain.tournament.dto.TournamentListResponseDto;
-import com.gg.server.domain.tournament.dto.TournamentResponseDto;
+import com.gg.server.domain.tournament.dto.*;
 import com.gg.server.domain.tournament.service.TournamentService;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.utils.argumentresolver.Login;
@@ -13,14 +10,9 @@ import org.checkerframework.checker.index.qual.Positive;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
@@ -37,10 +29,10 @@ public class TournamentController {
      * @return 토너먼트 리스트
      */
     @GetMapping
-    TournamentListResponseDto getAllTournamentList(@ModelAttribute @Valid TournamentFilterRequestDto tournamentFilterRequestDto){
-        Pageable pageRequest = PageRequest.of(tournamentFilterRequestDto.getPage() - 1, tournamentFilterRequestDto.getSize());
-
-        return tournamentService.getAllTournamentList(pageRequest, tournamentFilterRequestDto.getType(), tournamentFilterRequestDto.getStatus());
+    public ResponseEntity<TournamentListResponseDto> getAllTournamentList(@ModelAttribute @Valid TournamentFilterRequestDto tournamentFilterRequestDto){
+        Pageable pageRequest = PageRequest.of(tournamentFilterRequestDto.getPage() - 1, tournamentFilterRequestDto.getSize(), Sort.by("startTime").descending());
+        return ResponseEntity.ok().
+                body(tournamentService.getAllTournamentList(pageRequest, tournamentFilterRequestDto.getType(), tournamentFilterRequestDto.getStatus()));
     }
 
     /**
@@ -64,5 +56,15 @@ public class TournamentController {
     public ResponseEntity<TournamentResponseDto> getTournnament(@PathVariable @Positive Long tournamentId) {
         TournamentResponseDto tournamentResponseDto = tournamentService.getTournament(tournamentId);
             return ResponseEntity.status(HttpStatus.OK).body(tournamentResponseDto);
+    }
+
+    /**
+     * 토너먼트 게임 리스트 조회
+     * @param tournamentId 토너먼트 id
+     * @return 토너먼트 게임 리스트
+     */
+    @GetMapping("/{tournamentId}/games")
+    public ResponseEntity<TournamentGameListResponseDto> getTournamentGames(@PathVariable @Positive Long tournamentId){
+        return ResponseEntity.ok().body(tournamentService.getTournamentGames(tournamentId));
     }
 }

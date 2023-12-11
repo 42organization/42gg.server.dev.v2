@@ -51,6 +51,13 @@ public interface GameRepository extends JpaRepository<Game, Long>, GameRepositor
             "where t1.gameId IN (:games) and t1.teamId <t2.teamId and t1.gameId=t2.gameId order by t1.startTime desc;", nativeQuery = true)
     List<GameTeamUser> findTeamsByGameIsInAndNormalMode(@Param("games") List<Long> games);
 
+    @Query(value = "select t1.gameId, t1.startTime, t1.status, t1.mode, " +
+            "t1.intraId t1IntraId, t1.teamId t1TeamId, t1.win t1IsWin, t1.score t1Score, t1.image t1Image, t1.total_exp t1Exp, t1.wins t1Wins, t1.losses t1Losses, " +
+            "t2.win t2IsWin, t1.teamId t2TeamId, t2.score t2Score, t2.intraId t2IntraId, t2.wins t2Wins, t2.losses t2Losses, t2.image t2Image, t2.total_exp t2Exp " +
+            "from v_rank_game_detail t1, v_rank_game_detail t2 " +
+            "where t1.gameId = (:gameId) and t1.teamId <t2.teamId and t1.gameId=t2.gameId order by t1.startTime desc;", nativeQuery = true)
+    GameTeamUser findTeamsByGameId(@Param("gameId") Long gameId);
+
     @Query(value = "SELECT teamId, gameId, score, startTime, status, mode, userId, intraId, image, total_exp exp" +
             " FROM v_teamuser where gameId = :gameId", nativeQuery = true)
     List<GameTeamUserInfo> findTeamGameUser(@Param("gameId") Long gameId);
