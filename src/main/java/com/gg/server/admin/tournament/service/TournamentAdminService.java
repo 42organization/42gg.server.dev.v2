@@ -159,7 +159,7 @@ public class TournamentAdminService {
             .findAny().orElseThrow(UserNotFoundException::new);
         targetTournament.deleteTournamentUser(targetTournamentUser);
         if (targetTournamentUser.getIsJoined() && tournamentUserList.size() >= Tournament.ALLOWED_JOINED_NUMBER) {
-            tournamentUserList.get(Long.valueOf(Tournament.ALLOWED_JOINED_NUMBER).intValue()-1).updateIsJoined(true);
+            tournamentUserList.get(Tournament.ALLOWED_JOINED_NUMBER - 1).updateIsJoined(true);
         }
         tournamentUserRepository.delete(targetTournamentUser);
     }
