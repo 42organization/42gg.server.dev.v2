@@ -3,7 +3,7 @@ package com.gg.server.domain.game;
 import com.gg.server.domain.game.dto.ExpChangeResultResDto;
 import com.gg.server.domain.game.dto.GameTeamInfo;
 import com.gg.server.domain.game.dto.PPPChangeResultResDto;
-import com.gg.server.domain.game.dto.req.*;
+import com.gg.server.domain.game.dto.request.*;
 import com.gg.server.domain.game.dto.GameListResDto;
 import com.gg.server.domain.game.exception.ScoreNotMatchedException;
 import com.gg.server.domain.game.service.GameFindService;
