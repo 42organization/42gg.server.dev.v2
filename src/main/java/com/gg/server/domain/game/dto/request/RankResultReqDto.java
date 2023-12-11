@@ -1,4 +1,4 @@
-package com.gg.server.domain.game.dto.req;
+package com.gg.server.domain.game.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
