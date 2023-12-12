@@ -77,7 +77,8 @@ public class GameController {
 
     @PostMapping("/rank")
     synchronized ResponseEntity<Void> createRankResult(@Valid @RequestBody RankResultReqDto reqDto, @Parameter(hidden = true) @Login UserDto user) {
-        if (reqDto.getMyTeamScore() + reqDto.getEnemyTeamScore() > 3 || reqDto.getMyTeamScore() == reqDto.getEnemyTeamScore()) {
+        if (reqDto.getMyTeamScore() + reqDto.getEnemyTeamScore() > 3 || reqDto.getMyTeamScore() + reqDto.getEnemyTeamScore() < 2 ||
+                reqDto.getMyTeamScore() == reqDto.getEnemyTeamScore()) {
             throw new InvalidParameterException("점수를 잘못 입력했습니다.", ErrorCode.VALID_FAILED);
         }
         if (!gameService.createRankResult(reqDto, user.getId())) {
@@ -102,11 +103,12 @@ public class GameController {
      * @return 201 created
      */
     @PostMapping("/tournament")
-    synchronized ResponseEntity<Void> createTournamentResult(@Valid @RequestBody TournamentResultReqDto reqDto, @Parameter(hidden = true) @Login UserDto user) {
-        if (reqDto.getMyTeamScore() + reqDto.getEnemyTeamScore() > 3 || reqDto.getMyTeamScore() == reqDto.getEnemyTeamScore()) {
+    synchronized ResponseEntity<Void> createTournamentGameResult(@Valid @RequestBody TournamentResultReqDto reqDto, @Parameter(hidden = true) @Login UserDto user) {
+        if (reqDto.getMyTeamScore() + reqDto.getEnemyTeamScore() > 3 || reqDto.getMyTeamScore() + reqDto.getEnemyTeamScore() < 2 ||
+                reqDto.getMyTeamScore() == reqDto.getEnemyTeamScore()) {
             throw new InvalidParameterException("점수를 잘못 입력했습니다.", ErrorCode.VALID_FAILED);
         }
-        gameService.createTournamentResult(reqDto, user.getId());
+        gameService.createTournamentGameResult(reqDto, user.getId());
         return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
 
