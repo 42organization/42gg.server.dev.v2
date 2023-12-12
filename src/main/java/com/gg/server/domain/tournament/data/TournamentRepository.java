@@ -9,7 +9,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 public interface TournamentRepository extends JpaRepository<Tournament, Long> {
     List<Tournament> findAllByStatusIsNot(TournamentStatus status);
@@ -18,6 +17,7 @@ public interface TournamentRepository extends JpaRepository<Tournament, Long> {
     Page<Tournament> findAllByTypeAndStatus(@NotNull TournamentType type, @NotNull TournamentStatus status, Pageable pageable);
 
     Page<Tournament> findAllByStatus(@NotNull TournamentStatus status, Pageable pageable);
+    List<Tournament> findAllByStatus(@NotNull TournamentStatus status);
 
     Page<Tournament> findAllByType(@NotNull TournamentType type, Pageable pageable);
 

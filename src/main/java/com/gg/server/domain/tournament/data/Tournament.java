@@ -19,6 +19,13 @@ import lombok.*;
 @Entity
 @ToString
 public class Tournament extends BaseTimeEntity {
+    // 토너먼트 참가자 수 => 현재는 8강 고정
+    public static final int ALLOWED_JOINED_NUMBER = 8;
+    // 토너먼트 최소 시작 날짜 (n일 후)
+    public static final int ALLOWED_MINIMAL_START_DAYS = 2;
+    // 토너먼트 최소 진행 시간 (n시간)
+    public static final int MINIMUM_TOURNAMENT_DURATION = 2;
+
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -91,7 +98,11 @@ public class Tournament extends BaseTimeEntity {
         this.tournamentUsers.remove(tournamentUser);
     }
 
-    public void update_winner(User winner) {
+    public void updateWinner(User winner) {
         this.winner = winner;
+    }
+
+    public void updateStatus(TournamentStatus status) {
+        this.status = status;
     }
 }
