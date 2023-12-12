@@ -11,6 +11,7 @@ import com.gg.server.admin.tournament.dto.TournamentAdminCreateRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminAddUserRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
 import com.gg.server.admin.tournament.service.TournamentAdminService;
+import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentUser;
 import com.gg.server.domain.tournament.data.TournamentUserRepository;
@@ -18,6 +19,7 @@ import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentRepository;
 import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.tournament.type.TournamentType;
+import com.gg.server.domain.user.controller.dto.GameInfoDto;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.CustomRuntimeException;
@@ -158,6 +160,42 @@ class TournamentAdminControllerTest {
                 TournamentType.MASTER);
 
             String url = "/pingpong/admin/tournaments/" + tournamentToChange.getId();
+
+            String content = objectMapper.writeValueAsString(updateDto);
+
+            // when, then
+            String contentAsString = mockMvc.perform(patch(url)
+                    .content(content)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isConflict())
+                .andReturn().getResponse().getContentAsString();
+
+            System.out.println(contentAsString);
+        }
+
+        @Test
+        @DisplayName("기간내_게임_존재")
+        void gameAlreadyExist() throws Exception {
+            // given
+            String accessToken = testDataUtils.getAdminLoginAccessToken();
+
+            GameInfoDto game = testDataUtils.createGame(testDataUtils.createNewUser("testUser"),
+                LocalDateTime.now().plusDays(3), LocalDateTime.now().plusDays(3).plusMinutes(15),
+                testDataUtils.createSeason(), Mode.NORMAL);
+
+            Tournament tournament = testDataUtils.createTournament(
+                LocalDateTime.now().plusDays(2).plusHours(0),
+                LocalDateTime.now().plusDays(2).plusHours(3),
+                TournamentStatus.BEFORE);
+
+            // 겹치는 시간 조절
+            TournamentAdminUpdateRequestDto updateDto = testDataUtils.createUpdateRequestDto(
+                tournament.getStartTime().plusDays(1),
+                tournament.getEndTime().plusDays(1),
+                TournamentType.MASTER);
+
+            String url = "/pingpong/admin/tournaments/" + tournament.getId();
 
             String content = objectMapper.writeValueAsString(updateDto);
 
@@ -450,6 +488,34 @@ class TournamentAdminControllerTest {
                             .content(content))
                     .andExpect(status().isConflict())
                     .andReturn().getResponse().getContentAsString();
+
+            System.out.println(contentAsString);
+        }
+
+        @Test
+        @DisplayName("기간내_게임_존재")
+        void gameAlreadyExist() throws Exception {
+            // given
+            String accessToken = testDataUtils.getAdminLoginAccessToken();
+            GameInfoDto game = testDataUtils.createGame(testDataUtils.createNewUser("testUser"),
+                LocalDateTime.now().plusDays(3), LocalDateTime.now().plusDays(3).plusMinutes(15),
+                testDataUtils.createSeason(), Mode.NORMAL);
+
+            TournamentAdminCreateRequestDto createDto = testDataUtils.createRequestDto(
+                LocalDateTime.now().plusDays(3).plusHours(0),
+                LocalDateTime.now().plusDays(3).plusHours(5),
+                TournamentType.ROOKIE);
+
+            String url = "/pingpong/admin/tournaments";
+            String content = objectMapper.writeValueAsString(createDto);
+
+            // when, then
+            String contentAsString = mockMvc.perform(post(url)
+                    .content(content)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isConflict())
+                .andReturn().getResponse().getContentAsString();
 
             System.out.println(contentAsString);
         }
