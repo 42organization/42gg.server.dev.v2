@@ -67,6 +67,12 @@ public interface GameRepository extends JpaRepository<Game, Long>, GameRepositor
     @Query(value = "select g from Game g where g.startTime > :startTime and g.startTime < :endTime")
     List<Game> findAllBetween(@Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime);
 
+    @Query(value = "select g from Game g where (g.startTime between :startTime and :endTime) "
+        + "or (g.endTime between :startTime and :endTime) "
+        + "or (:startTime between g.startTime and g.endTime) "
+        + "or (:endTime between g.startTime and g.endTime)")
+    List<Game> findAllBetweenTournament(@Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime);
+
     @Query(value = "SELECT g FROM Game g, Team t, TeamUser tu WHERE g.startTime > :startTime AND g.startTime < :endTime "
             + "AND g.id = t.game.id AND t.id = tu.team.id AND tu.user.id = :userId")
     Optional<Game> findByUserInSlots(@Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime, @Param("userId") Long userId);
