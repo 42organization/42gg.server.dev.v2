@@ -487,7 +487,7 @@ public class GameControllerTest {
         public void invalidGameId() throws Exception {
             //given
             String url = "/pingpong/games/tournament";
-            Game game = gameRepository.save(testDataUtils.createGame(99999999L, season, StatusType.WAIT, Mode.TOURNAMENT, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
+            Game game = gameRepository.save(new Game(season, StatusType.WAIT, Mode.TOURNAMENT, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
             Team team1 = teamRepository.save(new Team(game, -1, false));
             Team team2 = teamRepository.save(new Team(game, -1, false));
             String ac1 = tokenProvider.createToken(user1.getId());
