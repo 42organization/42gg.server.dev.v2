@@ -88,7 +88,7 @@ public class GameService {
         if (game.getStatus() != StatusType.WAIT && game.getStatus() != StatusType.LIVE) {
             return false;
         }
-        return updateScore(game, scoreDto, userId);
+        return updateTournamentGameScore(game, scoreDto, userId);
     }
 
     /**
@@ -104,7 +104,7 @@ public class GameService {
         if (game.getStatus() != StatusType.WAIT && game.getStatus() != StatusType.LIVE) {
             throw new GameStatusNotMatchedException();
         }
-        updateScore(game, scoreDto, userId);
+        updateTournamentGameScore(game, scoreDto, userId);
     }
 
     /**
@@ -232,7 +232,7 @@ public class GameService {
         throw new TeamIdNotMatchException();
     }
 
-    private Boolean updateScore(Game game, RankResultReqDto scoreDto, Long userId) {
+    private Boolean updateTournamentGameScore(Game game, RankResultReqDto scoreDto, Long userId) {
         List<TeamUser> teams = teamUserRepository.findAllByGameId(game.getId());
         TeamUser myTeam = findTeamId(scoreDto.getMyTeamId(), teams);
         TeamUser enemyTeam = findTeamId(scoreDto.getEnemyTeamId(), teams);
@@ -261,7 +261,7 @@ public class GameService {
      * @exception InvalidParameterException 파라미터로 받은 userId가 myTeam의 userId와 일치하지 않을 경우
      * @exception ScoreAlreadyEnteredException 게임 점수가 이미 작성되어 있을 경우
      */
-    private void updateScore(Game game, TournamentResultReqDto scoreDto, Long userId) {
+    private void updateTournamentGameScore(Game game, TournamentResultReqDto scoreDto, Long userId) {
         List<TeamUser> teams = teamUserRepository.findAllByGameId(game.getId());
         TeamUser myTeam = findTeamId(scoreDto.getMyTeamId(), teams);
         TeamUser enemyTeam = findTeamId(scoreDto.getEnemyTeamId(), teams);
