@@ -16,7 +16,7 @@ import com.gg.server.domain.coin.data.CoinPolicyRepository;
 import com.gg.server.domain.coin.service.CoinHistoryService;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
-import com.gg.server.domain.game.dto.req.RankResultReqDto;
+import com.gg.server.domain.game.dto.request.RankResultReqDto;
 import com.gg.server.domain.game.service.GameService;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
@@ -78,6 +78,15 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.springframework.web.multipart.MultipartFile;
 
 @SpringBootTest

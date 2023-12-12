@@ -5,9 +5,12 @@ import com.gg.server.domain.coin.service.UserCoinChangeService;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.dto.*;
-import com.gg.server.domain.game.dto.req.NormalResultReqDto;
-import com.gg.server.domain.game.dto.req.RankResultReqDto;
+import com.gg.server.domain.game.dto.request.NormalResultReqDto;
+import com.gg.server.domain.game.dto.request.RankResultReqDto;
+import com.gg.server.domain.game.dto.request.TournamentResultReqDto;
 import com.gg.server.domain.game.exception.GameNotExistException;
+import com.gg.server.domain.game.exception.GameStatusNotMatchedException;
+import com.gg.server.domain.game.exception.ScoreAlreadyEnteredException;
 import com.gg.server.domain.pchange.data.PChange;
 import com.gg.server.domain.pchange.data.PChangeRepository;
 import com.gg.server.domain.pchange.exception.PChangeNotExistException;
@@ -20,6 +23,10 @@ import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.team.data.TeamUserRepository;
 import com.gg.server.domain.team.exception.TeamIdNotMatchException;
 import com.gg.server.domain.tier.service.TierService;
+import com.gg.server.domain.tournament.data.TournamentGame;
+import com.gg.server.domain.tournament.data.TournamentGameRepository;
+import com.gg.server.domain.tournament.type.TournamentRound;
+import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.InvalidParameterException;
 import com.gg.server.global.utils.ExpLevelCalculator;
@@ -44,6 +51,7 @@ public class GameService {
     private final UserCoinChangeService userCoinChangeService;
     private final TierService tierService;
     private final RedisUploadService redisUploadService;
+    private final TournamentGameRepository tournamentGameRepository;
 
   /**
    * 게임 정보를 가져온다.
@@ -62,6 +70,11 @@ public class GameService {
         return new GameTeamInfo(infos, userId);
     }
 
+    /**
+     * rank 게임 결과를 입력한다.
+     * WAIT, LIVE 상태일 때만 입력 가능
+     * @return Boolean 입력 성공 여부
+     */
     @Transactional
     @Caching(evict = {
             @CacheEvict(value = "rankGameListByIntra", allEntries = true),
@@ -69,21 +82,30 @@ public class GameService {
             @CacheEvict(value = "allGameList", allEntries = true),
             @CacheEvict(value = "allGameListByUser", allEntries = true)
     })
-
-    /**
-     * rank 게임 결과를 입력한다.
-     * WAIT, LIVE 상태일 때만 입력 가능
-     * @return Boolean 입력 성공 여부
-     */
     public Boolean createRankResult(RankResultReqDto scoreDto, Long userId) {
         // 현재 게임 id
         Game game = gameFindService.findGameWithPessimisticLockById(scoreDto.getGameId());
         if (game.getStatus() != StatusType.WAIT && game.getStatus() != StatusType.LIVE) {
             return false;
         }
-        return updateScore(game, scoreDto, userId);
+        return updateRankGameScore(game, scoreDto, userId);
     }
 
+    /**
+     * tournament 게임 결과 등록
+     * @param scoreDto 요청 Dto
+     * @param userId 사용자 Id
+     * @exception GameStatusNotMatchedException 게임 상태가 WAIT, LIVE가 아닐 경우
+     * @return Boolean 입력 성공 여부
+     */
+    @Transactional
+    public void createTournamentGameResult(TournamentResultReqDto scoreDto, Long userId) {
+        Game game = gameFindService.findGameWithPessimisticLockById(scoreDto.getGameId());
+        if (game.getStatus() != StatusType.WAIT && game.getStatus() != StatusType.LIVE) {
+            throw new GameStatusNotMatchedException();
+        }
+        updateTournamentGameScore(game, scoreDto, userId);
+    }
 
     /**
      * normal 게임을 종료하고 exp(경험치)를 부여한다.
@@ -210,7 +232,7 @@ public class GameService {
         throw new TeamIdNotMatchException();
     }
 
-    private Boolean updateScore(Game game, RankResultReqDto scoreDto, Long userId) {
+    private Boolean updateRankGameScore(Game game, RankResultReqDto scoreDto, Long userId) {
         List<TeamUser> teams = teamUserRepository.findAllByGameId(game.getId());
         TeamUser myTeam = findTeamId(scoreDto.getMyTeamId(), teams);
         TeamUser enemyTeam = findTeamId(scoreDto.getEnemyTeamId(), teams);
@@ -228,6 +250,36 @@ public class GameService {
                 return false;
             }
             return true;
+        }
+    }
+
+    /**
+     * 토너먼트 게임 결과 업데이트 메소드
+     * @param game
+     * @param scoreDto
+     * @param userId
+     * @exception InvalidParameterException 파라미터로 받은 userId가 myTeam의 userId와 일치하지 않을 경우
+     * @exception ScoreAlreadyEnteredException 게임 점수가 이미 작성되어 있을 경우
+     */
+    private void updateTournamentGameScore(Game game, TournamentResultReqDto scoreDto, Long userId) {
+        List<TeamUser> teams = teamUserRepository.findAllByGameId(game.getId());
+        TeamUser myTeam = findTeamId(scoreDto.getMyTeamId(), teams);
+        TeamUser enemyTeam = findTeamId(scoreDto.getEnemyTeamId(), teams);
+        if (!myTeam.getUser().getId().equals(userId)) {
+            throw new InvalidParameterException("team user 정보가 일치하지 않습니다.", ErrorCode.VALID_FAILED);
+        }
+        if (myTeam.getTeam().getScore().equals(-1) && enemyTeam.getTeam().getScore().equals(-1)){
+            setTeamScore(myTeam, scoreDto.getMyTeamScore(), scoreDto.getMyTeamScore() > scoreDto.getEnemyTeamScore());
+            setTeamScore(enemyTeam, scoreDto.getEnemyTeamScore(), scoreDto.getMyTeamScore() < scoreDto.getEnemyTeamScore());
+            expUpdates(game, teams);
+            Optional<TournamentGame> tournamentGame = tournamentGameRepository.findByGameId(scoreDto.getGameId());
+            if (tournamentGame.isPresent() && tournamentGame.get().getTournamentRound().equals(TournamentRound.THE_FINAL)) {
+                //토너먼트 결승전 게임일 경우, 토너먼트 상태 END로 변경
+                tournamentGame.get().getTournament().updateStatus(TournamentStatus.END);
+            }
+        } else {
+            // score 가 이미 입력됨
+            throw new ScoreAlreadyEnteredException(ErrorCode.SCORE_ALREADY_ENTERED.getMessage(), ErrorCode.SCORE_ALREADY_ENTERED);
         }
     }
 }

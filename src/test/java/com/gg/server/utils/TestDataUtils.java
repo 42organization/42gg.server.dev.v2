@@ -430,7 +430,7 @@ public class TestDataUtils {
                 .endTime(endTime)
                 .type(TournamentType.ROOKIE)
                 .status(status).build();
-        return  tournamentRepository.save(tournament);
+        return tournamentRepository.save(tournament);
     }
 
     /**
@@ -451,8 +451,9 @@ public class TestDataUtils {
                 .endTime(endTime)
                 .type(type)
                 .status(status).build();
-        return  tournamentRepository.save(tournament);
+        return tournamentRepository.save(tournament);
     }
+
     /**
      * 테스트용 토너먼트 생성 RequestDto 반환.
      * @param startTime
