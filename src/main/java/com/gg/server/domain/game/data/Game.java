@@ -62,16 +62,6 @@ public class Game {
         this.endTime = dto.getStartTime().plusMinutes(interval);
     }
 
-    @Builder
-    public Game(Long id, Season season, StatusType status, Mode mode, LocalDateTime startTime, LocalDateTime endTime) {
-        this.id = id;
-        this.season = season;
-        this.status = status;
-        this.mode = mode;
-        this.startTime = startTime;
-        this.endTime = endTime;
-    }
-
     @Override
     public String toString() {
         return "Game{" +

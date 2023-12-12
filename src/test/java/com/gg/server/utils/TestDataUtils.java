@@ -485,24 +485,4 @@ public class TestDataUtils {
         tournamentGameRepository.save(tournamentGame);
         return tournamentGame;
     }
-    /**
-     * 테스트용 게임 생성 및 반환
-     * @param season
-     * @param status
-     * @param mode
-     * @param startTime
-     * @param endTime
-     * @return 테스트용 게임
-     */
-    public Game createGame(Long id, Season season, StatusType status, Mode mode, LocalDateTime startTime, LocalDateTime endTime) {
-        Game game = Game.builder()
-                .id(id)
-                .season(season)
-                .status(status)
-                .mode(mode)
-                .startTime(startTime)
-                .endTime(endTime)
-                .build();
-        return (gameRepository.save(game));
-    }
 }
