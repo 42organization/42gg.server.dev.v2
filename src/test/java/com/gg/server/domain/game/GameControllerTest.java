@@ -6,6 +6,7 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gg.server.config.RedisInitializer;
 import com.gg.server.config.TestRedisConfig;
 import com.gg.server.domain.game.dto.request.TournamentResultReqDto;
 import com.gg.server.domain.game.service.GameFindService;
@@ -61,11 +62,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Import(TestRedisConfig.class)
+@ContextConfiguration(initializers = RedisInitializer.class)
 @AutoConfigureMockMvc
 @RequiredArgsConstructor
 @Transactional

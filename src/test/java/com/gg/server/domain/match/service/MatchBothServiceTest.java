@@ -2,6 +2,7 @@ package com.gg.server.domain.match.service;
 
 import com.gg.server.admin.penalty.data.PenaltyAdminRepository;
 import com.gg.server.admin.penalty.type.PenaltyKey;
+import com.gg.server.config.RedisInitializer;
 import com.gg.server.config.TestRedisConfig;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
@@ -36,10 +37,12 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Import(TestRedisConfig.class)
+@ContextConfiguration(initializers = RedisInitializer.class)
 @Transactional
 @AutoConfigureMockMvc
 @RequiredArgsConstructor

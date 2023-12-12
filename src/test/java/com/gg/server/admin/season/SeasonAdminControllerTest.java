@@ -12,6 +12,7 @@ import com.gg.server.admin.season.dto.SeasonCreateRequestDto;
 import com.gg.server.admin.season.dto.SeasonListAdminResponseDto;
 import com.gg.server.admin.season.dto.SeasonUpdateRequestDto;
 import com.gg.server.admin.season.service.SeasonAdminService;
+import com.gg.server.config.RedisInitializer;
 import com.gg.server.config.TestRedisConfig;
 import com.gg.server.domain.rank.data.RankRepository;
 import com.gg.server.domain.rank.exception.RedisDataNotFoundException;
@@ -35,6 +36,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +44,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @SpringBootTest
 @Import(TestRedisConfig.class)
+@ContextConfiguration(initializers = RedisInitializer.class)
 @AutoConfigureMockMvc
 @Transactional
 class SeasonAdminControllerTest {

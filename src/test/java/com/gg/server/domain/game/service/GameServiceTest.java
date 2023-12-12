@@ -2,6 +2,7 @@ package com.gg.server.domain.game.service;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+import com.gg.server.config.RedisInitializer;
 import com.gg.server.config.TestRedisConfig;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
@@ -34,10 +35,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Import(TestRedisConfig.class)
+@ContextConfiguration(initializers = RedisInitializer.class)
 @RequiredArgsConstructor
 @Transactional
 public class GameServiceTest {
