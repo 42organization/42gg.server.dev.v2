@@ -169,17 +169,17 @@ public class TournamentService {
     @Transactional
     public void startTournament() {
         LocalDate date = LocalDate.now();
-        Optional<Tournament> tournament = findImminentTournament(date);
+        List<Tournament> imminentTournaments = findImminentTournament(date);
 
-        if (tournament.isPresent()) {
-            List<TournamentUser> tournamentUsers = tournament.get().getTournamentUsers();
+        for (Tournament imminentTournament : imminentTournaments) {
+            List<TournamentUser> tournamentUsers = imminentTournament.getTournamentUsers();
             if (tournamentUsers.size() < Tournament.ALLOWED_JOINED_NUMBER) {
                 // TODO 취소 알림
-                tournamentRepository.delete(tournament.get());
+                tournamentRepository.delete(imminentTournament);
                 return;
             }
-            tournament.get().updateStatus(TournamentStatus.LIVE);
-            matchTournamentGames(tournament.get());
+            imminentTournament.updateStatus(TournamentStatus.LIVE);
+            matchTournamentGames(imminentTournament);
             // TODO 시작 알림?
         }
     }
@@ -231,15 +231,17 @@ public class TournamentService {
      * @param date 조회하려는 토너먼트의 시작 날짜
      * @return date 날짜에 시작하는 토너먼트
      */
-    private Optional<Tournament> findImminentTournament(LocalDate date) {
+    private List<Tournament> findImminentTournament(LocalDate date) {
         List<Tournament> tournaments = tournamentRepository.findAllByStatus(TournamentStatus.BEFORE);
+        List<Tournament> imminentTournaments = new ArrayList<>();
+
         for (Tournament tournament : tournaments) {
             LocalDate startDate = tournament.getStartTime().toLocalDate();
             if (startDate.isEqual(date)) {
-                return Optional.of(tournament);
+                imminentTournaments.add(tournament);
             }
         }
-        return Optional.empty();
+        return imminentTournaments;
     }
 
 
