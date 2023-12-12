@@ -29,12 +29,7 @@ import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.team.data.TeamUserRepository;
 import com.gg.server.domain.tier.data.Tier;
 import com.gg.server.domain.tier.data.TierRepository;
-import com.gg.server.domain.tournament.data.Tournament;
-import com.gg.server.domain.tournament.data.TournamentGame;
-import com.gg.server.domain.tournament.data.TournamentGameRepository;
-import com.gg.server.domain.tournament.data.TournamentRepository;
-import com.gg.server.domain.tournament.data.TournamentUser;
-import com.gg.server.domain.tournament.data.TournamentUserRepository;
+import com.gg.server.domain.tournament.data.*;
 import com.gg.server.domain.tournament.dto.TournamentResponseDto;
 import com.gg.server.domain.tournament.type.TournamentRound;
 import com.gg.server.domain.tournament.type.TournamentStatus;
@@ -49,14 +44,15 @@ import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
@@ -233,8 +229,10 @@ public class TestDataUtils {
         gameRepository.save(game);
         Team myTeam = new Team(game, -1, false);
         TeamUser teamUser = new TeamUser(myTeam, curUser);
+        game.addTeam(myTeam);
         Team enemyTeam = new Team(game, -1, false);
         User enemyUser = createNewUser();
+        game.addTeam(enemyTeam);
         createUserRank(curUser, "statusMessage", season);
         createUserRank(enemyUser, "enemyUserMeassage", season);
         TeamUser enemyTeamUser = new TeamUser(enemyTeam, enemyUser);
@@ -697,5 +695,14 @@ public class TestDataUtils {
                 return userImage;
             })
             .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public List<User> createUsers(int cnt) {
+        List<User> users = new ArrayList<>();
+        for (int i = 0; i < cnt; i++) {
+            users.add(createNewUser("testUser" + i, "testUser" + i + "@gmail.com", RacketType.PENHOLDER, SnsType.NONE, RoleType.USER));
+        }
+        userRepository.saveAll(users);
+        return users;
     }
 }

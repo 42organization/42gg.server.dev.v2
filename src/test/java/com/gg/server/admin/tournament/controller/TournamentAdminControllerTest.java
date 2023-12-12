@@ -1,15 +1,14 @@
 package com.gg.server.admin.tournament.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.tournament.dto.TournamentAdminCreateRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminAddUserRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
+import com.gg.server.admin.tournament.dto.TournamentGameUpdateReqDto;
 import com.gg.server.admin.tournament.service.TournamentAdminService;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.tournament.data.Tournament;
@@ -17,6 +16,13 @@ import com.gg.server.domain.tournament.data.TournamentUser;
 import com.gg.server.domain.tournament.data.TournamentUserRepository;
 import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentRepository;
+import com.gg.server.domain.game.data.Game;
+import com.gg.server.domain.game.type.Mode;
+import com.gg.server.domain.season.data.Season;
+import com.gg.server.domain.team.dto.TeamReqDto;
+import com.gg.server.domain.tournament.data.*;
+import com.gg.server.domain.tournament.dto.TournamentUserListResponseDto;
+import com.gg.server.domain.tournament.type.TournamentRound;
 import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.tournament.type.TournamentType;
 import com.gg.server.domain.user.controller.dto.GameInfoDto;
@@ -26,9 +32,11 @@ import com.gg.server.global.exception.custom.CustomRuntimeException;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpHeaders;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -65,6 +73,9 @@ class TournamentAdminControllerTest {
 
     @Autowired
     TournamentUserRepository tournamentUserRepository;
+
+    @Autowired
+    TournamentGameRepository tournamentGameRepository;
 
     @Nested
     @DisplayName("토너먼트_관리_수정_컨트롤러_테스트")
@@ -837,5 +848,90 @@ class TournamentAdminControllerTest {
                 .andExpect(status().isNotFound())
                 .andReturn().getResponse().getContentAsString();
         }
+    }
+
+    @Nested
+    @DisplayName("[Patch] /pingpong/admin/tournaments/{tournamentId}/games")
+    class AdminUpdateTournamentGameTest {
+        List<TournamentGame> tournamentGames = new ArrayList<>();
+        String accessToken;
+        Tournament tournament;
+        @BeforeEach
+        void setUp() {
+            tournament = testDataUtils.createTournament("testTournament",
+                LocalDateTime.now().plusDays(2).plusHours(1),
+                LocalDateTime.now().plusDays(2).plusHours(3),
+                TournamentStatus.LIVE);
+            accessToken = testDataUtils.getAdminLoginAccessToken();
+            List<User> userList = testDataUtils.createUsers(7);
+            int index = 0;
+            Season season = testDataUtils.createSeason();
+            for (TournamentRound tournamentRound : TournamentRound.values()){
+                LocalDateTime time = LocalDateTime.now().minusHours(4 - index).plusMinutes(15);
+                GameInfoDto game = testDataUtils.createGame(userList.get(index), time, time.plusMinutes(15), season, Mode.TOURNAMENT);
+                if (tournamentRound == TournamentRound.THE_FINAL) {
+                    TournamentGame tournamentGame = new TournamentGame(null, tournament, tournamentRound);
+                    tournamentGameRepository.save(tournamentGame);
+                    tournamentGames.add(tournamentGame);
+                }else {
+                    tournamentGames.add(testDataUtils.createTournamentGame(tournament, tournamentRound, game));
+                }
+            }
+        }
+
+        @Test
+        @DisplayName("토너먼트_게임_수정_성공")
+        void updateTournamentGameSuccess() throws Exception {
+            // given
+            String url = "/pingpong/admin/tournaments/" + tournament.getId() + "/games";
+
+            int myTeamScore = 2;
+            int otherTeamScore = 1;
+            List<TournamentGame> tournamentGameList = tournamentGameRepository.findAllByTournamentId(tournament.getId());
+            TournamentGame tournamentGame = tournamentGameList.stream().filter(tg -> tg.getTournamentRound() == TournamentRound.SEMI_FINAL_1).findAny().orElseThrow();
+            TournamentGame nextTournamentGame = tournamentGameList.stream().filter(tg -> tg.getTournamentRound() == TournamentRound.THE_FINAL).findAny().orElseThrow();
+            TournamentGameUpdateReqDto requestDto = new TournamentGameUpdateReqDto(tournamentGame.getId(), nextTournamentGame.getId(),
+                    new TeamReqDto(tournamentGame.getGame().getTeams().get(0).getId(), myTeamScore),
+                    new TeamReqDto(tournamentGame.getGame().getTeams().get(1).getId(), otherTeamScore));
+
+            System.out.println("sgo test requestDto = " + requestDto);
+            String content = objectMapper.writeValueAsString(requestDto);
+            // when
+            mockMvc.perform(patch(url)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                            .content(content)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andReturn().getResponse().getContentAsString();
+            TournamentGame resTournamentGame = tournamentGameRepository.findById(tournamentGame.getId()).orElseThrow();
+            assertThat(resTournamentGame.getGame().getTeams().get(0).getScore()).isEqualTo(myTeamScore);
+            assertThat(resTournamentGame.getGame().getTeams().get(1).getScore()).isEqualTo(otherTeamScore);
+        }
+        @Test
+        @DisplayName("토너먼트_게임_수정_불가능")
+        void updateTournamentGameEnable() throws Exception {
+            // given
+            String url = "/pingpong/admin/tournaments/" + tournament.getId() + "/games";
+
+            int myTeamScore = 2;
+            int otherTeamScore = 1;
+            List<TournamentGame> tournamentGameList = tournamentGameRepository.findAllByTournamentId(tournament.getId());
+            TournamentGame tournamentGame = tournamentGameList.stream().filter(tg -> tg.getTournamentRound() == TournamentRound.QUARTER_FINAL_1).findAny().orElseThrow();
+            TournamentGame nextTournamentGame = tournamentGameList.stream().filter(tg -> tg.getTournamentRound() == TournamentRound.SEMI_FINAL_1).findAny().orElseThrow();
+            TournamentGameUpdateReqDto requestDto = new TournamentGameUpdateReqDto(tournamentGame.getId(), nextTournamentGame.getId(),
+                    new TeamReqDto(tournamentGame.getGame().getTeams().get(0).getId(), myTeamScore),
+                    new TeamReqDto(tournamentGame.getGame().getTeams().get(1).getId(), otherTeamScore));
+
+            System.out.println("sgo test requestDto = " + requestDto);
+            String content = objectMapper.writeValueAsString(requestDto);
+            // when
+            mockMvc.perform(patch(url)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                            .content(content)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isBadRequest())
+                    .andReturn().getResponse().getContentAsString();
+        }
+
     }
 }
