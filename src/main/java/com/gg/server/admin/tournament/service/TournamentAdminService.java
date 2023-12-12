@@ -5,6 +5,7 @@ import com.gg.server.admin.tournament.exception.TournamentNotLiveException;
 import com.gg.server.admin.tournament.exception.TournamentTitleConflictException;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.data.Game;
+import com.gg.server.domain.game.exception.ScoreNotInvalidException;
 import com.gg.server.domain.game.service.GameService;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.team.data.Team;
@@ -273,10 +274,10 @@ public class TournamentAdminService {
         if (reqDto.getTeam1().getScore() + reqDto.getTeam2().getScore() > 3 ||
                 reqDto.getTeam1().getScore() + reqDto.getTeam2().getScore() < 2 ||
                 reqDto.getTeam1().getScore() == reqDto.getTeam2().getScore()) {
-            throw new InvalidParameterException("점수를 잘못 입력했습니다.", ErrorCode.VALID_FAILED);
+            throw new ScoreNotInvalidException();
         }
         Tournament tournament = tournamentRepository.findById(tournamentId)
-            .orElseThrow(() -> new TournamentNotFoundException("target tournament not found", ErrorCode.TOURNAMENT_NOT_FOUND));
+            .orElseThrow(TournamentNotFoundException::new);
         if (tournament.getStatus() != TournamentStatus.LIVE) {
             throw new TournamentNotLiveException();
         }

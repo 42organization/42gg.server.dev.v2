@@ -81,6 +81,8 @@ public enum ErrorCode {
     GAME_DUPLICATION_EXCEPTION(409, "GM204", "GAME ALREADY EXISTS"),
     GAME_STATUS_NOT_MATCHED(400, "GM205", "게임 상태 오류입니다."),
     SCORE_ALREADY_ENTERED(400, "GM206", "점수가 이미 입력되었습니다."),
+    GAME_DUPLICATION_EXCPETION(409, "GM204", "GAME ALREADY EXISTS"),
+    SCORE_NOT_INVALID(400, "GM205", "score 입력이 유효하지 않습니다."),
 
     /** match **/
     SLOT_ENROLLED(400, "MA300", "SLOT ALREADY ENROLLED"),
@@ -119,7 +121,7 @@ public enum ErrorCode {
     SLACK_SEND_FAIL(400, "SL003","fail to send notification" ),
 
     // Tournament
-    TOURNAMENT_NOT_FOUND(404, "TN001", "tournament not found"),
+    TOURNAMENT_NOT_FOUND(404, "TN001", "target tournament not found"),
     TOURNAMENT_CONFLICT(409, "TN002", "tournament conflicted"),
     TOURNAMENT_NOT_BEFORE(400, "TN003", "tournament status is not before"),
     TOURNAMENT_TITLE_CONFLICT(409, "TN004", "tournament title conflicted"),
