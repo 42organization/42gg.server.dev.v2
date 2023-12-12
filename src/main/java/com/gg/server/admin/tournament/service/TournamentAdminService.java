@@ -1,18 +1,22 @@
 package com.gg.server.admin.tournament.service;
 
-import com.gg.server.admin.tournament.dto.TournamentAdminAddUserRequestDto;
-import com.gg.server.admin.tournament.dto.TournamentAdminAddUserResponseDto;
-import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
-import com.gg.server.admin.tournament.dto.TournamentAdminCreateRequestDto;
+import com.gg.server.admin.tournament.dto.*;
+import com.gg.server.admin.tournament.exception.TournamentNotLiveException;
 import com.gg.server.admin.tournament.exception.TournamentTitleConflictException;
 import com.gg.server.domain.game.data.GameRepository;
+import com.gg.server.domain.game.data.Game;
+import com.gg.server.domain.game.service.GameService;
+import com.gg.server.domain.game.type.StatusType;
+import com.gg.server.domain.team.data.Team;
+import com.gg.server.domain.team.dto.TeamReqDto;
 import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentRepository;
 import com.gg.server.domain.tournament.data.TournamentUser;
-import com.gg.server.domain.tournament.data.TournamentUserRepository;
+import com.gg.server.domain.tournamentø.data.TournamentUserRepository;
 import com.gg.server.domain.tournament.dto.TournamentUserListResponseDto;
 import com.gg.server.domain.tournament.exception.TournamentConflictException;
+import com.gg.server.domain.tournament.exception.TournamentGameNotFoundException;
 import com.gg.server.domain.tournament.exception.TournamentNotFoundException;
 import com.gg.server.domain.tournament.exception.TournamentUpdateException;
 import com.gg.server.domain.tournament.type.TournamentRound;
@@ -24,6 +28,8 @@ import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.InvalidParameterException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -254,5 +260,76 @@ public class TournamentAdminService {
         } else {
             return new TournamentUserListResponseDto(tournamentUserRepository.findAllByTournamentAndIsJoined(tournament, isJoined));
         }
+    }
+
+    /**
+     * <p>토너먼트 게임 정보 수정</p>
+     * @param tournamentId 타겟 토너먼트 id
+     * @param reqDto 수정할 게임 정보
+     * @throws TournamentUpdateException 토너먼트가 시작되지 않았을 때
+     */
+    @Transactional
+    public void updateTournamentGame(Long tournamentId, TournamentGameUpdateReqDto reqDto) {
+        if (reqDto.getTeam1().getScore() + reqDto.getTeam2().getScore() > 3 ||
+                reqDto.getTeam1().getScore() + reqDto.getTeam2().getScore() < 2 ||
+                reqDto.getTeam1().getScore() == reqDto.getTeam2().getScore()) {
+            throw new InvalidParameterException("점수를 잘못 입력했습니다.", ErrorCode.VALID_FAILED);
+        }
+        Tournament tournament = tournamentRepository.findById(tournamentId)
+            .orElseThrow(() -> new TournamentNotFoundException("target tournament not found", ErrorCode.TOURNAMENT_NOT_FOUND));
+        if (tournament.getStatus() != TournamentStatus.LIVE) {
+            throw new TournamentNotLiveException();
+        }
+        TournamentGame tournamentGame = tournamentGameRepository.findById(reqDto.getTournamentGameId())
+                .orElseThrow(TournamentGameNotFoundException::new);
+        Game game = tournamentGame.getGame();
+        if (canUpdateScore(game, reqDto)){
+            updateTeamScore(game, reqDto);
+        } else {
+            throw new TournamentUpdateException();
+        }
+    }
+
+    /**
+     * <p>토너먼트 게임 점수 수정</p>
+     * @param game 수정될 게임
+     * @param reqDto 수정할 게임 정보
+     */
+    private void updateTeamScore(Game game, TournamentGameUpdateReqDto reqDto){
+
+        List<Team> teams = game.getTeams();
+        Team team1 = teams.stream().filter(t->t.getId().equals(reqDto.getTeam1().getTeamId())).findAny().orElseThrow(TournamentGameNotFoundException::new);
+        Team team2 = teams.stream().filter(t->t.getId().equals(reqDto.getTeam2().getTeamId())).findAny().orElseThrow(TournamentGameNotFoundException::new);
+        team1.updateScore(reqDto.getTeam1().getScore(), reqDto.getTeam1().getScore() > reqDto.getTeam2().getScore());
+        team2.updateScore(reqDto.getTeam2().getScore(), reqDto.getTeam2().getScore() > reqDto.getTeam1().getScore());
+        if (game.getStatus() == StatusType.LIVE || game.getStatus() == StatusType.WAIT){
+            // todo 매칭 시스템 로직 추가
+        }
+        if (game.getStatus() == StatusType.LIVE){
+            game.updateStatus();
+        }
+        game.updateStatus();
+    }
+
+    /**
+     * <p>토너먼트 게임 점수 수정 가능 여부</p>
+     * @param game 수정될 게임
+     * @param reqDto 수정할 게임 정보
+     * @return 수정 가능 여부
+     */
+    private boolean canUpdateScore(Game game, TournamentGameUpdateReqDto reqDto) {
+        TournamentGame nextTournamentGame = tournamentGameRepository.findById(reqDto.getNextTournamentGameId())
+                .orElseThrow(TournamentGameNotFoundException::new);
+        if (game.getTeams().stream().noneMatch(t-> Objects.equals(t.getId(), reqDto.getTeam1().getTeamId())) ||
+                game.getTeams().stream().noneMatch(t-> Objects.equals(t.getId(), reqDto.getTeam2().getTeamId()))){
+            return false;
+        }
+        if (nextTournamentGame.getGame() == null){
+            return true;
+        }
+        if (nextTournamentGame.getGame().getStatus() == StatusType.BEFORE){
+            return true;
+        }
+        return false;
     }
 }
