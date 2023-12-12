@@ -1,6 +1,7 @@
 package com.gg.server.domain.tournament.data;
 
 import com.gg.server.domain.tournament.type.TournamentStatus;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import com.gg.server.domain.tournament.type.TournamentType;
@@ -9,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import javax.validation.constraints.NotNull;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface TournamentRepository extends JpaRepository<Tournament, Long> {
     List<Tournament> findAllByStatusIsNot(TournamentStatus status);
@@ -20,6 +23,12 @@ public interface TournamentRepository extends JpaRepository<Tournament, Long> {
     List<Tournament> findAllByStatus(@NotNull TournamentStatus status);
 
     Page<Tournament> findAllByType(@NotNull TournamentType type, Pageable pageable);
+
+    @Query(value = "select t from Tournament t where (t.startTime between :startTime and :endTime) "
+        + "or (t.endTime between :startTime and :endTime) "
+        + "or (:startTime between t.startTime and t.endTime) "
+        + "or (:endTime between t.startTime and t.endTime)")
+    List<Tournament> findAllBetween(@Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime);
 
     boolean existsByTitle(String title);
 }

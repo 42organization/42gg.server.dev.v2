@@ -5,8 +5,8 @@ import com.gg.server.admin.tournament.dto.TournamentAdminAddUserResponseDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminCreateRequestDto;
 import com.gg.server.admin.tournament.exception.TournamentTitleConflictException;
+import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.tournament.data.TournamentGame;
-import com.gg.server.domain.tournament.data.TournamentGameRepository;
 import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentRepository;
 import com.gg.server.domain.tournament.data.TournamentUser;
@@ -23,7 +23,6 @@ import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.InvalidParameterException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,9 +32,9 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class TournamentAdminService {
     private final TournamentRepository tournamentRepository;
-    private final TournamentGameRepository tournamentGameRepository;
     private final TournamentUserRepository tournamentUserRepository;
     private final UserRepository userRepository;
+    private final GameRepository gameRepository;
 
     /***
      * 토너먼트 생성 Method
@@ -47,6 +46,7 @@ public class TournamentAdminService {
         checkTournamentTitle(tournamentAdminCreateRequestDto.getTitle());
         checkValidTournamentTime(tournamentAdminCreateRequestDto.getStartTime(), tournamentAdminCreateRequestDto.getEndTime());
         checkConflictedTournament(-1L, tournamentAdminCreateRequestDto.getStartTime(), tournamentAdminCreateRequestDto.getEndTime());
+        checkGameExistence(tournamentAdminCreateRequestDto.getStartTime(), tournamentAdminCreateRequestDto.getEndTime());
 
         Tournament tournament = Tournament.builder()
                 .title(tournamentAdminCreateRequestDto.getTitle())
@@ -75,6 +75,8 @@ public class TournamentAdminService {
         }
         checkValidTournamentTime(requestDto.getStartTime(), requestDto.getEndTime());
         checkConflictedTournament(targetTournament.getId(), requestDto.getStartTime(), requestDto.getEndTime());
+        checkGameExistence(requestDto.getStartTime(), requestDto.getEndTime());
+
         targetTournament.update(
                 requestDto.getTitle(),
                 requestDto.getContents(),
@@ -204,18 +206,13 @@ public class TournamentAdminService {
      * @throws TournamentConflictException 업데이트 하고자 하는 토너먼트의 시간이 겹칠 때
      */
     private void checkConflictedTournament(Long targetTournamentId, LocalDateTime startTime, LocalDateTime endTime) {
-        List<Tournament> tournamentList = tournamentRepository.findAllByStatusIsNot(TournamentStatus.END);
+        List<Tournament> tournamentList = tournamentRepository.findAllBetween(startTime, endTime);
         for (Tournament tournament : tournamentList) {
-            if (targetTournamentId.equals(tournament.getId())) {
+            if (targetTournamentId.equals(tournament.getId()) ||
+                (!tournament.getStatus().equals(TournamentStatus.BEFORE) && !tournament.getStatus().equals(TournamentStatus.LIVE))) {
                 continue;
             }
-            if ((startTime.isAfter(tournament.getStartTime()) && startTime.isBefore(tournament.getEndTime())) ||
-                    (endTime.isAfter(tournament.getStartTime()) && endTime.isBefore(tournament.getEndTime())) ||
-                    (startTime.isBefore(tournament.getStartTime()) && endTime.isAfter(tournament.getEndTime())) ||
-                    startTime.isEqual(tournament.getStartTime()) || startTime.isEqual(tournament.getEndTime()) ||
-                    endTime.isEqual(tournament.getEndTime()) || endTime.isEqual(tournament.getStartTime())) {
-                throw new TournamentConflictException("tournament conflicted", ErrorCode.TOURNAMENT_CONFLICT);
-            }
+            throw new TournamentConflictException("토너먼트 기간 중복", ErrorCode.TOURNAMENT_CONFLICT);
         }
     }
 
@@ -229,6 +226,17 @@ public class TournamentAdminService {
                 a -> {
                     throw new TournamentTitleConflictException();
                 });
+    }
+
+    /**
+     * <p>타겟 시간 내에 게임이 존재하는지 체크</p>
+     * @param startTime 시작 시간
+     * @param endTime 종료 시간
+     */
+    private void checkGameExistence(LocalDateTime startTime, LocalDateTime endTime) {
+        gameRepository.findAllBetweenTournament(startTime, endTime).stream()
+            .findAny()
+            .ifPresent(a->{throw new TournamentConflictException("대기중인 게임이 존재합니다.", ErrorCode.TOURNAMENT_CONFLICT);});
     }
 
     /**
