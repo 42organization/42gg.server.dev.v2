@@ -1,13 +1,16 @@
 package com.gg.server.domain.game.service;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
-import com.gg.server.domain.game.service.GameStatusService;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.data.SeasonRepository;
+import com.gg.server.domain.slotmanagement.SlotManagement;
+import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
 import com.gg.server.domain.team.data.Team;
 import com.gg.server.domain.team.data.TeamRepository;
 import com.gg.server.domain.team.data.TeamUser;
@@ -17,6 +20,7 @@ import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
 import com.gg.server.utils.TestDataUtils;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,10 +28,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
 @RequiredArgsConstructor
@@ -46,6 +46,8 @@ public class GameStatusServiceTest {
     private TeamRepository teamRepository;
     @Autowired
     private TeamUserRepository teamUserRepository;
+    @Autowired
+    private SlotManagementRepository slotManagementRepository;
     private Season season;
     User user1;
     User user2;
@@ -87,17 +89,14 @@ public class GameStatusServiceTest {
 
     @Test
     void game5분전알림테스트() throws Exception{
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime startTime = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), now.getMinute());
-        System.out.println(startTime.plusMinutes(5));
-        Game game = gameRepository.save(new Game(season, StatusType.BEFORE, Mode.RANK, startTime.plusMinutes(5), startTime.plusMinutes(20)));
-        Team team1 = teamRepository.save(new Team(game, 0, false));
-        Team team2 = teamRepository.save(new Team(game, 0, true));
-        teamUserRepository.save(new TeamUser(team1, user1));
-        teamUserRepository.save(new TeamUser(team2, user2));
-        gameRepository.flush();
-        teamRepository.flush();
-        teamUserRepository.flush();
+        SlotManagement slotManagement = SlotManagement.builder()
+            .futureSlotTime(12)
+            .pastSlotTime(0)
+            .openMinute(5)
+            .gameInterval(15)
+            .startTime(LocalDateTime.now().minusMinutes(1))
+            .build();
+        slotManagementRepository.save(slotManagement);
         System.out.println("==============");
         gameStatusService.imminentGame();
     }

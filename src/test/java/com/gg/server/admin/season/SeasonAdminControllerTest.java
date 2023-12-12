@@ -1,15 +1,18 @@
 package com.gg.server.admin.season;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.rank.service.RankAdminService;
 import com.gg.server.admin.rank.service.RankRedisAdminService;
+import com.gg.server.admin.season.data.SeasonAdminRepository;
 import com.gg.server.admin.season.dto.SeasonAdminDto;
 import com.gg.server.admin.season.dto.SeasonCreateRequestDto;
 import com.gg.server.admin.season.dto.SeasonListAdminResponseDto;
-import com.gg.server.admin.season.data.SeasonAdminRepository;
-
 import com.gg.server.admin.season.dto.SeasonUpdateRequestDto;
 import com.gg.server.admin.season.service.SeasonAdminService;
+import com.gg.server.config.TestRedisConfig;
 import com.gg.server.domain.rank.data.RankRepository;
 import com.gg.server.domain.rank.exception.RedisDataNotFoundException;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
@@ -17,28 +20,28 @@ import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.exception.SeasonForbiddenException;
 import com.gg.server.domain.season.exception.SeasonNotFoundException;
+import com.gg.server.domain.tier.data.Tier;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import com.google.common.net.HttpHeaders;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @RequiredArgsConstructor
 @SpringBootTest
+@Import(TestRedisConfig.class)
 @AutoConfigureMockMvc
 @Transactional
 class SeasonAdminControllerTest {
@@ -76,9 +79,16 @@ class SeasonAdminControllerTest {
     Long dbSeasonId;
 
 
+    @AfterEach
+    void tearDown() {
+        rankRedisRepository.deleteAll();
+    }
+
     @Test
     @DisplayName("[GET]pingpong/admin/seasons")
     void getAdminSeasons() throws Exception {
+        testDataUtils.createTierSystem("pingpong");
+        testDataUtils.createSeason();
         String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
 
@@ -95,6 +105,7 @@ class SeasonAdminControllerTest {
     @Test
     @DisplayName("[POST]/pingpong/admin/seasons")
     void createSeasons() throws Exception {
+        List<Tier> pingpong = testDataUtils.createTierSystem("pingpong");
         String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
 
@@ -125,6 +136,7 @@ class SeasonAdminControllerTest {
     @Test
     @DisplayName("[Delete]/pingpong/admin/season/{seasonId}")
     void deleteSeasons() throws Exception {
+        testDataUtils.createTierSystem("pingpong");
         String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
 
@@ -163,6 +175,8 @@ class SeasonAdminControllerTest {
     @Test
     @DisplayName("[Put]/pingpong/admin/seasons/{seasonId}")
     void updateSeasons() throws Exception {
+        testDataUtils.createTierSystem("pingpong");
+        testDataUtils.createSeason();
         String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
 
@@ -204,10 +218,12 @@ class SeasonAdminControllerTest {
     @Test
     @DisplayName("Fail[Put]/pingpong/admin/seasons/{seasonId}")
     void failUpdateSeasons() throws Exception {//현재 시즌을 변경할 때 400번대 상태코드 반환
+        testDataUtils.createTierSystem("pingpong");
+        testDataUtils.createSeason();
         String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
 
-        Long nowSeasonId = seasonAdminRepository.findCurrentSeason(LocalDateTime.now()).get().getId();
+        Long nowSeasonId = seasonAdminRepository.findCurrentSeason(LocalDateTime.now().plusMinutes(1)).get().getId();
         SeasonUpdateRequestDto seasonUpdateRequestDto = new SeasonUpdateRequestDto(
                 "putSeasonTestName",
                 LocalDateTime.now().plusHours(25),

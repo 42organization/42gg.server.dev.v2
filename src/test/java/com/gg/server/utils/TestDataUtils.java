@@ -2,9 +2,15 @@ package com.gg.server.utils;
 
 import com.gg.server.admin.tournament.dto.TournamentAdminCreateRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
+import com.gg.server.domain.announcement.data.Announcement;
+import com.gg.server.domain.announcement.data.AnnouncementRepository;
+import com.gg.server.domain.coin.data.CoinPolicy;
+import com.gg.server.domain.coin.data.CoinPolicyRepository;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.exception.GameNotExistException;
+import com.gg.server.domain.game.type.Mode;
+import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.noti.data.Noti;
 import com.gg.server.domain.noti.data.NotiRepository;
 import com.gg.server.domain.noti.type.NotiType;
@@ -23,33 +29,34 @@ import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.team.data.TeamUserRepository;
 import com.gg.server.domain.tier.data.Tier;
 import com.gg.server.domain.tier.data.TierRepository;
-import com.gg.server.domain.tournament.data.TournamentRepository;
-import com.gg.server.domain.tournament.dto.TournamentResponseDto;
 import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentGameRepository;
-import com.gg.server.domain.tournament.type.TournamentRound;
+import com.gg.server.domain.tournament.data.TournamentRepository;
 import com.gg.server.domain.tournament.data.TournamentUser;
 import com.gg.server.domain.tournament.data.TournamentUserRepository;
+import com.gg.server.domain.tournament.dto.TournamentResponseDto;
+import com.gg.server.domain.tournament.type.TournamentRound;
 import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.tournament.type.TournamentType;
-import com.gg.server.domain.user.data.User;
-import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.controller.dto.GameInfoDto;
+import com.gg.server.domain.user.data.User;
+import com.gg.server.domain.user.data.UserImage;
+import com.gg.server.domain.user.data.UserImageRepository;
+import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserImageDto;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
-import com.gg.server.domain.game.type.Mode;
-import com.gg.server.domain.game.type.StatusType;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -68,6 +75,9 @@ public class TestDataUtils {
     private final TournamentRepository tournamentRepository;
     private final TournamentGameRepository tournamentGameRepository;
     private final TournamentUserRepository tournamentUserRepository;
+    private final AnnouncementRepository announcementRepository;
+    private final CoinPolicyRepository coinPolicyRepository;
+    private final UserImageRepository userImageRepository;
 
     public String getLoginAccessToken() {
         User user = User.builder()
@@ -82,6 +92,11 @@ public class TestDataUtils {
         return tokenProvider.createToken(user.getId());
     }
 
+    public String getLoginAccessTokenFromUser(User user) {
+        return tokenProvider.createToken(user.getId());
+    }
+
+
     public String getAdminLoginAccessToken() {
         User user = User.builder()
                 .eMail("email")
@@ -93,6 +108,37 @@ public class TestDataUtils {
                 .build();
         userRepository.save(user);
         return tokenProvider.createToken(user.getId());
+    }
+
+    public User createAdminUser(){
+        String randomId = UUID.randomUUID().toString().substring(0, 30);
+        User user = User.builder()
+            .eMail("email")
+            .intraId(randomId)
+            .racketType(RacketType.PENHOLDER)
+            .snsNotiOpt(SnsType.NONE)
+            .roleType(RoleType.ADMIN)
+            .totalExp(1000)
+            .build();
+        userRepository.save(user);
+        return user;
+    }
+
+    /**
+     * Item 에는 인트라 ID가 현재 10자로 제한되어 있음
+     */
+    public User createAdminUserForItem(){
+        String randomId = UUID.randomUUID().toString().substring(0, 10);
+        User user = User.builder()
+            .eMail("email")
+            .intraId(randomId)
+            .racketType(RacketType.PENHOLDER)
+            .snsNotiOpt(SnsType.NONE)
+            .roleType(RoleType.ADMIN)
+            .totalExp(1000)
+            .build();
+        userRepository.save(user);
+        return user;
     }
 
     public User createNewUser(){
@@ -159,7 +205,7 @@ public class TestDataUtils {
         LocalDateTime startTime, endTime;
         Season season = createSeason();
         createUserRank(curUser, "testUserMessage", season);
-        Mode mode = (currentMatchMode == "RANK")? Mode.RANK : Mode.NORMAL;
+        Mode mode = (currentMatchMode.equals(Mode.RANK.getCode()))? Mode.RANK : Mode.NORMAL;
         createGame(curUser, LocalDateTime.now().minusMinutes(100), LocalDateTime.now().minusMinutes(85), season, mode);
         createGame(curUser, LocalDateTime.now().minusMinutes(50), LocalDateTime.now().minusMinutes(35), season, mode);
         LocalDateTime now = LocalDateTime.now();
@@ -206,7 +252,7 @@ public class TestDataUtils {
         LocalDateTime endTime = startTime.plusMonths(1);
         Season season = seasonRepository.findCurrentSeason(LocalDateTime.now()).orElse(null);
         if (season == null)
-            season = new Season("name", startTime, endTime, 1000, 300);
+            season = new Season("name", startTime.minusMinutes(1), endTime, 1000, 300);
         seasonRepository.save(season);
         return season;
     }
@@ -251,7 +297,7 @@ public class TestDataUtils {
     public void createUserRank(User newUser, String statusMessage, Season season, int ppp) {
         String zSetKey = RedisKeyManager.getZSetKey(season.getId());
         String hashKey = RedisKeyManager.getHashKey(season.getId());
-        Tier tier = tierRepository.getById(1L);
+        Tier tier = tierRepository.findStartTier().get();
         redisRepository.addToZSet(zSetKey, newUser.getId(), ppp);
         redisRepository.addRankData(hashKey, newUser.getId(),
                 new RankRedis(newUser.getId(), "aa", ppp, 1, 0, statusMessage, "https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/nheo.jpeg", "#000000"));
@@ -265,6 +311,26 @@ public class TestDataUtils {
                 .tier(tier)
                 .build();
         rankRepository.save(userRank);
+    }
+
+    public void createMockMatchWithMockRank(User newUser, Season season, LocalDateTime startTime, LocalDateTime endTime) {
+        Game game = new Game(season, StatusType.END, Mode.RANK, startTime, endTime);
+        gameRepository.save(game);
+        Team myTeam = new Team(game, 0, false);
+        TeamUser teamUser = new TeamUser(myTeam, newUser);
+        Team enemyTeam = new Team(game, 0, false);
+        User enemyUser = createNewUser();
+        TeamUser enemyTeamUser = new TeamUser(enemyTeam, enemyUser);
+        createUserRank(enemyUser, "status message", season);
+        teamRepository.save(myTeam);
+        teamRepository.save(enemyTeam);
+        teamUserRepository.save(teamUser);
+        teamUserRepository.save(enemyTeamUser);
+
+        PChange pChange1 = new PChange(game, newUser, 1100, true);
+        PChange pChange2 = new PChange(game, enemyUser, 900, true);
+        pChangeRepository.save(pChange1);
+        pChangeRepository.save(pChange2);
     }
 
     public void createMockMatch(User newUser, Season season, LocalDateTime startTime, LocalDateTime endTime) {
@@ -285,6 +351,49 @@ public class TestDataUtils {
 
         pChangeRepository.save(pChange1);
         pChangeRepository.save(pChange2);
+    }
+
+    public Game createMockMatch(User newUser, Season season, LocalDateTime startTime, LocalDateTime endTime, Mode mode) {
+        Game game = new Game(season, StatusType.END, mode, startTime, endTime);
+        gameRepository.save(game);
+        Team myTeam = new Team(game, 0, false);
+        TeamUser teamUser = new TeamUser(myTeam, newUser);
+        Team enemyTeam = new Team(game, 0, false);
+        User enemyUser = createNewUser();
+        TeamUser enemyTeamUser = new TeamUser(enemyTeam, enemyUser);
+        teamRepository.save(myTeam);
+        teamRepository.save(enemyTeam);
+        teamUserRepository.save(teamUser);
+        teamUserRepository.save(enemyTeamUser);
+
+        PChange pChange1 = new PChange(game, newUser, 1100, true);
+        PChange pChange2 = new PChange(game, enemyUser, 900, true);
+
+        pChangeRepository.save(pChange1);
+        pChangeRepository.save(pChange2);
+        return game;
+    }
+
+    public Game createMockMatch(User newUser, Season season, LocalDateTime startTime,
+        LocalDateTime endTime, Mode mode, int myScore, int enemyScore) {
+        Game game = new Game(season, StatusType.END, mode, startTime, endTime);
+        gameRepository.save(game);
+        Team myTeam = new Team(game, myScore, myScore > enemyScore);
+        TeamUser teamUser = new TeamUser(myTeam, newUser);
+        Team enemyTeam = new Team(game, enemyScore, enemyScore > myScore);
+        User enemyUser = createNewUser();
+        TeamUser enemyTeamUser = new TeamUser(enemyTeam, enemyUser);
+        teamRepository.save(myTeam);
+        teamRepository.save(enemyTeam);
+        teamUserRepository.save(teamUser);
+        teamUserRepository.save(enemyTeamUser);
+
+        PChange pChange1 = new PChange(game, newUser, 1100, true);
+        PChange pChange2 = new PChange(game, enemyUser, 900, true);
+
+        pChangeRepository.save(pChange1);
+        pChangeRepository.save(pChange2);
+        return game;
     }
 
     /**
@@ -482,5 +591,110 @@ public class TestDataUtils {
         TournamentGame tournamentGame = new TournamentGame(gameRepository.findById(gameInfoDto.getGameId()).orElseThrow(GameNotExistException::new), tournament, round);
         tournamentGameRepository.save(tournamentGame);
         return tournamentGame;
+    }
+
+    /**
+     * 티어 생성
+     */
+    public Tier createTier(String url) {
+        Tier tier = new Tier(url);
+        tierRepository.save(tier);
+        return tier;
+    }
+
+    /**
+     * 현재 시스템에 맞는 티어 7개를 생성
+     */
+    public ArrayList<Tier> createTierSystem(String url) {
+        ArrayList<Tier> tiers = new ArrayList<>();
+        for (int i = 0; i < 7; i++) {
+            Tier tier = new Tier(url + i);
+            tierRepository.save(tier);
+            tiers.add(tier);
+        }
+        return tiers;
+    }
+
+    public GameInfoDto createGameWithTierAndRank(User curUser, LocalDateTime startTime, LocalDateTime endTime, Season season, Mode mode, Tier tier) {
+        LocalDateTime now = LocalDateTime.now();
+        Game game;
+        if (now.isBefore(startTime))
+            game = new Game(season, StatusType.BEFORE, mode, startTime, endTime);
+        else if (now.isAfter(startTime) && now.isBefore(endTime))
+            game = new Game(season, StatusType.LIVE, mode, startTime, endTime);
+        else
+            game = new Game(season, StatusType.END, mode, startTime, endTime);
+        gameRepository.save(game);
+
+        User enemyUser = createNewUser();
+        Team myTeam = new Team(game, -1, false);
+        Team enemyTeam = new Team(game, -1, false);
+        TeamUser teamUser = new TeamUser(myTeam, curUser);
+        TeamUser enemyTeamUser = new TeamUser(enemyTeam, enemyUser);
+        createUserRank(curUser, "statusMessage", season, tier);
+        createUserRank(enemyUser, "enemyUserMeassage", season, tier);
+        teamRepository.save(myTeam);
+        teamRepository.save(enemyTeam);
+        teamUserRepository.save(teamUser);
+        teamUserRepository.save(enemyTeamUser);
+
+        return new GameInfoDto(game.getId(), myTeam.getId(), curUser.getId(), enemyTeam.getId(),
+            enemyUser.getId());
+    }
+
+    public CoinPolicy createCoinPolicy(User user, int attendance, int normal, int rankWin, int rankLose) {
+        CoinPolicy coinPolicy = CoinPolicy.builder()
+            .user(user)
+            .attendance(attendance)
+            .normal(normal)
+            .rankWin(rankWin)
+            .rankLose(rankLose)
+            .build();
+        coinPolicyRepository.save(coinPolicy);
+        return coinPolicy;
+    }
+
+    public Announcement createAnnouncement(User creator, String content) {
+        Announcement announcement = Announcement.builder()
+            .creatorIntraId(creator.getIntraId())
+            .content(content)
+            .build();
+        announcementRepository.save(announcement);
+        return announcement;
+    }
+
+    /**
+     * 공지사항 여러개 생성.
+     * 가장 최신 이외는 갱신처리.
+     *
+     * @param creator
+     * @param cnt
+     * @return 생성된 공지사항 리스트
+     */
+    public ArrayList<Announcement> createAnnouncements(User creator, int cnt) {
+        return IntStream.range(0, cnt)
+            .mapToObj(i -> {
+                Announcement announcement = createAnnouncement(creator, "content" + i);
+                if (i != cnt - 1) announcement.update(creator.getIntraId(), LocalDateTime.now());
+                return announcement;
+            })
+            .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public UserImage createUserImage(User user) {
+        UserImage userImage = new UserImage(user, "testUrl",
+            LocalDateTime.now(), null, true);
+        userImageRepository.save(userImage);
+        return userImage;
+    }
+
+    public ArrayList<UserImage> createUserImages(User user, int cnt) {
+        return IntStream.range(0, cnt)
+            .mapToObj(i -> {
+                UserImage userImage = createUserImage(user);
+                if (i != cnt - 1) userImage.updateDeletedAt(LocalDateTime.now());
+                return userImage;
+            })
+            .collect(Collectors.toCollection(ArrayList::new));
     }
 }

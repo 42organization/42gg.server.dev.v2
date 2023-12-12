@@ -1,31 +1,31 @@
 package com.gg.server.domain.coin.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.gg.server.domain.coin.data.CoinHistoryRepository;
 import com.gg.server.domain.coin.data.CoinPolicy;
 import com.gg.server.domain.coin.data.CoinPolicyRepository;
 import com.gg.server.domain.coin.dto.UserGameCoinResultDto;
 import com.gg.server.domain.coin.exception.CoinHistoryNotFoundException;
 import com.gg.server.domain.coin.exception.CoinPolicyNotFoundException;
+import com.gg.server.domain.game.data.Game;
+import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.item.data.Item;
 import com.gg.server.domain.item.data.ItemRepository;
 import com.gg.server.domain.item.type.ItemType;
+import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
-import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @RequiredArgsConstructor
@@ -55,9 +55,19 @@ class UserCoinChangeServiceTest {
     @Autowired
     ItemRepository itemRepository;
 
+    User admin;
+
+    @BeforeEach
+    void init() {
+        admin = testDataUtils.createAdminUser();
+    }
+
     @Test
     @DisplayName("출석시 재화 증가 서비스 테스트")
     void addAttendanceCoin() {
+        CoinPolicy coinPolicy = CoinPolicy.builder().user(admin).attendance(100).build();
+        coinPolicyRepository.save(coinPolicy);
+
         String accessToken = testDataUtils.getLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
         User user = userRepository.getById(userId);
@@ -143,6 +153,9 @@ class UserCoinChangeServiceTest {
     @Test
     @DisplayName("노말 게임 재화 증가 서비스 테스트")
     void addNormalGameService() {
+        CoinPolicy coinPolicy = CoinPolicy.builder().user(admin).normal(100).build();
+        coinPolicyRepository.save(coinPolicy);
+
         String accessToken = testDataUtils.getLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
         User user = userRepository.getById(userId);
@@ -159,27 +172,50 @@ class UserCoinChangeServiceTest {
     @Test
     @DisplayName("랭크 게임  승리 재화 증가 서비스 테스트")
     void addRankWinGameService() {
-        User user = userRepository.getUserByIntraId("cheolee").orElseThrow(UserNotFoundException::new);
+        CoinPolicy coinPolicy = CoinPolicy.builder().user(admin).rankWin(100).build();
+        coinPolicyRepository.save(coinPolicy);
 
-        UserGameCoinResultDto userGameCoinResultDto = userCoinChangeService.addRankGameCoin(3606L, user.getId());//본인의 게임Id와 id 값
+        String accessToken = testDataUtils.getLoginAccessToken();
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
+        User user = userRepository.getById(userId);
+
+        Season season = testDataUtils.createSeason();
+        Game mockMatch = testDataUtils.createMockMatch(user, season,
+            LocalDateTime.now().minusMinutes(20),
+            LocalDateTime.now().minusMinutes(5), Mode.RANK, 2, 1);
+        UserGameCoinResultDto userGameCoinResultDto = userCoinChangeService
+            .addRankGameCoin(mockMatch.getId(), user.getId());//본인의 게임Id와 id 값
 
         assertThat(user.getGgCoin()).isEqualTo(userGameCoinResultDto.getAfterCoin());
         assertThat(coinPolicyRepository.findTopByOrderByCreatedAtDesc()
-                .orElseThrow(() -> new CoinPolicyNotFoundException()).getRankWin()).isEqualTo(userGameCoinResultDto.getCoinIncrement());
+            .orElseThrow(() -> new CoinPolicyNotFoundException()).getRankWin())
+            .isEqualTo(userGameCoinResultDto.getCoinIncrement());
         System.out.println(coinHistoryRepository.findFirstByOrderByIdDesc()
-                .orElseThrow(() -> new CoinHistoryNotFoundException()).getHistory());
+            .orElseThrow(() -> new CoinHistoryNotFoundException()).getHistory());
     }
 
     @Test
     @DisplayName("랭크 게임 패배 재화 증가 서비스 테스트")
     void addRankLoseGameService() {
-        User user = userRepository.getUserByIntraId("cheolee").orElseThrow(UserNotFoundException::new);
+        CoinPolicy coinPolicy = CoinPolicy.builder().user(admin).rankLose(100).build();
+        coinPolicyRepository.save(coinPolicy);
 
-        UserGameCoinResultDto userGameCoinResultDto = userCoinChangeService.addRankGameCoin(3689L, user.getId());
+        String accessToken = testDataUtils.getLoginAccessToken();
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
+        User user = userRepository.getById(userId);
+
+        Season season = testDataUtils.createSeason();
+        Game mockMatch = testDataUtils.createMockMatch(user, season,
+            LocalDateTime.now().minusMinutes(20),
+            LocalDateTime.now().minusMinutes(5), Mode.RANK, 1, 2);
+
+        UserGameCoinResultDto userGameCoinResultDto = userCoinChangeService
+            .addRankGameCoin(mockMatch.getId(), user.getId());
 
         assertThat(user.getGgCoin()).isEqualTo(userGameCoinResultDto.getAfterCoin());
         assertThat(coinPolicyRepository.findTopByOrderByCreatedAtDesc()
-                .orElseThrow(() -> new CoinPolicyNotFoundException()).getRankLose()).isEqualTo(userGameCoinResultDto.getCoinIncrement());
+            .orElseThrow(() -> new CoinPolicyNotFoundException()).getRankLose())
+            .isEqualTo(userGameCoinResultDto.getCoinIncrement());
         System.out.println(coinHistoryRepository.findFirstByOrderByIdDesc()
                 .orElseThrow(() -> new CoinHistoryNotFoundException()).getHistory());
     }

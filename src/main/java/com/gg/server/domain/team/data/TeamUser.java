@@ -29,5 +29,6 @@ public class TeamUser {
     public TeamUser(Team team, User user) {
         this.team = team;
         this.user = user;
+        team.addTeamUser(this);
     }
 }

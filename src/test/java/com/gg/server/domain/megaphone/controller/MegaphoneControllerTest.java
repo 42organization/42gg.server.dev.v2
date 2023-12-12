@@ -1,6 +1,15 @@
 package com.gg.server.domain.megaphone.controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gg.server.admin.item.dto.ItemUpdateRequestDto;
+import com.gg.server.domain.item.data.Item;
+import com.gg.server.domain.item.type.ItemType;
 import com.gg.server.domain.megaphone.data.Megaphone;
 import com.gg.server.domain.megaphone.data.MegaphoneRepository;
 import com.gg.server.domain.megaphone.dto.MegaphoneUseRequestDto;
@@ -12,7 +21,9 @@ import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
+import com.gg.server.utils.ItemTestUtils;
 import com.gg.server.utils.TestDataUtils;
+import java.time.LocalTime;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpHeaders;
 import org.assertj.core.api.AssertionsForClassTypes;
@@ -24,10 +35,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RequiredArgsConstructor
 @SpringBootTest
@@ -51,17 +58,28 @@ class MegaphoneControllerTest {
     @Autowired
     ReceiptRepository receiptRepository;
 
+    @Autowired
+    ItemTestUtils itemTestUtils;
+
     @Test
     @Transactional
     @DisplayName("[Post] /pingpong/megaphones")
     void useMegaphoneTest() throws Exception {
+        // 해당 테스트는 시스템상 23:55 ~ 00:05 사이에 테스트 불가능
+        if (LocalTime.now().isAfter(LocalTime.of(23, 54))
+            || LocalTime.now().isBefore(LocalTime.of(0, 6))) {
+            return;
+        }
         String intraId = "intra";
         String email = "email";
         User newUser = testDataUtils.createNewUser(intraId, email, RacketType.PENHOLDER,
                 SnsType.BOTH, RoleType.ADMIN);
         String accessToken = tokenProvider.createToken(newUser.getId());
         // db에 저장해두고 테스트
-        Receipt receipt = receiptRepository.findById(1L).get();
+        ItemUpdateRequestDto dto = new ItemUpdateRequestDto("확성기", "default",
+            "default", 40, 50, ItemType.MEGAPHONE);
+        Item item = itemTestUtils.createItem(newUser, dto);
+        Receipt receipt = itemTestUtils.purchaseItem(newUser, newUser, item);
         MegaphoneUseRequestDto megaphoneUseRequestDto = new MegaphoneUseRequestDto(receipt.getId(), "test");
         String content = objectMapper.writeValueAsString(megaphoneUseRequestDto);
         String url = "/pingpong/megaphones";
@@ -82,14 +100,19 @@ class MegaphoneControllerTest {
     @DisplayName("DELETE /pingpong/megaphones/{megaphoneId}")
     public void deleteMegaphoneTest() throws Exception {
         //given
-        String intraId = "intra";
+        String intraId = "intra2";
         String email = "email";
-        String imageUrl = "imageUrl";
         User newUser = testDataUtils.createNewUser(intraId, email, RacketType.PENHOLDER,
                 SnsType.BOTH, RoleType.ADMIN);
         String accessToken = tokenProvider.createToken(newUser.getId());
-        Receipt receipt = receiptRepository.findById(2L).get();
-        String url = "/pingpong/megaphones/2";
+        ItemUpdateRequestDto dto = new ItemUpdateRequestDto("확성기", "default",
+            "default", 40, 50, ItemType.MEGAPHONE);
+        Item item = itemTestUtils.createItem(newUser, dto);
+        Receipt receipt = itemTestUtils.purchaseItem(newUser, newUser, item);
+        Receipt receipt2 = itemTestUtils.purchaseItem(newUser, newUser, item);
+        Megaphone megaphone = itemTestUtils.createMegaPhone(newUser, receipt, "test");
+        Megaphone megaphone2 = itemTestUtils.createMegaPhone(newUser, receipt2, "test");
+        String url = "/pingpong/megaphones/" + megaphone2.getId();
 
         //when
         mockMvc.perform(delete(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
@@ -97,7 +120,7 @@ class MegaphoneControllerTest {
                 .andReturn().getResponse();
 
         //then
-        AssertionsForClassTypes.assertThat(receipt.getStatus()).isEqualTo(ItemStatus.DELETED);
+        AssertionsForClassTypes.assertThat(receipt2.getStatus()).isEqualTo(ItemStatus.DELETED);
     }
 
     @Test
@@ -109,7 +132,11 @@ class MegaphoneControllerTest {
         User newUser = testDataUtils.createNewUser(intraId, email, RacketType.PENHOLDER,
                 SnsType.BOTH, RoleType.ADMIN);
         String accessToken = tokenProvider.createToken(newUser.getId());
-        Receipt receipt = receiptRepository.findById(1L).get();
+        ItemUpdateRequestDto dto = new ItemUpdateRequestDto("확성기", "default",
+            "default", 40, 50, ItemType.MEGAPHONE);
+        Item item = itemTestUtils.createItem(newUser, dto);
+        Receipt receipt = itemTestUtils.purchaseItem(newUser, newUser, item);
+        Megaphone megaphone = itemTestUtils.createMegaPhone(newUser, receipt, "test");
         String url = "/pingpong/megaphones/receipt/" + receipt.getId();
 
         String contentAsString = mockMvc.perform(get(url)
@@ -121,6 +148,7 @@ class MegaphoneControllerTest {
     }
 
     @Test
+    @Transactional
     @DisplayName("[GET] /pingpong/megaphones")
     void getMegaphoneTodayListTest() throws Exception {
         String accessToken = testDataUtils.getLoginAccessToken();
