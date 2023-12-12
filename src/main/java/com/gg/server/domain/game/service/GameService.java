@@ -88,7 +88,7 @@ public class GameService {
         if (game.getStatus() != StatusType.WAIT && game.getStatus() != StatusType.LIVE) {
             return false;
         }
-        return updateTournamentGameScore(game, scoreDto, userId);
+        return updateRankGameScore(game, scoreDto, userId);
     }
 
     /**
@@ -99,7 +99,7 @@ public class GameService {
      * @return Boolean 입력 성공 여부
      */
     @Transactional
-    public void createTournamentResult(TournamentResultReqDto scoreDto, Long userId) {
+    public void createTournamentGameResult(TournamentResultReqDto scoreDto, Long userId) {
         Game game = gameFindService.findGameWithPessimisticLockById(scoreDto.getGameId());
         if (game.getStatus() != StatusType.WAIT && game.getStatus() != StatusType.LIVE) {
             throw new GameStatusNotMatchedException();
@@ -232,7 +232,7 @@ public class GameService {
         throw new TeamIdNotMatchException();
     }
 
-    private Boolean updateTournamentGameScore(Game game, RankResultReqDto scoreDto, Long userId) {
+    private Boolean updateRankGameScore(Game game, RankResultReqDto scoreDto, Long userId) {
         List<TeamUser> teams = teamUserRepository.findAllByGameId(game.getId());
         TeamUser myTeam = findTeamId(scoreDto.getMyTeamId(), teams);
         TeamUser enemyTeam = findTeamId(scoreDto.getEnemyTeamId(), teams);
@@ -267,20 +267,19 @@ public class GameService {
         TeamUser enemyTeam = findTeamId(scoreDto.getEnemyTeamId(), teams);
         if (!myTeam.getUser().getId().equals(userId)) {
             throw new InvalidParameterException("team user 정보가 일치하지 않습니다.", ErrorCode.VALID_FAILED);
-        } else {
-            if (myTeam.getTeam().getScore().equals(-1) && enemyTeam.getTeam().getScore().equals(-1)){
-                setTeamScore(myTeam, scoreDto.getMyTeamScore(), scoreDto.getMyTeamScore() > scoreDto.getEnemyTeamScore());
-                setTeamScore(enemyTeam, scoreDto.getEnemyTeamScore(), scoreDto.getMyTeamScore() < scoreDto.getEnemyTeamScore());
-                expUpdates(game, teams);
-                Optional<TournamentGame> tournamentGame = tournamentGameRepository.findById(scoreDto.getGameId());
-                if (tournamentGame.isPresent() && tournamentGame.get().getTournamentRound().equals(TournamentRound.THE_FINAL)) {
-                    //토너먼트 결승전 게임일 경우, 토너먼트 상태 END로 변경
-                    tournamentGame.get().getTournament().updateStatus(TournamentStatus.END);
-                }
-            } else {
-                // score 가 이미 입력됨
-                throw new ScoreAlreadyEnteredException(ErrorCode.SCORE_ALREADY_ENTERED.getMessage(), ErrorCode.SCORE_ALREADY_ENTERED);
+        }
+        if (myTeam.getTeam().getScore().equals(-1) && enemyTeam.getTeam().getScore().equals(-1)){
+            setTeamScore(myTeam, scoreDto.getMyTeamScore(), scoreDto.getMyTeamScore() > scoreDto.getEnemyTeamScore());
+            setTeamScore(enemyTeam, scoreDto.getEnemyTeamScore(), scoreDto.getMyTeamScore() < scoreDto.getEnemyTeamScore());
+            expUpdates(game, teams);
+            Optional<TournamentGame> tournamentGame = tournamentGameRepository.findByGameId(scoreDto.getGameId());
+            if (tournamentGame.isPresent() && tournamentGame.get().getTournamentRound().equals(TournamentRound.THE_FINAL)) {
+                //토너먼트 결승전 게임일 경우, 토너먼트 상태 END로 변경
+                tournamentGame.get().getTournament().updateStatus(TournamentStatus.END);
             }
+        } else {
+            // score 가 이미 입력됨
+            throw new ScoreAlreadyEnteredException(ErrorCode.SCORE_ALREADY_ENTERED.getMessage(), ErrorCode.SCORE_ALREADY_ENTERED);
         }
     }
 }
