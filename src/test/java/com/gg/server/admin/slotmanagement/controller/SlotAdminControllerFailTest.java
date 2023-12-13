@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.slotmanagement.data.adminSlotManagementRepository;
 import com.gg.server.admin.slotmanagement.dto.SlotCreateRequestDto;
+import com.gg.server.utils.annotation.IntegrationTest;
 import com.gg.server.domain.slotmanagement.SlotManagement;
 import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
@@ -19,13 +20,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
-@SpringBootTest
+@IntegrationTest
 @AutoConfigureMockMvc
 @Transactional
 public class SlotAdminControllerFailTest {

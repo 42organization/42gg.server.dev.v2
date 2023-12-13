@@ -2,6 +2,7 @@ package com.gg.server.domain.coin.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.gg.server.utils.annotation.IntegrationTest;
 import com.gg.server.domain.coin.data.CoinHistoryRepository;
 import com.gg.server.domain.coin.data.CoinPolicy;
 import com.gg.server.domain.coin.data.CoinPolicyRepository;
@@ -24,10 +25,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
+@IntegrationTest
 @RequiredArgsConstructor
 @Transactional
 class UserCoinChangeServiceTest {

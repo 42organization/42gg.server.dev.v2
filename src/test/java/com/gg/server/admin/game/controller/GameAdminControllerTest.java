@@ -3,7 +3,7 @@ package com.gg.server.admin.game.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.game.dto.GameLogListAdminResponseDto;
 import com.gg.server.admin.game.dto.RankGamePPPModifyReqDto;
-import com.gg.server.config.TestRedisConfig;
+import com.gg.server.utils.annotation.IntegrationTest;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.dto.GameTeamUser;
 import com.gg.server.domain.game.dto.request.RankResultReqDto;
@@ -30,8 +30,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,8 +43,7 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RequiredArgsConstructor
-@SpringBootTest
-@Import(TestRedisConfig.class)
+@IntegrationTest
 @AutoConfigureMockMvc
 @Transactional
 @DisplayName("[Admin] Game Admin Controller Integration Test")

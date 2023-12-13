@@ -3,6 +3,7 @@ package com.gg.server.admin.coin.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.coin.data.CoinPolicyAdminRepository;
 import com.gg.server.admin.coin.dto.CoinPolicyAdminAddDto;
+import com.gg.server.utils.annotation.IntegrationTest;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +12,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +20,7 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RequiredArgsConstructor
-@SpringBootTest
+@IntegrationTest
 @AutoConfigureMockMvc
 @Transactional
 public class CoinPolicyAdminControllerFailTest {

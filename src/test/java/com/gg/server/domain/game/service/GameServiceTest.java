@@ -2,7 +2,7 @@ package com.gg.server.domain.game.service;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-import com.gg.server.config.TestRedisConfig;
+import com.gg.server.utils.annotation.IntegrationTest;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.dto.request.RankResultReqDto;
@@ -32,12 +32,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@Import(TestRedisConfig.class)
+@IntegrationTest
 @RequiredArgsConstructor
 @Transactional
 public class GameServiceTest {

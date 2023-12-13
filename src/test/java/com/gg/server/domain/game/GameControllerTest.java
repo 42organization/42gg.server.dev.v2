@@ -6,15 +6,12 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gg.server.config.TestRedisConfig;
-import com.gg.server.domain.game.dto.request.TournamentResultReqDto;
-import com.gg.server.domain.game.service.GameFindService;
-import com.gg.server.domain.game.service.GameService;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.dto.GameListResDto;
 import com.gg.server.domain.game.dto.GameTeamInfo;
 import com.gg.server.domain.game.dto.request.RankResultReqDto;
+import com.gg.server.domain.game.dto.request.TournamentResultReqDto;
 import com.gg.server.domain.game.service.GameFindService;
 import com.gg.server.domain.game.service.GameService;
 import com.gg.server.domain.game.type.Mode;
@@ -43,6 +40,7 @@ import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
+import com.gg.server.utils.annotation.IntegrationTest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,8 +53,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -64,8 +60,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@Import(TestRedisConfig.class)
+@IntegrationTest
 @AutoConfigureMockMvc
 @RequiredArgsConstructor
 @Transactional

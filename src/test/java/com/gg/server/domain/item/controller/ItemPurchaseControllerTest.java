@@ -1,6 +1,7 @@
 package com.gg.server.domain.item.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gg.server.utils.annotation.IntegrationTest;
 import com.gg.server.domain.item.service.ItemService;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
@@ -11,7 +12,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import javax.transaction.Transactional;
@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @RequiredArgsConstructor
-@SpringBootTest
+@IntegrationTest
 @AutoConfigureMockMvc
 @Transactional
 class ItemPurchaseControllerTest {

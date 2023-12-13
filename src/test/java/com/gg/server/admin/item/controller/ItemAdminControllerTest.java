@@ -11,6 +11,7 @@ import com.gg.server.admin.item.data.ItemAdminRepository;
 import com.gg.server.admin.item.dto.ItemListResponseDto;
 import com.gg.server.admin.item.dto.ItemUpdateRequestDto;
 import com.gg.server.admin.item.service.ItemAdminService;
+import com.gg.server.utils.annotation.IntegrationTest;
 import com.gg.server.domain.item.data.Item;
 import com.gg.server.domain.item.type.ItemType;
 import com.gg.server.domain.user.data.UserRepository;
@@ -27,7 +28,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -35,7 +35,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 
-@SpringBootTest
+@IntegrationTest
 @AutoConfigureMockMvc
 @Transactional
 class ItemAdminControllerTest {

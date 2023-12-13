@@ -1,6 +1,7 @@
 package com.gg.server.domain.noti.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gg.server.utils.annotation.IntegrationTest;
 import com.gg.server.domain.noti.data.Noti;
 import com.gg.server.domain.noti.data.NotiRepository;
 import com.gg.server.domain.noti.dto.NotiListResponseDto;
@@ -17,7 +18,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
 import javax.transaction.Transactional;
@@ -29,7 +29,7 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RequiredArgsConstructor
-@SpringBootTest
+@IntegrationTest
 @AutoConfigureMockMvc
 @Transactional
 class NotiControllerTest {

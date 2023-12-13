@@ -1,7 +1,7 @@
 package com.gg.server.domain.match.service;
 
 import com.gg.server.admin.penalty.data.PenaltyAdminRepository;
-import com.gg.server.config.TestRedisConfig;
+import com.gg.server.utils.annotation.IntegrationTest;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.type.Mode;
@@ -53,16 +53,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
+@IntegrationTest
 @Transactional
-@Import(TestRedisConfig.class)
 @RequiredArgsConstructor
 class MatchServiceTest {
     @Autowired

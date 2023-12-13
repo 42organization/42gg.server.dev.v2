@@ -6,6 +6,7 @@ import com.gg.server.admin.noti.dto.NotiAdminDto;
 import com.gg.server.admin.noti.dto.NotiListAdminResponseDto;
 import com.gg.server.admin.noti.dto.SendNotiAdminRequestDto;
 import com.gg.server.admin.noti.service.NotiAdminService;
+import com.gg.server.utils.annotation.IntegrationTest;
 import com.gg.server.domain.noti.data.Noti;
 import com.gg.server.domain.noti.data.NotiRepository;
 import com.gg.server.domain.noti.type.NotiType;
@@ -20,7 +21,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -38,7 +38,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RequiredArgsConstructor
-@SpringBootTest
+@IntegrationTest
 @AutoConfigureMockMvc
 class NotiAdminControllerTest {
     @Autowired
