@@ -147,9 +147,6 @@ spring:
   # Redis 설정
   cache:
     type: redis
-  redis:
-    host: 127.0.0.1
-    port: 6379
   sql:
     init:
       mode: always
