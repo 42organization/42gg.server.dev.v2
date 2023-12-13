@@ -22,6 +22,8 @@ import com.gg.server.domain.tournament.dto.TournamentGameListResponseDto;
 import com.gg.server.domain.tournament.dto.TournamentGameResDto;
 import com.gg.server.domain.tournament.dto.TournamentListResponseDto;
 import com.gg.server.domain.tournament.dto.TournamentResponseDto;
+import com.gg.server.domain.tournament.exception.TournamentConflictException;
+import com.gg.server.domain.tournament.exception.TournamentNotFoundException;
 import com.gg.server.domain.tournament.type.TournamentRound;
 import com.gg.server.domain.tournament.exception.TournamentNotFoundException;
 import com.gg.server.domain.tournament.type.TournamentStatus;
@@ -33,8 +35,9 @@ import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.domain.user.dto.UserImageDto;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.global.exception.ErrorCode;
-import java.util.Optional;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,7 +45,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.stream.Collectors;
@@ -106,17 +108,47 @@ public class TournamentService {
      * <p>유저 해당 토너먼트 참여 여부 확인 매서드</p>
      * @param tournamentId 타겟 토너먼트
      * @param user 해당 유저
-     * @return
+     * @return TournamentUserRegistrationResponseDto [ BEFORE || WAIT || PLAYER ]
+     * @throws TournamentNotFoundException 타겟 토너먼트 없음
+     * @throws UserNotFoundException 유저 없음
      */
     public TournamentUserRegistrationResponseDto getUserStatusInTournament(Long tournamentId, UserDto user) {
         Tournament targetTournament = tournamentRepository.findById(tournamentId).orElseThrow(() ->
             new TournamentNotFoundException("target tournament not found", ErrorCode.TOURNAMENT_NOT_FOUND));
-        User loginUser = userRepository.findById(user.getId()).orElseThrow(UserNotFoundException::new);
+
         TournamentUserStatus tournamentUserStatus = TournamentUserStatus.BEFORE;
         Optional<TournamentUser> tournamentUser = tournamentUserRepository.findByTournamentIdAndUserId(tournamentId, user.getId());
         if (tournamentUser.isPresent()) {
             tournamentUserStatus = tournamentUser.get().getIsJoined() ? TournamentUserStatus.PLAYER : TournamentUserStatus.WAIT;
         }
+        return new TournamentUserRegistrationResponseDto(tournamentUserStatus);
+    }
+
+    /**
+     * <p>토너먼트 참가 신청 매서드</p>
+     * <p>이미 신청한 토너먼트 중  BEFORE || LIVE인 경우가 존재한다면 신청 불가능 하다.</p>
+     * @param tournamentId 타겟 토너먼트 Id
+     * @param user 신청 유저(로그인한 본인)
+     * @return TournamentUserRegistrationResponseDto [ WAIT || PLAYER ]
+     * @throws TournamentNotFoundException 타겟 토너먼트 없음
+     * @throws UserNotFoundException 유저 없음
+     * @throws TournamentConflictException 이미 신청한 토너먼트 존재(BEFORE || LIVE인 토너먼트)
+     */
+    @Transactional
+    public TournamentUserRegistrationResponseDto registerTournamentUser(Long tournamentId, UserDto user) {
+        Tournament targetTournament = tournamentRepository.findById(tournamentId).orElseThrow(() ->
+            new TournamentNotFoundException("target tournament not found", ErrorCode.TOURNAMENT_NOT_FOUND));
+        User loginUser = userRepository.findById(user.getId()).orElseThrow(UserNotFoundException::new);
+
+        List<TournamentUser> tournamentUserList = targetTournament.getTournamentUsers();
+        tournamentUserRepository.findAllByUser(loginUser).stream()
+            .filter(tu->tu.getTournament().getStatus().equals(TournamentStatus.BEFORE) || tu.getTournament().getStatus().equals(TournamentStatus.LIVE))
+            .findAny()
+            .ifPresent(a->{throw new TournamentConflictException("이미 신청한 토너먼트가 존재합니다.", ErrorCode.TOURNAMENT_CONFLICT);});
+        TournamentUser tournamentUser = new TournamentUser(loginUser, targetTournament,
+            tournamentUserList.size() < Tournament.ALLOWED_JOINED_NUMBER, LocalDateTime.now());
+        targetTournament.addTournamentUser(tournamentUser);
+        TournamentUserStatus tournamentUserStatus = tournamentUser.getIsJoined() ? TournamentUserStatus.PLAYER : TournamentUserStatus.WAIT;
         return new TournamentUserRegistrationResponseDto(tournamentUserStatus);
     }
 
