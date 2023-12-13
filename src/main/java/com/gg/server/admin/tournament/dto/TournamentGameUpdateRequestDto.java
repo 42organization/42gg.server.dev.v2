@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class TournamentGameUpdateReqDto {
+public class TournamentGameUpdateRequestDto {
 
     @NotNull
     private Long tournamentGameId;

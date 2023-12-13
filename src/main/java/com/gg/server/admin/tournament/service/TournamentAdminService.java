@@ -6,10 +6,8 @@ import com.gg.server.admin.tournament.exception.TournamentTitleConflictException
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.exception.ScoreNotInvalidException;
-import com.gg.server.domain.game.service.GameService;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.team.data.Team;
-import com.gg.server.domain.team.dto.TeamReqDto;
 import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentRepository;
@@ -29,7 +27,6 @@ import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.InvalidParameterException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -270,7 +267,7 @@ public class TournamentAdminService {
      * @throws TournamentUpdateException 토너먼트가 시작되지 않았을 때
      */
     @Transactional
-    public void updateTournamentGame(Long tournamentId, TournamentGameUpdateReqDto reqDto) {
+    public void updateTournamentGame(Long tournamentId, TournamentGameUpdateRequestDto reqDto) {
         if (reqDto.getTeam1().getScore() + reqDto.getTeam2().getScore() > 3 ||
                 reqDto.getTeam1().getScore() + reqDto.getTeam2().getScore() < 2 ||
                 reqDto.getTeam1().getScore() == reqDto.getTeam2().getScore()) {
@@ -296,7 +293,7 @@ public class TournamentAdminService {
      * @param game 수정될 게임
      * @param reqDto 수정할 게임 정보
      */
-    private void updateTeamScore(Game game, TournamentGameUpdateReqDto reqDto){
+    private void updateTeamScore(Game game, TournamentGameUpdateRequestDto reqDto){
 
         List<Team> teams = game.getTeams();
         Team team1 = teams.stream().filter(t->t.getId().equals(reqDto.getTeam1().getTeamId())).findAny().orElseThrow(TournamentGameNotFoundException::new);
@@ -318,13 +315,9 @@ public class TournamentAdminService {
      * @param reqDto 수정할 게임 정보
      * @return 수정 가능 여부
      */
-    private boolean canUpdateScore(Game game, TournamentGameUpdateReqDto reqDto) {
+    private boolean canUpdateScore(Game game, TournamentGameUpdateRequestDto reqDto) {
         TournamentGame nextTournamentGame = tournamentGameRepository.findById(reqDto.getNextTournamentGameId())
                 .orElseThrow(TournamentGameNotFoundException::new);
-        if (game.getTeams().stream().noneMatch(t-> Objects.equals(t.getId(), reqDto.getTeam1().getTeamId())) ||
-                game.getTeams().stream().noneMatch(t-> Objects.equals(t.getId(), reqDto.getTeam2().getTeamId()))){
-            return false;
-        }
         if (nextTournamentGame.getGame() == null){
             return true;
         }

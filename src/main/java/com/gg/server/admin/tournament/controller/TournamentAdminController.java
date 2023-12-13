@@ -4,7 +4,6 @@ import com.gg.server.admin.tournament.dto.*;
 import com.gg.server.admin.tournament.service.TournamentAdminService;
 import javax.validation.Valid;
 
-import com.gg.server.domain.team.dto.TeamReqDto;
 import com.gg.server.domain.tournament.dto.TournamentUserListResponseDto;
 import lombok.AllArgsConstructor;
 import org.checkerframework.checker.index.qual.Positive;
@@ -107,7 +106,7 @@ public class TournamentAdminController {
      */
     @PatchMapping("{tournamentId}/games")
     public ResponseEntity<Void> updateTournamentGame(@PathVariable @Positive Long tournamentId,
-                                                     @Valid @RequestBody TournamentGameUpdateReqDto tournamentGameUpdateReqDto) {
+                                                     @Valid @RequestBody TournamentGameUpdateRequestDto tournamentGameUpdateReqDto) {
         tournamentAdminService.updateTournamentGame(tournamentId, tournamentGameUpdateReqDto);
         return ResponseEntity.ok().build();
     }

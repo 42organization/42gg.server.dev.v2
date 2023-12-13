@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.tournament.dto.TournamentAdminCreateRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminAddUserRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
-import com.gg.server.admin.tournament.dto.TournamentGameUpdateReqDto;
+import com.gg.server.admin.tournament.dto.TournamentGameUpdateRequestDto;
 import com.gg.server.admin.tournament.service.TournamentAdminService;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.tournament.data.Tournament;
@@ -21,7 +21,6 @@ import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.team.dto.TeamReqDto;
 import com.gg.server.domain.tournament.data.*;
-import com.gg.server.domain.tournament.dto.TournamentUserListResponseDto;
 import com.gg.server.domain.tournament.type.TournamentRound;
 import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.tournament.type.TournamentType;
@@ -890,7 +889,7 @@ class TournamentAdminControllerTest {
             List<TournamentGame> tournamentGameList = tournamentGameRepository.findAllByTournamentId(tournament.getId());
             TournamentGame tournamentGame = tournamentGameList.stream().filter(tg -> tg.getTournamentRound() == TournamentRound.SEMI_FINAL_1).findAny().orElseThrow();
             TournamentGame nextTournamentGame = tournamentGameList.stream().filter(tg -> tg.getTournamentRound() == TournamentRound.THE_FINAL).findAny().orElseThrow();
-            TournamentGameUpdateReqDto requestDto = new TournamentGameUpdateReqDto(tournamentGame.getId(), nextTournamentGame.getId(),
+            TournamentGameUpdateRequestDto requestDto = new TournamentGameUpdateRequestDto(tournamentGame.getId(), nextTournamentGame.getId(),
                     new TeamReqDto(tournamentGame.getGame().getTeams().get(0).getId(), myTeamScore),
                     new TeamReqDto(tournamentGame.getGame().getTeams().get(1).getId(), otherTeamScore));
 
@@ -918,7 +917,7 @@ class TournamentAdminControllerTest {
             List<TournamentGame> tournamentGameList = tournamentGameRepository.findAllByTournamentId(tournament.getId());
             TournamentGame tournamentGame = tournamentGameList.stream().filter(tg -> tg.getTournamentRound() == TournamentRound.QUARTER_FINAL_1).findAny().orElseThrow();
             TournamentGame nextTournamentGame = tournamentGameList.stream().filter(tg -> tg.getTournamentRound() == TournamentRound.SEMI_FINAL_1).findAny().orElseThrow();
-            TournamentGameUpdateReqDto requestDto = new TournamentGameUpdateReqDto(tournamentGame.getId(), nextTournamentGame.getId(),
+            TournamentGameUpdateRequestDto requestDto = new TournamentGameUpdateRequestDto(tournamentGame.getId(), nextTournamentGame.getId(),
                     new TeamReqDto(tournamentGame.getGame().getTeams().get(0).getId(), myTeamScore),
                     new TeamReqDto(tournamentGame.getGame().getTeams().get(1).getId(), otherTeamScore));
 
