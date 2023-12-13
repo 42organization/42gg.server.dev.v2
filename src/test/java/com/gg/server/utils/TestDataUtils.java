@@ -559,23 +559,26 @@ public class TestDataUtils {
     }
 
     public Tournament createTournamentWithUser(int joinUserCnt, int notJoinUserCnt, String testName) {
-        Tournament tournament = createTournamentByEnum(TournamentType.ROOKIE, TournamentStatus.BEFORE, LocalDateTime.now());
-        tournamentRepository.save(tournament);
+        Tournament tournament = Tournament.builder()
+            .title("testTournament")
+            .contents("contents")
+            .startTime(LocalDateTime.now())
+            .endTime(LocalDateTime.now().plusDays(1))
+            .type(TournamentType.ROOKIE)
+            .status(TournamentStatus.BEFORE).build();
         for (int i = 0; i < joinUserCnt + notJoinUserCnt; i++) {
             User newUser = createNewUser(testName + i, "tester" + i + "@gmail.com", RacketType.PENHOLDER, SnsType.NONE, RoleType.USER);
             userRepository.save(newUser);
         }
         for (int j = 0; j < joinUserCnt; j++) {
             TournamentUser tournamentUser = new TournamentUser(userRepository.findByIntraId(testName + j).get(), tournament, true, LocalDateTime.now());
-            tournamentUserRepository.save(tournamentUser);
-            tournament.getTournamentUsers().add(tournamentUser);
+            tournament.addTournamentUser(tournamentUser);
         }
         for (int j = joinUserCnt; j < joinUserCnt + notJoinUserCnt; j++) {
             TournamentUser tournamentUser = new TournamentUser(userRepository.findByIntraId(testName + j).get(), tournament, false, LocalDateTime.now());
-            tournamentUserRepository.save(tournamentUser);
-            tournament.getTournamentUsers().add(tournamentUser);
+            tournament.addTournamentUser(tournamentUser);
         }
-        return tournament;
+        return tournamentRepository.save(tournament);
     }
 
     public TournamentGame createTournamentGame(Tournament tournament, TournamentRound round, GameInfoDto gameInfoDto) {
