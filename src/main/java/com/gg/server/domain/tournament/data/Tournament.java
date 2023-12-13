@@ -19,6 +19,13 @@ import lombok.*;
 @Entity
 @ToString
 public class Tournament extends BaseTimeEntity {
+    // 토너먼트 참가자 수 => 현재는 8강 고정
+    public static final int ALLOWED_JOINED_NUMBER = 8;
+    // 토너먼트 최소 시작 날짜 (n일 후)
+    public static final int ALLOWED_MINIMAL_START_DAYS = 2;
+    // 토너먼트 최소 진행 시간 (n시간)
+    public static final int MINIMUM_TOURNAMENT_DURATION = 2;
+
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -59,16 +66,6 @@ public class Tournament extends BaseTimeEntity {
     private List<TournamentUser> tournamentUsers = new ArrayList<>();
 
     @Builder
-    public Tournament(String title, String contents, LocalDateTime startTime, LocalDateTime endTime, TournamentType type, TournamentStatus status) {
-        this.title = title;
-        this.contents = contents;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.type = type;
-        this.status = status;
-    }
-
-    @Builder
     public Tournament(String title, String contents, LocalDateTime startTime, LocalDateTime endTime, TournamentType type, TournamentStatus status, User winner, List<TournamentGame> tournamentGames, List<TournamentUser> tournamentUsers) {
         this.title = title;
         this.contents = contents;
@@ -79,29 +76,6 @@ public class Tournament extends BaseTimeEntity {
         this.tournamentGames = tournamentGames != null ? tournamentGames : new ArrayList<>();
         this.tournamentUsers = tournamentUsers != null ? tournamentUsers : new ArrayList<>();
     }
-
-    static public Tournament of(String title, String contents, LocalDateTime startTime, LocalDateTime endTime, TournamentType type, TournamentStatus status) {
-        return Tournament.builder()
-                .title(title)
-                .contents(contents)
-                .startTime(startTime)
-                .endTime(endTime)
-                .type(type)
-                .status(status)
-                .build();
-    }
-
-    // TODO TournamentDto 사용할 건지 고민해보기
-//    static public Tournament from(TournamentDto tournamentDto) {
-//        return Tournament.builder()
-//                .title(tournamentDto.getTitle())
-//                .contents(tournamentDto.getContents())
-//                .startTime(tournamentDto.getStartTime())
-//                .endTime(tournamentDto.getEndTime())
-//                .type(tournamentDto.getType())
-//                .status(tournamentDto.getStatus())
-//                .build();
-//    }
 
     public void update(String title, String contents, LocalDateTime startTime, LocalDateTime endTime, TournamentType type, TournamentStatus status) {
         this.title = title;
@@ -124,7 +98,11 @@ public class Tournament extends BaseTimeEntity {
         this.tournamentUsers.remove(tournamentUser);
     }
 
-    public void update_winner(User winner) {
+    public void updateWinner(User winner) {
         this.winner = winner;
+    }
+
+    public void updateStatus(TournamentStatus status) {
+        this.status = status;
     }
 }

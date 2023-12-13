@@ -1,9 +1,11 @@
 package com.gg.server.domain.game.service;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
+import com.gg.server.config.TestRedisConfig;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
-import com.gg.server.domain.game.dto.req.RankResultReqDto;
-import com.gg.server.domain.game.service.GameService;
+import com.gg.server.domain.game.dto.request.RankResultReqDto;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.rank.data.Rank;
@@ -24,19 +26,18 @@ import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-
 @SpringBootTest
+@Import(TestRedisConfig.class)
 @RequiredArgsConstructor
 @Transactional
 public class GameServiceTest {
@@ -72,6 +73,7 @@ public class GameServiceTest {
 
     @BeforeEach
     void init() {
+        testDataUtils.createTierSystem("pingpong");
         Season season = testDataUtils.createSeason();
         Tier tier = tierRepository.findStartTier().orElseThrow(TierNotFoundException::new);
         user1 = testDataUtils.createNewUser();

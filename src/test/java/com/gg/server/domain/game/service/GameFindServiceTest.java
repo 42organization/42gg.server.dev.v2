@@ -1,11 +1,12 @@
 package com.gg.server.domain.game.service;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.dto.GameListResDto;
 import com.gg.server.domain.game.dto.GameResultResDto;
 import com.gg.server.domain.game.dto.GameTeamUser;
-import com.gg.server.domain.game.service.GameFindService;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.rank.redis.RankRedis;
@@ -19,6 +20,9 @@ import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,12 +34,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
 @RequiredArgsConstructor
@@ -59,6 +57,7 @@ public class GameFindServiceTest {
 
     @BeforeEach
     void init() {
+        testDataUtils.createTierSystem("pingpong");
         Season season = testDataUtils.createSeason();
         User newUser = testDataUtils.createNewUser();
         Tier tier = tierRepository.findStartTier().orElseThrow(TierNotFoundException::new);

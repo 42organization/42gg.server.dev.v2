@@ -7,6 +7,8 @@ import static org.mockito.BDDMockito.given;
 import com.gg.server.admin.tournament.dto.TournamentAdminCreateRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminAddUserRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
+import com.gg.server.domain.game.data.Game;
+import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentGameRepository;
@@ -29,13 +31,9 @@ import com.gg.server.domain.user.type.SnsType;
 import com.gg.server.global.exception.custom.InvalidParameterException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-import javax.validation.constraints.NotNull;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -54,6 +52,8 @@ class TournamentAdminServiceTest {
     TournamentUserRepository tournamentUserRepository;
     @Mock
     UserRepository userRepository;
+    @Mock
+    GameRepository gameRepository;
     @InjectMocks
     TournamentAdminService tournamentAdminService;
 
@@ -73,8 +73,12 @@ class TournamentAdminServiceTest {
             TournamentGame tournamentGame = createTournamentGame(tournament, TournamentRound.THE_FINAL);
 
             given(tournamentRepository.findByTitle(tournament.getTitle())).willReturn(Optional.empty());
-            given(tournamentRepository.findAllByStatusIsNot(TournamentStatus.END)).willReturn(tournamentList);
+            given(tournamentRepository.findAllBetween(tournamentAdminCreateRequestDto.getStartTime(), tournamentAdminCreateRequestDto.getEndTime()))
+                .willReturn(new ArrayList<>());
+            given(gameRepository.findAllBetweenTournament(tournamentAdminCreateRequestDto.getStartTime(), tournamentAdminCreateRequestDto.getEndTime()))
+                .willReturn(new ArrayList<>());
             given(tournamentRepository.save(any(Tournament.class))).willReturn(tournament);
+
 
             // when
             tournamentAdminService.createTournament(tournamentAdminCreateRequestDto);
@@ -133,45 +137,41 @@ class TournamentAdminServiceTest {
             // given
             List<Tournament> tournamentList = createTournaments(1L, 2, getTargetTime(3, 1));
             Tournament tournament = tournamentList.get(0);
-            TournamentAdminCreateRequestDto createRequestDto1 = createTournamentCreateRequestDto(
+            TournamentAdminCreateRequestDto createRequestDto = createTournamentCreateRequestDto(
                     "1st tournament",
                     getTargetTime(3, 2), getTargetTime(3, 5));
-            TournamentAdminCreateRequestDto createRequestDto2 = createTournamentCreateRequestDto(
-                    "1st tournament",
-                    getTargetTime(3, 0), getTargetTime(3, 2));
-            TournamentAdminCreateRequestDto createRequestDto3 = createTournamentCreateRequestDto(
-                    "1st tournament",
-                    getTargetTime(3, 0), getTargetTime(3, 4));
-            TournamentAdminCreateRequestDto createRequestDto4 = createTournamentCreateRequestDto(
-                    "1st tournament",
-                    getTargetTime(3, 1), getTargetTime(3, 5));
-            TournamentAdminCreateRequestDto createRequestDto5 = createTournamentCreateRequestDto(
-                    "1st tournament",
-                    getTargetTime(2, 3), getTargetTime(3, 1));
-            TournamentAdminCreateRequestDto createRequestDto6 = createTournamentCreateRequestDto(
-                    "1st tournament",
-                    getTargetTime(2, 3), getTargetTime(3, 3));
-            TournamentAdminCreateRequestDto createRequestDto7 = createTournamentCreateRequestDto(
-                    "1st tournament",
-                    LocalDateTime.now().plusDays(2).plusMinutes(30), LocalDateTime.now().plusDays(3).plusHours(1));
+
             given(tournamentRepository.findByTitle(tournament.getTitle())).willReturn(Optional.empty());
-            given(tournamentRepository.findAllByStatusIsNot(TournamentStatus.END)).willReturn(tournamentList);
+            given(tournamentRepository.findAllBetween(createRequestDto.getStartTime(), createRequestDto.getEndTime()))
+                .willReturn(tournamentList);
 
             // when, then
-            assertThatThrownBy(() -> tournamentAdminService.createTournament(createRequestDto1))
+            assertThatThrownBy(() -> tournamentAdminService.createTournament(createRequestDto))
                     .isInstanceOf(TournamentConflictException.class);
-            assertThatThrownBy(() -> tournamentAdminService.createTournament(createRequestDto2))
-                    .isInstanceOf(TournamentConflictException.class);
-            assertThatThrownBy(() -> tournamentAdminService.createTournament(createRequestDto3))
-                    .isInstanceOf(TournamentConflictException.class);
-            assertThatThrownBy(() -> tournamentAdminService.createTournament(createRequestDto4))
-                    .isInstanceOf(TournamentConflictException.class);
-            assertThatThrownBy(() -> tournamentAdminService.createTournament(createRequestDto5))
-                    .isInstanceOf(TournamentConflictException.class);
-            assertThatThrownBy(() -> tournamentAdminService.createTournament(createRequestDto6))
-                    .isInstanceOf(TournamentConflictException.class);
-            assertThatThrownBy(() -> tournamentAdminService.createTournament(createRequestDto7))
-                    .isInstanceOf(TournamentConflictException.class);
+        }
+
+        @Test
+        @DisplayName("기존에 있는 게임과 겹치는 토너먼트 시간")
+        void gameAlreadyExist() {
+            // given
+            TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto = createTournamentCreateRequestDto(
+                "1st tournament",
+                getTargetTime(3, 1), getTargetTime(3, 3));
+            List<Tournament> tournamentList = createTournaments(1L, 2, getTargetTime(2, 1));
+            Tournament tournament = tournamentList.get(0);
+            TournamentGame tournamentGame = createTournamentGame(tournament, TournamentRound.THE_FINAL);
+            List<Game> gameList = new ArrayList<>();
+            gameList.add(new Game());
+            given(tournamentRepository.findByTitle(tournament.getTitle())).willReturn(Optional.empty());
+            given(tournamentRepository.findAllBetween(tournamentAdminCreateRequestDto.getStartTime(), tournamentAdminCreateRequestDto.getEndTime()))
+                .willReturn(new ArrayList<>());
+            given(gameRepository.findAllBetweenTournament(tournamentAdminCreateRequestDto.getStartTime(), tournamentAdminCreateRequestDto.getEndTime()))
+                .willReturn(gameList);
+
+            // when
+            assertThatThrownBy(() -> tournamentAdminService.createTournament(tournamentAdminCreateRequestDto))
+                .isInstanceOf(TournamentConflictException.class);
+            ;
         }
     }
 
@@ -188,7 +188,10 @@ class TournamentAdminServiceTest {
             TournamentAdminUpdateRequestDto updateRequestDto = createTournamentAdminUpdateRequestDto(
                 getTargetTime(3, 1), getTargetTime(3, 3));
             given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
-            given(tournamentRepository.findAllByStatusIsNot(TournamentStatus.END)).willReturn(tournamentList);
+            given(tournamentRepository.findAllBetween(updateRequestDto.getStartTime(), updateRequestDto.getEndTime()))
+                .willReturn(new ArrayList<>());
+            given(gameRepository.findAllBetweenTournament(updateRequestDto.getStartTime(), updateRequestDto.getEndTime()))
+                .willReturn(new ArrayList<>());
             given(tournamentRepository.save(any(Tournament.class))).willReturn(tournament);
             // when
             Tournament changedTournament = tournamentAdminService.updateTournamentInfo(1L, updateRequestDto);
@@ -268,7 +271,27 @@ class TournamentAdminServiceTest {
             TournamentAdminUpdateRequestDto updateRequestDto = createTournamentAdminUpdateRequestDto(
                 LocalDateTime.now().plusDays(2).plusHours(3), LocalDateTime.now().plusDays(2).plusHours(5));
             given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
-            given(tournamentRepository.findAllByStatusIsNot(TournamentStatus.END)).willReturn(tournamentList);
+            given(tournamentRepository.findAllBetween(updateRequestDto.getStartTime(), updateRequestDto.getEndTime()))
+                .willReturn(tournamentList);
+            // when, then
+            assertThatThrownBy(() -> tournamentAdminService.updateTournamentInfo(tournament.getId(), updateRequestDto))
+                .isInstanceOf(TournamentConflictException.class);
+        }
+
+        @Test
+        @DisplayName("Dto_기간_게임_겹침")
+        public void gameTimeConflict() {
+            // given
+            List<Tournament> tournamentList = createTournaments(1L, 2, getTargetTime(0, 1));
+            Tournament tournament = tournamentList.get(0);
+            TournamentAdminUpdateRequestDto updateRequestDto = createTournamentAdminUpdateRequestDto(
+                LocalDateTime.now().plusDays(2).plusHours(3), LocalDateTime.now().plusDays(2).plusHours(5));
+            List<Game> gameList = new ArrayList<>();
+            gameList.add(new Game());
+            given(tournamentRepository.findById(tournament.getId())).willReturn(Optional.of(tournament));
+            given(tournamentRepository.findAllBetween(updateRequestDto.getStartTime(), updateRequestDto.getEndTime()))
+                .willReturn(new ArrayList<>());
+            given(gameRepository.findAllBetweenTournament(updateRequestDto.getStartTime(), updateRequestDto.getEndTime())).willReturn(gameList);
             // when, then
             assertThatThrownBy(() -> tournamentAdminService.updateTournamentInfo(tournament.getId(), updateRequestDto))
                 .isInstanceOf(TournamentConflictException.class);
@@ -336,8 +359,6 @@ class TournamentAdminServiceTest {
             TournamentUser tournamentUser = new TournamentUser(user, tournament, true, LocalDateTime.now());
             given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
             given(userRepository.findByIntraId("testUser")).willReturn(Optional.of(user));
-            given(tournamentRepository.findAllByStatusIsNot(TournamentStatus.END)).willReturn(tournamentList);
-            given(tournamentUserRepository.save(any(TournamentUser.class))).willReturn(tournamentUser);
 
             // when, then
             tournamentAdminService.addTournamentUser(1L, requestDto);
@@ -400,7 +421,6 @@ class TournamentAdminServiceTest {
             tournament.addTournamentUser(tournamentUser);
             given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
             given(userRepository.findByIntraId("testUser")).willReturn(Optional.of(user));
-            given(tournamentRepository.findAllByStatusIsNot(TournamentStatus.END)).willReturn(tournamentList);
 
             // when, then
             assertThatThrownBy(() -> tournamentAdminService.addTournamentUser(tournament.getId(), requestDto))
@@ -412,34 +432,15 @@ class TournamentAdminServiceTest {
     @DisplayName("관리자_토너먼트_유저_삭제_테스트")
     class TournamentAdminServiceDeleteUserTest {
         @Test
-        @DisplayName("유저_삭제_성공")
-        public void success() {
-            // given
-            List<Tournament> tournamentList = createTournaments(1L, 2, getTargetTime(2, 1));
-            Tournament tournament = tournamentList.get(0);
-            TournamentAdminAddUserRequestDto requestDto = new TournamentAdminAddUserRequestDto("test");
-            User user = createUser("user");
-            TournamentUser tournamentUser = new TournamentUser(user, tournament, true, LocalDateTime.now());
-            given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
-            given(tournamentUserRepository.findByTournamentIdAndUserId(tournament.getId(), user.getId()))
-                .willReturn(Optional.of(tournamentUser));
-
-            // when, then
-            tournamentAdminService.deleteTournamentUser(tournament.getId(), user.getId());
-        }
-
-        @Test
         @DisplayName("찾을_수_없는_유저")
         public void userNotFound() {
             //given
             List<Tournament> tournamentList = createTournaments(1L, 2, getTargetTime(2, 1));
             Tournament tournament = tournamentList.get(0);
-            TournamentAdminAddUserRequestDto requestDto = new TournamentAdminAddUserRequestDto("test");
             User user = createUser("user");
-            TournamentUser tournamentUser = new TournamentUser(user, tournament, true, LocalDateTime.now());
             given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
-            given(tournamentUserRepository.findByTournamentIdAndUserId(tournament.getId(), user.getId()))
-                .willReturn(Optional.empty());
+            given(userRepository.findById(null)).willReturn(Optional.empty());
+
             // when, then
             assertThatThrownBy(() -> tournamentAdminService.deleteTournamentUser(tournament.getId(), user.getId()))
                 .isInstanceOf(UserNotFoundException.class);
