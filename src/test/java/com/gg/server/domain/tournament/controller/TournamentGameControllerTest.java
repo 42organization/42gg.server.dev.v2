@@ -66,8 +66,9 @@ public class TournamentGameControllerTest {
 
         Season season = testDataUtils.createSeason();
         testTournament = testDataUtils.createTournament("Test Tournament", LocalDateTime.now(), LocalDateTime.now().plusHours(2), TournamentStatus.LIVE);
+        int i=0;
         for (TournamentRound round : TournamentRound.values()) {
-            User gamer = testDataUtils.createNewUser("gamer" + Math.round(Math.random() * 100));
+            User gamer = testDataUtils.createNewUser("gamer" + i++);
             GameInfoDto gameInfoDto = testDataUtils.createGame(gamer, LocalDateTime.now().minusDays(10), LocalDateTime.now().minusDays(10).plusMinutes(20),season, Mode.TOURNAMENT);
             TournamentGame tournamentGame = testDataUtils.createTournamentGame(testTournament, round, gameInfoDto);
         }
@@ -79,7 +80,6 @@ public class TournamentGameControllerTest {
 
         @Test
         @DisplayName("[Get] pingpong/tournaments/{tournamentId}/games")
-        @Disabled
         public void getTournamentGames() throws Exception {
 
             // given
