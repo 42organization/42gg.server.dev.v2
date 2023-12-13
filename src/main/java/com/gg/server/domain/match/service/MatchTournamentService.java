@@ -16,6 +16,8 @@ import com.gg.server.domain.tournament.data.TournamentGameRepository;
 import com.gg.server.domain.tournament.type.TournamentRound;
 import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.user.data.User;
+import com.gg.server.global.exception.ErrorCode;
+import com.gg.server.global.exception.custom.CustomRuntimeException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -43,13 +45,13 @@ public class MatchTournamentService {
      */
     public void checkTournamentGame(Game game) {
         TournamentGame tournamentGame = tournamentGameRepository.findByGameId(game.getId())
-            .orElseThrow(() -> new IllegalArgumentException("토너먼트 게임이 아닙니다."));     // TODO : custom exception
+            .orElseThrow(() -> new CustomRuntimeException("토너먼트 게임이 아닙니다.", ErrorCode.TOURNAMENT_NOT_FOUND));     // TODO : custom exception
 
         // 토너먼트 결승전 게임일 경우, 토너먼트 상태 END로 변경
         if (TournamentRound.THE_FINAL.equals(tournamentGame.getTournamentRound())) {
             Tournament tournament = tournamentGame.getTournament();
-            User winner = game.getWinnerTeam()
-                .orElseThrow(() -> new IllegalArgumentException("승자가 존재하지 않습니다."))
+            User winner = game.getWinningTeam()
+                .orElseThrow(() -> new CustomRuntimeException("승자가 존재하지 않습니다.", ErrorCode.TOURNAMENT_NOT_FOUND))
                 .getTeamUsers().get(0).getUser();
             tournament.updateStatus(TournamentStatus.END);
             tournament.updateWinner(winner);
@@ -58,8 +60,9 @@ public class MatchTournamentService {
 
         // 같은 round의 모든 게임이 END인 경우, 다음 round의 토너먼트 게임 매칭
         TournamentRound round = tournamentGame.getTournamentRound();
-        List<TournamentGame> sameRoundGames = tournamentGame.getTournament().getTournamentGames().stream()
-            .filter(tg -> round.equals(tg.getTournamentRound()))
+        List<TournamentGame> tournamentGames = tournamentGameRepository.findAllByTournamentId(tournamentGame.getTournament().getId());
+        List<TournamentGame> sameRoundGames = tournamentGames.stream()
+            .filter(tg -> tg.getTournamentRound().getRoundNumber() == round.getRoundNumber())
             .collect(Collectors.toList());
         for (TournamentGame tg : sameRoundGames) {
             if (!StatusType.END.equals(tg.getGame().getStatus())) {
@@ -102,7 +105,7 @@ public class MatchTournamentService {
         if (previousTournamentGames.isEmpty()) {
             return tournament.getTournamentUsers().get(index).getUser();
         }
-        return previousTournamentGames.get(index).getGame().getWinnerTeam()
+        return previousTournamentGames.get(index).getGame().getWinningTeam()
             .orElseThrow(() -> new IllegalArgumentException("이전 라운드의 승자가 존재하지 않습니다."))
             .getTeamUsers().get(0).getUser();
     }
