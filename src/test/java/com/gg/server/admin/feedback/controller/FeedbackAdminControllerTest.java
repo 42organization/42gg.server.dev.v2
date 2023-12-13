@@ -49,7 +49,15 @@ class FeedbackAdminControllerTest {
     @DisplayName("[Get]/pingpong/admin/feedback")
     void getFeedback() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
-        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
+
+        for (int i = 0; i < 6; i++) {
+            Feedback feedback = Feedback.builder()
+                    .category(FeedbackType.ETC)
+                    .content("test" + i)
+                    .user(testDataUtils.createNewUser())
+                    .build();
+            feedbackAdminRepository.save(feedback);
+        }
 
         Integer currentPage = 1;
         Integer pageSize = 5;//페이지 사이즈 크기가 실제 디비 정보보다 큰지 확인할 것

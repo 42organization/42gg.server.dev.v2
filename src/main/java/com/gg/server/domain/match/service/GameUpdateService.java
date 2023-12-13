@@ -33,6 +33,12 @@ public class GameUpdateService {
     private final NotiService notiService;
     private final SnsNotiService snsNotiService;
 
+    /**
+     * 게임 생성 메서드
+     * 1) 게임 취소했을 경우, 2) 게임 매칭됐을 경우, 3) 토너먼트 게임 생성
+     * @param addDto 게임 생성에 필요한 정보
+     * @param recoveredUserId 게임 취소 당한 유저의 id, -1이면 무의미함
+     */
     public void make(GameAddDto addDto, Long recoveredUserId) {
         SlotManagement slotManagement = slotManagementRepository.findCurrent(LocalDateTime.now())
                 .orElseThrow(SlotNotFoundException::new);

@@ -1,9 +1,7 @@
-package com.gg.server.domain.game.dto.req;
+package com.gg.server.domain.game.dto.request;
 
 import com.gg.server.domain.game.type.StatusType;
 import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 
 @Getter
 public class GameListReqDto extends NormalGameListReqDto {

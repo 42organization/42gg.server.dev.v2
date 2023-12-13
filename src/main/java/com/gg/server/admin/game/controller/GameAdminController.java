@@ -4,11 +4,13 @@ import com.gg.server.admin.game.dto.GameLogListAdminResponseDto;
 import com.gg.server.admin.game.dto.GameUserLogAdminReqDto;
 import com.gg.server.admin.game.dto.RankGamePPPModifyReqDto;
 import com.gg.server.admin.game.service.GameAdminService;
+import com.gg.server.global.dto.PageRequestDto;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.InvalidParameterException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +23,15 @@ import javax.validation.constraints.Positive;
 @RequestMapping("/pingpong/admin/games")
 public class GameAdminController {
     private final GameAdminService gameAdminService;
+
+    @GetMapping
+    public GameLogListAdminResponseDto gameFindBySeasonId(@ModelAttribute @Valid PageRequestDto pageRequestDto) {
+        int page = pageRequestDto.getPage();
+        int size = pageRequestDto.getSize();
+
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("startTime").descending());
+        return gameAdminService.findAllGamesByAdmin(pageable);
+    }
 
     /**
      * 특정 유저의 게임 목록 조회 API

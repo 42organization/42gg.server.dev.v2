@@ -3,7 +3,7 @@ package com.gg.server.domain.game;
 import com.gg.server.domain.game.dto.ExpChangeResultResDto;
 import com.gg.server.domain.game.dto.GameTeamInfo;
 import com.gg.server.domain.game.dto.PPPChangeResultResDto;
-import com.gg.server.domain.game.dto.req.*;
+import com.gg.server.domain.game.dto.request.*;
 import com.gg.server.domain.game.dto.GameListResDto;
 import com.gg.server.domain.game.exception.ScoreNotMatchedException;
 import com.gg.server.domain.game.service.GameFindService;
@@ -77,7 +77,8 @@ public class GameController {
 
     @PostMapping("/rank")
     synchronized ResponseEntity<Void> createRankResult(@Valid @RequestBody RankResultReqDto reqDto, @Parameter(hidden = true) @Login UserDto user) {
-        if (reqDto.getMyTeamScore() + reqDto.getEnemyTeamScore() > 3 || reqDto.getMyTeamScore() == reqDto.getEnemyTeamScore()) {
+        if (reqDto.getMyTeamScore() + reqDto.getEnemyTeamScore() > 3 || reqDto.getMyTeamScore() + reqDto.getEnemyTeamScore() < 2 ||
+                reqDto.getMyTeamScore() == reqDto.getEnemyTeamScore()) {
             throw new InvalidParameterException("점수를 잘못 입력했습니다.", ErrorCode.VALID_FAILED);
         }
         if (!gameService.createRankResult(reqDto, user.getId())) {
@@ -92,6 +93,23 @@ public class GameController {
         if (gameService.normalExpResult(reqDto, user.getId()))
             return new ResponseEntity<Void>(HttpStatus.CREATED);
         return new ResponseEntity<Void>(HttpStatus.ACCEPTED);
+    }
+
+    /**
+     * 토너먼트 게임 결과 등록
+     * @param reqDto 요청 Dto
+     * @param user 사용자
+     * @exception InvalidParameterException 유효하지 않은 점수 입력할 경우
+     * @return 201 created
+     */
+    @PostMapping("/tournament")
+    synchronized ResponseEntity<Void> createTournamentGameResult(@Valid @RequestBody TournamentResultReqDto reqDto, @Parameter(hidden = true) @Login UserDto user) {
+        if (reqDto.getMyTeamScore() + reqDto.getEnemyTeamScore() > 3 || reqDto.getMyTeamScore() + reqDto.getEnemyTeamScore() < 2 ||
+                reqDto.getMyTeamScore() == reqDto.getEnemyTeamScore()) {
+            throw new InvalidParameterException("점수를 잘못 입력했습니다.", ErrorCode.VALID_FAILED);
+        }
+        gameService.createTournamentGameResult(reqDto, user.getId());
+        return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
 
     @GetMapping("/{gameId}/result/normal")

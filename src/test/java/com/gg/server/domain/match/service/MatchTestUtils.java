@@ -94,11 +94,6 @@ public class MatchTestUtils {
     }
 
     public SlotManagement makeTestSlotManagement(Integer interval) {
-        SlotManagement slotManagement1 = slotManagementRepository.findCurrent(LocalDateTime.now())
-                .orElseThrow(SlotNotFoundException::new);
-        if (slotManagement1 !=  null) {
-            return slotManagement1;
-        }
         SlotManagement slotManagement = SlotManagement.builder()
                 .futureSlotTime(10)
                 .pastSlotTime(0)

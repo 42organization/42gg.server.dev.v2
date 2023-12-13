@@ -31,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RequiredArgsConstructor
 @SpringBootTest
 @AutoConfigureMockMvc
+@Transactional
 class NotiControllerTest {
 
     @Autowired
