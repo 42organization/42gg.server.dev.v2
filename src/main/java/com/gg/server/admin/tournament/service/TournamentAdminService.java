@@ -40,6 +40,9 @@ public class TournamentAdminService {
     /***
      * 토너먼트 생성 Method
      * @param tournamentAdminCreateRequestDto 토너먼트 생성에 필요한 데이터
+     * @throws TournamentTitleConflictException 토너먼트의 제목이 겹칠 때
+     * @throws InvalidParameterException 토너먼트 시간으로 부적합 할 때
+     * @throws TournamentConflictException 업데이트 하고자 하는 토너먼트의 시간이 겹칠 때
      * @return 새로 생성된 tournament
      */
     @Transactional
@@ -66,6 +69,7 @@ public class TournamentAdminService {
      * @param requestDto   요청한 Dto
      * @throws TournamentNotFoundException 찾을 수 없는 토너먼트 일 때
      * @throws TournamentUpdateException   업데이트 할 수 없는 토너먼트 일 때
+     * @throws InvalidParameterException 토너먼트 시간으로 부적합 할 때
      */
     @Transactional
     public Tournament updateTournamentInfo(Long tournamentId, TournamentAdminUpdateRequestDto requestDto) {
@@ -128,7 +132,8 @@ public class TournamentAdminService {
 
         List<TournamentUser> tournamentList = targetTournament.getTournamentUsers();
         tournamentList.stream().filter(tu->tu.getUser().getIntraId().equals(targetUser.getIntraId()))
-            .findAny().ifPresent(a->{throw new TournamentConflictException("user is already participant", ErrorCode.TOURNAMENT_CONFLICT);});
+            .findAny()
+            .ifPresent(a->{throw new TournamentConflictException("user is already participant", ErrorCode.TOURNAMENT_CONFLICT);});
 
         TournamentUser tournamentUser = new TournamentUser(targetUser, targetTournament,
             tournamentList.size() < Tournament.ALLOWED_JOINED_NUMBER, LocalDateTime.now());
@@ -147,6 +152,9 @@ public class TournamentAdminService {
      * <p>삭제하고자 하는 유저가 참가자이고, 현재 대기자가 있다면 참가신청이 빠른 대기자를 참가자로 변경해준다.</p>
      * @param tournamentId 타겟 토너먼트 id
      * @param userId 타겟 유저 id
+     * @throws TournamentNotFoundException 타겟 토너먼트 없음
+     * @throws TournamentUpdateException   이미 시작했거나 종료된 토너먼트
+     * @throws UserNotFoundException       유저 없음 || 토너먼트 신청자가 아님
      */
     @Transactional
     public void deleteTournamentUser(Long tournamentId, Long userId) {
