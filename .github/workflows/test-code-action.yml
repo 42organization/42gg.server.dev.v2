@@ -19,14 +19,16 @@ jobs:
         run: chmod +x gradlew
       - name: ️👶 Unit Test with Gradle
         run: ./gradlew --console verbose clean unitTestCoverage
-      - name: mv for separate report
+      - name: mv for separate report folder
         run: mv ./build/reports/jacoco/test ./build/reports/jacoco/unitTest
+      - name: mv for separate report name
+        run: mv ./build/reports/jacoco/unitTest/jacocoTestReport.xml ./build/reports/jacoco/unitTest/unitTestReport.xml
       - name: 📲 Upload unitTest coverage to Codecov
         uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
-          files: ./build/reports/jacoco/unitTest/jacocoTestReport.xml
+          files: ./build/reports/jacoco/unitTest/unitTestReport.xml
           flags: unitTest
           name: codecov-unit
           verbose: true

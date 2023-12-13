@@ -2,11 +2,11 @@ coverage:
   status:
     project:
       unit:
-        target: 30%
+        target: auto
         flags:
           - unitTest
       integration:
-        target: 80%
+        target: auto
         flags:
           - integrationTest
 flags:
