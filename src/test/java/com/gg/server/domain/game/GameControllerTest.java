@@ -32,6 +32,8 @@ import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.team.data.TeamUserRepository;
 import com.gg.server.domain.tier.data.Tier;
 import com.gg.server.domain.tier.data.TierRepository;
+import com.gg.server.domain.tournament.data.Tournament;
+import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentRepository;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.dto.UserDto;
@@ -452,13 +454,24 @@ public class GameControllerTest {
         public void success() throws Exception {
             //given
             String url = "/pingpong/games/tournament";
-            Game game = gameRepository.save(new Game(season, StatusType.WAIT, Mode.TOURNAMENT, LocalDateTime.now().minusMinutes(15), LocalDateTime.now()));
-            Team team1 = teamRepository.save(new Team(game, -1, false));
-            Team team2 = teamRepository.save(new Team(game, -1, false));
-            String ac1 = tokenProvider.createToken(user1.getId());
-            teamUserRepository.save(new TeamUser(team1, user1));
-            teamUserRepository.save(new TeamUser(team2, user2));
+            Tournament tournament = testDataUtils.createTournamentWithUser(Tournament.ALLOWED_JOINED_NUMBER, 4, "ttt");
+            List<TournamentGame> tournamentGameList = testDataUtils.createTournamentGameList(tournament, Tournament.ALLOWED_JOINED_NUMBER - 1);
+            // 8강 경기 생성
+            Game game = null;
+            Team team1 = null;
+            Team team2 = null;
+            for (int i = 0; i < Tournament.ALLOWED_JOINED_NUMBER / 2; ++i) {
+                game = new Game(season, StatusType.WAIT, Mode.TOURNAMENT, LocalDateTime.now().minusMinutes(15), LocalDateTime.now());
+                team1 = new Team(game, -1, false);
+                team2 = new Team(game, -1, false);
+                TeamUser teamUser1 = new TeamUser(team1, tournament.getTournamentUsers().get(i * 2).getUser());
+                TeamUser teamUser2 = new TeamUser(team2, tournament.getTournamentUsers().get(i * 2 + 1).getUser());
+                gameRepository.save(game);
+                tournamentGameList.get(i).updateGame(game);
+            }
+            String ac1 = tokenProvider.createToken(team1.getTeamUsers().get(0).getUser().getId());
             String content = objectMapper.writeValueAsString(new TournamentResultReqDto(game.getId(), team1.getId(), 1, team2.getId(), 2));
+
             //when
             String contentAsString = mockMvc.perform(post(url)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + ac1)
@@ -466,7 +479,9 @@ public class GameControllerTest {
                         .content(content))
                     .andExpect(status().isCreated())
                     .andReturn().getResponse().getContentAsString();
+
             //then
+            assertThat(game.getStatus()).isEqualTo(StatusType.END);
             System.out.println(contentAsString);
         }
 
