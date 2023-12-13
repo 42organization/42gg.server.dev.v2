@@ -1,4 +1,4 @@
-package com.gg.server.config;
+package com.gg.server.utils.config;
 
 import com.redis.testcontainers.RedisContainer;
 import org.springframework.boot.test.util.TestPropertyValues;

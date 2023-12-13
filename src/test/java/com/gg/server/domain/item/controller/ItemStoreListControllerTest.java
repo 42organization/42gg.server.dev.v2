@@ -1,5 +1,6 @@
 package com.gg.server.domain.item.controller;
 
+import com.gg.server.utils.annotation.IntegrationTest;
 import com.gg.server.domain.item.data.ItemRepository;
 import com.gg.server.domain.item.dto.ItemStoreListResponseDto;
 import com.gg.server.domain.item.dto.ItemStoreResponseDto;
@@ -13,7 +14,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
@@ -27,7 +27,7 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RequiredArgsConstructor
-@SpringBootTest
+@IntegrationTest
 @AutoConfigureMockMvc
 @Transactional
 class ItemStoreListControllerTest {

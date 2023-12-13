@@ -1,7 +1,7 @@
 package com.gg.server.domain.tournament.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gg.server.domain.game.data.Game;
+import com.gg.server.utils.annotation.IntegrationTest;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.tournament.data.Tournament;
@@ -26,7 +26,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,11 +34,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 
-@SpringBootTest
+@IntegrationTest
 @AutoConfigureMockMvc
 @Transactional
 @RequiredArgsConstructor

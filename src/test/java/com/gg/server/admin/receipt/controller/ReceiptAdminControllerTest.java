@@ -9,6 +9,7 @@ import com.gg.server.admin.item.dto.ItemUpdateRequestDto;
 import com.gg.server.admin.receipt.data.ReceiptAdminRepository;
 import com.gg.server.admin.receipt.dto.ReceiptListResponseDto;
 import com.gg.server.admin.receipt.service.ReceiptAdminService;
+import com.gg.server.utils.annotation.IntegrationTest;
 import com.gg.server.domain.item.data.Item;
 import com.gg.server.domain.item.type.ItemType;
 import com.gg.server.domain.user.data.User;
@@ -21,14 +22,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
+@IntegrationTest
 @AutoConfigureMockMvc
 @Transactional
 class ReceiptAdminControllerTest {

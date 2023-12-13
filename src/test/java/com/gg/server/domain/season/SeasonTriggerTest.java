@@ -1,6 +1,7 @@
 package com.gg.server.domain.season;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gg.server.utils.annotation.IntegrationTest;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.data.SeasonRepository;
@@ -16,13 +17,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cglib.proxy.UndeclaredThrowableException;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
-@SpringBootTest
+@IntegrationTest
 @AutoConfigureMockMvc
 @Slf4j
 public class SeasonTriggerTest {

@@ -3,6 +3,7 @@ package com.gg.server.admin.feedback.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.feedback.data.FeedbackAdminRepository;
 import com.gg.server.admin.feedback.dto.FeedbackListAdminResponseDto;
+import com.gg.server.utils.annotation.IntegrationTest;
 import com.gg.server.domain.feedback.data.Feedback;
 import com.gg.server.domain.feedback.type.FeedbackType;
 import com.gg.server.domain.user.data.User;
@@ -15,7 +16,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +24,7 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RequiredArgsConstructor
-@SpringBootTest
+@IntegrationTest
 @AutoConfigureMockMvc
 @Transactional
 class FeedbackAdminControllerTest {

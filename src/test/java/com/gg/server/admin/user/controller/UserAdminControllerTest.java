@@ -14,6 +14,7 @@ import com.gg.server.admin.user.dto.UserImageListAdminResponseDto;
 import com.gg.server.admin.user.dto.UserSearchAdminDto;
 import com.gg.server.admin.user.dto.UserSearchAdminResponseDto;
 import com.gg.server.admin.user.service.UserAdminService;
+import com.gg.server.utils.annotation.IntegrationTest;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserImage;
 import com.gg.server.domain.user.data.UserRepository;
@@ -30,14 +31,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.web.servlet.MockMvc;
 
 @RequiredArgsConstructor
-@SpringBootTest
+@IntegrationTest
 @AutoConfigureMockMvc
 class UserAdminControllerTest {
 

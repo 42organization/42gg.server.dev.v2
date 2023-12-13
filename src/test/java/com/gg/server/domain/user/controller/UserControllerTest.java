@@ -10,8 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.item.dto.ItemUpdateRequestDto;
-import com.gg.server.config.RedisInitializer;
-import com.gg.server.config.TestRedisConfig;
+import com.gg.server.utils.annotation.IntegrationTest;
 import com.gg.server.domain.coin.data.CoinHistoryRepository;
 import com.gg.server.domain.coin.data.CoinPolicyRepository;
 import com.gg.server.domain.coin.service.CoinHistoryService;
@@ -72,12 +71,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -91,9 +87,7 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.springframework.web.multipart.MultipartFile;
 
-@SpringBootTest
-@Import(TestRedisConfig.class)
-@ContextConfiguration(initializers = RedisInitializer.class)
+@IntegrationTest
 @AutoConfigureMockMvc
 @Transactional
 @Slf4j

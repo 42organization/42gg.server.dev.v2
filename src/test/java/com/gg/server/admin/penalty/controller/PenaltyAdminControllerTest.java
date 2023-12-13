@@ -11,8 +11,7 @@ import com.gg.server.admin.penalty.data.PenaltyUserAdminRedisRepository;
 import com.gg.server.admin.penalty.dto.PenaltyListResponseDto;
 import com.gg.server.admin.penalty.dto.PenaltyRequestDto;
 import com.gg.server.admin.penalty.service.PenaltyAdminService;
-import com.gg.server.config.RedisInitializer;
-import com.gg.server.config.TestRedisConfig;
+import com.gg.server.utils.annotation.IntegrationTest;
 import com.gg.server.domain.penalty.data.Penalty;
 import com.gg.server.domain.penalty.redis.RedisPenaltyUser;
 import com.gg.server.domain.penalty.type.PenaltyType;
@@ -37,18 +36,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@Import(TestRedisConfig.class)
-@ContextConfiguration(initializers = RedisInitializer.class)
+@IntegrationTest
 @AutoConfigureMockMvc
 @Transactional
 class PenaltyAdminControllerTest {

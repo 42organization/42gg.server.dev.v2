@@ -11,6 +11,7 @@ import com.gg.server.domain.tournament.service.TournamentService;
 import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.global.scheduler.TournamentScheduler;
 import com.gg.server.utils.TestDataUtils;
+import com.gg.server.utils.annotation.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
 
-@SpringBootTest
+@IntegrationTest
 @Transactional
 public class TournamentSchedulerTest {
     @Autowired

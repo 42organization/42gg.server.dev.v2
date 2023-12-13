@@ -1,15 +1,15 @@
 package com.gg.server.domain.rank.redis;
 
 
+import com.gg.server.utils.annotation.IntegrationTestWithRedisTransaction;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
+@IntegrationTestWithRedisTransaction
 public class RedisTransactionTest {
 
     @Autowired

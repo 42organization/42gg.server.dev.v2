@@ -1,4 +1,4 @@
-package com.gg.server.config;
+package com.gg.server.utils.config;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -15,9 +15,6 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  *  테스트에서 redis Transaction을 사용하지 않기 위한 설정
  *  해당 빈을 사용할 경우 각 테스트마다 redis 데이터 초기화 필요
  * </p>
- *
- * @author : middlefitting
- * @since : 2023/12/08
  */
 @TestConfiguration
 public class TestRedisConfig {
