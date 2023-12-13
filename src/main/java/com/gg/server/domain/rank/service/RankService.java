@@ -78,7 +78,7 @@ public class RankService {
         Long myRank = curUser.getTotalExp() == 0 ? -1 : userRepository.findExpRankingByIntraId(curUser.getIntraId());
         Page<User> users = userRepository.findAllByTotalExpGreaterThan(pageRequest, 0);
         if(pageRequest.getPageNumber() + 1 > users.getTotalPages())
-            throw new PageNotFoundException("페이지가 존재하지 않습니다.", ErrorCode.PAGE_NOT_FOUND);
+            throw new PageNotFoundException();
         List<ExpRankDto> expRankDtos = getExpRankList(pageRequest);
 
         return new ExpRankPageResponseDto(myRank.intValue(),
@@ -115,7 +115,7 @@ public class RankService {
         if (totalPage == 0)
             return returnEmptyRankPage();
         if (pageRequest.getPageNumber() + 1 > totalPage)
-            throw new PageNotFoundException("페이지가 존재하지 않습니다.", ErrorCode.PAGE_NOT_FOUND);
+            throw new PageNotFoundException();
 
         int myRank = rankRepository.findRankByUserIdAndSeasonId(curUser.getId(), season.getId())
                 .orElse(-1);
