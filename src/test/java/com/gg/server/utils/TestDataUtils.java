@@ -229,10 +229,8 @@ public class TestDataUtils {
         gameRepository.save(game);
         Team myTeam = new Team(game, -1, false);
         TeamUser teamUser = new TeamUser(myTeam, curUser);
-        game.addTeam(myTeam);
         Team enemyTeam = new Team(game, -1, false);
         User enemyUser = createNewUser();
-        game.addTeam(enemyTeam);
         createUserRank(curUser, "statusMessage", season);
         createUserRank(enemyUser, "enemyUserMeassage", season);
         TeamUser enemyTeamUser = new TeamUser(enemyTeam, enemyUser);

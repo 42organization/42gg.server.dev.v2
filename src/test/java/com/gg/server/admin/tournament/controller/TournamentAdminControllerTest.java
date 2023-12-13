@@ -852,7 +852,6 @@ class TournamentAdminControllerTest {
     @Nested
     @DisplayName("[Patch] /pingpong/admin/tournaments/{tournamentId}/games")
     class AdminUpdateTournamentGameTest {
-        List<TournamentGame> tournamentGames = new ArrayList<>();
         String accessToken;
         Tournament tournament;
         @BeforeEach
@@ -871,9 +870,9 @@ class TournamentAdminControllerTest {
                 if (tournamentRound == TournamentRound.THE_FINAL) {
                     TournamentGame tournamentGame = new TournamentGame(null, tournament, tournamentRound);
                     tournamentGameRepository.save(tournamentGame);
-                    tournamentGames.add(tournamentGame);
+                    tournament.addTournamentGame(tournamentGame);
                 }else {
-                    tournamentGames.add(testDataUtils.createTournamentGame(tournament, tournamentRound, game));
+                    tournament.addTournamentGame(testDataUtils.createTournamentGame(tournament, tournamentRound, game));
                 }
             }
         }
@@ -893,7 +892,6 @@ class TournamentAdminControllerTest {
                     new TeamReqDto(tournamentGame.getGame().getTeams().get(0).getId(), myTeamScore),
                     new TeamReqDto(tournamentGame.getGame().getTeams().get(1).getId(), otherTeamScore));
 
-            System.out.println("sgo test requestDto = " + requestDto);
             String content = objectMapper.writeValueAsString(requestDto);
             // when
             mockMvc.perform(patch(url)
@@ -921,7 +919,6 @@ class TournamentAdminControllerTest {
                     new TeamReqDto(tournamentGame.getGame().getTeams().get(0).getId(), myTeamScore),
                     new TeamReqDto(tournamentGame.getGame().getTeams().get(1).getId(), otherTeamScore));
 
-            System.out.println("sgo test requestDto = " + requestDto);
             String content = objectMapper.writeValueAsString(requestDto);
             // when
             mockMvc.perform(patch(url)

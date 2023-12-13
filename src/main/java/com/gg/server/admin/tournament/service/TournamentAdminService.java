@@ -3,16 +3,12 @@ package com.gg.server.admin.tournament.service;
 import com.gg.server.admin.tournament.dto.*;
 import com.gg.server.admin.tournament.exception.TournamentNotLiveException;
 import com.gg.server.admin.tournament.exception.TournamentTitleConflictException;
-import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.data.Game;
+import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.exception.ScoreNotInvalidException;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.team.data.Team;
-import com.gg.server.domain.tournament.data.TournamentGame;
-import com.gg.server.domain.tournament.data.Tournament;
-import com.gg.server.domain.tournament.data.TournamentRepository;
-import com.gg.server.domain.tournament.data.TournamentUser;
-import com.gg.server.domain.tournamentø.data.TournamentUserRepository;
+import com.gg.server.domain.tournament.data.*;
 import com.gg.server.domain.tournament.dto.TournamentUserListResponseDto;
 import com.gg.server.domain.tournament.exception.TournamentConflictException;
 import com.gg.server.domain.tournament.exception.TournamentGameNotFoundException;
@@ -25,12 +21,12 @@ import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.InvalidParameterException;
-import java.time.LocalDateTime;
-import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +35,7 @@ public class TournamentAdminService {
     private final TournamentUserRepository tournamentUserRepository;
     private final UserRepository userRepository;
     private final GameRepository gameRepository;
+    private final TournamentGameRepository tournamentGameRepository;
 
     /***
      * 토너먼트 생성 Method
@@ -278,10 +275,14 @@ public class TournamentAdminService {
         if (tournament.getStatus() != TournamentStatus.LIVE) {
             throw new TournamentNotLiveException();
         }
-        TournamentGame tournamentGame = tournamentGameRepository.findById(reqDto.getTournamentGameId())
+        TournamentGame tournamentGame = tournament.getTournamentGames().stream().
+                filter(t->t.getId().equals(reqDto.getTournamentGameId())).findAny()
                 .orElseThrow(TournamentGameNotFoundException::new);
         Game game = tournamentGame.getGame();
-        if (canUpdateScore(game, reqDto)){
+        if (game == null){
+            throw new TournamentGameNotFoundException();
+        }
+        if (canUpdateScore(tournamentGame,reqDto)){
             updateTeamScore(game, reqDto);
         } else {
             throw new TournamentUpdateException();
@@ -311,11 +312,14 @@ public class TournamentAdminService {
 
     /**
      * <p>토너먼트 게임 점수 수정 가능 여부</p>
-     * @param game 수정될 게임
      * @param reqDto 수정할 게임 정보
      * @return 수정 가능 여부
      */
-    private boolean canUpdateScore(Game game, TournamentGameUpdateRequestDto reqDto) {
+    private boolean canUpdateScore(TournamentGame tournamentGame, TournamentGameUpdateRequestDto reqDto) {
+        if (reqDto.getNextTournamentGameId() == null &&
+                tournamentGame.getTournamentRound() == TournamentRound.THE_FINAL){
+            return true;
+        }
         TournamentGame nextTournamentGame = tournamentGameRepository.findById(reqDto.getNextTournamentGameId())
                 .orElseThrow(TournamentGameNotFoundException::new);
         if (nextTournamentGame.getGame() == null){
