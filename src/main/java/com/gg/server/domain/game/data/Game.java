@@ -95,7 +95,7 @@ public class Game {
         this.teams.add(team);
     }
 
-    public Optional<Team> getWinnerTeam() {
+    public Optional<Team> getWinningTeam() {
         return this.teams.stream()
             .filter(team -> Boolean.TRUE.equals(team.getWin()))
             .findAny();
