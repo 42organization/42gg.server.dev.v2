@@ -7,6 +7,7 @@ import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.exception.ScoreNotInvalidException;
 import com.gg.server.domain.game.type.StatusType;
+import com.gg.server.domain.match.service.MatchTournamentService;
 import com.gg.server.domain.team.data.Team;
 import com.gg.server.domain.tournament.data.*;
 import com.gg.server.domain.tournament.dto.TournamentUserListResponseDto;
@@ -36,6 +37,7 @@ public class TournamentAdminService {
     private final UserRepository userRepository;
     private final GameRepository gameRepository;
     private final TournamentGameRepository tournamentGameRepository;
+    private final MatchTournamentService matchTournamentService;
 
     /***
      * 토너먼트 생성 Method
@@ -308,7 +310,7 @@ public class TournamentAdminService {
         team1.updateScore(reqDto.getTeam1().getScore(), reqDto.getTeam1().getScore() > reqDto.getTeam2().getScore());
         team2.updateScore(reqDto.getTeam2().getScore(), reqDto.getTeam2().getScore() > reqDto.getTeam1().getScore());
         if (game.getStatus() == StatusType.LIVE || game.getStatus() == StatusType.WAIT){
-            // todo 매칭 시스템 로직 추가
+            matchTournamentService.checkTournamentGame(game);
         }
         if (game.getStatus() == StatusType.LIVE){
             game.updateStatus();
