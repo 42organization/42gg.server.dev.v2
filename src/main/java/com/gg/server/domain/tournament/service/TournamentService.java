@@ -1,16 +1,7 @@
 package com.gg.server.domain.tournament.service;
 
-import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
-import com.gg.server.domain.game.type.Mode;
-import com.gg.server.domain.game.type.StatusType;
-import com.gg.server.domain.match.exception.SlotNotFoundException;
-import com.gg.server.domain.season.data.Season;
-import com.gg.server.domain.season.service.SeasonFindService;
-import com.gg.server.domain.slotmanagement.SlotManagement;
-import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
-import com.gg.server.domain.team.data.Team;
-import com.gg.server.domain.team.data.TeamUser;
+import com.gg.server.domain.match.service.MatchTournamentService;
 import com.gg.server.domain.tournament.data.*;
 import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentRepository;
@@ -45,11 +36,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.stream.Collectors;
 
 import static com.gg.server.domain.tournament.type.TournamentRound.*;
-import static com.gg.server.domain.tournament.type.TournamentRound.QUARTER_FINAL_4;
 
 @Service
 @RequiredArgsConstructor
@@ -59,8 +47,7 @@ public class TournamentService {
     private final UserRepository userRepository;
     private final TournamentGameRepository tournamentGameRepository;
     private final GameRepository gameRepository;
-    private final SlotManagementRepository slotManagementRepository;
-    private final SeasonFindService seasonFindService;
+    private final MatchTournamentService matchTournamentService;
 
     /**
      * 토너먼트 리스트 조회
@@ -201,50 +188,8 @@ public class TournamentService {
                 return;
             }
             imminentTournament.updateStatus(TournamentStatus.LIVE);
-            matchTournamentGames(imminentTournament);
+            matchTournamentService.matchTournamentGame(imminentTournament, QUARTER_FINAL_1);
             // TODO 시작 알림?
-        }
-    }
-
-    /**
-     * 토너먼트 8강 경기 매칭 (game 생성)
-     * @param tournament 게임 생성할 토너먼트
-     */
-    private void matchTournamentGames(Tournament tournament) {
-        Season season = seasonFindService.findCurrentSeason(tournament.getStartTime());
-        SlotManagement slotManagement = slotManagementRepository.findCurrent(tournament.getStartTime())
-                .orElseThrow(SlotNotFoundException::new);
-        int gameInterval = slotManagement.getGameInterval();
-        // 8강 경기 매칭
-        // QUARTER_FINAL_1, QUARTER_FINAL_2, QUARTER_FINAL_3, QUARTER_FINAL_4 순서대로 정렬
-        List<TournamentGame> quarterFinalGames = tournament.getTournamentGames().stream()
-            .filter(o -> o.getTournamentRound() == QUARTER_FINAL_1 ||
-                o.getTournamentRound() == QUARTER_FINAL_2 ||
-                o.getTournamentRound() == QUARTER_FINAL_3 ||
-                o.getTournamentRound() == QUARTER_FINAL_4)
-            .sorted(Comparator.comparing(TournamentGame::getTournamentRound))
-            .collect(Collectors.toList());
-        List<Game> games = new ArrayList<>();
-
-        // game, team, teamUser 생성 후 저장
-        for (int i = 0; i < Tournament.ALLOWED_JOINED_NUMBER / 2; ++i) {
-            LocalDateTime startTime = tournament.getStartTime().plusMinutes((long) gameInterval * i);
-            Game game = new Game(season, StatusType.BEFORE, Mode.TOURNAMENT, startTime, startTime.plusMinutes(gameInterval));
-            Team team1 = new Team(game, -1, false);
-            Team team2 = new Team(game, -1, false);
-            TeamUser teamUser1 = new TeamUser(team1, tournament.getTournamentUsers().get(i * 2).getUser());
-            TeamUser teamUser2 = new TeamUser(team2, tournament.getTournamentUsers().get(i * 2 + 1).getUser());
-            team1.getTeamUsers().add(teamUser1);
-            team2.getTeamUsers().add(teamUser2);
-            game.getTeams().add(team1);
-            game.getTeams().add(team2);
-            gameRepository.save(game);
-
-            games.add(game);
-        }
-        // TournamentGame Entity에 game 저장
-        for (int i = 0; i < Tournament.ALLOWED_JOINED_NUMBER / 2; ++i) {
-            quarterFinalGames.get(i).updateGame(games.get(i));
         }
     }
 
