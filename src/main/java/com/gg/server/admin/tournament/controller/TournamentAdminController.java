@@ -1,8 +1,6 @@
 package com.gg.server.admin.tournament.controller;
 
-import com.gg.server.admin.tournament.dto.TournamentAdminAddUserRequestDto;
-import com.gg.server.admin.tournament.dto.TournamentAdminAddUserResponseDto;
-import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
+import com.gg.server.admin.tournament.dto.*;
 import com.gg.server.admin.tournament.service.TournamentAdminService;
 import javax.validation.Valid;
 
@@ -13,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import com.gg.server.admin.tournament.dto.TournamentAdminCreateRequestDto;
 
 @RestController
 @AllArgsConstructor
@@ -99,5 +96,18 @@ public class TournamentAdminController {
         tournamentAdminService.deleteTournamentUser(tournamentId, userId);
 
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+    }
+
+    /**
+     * <p>토너먼트 게임 점수 정보 수정</p>
+     * @param tournamentId 타겟 토너먼트 id
+     * @param tournamentGameUpdateReqDto 수정할 게임 정보
+     * @return HttpStatus.OK
+     */
+    @PatchMapping("{tournamentId}/games")
+    public ResponseEntity<Void> updateTournamentGame(@PathVariable @Positive Long tournamentId,
+                                                     @Valid @RequestBody TournamentGameUpdateRequestDto tournamentGameUpdateReqDto) {
+        tournamentAdminService.updateTournamentGame(tournamentId, tournamentGameUpdateReqDto);
+        return ResponseEntity.ok().build();
     }
 }
