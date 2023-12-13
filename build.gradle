@@ -109,37 +109,40 @@ dependencies {
 
 //테스트 커버리지 측정도구
 jacoco {
-	toolVersion = "0.8.5"
+	toolVersion = "0.8.8"
 }
+
+// dto, 외부 연동 서비스는 테스트에서 제외
+def	jacocoExcludes = [
+	'*Application*',
+	"**/config/*",
+	"**/security/*",
+	"**/dto/*",
+	"**/aws/*",
+	"*NotiMailSender*",
+	'*SlackbotService*',
+]
 
 //커버리지 리포트 생성
 jacocoTestReport {
+
 	reports {
-		xml.enabled false
+		xml.enabled true
 		html.enabled true
-		csv.enabled true
+		csv.enabled false
 	}
 
 	afterEvaluate {
 		//dto 및 외부 연동 서비스는 테스트에서 제외
 		classDirectories.setFrom(files(classDirectories.files.collect {
-			fileTree(dir: it,
-					exclude: [
-							'*Application*',
-							"**/config/*",
-							"**/security/*",
-							"**/dto/*",
-							"**/aws/*",
-							"*NotiMailSender*",
-							'*SlackbotService*'
-					]
-			)
-		}))
+			fileTree(dir: it, exclude: jacocoExcludes)})
+		)
 	}
 }
 
 // 커버리지 검증 설정
 jacocoTestCoverageVerification {
+
 	violationRules {
 		rule {
 			enabled = true
@@ -152,6 +155,13 @@ jacocoTestCoverageVerification {
 				minimum = 0.00
 			}
 
+			//메소드 커버리지
+			limit {
+				counter = 'METHOD'
+				value = 'COVEREDRATIO'
+				minimum = 0.00
+			}
+
 			//라인 커버리지
 			limit {
 				counter = 'LINE'
@@ -159,33 +169,82 @@ jacocoTestCoverageVerification {
 				minimum = 0.00
 			}
 
-			//검증에서 제외할 패키지, 클래스 설정
-			excludes = [
-					'*Application*',
-					"**/config/*",
-					"**/security/*",
-					"**/dto/*",
-					"**/aws/*",
-					"*NotiMailSender*",
-					'*SlackbotService*',
-			]
+			//검증에서 제외할 패키지, 클래스
+			excludes = jacocoExcludes
 		}
 	}
 }
 
+//전체 테스트
 test {
+	description = 'Runs the total tests.'
 	useJUnitPlatform()
 }
 
-//jacocoTestReport 는 jacocoTestCoverageVerification 이후에 실행되도록 설정
-task testCoverage(type: Test) {
+//유닛 테스트
+task unitTest(type: Test) {
+	group = 'verification'
+	description = 'Runs the unit tests.'
+	useJUnitPlatform{
+		includeTags 'UnitTest'
+		excludeTags 'IntegrationTest'
+	}
+
+	jacoco {
+		destinationFile = file("$buildDir/jacoco/test.exec")
+	}
+
+}
+
+//통합 테스트
+task integrationTest(type: Test) {
+	group = 'verification'
+	description = 'Runs the integration tests.'
+	useJUnitPlatform{
+		includeTags 'IntegrationTest'
+		excludeTags 'UnitTest'
+	}
+
+	jacoco {
+		destinationFile = file("$buildDir/jacoco/test.exec")
+	}
+}
+
+//전체 테스트, 리포트 생성, 검증
+task totalTestCoverage(type: Test) {
 	group 'verification'
-	description 'Runs the unit tests with coverage'
+	description 'Runs the total tests with coverage'
 
 	dependsOn(':test',
 			':jacocoTestReport',
 			':jacocoTestCoverageVerification')
 
 	tasks['jacocoTestReport'].mustRunAfter(tasks['test'])
+	tasks['jacocoTestCoverageVerification'].mustRunAfter(tasks['jacocoTestReport'])
+}
+
+//유닛 테스트, 리포트 생성, 검증
+task unitTestCoverage(type: Test) {
+	group 'verification'
+	description 'Runs the unit tests with coverage'
+
+	dependsOn(':unitTest',
+			':jacocoTestReport',
+			':jacocoTestCoverageVerification')
+
+	tasks['jacocoTestReport'].mustRunAfter(tasks['unitTest'])
+	tasks['jacocoTestCoverageVerification'].mustRunAfter(tasks['jacocoTestReport'])
+}
+
+//통합 테스트, 리포트 생성, 검증
+task integrationTestCoverage(type: Test) {
+	group 'verification'
+	description 'Runs the integration tests with coverage'
+
+	dependsOn(':integrationTest',
+			':jacocoTestReport',
+			':jacocoTestCoverageVerification')
+
+	tasks['jacocoTestReport'].mustRunAfter(tasks['integrationTest'])
 	tasks['jacocoTestCoverageVerification'].mustRunAfter(tasks['jacocoTestReport'])
 }
