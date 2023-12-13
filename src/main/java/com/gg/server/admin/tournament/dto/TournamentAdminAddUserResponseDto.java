@@ -17,6 +17,6 @@ public class TournamentAdminAddUserResponseDto {
     private String intraId;
 
     @NotNull
-    private boolean isJoined;
+    private Boolean isJoined;
 
 }
