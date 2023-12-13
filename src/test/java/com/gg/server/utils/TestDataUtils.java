@@ -230,19 +230,14 @@ public class TestDataUtils {
             game = new Game(season, StatusType.LIVE, mode, startTime, endTime);
         else
             game = new Game(season, StatusType.END, mode, startTime, endTime);
-        gameRepository.save(game);
         Team myTeam = new Team(game, -1, false);
         TeamUser teamUser = new TeamUser(myTeam, curUser);
-        Team enemyTeam = new Team(game, -1, false);
         User enemyUser = createNewUser();
+        Team enemyTeam = new Team(game, -1, false);
+        TeamUser enemyTeamUser = new TeamUser(enemyTeam, enemyUser);
         createUserRank(curUser, "statusMessage", season);
         createUserRank(enemyUser, "enemyUserMeassage", season);
-        TeamUser enemyTeamUser = new TeamUser(enemyTeam, enemyUser);
-        teamRepository.save(myTeam);
-        teamRepository.save(enemyTeam);
-        teamUserRepository.save(teamUser);
-        teamUserRepository.save(enemyTeamUser);
-
+        gameRepository.save(game);
         return new GameInfoDto(game.getId(), myTeam.getId(), curUser.getId(), enemyTeam.getId(), enemyUser.getId());
     }
 
