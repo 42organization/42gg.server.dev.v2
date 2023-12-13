@@ -14,6 +14,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -92,5 +93,11 @@ public class Game {
         BusinessChecker.mustNotExceed(1, teams, ErrorCode.TEAM_SIZE_EXCEED);
         BusinessChecker.mustNotContains(team, teams, ErrorCode.TEAM_DUPLICATION);
         this.teams.add(team);
+    }
+
+    public Optional<Team> getWinnerTeam() {
+        return this.teams.stream()
+            .filter(team -> Boolean.TRUE.equals(team.getWin()))
+            .findAny();
     }
 }
