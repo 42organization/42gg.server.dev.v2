@@ -8,12 +8,14 @@
 name: test-deploy
 
 on:
+  push:
+    branches: [ dev ]
   workflow_dispatch:
 
 env:
   DOCKER_USER: ${{ secrets.DOCKER_USER }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-  IMAGE_NAME: wken5577/test-server
+  IMAGE_NAME: wken5577/test-migrate-server
   
 permissions:
   contents: read
@@ -36,7 +38,7 @@ jobs:
     - name: Make application ymls
       run: |
         cd ./src/main/resources
-        echo "${{ secrets.APPLICATION_YML }}" | base64 -d > application.yml
+        echo "${{ secrets.MIGRATE_APPLICATION_YML }}" | base64 -d > application.yml
       shell: bash
       
     - name: Login to Docker Hub
@@ -46,7 +48,7 @@ jobs:
           password: ${{ env.DOCKER_PASSWORD }}
     
     - name: Build with Gradle
-      run: ./gradlew clean build
+      run: ./gradlew clean test build
 
     - name: build new docker image as latest tag
       run: |
@@ -60,27 +62,27 @@ jobs:
     - name: AWS Credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
-        aws-access-key-id: ${{ secrets.AWS_SECURITY_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECURITY_SECRET_KEY }}
+        aws-access-key-id: ${{ secrets.AWS_TEST_MIGRATE_SECURITY_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_TEST_MIGRATE_SECURITY_SECRET_KEY }}
         aws-region: ap-northeast-2
 
     - name: Add Github Actions IP to Security group
       run: |
-          aws ec2 authorize-security-group-ingress --group-id ${{ secrets.AWS_TEST_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+          aws ec2 authorize-security-group-ingress --group-id ${{ secrets.AWS_TEST_MIGRATE_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
 
     - name: executing docker-compose up on test server
       uses: appleboy/ssh-action@master
       with:
-        host: ${{ secrets.TEST_SERVER_HOST }}
-        username: ${{ secrets.TEST_SERVER_USERNAME }}
-        key: ${{ secrets.TEST_SERVER_PEM }}
+        host: ${{ secrets.TEST_MIGRATE_SERVER_HOST }}
+        username: ${{ secrets.TEST_MIGRATE_SERVER_USERNAME }}
+        key: ${{ secrets.TEST_MIGRATE_SERVER_PEM }}
         script: |
           cd ./docker
-          docker stop tomcat
+          docker-compose down tomcat
           docker rm tomcat
           docker rmi ${{ env.IMAGE_NAME }}:latest
-          docker-compose up -d
+          docker-compose up tomcat -d
 
     - name: Remove Github Actions IP From Security Group
       run: |
-          aws ec2 revoke-security-group-ingress --group-id ${{ secrets.AWS_TEST_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+          aws ec2 revoke-security-group-ingress --group-id ${{ secrets.AWS_TEST_MIGRATE_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
