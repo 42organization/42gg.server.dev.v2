@@ -6,6 +6,8 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum ErrorCode {
+    //common
+    NULL_POINT(500, "G100", "NULL POINT EXCEPTION"),
 
     //user
     USER_NOT_FOUND(404, "UR100", "USER NOT FOUND"),
@@ -72,7 +74,8 @@ public enum ErrorCode {
 
     /** team **/
     TEAM_ID_NOT_MATCH(400, "TM201", "TEAM id 가 일치하지 않습니다."),
-    TEAM_DUPLICATION(500, "TM202", "중복된 TEAM"),
+    TEAM_DUPLICATION(500, "TM202", "중복된 Team 이 한 Game 에 존재할 수 없습니다."),
+    TEAM_SIZE_EXCEED(500, "TM203", "게임 최대 Team 의 수(2)를 초과하였습니다."),
 
     /**
      * team_user
