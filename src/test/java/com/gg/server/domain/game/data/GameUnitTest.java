@@ -116,6 +116,4 @@ class GameUnitTest {
       assertEquals(ErrorCode.NULL_POINT.getMessage(), businessException.getMessage());
     }
   }
-
-
 }

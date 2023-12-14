@@ -1,10 +1,14 @@
 package com.gg.server.domain.tournament.data;
 
+import static com.gg.server.global.utils.BusinessChecker.mustContains;
+import static com.gg.server.global.utils.BusinessChecker.mustNotContains;
+import static com.gg.server.global.utils.BusinessChecker.mustNotExceed;
+import static com.gg.server.global.utils.BusinessChecker.mustNotNull;
+
 import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.tournament.type.TournamentType;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.global.exception.ErrorCode;
-import com.gg.server.global.exception.custom.BusinessException;
 import com.gg.server.global.utils.BaseTimeEntity;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -109,16 +113,17 @@ public class Tournament extends BaseTimeEntity {
      * 토너먼트 관련 연관관계 편의 메소드는 토너먼트에서 모두 관리
      */
     public void addTournamentGame(TournamentGame tournamentGame) {
-        if (tournamentGames.contains(tournamentGame)) {
-            throw new BusinessException(ErrorCode.TOURNAMENT_GAME_DUPLICATION);
-        }
+        mustNotNull(tournamentGame, ErrorCode.NULL_POINT);
+        mustNotExceed(ALLOWED_JOINED_NUMBER - 2, tournamentGames,
+            ErrorCode.TOURNAMENT_GAME_EXCEED);
+        mustNotContains(tournamentGame, tournamentGames, ErrorCode.TOURNAMENT_GAME_DUPLICATION);
         this.tournamentGames.add(tournamentGame);
         tournamentGame.setTournament(this);
     }
 
     public void addTournamentUser(@NotNull TournamentUser tournamentUser) {
-        if (tournamentUsers.contains(tournamentUser))
-            throw new BusinessException(ErrorCode.TOURNAMENT_USER_DUPLICATION);
+        mustNotNull(tournamentUser, ErrorCode.NULL_POINT);
+        mustNotContains(tournamentUser, tournamentUsers, ErrorCode.TOURNAMENT_USER_DUPLICATION);
         this.tournamentUsers.add(tournamentUser);
         tournamentUser.setTournament(this);
     }
@@ -126,18 +131,20 @@ public class Tournament extends BaseTimeEntity {
     /**
      * not null 제약조건을 이용해서 실수를 방지
      */
-    public void deleteTournamentUser(@NotNull TournamentUser tournamentUser) {
-        if (!tournamentUsers.contains(tournamentUser))
-            throw new BusinessException(ErrorCode.TOURNAMENT_USER_NOT_FOUND);
+    public void deleteTournamentUser(TournamentUser tournamentUser) {
+        mustNotNull(tournamentUser, ErrorCode.NULL_POINT);
+        mustContains(tournamentUser, tournamentUsers, ErrorCode.TOURNAMENT_USER_NOT_FOUND);
         this.tournamentUsers.remove(tournamentUser);
         tournamentUser.setTournament(null);
     }
 
     public void updateWinner(User winner) {
+        mustNotNull(winner, ErrorCode.NULL_POINT);
         this.winner = winner;
     }
 
     public void updateStatus(TournamentStatus status) {
+        mustNotNull(status, ErrorCode.NULL_POINT);
         this.status = status;
     }
 }

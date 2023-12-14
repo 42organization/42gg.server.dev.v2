@@ -19,6 +19,12 @@ public class BusinessChecker {
     }
   }
 
+  public static void mustContains(Object object, Collection<?> collection, ErrorCode errorCode) {
+    if (!collection.contains(object)) {
+      throw new BusinessException(errorCode);
+    }
+  }
+
   public static void mustNotContains(Object object, Collection<?> collection, ErrorCode errorCode) {
     if (collection.contains(object)) {
       throw new BusinessException(errorCode);

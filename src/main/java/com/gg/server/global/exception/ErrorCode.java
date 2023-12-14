@@ -141,6 +141,7 @@ public enum ErrorCode {
     TOURNAMENT_GAME_DUPLICATION(500, "TN008", "중복된 토너먼트 게임입니다!"),
     TOURNAMENT_USER_DUPLICATION(500, "TN009", "중복된 토너먼트 유저입니다!"),
     TOURNAMENT_USER_NOT_FOUND(404, "TN010", "target tournament user not found"),
+    TOURNAMENT_GAME_EXCEED(500, "TN011", "토너먼트 게임 최대 사이즈를 초과하였습니다!"),
     ;
     private int status;
     private String errCode;
