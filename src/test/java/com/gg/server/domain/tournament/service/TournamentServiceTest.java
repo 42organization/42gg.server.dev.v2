@@ -1,6 +1,7 @@
 package com.gg.server.domain.tournament.service;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import com.gg.server.admin.tournament.dto.TournamentAdminCreateRequestDto;
@@ -12,6 +13,7 @@ import com.gg.server.domain.tournament.data.TournamentRepository;
 import com.gg.server.domain.tournament.data.TournamentUser;
 import com.gg.server.domain.tournament.data.TournamentUserRepository;
 import com.gg.server.domain.tournament.dto.TournamentUserRegistrationResponseDto;
+import com.gg.server.domain.tournament.exception.TournamentConflictException;
 import com.gg.server.domain.tournament.exception.TournamentNotFoundException;
 import com.gg.server.domain.tournament.type.TournamentRound;
 import com.gg.server.domain.tournament.type.TournamentStatus;
@@ -63,7 +65,6 @@ class TournamentServiceTest {
             User user = createUser("testUser");
             TournamentUser tournamentUser = new TournamentUser(user, tournament, true, LocalDateTime.now());
             given(tournamentRepository.findById(tournament.getId())).willReturn(Optional.of(tournament));
-            given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
             given(tournamentUserRepository.findByTournamentIdAndUserId(tournament.getId(), user.getId()))
                 .willReturn(Optional.of(tournamentUser));
 
@@ -84,6 +85,39 @@ class TournamentServiceTest {
             assertThatThrownBy(() -> tournamentService.getUserStatusInTournament(tournamentId, UserDto.from(user)))
                 .isInstanceOf(TournamentNotFoundException.class);
         }
+    }
+
+    @Nested
+    @DisplayName("토너먼트_유저_신청_테스트")
+    class RegisterTournamentUserTest {
+        @Test
+        @DisplayName("유저_상태_추가_성공")
+        void success() {
+            // given
+            Tournament tournament = createTournament(1L, TournamentStatus.BEFORE,
+                LocalDateTime.now(), LocalDateTime.now().plusHours(2));
+            User user = createUser("testUser");
+            List<TournamentUser> tournamentUserList = new ArrayList<>();
+            given(tournamentRepository.findById(tournament.getId())).willReturn(Optional.of(tournament));
+            given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
+            given(tournamentUserRepository.findAllByUser(any(User.class))).willReturn(tournamentUserList);
+
+            // when, then
+            TournamentUserRegistrationResponseDto responseDto =
+                tournamentService.registerTournamentUser(tournament.getId(), UserDto.from(user));
+        }
+
+        @Test
+        @DisplayName("찾을_수_없는_토너먼트")
+        void tournamentNotFound() {
+            // given
+            User user = createUser("testUser");
+            given(tournamentRepository.findById(any(Long.class))).willReturn(Optional.empty());
+
+            // when, then
+            assertThatThrownBy(()->tournamentService.registerTournamentUser(1L, UserDto.from(user)))
+                .isInstanceOf(TournamentNotFoundException.class);
+        }
 
         @Test
         @DisplayName("db에_없는_유저")
@@ -93,34 +127,35 @@ class TournamentServiceTest {
                 LocalDateTime.now(), LocalDateTime.now().plusHours(2));
             User user = createUser("testUser");
             given(tournamentRepository.findById(tournament.getId())).willReturn(Optional.of(tournament));
-            given(userRepository.findById(user.getId())).willReturn(Optional.empty());
+            given(userRepository.findById(null)).willReturn(Optional.empty());
 
             // when, then
-            assertThatThrownBy(() -> tournamentService.getUserStatusInTournament(tournament.getId(), UserDto.from(user)))
+            assertThatThrownBy(()->tournamentService.registerTournamentUser(tournament.getId(), UserDto.from(user)))
                 .isInstanceOf(UserNotFoundException.class);
+        }
+
+        @Test
+        @DisplayName("이미_신청한_토너먼트_존재")
+        void conflictedRegistration() {
+            // given
+            Tournament tournament = createTournament(1L, TournamentStatus.BEFORE,
+                LocalDateTime.now(), LocalDateTime.now().plusHours(2));
+            User user = createUser("testUser");
+            List<TournamentUser> tournamentUserList = new ArrayList<>();
+            tournamentUserList.add(new TournamentUser(user, tournament, true, LocalDateTime.now()));
+            given(tournamentRepository.findById(tournament.getId())).willReturn(Optional.of(tournament));
+            given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
+            given(tournamentUserRepository.findAllByUser(any(User.class))).willReturn(tournamentUserList);
+
+            // when, then
+            assertThatThrownBy(()->tournamentService.registerTournamentUser(tournament.getId(), UserDto.from(user)))
+                .isInstanceOf(TournamentConflictException.class);
         }
     }
 
     @Nested
     @DisplayName("토너먼트_유저_참가_취소_테스트")
     class cancelTournamentUserRegistration {
-        @Test
-        @DisplayName("유저_참가_취소_성공")
-        @Disabled
-        void success() {
-            // given
-            Tournament tournament = createTournament(1L, TournamentStatus.BEFORE,
-                LocalDateTime.now(), LocalDateTime.now().plusHours(2));
-            User user = createUser("testUser");
-            TournamentUser tournamentUser = new TournamentUser(user, tournament, true, LocalDateTime.now());
-            tournament.addTournamentUser(tournamentUser);
-            given(tournamentRepository.findById(tournament.getId())).willReturn(Optional.of(tournament));
-            given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
-
-            // when, then
-            tournamentService.cancelTournamentUserRegistration(tournament.getId(), UserDto.from(user));
-        }
-
         @Test
         @DisplayName("찾을_수_없는_토너먼트")
         void tournamentNotFound() {
@@ -132,22 +167,6 @@ class TournamentServiceTest {
             // when, then
             assertThatThrownBy(()->tournamentService.cancelTournamentUserRegistration(tournamentId, UserDto.from(user)))
                 .isInstanceOf(TournamentNotFoundException.class);
-        }
-
-        @Test
-        @DisplayName("db에_없는_유저")
-        @Disabled
-        void userNotFound() {
-            // given
-            UserDto userDto = UserDto.builder().id(1L).intraId("testUser").build();
-            Tournament tournament = createTournament(1L, TournamentStatus.BEFORE,
-                LocalDateTime.now(), LocalDateTime.now().plusHours(2));
-            given(tournamentRepository.findById(tournament.getId())).willReturn(Optional.of(tournament));
-            given(userRepository.findById(userDto.getId())).willReturn(Optional.empty());
-
-            // when, then
-            assertThatThrownBy(()->tournamentService.cancelTournamentUserRegistration(tournament.getId(), userDto))
-                .isInstanceOf(UserNotFoundException.class);
         }
     }
 

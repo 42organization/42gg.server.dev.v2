@@ -5,6 +5,7 @@ import com.gg.server.domain.tournament.service.TournamentService;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.utils.argumentresolver.Login;
 import io.swagger.v3.oas.annotations.Parameter;
+import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.checkerframework.checker.index.qual.Positive;
 import org.springframework.data.domain.PageRequest;
@@ -77,5 +78,19 @@ public class TournamentController {
     @GetMapping("/{tournamentId}/games")
     public ResponseEntity<TournamentGameListResponseDto> getTournamentGames(@PathVariable @Positive Long tournamentId){
         return ResponseEntity.ok().body(tournamentService.getTournamentGames(tournamentId));
+    }
+
+    /**
+     * <p>토너먼트 참가 신청</p>
+     * <p>토너먼트 최대 인원보다 이미 많이 신청했다면 대기자로 들어간다</p>
+     * @param tournamentId 타겟 토너먼트 id
+     * @param user 신청 유저(본인)
+     * @return
+     */
+    @PostMapping("/{tournamentId}/users")
+    ResponseEntity<TournamentUserRegistrationResponseDto> registerTournamentUser(@PathVariable Long tournamentId, @Parameter(hidden = true) @Login UserDto user) {
+
+        return ResponseEntity.created(URI.create("/pingpong/tournaments/"+tournamentId+"/users"))
+            .body(tournamentService.registerTournamentUser(tournamentId, user));
     }
 }
