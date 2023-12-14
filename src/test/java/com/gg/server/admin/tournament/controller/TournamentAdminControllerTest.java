@@ -251,7 +251,7 @@ class TournamentAdminControllerTest {
                     .content(content)
                     .contentType(MediaType.APPLICATION_JSON)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isForbidden())
                 .andReturn().getResponse().getContentAsString();
 
             System.out.println(contentAsString);
@@ -263,7 +263,7 @@ class TournamentAdminControllerTest {
                     .content(content)
                     .contentType(MediaType.APPLICATION_JSON)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isForbidden())
                 .andReturn().getResponse().getContentAsString();
 
             System.out.println(contentAsString);
@@ -299,7 +299,7 @@ class TournamentAdminControllerTest {
                     .content(content)
                     .contentType(MediaType.APPLICATION_JSON)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isForbidden())
                 .andReturn().getResponse().getContentAsString();
 
             System.out.println(contentAsString);
@@ -311,7 +311,7 @@ class TournamentAdminControllerTest {
                     .content(content)
                     .contentType(MediaType.APPLICATION_JSON)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isForbidden())
                 .andReturn().getResponse().getContentAsString();
 
             System.out.println(contentAsString);
@@ -424,7 +424,7 @@ class TournamentAdminControllerTest {
             String contentAsString = mockMvc.perform(delete(url)
                     .contentType(MediaType.APPLICATION_JSON)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isForbidden())
                 .andReturn().getResponse().getContentAsString();
 
             System.out.println(contentAsString);
@@ -435,7 +435,7 @@ class TournamentAdminControllerTest {
             contentAsString = mockMvc.perform(delete(url)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isForbidden())
                 .andReturn().getResponse().getContentAsString();
 
             System.out.println(contentAsString);
@@ -623,7 +623,7 @@ class TournamentAdminControllerTest {
                     .content(content)
                     .contentType(MediaType.APPLICATION_JSON)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isForbidden())
                 .andReturn().getResponse().getContentAsString();
         }
 
@@ -818,7 +818,7 @@ class TournamentAdminControllerTest {
                     .content(content)
                     .contentType(MediaType.APPLICATION_JSON)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isForbidden())
                 .andReturn().getResponse().getContentAsString();
         }
 
@@ -908,7 +908,6 @@ class TournamentAdminControllerTest {
         void updateTournamentGameEnable() throws Exception {
             // given
             String url = "/pingpong/admin/tournaments/" + tournament.getId() + "/games";
-
             int myTeamScore = 2;
             int otherTeamScore = 1;
             List<TournamentGame> tournamentGameList = tournamentGameRepository.findAllByTournamentId(tournament.getId());
@@ -924,7 +923,7 @@ class TournamentAdminControllerTest {
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                             .content(content)
                             .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isBadRequest())
+                    .andExpect(status().isForbidden())
                     .andReturn().getResponse().getContentAsString();
         }
 
