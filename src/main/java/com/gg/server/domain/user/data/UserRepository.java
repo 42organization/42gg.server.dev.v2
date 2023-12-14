@@ -1,5 +1,6 @@
 package com.gg.server.domain.user.data;
 
+import com.gg.server.domain.rank.dto.ExpRankV2Dto;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -25,7 +26,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(nativeQuery = true, value = "select ranking from " +
             "(select intra_id, row_number() over (order by total_exp desc, intra_id asc) as ranking from user) ranked where intra_id=:intraId")
     Long findExpRankingByIntraId(@Param("intraId") String intraId);
-
     Page<User> findAll(Pageable pageable);
 
     @Query("select tu.user from User u, TeamUser tu, Team t, Game g" +
@@ -38,4 +38,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying(clearAutomatically = true)
     @Query("update User u set u.imageUri = :imageUri where u.id = :id")
     void updateUserImage(Long id, String imageUri);
+
+    @Query(value = "SELECT u.intra_id intraId, r.status_message statusMessage, u.total_exp totalExp, "
+            + "u.image_uri imageUri, u.text_color textColor, "
+            + "RANK() OVER(ORDER BY u.total_exp DESC, r.modified_at DESC, r.ppp DESC) ranking "
+            + "FROM User u LEFT JOIN Ranks r "
+            + "ON u.id = r.user_id "
+            + "WHERE r.season_id = :seasonId AND u.total_exp > 0 "
+            + "LIMIT :pageSize OFFSET :pageNum", nativeQuery = true)
+    List<ExpRankV2Dto> findExpRank(@Param("pageNum")int pageNum, @Param("pageSize")int pageSize, @Param("seasonId")Long seasonId);
+
 }

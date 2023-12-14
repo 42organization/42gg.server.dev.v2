@@ -7,6 +7,7 @@ import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.dto.PageRequestDto;
 import com.gg.server.global.utils.argumentresolver.Login;
 import io.swagger.v3.oas.annotations.Parameter;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -14,21 +15,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/pingpong")
-public class RankController {
-
+@RequestMapping("/pingpong/v2")
+public class RankV2Controller {
     private final RankService rankService;
     @GetMapping("/exp")
     public ExpRankPageResponseDto getExpRankPage(@Valid PageRequestDto pageRequestDto, @Parameter(hidden = true) @Login UserDto user) {
         PageRequest pageRequest = PageRequest.of(pageRequestDto.getPage() - 1, pageRequestDto.getSize(),
                 Sort.by("totalExp").descending().and(Sort.by("intraId")));
-        return rankService.getExpRankPageByRedis(pageRequest, user);
+        return rankService.getExpRankPage(pageRequest, user);
     }
-
     /**
      *
      * @param pageRequestDto
@@ -40,8 +37,8 @@ public class RankController {
      */
     @GetMapping("/ranks/{gameType}")
     public RankPageResponseDto getRankPage(@Valid PageRequestDto pageRequestDto, @Parameter(hidden = true) @Login UserDto user,
-                                           Long season,  String gameType){
+            Long season,  String gameType){
         PageRequest pageRequest = PageRequest.of(pageRequestDto.getPage() - 1, pageRequestDto.getSize());
-        return rankService.getRankPage(pageRequest, user, season);
+        return rankService.getRankPageV2(pageRequest, user, season);
     }
 }

@@ -33,4 +33,15 @@ public class ExpRankDto {
                 .build();
         return dto;
     }
+    public static ExpRankDto from(ExpRankV2Dto dto) {
+        return ExpRankDto.builder()
+                .intraId(dto.getIntraId())
+                .rank(dto.getRanking())
+                .statusMessage(dto.getStatusMessage())
+                .level(ExpLevelCalculator.getLevel(dto.getTotalExp()))
+                .exp(dto.getTotalExp())
+                .userImageUri(dto.getImageUri())
+                .textColor(dto.getTextColor())
+                .build();
+    }
 }

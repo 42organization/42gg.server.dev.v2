@@ -101,7 +101,8 @@ public class GameAdminService {
             @CacheEvict(value = "rankGameListByIntra", allEntries = true),
             @CacheEvict(value = "rankGameList", allEntries = true),
             @CacheEvict(value = "allGameList", allEntries = true),
-            @CacheEvict(value = "allGameListByUser", allEntries = true)
+            @CacheEvict(value = "allGameListByUser", allEntries = true),
+            @CacheEvict(value = "ranking", allEntries = true)
     })
     public void rankResultEdit(RankGamePPPModifyReqDto reqDto, Long gameId) {
         // 게임이 두명 다 가장 마지막 게임인지 확인 (그 game에 해당하는 팀이 맞는지 확인)

@@ -17,7 +17,6 @@ import com.gg.server.domain.pchange.exception.PChangeNotExistException;
 import com.gg.server.domain.pchange.service.PChangeService;
 import com.gg.server.domain.rank.redis.RankRedisService;
 import com.gg.server.domain.game.type.StatusType;
-import com.gg.server.domain.rank.service.RedisUploadService;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.team.data.TeamUserRepository;
@@ -50,7 +49,6 @@ public class GameService {
     private final GameFindService gameFindService;
     private final UserCoinChangeService userCoinChangeService;
     private final TierService tierService;
-    private final RedisUploadService redisUploadService;
     private final TournamentGameRepository tournamentGameRepository;
 
   /**
@@ -80,7 +78,9 @@ public class GameService {
             @CacheEvict(value = "rankGameListByIntra", allEntries = true),
             @CacheEvict(value = "rankGameList", allEntries = true),
             @CacheEvict(value = "allGameList", allEntries = true),
-            @CacheEvict(value = "allGameListByUser", allEntries = true)
+            @CacheEvict(value = "allGameListByUser", allEntries = true),
+            @CacheEvict(value = "ranking", allEntries = true),
+            @CacheEvict(value = "expRanking", allEntries = true)
     })
     public Boolean createRankResult(RankResultReqDto scoreDto, Long userId) {
         // 현재 게임 id
@@ -118,7 +118,9 @@ public class GameService {
             @CacheEvict(value = "normalGameListByIntra", allEntries = true),
             @CacheEvict(value = "normalGameList", allEntries = true),
             @CacheEvict(value = "allGameList", allEntries = true),
-            @CacheEvict(value = "allGameListByUser", allEntries = true)
+            @CacheEvict(value = "allGameListByUser", allEntries = true),
+            @CacheEvict(value = "ranking", allEntries = true),
+            @CacheEvict(value = "expRanking", allEntries = true)
     })
     public Boolean normalExpResult(NormalResultReqDto normalResultReqDto, Long loginUserId) {
         Game game = gameFindService.findGameWithPessimisticLockById(normalResultReqDto.getGameId());
