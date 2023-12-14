@@ -131,17 +131,22 @@ public enum ErrorCode {
     SLACK_SEND_FAIL(400, "SL003","fail to send notification" ),
 
     // Tournament
-    TOURNAMENT_NOT_FOUND(404, "TN001", "target tournament not found"),
-    TOURNAMENT_CONFLICT(409, "TN002", "tournament conflicted"),
-    TOURNAMENT_NOT_BEFORE(400, "TN003", "tournament status is not before"),
-    TOURNAMENT_TITLE_CONFLICT(409, "TN004", "tournament title conflicted"),
-    TOURNAMENT_NOT_LIVE(400, "TN005", "tournament status is not live"),
-    TOURNAMENT_GAME_NOT_FOUND(404, "TN006", "tournament game not found"),
-    TOURNAMENT_CANT_UPDATE(400, "TN007", "tournament can't update"),
-    TOURNAMENT_GAME_DUPLICATION(409, "TN008", "중복된 토너먼트 게임입니다!"),
-    TOURNAMENT_USER_DUPLICATION(409, "TN009", "중복된 토너먼트 유저입니다!"),
-    TOURNAMENT_USER_NOT_FOUND(404, "TN010", "target tournament user not found"),
-    TOURNAMENT_GAME_EXCEED(500, "TN011", "토너먼트 게임 최대 사이즈를 초과하였습니다!"),
+    TOURNAMENT_INVALID_TIME(400, "TN001", "유효한 토너먼트 기간이 아닙니다."),
+    TOURNAMENT_CAN_NOT_UPDATE(403, "TN002", "토너먼트를 업데이트 할 수 없는 기간입니다."),
+    TOURNAMENT_INVALID_SCORE(403, "TN003", "스코어를 업데이트 할 수 없습니다."),
+    TOURNAMENT_NOT_BEFORE(403, "TN004", "tournament status is not before"),
+    TOURNAMENT_NOT_LIVE(403, "TN005", "tournament status is not live"),
+    TOURNAMENT_NOT_FOUND(404, "TN006", "target tournament not found"),
+    TOURNAMENT_GAME_NOT_FOUND(404, "TN007", "tournament game not found"),
+    TOURNAMENT_NOT_PARTICIPANT(404, "TN008", "토너먼트의 신청자가 아닙니다."),
+    TOURNAMENT_USER_NOT_FOUND(404, "TN009", "target tournament user not found"),
+    TOURNAMENT_CONFLICT(409, "TN010", "tournament conflicted"),
+    TOURNAMENT_TITLE_CONFLICT(409, "TN011", "tournament title conflicted"),
+    TOURNAMENT_ALREADY_PARTICIPANT(409, "TN012", "이미 토너먼트의 신청자 입니다."),
+    TOURNAMENT_CONFLICT_GAME(409, "TN013", "토너먼트 기간 내 대기중인 게임이 존재합니다."),
+    TOURNAMENT_GAME_DUPLICATION(409, "TN014", "중복된 토너먼트 게임입니다!"),
+    TOURNAMENT_USER_DUPLICATION(409, "TN015", "중복된 토너먼트 유저입니다!"),
+    TOURNAMENT_GAME_EXCEED(500, "TN016", "토너먼트 게임 최대 사이즈를 초과하였습니다!")
     ;
     private int status;
     private String errCode;
