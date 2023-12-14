@@ -128,6 +128,9 @@ public enum ErrorCode {
     TOURNAMENT_NOT_LIVE(400, "TN005", "tournament status is not live"),
     TOURNAMENT_GAME_NOT_FOUND(404, "TN006", "tournament game not found"),
     TOURNAMENT_CANT_UPDATE(400, "TN007", "tournament can't update"),
+    TOURNAMENT_GAME_DUPLICATION(500, "TN008", "중복된 토너먼트 게임입니다!"),
+    TOURNAMENT_USER_DUPLICATION(500, "TN008", "중복된 토너먼트 유저입니다!"),
+    TOURNAMENT_USER_NOT_FOUND(404, "TN009", "target tournament user not found"),
     ;
     private int status;
     private String errCode;
