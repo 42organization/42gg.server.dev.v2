@@ -5,6 +5,8 @@ import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.team.data.Team;
+import com.gg.server.global.exception.ErrorCode;
+import com.gg.server.global.exception.custom.BusinessException;
 import java.util.ArrayList;
 import lombok.*;
 
@@ -87,6 +89,8 @@ public class Game {
     }
 
     public void addTeam(Team team) {
+        if (teams.contains(team))
+            throw new BusinessException(ErrorCode.TEAM_DUPLICATION);
         this.teams.add(team);
     }
 }

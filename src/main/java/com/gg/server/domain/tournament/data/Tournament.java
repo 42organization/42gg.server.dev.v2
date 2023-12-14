@@ -117,9 +117,8 @@ public class Tournament extends BaseTimeEntity {
     }
 
     public void addTournamentUser(@NotNull TournamentUser tournamentUser) {
-        if (tournamentUsers.contains(tournamentUser)) {
+        if (tournamentUsers.contains(tournamentUser))
             throw new BusinessException(ErrorCode.TOURNAMENT_USER_DUPLICATION);
-        }
         this.tournamentUsers.add(tournamentUser);
         tournamentUser.setTournament(this);
     }
@@ -128,9 +127,8 @@ public class Tournament extends BaseTimeEntity {
      * not null 제약조건을 이용해서 실수를 방지
      */
     public void deleteTournamentUser(@NotNull TournamentUser tournamentUser) {
-        if (!tournamentUsers.contains(tournamentUser)) {
+        if (!tournamentUsers.contains(tournamentUser))
             throw new BusinessException(ErrorCode.TOURNAMENT_USER_NOT_FOUND);
-        }
         this.tournamentUsers.remove(tournamentUser);
         tournamentUser.setTournament(null);
     }

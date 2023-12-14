@@ -72,6 +72,12 @@ public enum ErrorCode {
 
     /** team **/
     TEAM_ID_NOT_MATCH(400, "TM201", "TEAM id 가 일치하지 않습니다."),
+    TEAM_DUPLICATION(500, "TM202", "중복된 TEAM"),
+
+    /**
+     * team_user
+     */
+    TEAM_USER_ALREADY_EXIST(500, "TU201", "중복된 TEAM_USER"),
 
     /** game **/
     GAME_DB_NOT_VALID(500, "GM201", "GAME DB NOT CONSISTENCY"),
@@ -129,8 +135,8 @@ public enum ErrorCode {
     TOURNAMENT_GAME_NOT_FOUND(404, "TN006", "tournament game not found"),
     TOURNAMENT_CANT_UPDATE(400, "TN007", "tournament can't update"),
     TOURNAMENT_GAME_DUPLICATION(500, "TN008", "중복된 토너먼트 게임입니다!"),
-    TOURNAMENT_USER_DUPLICATION(500, "TN008", "중복된 토너먼트 유저입니다!"),
-    TOURNAMENT_USER_NOT_FOUND(404, "TN009", "target tournament user not found"),
+    TOURNAMENT_USER_DUPLICATION(500, "TN009", "중복된 토너먼트 유저입니다!"),
+    TOURNAMENT_USER_NOT_FOUND(404, "TN010", "target tournament user not found"),
     ;
     private int status;
     private String errCode;
