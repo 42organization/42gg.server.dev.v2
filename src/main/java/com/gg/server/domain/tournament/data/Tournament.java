@@ -65,19 +65,22 @@ public class Tournament extends BaseTimeEntity {
     @OneToMany(mappedBy = "tournament", cascade = CascadeType.ALL)
     private List<TournamentUser> tournamentUsers = new ArrayList<>();
 
+    /**
+     * winner는 생성시점에 존재하지 않음.
+     */
     @Builder
-    public Tournament(String title, String contents, LocalDateTime startTime, LocalDateTime endTime, TournamentType type, TournamentStatus status, User winner, List<TournamentGame> tournamentGames, List<TournamentUser> tournamentUsers) {
+    public Tournament(String title, String contents, LocalDateTime startTime, LocalDateTime endTime,
+        TournamentType type, TournamentStatus status) {
         this.title = title;
         this.contents = contents;
         this.startTime = startTime;
         this.endTime = endTime;
         this.type = type;
         this.status = status;
-        this.tournamentGames = tournamentGames != null ? tournamentGames : new ArrayList<>();
-        this.tournamentUsers = tournamentUsers != null ? tournamentUsers : new ArrayList<>();
     }
 
-    public void update(String title, String contents, LocalDateTime startTime, LocalDateTime endTime, TournamentType type, TournamentStatus status) {
+    public void update(String title, String contents, LocalDateTime startTime,
+        LocalDateTime endTime, TournamentType type, TournamentStatus status) {
         this.title = title;
         this.contents = contents;
         this.startTime = startTime;
