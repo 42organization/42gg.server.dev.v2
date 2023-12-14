@@ -3,15 +3,31 @@ package com.gg.server.domain.tournament.data;
 import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.tournament.type.TournamentType;
 import com.gg.server.domain.user.data.User;
+import com.gg.server.global.exception.ErrorCode;
+import com.gg.server.global.exception.custom.BusinessException;
 import com.gg.server.global.utils.BaseTimeEntity;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
-
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -89,16 +105,34 @@ public class Tournament extends BaseTimeEntity {
         this.status = status;
     }
 
+    /**
+     * 토너먼트 관련 연관관계 편의 메소드는 토너먼트에서 모두 관리
+     */
     public void addTournamentGame(TournamentGame tournamentGame) {
+        if (tournamentGames.contains(tournamentGame)) {
+            throw new BusinessException(ErrorCode.TOURNAMENT_GAME_DUPLICATION);
+        }
         this.tournamentGames.add(tournamentGame);
+        tournamentGame.setTournament(this);
     }
 
     public void addTournamentUser(@NotNull TournamentUser tournamentUser) {
+        if (tournamentUsers.contains(tournamentUser)) {
+            throw new BusinessException(ErrorCode.TOURNAMENT_USER_DUPLICATION);
+        }
         this.tournamentUsers.add(tournamentUser);
+        tournamentUser.setTournament(this);
     }
 
+    /**
+     * not null 제약조건을 이용해서 실수를 방지
+     */
     public void deleteTournamentUser(@NotNull TournamentUser tournamentUser) {
+        if (!tournamentUsers.contains(tournamentUser)) {
+            throw new BusinessException(ErrorCode.TOURNAMENT_USER_NOT_FOUND);
+        }
         this.tournamentUsers.remove(tournamentUser);
+        tournamentUser.setTournament(null);
     }
 
     public void updateWinner(User winner) {

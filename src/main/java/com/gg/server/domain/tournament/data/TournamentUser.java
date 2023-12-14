@@ -52,4 +52,8 @@ public class TournamentUser extends BaseTimeEntity {
     public void updateIsJoined(boolean isJoined) {
         this.isJoined = isJoined;
     }
+
+    public void setTournament(Tournament tournament) {
+        this.tournament = tournament;
+    }
 }

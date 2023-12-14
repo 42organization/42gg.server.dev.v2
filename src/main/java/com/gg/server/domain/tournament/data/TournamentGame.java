@@ -53,4 +53,8 @@ public class TournamentGame extends BaseTimeEntity {
     public void updateGame(Game game) {
         this.game = game;
     }
+
+    public void setTournament(Tournament tournament) {
+        this.tournament = tournament;
+    }
 }
