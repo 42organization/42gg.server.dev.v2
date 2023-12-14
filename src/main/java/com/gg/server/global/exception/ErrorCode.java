@@ -81,6 +81,7 @@ public enum ErrorCode {
      * team_user
      */
     TEAM_USER_ALREADY_EXIST(500, "TU201", "중복된 TEAM_USER"),
+    TEAM_USER_EXCEED(500, "TU202", "TeamUser 최대 인원의 수(2)를 초과하였습니다."),
 
     /** game **/
     GAME_DB_NOT_VALID(500, "GM201", "GAME DB NOT CONSISTENCY"),

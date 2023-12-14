@@ -2,7 +2,7 @@ package com.gg.server.domain.team.data;
 
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.global.exception.ErrorCode;
-import com.gg.server.global.exception.custom.BusinessException;
+import com.gg.server.global.utils.BusinessChecker;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -56,8 +56,9 @@ public class Team {
     }
 
     public void addTeamUser(TeamUser teamUser) {
-        if (teamUsers.contains(teamUser))
-            throw new BusinessException(ErrorCode.TEAM_USER_ALREADY_EXIST);
+        BusinessChecker.mustNotNull(teamUser, ErrorCode.NULL_POINT);
+        BusinessChecker.mustNotExceed(1, teamUsers, ErrorCode.TEAM_USER_EXCEED);
+        BusinessChecker.mustNotContains(teamUser, teamUsers, ErrorCode.TEAM_USER_ALREADY_EXIST);
         this.teamUsers.add(teamUser);
     }
 }
