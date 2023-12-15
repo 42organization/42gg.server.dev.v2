@@ -8,6 +8,6 @@ public class TournamentConflictException extends DuplicationException {
         super(ErrorCode.TOURNAMENT_CONFLICT.getMessage(), ErrorCode.TOURNAMENT_CONFLICT);
     }
     public TournamentConflictException(ErrorCode errorCode) {
-        super(errorCode.getMessage(), ErrorCode.TOURNAMENT_CONFLICT);
+        super(errorCode.getMessage(), errorCode);
     }
 }

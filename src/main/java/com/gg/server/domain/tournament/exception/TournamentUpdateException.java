@@ -8,6 +8,6 @@ public class TournamentUpdateException extends ForbiddenException {
         super(ErrorCode.TOURNAMENT_CAN_NOT_UPDATE.getMessage(), ErrorCode.TOURNAMENT_CAN_NOT_UPDATE);
     }
     public TournamentUpdateException(ErrorCode errorCode) {
-        super(errorCode.getMessage(), ErrorCode.TOURNAMENT_CAN_NOT_UPDATE);
+        super(errorCode.getMessage(), errorCode);
     }
 }

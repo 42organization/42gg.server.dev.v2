@@ -8,6 +8,6 @@ public class TournamentNotFoundException extends NotExistException {
         super(ErrorCode.TOURNAMENT_NOT_FOUND.getMessage(), ErrorCode.TOURNAMENT_NOT_FOUND);
     }
     public TournamentNotFoundException(ErrorCode errorCode) {
-        super(errorCode.getMessage(), ErrorCode.TOURNAMENT_NOT_FOUND);
+        super(errorCode.getMessage(), errorCode);
     }
 }
