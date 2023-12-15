@@ -14,7 +14,8 @@ public enum NotiType {
     CANCELEDBYMAN("canceledbyman", "매칭이 취소되었퐁."),
     CANCELEDBYTIME("canceledbytime", "매칭이 상대 없음으로 취소되었퐁."),
     IMMINENT("imminent", "매치가 곧 시작될퐁."),
-    ANNOUNCE("announce", "공지사항이 도착했퐁.");
+    ANNOUNCE("announce", "공지사항이 도착했퐁."),
+    GIFT("gift", "새로운 선물이 도착했퐁.");
 
     private final String code;
     private final String message;

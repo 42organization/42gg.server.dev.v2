@@ -1,8 +1,7 @@
 package com.gg.server.global.security.handler;
 
-import com.gg.server.domain.rank.redis.RedisKeyManager;
-import com.gg.server.domain.user.User;
-import com.gg.server.domain.user.UserRepository;
+import com.gg.server.domain.user.data.User;
+import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.global.security.UserPrincipal;
@@ -73,7 +72,7 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
 
         // token 설정
         String accessToken = tokenProvider.createToken(principal.getId());
-        String refreshToken = tokenProvider.refreshToken();
+        String refreshToken = tokenProvider.refreshToken(principal.getId());
 
         cookieUtil.addCookie(response, TokenHeaders.REFRESH_TOKEN, refreshToken,
                         (int)(refreshTokenExpiry / 1000));
@@ -115,7 +114,7 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
 
         // token 설정
         String accessToken = tokenProvider.createToken(remainedUser.getId());
-        String refreshToken = tokenProvider.refreshToken();
+        String refreshToken = tokenProvider.refreshToken(remainedUser.getId());
         jwtRedisRepository.addRefToken(refreshToken, refreshTokenExpiry, remainedUser.getId());
 
         cookieUtil.addCookie(response, TokenHeaders.REFRESH_TOKEN, refreshToken,
@@ -129,5 +128,3 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
 
 
 }
-
-

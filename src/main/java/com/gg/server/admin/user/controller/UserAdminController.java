@@ -1,20 +1,14 @@
 package com.gg.server.admin.user.controller;
 
-import com.gg.server.admin.user.dto.UserDetailAdminResponseDto;
-import com.gg.server.admin.user.dto.UserSearchAdminRequestDto;
-import com.gg.server.admin.user.dto.UserSearchAdminResponseDto;
-import com.gg.server.admin.user.dto.UserUpdateAdminRequestDto;
+import com.gg.server.admin.user.dto.*;
 import com.gg.server.admin.user.service.UserAdminService;
-import com.gg.server.domain.rank.exception.RankUpdateException;
 import com.gg.server.domain.user.exception.UserImageLargeException;
 import com.gg.server.domain.user.exception.UserImageTypeException;
 import com.gg.server.global.dto.PageRequestDto;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,7 +19,6 @@ import java.io.IOException;
 @RestController
 @AllArgsConstructor
 @RequestMapping(value = "/pingpong/admin/users")
-@Slf4j
 public class UserAdminController {
 
     private final UserAdminService userAdminService;
@@ -61,6 +54,55 @@ public class UserAdminController {
         }
         userAdminService.updateUserDetail(intraId, updateUserInfo, imgData);
 
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/images/{intraId}")
+    public ResponseEntity deleteUserProfileImage(@PathVariable String intraId) {
+        userAdminService.deleteUserProfileImage(intraId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/delete-list")
+    public UserImageListAdminResponseDto getUserImageDeleteList(@ModelAttribute @Valid PageRequestDto pageRequestDto) {
+        Pageable pageable = PageRequest.of(pageRequestDto.getPage() - 1,
+                pageRequestDto.getSize(),
+                Sort.by("id").descending());
+        return userAdminService.getUserImageDeleteList(pageable);
+    }
+
+    @GetMapping("/delete-list/{intraId}")
+    public UserImageListAdminResponseDto getUserImageDeleteListByIntraId(@ModelAttribute @Valid PageRequestDto pageRequestDto, @PathVariable String intraId) {
+        Pageable pageable = PageRequest.of(pageRequestDto.getPage() - 1,
+                pageRequestDto.getSize());
+        return userAdminService.getUserImageDeleteListByIntraId(pageable, intraId);
+    }
+
+    @GetMapping("/images")
+    public UserImageListAdminResponseDto getUserImageList(@ModelAttribute @Valid PageRequestDto pageRequestDto) {
+        Pageable pageable = PageRequest.of(pageRequestDto.getPage() - 1,
+                pageRequestDto.getSize());
+        return userAdminService.getUserImageList(pageable);
+    }
+
+    @GetMapping("/images/{intraId}")
+    public UserImageListAdminResponseDto getUserImage(@ModelAttribute @Valid PageRequestDto pageRequestDto, @PathVariable String intraId) {
+        Pageable pageable = PageRequest.of(pageRequestDto.getPage() - 1,
+                pageRequestDto.getSize());
+        return userAdminService.getUserImageListByIntraId(pageable, intraId);
+    }
+
+    @GetMapping("/images/current")
+    public UserImageListAdminResponseDto getUserImageCurrent(@ModelAttribute @Valid PageRequestDto pageRequestDto) {
+        Pageable pageable = PageRequest.of(pageRequestDto.getPage() - 1,
+                pageRequestDto.getSize());
+        return userAdminService.getUserImageCurrent(pageable);
+    }
+
+    @GetMapping("/images/current/{intraId}")
+    public UserImageListAdminResponseDto getUserImageCurrentByIntraId(@ModelAttribute @Valid PageRequestDto pageRequestDto, @PathVariable String intraId) {
+        Pageable pageable = PageRequest.of(pageRequestDto.getPage() - 1,
+                pageRequestDto.getSize());
+        return userAdminService.getUserImageCurrentByIntraId(pageable, intraId);
     }
 }

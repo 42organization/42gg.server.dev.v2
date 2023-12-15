@@ -12,7 +12,10 @@ import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.Season;
-import com.gg.server.domain.user.User;
+import com.gg.server.domain.tier.data.Tier;
+import com.gg.server.domain.tier.data.TierRepository;
+import com.gg.server.domain.tier.exception.TierNotFoundException;
+import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
@@ -47,6 +50,10 @@ public class GameFindServiceTest {
     AuthTokenProvider tokenProvider;
     @Autowired
     RankRedisRepository rankRedisRepository;
+
+    @Autowired
+    TierRepository tierRepository;
+
     @Autowired
     GameRepository gameRepository;
 
@@ -54,6 +61,7 @@ public class GameFindServiceTest {
     void init() {
         Season season = testDataUtils.createSeason();
         User newUser = testDataUtils.createNewUser();
+        Tier tier = tierRepository.findStartTier().orElseThrow(TierNotFoundException::new);
         String accessToken = tokenProvider.createToken(newUser.getId());
         String statusMsg = "status message test1";
 
@@ -70,7 +78,7 @@ public class GameFindServiceTest {
         testDataUtils.createMockMatch(newUser, season, startTime2, endTime2);
 
         testDataUtils.createUserRank(newUser, statusMsg, season);
-        RankRedis userRank = RankRedis.from(UserDto.from(newUser), season.getStartPpp());
+        RankRedis userRank = RankRedis.from(UserDto.from(newUser), season.getStartPpp(), tier.getImageUri());
         String redisHashKey = RedisKeyManager.getHashKey(season.getId());
         rankRedisRepository.addRankData(redisHashKey, newUser.getId(), userRank);
     }

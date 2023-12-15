@@ -8,8 +8,8 @@ import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.data.SeasonRepository;
 import com.gg.server.domain.slotmanagement.SlotManagement;
 import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
-import com.gg.server.domain.user.User;
-import com.gg.server.domain.user.UserRepository;
+import com.gg.server.domain.user.data.User;
+import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
@@ -34,7 +34,6 @@ public class MatchTestUtils {
         User user = User.builder()
                 .eMail("email")
                 .intraId(randomId)
-                .imageUri("image")
                 .racketType(RacketType.PENHOLDER)
                 .snsNotiOpt(SnsType.NONE)
                 .roleType(RoleType.USER)
@@ -49,7 +48,6 @@ public class MatchTestUtils {
         User user = User.builder()
                 .eMail("email")
                 .intraId(randomId)
-                .imageUri("image")
                 .racketType(RacketType.PENHOLDER)
                 .snsNotiOpt(SnsType.NONE)
                 .roleType(RoleType.GUEST)
@@ -61,7 +59,7 @@ public class MatchTestUtils {
 
     public RankRedis addUsertoRankRedis(Long userId, Integer ppp, Long seasonId) {
         String randomId = UUID.randomUUID().toString();
-        RankRedis rankRedis = new RankRedis(userId,  randomId, ppp, 0, 0,"test");
+        RankRedis rankRedis = new RankRedis(userId,  randomId, ppp, 0, 0,"test", "https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/nheo.jpeg", "#000000");
         rankRedisRepository.addRankData(RedisKeyManager.getHashKey(seasonId), userId, rankRedis);
         rankRedisRepository.addToZSet(RedisKeyManager.getZSetKey(seasonId), userId, ppp);
         return rankRedis;

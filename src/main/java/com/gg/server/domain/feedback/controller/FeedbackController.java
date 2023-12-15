@@ -3,7 +3,7 @@ package com.gg.server.domain.feedback.controller;
 
 import com.gg.server.domain.feedback.dto.FeedbackRequestDto;
 import com.gg.server.domain.feedback.service.FeedbackService;
-import com.gg.server.domain.user.UserRepository;
+import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.utils.argumentresolver.Login;
 import io.swagger.v3.oas.annotations.Parameter;

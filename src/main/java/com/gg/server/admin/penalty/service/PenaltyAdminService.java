@@ -10,7 +10,7 @@ import com.gg.server.domain.penalty.exception.PenaltyExpiredException;
 import com.gg.server.domain.penalty.exception.PenaltyNotFoundException;
 import com.gg.server.domain.penalty.exception.RedisPenaltyUserNotFoundException;
 import com.gg.server.domain.penalty.type.PenaltyType;
-import com.gg.server.domain.user.User;
+import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.service.UserFindService;
 import java.time.LocalDateTime;
 import java.util.List;

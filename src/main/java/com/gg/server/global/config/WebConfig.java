@@ -1,6 +1,6 @@
 package com.gg.server.global.config;
 
-import com.gg.server.domain.user.UserRepository;
+import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.global.utils.argumentresolver.LoginMemberArgumentResolver;
 import com.gg.server.global.utils.querytracker.LoggingInterceptor;

@@ -11,7 +11,6 @@ import com.gg.server.admin.season.data.SeasonAdminRepository;
 import com.gg.server.admin.team.data.TeamUserAdminRepository;
 import com.gg.server.admin.user.data.UserAdminRepository;
 import com.gg.server.domain.game.data.Game;
-import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.dto.GameTeamUser;
 import com.gg.server.domain.game.exception.GameNotExistException;
 import com.gg.server.domain.game.type.StatusType;
@@ -19,19 +18,13 @@ import com.gg.server.domain.match.data.RedisMatchUserRepository;
 import com.gg.server.domain.pchange.data.PChange;
 import com.gg.server.domain.pchange.data.PChangeRepository;
 
-import com.gg.server.domain.rank.data.Rank;
-import com.gg.server.domain.rank.data.RankRepository;
-import com.gg.server.domain.rank.exception.RankNotFoundException;
-import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisService;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.exception.SeasonNotFoundException;
 import com.gg.server.domain.team.data.TeamUser;
-import com.gg.server.domain.user.User;
-import com.gg.server.domain.user.UserRepository;
+import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.*;
@@ -44,7 +37,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class GameAdminService {
 
     private final GameAdminRepository gameAdminRepository;
@@ -58,10 +50,9 @@ public class GameAdminService {
 
     @Transactional(readOnly = true)
     public GameLogListAdminResponseDto findAllGamesByAdmin(Pageable pageable) {
-        Page<Game> gamePage = gameAdminRepository.findAllByStatus(pageable, StatusType.END); //모든 게임 정보 가져오기
+        Page<Game> gamePage = gameAdminRepository.findAll(pageable); //모든 게임 정보 가져오기
         return new GameLogListAdminResponseDto(getGameLogList(gamePage.getContent().stream().map(Game::getId).collect(Collectors.toList())), gamePage.getTotalPages());
     }
-
 
     @Transactional(readOnly = true)
     public GameLogListAdminResponseDto findGamesBySeasonId(Long seasonId, Pageable pageable){
@@ -78,7 +69,7 @@ public class GameAdminService {
 
     @Transactional(readOnly = true)
     public GameLogListAdminResponseDto findGamesByIntraId(String intraId, Pageable pageable){
-        User user = userAdminRepository.findByIntraId(intraId).orElseThrow(() -> new UserNotFoundException());
+        User user = userAdminRepository.findByIntraId(intraId).orElseThrow(UserNotFoundException::new);
         List<PChange> pChangeList = pChangeRepository.findAllByUserId(user.getId());
         List<Game> gameList = new ArrayList<>();
 
@@ -141,7 +132,7 @@ public class GameAdminService {
             teamUser.getTeam().updateScore(reqDto.getTeam2Score(), reqDto.getTeam2Score() > reqDto.getTeam1Score());
         }
     }
-
+  
     private Boolean isRecentlyGame(List<TeamUser> teamUsers, Long gameId) {
         for (TeamUser teamUser : teamUsers) {
             List<PChange> pChanges = pChangeAdminRepository.findByTeamUser(teamUser.getUser().getId());

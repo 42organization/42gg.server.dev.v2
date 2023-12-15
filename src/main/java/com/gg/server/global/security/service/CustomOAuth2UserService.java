@@ -5,10 +5,12 @@ import com.gg.server.domain.rank.data.RankRepository;
 import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
-import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.data.SeasonRepository;
-import com.gg.server.domain.user.User;
-import com.gg.server.domain.user.UserRepository;
+import com.gg.server.domain.tier.data.Tier;
+import com.gg.server.domain.tier.data.TierRepository;
+import com.gg.server.domain.tier.exception.TierNotFoundException;
+import com.gg.server.domain.user.data.User;
+import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.security.UserPrincipal;
 import com.gg.server.global.security.info.OAuthUserInfo;
@@ -29,8 +31,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +41,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final RankRepository rankRepository;
     private final SeasonRepository seasonRepository;
     private final RankRedisRepository rankRedisRepository;
+    private final TierRepository tierRepository;
 
     @Value("${info.image.defaultUrl}")
     private String defaultImageUrl;
@@ -82,11 +83,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     private void createUserRank(User savedUser) {
+        Tier tier = tierRepository.findStartTier().orElseThrow(TierNotFoundException::new);
         seasonRepository.findCurrentAndNewSeason(LocalDateTime.now()).forEach(
             season -> {
-                Rank userRank = Rank.from(savedUser, season, season.getStartPpp());
+                Rank userRank = Rank.from(savedUser, season, season.getStartPpp(), tier);
                 rankRepository.save(userRank);
-                RankRedis rankRedis = RankRedis.from(UserDto.from(savedUser), season.getStartPpp());
+                RankRedis rankRedis = RankRedis.from(UserDto.from(savedUser), season.getStartPpp(), tier.getImageUri());
                 String hashKey = RedisKeyManager.getHashKey(season.getId());
                 rankRedisRepository.addRankData(hashKey, savedUser.getId(), rankRedis);
             }
@@ -97,7 +99,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         User user = User.builder()
                 .intraId(userInfo.getIntraId())
                 .roleType(userInfo.getRoleType())
-                .imageUri(userInfo.getImageUrl())
                 .kakaoId(userInfo.getKakaoId())
                 .snsNotiOpt(SnsType.EMAIL)
                 .racketType(RacketType.NONE)

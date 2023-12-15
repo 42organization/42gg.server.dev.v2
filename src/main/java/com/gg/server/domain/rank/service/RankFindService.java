@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class RankFindService {
     private final RankRepository rankRepository;
 
-    @Transactional(readOnly = true)
     public Rank findByUserIdAndSeasonId(Long userId, Long seasonId){
         return  rankRepository.findByUserIdAndSeasonId(userId, seasonId).orElseThrow(() -> new RankNotFoundException());
     }

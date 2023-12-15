@@ -1,7 +1,6 @@
 package com.gg.server.domain.match.service;
 
 import com.gg.server.admin.penalty.data.PenaltyAdminRepository;
-import com.gg.server.admin.penalty.data.PenaltyUserAdminRedisRepository;
 import com.gg.server.admin.penalty.type.PenaltyKey;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
@@ -11,11 +10,10 @@ import com.gg.server.domain.match.exception.SlotNotFoundException;
 import com.gg.server.domain.match.type.Option;
 import com.gg.server.domain.noti.data.NotiRepository;
 import com.gg.server.domain.penalty.redis.PenaltyUserRedisRepository;
-import com.gg.server.domain.penalty.redis.RedisPenaltyUser;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.slotmanagement.SlotManagement;
-import com.gg.server.domain.user.User;
+import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.dto.UserDto;
 import java.time.LocalDateTime;
 import java.util.ArrayList;

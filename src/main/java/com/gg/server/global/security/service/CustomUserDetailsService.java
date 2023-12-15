@@ -1,14 +1,12 @@
 package com.gg.server.global.security.service;
 
-import com.gg.server.domain.user.User;
-import com.gg.server.domain.user.UserRepository;
+import com.gg.server.domain.user.data.User;
+import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.domain.user.service.UserFindService;
-import com.gg.server.domain.user.service.UserService;
 import com.gg.server.global.security.UserPrincipal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +17,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserFindService userFindService;
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) throws UserNotFoundException {
         User user = userFindService.findByIntraId(username);
         return UserPrincipal.create(user);
     }

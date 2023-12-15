@@ -1,6 +1,6 @@
 package com.gg.server.global.security;
 
-import com.gg.server.domain.user.User;
+import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.type.RoleType;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,14 +14,12 @@ import java.util.*;
 public class UserPrincipal implements OAuth2User, UserDetails {
     private final Long id;
     private final String nickname;
-    private final String profileImg;
     private final Collection<GrantedAuthority> authorities;
     private Map<String, Object> attributes;
 
-    public UserPrincipal(Long id, String nickname, String profileImg, Collection<GrantedAuthority> authorities) {
+    public UserPrincipal(Long id, String nickname, Collection<GrantedAuthority> authorities) {
         this.id = id;
         this.nickname = nickname;
-        this.profileImg = profileImg;
         this.authorities = authorities;
     }
 
@@ -33,7 +31,7 @@ public class UserPrincipal implements OAuth2User, UserDetails {
             authorities.add(new SimpleGrantedAuthority(RoleType.USER.getKey()));
             authorities.add(new SimpleGrantedAuthority(RoleType.ADMIN.getKey()));
         }
-        return new UserPrincipal(user.getId(), user.getIntraId(), user.getImageUri(), authorities);
+        return new UserPrincipal(user.getId(), user.getIntraId(), authorities);
     }
 
     public static UserPrincipal create(User user, Map<String, Object> attributes) {

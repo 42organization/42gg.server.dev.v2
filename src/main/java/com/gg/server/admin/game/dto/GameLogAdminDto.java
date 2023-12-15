@@ -1,6 +1,7 @@
 package com.gg.server.admin.game.dto;
 
 import com.gg.server.domain.game.dto.GameTeamUser;
+import com.gg.server.domain.game.type.StatusType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,7 @@ public class GameLogAdminDto {
     private LocalDateTime startAt;
     private String slotTime;
     private String mode;
+    private StatusType status;
     private GameTeamAdminDto team1;
     private GameTeamAdminDto team2;
 
@@ -27,5 +29,6 @@ public class GameLogAdminDto {
         this.mode = game.getMode().getCode();
         this.team1 = new GameTeamAdminDto(game.getT1IntraId(), game.getT1TeamId(), game.getT1Score(), game.getT1IsWin());
         this.team2 = new GameTeamAdminDto(game.getT2IntraId(), game.getT2TeamId(), game.getT2Score(), game.getT2IsWin());
+        this.status = game.getStatus();
     }
 }

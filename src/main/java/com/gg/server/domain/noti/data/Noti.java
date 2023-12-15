@@ -1,6 +1,6 @@
 package com.gg.server.domain.noti.data;
 
-import com.gg.server.domain.user.User;
+import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.noti.type.NotiType;
 import com.gg.server.global.utils.BaseTimeEntity;
 import lombok.*;
