@@ -16,7 +16,7 @@ public enum TournamentRound {
     // semi final  -> 4강
     // quarter final -> 8강
     // ordinal()로 sorting 사용되고 있으므로 순서 중요 -> 이후에 리팩토링으로 해결하겠습니다.
-    THE_FINAL("1", null, 1),
+    THE_FINAL("1", null, 2),
     SEMI_FINAL_1("4-1", THE_FINAL, 4),
     SEMI_FINAL_2("4-2", THE_FINAL, 4),
     QUARTER_FINAL_1("8-1", SEMI_FINAL_1, 8),
