@@ -72,7 +72,7 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
 
         // token 설정
         String accessToken = tokenProvider.createToken(principal.getId());
-        String refreshToken = tokenProvider.refreshToken();
+        String refreshToken = tokenProvider.refreshToken(principal.getId());
 
         cookieUtil.addCookie(response, TokenHeaders.REFRESH_TOKEN, refreshToken,
                         (int)(refreshTokenExpiry / 1000));
@@ -114,7 +114,7 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
 
         // token 설정
         String accessToken = tokenProvider.createToken(remainedUser.getId());
-        String refreshToken = tokenProvider.refreshToken();
+        String refreshToken = tokenProvider.refreshToken(remainedUser.getId());
         jwtRedisRepository.addRefToken(refreshToken, refreshTokenExpiry, remainedUser.getId());
 
         cookieUtil.addCookie(response, TokenHeaders.REFRESH_TOKEN, refreshToken,
