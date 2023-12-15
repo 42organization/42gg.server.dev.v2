@@ -116,6 +116,7 @@ public class GameAdminService {
                 throw new PChangeNotExistException();
             }
             rollbackGameResult(reqDto, season, teamUser, pChanges);
+            teamUserAdminRepository.flush();
             pChangeAdminRepository.delete(pChanges.get(0));
         }
         rankRedisService.updateRankRedis(teamUsers.get(0), teamUsers.get(1), game);
