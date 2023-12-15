@@ -25,11 +25,12 @@ public class AuthTokenProvider {
         refreshKey = Keys.hmacShaKeyFor(appProperties.getAuth().getRefreshTokenSecret().getBytes());
         log.info(key.getAlgorithm());
     }
-    public String refreshToken() {
+    public String refreshToken(Long userId) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() +
                 appProperties.getAuth().getRefreshTokenExpiry());
         return Jwts.builder()
+                .setSubject(userId.toString())
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
                 .signWith(refreshKey)
