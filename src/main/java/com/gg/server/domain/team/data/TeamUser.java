@@ -31,4 +31,8 @@ public class TeamUser {
         this.user = user;
         team.addTeamUser(this);
     }
+
+    public void updateUser(User user) {
+        this.user = user;
+    }
 }
