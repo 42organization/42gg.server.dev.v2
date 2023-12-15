@@ -188,7 +188,7 @@ public class TournamentService {
                 return;
             }
             imminentTournament.updateStatus(TournamentStatus.LIVE);
-            matchTournamentService.matchTournamentGame(imminentTournament, QUARTER_FINAL_1);
+            matchTournamentService.matchGames(imminentTournament, QUARTER_FINAL_1);
             // TODO 시작 알림?
         }
     }

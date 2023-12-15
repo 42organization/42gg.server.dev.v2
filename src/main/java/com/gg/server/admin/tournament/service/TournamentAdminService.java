@@ -6,6 +6,7 @@ import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.exception.ScoreNotInvalidException;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.match.service.MatchTournamentService;
+import com.gg.server.domain.match.type.TournamentMatch;
 import com.gg.server.domain.team.data.Team;
 import com.gg.server.domain.tournament.data.*;
 import com.gg.server.domain.tournament.dto.TournamentUserListResponseDto;
@@ -26,6 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static com.gg.server.domain.match.type.TournamentMatch.*;
 
 @Service
 @RequiredArgsConstructor
@@ -283,10 +286,17 @@ public class TournamentAdminService {
         if (game == null){
             throw new TournamentGameNotFoundException();
         }
-        if (canUpdateScore(tournamentGame,reqDto)){
-            updateTeamScore(game, reqDto);
-        } else {
+        if (!canUpdateScore(tournamentGame,reqDto)){
             throw new TournamentUpdateException(ErrorCode.TOURNAMENT_INVALID_SCORE);
+        }
+        updateTeamScore(game, reqDto);
+        TournamentMatch matchStatus = matchTournamentService.checkTournamentGame(game);
+        TournamentRound nextRound = tournamentGame.getTournamentRound().getNextRound();
+        if (POSSIBLE.equals(matchStatus)) {
+            matchTournamentService.matchGames(tournament, nextRound);
+        } else if (ALREADY_MATCHED.equals(matchStatus)) {
+            Game nextMatchedGame = tournamentGameRepository.findByTournamentIdAndTournamentRound(tournament.getId(), nextRound).orElseThrow().getGame();
+            matchTournamentService.updateMatchedGameUser(game, nextMatchedGame);
         }
     }
 
@@ -302,9 +312,6 @@ public class TournamentAdminService {
         Team team2 = teams.stream().filter(t->t.getId().equals(reqDto.getTeam2().getTeamId())).findAny().orElseThrow(TournamentGameNotFoundException::new);
         team1.updateScore(reqDto.getTeam1().getScore(), reqDto.getTeam1().getScore() > reqDto.getTeam2().getScore());
         team2.updateScore(reqDto.getTeam2().getScore(), reqDto.getTeam2().getScore() > reqDto.getTeam1().getScore());
-        if (game.getStatus() == StatusType.LIVE || game.getStatus() == StatusType.WAIT){
-            matchTournamentService.checkTournamentGame(game);
-        }
         if (game.getStatus() == StatusType.LIVE){
             game.updateStatus();
         }
