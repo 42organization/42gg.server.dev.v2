@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 import static com.gg.server.domain.match.type.TournamentMatch.*;
 
 
-// TODO transactional 고민해보기
 @Service
 @RequiredArgsConstructor
 public class MatchTournamentService {

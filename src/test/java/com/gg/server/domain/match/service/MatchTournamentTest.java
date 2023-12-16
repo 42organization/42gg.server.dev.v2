@@ -6,6 +6,7 @@ import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.match.type.TournamentMatch;
 import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
 import com.gg.server.domain.team.data.Team;
+import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.type.TournamentRound;
@@ -40,7 +41,7 @@ public class MatchTournamentTest {
     @Autowired
     GameRepository gameRepository;
     @Autowired
-    MatchTournamentService mathTournamentService;
+    MatchTournamentService matchTournamentService;
     @Autowired
     MatchTestUtils matchTestUtils;
 
@@ -65,7 +66,7 @@ public class MatchTournamentTest {
         @DisplayName("8강 경기 매칭 성공")
         public void quarterTest() {
             // when
-            mathTournamentService.matchGames(tournament, TournamentRound.QUARTER_FINAL_1);
+            matchTournamentService.matchGames(tournament, TournamentRound.QUARTER_FINAL_1);
 
             // then
             List<TournamentRound> quarterRounds = TournamentRound.getSameRounds(TournamentRound.QUARTER_FINAL_1);
@@ -89,7 +90,7 @@ public class MatchTournamentTest {
             matchTestUtils.updateTournamentGamesResult(tournamentGames, List.of(2, 0));
 
             // when
-            mathTournamentService.matchGames(tournament, TournamentRound.SEMI_FINAL_1);
+            matchTournamentService.matchGames(tournament, TournamentRound.SEMI_FINAL_1);
 
             // then
             List<TournamentRound> semiRounds = TournamentRound.getSameRounds(TournamentRound.SEMI_FINAL_1);
@@ -132,7 +133,7 @@ public class MatchTournamentTest {
             matchTestUtils.updateTournamentGamesResult(tournamentGames, List.of(2, 0));
 
             // when
-            mathTournamentService.matchGames(tournament, TournamentRound.THE_FINAL);
+            matchTournamentService.matchGames(tournament, TournamentRound.THE_FINAL);
 
             // then
             // 1개의 결승 경기가 생성되었는지 확인
@@ -157,7 +158,7 @@ public class MatchTournamentTest {
             matchTestUtils.updateTournamentGameResult(finalGame, List.of(2, 0));
 
             // when
-            TournamentMatch tournamentMatch = mathTournamentService.checkTournamentGame(finalGame);
+            TournamentMatch tournamentMatch = matchTournamentService.checkTournamentGame(finalGame);
 
             // then
             // 토너먼트 상태가 END로 변경되었는지
@@ -176,29 +177,32 @@ public class MatchTournamentTest {
         public void quarterToSemiTest() {
             // given
             // 8강 경기 결과 + 4강 매칭
-            List<TournamentGame> tournamentGames = matchTestUtils.matchTournamentGames(tournament, TournamentRound.QUARTER_FINAL_1);
-            matchTestUtils.updateTournamentGamesResult(tournamentGames, List.of(2, 0));
-            matchTestUtils.matchTournamentGames(tournament, TournamentRound.SEMI_FINAL_1);
-            Game game = tournamentGames.get(0).getGame();
-            TournamentRound nextRound = tournamentGames.get(0).getTournamentRound().getNextRound();
-            Game nextMatchedGame = allTournamentGames.stream()
+            List<TournamentGame> quarterGames = matchTestUtils.matchTournamentGames(tournament, TournamentRound.QUARTER_FINAL_1);
+            matchTestUtils.updateTournamentGamesResult(quarterGames, List.of(2, 0));
+            List<TournamentGame> semiGames = matchTestUtils.matchTournamentGames(tournament, TournamentRound.SEMI_FINAL_1);
+
+            Game game = quarterGames.get(0).getGame();                                              // QAUARTER_FINAL_1l Game
+            TournamentRound nextRound = quarterGames.get(0).getTournamentRound().getNextRound();    // SEMI_FINAL_1
+            Game nextMatchedGame = semiGames.stream()                                               // SEMI_FINAL_1 Game
                 .filter(o -> nextRound.equals(o.getTournamentRound()))
                 .findAny()
                 .orElseThrow(() -> new IllegalArgumentException("다음 경기가 존재하지 않습니다.")).getGame();
 
             // when
-            List<Team> beforeNextGameTeams = nextMatchedGame.getTeams();
-            List<Team> beforeGameTeams = game.getTeams();
-            beforeGameTeams.get(0).updateScore(1, false);
-            beforeGameTeams.get(1).updateScore(2, true);
-            mathTournamentService.updateMatchedGameUser(game, nextMatchedGame);
+            // 기존 8강 경기에서 진 팀이 점수 수정으로 이긴 팀으로 변경
+            Team losingTeam = game.getTeams().stream().filter(Team::getWin).findAny().orElseThrow(() -> new IllegalArgumentException("승리팀이 존재하지 않습니다."));
+            Team winningTeam = game.getTeams().stream().filter(o -> !o.getWin()).findAny().orElseThrow(() -> new IllegalArgumentException("패배팀이 존재하지 않습니다."));
+            losingTeam.updateScore(0, false);
+            winningTeam.updateScore(2, true);
+            matchTournamentService.updateMatchedGameUser(game, nextMatchedGame);
 
             // then
-            // 8강 경기에서 이긴 팀이 4강 경기로 변경되었는지 확인
-            List<Team> afterNextGameTeams = nextMatchedGame.getTeams();
-            for (Team team : afterNextGameTeams) {
-            }
-
+            // 점수 수정으로 8강 경기에서 이긴 팀이 다음 경기로 변경되었는지 확인
+            List<User> nextGameUsers = nextMatchedGame.getTeams().get(0).getTeamUsers().stream()
+                .map(TeamUser::getUser)
+                .collect(Collectors.toList());
+            assertThat(nextGameUsers.contains(winningTeam.getTeamUsers().get(0).getUser())).isTrue();
+            assertThat(nextGameUsers.contains(losingTeam.getTeamUsers().get(0).getUser())).isFalse();
         }
     }
 }
