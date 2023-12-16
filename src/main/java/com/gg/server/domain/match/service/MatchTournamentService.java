@@ -4,6 +4,7 @@ import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
+import com.gg.server.domain.match.exception.EnrolledSlotException;
 import com.gg.server.domain.match.type.TournamentMatchStatus;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.service.SeasonFindService;
@@ -11,6 +12,7 @@ import com.gg.server.domain.slotmanagement.SlotManagement;
 import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
 import com.gg.server.domain.team.data.Team;
 import com.gg.server.domain.team.data.TeamUser;
+import com.gg.server.domain.team.exception.TeamNotFoundException;
 import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentGameRepository;
@@ -46,11 +48,11 @@ public class MatchTournamentService {
      * <p> 결승전 점수 입력 후 토너먼트 END 상태로 업데이트 </p>
      * @param game 토너먼트 게임
      * @return TournamentMatchStatus - 매칭 가능 여부
-     * @throws IllegalArgumentException 토너먼트 게임이 아닐 경우
+     * @throws TournamentGameNotFoundException 토너먼트 게임이 존재하지 않을 경우
      */
     public TournamentMatchStatus checkTournamentGame(Game game) {
         TournamentGame tournamentGame = tournamentGameRepository.findByGameId(game.getId())
-            .orElseThrow(() -> new CustomRuntimeException("토너먼트 게임이 아닙니다.", ErrorCode.TOURNAMENT_NOT_FOUND));     // TODO : custom exception
+            .orElseThrow(TournamentGameNotFoundException::new);
 
         // 토너먼트 결승전 게임일 경우, 토너먼트 상태 END로 변경
         if (TournamentRound.THE_FINAL.equals(tournamentGame.getTournamentRound())) {
@@ -80,11 +82,12 @@ public class MatchTournamentService {
      * 토너먼트 게임 매칭
      * @param tournament 토너먼트
      * @param round 새로 매칭할 토너먼트 라운드
-     * @throws NullPointerException round의 이전 라운드가 존재하지 않을 경우
+     * @throws EnrolledSlotException 이미 매칭된 게임이 존재할 경우
+     * @throws SlotNotFoundException 슬롯이 존재하지 않을 경우
      */
     public void matchGames(Tournament tournament, TournamentRound round) {
         if (isAlreadyExistMatchedGame(tournament, round)) {
-            throw new CustomRuntimeException("이미 매칭된 게임이 존재합니다.", ErrorCode.TOURNAMENT_NOT_FOUND);      // TODO 수정
+            throw new EnrolledSlotException();
         }
         Season season = seasonFindService.findCurrentSeason(tournament.getStartTime());
         SlotManagement slotManagement = slotManagementRepository.findCurrent(tournament.getStartTime())
@@ -113,10 +116,11 @@ public class MatchTournamentService {
      * 토너먼트 게임의 승자를 토너먼트 다음 라운드의 게임 플레이어로 업데이트
      * @param game 경기 결과가 수정된 토너먼트 게임
      * @param nextMatchedGame 수정된 우승자로 수정할 다음 게임
+     * @throws TeamNotFoundException 우승팀이 존재하지 않을 경우
      */
     public void updateMatchedGameUser(Game game, Game nextMatchedGame) {
         List<Long> teamIds = game.getTeams().stream().map(Team::getId).collect(Collectors.toList());
-        Team winningTeam = game.getWinningTeam().orElseThrow();     // TODO : throw exception
+        Team winningTeam = game.getWinningTeam().orElseThrow(TeamNotFoundException::new);
 
         List<Team> nextMatchedGameTeams = nextMatchedGame.getTeams();
         for (Team team : nextMatchedGameTeams) {
@@ -148,7 +152,7 @@ public class MatchTournamentService {
             return tournament.getTournamentUsers().get(index).getUser();
         }
         return previousTournamentGames.get(index).getGame().getWinningTeam()
-            .orElseThrow(() -> new IllegalArgumentException("이전 라운드의 승자가 존재하지 않습니다."))
+            .orElseThrow(TeamNotFoundException::new)
             .getTeamUsers().get(0).getUser();
     }
 
@@ -157,6 +161,7 @@ public class MatchTournamentService {
      * @param tournament 토너먼트
      * @param round 토너먼트 라운드
      * @return true - 매칭된 게임이 존재, false - 아직 매칭된 게임이 존재하지 않음
+     * @throws TournamentGameNotFoundException 토너먼트 게임이 존재하지 않을 경우
      */
     private boolean isAlreadyExistMatchedGame(Tournament tournament, TournamentRound round) {
         TournamentGame tournamentGame = tournamentGameRepository.findByTournamentIdAndTournamentRound(tournament.getId(), round)
@@ -170,10 +175,11 @@ public class MatchTournamentService {
      * <p> 토너먼트 winner 업데이트 </p>
      * @param tournament 종료할 토너먼트
      * @param finalGame 토너먼트의 마지막 게임
+     * @throws TeamNotFoundException 우승팀이 존재하지 않을 경우
      */
     private void closeTournament(Tournament tournament, Game finalGame) {
         User winner = finalGame.getWinningTeam()
-            .orElseThrow(() -> new CustomRuntimeException("승자가 존재하지 않습니다.", ErrorCode.TOURNAMENT_NOT_FOUND))
+            .orElseThrow(TeamNotFoundException::new)
             .getTeamUsers().get(0).getUser();
         tournament.updateStatus(TournamentStatus.END);
         tournament.updateWinner(winner);
