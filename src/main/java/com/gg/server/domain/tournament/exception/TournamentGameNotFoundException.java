@@ -5,6 +5,6 @@ import com.gg.server.global.exception.custom.NotExistException;
 
 public class TournamentGameNotFoundException extends NotExistException {
     public TournamentGameNotFoundException() {
-        super(ErrorCode.TOURNAMENT_GAME_NOT_FOUND.getMessage(), ErrorCode.TOURNAMENT_NOT_FOUND);
+        super(ErrorCode.TOURNAMENT_GAME_NOT_FOUND.getMessage(), ErrorCode.TOURNAMENT_GAME_NOT_FOUND);
     }
 }
