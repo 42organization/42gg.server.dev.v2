@@ -1,5 +1,7 @@
 package com.gg.server.domain.tournament.data;
 
+import static com.gg.server.global.exception.ErrorCode.*;
+import static com.gg.server.global.exception.ErrorCode.TOURNAMENT_GAME_EXCEED;
 import static com.gg.server.global.utils.BusinessChecker.mustContains;
 import static com.gg.server.global.utils.BusinessChecker.mustNotContains;
 import static com.gg.server.global.utils.BusinessChecker.mustNotExceed;
@@ -113,17 +115,16 @@ public class Tournament extends BaseTimeEntity {
      * 토너먼트 관련 연관관계 편의 메소드는 토너먼트에서 모두 관리
      */
     public void addTournamentGame(TournamentGame tournamentGame) {
-        mustNotNull(tournamentGame, ErrorCode.NULL_POINT);
-        mustNotExceed(ALLOWED_JOINED_NUMBER - 2, tournamentGames,
-            ErrorCode.TOURNAMENT_GAME_EXCEED);
-        mustNotContains(tournamentGame, tournamentGames, ErrorCode.TOURNAMENT_GAME_DUPLICATION);
+        mustNotNull(tournamentGame, NULL_POINT);
+        mustNotExceed(ALLOWED_JOINED_NUMBER - 2, tournamentGames, TOURNAMENT_GAME_EXCEED);
+        mustNotContains(tournamentGame, tournamentGames, TOURNAMENT_GAME_DUPLICATION);
         this.tournamentGames.add(tournamentGame);
         tournamentGame.setTournament(this);
     }
 
     public void addTournamentUser(@NotNull TournamentUser tournamentUser) {
-        mustNotNull(tournamentUser, ErrorCode.NULL_POINT);
-        mustNotContains(tournamentUser, tournamentUsers, ErrorCode.TOURNAMENT_USER_DUPLICATION);
+        mustNotNull(tournamentUser, NULL_POINT);
+        mustNotContains(tournamentUser, tournamentUsers, TOURNAMENT_USER_DUPLICATION);
         this.tournamentUsers.add(tournamentUser);
         tournamentUser.setTournament(this);
     }
@@ -132,19 +133,19 @@ public class Tournament extends BaseTimeEntity {
      * not null 제약조건을 이용해서 실수를 방지
      */
     public void deleteTournamentUser(TournamentUser tournamentUser) {
-        mustNotNull(tournamentUser, ErrorCode.NULL_POINT);
-        mustContains(tournamentUser, tournamentUsers, ErrorCode.TOURNAMENT_USER_NOT_FOUND);
+        mustNotNull(tournamentUser, NULL_POINT);
+        mustContains(tournamentUser, tournamentUsers, TOURNAMENT_USER_NOT_FOUND);
         this.tournamentUsers.remove(tournamentUser);
         tournamentUser.setTournament(null);
     }
 
     public void updateWinner(User winner) {
-        mustNotNull(winner, ErrorCode.NULL_POINT);
+        mustNotNull(winner, NULL_POINT);
         this.winner = winner;
     }
 
     public void updateStatus(TournamentStatus status) {
-        mustNotNull(status, ErrorCode.NULL_POINT);
+        mustNotNull(status, NULL_POINT);
         this.status = status;
     }
 }
