@@ -8,7 +8,7 @@ import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.exception.ScoreNotInvalidException;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.match.service.MatchTournamentService;
-import com.gg.server.domain.match.type.TournamentMatch;
+import com.gg.server.domain.match.type.TournamentMatchStatus;
 import com.gg.server.domain.team.data.Team;
 import com.gg.server.domain.tournament.data.*;
 import com.gg.server.domain.tournament.dto.TournamentUserListResponseDto;
@@ -30,7 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.gg.server.domain.match.type.TournamentMatch.*;
+import static com.gg.server.domain.match.type.TournamentMatchStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -297,7 +297,7 @@ public class TournamentAdminService {
             throw new TournamentUpdateException();
         }
         updateTeamScore(game, reqDto);
-        TournamentMatch matchStatus = matchTournamentService.checkTournamentGame(game);
+        TournamentMatchStatus matchStatus = matchTournamentService.checkTournamentGame(game);
         TournamentRound nextRound = tournamentGame.getTournamentRound().getNextRound();
         if (POSSIBLE.equals(matchStatus)) {
             matchTournamentService.matchGames(tournament, nextRound);
