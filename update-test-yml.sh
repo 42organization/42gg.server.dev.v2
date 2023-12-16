@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # yml 파일 경로
-YML_FILE="./src/main/resources/deploy-application.yml"
+YML_FILE="./src/main/resources/application-test.yml"
 
 # 변경된 내용을 임시 파일에 저장
 ENCODED_APPLICATION_YML=$(mktemp)
