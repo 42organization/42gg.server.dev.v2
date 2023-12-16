@@ -4,16 +4,14 @@ import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.match.type.TournamentMatch;
-import com.gg.server.domain.season.data.Season;
-import com.gg.server.domain.slotmanagement.SlotManagement;
 import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
 import com.gg.server.domain.team.data.Team;
 import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentGame;
-import com.gg.server.domain.tournament.data.TournamentGameRepository;
 import com.gg.server.domain.tournament.type.TournamentRound;
 import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.user.data.User;
+import com.gg.server.utils.MatchTestUtils;
 import com.gg.server.utils.TestDataUtils;
 import com.gg.server.utils.annotation.IntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -41,8 +38,6 @@ public class MatchTournamentTest {
     @Autowired
     SlotManagementRepository slotManagementRepository;
     @Autowired
-    TournamentGameRepository tournamentGameRepository;
-    @Autowired
     GameRepository gameRepository;
     @Autowired
     MatchTournamentService mathTournamentService;
@@ -50,24 +45,15 @@ public class MatchTournamentTest {
     MatchTestUtils matchTestUtils;
 
     Tournament tournament;
-    List<TournamentGame> tournamentGameList;
-    Season season;
-    SlotManagement slotManagement;
+    List<TournamentGame> allTournamentGames;
 
     @BeforeEach
     public void beforeEach() {
-        season = testDataUtils.createSeason();
-        slotManagement = SlotManagement.builder()
-            .pastSlotTime(0)
-            .futureSlotTime(0)
-            .openMinute(0)
-            .gameInterval(15)
-            .startTime(LocalDateTime.now().minusHours(1))
-            .build();
-        slotManagementRepository.save(slotManagement);
+        testDataUtils.createSeason();
+        testDataUtils.createSlotManagement(15);
         tournament = testDataUtils.createTournamentWithUser(Tournament.ALLOWED_JOINED_NUMBER, 4, "test");
-        tournamentGameList = testDataUtils.createTournamentGameList(tournament, 7);
-        for (TournamentGame tournamentGame : tournamentGameList) {
+        allTournamentGames = testDataUtils.createTournamentGameList(tournament, 7);
+        for (TournamentGame tournamentGame : allTournamentGames) {
             tournament.addTournamentGame(tournamentGame);
         }
     }
@@ -76,14 +62,14 @@ public class MatchTournamentTest {
     @DisplayName("토너먼트 라운드별 경기 생성 테스트")
     class MatchTournament {
         @Test
-        @DisplayName("8강 경기 매칭 테스트")
+        @DisplayName("8강 경기 매칭 성공")
         public void quarterTest() {
             // when
             mathTournamentService.matchGames(tournament, TournamentRound.QUARTER_FINAL_1);
 
             // then
             List<TournamentRound> quarterRounds = TournamentRound.getSameRounds(TournamentRound.QUARTER_FINAL_1);
-            List<TournamentGame> quarterRoundGames = tournamentGameRepository.findAllByTournamentId(tournament.getId()).stream()
+            List<TournamentGame> quarterRoundGames = allTournamentGames.stream()
                 .filter(o -> quarterRounds.contains(o.getTournamentRound()))
                 .collect(Collectors.toList());
             // 4개의 8강 경기가 생성되었는지 확인
@@ -95,7 +81,7 @@ public class MatchTournamentTest {
         }
 
         @Test
-        @DisplayName("4강 경기 매칭 테스트")
+        @DisplayName("4강 경기 매칭 성공")
         public void semiTest() {
             // given
             // 8강 경기 결과
@@ -107,7 +93,7 @@ public class MatchTournamentTest {
 
             // then
             List<TournamentRound> semiRounds = TournamentRound.getSameRounds(TournamentRound.SEMI_FINAL_1);
-            List<TournamentGame> semiRoundGames = tournamentGameRepository.findAllByTournamentId(tournament.getId()).stream()
+            List<TournamentGame> semiRoundGames = allTournamentGames.stream()
                 .filter(o -> semiRounds.contains(o.getTournamentRound()))
                 .sorted(Comparator.comparing(TournamentGame::getTournamentRound))
                 .collect(Collectors.toList());
@@ -119,7 +105,7 @@ public class MatchTournamentTest {
             }
             // 8강에서 이긴 유저끼리 4강에 매칭되었는지 확인
             List<TournamentRound> quarterRounds = TournamentRound.getSameRounds(TournamentRound.QUARTER_FINAL_1);
-            List<TournamentGame> quarterRoundGames = tournamentGameRepository.findAllByTournamentId(tournament.getId()).stream()
+            List<TournamentGame> quarterRoundGames = allTournamentGames.stream()
                 .filter(o -> quarterRounds.contains(o.getTournamentRound()))
                 .sorted(Comparator.comparing(TournamentGame::getTournamentRound))
                 .collect(Collectors.toList());
@@ -137,7 +123,7 @@ public class MatchTournamentTest {
         }
 
         @Test
-        @DisplayName("결승 경기 매칭 테스트")
+        @DisplayName("결승 경기 매칭 테스트 성공")
         public void finalTest() {
             // given
             // 8강 & 4강 경기 결과 입력
@@ -150,7 +136,7 @@ public class MatchTournamentTest {
 
             // then
             // 1개의 결승 경기가 생성되었는지 확인
-            TournamentGame finalRoundGame = tournamentGameRepository.findAllByTournamentId(tournament.getId()).stream()
+            TournamentGame finalRoundGame = allTournamentGames.stream()
                 .filter(o -> TournamentRound.THE_FINAL.equals(o.getTournamentRound())).findAny().orElse(null);
             assertThat(finalRoundGame.getGame()).isNotNull();
         }
@@ -160,7 +146,7 @@ public class MatchTournamentTest {
     @DisplayName("토너먼트 종료 테스트")
     class CloseTournament {
         @Test
-        @DisplayName("결승 경기 점수 입력 후 토너먼트 END 상태로 업데이트 테스트")
+        @DisplayName("결승 경기 점수 입력 후 토너먼트 END 상태로 업데이트 성공")
         public void finalEndTest() {
             // given
             // 8강 & 4강 & 결승 경기 결과 입력
@@ -186,7 +172,7 @@ public class MatchTournamentTest {
     @DisplayName("위너 변경에 따른 다음 경기 팀 변경 테스트")
     class ChangeTeam {
         @Test
-        @DisplayName("8강 경기에서 4강 경기로 팀 변경 테스트")
+        @DisplayName("8강 경기에서 4강 경기로 팀 변경 성공")
         public void quarterToSemiTest() {
             // given
             // 8강 경기 결과 + 4강 매칭
@@ -195,7 +181,9 @@ public class MatchTournamentTest {
             matchTestUtils.matchTournamentGames(tournament, TournamentRound.SEMI_FINAL_1);
             Game game = tournamentGames.get(0).getGame();
             TournamentRound nextRound = tournamentGames.get(0).getTournamentRound().getNextRound();
-            Game nextMatchedGame = tournamentGameRepository.findByTournamentIdAndTournamentRound(tournament.getId(), nextRound)
+            Game nextMatchedGame = allTournamentGames.stream()
+                .filter(o -> nextRound.equals(o.getTournamentRound()))
+                .findAny()
                 .orElseThrow(() -> new IllegalArgumentException("다음 경기가 존재하지 않습니다.")).getGame();
 
             // when

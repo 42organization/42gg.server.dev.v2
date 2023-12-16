@@ -23,6 +23,8 @@ import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.data.SeasonRepository;
+import com.gg.server.domain.slotmanagement.SlotManagement;
+import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
 import com.gg.server.domain.team.data.Team;
 import com.gg.server.domain.team.data.TeamRepository;
 import com.gg.server.domain.team.data.TeamUser;
@@ -74,6 +76,7 @@ public class TestDataUtils {
     private final AnnouncementRepository announcementRepository;
     private final CoinPolicyRepository coinPolicyRepository;
     private final UserImageRepository userImageRepository;
+    private final SlotManagementRepository slotManagementRepository;
 
     public String getLoginAccessToken() {
         User user = User.builder()
@@ -699,5 +702,17 @@ public class TestDataUtils {
         }
         userRepository.saveAll(users);
         return users;
+    }
+
+    public SlotManagement createSlotManagement(Integer interval) {
+        SlotManagement slotManagement = SlotManagement.builder()
+            .futureSlotTime(12)
+            .pastSlotTime(5)
+            .gameInterval(interval)
+            .openMinute(5)
+            .startTime(LocalDateTime.now().minusHours(2))
+            .build();
+        slotManagementRepository.save(slotManagement);
+        return slotManagement;
     }
 }
