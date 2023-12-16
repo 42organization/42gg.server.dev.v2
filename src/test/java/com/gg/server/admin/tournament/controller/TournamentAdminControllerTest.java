@@ -862,9 +862,10 @@ class TournamentAdminControllerTest {
             tournament = testDataUtils.createTournamentWithUser(Tournament.ALLOWED_JOINED_NUMBER, 4, "test");
             allTournamentGames = testDataUtils.createTournamentGameList(tournament, 7);
             tournament.updateStatus(TournamentStatus.LIVE);
-            List<TournamentGame> endedGames = matchTestUtils.matchTournamentGames(tournament, TournamentRound.QUARTER_FINAL_1);
-            endedGames.addAll(matchTestUtils.matchTournamentGames(tournament, TournamentRound.SEMI_FINAL_1));
-            matchTestUtils.updateTournamentGamesResult(endedGames, List.of(2, 0));
+            List<TournamentGame> quarterGames = matchTestUtils.matchTournamentGames(tournament, TournamentRound.QUARTER_FINAL_1);
+            matchTestUtils.updateTournamentGamesResult(quarterGames, List.of(2, 0));
+            List<TournamentGame> semiGames = matchTestUtils.matchTournamentGames(tournament, TournamentRound.SEMI_FINAL_1);
+            matchTestUtils.updateTournamentGamesResult(semiGames, List.of(2, 0));
 
             accessToken = testDataUtils.getAdminLoginAccessToken();
         }

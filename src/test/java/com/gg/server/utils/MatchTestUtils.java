@@ -13,6 +13,7 @@ import com.gg.server.domain.slotmanagement.SlotManagement;
 import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
 import com.gg.server.domain.team.data.Team;
 import com.gg.server.domain.team.data.TeamUser;
+import com.gg.server.domain.team.exception.TeamNotFoundException;
 import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.type.TournamentRound;
@@ -128,13 +129,16 @@ public class MatchTestUtils {
             .filter(o -> sameRounds.contains(o.getTournamentRound()))
             .sorted(Comparator.comparing(TournamentGame::getTournamentRound))
             .collect(Collectors.toList());
+        List<TournamentGame> previousRoundTournamentGames = findSameRoundGames(tournament.getTournamentGames(), TournamentRound.getPreviousRoundNumber(round));
 
         for (int i = 0; i < round.getRoundNumber() / 2; ++i) {
             Game game = new Game(season, StatusType.BEFORE, Mode.TOURNAMENT, LocalDateTime.now(), LocalDateTime.now());
             Team team1 = new Team(game, -1, false);
             Team team2 = new Team(game, -1, false);
-            new TeamUser(team1, tournament.getTournamentUsers().get(i * 2).getUser());
-            new TeamUser(team2, tournament.getTournamentUsers().get(i * 2 + 1).getUser());
+            User user1 = findMatchUser(previousRoundTournamentGames, i * 2, tournament);
+            User user2 = findMatchUser(previousRoundTournamentGames, i * 2 + 1, tournament);
+            new TeamUser(team1, user1);
+            new TeamUser(team2, user2);
             gameRepository.save(game);
             sameRoundGames.get(i).updateGame(game);
         }
@@ -175,5 +179,21 @@ public class MatchTestUtils {
         game.updateStatus();
         game.updateStatus();
 
+    }
+
+    private User findMatchUser(List<TournamentGame> previousTournamentGames, int index, Tournament tournament) {
+        if (previousTournamentGames.isEmpty()) {
+            return tournament.getTournamentUsers().get(index).getUser();
+        }
+        return previousTournamentGames.get(index).getGame().getWinningTeam()
+            .orElseThrow(TeamNotFoundException::new)
+            .getTeamUsers().get(0).getUser();
+    }
+
+    private List<TournamentGame> findSameRoundGames(List<TournamentGame> tournamentGames, int roundNum) {
+        return tournamentGames.stream()
+            .filter(tournamentGame -> roundNum == tournamentGame.getTournamentRound().getRoundNumber())
+            .sorted(Comparator.comparing(TournamentGame::getTournamentRound))
+            .collect(Collectors.toList());
     }
 }
