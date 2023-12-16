@@ -27,6 +27,7 @@ import com.gg.server.domain.tier.service.TierService;
 import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentGameRepository;
+import com.gg.server.domain.tournament.exception.TournamentGameNotFoundException;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.InvalidParameterException;
 import com.gg.server.global.utils.ExpLevelCalculator;
@@ -109,7 +110,7 @@ public class GameService {
         updateTournamentGameScore(game, scoreDto, userId);
         if (TournamentMatchStatus.POSSIBLE.equals(matchTournamentService.checkTournamentGame(game))) {
             TournamentGame tournamentGame = tournamentGameRepository.findByGameId(game.getId())
-                    .orElseThrow(GameNotExistException::new);
+                    .orElseThrow(TournamentGameNotFoundException::new);
             Tournament tournament = tournamentGame.getTournament();
             matchTournamentService.matchGames(tournament, tournamentGame.getTournamentRound().getNextRound());
         }
