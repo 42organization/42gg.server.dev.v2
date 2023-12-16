@@ -3,7 +3,7 @@ package com.gg.server.domain.match.service;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.type.StatusType;
-import com.gg.server.domain.match.type.TournamentMatch;
+import com.gg.server.domain.match.type.TournamentMatchStatus;
 import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
 import com.gg.server.domain.team.data.Team;
 import com.gg.server.domain.team.data.TeamUser;
@@ -158,12 +158,12 @@ public class MatchTournamentTest {
             matchTestUtils.updateTournamentGameResult(finalGame, List.of(2, 0));
 
             // when
-            TournamentMatch tournamentMatch = matchTournamentService.checkTournamentGame(finalGame);
+            TournamentMatchStatus tournamentMatchStatus = matchTournamentService.checkTournamentGame(finalGame);
 
             // then
             // 토너먼트 상태가 END로 변경되었는지
             // winner가 존재하는지 확인
-            assertThat(TournamentMatch.IMPOSSIBLE).isEqualTo(tournamentMatch);
+            assertThat(TournamentMatchStatus.IMPOSSIBLE).isEqualTo(tournamentMatchStatus);
             assertThat(tournament.getStatus()).isEqualTo(TournamentStatus.END);
             assertThat(tournament.getWinner()).isNotNull();
         }
