@@ -9,7 +9,7 @@ import java.util.Locale;
 
 @Getter
 @RequiredArgsConstructor
-public enum TournamentMatch {
+public enum TournamentMatchStatus {
     // 토너먼트 매치 상태
     IMPOSSIBLE(0, "매칭 불가능"),
     POSSIBLE(1, "매칭 가능"),
@@ -19,8 +19,8 @@ public enum TournamentMatch {
     private final String code;
 
     @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
-    public static TournamentMatch getEnumValue(String code) {
-        for(TournamentMatch e : values()) {
+    public static TournamentMatchStatus getEnumValue(String code) {
+        for(TournamentMatchStatus e : values()) {
             if(e.code.equals(code)) {
                 return e;
             }

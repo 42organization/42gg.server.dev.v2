@@ -4,7 +4,7 @@ import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
-import com.gg.server.domain.match.type.TournamentMatch;
+import com.gg.server.domain.match.type.TournamentMatchStatus;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.service.SeasonFindService;
 import com.gg.server.domain.slotmanagement.SlotManagement;
@@ -29,7 +29,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.gg.server.domain.match.type.TournamentMatch.*;
+import static com.gg.server.domain.match.type.TournamentMatchStatus.*;
 
 
 @Service
@@ -47,7 +47,7 @@ public class MatchTournamentService {
      * @return TournamentMatchStatus - 매칭 가능 여부
      * @throws IllegalArgumentException 토너먼트 게임이 아닐 경우
      */
-    public TournamentMatch checkTournamentGame(Game game) {
+    public TournamentMatchStatus checkTournamentGame(Game game) {
         TournamentGame tournamentGame = tournamentGameRepository.findByGameId(game.getId())
             .orElseThrow(() -> new CustomRuntimeException("토너먼트 게임이 아닙니다.", ErrorCode.TOURNAMENT_NOT_FOUND));     // TODO : custom exception
 

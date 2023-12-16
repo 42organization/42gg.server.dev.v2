@@ -12,7 +12,7 @@ import com.gg.server.domain.game.exception.GameNotExistException;
 import com.gg.server.domain.game.exception.GameStatusNotMatchedException;
 import com.gg.server.domain.game.exception.ScoreAlreadyEnteredException;
 import com.gg.server.domain.match.service.MatchTournamentService;
-import com.gg.server.domain.match.type.TournamentMatch;
+import com.gg.server.domain.match.type.TournamentMatchStatus;
 import com.gg.server.domain.pchange.data.PChange;
 import com.gg.server.domain.pchange.data.PChangeRepository;
 import com.gg.server.domain.pchange.exception.PChangeNotExistException;
@@ -107,7 +107,7 @@ public class GameService {
             throw new GameStatusNotMatchedException();
         }
         updateTournamentGameScore(game, scoreDto, userId);
-        if (TournamentMatch.POSSIBLE.equals(matchTournamentService.checkTournamentGame(game))) {
+        if (TournamentMatchStatus.POSSIBLE.equals(matchTournamentService.checkTournamentGame(game))) {
             TournamentGame tournamentGame = tournamentGameRepository.findByGameId(game.getId())
                     .orElseThrow(GameNotExistException::new);
             Tournament tournament = tournamentGame.getTournament();
