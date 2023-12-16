@@ -2,6 +2,7 @@ package com.gg.server.domain.match.service;
 
 import com.gg.server.admin.penalty.data.PenaltyAdminRepository;
 import com.gg.server.admin.penalty.type.PenaltyKey;
+import com.gg.server.utils.MatchTestUtils;
 import com.gg.server.utils.annotation.IntegrationTest;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
