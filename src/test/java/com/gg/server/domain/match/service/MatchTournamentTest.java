@@ -198,9 +198,10 @@ public class MatchTournamentTest {
 
             // then
             // 점수 수정으로 8강 경기에서 이긴 팀이 다음 경기로 변경되었는지 확인
-            List<User> nextGameUsers = nextMatchedGame.getTeams().get(0).getTeamUsers().stream()
-                .map(TeamUser::getUser)
-                .collect(Collectors.toList());
+            List<User> nextGameUsers = new ArrayList<>();
+            nextGameUsers.add(nextMatchedGame.getTeams().get(0).getTeamUsers().get(0).getUser());
+            nextGameUsers.add(nextMatchedGame.getTeams().get(1).getTeamUsers().get(0).getUser());
+
             assertThat(nextGameUsers.contains(winningTeam.getTeamUsers().get(0).getUser())).isTrue();
             assertThat(nextGameUsers.contains(losingTeam.getTeamUsers().get(0).getUser())).isFalse();
         }
