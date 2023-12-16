@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import com.gg.server.domain.match.exception.SlotNotFoundException;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -89,17 +90,18 @@ public class MatchTournamentService {
         SlotManagement slotManagement = slotManagementRepository.findCurrent(tournament.getStartTime())
             .orElseThrow(SlotNotFoundException::new);
         int gameInterval = slotManagement.getGameInterval();
-        int previousRoundNumber = TournamentRound.getPreviousRoundNumber(round);
-        List<TournamentGame> tournamentGames = tournament.findSameRoundNumTournamentGames(round.getRoundNumber());
-        List<TournamentGame> previousRoundTournamentGames = tournament.findSameRoundNumTournamentGames(previousRoundNumber);
+        List<TournamentGame> allTournamentGames = tournamentGameRepository.findAllByTournamentId(tournament.getId());
+        List<TournamentGame> tournamentGames = findSameRoundGames(allTournamentGames, round.getRoundNumber());
+        List<TournamentGame> previousRoundTournamentGames = findSameRoundGames(allTournamentGames, TournamentRound.getPreviousRoundNumber(round));
+        LocalDateTime startTime = findLastGameEndTime(tournament, round).plusMinutes(gameInterval);
 
         for (int i = 0; i < tournamentGames.size(); ++i) {
-            LocalDateTime startTime = tournament.getStartTime().plusMinutes((long) gameInterval * i);
+            startTime = startTime.plusMinutes((long) gameInterval * i);
             Game game = new Game(season, StatusType.BEFORE, Mode.TOURNAMENT, startTime, startTime.plusMinutes(gameInterval));
             Team team1 = new Team(game, -1, false);
             Team team2 = new Team(game, -1, false);
-            User user1 = getTeamUser(previousRoundTournamentGames, i * 2, tournament);
-            User user2 = getTeamUser(previousRoundTournamentGames, i * 2 + 1, tournament);
+            User user1 = findMatchUser(previousRoundTournamentGames, i * 2, tournament);
+            User user2 = findMatchUser(previousRoundTournamentGames, i * 2 + 1, tournament);
             new TeamUser(team1, user1);
             new TeamUser(team2, user2);
             gameRepository.save(game);
@@ -125,7 +127,23 @@ public class MatchTournamentService {
         }
     }
 
-    private User getTeamUser(List<TournamentGame> previousTournamentGames, int index, Tournament tournament) {
+    /**
+     * @param tournament 토너먼트
+     * @param round 토너먼트 라운드
+     * @return 마지막 경기 종료 시간
+     * <p>8강의 경우 토너먼트 시작 시간</p>
+     * <p>4강, 결승일 경우 이전 라운드의 마지막 경기 종료 시간</p>
+     */
+    private LocalDateTime findLastGameEndTime(Tournament tournament, TournamentRound round) {
+        if (TournamentRound.QUARTER_FINAL_1.getRoundNumber() == round.getRoundNumber()) {
+            return tournament.getStartTime();
+        }
+        List<TournamentGame> previousRoundTournamentGames = findSameRoundGames(tournament.getTournamentGames(), TournamentRound.getPreviousRoundNumber(round));
+        TournamentGame lastGame = previousRoundTournamentGames.get(previousRoundTournamentGames.size() - 1);
+        return lastGame.getGame().getEndTime();
+    }
+
+    private User findMatchUser(List<TournamentGame> previousTournamentGames, int index, Tournament tournament) {
         if (previousTournamentGames.isEmpty()) {
             return tournament.getTournamentUsers().get(index).getUser();
         }
@@ -160,5 +178,18 @@ public class MatchTournamentService {
         tournament.updateStatus(TournamentStatus.END);
         tournament.updateWinner(winner);
 
+    }
+
+    /**
+     * 같은 round의 토너먼트 게임을 찾는다.
+     * @param tournamentGames - 토너먼트 게임 List
+     * @param roundNum - 토너먼트 라운드 number
+     * @return - 같은 roundNum의 tournamentGame List
+     */
+    private List<TournamentGame> findSameRoundGames(List<TournamentGame> tournamentGames, int roundNum) {
+        return tournamentGames.stream()
+            .filter(tournamentGame -> roundNum == tournamentGame.getTournamentRound().getRoundNumber())
+            .sorted(Comparator.comparing(TournamentGame::getTournamentRound))
+            .collect(Collectors.toList());
     }
 }

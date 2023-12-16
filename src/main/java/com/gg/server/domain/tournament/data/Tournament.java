@@ -150,17 +150,4 @@ public class Tournament extends BaseTimeEntity {
         mustNotNull(status, NULL_POINT);
         this.status = status;
     }
-
-
-    /**
-     * 같은 round의 토너먼트 게임을 찾는다.
-     * @param roundNum - 토너먼트 라운드 number
-     * @return - 같은 roundNum의 tournamentGame List
-     */
-    public List<TournamentGame> findSameRoundNumTournamentGames(int roundNum) {
-        return tournamentGames.stream()
-            .filter(tournamentGame -> roundNum == tournamentGame.getTournamentRound().getRoundNumber())
-            .sorted(Comparator.comparing(TournamentGame::getTournamentRound))
-            .collect(Collectors.toList());
-    }
 }
