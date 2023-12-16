@@ -52,7 +52,6 @@ public class GameService {
     private final TierService tierService;
     private final TournamentGameRepository tournamentGameRepository;
     private final MatchTournamentService matchTournamentService;
-    private final TournamentGameRepository tournamentGameRepository;
 
   /**
    * 게임 정보를 가져온다.
