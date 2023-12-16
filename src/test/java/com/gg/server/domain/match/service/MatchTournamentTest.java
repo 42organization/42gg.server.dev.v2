@@ -128,9 +128,10 @@ public class MatchTournamentTest {
         public void finalTest() {
             // given
             // 8강 & 4강 경기 결과 입력
-            List<TournamentGame> tournamentGames = matchTestUtils.matchTournamentGames(tournament, TournamentRound.QUARTER_FINAL_1);
-            tournamentGames.addAll(matchTestUtils.matchTournamentGames(tournament, TournamentRound.SEMI_FINAL_1));
-            matchTestUtils.updateTournamentGamesResult(tournamentGames, List.of(2, 0));
+            List<TournamentGame> quarterGames = matchTestUtils.matchTournamentGames(tournament, TournamentRound.QUARTER_FINAL_1);
+            matchTestUtils.updateTournamentGamesResult(quarterGames, List.of(2, 0));
+            List<TournamentGame> semiGames = matchTestUtils.matchTournamentGames(tournament, TournamentRound.SEMI_FINAL_1);
+            matchTestUtils.updateTournamentGamesResult(semiGames, List.of(2, 0));
 
             // when
             matchTournamentService.matchGames(tournament, TournamentRound.THE_FINAL);
@@ -151,9 +152,10 @@ public class MatchTournamentTest {
         public void finalEndTest() {
             // given
             // 8강 & 4강 & 결승 경기 결과 입력
-            List<TournamentGame> tournamentGames = matchTestUtils.matchTournamentGames(tournament, TournamentRound.QUARTER_FINAL_1);
-            tournamentGames.addAll(matchTestUtils.matchTournamentGames(tournament, TournamentRound.SEMI_FINAL_1));
-            matchTestUtils.updateTournamentGamesResult(tournamentGames, List.of(2, 0));
+            List<TournamentGame> quarterGames = matchTestUtils.matchTournamentGames(tournament, TournamentRound.QUARTER_FINAL_1);
+            matchTestUtils.updateTournamentGamesResult(quarterGames, List.of(2, 0));
+            List<TournamentGame> semiGames = matchTestUtils.matchTournamentGames(tournament, TournamentRound.SEMI_FINAL_1);
+            matchTestUtils.updateTournamentGamesResult(semiGames, List.of(2, 0));
             Game finalGame = matchTestUtils.matchTournamentGames(tournament, TournamentRound.THE_FINAL).get(0).getGame();
             matchTestUtils.updateTournamentGameResult(finalGame, List.of(2, 0));
 
