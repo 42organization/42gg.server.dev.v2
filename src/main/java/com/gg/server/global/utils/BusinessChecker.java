@@ -3,6 +3,8 @@ package com.gg.server.global.utils;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.BusinessException;
 import java.util.Collection;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 /**
  * Checker.
@@ -12,7 +14,8 @@ import java.util.Collection;
  * </p>
  *
  */
-public class BusinessChecker {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class BusinessChecker {
   public static void mustNotNull(Object object, ErrorCode errorCode) {
     if (object == null) {
       throw new BusinessException(errorCode);
