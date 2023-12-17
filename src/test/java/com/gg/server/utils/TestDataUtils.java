@@ -575,11 +575,9 @@ public class TestDataUtils {
         }
         for (int j = 0; j < joinUserCnt; j++) {
             TournamentUser tournamentUser = new TournamentUser(userRepository.findByIntraId(testName + j).get(), tournament, true, LocalDateTime.now());
-            tournament.addTournamentUser(tournamentUser);
         }
         for (int j = joinUserCnt; j < joinUserCnt + notJoinUserCnt; j++) {
             TournamentUser tournamentUser = new TournamentUser(userRepository.findByIntraId(testName + j).get(), tournament, false, LocalDateTime.now());
-            tournament.addTournamentUser(tournamentUser);
         }
         return tournamentRepository.save(tournament);
     }
