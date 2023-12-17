@@ -295,7 +295,9 @@ public class TournamentAdminService {
         if (POSSIBLE.equals(matchStatus)) {
             matchTournamentService.matchGames(tournament, nextRound);
         } else if (ALREADY_MATCHED.equals(matchStatus)) {
-            Game nextMatchedGame = tournamentGameRepository.findByTournamentIdAndTournamentRound(tournament.getId(), nextRound).orElseThrow().getGame();
+            Game nextMatchedGame = tournamentGameRepository.findByTournamentIdAndTournamentRound(tournament.getId(), nextRound)
+                .orElseThrow(TournamentGameNotFoundException::new)
+                .getGame();
             matchTournamentService.updateMatchedGameUser(game, nextMatchedGame);
         }
     }
