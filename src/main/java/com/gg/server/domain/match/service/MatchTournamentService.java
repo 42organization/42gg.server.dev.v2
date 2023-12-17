@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import com.gg.server.domain.match.exception.SlotNotFoundException;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -49,6 +50,7 @@ public class MatchTournamentService {
      * @return TournamentMatchStatus - 매칭 가능 여부
      * @throws TournamentGameNotFoundException 토너먼트 게임이 존재하지 않을 경우
      */
+    @Transactional
     public TournamentMatchStatus checkTournamentGame(Game game) {
         TournamentGame tournamentGame = tournamentGameRepository.findByGameId(game.getId())
             .orElseThrow(TournamentGameNotFoundException::new);
@@ -84,6 +86,7 @@ public class MatchTournamentService {
      * @throws EnrolledSlotException 이미 매칭된 게임이 존재할 경우
      * @throws SlotNotFoundException 슬롯이 존재하지 않을 경우
      */
+    @Transactional
     public void matchGames(Tournament tournament, TournamentRound round) {
         if (isAlreadyExistMatchedGame(tournament, round)) {
             throw new EnrolledSlotException();
@@ -117,6 +120,7 @@ public class MatchTournamentService {
      * @param nextMatchedGame 수정된 우승자로 수정할 다음 게임
      * @throws WinningTeamNotFoundException 우승팀이 존재하지 않을 경우
      */
+    @Transactional
     public void updateMatchedGameUser(Game modifiedGame, Game nextMatchedGame) {
         User winner = modifiedGame.getWinningTeam().orElseThrow(WinningTeamNotFoundException::new).getTeamUsers().get(0).getUser();
         List<User> players = modifiedGame.getTeams().stream()
