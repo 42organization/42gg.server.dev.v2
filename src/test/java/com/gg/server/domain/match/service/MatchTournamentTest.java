@@ -116,7 +116,8 @@ public class MatchTournamentTest {
                 semiTeams.add(semiRoundGame.getGame().getTeams().get(1).getTeamUsers().get(0).getUser());
             }
             for (TournamentGame quarterRoundGame : quarterRoundGames) {
-                quarterWinningTeams.add(quarterRoundGame.getGame().getWinningTeam().get().getTeamUsers().get(0).getUser());
+                Team winningTeam = matchTestUtils.getWinningTeam(quarterRoundGame.getGame());
+                quarterWinningTeams.add(winningTeam.getTeamUsers().get(0).getUser());
             }
             assertThat(semiTeams).contains(quarterWinningTeams.get(0));
             assertThat(semiTeams).contains(quarterWinningTeams.get(1));

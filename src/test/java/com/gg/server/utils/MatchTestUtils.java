@@ -4,6 +4,7 @@ import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
+import com.gg.server.domain.match.exception.WinningTeamNotFoundException;
 import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
@@ -181,12 +182,19 @@ public class MatchTestUtils {
 
     }
 
+    public Team getWinningTeam(Game game) {
+        return game.getTeams().stream()
+            .filter(team -> Boolean.TRUE.equals(team.getWin()))
+            .findAny()
+            .orElseThrow(WinningTeamNotFoundException::new);
+    }
+
     private User findMatchUser(List<TournamentGame> previousTournamentGames, int index, Tournament tournament) {
         if (previousTournamentGames.isEmpty()) {
             return tournament.getTournamentUsers().get(index).getUser();
         }
-        return previousTournamentGames.get(index).getGame().getWinningTeam()
-            .orElseThrow(TeamNotFoundException::new)
+        Game game = previousTournamentGames.get(index).getGame();
+        return getWinningTeam(game)
             .getTeamUsers().get(0).getUser();
     }
 
