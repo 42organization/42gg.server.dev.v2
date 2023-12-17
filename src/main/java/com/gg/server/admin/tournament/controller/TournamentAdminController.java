@@ -81,7 +81,7 @@ public class TournamentAdminController {
     public ResponseEntity<TournamentUserListResponseDto> getTournamentUserList(@PathVariable @Positive Long tournamentId,
                                                                                @RequestParam(required = false) Boolean isJoined) {
         TournamentUserListResponseDto responseDto = tournamentAdminService.getTournamentUserList(tournamentId, isJoined);
-        return ResponseEntity.ok().body(responseDto);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
     /**
@@ -108,6 +108,6 @@ public class TournamentAdminController {
     public ResponseEntity<Void> updateTournamentGame(@PathVariable @Positive Long tournamentId,
                                                      @Valid @RequestBody TournamentGameUpdateRequestDto tournamentGameUpdateReqDto) {
         tournamentAdminService.updateTournamentGame(tournamentId, tournamentGameUpdateReqDto);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
