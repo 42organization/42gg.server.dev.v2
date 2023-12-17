@@ -5,6 +5,7 @@ import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.match.exception.EnrolledSlotException;
+import com.gg.server.domain.match.exception.WinningTeamNotFoundException;
 import com.gg.server.domain.match.type.TournamentMatchStatus;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.service.SeasonFindService;
@@ -20,8 +21,6 @@ import com.gg.server.domain.tournament.exception.TournamentGameNotFoundException
 import com.gg.server.domain.tournament.type.TournamentRound;
 import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.user.data.User;
-import com.gg.server.global.exception.ErrorCode;
-import com.gg.server.global.exception.custom.CustomRuntimeException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -116,17 +115,20 @@ public class MatchTournamentService {
      * 토너먼트 게임의 승자를 토너먼트 다음 라운드의 게임 플레이어로 업데이트
      * @param game 경기 결과가 수정된 토너먼트 게임
      * @param nextMatchedGame 수정된 우승자로 수정할 다음 게임
-     * @throws TeamNotFoundException 우승팀이 존재하지 않을 경우
+     * @throws WinningTeamNotFoundException 우승팀이 존재하지 않을 경우
      */
     public void updateMatchedGameUser(Game game, Game nextMatchedGame) {
-        List<Long> teamIds = game.getTeams().stream().map(Team::getId).collect(Collectors.toList());
-        Team winningTeam = game.getWinningTeam().orElseThrow(TeamNotFoundException::new);
-
-        List<Team> nextMatchedGameTeams = nextMatchedGame.getTeams();
-        for (Team team : nextMatchedGameTeams) {
-            User teamUser = team.getTeamUsers().get(0).getUser();
-            if (teamIds.contains(teamUser.getId())) {
-                team.getTeamUsers().get(0).updateUser(winningTeam.getTeamUsers().get(0).getUser());
+        User winner = game.getWinningTeam().orElseThrow(WinningTeamNotFoundException::new).getTeamUsers().get(0).getUser();
+        List<User> players = game.getTeams().stream()
+            .map(team -> team.getTeamUsers().get(0).getUser())
+            .collect(Collectors.toList());
+        List<TeamUser> nextMatchedGameTeamUsers = nextMatchedGame.getTeams().stream()
+            .map(team -> team.getTeamUsers().get(0))
+            .collect(Collectors.toList());
+        for (TeamUser nextGameTeamUser : nextMatchedGameTeamUsers) {
+            if (players.contains(nextGameTeamUser.getUser())) {
+                nextGameTeamUser.updateUser(winner);
+                break;
             }
         }
     }
@@ -175,11 +177,11 @@ public class MatchTournamentService {
      * <p> 토너먼트 winner 업데이트 </p>
      * @param tournament 종료할 토너먼트
      * @param finalGame 토너먼트의 마지막 게임
-     * @throws TeamNotFoundException 우승팀이 존재하지 않을 경우
+     * @throws WinningTeamNotFoundException 우승팀이 존재하지 않을 경우
      */
     private void closeTournament(Tournament tournament, Game finalGame) {
         User winner = finalGame.getWinningTeam()
-            .orElseThrow(TeamNotFoundException::new)
+            .orElseThrow(WinningTeamNotFoundException::new)
             .getTeamUsers().get(0).getUser();
         tournament.updateStatus(TournamentStatus.END);
         tournament.updateWinner(winner);
