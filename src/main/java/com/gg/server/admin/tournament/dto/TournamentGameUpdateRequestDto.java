@@ -17,7 +17,6 @@ public class TournamentGameUpdateRequestDto {
     @NotNull
     private Long tournamentGameId;
 
-    @NotNull
     private Long nextTournamentGameId;
     @NotNull
     @Valid
