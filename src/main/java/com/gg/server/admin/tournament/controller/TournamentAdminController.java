@@ -27,7 +27,7 @@ public class TournamentAdminController {
     @PostMapping()
     public ResponseEntity<Void> createTournament(@RequestBody @Valid TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto) {
         tournamentAdminService.createTournament(tournamentAdminCreateRequestDto);
-        return new ResponseEntity<Void>(HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**
@@ -41,7 +41,7 @@ public class TournamentAdminController {
         @Valid @RequestBody TournamentAdminUpdateRequestDto tournamentAdminUpdateRequestDto) {
         tournamentAdminService.updateTournamentInfo(tournamentId, tournamentAdminUpdateRequestDto);
 
-        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     /**
@@ -53,7 +53,7 @@ public class TournamentAdminController {
     public ResponseEntity<Void> deleteTournament(@PathVariable @Positive Long tournamentId) {
         tournamentAdminService.deleteTournament(tournamentId);
 
-        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     /**
@@ -68,7 +68,7 @@ public class TournamentAdminController {
         @Valid @RequestBody TournamentAdminAddUserRequestDto tournamentAdminUserAddRequestDto) {
         TournamentAdminAddUserResponseDto responseDto = tournamentAdminService.addTournamentUser(tournamentId, tournamentAdminUserAddRequestDto);
 
-        return new ResponseEntity<TournamentAdminAddUserResponseDto>(responseDto, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
     /**
@@ -81,7 +81,7 @@ public class TournamentAdminController {
     public ResponseEntity<TournamentUserListResponseDto> getTournamentUserList(@PathVariable @Positive Long tournamentId,
                                                                                @RequestParam(required = false) Boolean isJoined) {
         TournamentUserListResponseDto responseDto = tournamentAdminService.getTournamentUserList(tournamentId, isJoined);
-        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
     /**
@@ -95,7 +95,7 @@ public class TournamentAdminController {
         @PathVariable @Positive Long userId) {
         tournamentAdminService.deleteTournamentUser(tournamentId, userId);
 
-        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     /**
@@ -108,6 +108,6 @@ public class TournamentAdminController {
     public ResponseEntity<Void> updateTournamentGame(@PathVariable @Positive Long tournamentId,
                                                      @Valid @RequestBody TournamentGameUpdateRequestDto tournamentGameUpdateReqDto) {
         tournamentAdminService.updateTournamentGame(tournamentId, tournamentGameUpdateReqDto);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

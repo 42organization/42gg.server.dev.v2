@@ -111,11 +111,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    protected ResponseEntity handleException(MethodArgumentNotValidException e) {
-        return ResponseEntity.badRequest().body(e.getFieldError().getDefaultMessage());
-    }
-
     @ExceptionHandler(HttpMessageNotReadableException.class)
     protected ResponseEntity handleException(HttpMessageNotReadableException e) {
         return ResponseEntity.badRequest().body(ErrorCode.UNREADABLE_HTTP_MESSAGE.getMessage());

@@ -70,24 +70,20 @@ public class TournamentService {
      * @param status 토너먼트 상태
      * @return 토너먼트 리스트
      */
-    public TournamentListResponseDto getAllTournamentList(Pageable pageRequest, String type, String status) {
+    public TournamentListResponseDto getAllTournamentList(Pageable pageRequest, TournamentType type, TournamentStatus status) {
 
         Page<TournamentResponseDto> tournaments;
-
-        TournamentType tournamentType = TournamentType.getEnumFromValue(type);
-        TournamentStatus tournamentStatus = TournamentStatus.getEnumFromValue(status);
-
         if (type == null && status == null) {
             tournaments = tournamentRepository.findAll(pageRequest).
                     map(o-> new TournamentResponseDto(o, findTournamentWinner(o), findJoinedPlayerCnt(o)));
         } else if (type == null){
-            tournaments = tournamentRepository.findAllByStatus(tournamentStatus, pageRequest).
+            tournaments = tournamentRepository.findAllByStatus(status, pageRequest).
                     map(o-> new TournamentResponseDto(o, findTournamentWinner(o), findJoinedPlayerCnt(o)));
         } else if (status == null) {
-            tournaments = tournamentRepository.findAllByType(tournamentType, pageRequest).
+            tournaments = tournamentRepository.findAllByType(type, pageRequest).
                     map(o-> new TournamentResponseDto(o, findTournamentWinner(o), findJoinedPlayerCnt(o)));
         } else {
-            tournaments = tournamentRepository.findAllByTypeAndStatus(tournamentType, tournamentStatus, pageRequest).
+            tournaments = tournamentRepository.findAllByTypeAndStatus(type, status, pageRequest).
                     map(o-> new TournamentResponseDto(o, findTournamentWinner(o), findJoinedPlayerCnt(o)));
         }
         return new TournamentListResponseDto(tournaments.getContent(), tournaments.getTotalPages());

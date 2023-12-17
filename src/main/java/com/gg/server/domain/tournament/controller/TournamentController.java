@@ -37,7 +37,7 @@ public class TournamentController {
     @GetMapping
     public ResponseEntity<TournamentListResponseDto> getAllTournamentList(@ModelAttribute @Valid TournamentFilterRequestDto tournamentFilterRequestDto){
         Pageable pageRequest = PageRequest.of(tournamentFilterRequestDto.getPage() - 1, tournamentFilterRequestDto.getSize(), Sort.by("startTime").descending());
-        return ResponseEntity.ok().
+        return ResponseEntity.status(HttpStatus.OK).
                 body(tournamentService.getAllTournamentList(pageRequest, tournamentFilterRequestDto.getType(), tournamentFilterRequestDto.getStatus()));
     }
 
@@ -50,7 +50,7 @@ public class TournamentController {
     @GetMapping("/{tournamentId}/users")
     ResponseEntity<TournamentUserRegistrationResponseDto> getUserStatusInTournament(@PathVariable Long tournamentId, @Parameter(hidden = true) @Login UserDto user) {
 
-        return ResponseEntity.ok().body(tournamentService.getUserStatusInTournament(tournamentId, user));
+        return ResponseEntity.status(HttpStatus.OK).body(tournamentService.getUserStatusInTournament(tournamentId, user));
     }
 
     /**
@@ -67,7 +67,7 @@ public class TournamentController {
     @DeleteMapping("/{tournamentId}/users")
     ResponseEntity<TournamentUserRegistrationResponseDto> cancelTournamentUserRegistration(@PathVariable Long tournamentId, @Parameter(hidden = true) @Login UserDto user) {
 
-        return ResponseEntity.ok().body(tournamentService.cancelTournamentUserRegistration(tournamentId, user));
+        return ResponseEntity.status(HttpStatus.OK).body(tournamentService.cancelTournamentUserRegistration(tournamentId, user));
     }
 
     /**
@@ -77,7 +77,7 @@ public class TournamentController {
      */
     @GetMapping("/{tournamentId}/games")
     public ResponseEntity<TournamentGameListResponseDto> getTournamentGames(@PathVariable @Positive Long tournamentId){
-        return ResponseEntity.ok().body(tournamentService.getTournamentGames(tournamentId));
+        return ResponseEntity.status(HttpStatus.OK).body(tournamentService.getTournamentGames(tournamentId));
     }
 
     /**
@@ -90,7 +90,7 @@ public class TournamentController {
     @PostMapping("/{tournamentId}/users")
     ResponseEntity<TournamentUserRegistrationResponseDto> registerTournamentUser(@PathVariable Long tournamentId, @Parameter(hidden = true) @Login UserDto user) {
 
-        return ResponseEntity.created(URI.create("/pingpong/tournaments/"+tournamentId+"/users"))
+        return ResponseEntity.status(HttpStatus.CREATED)
             .body(tournamentService.registerTournamentUser(tournamentId, user));
     }
 }
