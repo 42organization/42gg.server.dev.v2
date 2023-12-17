@@ -17,17 +17,4 @@ public enum TournamentMatchStatus {
 
     private final Integer value;
     private final String code;
-
-    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
-    public static TournamentMatchStatus getEnumValue(String code) {
-        for(TournamentMatchStatus e : values()) {
-            if(e.code.equals(code)) {
-                return e;
-            }
-            else if (e.code.toUpperCase(Locale.ROOT).equals(code.toUpperCase(Locale.ROOT)))
-                return e;
-        }
-        throw new OptionInvalidException();
-    }
-
 }
