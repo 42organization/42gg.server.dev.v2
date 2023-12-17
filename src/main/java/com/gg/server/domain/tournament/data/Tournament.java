@@ -1,20 +1,40 @@
 package com.gg.server.domain.tournament.data;
 
+import static com.gg.server.global.exception.ErrorCode.*;
+import static com.gg.server.global.exception.ErrorCode.TOURNAMENT_GAME_EXCEED;
+import static com.gg.server.global.utils.BusinessChecker.mustContains;
+import static com.gg.server.global.utils.BusinessChecker.mustNotContains;
+import static com.gg.server.global.utils.BusinessChecker.mustNotExceed;
+import static com.gg.server.global.utils.BusinessChecker.mustNotNull;
+
 import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.tournament.type.TournamentType;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.global.utils.BaseTimeEntity;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
-
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @Getter
 @Entity
 @ToString
@@ -65,19 +85,23 @@ public class Tournament extends BaseTimeEntity {
     @OneToMany(mappedBy = "tournament", cascade = CascadeType.ALL)
     private List<TournamentUser> tournamentUsers = new ArrayList<>();
 
+    /**
+     * winner는 생성시점에 존재하지 않음.
+     */
     @Builder
-    public Tournament(String title, String contents, LocalDateTime startTime, LocalDateTime endTime, TournamentType type, TournamentStatus status, User winner, List<TournamentGame> tournamentGames, List<TournamentUser> tournamentUsers) {
+    public Tournament(String title, String contents, LocalDateTime startTime, LocalDateTime endTime,
+        TournamentType type, TournamentStatus status) {
         this.title = title;
         this.contents = contents;
         this.startTime = startTime;
         this.endTime = endTime;
         this.type = type;
         this.status = status;
-        this.tournamentGames = tournamentGames != null ? tournamentGames : new ArrayList<>();
-        this.tournamentUsers = tournamentUsers != null ? tournamentUsers : new ArrayList<>();
+        this.winner = null;
     }
 
-    public void update(String title, String contents, LocalDateTime startTime, LocalDateTime endTime, TournamentType type, TournamentStatus status) {
+    public void update(String title, String contents, LocalDateTime startTime,
+        LocalDateTime endTime, TournamentType type, TournamentStatus status) {
         this.title = title;
         this.contents = contents;
         this.startTime = startTime;
@@ -86,23 +110,41 @@ public class Tournament extends BaseTimeEntity {
         this.status = status;
     }
 
-    public void addTournamentGame(TournamentGame tournamentGame) {
+    /**
+     * TournamentGame 에서 호출하는 연관관계 편의 메서드, 기타 호출 금지.
+     */
+    protected void addTournamentGame(TournamentGame tournamentGame) {
+        mustNotNull(tournamentGame, NULL_POINT);
+        mustNotExceed(ALLOWED_JOINED_NUMBER - 2, tournamentGames, TOURNAMENT_GAME_EXCEED);
+        mustNotContains(tournamentGame, tournamentGames, TOURNAMENT_GAME_DUPLICATION);
         this.tournamentGames.add(tournamentGame);
     }
 
-    public void addTournamentUser(@NotNull TournamentUser tournamentUser) {
+    /**
+     * TournamentUser 에서 호출하는 연관관계 편의 메서드, 기타 호출 금지.
+     */
+    protected void addTournamentUser(@NotNull TournamentUser tournamentUser) {
+        mustNotNull(tournamentUser, NULL_POINT);
+        mustNotContains(tournamentUser, tournamentUsers, TOURNAMENT_USER_DUPLICATION);
         this.tournamentUsers.add(tournamentUser);
     }
 
-    public void deleteTournamentUser(@NotNull TournamentUser tournamentUser) {
+    /**
+     * TournamentGame 에서 호출하는 연관관계 편의 메서드, 기타 호출 금지.
+     */
+    protected void deleteTournamentUser(TournamentUser tournamentUser) {
+        mustNotNull(tournamentUser, NULL_POINT);
+        mustContains(tournamentUser, tournamentUsers, TOURNAMENT_USER_NOT_FOUND);
         this.tournamentUsers.remove(tournamentUser);
     }
 
     public void updateWinner(User winner) {
+        mustNotNull(winner, NULL_POINT);
         this.winner = winner;
     }
 
     public void updateStatus(TournamentStatus status) {
+        mustNotNull(status, NULL_POINT);
         this.status = status;
     }
 }

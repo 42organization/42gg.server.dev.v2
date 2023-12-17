@@ -137,7 +137,6 @@ public class TournamentAdminService {
 
         TournamentUser tournamentUser = new TournamentUser(targetUser, targetTournament,
             tournamentList.size() < Tournament.ALLOWED_JOINED_NUMBER, LocalDateTime.now());
-        targetTournament.addTournamentUser(tournamentUser);
         tournamentUserRepository.save(tournamentUser);
 
         return new TournamentAdminAddUserResponseDto(
@@ -168,7 +167,7 @@ public class TournamentAdminService {
         List<TournamentUser> tournamentUserList = targetTournament.getTournamentUsers();
         TournamentUser targetTournamentUser = tournamentUserList.stream().filter(tu->tu.getUser().getId().equals(targetUser.getId()))
             .findAny().orElseThrow(UserNotFoundException::new);
-        targetTournament.deleteTournamentUser(targetTournamentUser);
+        targetTournamentUser.deleteTournament();
         if (targetTournamentUser.getIsJoined() && tournamentUserList.size() >= Tournament.ALLOWED_JOINED_NUMBER) {
             tournamentUserList.get(Tournament.ALLOWED_JOINED_NUMBER - 1).updateIsJoined(true);
         }
@@ -184,7 +183,6 @@ public class TournamentAdminService {
         TournamentRound[] rounds = TournamentRound.values();
         while (--cnt >= 0) {
             TournamentGame tournamentGame = new TournamentGame(null, tournament, rounds[cnt]);
-            tournament.addTournamentGame(tournamentGame);
         }
     }
 

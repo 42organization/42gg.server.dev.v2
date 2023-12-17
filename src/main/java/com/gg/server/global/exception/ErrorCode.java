@@ -6,6 +6,8 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum ErrorCode {
+    //common
+    NULL_POINT(500, "G100", "NULL POINT EXCEPTION"),
 
     //user
     USER_NOT_FOUND(404, "UR100", "USER NOT FOUND"),
@@ -72,6 +74,14 @@ public enum ErrorCode {
 
     /** team **/
     TEAM_ID_NOT_MATCH(400, "TM201", "TEAM id 가 일치하지 않습니다."),
+    TEAM_DUPLICATION(409, "TM202", "중복된 Team 이 한 Game 에 존재할 수 없습니다."),
+    TEAM_SIZE_EXCEED(500, "TM203", "게임 최대 Team 의 수(2)를 초과하였습니다."),
+
+    /**
+     * team_user
+     */
+    TEAM_USER_ALREADY_EXIST(409, "TU201", "중복된 TEAM_USER"),
+    TEAM_USER_EXCEED(500, "TU202", "TeamUser 최대 인원의 수(2)를 초과하였습니다."),
 
     /** game **/
     GAME_DB_NOT_VALID(500, "GM201", "GAME DB NOT CONSISTENCY"),
@@ -128,6 +138,10 @@ public enum ErrorCode {
     TOURNAMENT_NOT_LIVE(400, "TN005", "tournament status is not live"),
     TOURNAMENT_GAME_NOT_FOUND(404, "TN006", "tournament game not found"),
     TOURNAMENT_CANT_UPDATE(400, "TN007", "tournament can't update"),
+    TOURNAMENT_GAME_DUPLICATION(409, "TN008", "중복된 토너먼트 게임입니다!"),
+    TOURNAMENT_USER_DUPLICATION(409, "TN009", "중복된 토너먼트 유저입니다!"),
+    TOURNAMENT_USER_NOT_FOUND(404, "TN010", "target tournament user not found"),
+    TOURNAMENT_GAME_EXCEED(500, "TN011", "토너먼트 게임 최대 사이즈를 초과하였습니다!"),
     ;
     private int status;
     private String errCode;

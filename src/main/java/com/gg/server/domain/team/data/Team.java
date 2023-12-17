@@ -1,13 +1,24 @@
 package com.gg.server.domain.team.data;
 
 import com.gg.server.domain.game.data.Game;
-import java.util.ArrayList;
-import lombok.*;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import com.gg.server.global.exception.ErrorCode;
+import com.gg.server.global.utils.BusinessChecker;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -45,6 +56,9 @@ public class Team {
     }
 
     public void addTeamUser(TeamUser teamUser) {
+        BusinessChecker.mustNotNull(teamUser, ErrorCode.NULL_POINT);
+        BusinessChecker.mustNotExceed(1, teamUsers, ErrorCode.TEAM_USER_EXCEED);
+        BusinessChecker.mustNotContains(teamUser, teamUsers, ErrorCode.TEAM_USER_ALREADY_EXIST);
         this.teamUsers.add(teamUser);
     }
 }

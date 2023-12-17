@@ -5,13 +5,14 @@ import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.team.data.Team;
+import com.gg.server.global.exception.ErrorCode;
+import com.gg.server.global.utils.BusinessChecker;
 import java.util.ArrayList;
 import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -87,6 +88,9 @@ public class Game {
     }
 
     public void addTeam(Team team) {
+        BusinessChecker.mustNotNull(team, ErrorCode.NULL_POINT);
+        BusinessChecker.mustNotExceed(1, teams, ErrorCode.TEAM_SIZE_EXCEED);
+        BusinessChecker.mustNotContains(team, teams, ErrorCode.TEAM_DUPLICATION);
         this.teams.add(team);
     }
 }

@@ -25,6 +25,7 @@ import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
+import com.gg.server.utils.ReflectionUtilsForUnitTest;
 import com.gg.server.utils.annotation.UnitTest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -52,6 +53,7 @@ class TournamentServiceTest {
     UserRepository userRepository;
     @InjectMocks
     TournamentService tournamentService;
+    ReflectionUtilsForUnitTest reflectionUtilsForUnitTest = new ReflectionUtilsForUnitTest();
 
     @Nested
     @DisplayName("토너먼트_유저_상태_테스트")
@@ -157,6 +159,22 @@ class TournamentServiceTest {
     @DisplayName("토너먼트_유저_참가_취소_테스트")
     class cancelTournamentUserRegistration {
         @Test
+        @DisplayName("유저_참가_취소_성공")
+        @Disabled
+        void success() {
+            // given
+            Tournament tournament = createTournament(1L, TournamentStatus.BEFORE,
+                LocalDateTime.now(), LocalDateTime.now().plusHours(2));
+            User user = createUser("testUser");
+            TournamentUser tournamentUser = new TournamentUser(user, tournament, true, LocalDateTime.now());
+            given(tournamentRepository.findById(tournament.getId())).willReturn(Optional.of(tournament));
+            given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
+
+            // when, then
+            tournamentService.cancelTournamentUserRegistration(tournament.getId(), UserDto.from(user));
+        }
+
+        @Test
         @DisplayName("찾을_수_없는_토너먼트")
         void tournamentNotFound() {
             // given
@@ -207,27 +225,17 @@ class TournamentServiceTest {
         return LocalDateTime.now().plusDays(days).plusHours(hours);
     }
 
-    /**
-     * 각 매개변수로 초기화 된 토너먼트를 반환
-     * @param id
-     * @param status
-     * @param startTime
-     * @param endTime
-     * @return
-     */
     private Tournament createTournament(Long id, TournamentStatus status, LocalDateTime startTime, LocalDateTime endTime) {
-        return new Tournament(
-            id,
-            id + "st tournament",
-            "",
-            startTime,
-            endTime,
-            TournamentType.ROOKIE,
-            status,
-            null,
-            new ArrayList<>(),
-            new ArrayList<>()
-            );
+      Tournament tournament = Tournament.builder()
+          .title(id + "st tournament")
+          .contents("")
+          .startTime(startTime)
+          .endTime(endTime)
+          .type(TournamentType.ROOKIE)
+          .status(status)
+          .build();
+      reflectionUtilsForUnitTest.setFieldWithReflection(tournament, "id", id);
+      return tournament;
     }
 
     /**
@@ -277,21 +285,5 @@ class TournamentServiceTest {
             .roleType(RoleType.USER)
             .totalExp(1000)
             .build();
-    }
-
-    /**
-     * cnt 사이즈의 토너먼트 게임 리스트 생성
-     * @param id 토너먼트 게임 id
-     * @param tournament 해당 토너먼트
-     * @param cnt 토너먼트 게임 수
-     * @return
-     */
-    private List<TournamentGame> createTournamentGames(Long id, Tournament tournament, int cnt) {
-        List<TournamentGame> tournamentGameList = new ArrayList<>();
-        TournamentRound [] values = TournamentRound.values();
-        while (--cnt >= 0) {
-            tournamentGameList.add(new TournamentGame(id, null, tournament, values[cnt]));
-        }
-        return tournamentGameList;
     }
 }

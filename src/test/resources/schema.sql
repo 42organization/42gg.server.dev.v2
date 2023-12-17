@@ -274,46 +274,52 @@ CREATE TABLE `team_user` (
 
 DROP TABLE IF EXISTS `tournament`;
 CREATE TABLE tournament (
-id                  BIGINT NOT NULL AUTO_INCREMENT,
-title               VARCHAR(30) NOT NULL,
-contents            VARCHAR(1000) NOT NULL,
-start_time          DATETIME NOT NULL,
-end_time            DATETIME NOT NULL,
-type                VARCHAR(15) NOT NULL,
-status              VARCHAR(10) NOT NULL DEFAULT 'BEFORE',
-created_at          DATETIME NOT NULL,
-modified_at         DATETIME NOT NULL,
-winner_id           BIGINT,
-PRIMARY KEY (id),
-FOREIGN KEY (winner_id) REFERENCES user(id)
-);
+    id                  BIGINT NOT NULL AUTO_INCREMENT,
+    title               VARCHAR(30) NOT NULL,
+    contents            VARCHAR(1000) NOT NULL,
+    start_time          DATETIME NOT NULL,
+    end_time            DATETIME NOT NULL,
+    type                VARCHAR(15) NOT NULL,
+    status              VARCHAR(10) NOT NULL DEFAULT 'BEFORE',
+    created_at          DATETIME NOT NULL,
+    modified_at         DATETIME NOT NULL,
+    winner_id           BIGINT,
+    PRIMARY KEY (id),
+    FOREIGN KEY (winner_id) REFERENCES user(id)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 DROP TABLE IF EXISTS `tournament_user`;
 CREATE TABLE tournament_user (
- id              BIGINT NOT NULL AUTO_INCREMENT,
- user_id         BIGINT NOT NULL,
- tournament_id   BIGINT NOT NULL,
- is_joined       BOOLEAN NOT NULL DEFAULT FALSE,
- register_time   DATETIME NOT NULL,
- created_at      DATETIME NOT NULL,
- modified_at      DATETIME NOT NULL,
- PRIMARY KEY (id),
- FOREIGN KEY (tournament_id) REFERENCES tournament(id),
- FOREIGN KEY (user_id)       REFERENCES user(id)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;;
+     id              BIGINT NOT NULL AUTO_INCREMENT,
+     user_id         BIGINT NOT NULL,
+     tournament_id   BIGINT NOT NULL,
+     is_joined       BOOLEAN NOT NULL DEFAULT FALSE,
+     register_time   DATETIME NOT NULL,
+     created_at      DATETIME NOT NULL,
+     modified_at      DATETIME NOT NULL,
+     PRIMARY KEY (id),
+     FOREIGN KEY (tournament_id) REFERENCES tournament(id)
+         ON UPDATE CASCADE
+         ON DELETE CASCADE ,
+     FOREIGN KEY (user_id)       REFERENCES user(id)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 DROP TABLE IF EXISTS `tournament_game`;
 CREATE TABLE tournament_game (
- id                  BIGINT NOT NULL AUTO_INCREMENT,
- tournament_id       BIGINT NOT NULL,
- game_id             BIGINT,
- round               VARCHAR(20) NOT NULL,
- created_at          DATETIME NOT NULL,
- modified_at          DATETIME NOT NULL,
- PRIMARY KEY (id),
- FOREIGN KEY (tournament_id) REFERENCES tournament(id),
- FOREIGN KEY (game_id)       REFERENCES game(id)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;;
+     id                  BIGINT NOT NULL AUTO_INCREMENT,
+     tournament_id       BIGINT NOT NULL,
+     game_id             BIGINT,
+     round               VARCHAR(20) NOT NULL,
+     created_at          DATETIME NOT NULL,
+     modified_at          DATETIME NOT NULL,
+     PRIMARY KEY (id),
+     FOREIGN KEY (tournament_id) REFERENCES tournament(id)
+         ON UPDATE CASCADE
+         ON DELETE CASCADE ,
+     FOREIGN KEY (game_id)       REFERENCES game(id)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 DROP TABLE IF EXISTS `user_image`;

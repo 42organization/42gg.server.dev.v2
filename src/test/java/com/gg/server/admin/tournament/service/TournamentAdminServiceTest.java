@@ -29,6 +29,7 @@ import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
 import com.gg.server.global.exception.custom.InvalidParameterException;
+import com.gg.server.utils.ReflectionUtilsForUnitTest;
 import com.gg.server.utils.annotation.UnitTest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -58,6 +59,8 @@ class TournamentAdminServiceTest {
     GameRepository gameRepository;
     @InjectMocks
     TournamentAdminService tournamentAdminService;
+
+    ReflectionUtilsForUnitTest reflectionUtilsForUnitTest = new ReflectionUtilsForUnitTest();
 
     // 토너먼트 생성 서비스 테스트
     @Nested
@@ -311,7 +314,6 @@ class TournamentAdminServiceTest {
             int tournamentGameCnt = 7;
             Tournament tournament = createTournament(1L, TournamentStatus.BEFORE,
                 getTargetTime(2, 1), getTargetTime(2, 3));
-            List<TournamentGame> tournamentGameList = createTournamentGames(1L, tournament, tournamentGameCnt);
             given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
             // when, then
             tournamentAdminService.deleteTournament(tournament.getId());
@@ -358,7 +360,6 @@ class TournamentAdminServiceTest {
             Tournament tournament = tournamentList.get(0);
             TournamentAdminAddUserRequestDto requestDto = new TournamentAdminAddUserRequestDto("testUser");
             User user = createUser("testUser");
-            TournamentUser tournamentUser = new TournamentUser(user, tournament, true, LocalDateTime.now());
             given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
             given(userRepository.findByIntraId("testUser")).willReturn(Optional.of(user));
 
@@ -420,7 +421,6 @@ class TournamentAdminServiceTest {
             TournamentAdminAddUserRequestDto requestDto = new TournamentAdminAddUserRequestDto("testUser");
             User user = createUser("testUser");
             TournamentUser tournamentUser = new TournamentUser(user, tournament, true, LocalDateTime.now());
-            tournament.addTournamentUser(tournamentUser);
             given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
             given(userRepository.findByIntraId("testUser")).willReturn(Optional.of(user));
 
@@ -495,18 +495,16 @@ class TournamentAdminServiceTest {
      * @return
      */
     private Tournament createTournament(Long id, TournamentStatus status, LocalDateTime startTime, LocalDateTime endTime) {
-        return new Tournament(
-            id,
-            id + "st tournament",
-            "",
-            startTime,
-            endTime,
-            TournamentType.ROOKIE,
-            status,
-            null,
-            new ArrayList<>(),
-            new ArrayList<>()
-            );
+        Tournament tournament =  Tournament.builder()
+            .title(id + "st tournament")
+            .contents("")
+            .startTime(startTime)
+            .endTime(endTime)
+            .type(TournamentType.ROOKIE)
+            .status(status)
+            .build();
+        reflectionUtilsForUnitTest.setFieldWithReflection(tournament, "id", id);
+        return tournament;
     }
 
     /**
@@ -556,21 +554,5 @@ class TournamentAdminServiceTest {
             .roleType(RoleType.USER)
             .totalExp(1000)
             .build();
-    }
-
-    /**
-     * cnt 사이즈의 토너먼트 게임 리스트 생성
-     * @param id 토너먼트 게임 id
-     * @param tournament 해당 토너먼트
-     * @param cnt 토너먼트 게임 수
-     * @return
-     */
-    private List<TournamentGame> createTournamentGames(Long id, Tournament tournament, int cnt) {
-        List<TournamentGame> tournamentGameList = new ArrayList<>();
-        TournamentRound [] values = TournamentRound.values();
-        while (--cnt >= 0) {
-            tournamentGameList.add(new TournamentGame(id, null, tournament, values[cnt]));
-        }
-        return tournamentGameList;
     }
 }

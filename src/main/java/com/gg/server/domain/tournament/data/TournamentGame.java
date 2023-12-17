@@ -10,7 +10,6 @@ import javax.validation.constraints.NotNull;
 import lombok.*;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @Getter
 @Entity
 public class TournamentGame extends BaseTimeEntity {
@@ -34,13 +33,17 @@ public class TournamentGame extends BaseTimeEntity {
 
 
     /**
-     * id 값 제외한 생성자
+     * id 값 제외한 생성자.
+     * <p>
+     *  생성에 따른 Tournament 연관관계 설정을 담당
+     * </p>
      * @param game
      * @param tournament
      * @param tournamentRound
      */
     @Builder
     public TournamentGame(Game game, Tournament tournament, TournamentRound tournamentRound) {
+        tournament.addTournamentGame(this);
         this.game = game;
         this.tournament = tournament;
         this.tournamentRound = tournamentRound;
@@ -53,4 +56,5 @@ public class TournamentGame extends BaseTimeEntity {
     public void updateGame(Game game) {
         this.game = game;
     }
+
 }

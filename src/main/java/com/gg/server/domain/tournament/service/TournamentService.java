@@ -147,7 +147,6 @@ public class TournamentService {
             .ifPresent(a->{throw new TournamentConflictException("이미 신청한 토너먼트가 존재합니다.", ErrorCode.TOURNAMENT_CONFLICT);});
         TournamentUser tournamentUser = new TournamentUser(loginUser, targetTournament,
             tournamentUserList.size() < Tournament.ALLOWED_JOINED_NUMBER, LocalDateTime.now());
-        targetTournament.addTournamentUser(tournamentUser);
         TournamentUserStatus tournamentUserStatus = tournamentUser.getIsJoined() ? TournamentUserStatus.PLAYER : TournamentUserStatus.WAIT;
         return new TournamentUserRegistrationResponseDto(tournamentUserStatus);
     }
