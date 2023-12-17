@@ -3,6 +3,7 @@ package com.gg.server.domain.match.service;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.type.StatusType;
+import com.gg.server.domain.match.exception.EnrolledSlotException;
 import com.gg.server.domain.match.exception.WinningTeamNotFoundException;
 import com.gg.server.domain.match.type.TournamentMatchStatus;
 import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
@@ -143,6 +144,21 @@ public class MatchTournamentTest {
                 .filter(o -> TournamentRound.THE_FINAL.equals(o.getTournamentRound())).findAny().orElse(null);
             assertThat(finalRoundGame.getGame()).isNotNull();
         }
+
+        @Test
+        @DisplayName("이미 매칭된 게임이 존재할 경우 실패")
+        public void failAlreadyMatched() {
+            // given
+            // 8강 경기 매칭 + 4강 경기 매칭
+            List<TournamentGame> quarterGames = matchTestUtils.matchTournamentGames(tournament, TournamentRound.QUARTER_FINAL_1);
+            matchTestUtils.updateTournamentGamesResult(quarterGames, List.of(2, 0));
+            List<TournamentGame> semiGames = matchTestUtils.matchTournamentGames(tournament, TournamentRound.SEMI_FINAL_1);
+            matchTestUtils.updateTournamentGamesResult(semiGames, List.of(2, 0));
+
+            // when, then
+            assertThatThrownBy(() -> matchTournamentService.matchGames(tournament, TournamentRound.SEMI_FINAL_1))
+                .isInstanceOf(EnrolledSlotException.class);
+        }
     }
 
     @Nested
@@ -215,8 +231,6 @@ public class MatchTournamentTest {
             // given
             // 8강 매칭
             List<TournamentGame> quarterGames = matchTestUtils.matchTournamentGames(tournament, TournamentRound.QUARTER_FINAL_1);
-
-            // when
             TournamentGame targetTournamentGame = quarterGames.get(0);
             TournamentRound nextRound = targetTournamentGame.getTournamentRound().getNextRound();
             Game nextMatchedGame = allTournamentGames.stream()
@@ -224,7 +238,7 @@ public class MatchTournamentTest {
                 .findAny()
                 .orElseThrow(() -> new IllegalArgumentException("다음 경기가 존재하지 않습니다.")).getGame();
 
-            // then
+            // when, then
             assertThatThrownBy(() -> matchTournamentService.updateMatchedGameUser(targetTournamentGame.getGame(), nextMatchedGame))
                 .isInstanceOf(WinningTeamNotFoundException.class);
 
