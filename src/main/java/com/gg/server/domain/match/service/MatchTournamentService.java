@@ -113,13 +113,13 @@ public class MatchTournamentService {
 
     /**
      * 토너먼트 게임의 승자를 토너먼트 다음 라운드의 게임 플레이어로 업데이트
-     * @param game 경기 결과가 수정된 토너먼트 게임
+     * @param modifiedGame 경기 결과가 수정된 토너먼트 게임
      * @param nextMatchedGame 수정된 우승자로 수정할 다음 게임
      * @throws WinningTeamNotFoundException 우승팀이 존재하지 않을 경우
      */
-    public void updateMatchedGameUser(Game game, Game nextMatchedGame) {
-        User winner = game.getWinningTeam().orElseThrow(WinningTeamNotFoundException::new).getTeamUsers().get(0).getUser();
-        List<User> players = game.getTeams().stream()
+    public void updateMatchedGameUser(Game modifiedGame, Game nextMatchedGame) {
+        User winner = modifiedGame.getWinningTeam().orElseThrow(WinningTeamNotFoundException::new).getTeamUsers().get(0).getUser();
+        List<User> players = modifiedGame.getTeams().stream()
             .map(team -> team.getTeamUsers().get(0).getUser())
             .collect(Collectors.toList());
         List<TeamUser> nextMatchedGameTeamUsers = nextMatchedGame.getTeams().stream()
