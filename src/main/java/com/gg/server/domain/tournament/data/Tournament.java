@@ -35,7 +35,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @Getter
 @Entity
 @ToString
@@ -98,6 +97,7 @@ public class Tournament extends BaseTimeEntity {
         this.endTime = endTime;
         this.type = type;
         this.status = status;
+        this.winner = null;
     }
 
     public void update(String title, String contents, LocalDateTime startTime,
