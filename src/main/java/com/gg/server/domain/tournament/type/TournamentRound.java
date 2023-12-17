@@ -1,9 +1,6 @@
 package com.gg.server.domain.tournament.type;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-
 import java.util.ArrayList;
-import java.util.Locale;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -27,18 +24,6 @@ public enum TournamentRound {
     private final String round;
     private final TournamentRound nextRound;
     private final int roundNumber;
-
-    @JsonCreator
-    public static TournamentRound getEnumFromValue(String round) {
-        for (TournamentRound e : values()) {
-            if (e.name().equals(round)) {
-                return e;
-            } else if (e.round.toUpperCase(Locale.ROOT).equals(round.toUpperCase(Locale.ROOT))) {
-                return e;
-            }
-        }
-        return null;
-    }
 
     public static List<TournamentRound> getSameRounds(TournamentRound round) {
         List<TournamentRound> sameRounds = new ArrayList<>();
