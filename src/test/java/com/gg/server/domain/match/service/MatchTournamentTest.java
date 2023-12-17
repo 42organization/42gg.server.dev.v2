@@ -56,9 +56,6 @@ public class MatchTournamentTest {
         testDataUtils.createSlotManagement(15);
         tournament = testDataUtils.createTournamentWithUser(Tournament.ALLOWED_JOINED_NUMBER, 4, "test");
         allTournamentGames = testDataUtils.createTournamentGameList(tournament, 7);
-        for (TournamentGame tournamentGame : allTournamentGames) {
-            tournament.addTournamentGame(tournamentGame);
-        }
     }
 
     @Nested
