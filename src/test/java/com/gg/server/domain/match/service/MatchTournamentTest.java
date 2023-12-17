@@ -3,10 +3,10 @@ package com.gg.server.domain.match.service;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.type.StatusType;
+import com.gg.server.domain.match.exception.WinningTeamNotFoundException;
 import com.gg.server.domain.match.type.TournamentMatchStatus;
 import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
 import com.gg.server.domain.team.data.Team;
-import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.type.TournamentRound;
@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @IntegrationTest
 @SpringBootTest
@@ -206,6 +207,27 @@ public class MatchTournamentTest {
 
             assertThat(nextGameUsers.contains(winningTeam.getTeamUsers().get(0).getUser())).isTrue();
             assertThat(nextGameUsers.contains(losingTeam.getTeamUsers().get(0).getUser())).isFalse();
+        }
+
+        @Test
+        @DisplayName("우승팀이 존재하지 않을 경우 실패")
+        public void failUpdateWinner() {
+            // given
+            // 8강 매칭
+            List<TournamentGame> quarterGames = matchTestUtils.matchTournamentGames(tournament, TournamentRound.QUARTER_FINAL_1);
+
+            // when
+            TournamentGame targetTournamentGame = quarterGames.get(0);
+            TournamentRound nextRound = targetTournamentGame.getTournamentRound().getNextRound();
+            Game nextMatchedGame = allTournamentGames.stream()
+                .filter(o -> nextRound.equals(o.getTournamentRound()))
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException("다음 경기가 존재하지 않습니다.")).getGame();
+
+            // then
+            assertThatThrownBy(() -> matchTournamentService.updateMatchedGameUser(targetTournamentGame.getGame(), nextMatchedGame))
+                .isInstanceOf(WinningTeamNotFoundException.class);
+
         }
     }
 }
