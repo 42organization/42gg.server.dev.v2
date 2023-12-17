@@ -77,9 +77,8 @@ jobs:
         username: ${{ secrets.TEST_MIGRATE_SERVER_USERNAME }}
         key: ${{ secrets.TEST_MIGRATE_SERVER_PEM }}
         script: |
-          cd ./docker
+          cd /home/ec2-user/docker
           docker-compose down tomcat
-          docker rm tomcat
           docker rmi ${{ env.IMAGE_NAME }}:latest
           docker-compose up tomcat -d
 
