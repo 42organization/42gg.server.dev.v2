@@ -113,7 +113,7 @@ public class Tournament extends BaseTimeEntity {
     /**
      * TournamentGame 에서 호출하는 연관관계 편의 메서드, 기타 호출 금지.
      */
-    public void addTournamentGame(TournamentGame tournamentGame) {
+    protected void addTournamentGame(TournamentGame tournamentGame) {
         mustNotNull(tournamentGame, NULL_POINT);
         mustNotExceed(ALLOWED_JOINED_NUMBER - 2, tournamentGames, TOURNAMENT_GAME_EXCEED);
         mustNotContains(tournamentGame, tournamentGames, TOURNAMENT_GAME_DUPLICATION);

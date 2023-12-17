@@ -44,9 +44,6 @@ public class TournamentSchedulerTest {
         // BEFORE로 토너먼트 생성
         Tournament tournament = testDataUtils.createTournamentWithUser(Tournament.ALLOWED_JOINED_NUMBER, 4, "test");
         List<TournamentGame> tournamentGameList = testDataUtils.createTournamentGameList(tournament, 7);
-        for (TournamentGame tournamentGame : tournamentGameList) {
-            tournament.addTournamentGame(tournamentGame);
-        }
         SlotManagement slotManagement = SlotManagement.builder()
             .pastSlotTime(0)
             .futureSlotTime(0)

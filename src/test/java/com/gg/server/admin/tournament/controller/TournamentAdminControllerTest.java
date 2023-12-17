@@ -870,9 +870,8 @@ class TournamentAdminControllerTest {
                 if (tournamentRound == TournamentRound.THE_FINAL) {
                     TournamentGame tournamentGame = new TournamentGame(null, tournament, tournamentRound);
                     tournamentGameRepository.save(tournamentGame);
-                    tournament.addTournamentGame(tournamentGame);
                 }else {
-                    tournament.addTournamentGame(testDataUtils.createTournamentGame(tournament, tournamentRound, game));
+                    testDataUtils.createTournamentGame(tournament, tournamentRound, game);
                 }
             }
         }

@@ -183,7 +183,6 @@ public class TournamentAdminService {
         TournamentRound[] rounds = TournamentRound.values();
         while (--cnt >= 0) {
             TournamentGame tournamentGame = new TournamentGame(null, tournament, rounds[cnt]);
-            tournament.addTournamentGame(tournamentGame);
         }
     }
 
