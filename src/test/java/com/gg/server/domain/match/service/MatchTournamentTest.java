@@ -162,10 +162,10 @@ public class MatchTournamentTest {
     }
 
     @Nested
-    @DisplayName("토너먼트 종료 테스트")
-    class CloseTournament {
+    @DisplayName("토너먼트 매칭 가능 상태 확인 테스트")
+    class CheckTournament {
         @Test
-        @DisplayName("결승 경기 점수 입력 후 토너먼트 END 상태로 업데이트 성공")
+        @DisplayName("IMPOSSIBLE : 결승 경기 점수 입력 후 토너먼트 END 상태로 업데이트 성공")
         public void finalEndTest() {
             // given
             // 8강 & 4강 & 결승 경기 결과 입력
@@ -186,6 +186,54 @@ public class MatchTournamentTest {
             assertThat(tournament.getStatus()).isEqualTo(TournamentStatus.END);
             assertThat(tournament.getWinner()).isNotNull();
         }
+
+        @Test
+        @DisplayName("IMPOSSBLE : 진행중인 라운드의 모든 경기가 점수입력 완료되지 않을 경우")
+        public void impossibleTest() {
+            // given
+            // 8강 경기 매칭
+            List<TournamentGame> quarterGames = matchTestUtils.matchTournamentGames(tournament, TournamentRound.QUARTER_FINAL_1);
+
+            // when
+            matchTestUtils.updateTournamentGameResult(quarterGames.get(0).getGame(), List.of(2, 0));
+            TournamentMatchStatus tournamentMatchStatus = matchTournamentService.checkTournamentGame(quarterGames.get(0).getGame());
+
+            // then
+            assertThat(tournamentMatchStatus).isEqualTo(TournamentMatchStatus.IMPOSSIBLE);
+        }
+
+        @Test
+        @DisplayName("ALREADY_MATCHED : 이미 매칭된 게임이 존재할 경우")
+        public void alreadyMatchedTest() {
+            // given
+            // 8강 경기 매칭 + 4강 경기 매칭
+            List<TournamentGame> quarterGames = matchTestUtils.matchTournamentGames(tournament, TournamentRound.QUARTER_FINAL_1);
+            matchTestUtils.updateTournamentGamesResult(quarterGames, List.of(2, 0));
+            List<TournamentGame> semiGames = matchTestUtils.matchTournamentGames(tournament, TournamentRound.SEMI_FINAL_1);
+            matchTestUtils.updateTournamentGamesResult(semiGames, List.of(2, 0));
+
+            // when
+            TournamentMatchStatus tournamentMatchStatus = matchTournamentService.checkTournamentGame(quarterGames.get(0).getGame());
+
+            // then
+            assertThat(tournamentMatchStatus).isEqualTo(TournamentMatchStatus.ALREADY_MATCHED);
+        }
+
+        @Test
+        @DisplayName("POSSIBLE : 토너먼트 매칭 가능 상태")
+        public void possibleTest() {
+            // given
+            // 8강 경기 매칭
+            List<TournamentGame> quarterGames = matchTestUtils.matchTournamentGames(tournament, TournamentRound.QUARTER_FINAL_1);
+            matchTestUtils.updateTournamentGamesResult(quarterGames, List.of(2, 0));
+
+            // when
+            TournamentMatchStatus tournamentMatchStatus = matchTournamentService.checkTournamentGame(quarterGames.get(0).getGame());
+
+            // then
+            assertThat(tournamentMatchStatus).isEqualTo(TournamentMatchStatus.POSSIBLE);
+        }
+
     }
 
     @Nested
