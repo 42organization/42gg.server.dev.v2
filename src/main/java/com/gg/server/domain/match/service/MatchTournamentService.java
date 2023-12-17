@@ -13,7 +13,6 @@ import com.gg.server.domain.slotmanagement.SlotManagement;
 import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
 import com.gg.server.domain.team.data.Team;
 import com.gg.server.domain.team.data.TeamUser;
-import com.gg.server.domain.team.exception.TeamNotFoundException;
 import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentGameRepository;
@@ -122,7 +121,7 @@ public class MatchTournamentService {
      */
     @Transactional
     public void updateMatchedGameUser(Game modifiedGame, Game nextMatchedGame) {
-        User winner = modifiedGame.getWinningTeam().orElseThrow(WinningTeamNotFoundException::new).getTeamUsers().get(0).getUser();
+        User winner = getWinningTeam(modifiedGame).getTeamUsers().get(0).getUser();
         List<User> players = modifiedGame.getTeams().stream()
             .map(team -> team.getTeamUsers().get(0).getUser())
             .collect(Collectors.toList());
@@ -157,8 +156,7 @@ public class MatchTournamentService {
         if (previousTournamentGames.isEmpty()) {
             return tournament.getTournamentUsers().get(index).getUser();
         }
-        return previousTournamentGames.get(index).getGame().getWinningTeam()
-            .orElseThrow(TeamNotFoundException::new)
+        return getWinningTeam(previousTournamentGames.get(index).getGame())
             .getTeamUsers().get(0).getUser();
     }
 
@@ -184,8 +182,7 @@ public class MatchTournamentService {
      * @throws WinningTeamNotFoundException 우승팀이 존재하지 않을 경우
      */
     private void closeTournament(Tournament tournament, Game finalGame) {
-        User winner = finalGame.getWinningTeam()
-            .orElseThrow(WinningTeamNotFoundException::new)
+        User winner = getWinningTeam(finalGame)
             .getTeamUsers().get(0).getUser();
         tournament.updateStatus(TournamentStatus.END);
         tournament.updateWinner(winner);
@@ -203,5 +200,17 @@ public class MatchTournamentService {
             .filter(tournamentGame -> roundNum == tournamentGame.getTournamentRound().getRoundNumber())
             .sorted(Comparator.comparing(TournamentGame::getTournamentRound))
             .collect(Collectors.toList());
+    }
+
+    /**
+     * game의 승자를 찾는다.
+     * @param game
+     * @return
+     */
+    private Team getWinningTeam(Game game) {
+        return game.getTeams().stream()
+            .filter(team -> Boolean.TRUE.equals(team.getWin()))
+            .findAny()
+            .orElseThrow(WinningTeamNotFoundException::new);
     }
 }
