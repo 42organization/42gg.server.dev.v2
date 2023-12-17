@@ -157,6 +157,22 @@ class TournamentServiceTest {
     @DisplayName("토너먼트_유저_참가_취소_테스트")
     class cancelTournamentUserRegistration {
         @Test
+        @DisplayName("유저_참가_취소_성공")
+        @Disabled
+        void success() {
+            // given
+            Tournament tournament = createTournament(1L, TournamentStatus.BEFORE,
+                LocalDateTime.now(), LocalDateTime.now().plusHours(2));
+            User user = createUser("testUser");
+            TournamentUser tournamentUser = new TournamentUser(user, tournament, true, LocalDateTime.now());
+            given(tournamentRepository.findById(tournament.getId())).willReturn(Optional.of(tournament));
+            given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
+
+            // when, then
+            tournamentService.cancelTournamentUserRegistration(tournament.getId(), UserDto.from(user));
+        }
+
+        @Test
         @DisplayName("찾을_수_없는_토너먼트")
         void tournamentNotFound() {
             // given

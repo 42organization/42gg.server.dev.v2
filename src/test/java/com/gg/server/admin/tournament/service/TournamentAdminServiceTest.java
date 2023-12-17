@@ -358,7 +358,6 @@ class TournamentAdminServiceTest {
             Tournament tournament = tournamentList.get(0);
             TournamentAdminAddUserRequestDto requestDto = new TournamentAdminAddUserRequestDto("testUser");
             User user = createUser("testUser");
-            TournamentUser tournamentUser = new TournamentUser(user, tournament, true, LocalDateTime.now());
             given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
             given(userRepository.findByIntraId("testUser")).willReturn(Optional.of(user));
 
@@ -420,7 +419,6 @@ class TournamentAdminServiceTest {
             TournamentAdminAddUserRequestDto requestDto = new TournamentAdminAddUserRequestDto("testUser");
             User user = createUser("testUser");
             TournamentUser tournamentUser = new TournamentUser(user, tournament, true, LocalDateTime.now());
-            tournament.addTournamentUser(tournamentUser);
             given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
             given(userRepository.findByIntraId("testUser")).willReturn(Optional.of(user));
 

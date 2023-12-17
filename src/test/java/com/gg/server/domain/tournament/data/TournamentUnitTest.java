@@ -40,11 +40,7 @@ class TournamentUnitTest {
         .collect(Collectors.toCollection(ArrayList::new));
 
     mockTournamentUsers = IntStream.range(0, 10)
-        .mapToObj(i -> {
-          TournamentUser tournamentUser = mock(TournamentUser.class);
-          doNothing().when(tournamentUser).setTournament(Mockito.any(Tournament.class));
-          return tournamentUser;
-        })
+        .mapToObj(i -> mock(TournamentUser.class))
         .collect(Collectors.toCollection(ArrayList::new));
 
     tournaments = IntStream.range(0, 10)

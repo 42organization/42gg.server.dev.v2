@@ -10,7 +10,6 @@ import static com.gg.server.global.utils.BusinessChecker.mustNotNull;
 import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.tournament.type.TournamentType;
 import com.gg.server.domain.user.data.User;
-import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.utils.BaseTimeEntity;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -112,31 +111,31 @@ public class Tournament extends BaseTimeEntity {
     }
 
     /**
-     * 토너먼트 관련 연관관계 편의 메소드는 토너먼트에서 모두 관리
+     * TournamentGame 에서 호출하는 연관관계 편의 메서드, 기타 호출 금지.
      */
     public void addTournamentGame(TournamentGame tournamentGame) {
         mustNotNull(tournamentGame, NULL_POINT);
         mustNotExceed(ALLOWED_JOINED_NUMBER - 2, tournamentGames, TOURNAMENT_GAME_EXCEED);
         mustNotContains(tournamentGame, tournamentGames, TOURNAMENT_GAME_DUPLICATION);
         this.tournamentGames.add(tournamentGame);
-        tournamentGame.setTournament(this);
-    }
-
-    public void addTournamentUser(@NotNull TournamentUser tournamentUser) {
-        mustNotNull(tournamentUser, NULL_POINT);
-        mustNotContains(tournamentUser, tournamentUsers, TOURNAMENT_USER_DUPLICATION);
-        this.tournamentUsers.add(tournamentUser);
-        tournamentUser.setTournament(this);
     }
 
     /**
-     * not null 제약조건을 이용해서 실수를 방지
+     * TournamentUser 에서 호출하는 연관관계 편의 메서드, 기타 호출 금지.
      */
-    public void deleteTournamentUser(TournamentUser tournamentUser) {
+    protected void addTournamentUser(@NotNull TournamentUser tournamentUser) {
+        mustNotNull(tournamentUser, NULL_POINT);
+        mustNotContains(tournamentUser, tournamentUsers, TOURNAMENT_USER_DUPLICATION);
+        this.tournamentUsers.add(tournamentUser);
+    }
+
+    /**
+     * TournamentGame 에서 호출하는 연관관계 편의 메서드, 기타 호출 금지.
+     */
+    protected void deleteTournamentUser(TournamentUser tournamentUser) {
         mustNotNull(tournamentUser, NULL_POINT);
         mustContains(tournamentUser, tournamentUsers, TOURNAMENT_USER_NOT_FOUND);
         this.tournamentUsers.remove(tournamentUser);
-        tournamentUser.setTournament(null);
     }
 
     public void updateWinner(User winner) {
