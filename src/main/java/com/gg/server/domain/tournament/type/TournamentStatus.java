@@ -1,7 +1,10 @@
 package com.gg.server.domain.tournament.type;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Locale;
 
 @Getter
 @RequiredArgsConstructor
@@ -12,4 +15,18 @@ public enum TournamentStatus {
 
     private final String code;
     private final String desc;
+
+
+    @JsonCreator
+    public static TournamentStatus getEnumFromValue(String value) {
+        if (value == null) return null;
+        for(TournamentStatus e : values()) {
+            if (e.name().equals(value)) {
+                return e;
+            } else if (e.code.toUpperCase(Locale.ROOT).equals(value.toUpperCase(Locale.ROOT))) {
+                return e;
+            }
+        }
+        return null;
+    }
 }
