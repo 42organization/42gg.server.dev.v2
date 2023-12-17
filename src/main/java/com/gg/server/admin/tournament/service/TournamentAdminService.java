@@ -159,10 +159,10 @@ public class TournamentAdminService {
         User targetUser = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
         List<TournamentUser> tournamentUserList = targetTournament.getTournamentUsers();
-        TournamentUser targetTournamentUser = tournamentUserList.stream().filter(tu->tu.getUser().getId().equals(targetUser.getId()))
-            .findAny().orElseThrow(()->new TournamentNotFoundException(ErrorCode.TOURNAMENT_NOT_PARTICIPANT));
-        targetTournament.deleteTournamentUser(targetTournamentUser);
-            .findAny().orElseThrow(UserNotFoundException::new);
+        TournamentUser targetTournamentUser = tournamentUserList.stream()
+            .filter(tu->tu.getUser().getId().equals(targetUser.getId()))
+            .findAny()
+            .orElseThrow(()->new TournamentNotFoundException(ErrorCode.TOURNAMENT_NOT_PARTICIPANT));
         targetTournamentUser.deleteTournament();
         if (targetTournamentUser.getIsJoined() && tournamentUserList.size() >= Tournament.ALLOWED_JOINED_NUMBER) {
             tournamentUserList.get(Tournament.ALLOWED_JOINED_NUMBER - 1).updateIsJoined(true);
