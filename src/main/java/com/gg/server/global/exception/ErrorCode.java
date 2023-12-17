@@ -77,6 +77,8 @@ public enum ErrorCode {
     TEAM_DUPLICATION(409, "TM202", "중복된 Team 이 한 Game 에 존재할 수 없습니다."),
     TEAM_SIZE_EXCEED(500, "TM203", "게임 최대 Team 의 수(2)를 초과하였습니다."),
     TEAM_NOT_FOUND(404, "TM204", "TEAM이 존재하지 않습니다."),
+    WINNING_TEAM_NOT_FOUND(404, "TM205", "WINNING TEAM이 존재하지 않습니다."),
+
 
     /**
      * team_user
