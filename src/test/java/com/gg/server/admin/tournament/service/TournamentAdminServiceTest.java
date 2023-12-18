@@ -9,6 +9,8 @@ import com.gg.server.admin.tournament.dto.TournamentAdminAddUserRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
+import com.gg.server.domain.slotmanagement.SlotManagement;
+import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
 import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentGameRepository;
@@ -27,7 +29,6 @@ import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
-import com.gg.server.global.exception.custom.InvalidParameterException;
 import com.gg.server.utils.ReflectionUtilsForUnitTest;
 import com.gg.server.utils.annotation.UnitTest;
 import java.time.LocalDateTime;
@@ -53,6 +54,8 @@ class TournamentAdminServiceTest {
     @Mock
     TournamentUserRepository tournamentUserRepository;
     @Mock
+    SlotManagementRepository slotManagementRepository;
+    @Mock
     UserRepository userRepository;
     @Mock
     GameRepository gameRepository;
@@ -69,23 +72,24 @@ class TournamentAdminServiceTest {
         @DisplayName("토너먼트 생성 성공")
         void success() {
             // given
-            TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto = createTournamentCreateRequestDto(
+            TournamentAdminCreateRequestDto requestDto = createTournamentCreateRequestDto(
                     "1st tournament",
-                    getTargetTime(3, 1), getTargetTime(3, 3));
-            List<Tournament> tournamentList = createTournaments(1L, 2, getTargetTime(2, 1));
+                    getTargetTime(3, 14, 0), getTargetTime(3, 16, 0));
+            List<Tournament> tournamentList = createTournaments(1L, 2, getTargetTime(2, 10, 0));
             Tournament tournament = tournamentList.get(0);
             TournamentGame tournamentGame = createTournamentGame(tournament, TournamentRound.THE_FINAL);
 
+            given(slotManagementRepository.findCurrent(requestDto.getStartTime())).willReturn(Optional.of(createSlot(15)));
             given(tournamentRepository.findByTitle(tournament.getTitle())).willReturn(Optional.empty());
-            given(tournamentRepository.findAllBetween(tournamentAdminCreateRequestDto.getStartTime(), tournamentAdminCreateRequestDto.getEndTime()))
+            given(tournamentRepository.findAllBetween(requestDto.getStartTime(), requestDto.getEndTime()))
                 .willReturn(new ArrayList<>());
-            given(gameRepository.findAllBetweenTournament(tournamentAdminCreateRequestDto.getStartTime(), tournamentAdminCreateRequestDto.getEndTime()))
+            given(gameRepository.findAllBetweenTournament(requestDto.getStartTime(), requestDto.getEndTime()))
                 .willReturn(new ArrayList<>());
             given(tournamentRepository.save(any(Tournament.class))).willReturn(tournament);
 
 
             // when
-            tournamentAdminService.createTournament(tournamentAdminCreateRequestDto);
+            tournamentAdminService.createTournament(requestDto);
         }
 
         @Test
@@ -93,10 +97,10 @@ class TournamentAdminServiceTest {
         public void titleDup() {
             //given
             Tournament tournament = createTournament(1L, TournamentStatus.BEFORE,
-                getTargetTime(0, -1), getTargetTime(0, 1));
+                getTargetTime(0, 14, 0), getTargetTime(0, 16, 0));
             TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto = createTournamentCreateRequestDto(
                     "1st tournament",
-                    getTargetTime(3, 1), getTargetTime(3, 3));
+                    getTargetTime(3, 10, 0), getTargetTime(3, 12, 0));
             given(tournamentRepository.findByTitle(tournament.getTitle())).willReturn(Optional.of(tournament));
             // when, then
             assertThatThrownBy(() -> tournamentAdminService.createTournament(tournamentAdminCreateRequestDto))
@@ -108,30 +112,30 @@ class TournamentAdminServiceTest {
         public void invalidTime() {
             //given
             Tournament tournament = createTournament(1L, TournamentStatus.BEFORE,
-                    getTargetTime(0, 0), getTargetTime(0, 1));
+                    getTargetTime(0, 0, 0), getTargetTime(0, 1, 0));
 
-            TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto1 = createTournamentCreateRequestDto(
+            TournamentAdminCreateRequestDto requestDto1 = createTournamentCreateRequestDto(
                     "1st tournament",
-                    getTargetTime(1, 1), getTargetTime(1, 3));
-            TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto2 = createTournamentCreateRequestDto(
+                    getTargetTime(1, 1, 0), getTargetTime(1, 3, 0));
+            TournamentAdminCreateRequestDto requestDto2 = createTournamentCreateRequestDto(
                     "1st tournament",
-                    getTargetTime(3, 3), getTargetTime(3, 1));
-            TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto3 = createTournamentCreateRequestDto(
+                    getTargetTime(3, 3, 0), getTargetTime(3, 1, 0));
+            TournamentAdminCreateRequestDto requestDto3 = createTournamentCreateRequestDto(
                     "1st tournament",
-                    getTargetTime(3, 3), getTargetTime(3, 3));
-            TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto4 = createTournamentCreateRequestDto(
+                    getTargetTime(3, 3, 0), getTargetTime(3, 3, 0));
+            TournamentAdminCreateRequestDto requestDto4 = createTournamentCreateRequestDto(
                     "1st tournament",
-                    getTargetTime(3, 1), getTargetTime(3, 2));
-
+                    getTargetTime(3, 1, 10), getTargetTime(3, 2, 10));
+            given(slotManagementRepository.findCurrent(any(LocalDateTime.class))).willReturn(Optional.of(createSlot(15)));
             given(tournamentRepository.findByTitle(tournament.getTitle())).willReturn(Optional.empty());
             // when, then
-            assertThatThrownBy(() -> tournamentAdminService.createTournament(tournamentAdminCreateRequestDto1))
+            assertThatThrownBy(() -> tournamentAdminService.createTournament(requestDto1))
                     .isInstanceOf(TournamentUpdateException.class);
-            assertThatThrownBy(() -> tournamentAdminService.createTournament(tournamentAdminCreateRequestDto2))
+            assertThatThrownBy(() -> tournamentAdminService.createTournament(requestDto2))
                     .isInstanceOf(TournamentUpdateException.class);
-            assertThatThrownBy(() -> tournamentAdminService.createTournament(tournamentAdminCreateRequestDto3))
+            assertThatThrownBy(() -> tournamentAdminService.createTournament(requestDto3))
                     .isInstanceOf(TournamentUpdateException.class);
-            assertThatThrownBy(() -> tournamentAdminService.createTournament(tournamentAdminCreateRequestDto4))
+            assertThatThrownBy(() -> tournamentAdminService.createTournament(requestDto4))
                     .isInstanceOf(TournamentUpdateException.class);
         }
 
@@ -139,12 +143,12 @@ class TournamentAdminServiceTest {
         @DisplayName("기존에 있는 토너먼트와 겹치는 토너먼트 시간")
         public void tournamentTimeConflict() {
             // given
-            List<Tournament> tournamentList = createTournaments(1L, 2, getTargetTime(3, 1));
+            List<Tournament> tournamentList = createTournaments(1L, 2, getTargetTime(3, 10, 0));
             Tournament tournament = tournamentList.get(0);
             TournamentAdminCreateRequestDto createRequestDto = createTournamentCreateRequestDto(
                     "1st tournament",
-                    getTargetTime(3, 2), getTargetTime(3, 5));
-
+                    getTargetTime(3, 11, 0), getTargetTime(3, 13, 0));
+            given(slotManagementRepository.findCurrent(createRequestDto.getStartTime())).willReturn(Optional.of(createSlot(15)));
             given(tournamentRepository.findByTitle(tournament.getTitle())).willReturn(Optional.empty());
             given(tournamentRepository.findAllBetween(createRequestDto.getStartTime(), createRequestDto.getEndTime()))
                 .willReturn(tournamentList);
@@ -160,12 +164,13 @@ class TournamentAdminServiceTest {
             // given
             TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto = createTournamentCreateRequestDto(
                 "1st tournament",
-                getTargetTime(3, 1), getTargetTime(3, 3));
-            List<Tournament> tournamentList = createTournaments(1L, 2, getTargetTime(2, 1));
+                getTargetTime(3, 10, 0), getTargetTime(3, 12, 0));
+            List<Tournament> tournamentList = createTournaments(1L, 2, getTargetTime(2, 10, 0));
             Tournament tournament = tournamentList.get(0);
             TournamentGame tournamentGame = createTournamentGame(tournament, TournamentRound.THE_FINAL);
             List<Game> gameList = new ArrayList<>();
             gameList.add(new Game());
+            given(slotManagementRepository.findCurrent(tournamentAdminCreateRequestDto.getStartTime())).willReturn(Optional.of(createSlot(15)));
             given(tournamentRepository.findByTitle(tournament.getTitle())).willReturn(Optional.empty());
             given(tournamentRepository.findAllBetween(tournamentAdminCreateRequestDto.getStartTime(), tournamentAdminCreateRequestDto.getEndTime()))
                 .willReturn(new ArrayList<>());
@@ -187,10 +192,11 @@ class TournamentAdminServiceTest {
         @DisplayName("토너먼트_업데이트_성공")
         public void success() {
             // given
-            List<Tournament> tournamentList = createTournaments(1L, 2, getTargetTime(2, 1));
+            List<Tournament> tournamentList = createTournaments(1L, 2, getTargetTime(2, 10, 0));
             Tournament tournament = tournamentList.get(0);
             TournamentAdminUpdateRequestDto updateRequestDto = createTournamentAdminUpdateRequestDto(
-                getTargetTime(3, 1), getTargetTime(3, 3));
+                getTargetTime(3, 14, 0), getTargetTime(3, 16, 0));
+            given(slotManagementRepository.findCurrent(updateRequestDto.getStartTime())).willReturn(Optional.of(createSlot(15)));
             given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
             given(tournamentRepository.findAllBetween(updateRequestDto.getStartTime(), updateRequestDto.getEndTime()))
                 .willReturn(new ArrayList<>());
@@ -214,9 +220,9 @@ class TournamentAdminServiceTest {
         public void tournamentNotFound() {
             // given
             Tournament tournament = createTournament(1234L, TournamentStatus.BEFORE,
-                getTargetTime(2, 1), getTargetTime(2, 3));
+                getTargetTime(2, 1, 0), getTargetTime(2, 3, 0));
             TournamentAdminUpdateRequestDto updateRequestDto = createTournamentAdminUpdateRequestDto(
-                getTargetTime(2, 1), getTargetTime(2, 3));
+                getTargetTime(2, 1, 0), getTargetTime(2, 3, 0));
 
             given(tournamentRepository.findById(tournament.getId())).willReturn(Optional.empty());
             // when, then
@@ -229,11 +235,11 @@ class TournamentAdminServiceTest {
         public void canNotUpdate() {
             // given
             Tournament tournamentLive = createTournament(1L, TournamentStatus.LIVE,
-                getTargetTime(0, -1), getTargetTime(0, 1));
+                LocalDateTime.now().plusHours(-1).withMinute(0), LocalDateTime.now().plusHours(1).withMinute(0));
             Tournament tournamentEnd = createTournament(2L, TournamentStatus.END,
-                getTargetTime(0, -3), getTargetTime(0, -1));
+                LocalDateTime.now().plusHours(-4).withMinute(0), LocalDateTime.now().plusHours(-2).withMinute(0));
             TournamentAdminUpdateRequestDto updateRequestDto = createTournamentAdminUpdateRequestDto(
-                getTargetTime(2, 1), getTargetTime(2, 3));
+                getTargetTime(3, 10, 0), getTargetTime(3, 12, 0));
             given(tournamentRepository.findById(tournamentLive.getId())).willReturn(Optional.of(tournamentLive));
             given(tournamentRepository.findById(tournamentEnd.getId())).willReturn(Optional.of(tournamentEnd));
             // when, then
@@ -248,14 +254,17 @@ class TournamentAdminServiceTest {
         public void Dto_Invalid_Time() {
             // given
             Tournament tournament = createTournament(1L, TournamentStatus.BEFORE,
-                getTargetTime(2, 1), getTargetTime(2, 3));
+                getTargetTime(2, 1, 0), getTargetTime(2, 3, 0));
             TournamentAdminUpdateRequestDto invalidRequestDto1 = createTournamentAdminUpdateRequestDto(
-                getTargetTime(2, 3), getTargetTime(2, 1));
+                getTargetTime(2, 3, 0), getTargetTime(2, 1, 0));
             TournamentAdminUpdateRequestDto invalidRequestDto2 = createTournamentAdminUpdateRequestDto(
                 invalidRequestDto1.getStartTime(), invalidRequestDto1.getStartTime());
             TournamentAdminUpdateRequestDto invalidRequestDto3 = createTournamentAdminUpdateRequestDto(
-                getTargetTime(2, -1), getTargetTime(2, 1));
+                getTargetTime(1, 23, 0), getTargetTime(2, 1, 0));
+            TournamentAdminUpdateRequestDto invalidRequestDto4 = createTournamentAdminUpdateRequestDto(
+                getTargetTime(2, 20, 1), getTargetTime(2, 23, 0));
 
+            given(slotManagementRepository.findCurrent(any(LocalDateTime.class))).willReturn(Optional.of(createSlot(15)));
             given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
             // when then
             assertThatThrownBy(() -> tournamentAdminService.updateTournamentInfo(tournament.getId(), invalidRequestDto1))
@@ -264,16 +273,19 @@ class TournamentAdminServiceTest {
                 .isInstanceOf(TournamentUpdateException.class);
             assertThatThrownBy(() -> tournamentAdminService.updateTournamentInfo(tournament.getId(), invalidRequestDto3))
                 .isInstanceOf(TournamentUpdateException.class);
+            assertThatThrownBy(() -> tournamentAdminService.updateTournamentInfo(tournament.getId(), invalidRequestDto4))
+                .isInstanceOf(TournamentUpdateException.class);
         }
 
         @Test
         @DisplayName("Dto_기간_토너먼트_기간_겹침")
         public void tournamentTimeConflict() {
             // given
-            List<Tournament> tournamentList = createTournaments(1L, 2, getTargetTime(2, 1));
+            List<Tournament> tournamentList = createTournaments(1L, 2, getTargetTime(3, 10, 0));
             Tournament tournament = tournamentList.get(0);
             TournamentAdminUpdateRequestDto updateRequestDto = createTournamentAdminUpdateRequestDto(
-                LocalDateTime.now().plusDays(2).plusHours(3), LocalDateTime.now().plusDays(2).plusHours(5));
+                getTargetTime(3, 12, 0), getTargetTime(3, 14, 0));
+            given(slotManagementRepository.findCurrent(any(LocalDateTime.class))).willReturn(Optional.of(createSlot(15)));
             given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
             given(tournamentRepository.findAllBetween(updateRequestDto.getStartTime(), updateRequestDto.getEndTime()))
                 .willReturn(tournamentList);
@@ -286,12 +298,13 @@ class TournamentAdminServiceTest {
         @DisplayName("Dto_기간_게임_겹침")
         public void gameTimeConflict() {
             // given
-            List<Tournament> tournamentList = createTournaments(1L, 2, getTargetTime(0, 1));
+            List<Tournament> tournamentList = createTournaments(1L, 2, getTargetTime(2, 10, 0));
             Tournament tournament = tournamentList.get(0);
             TournamentAdminUpdateRequestDto updateRequestDto = createTournamentAdminUpdateRequestDto(
-                LocalDateTime.now().plusDays(2).plusHours(3), LocalDateTime.now().plusDays(2).plusHours(5));
+                getTargetTime(3, 1, 0), getTargetTime(3, 3, 0));
             List<Game> gameList = new ArrayList<>();
             gameList.add(new Game());
+            given(slotManagementRepository.findCurrent(any(LocalDateTime.class))).willReturn(Optional.of(createSlot(15)));
             given(tournamentRepository.findById(tournament.getId())).willReturn(Optional.of(tournament));
             given(tournamentRepository.findAllBetween(updateRequestDto.getStartTime(), updateRequestDto.getEndTime()))
                 .willReturn(new ArrayList<>());
@@ -312,7 +325,8 @@ class TournamentAdminServiceTest {
             // given
             int tournamentGameCnt = 7;
             Tournament tournament = createTournament(1L, TournamentStatus.BEFORE,
-                getTargetTime(2, 1), getTargetTime(2, 3));
+                getTargetTime(2, 1, 0), getTargetTime(2, 3, 0));
+            List<TournamentGame> tournamentGameList = createTournamentGames(1L, tournament, tournamentGameCnt);
             given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
             // when, then
             tournamentAdminService.deleteTournament(tournament.getId());
@@ -322,7 +336,7 @@ class TournamentAdminServiceTest {
         public void tournamentNotFound() {
             // given
             Tournament tournament = createTournament(1L, TournamentStatus.BEFORE,
-                getTargetTime(2, 1), getTargetTime(2, 3));
+                getTargetTime(2, 1, 0), getTargetTime(2, 3, 0));
             given(tournamentRepository.findById(1L)).willReturn(Optional.empty());
             // when, then
             assertThatThrownBy(() -> tournamentAdminService.deleteTournament(tournament.getId()))
@@ -334,9 +348,9 @@ class TournamentAdminServiceTest {
         public void canNotDelete() {
             // given
             Tournament liveTournament = createTournament(1L, TournamentStatus.LIVE,
-                getTargetTime(0, -1), getTargetTime(0, 1));
+                LocalDateTime.now().plusHours(-1).withMinute(0), LocalDateTime.now().plusHours(1).withMinute(0));
             Tournament endTournament = createTournament(1L, TournamentStatus.END,
-                getTargetTime(-2, 5), getTargetTime(-2, 7));
+                LocalDateTime.now().plusHours(-4).withMinute(0), LocalDateTime.now().plusHours(-2).withMinute(0));
             given(tournamentRepository.findById(liveTournament.getId())).willReturn(Optional.of(liveTournament));
             given(tournamentRepository.findById(endTournament.getId())).willReturn(Optional.of(endTournament));
             // when, then
@@ -355,7 +369,7 @@ class TournamentAdminServiceTest {
         @DisplayName("유저_추가_성공")
         public void success() {
             // given
-            List<Tournament> tournamentList = createTournaments(1L, 2, getTargetTime(2, 1));
+            List<Tournament> tournamentList = createTournaments(1L, 2, getTargetTime(2, 1, 0));
             Tournament tournament = tournamentList.get(0);
             TournamentAdminAddUserRequestDto requestDto = new TournamentAdminAddUserRequestDto("testUser");
             User user = createUser("testUser");
@@ -383,9 +397,9 @@ class TournamentAdminServiceTest {
         public void canNotAdd() {
             // given
             Tournament tournamentLive = createTournament(1L, TournamentStatus.LIVE,
-                getTargetTime(0, -1), getTargetTime(0, 1));
+                LocalDateTime.now().plusHours(-1).withMinute(0), LocalDateTime.now().plusHours(1).withMinute(0));
             Tournament tournamentEnd = createTournament(2L, TournamentStatus.END,
-                getTargetTime(0, -3), getTargetTime(0, -1));
+                LocalDateTime.now().plusHours(-4).withMinute(0), LocalDateTime.now().plusHours(-2).withMinute(0));
             TournamentAdminAddUserRequestDto requestDto = new TournamentAdminAddUserRequestDto("test");
             given(tournamentRepository.findById(tournamentLive.getId())).willReturn(Optional.of(tournamentLive));
             given(tournamentRepository.findById(tournamentEnd.getId())).willReturn(Optional.of(tournamentEnd));
@@ -401,7 +415,7 @@ class TournamentAdminServiceTest {
         public void userNotFound() {
             // given
             Tournament tournament = createTournament(1L, TournamentStatus.BEFORE,
-                getTargetTime(0, -1), getTargetTime(0, 1));
+                getTargetTime(0, 14, 0), getTargetTime(0, 16, 0));
             TournamentAdminAddUserRequestDto requestDto = new TournamentAdminAddUserRequestDto("test");
             given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
             given(userRepository.findByIntraId("test")).willReturn(Optional.empty());
@@ -415,7 +429,7 @@ class TournamentAdminServiceTest {
         @DisplayName("이미_해당_토너먼트_참가중인_유저")
         public void alreadyTournamentParticipant() {
             // given
-            List<Tournament> tournamentList = createTournaments(1L, 2, getTargetTime(2, 1));
+            List<Tournament> tournamentList = createTournaments(1L, 2, getTargetTime(2, 1, 0));
             Tournament tournament = tournamentList.get(0);
             TournamentAdminAddUserRequestDto requestDto = new TournamentAdminAddUserRequestDto("testUser");
             User user = createUser("testUser");
@@ -436,7 +450,7 @@ class TournamentAdminServiceTest {
         @DisplayName("찾을_수_없는_유저")
         public void userNotFound() {
             //given
-            List<Tournament> tournamentList = createTournaments(1L, 2, getTargetTime(2, 1));
+            List<Tournament> tournamentList = createTournaments(1L, 2, getTargetTime(2, 1, 0));
             Tournament tournament = tournamentList.get(0);
             User user = createUser("user");
             given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
@@ -481,8 +495,8 @@ class TournamentAdminServiceTest {
      * @param hours
      * @return
      */
-    private LocalDateTime getTargetTime(long days, long hours) {
-        return LocalDateTime.now().plusDays(days).plusHours(hours);
+    private LocalDateTime getTargetTime(int days, int hours, int minutes) {
+        return LocalDateTime.now().plusDays(days).withHour(hours).withMinute(minutes);
     }
 
     /**
@@ -552,6 +566,32 @@ class TournamentAdminServiceTest {
             .snsNotiOpt(SnsType.NONE)
             .roleType(RoleType.USER)
             .totalExp(1000)
+            .build();
+    }
+
+    /**
+     * cnt 사이즈의 토너먼트 게임 리스트 생성
+     * @param id 토너먼트 게임 id
+     * @param tournament 해당 토너먼트
+     * @param cnt 토너먼트 게임 수
+     * @return
+     */
+    private List<TournamentGame> createTournamentGames(Long id, Tournament tournament, int cnt) {
+        List<TournamentGame> tournamentGameList = new ArrayList<>();
+        TournamentRound [] values = TournamentRound.values();
+        while (--cnt >= 0) {
+            tournamentGameList.add(new TournamentGame(null, tournament, values[cnt]));
+        }
+        return tournamentGameList;
+    }
+
+    private SlotManagement createSlot(int gameInterval) {
+        return SlotManagement.builder()
+            .pastSlotTime(0)
+            .futureSlotTime(0)
+            .openMinute(0)
+            .gameInterval(gameInterval)
+            .startTime(LocalDateTime.now().minusHours(1))
             .build();
     }
 }

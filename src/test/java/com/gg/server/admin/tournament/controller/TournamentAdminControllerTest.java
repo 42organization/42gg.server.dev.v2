@@ -18,6 +18,7 @@ import com.gg.server.domain.tournament.data.TournamentUser;
 import com.gg.server.domain.tournament.data.TournamentUserRepository;
 import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentRepository;
+import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.team.dto.TeamReqDto;
 import com.gg.server.domain.tournament.data.*;
 import com.gg.server.domain.tournament.type.TournamentRound;
@@ -76,6 +77,10 @@ class TournamentAdminControllerTest {
     @Nested
     @DisplayName("토너먼트_관리_수정_컨트롤러_테스트")
     class TournamentAdminControllerUpdateTest {
+        @BeforeEach
+        void beforeEach() {
+            testDataUtils.createSlot(15);
+        }
         @Test
         @DisplayName("토너먼트_업데이트_성공")
         void success() throws Exception {
@@ -84,13 +89,13 @@ class TournamentAdminControllerTest {
             tokenProvider.getUserIdFromAccessToken(accessToken);
 
             Tournament tournament = testDataUtils.createTournament(
-                LocalDateTime.now().plusDays(2).plusHours(1),
-                LocalDateTime.now().plusDays(2).plusHours(3),
+                LocalDateTime.now().plusDays(2).withHour(14).withMinute(0),
+                LocalDateTime.now().plusDays(2).withHour(16).withMinute(0),
                 TournamentStatus.BEFORE);
 
             TournamentAdminUpdateRequestDto updateDto = testDataUtils.createUpdateRequestDto (
-                LocalDateTime.now().plusDays(2).plusHours(2),
-                LocalDateTime.now().plusDays(2).plusHours(4),
+                LocalDateTime.now().plusDays(3).withHour(14).withMinute(0),
+                LocalDateTime.now().plusDays(3).withHour(16).withMinute(0),
                 TournamentType.MASTER);
 
             String url = "/pingpong/admin/tournaments/" + tournament.getId();
@@ -125,8 +130,8 @@ class TournamentAdminControllerTest {
             tokenProvider.getUserIdFromAccessToken(accessToken);
 
             TournamentAdminUpdateRequestDto updateDto = testDataUtils.createUpdateRequestDto(
-                LocalDateTime.now().plusDays(2).plusHours(2),
-                LocalDateTime.now().plusDays(2).plusHours(4),
+                LocalDateTime.now().plusDays(2).withHour(14).withMinute(0),
+                LocalDateTime.now().plusDays(2).withHour(16).withMinute(0),
                 TournamentType.MASTER);
 
             String url = "/pingpong/admin/tournaments/" + 1111;
@@ -151,19 +156,19 @@ class TournamentAdminControllerTest {
             tokenProvider.getUserIdFromAccessToken(accessToken);
 
             Tournament tournamentAlreadyExist = testDataUtils.createTournament(
-                LocalDateTime.now().plusDays(2).plusHours(2),
-                LocalDateTime.now().plusDays(2).plusHours(4),
+                LocalDateTime.now().plusDays(3).withHour(14).withMinute(0),
+                LocalDateTime.now().plusDays(3).withHour(16).withMinute(0),
                 TournamentStatus.BEFORE);
 
             Tournament tournamentToChange = testDataUtils.createTournament(
-                LocalDateTime.now().plusDays(2).plusHours(5),
-                LocalDateTime.now().plusDays(2).plusHours(7),
+                LocalDateTime.now().plusDays(3).withHour(18).withMinute(0),
+                LocalDateTime.now().plusDays(3).withHour(20).withMinute(0),
                 TournamentStatus.BEFORE);
 
             // 겹치는 시간 조절
             TournamentAdminUpdateRequestDto updateDto = testDataUtils.createUpdateRequestDto(
-                tournamentAlreadyExist.getStartTime().plusMinutes(1),
-                tournamentAlreadyExist.getEndTime().plusMinutes(2),
+                LocalDateTime.now().plusDays(3).withHour(13).withMinute(0),
+                LocalDateTime.now().plusDays(3).withHour(15).withMinute(0),
                 TournamentType.MASTER);
 
             String url = "/pingpong/admin/tournaments/" + tournamentToChange.getId();
@@ -188,12 +193,13 @@ class TournamentAdminControllerTest {
             String accessToken = testDataUtils.getAdminLoginAccessToken();
 
             GameInfoDto game = testDataUtils.createGame(testDataUtils.createNewUser("testUser"),
-                LocalDateTime.now().plusDays(3), LocalDateTime.now().plusDays(3).plusMinutes(15),
+                LocalDateTime.now().plusDays(3).withHour(14).withMinute(0),
+                LocalDateTime.now().plusDays(3).withHour(14).withMinute(15),
                 testDataUtils.createSeason(), Mode.NORMAL);
 
             Tournament tournament = testDataUtils.createTournament(
-                LocalDateTime.now().plusDays(2).plusHours(0),
-                LocalDateTime.now().plusDays(2).plusHours(3),
+                LocalDateTime.now().plusDays(2).withHour(14).withMinute(0),
+                LocalDateTime.now().plusDays(2).withHour(16).withMinute(0),
                 TournamentStatus.BEFORE);
 
             // 겹치는 시간 조절
@@ -225,18 +231,18 @@ class TournamentAdminControllerTest {
             tokenProvider.getUserIdFromAccessToken(accessToken);
 
             Tournament liveTournament = testDataUtils.createTournament(
-                LocalDateTime.now().minusHours(1),
-                LocalDateTime.now().plusHours(2),
+                LocalDateTime.now().minusHours(1).withMinute(0),
+                LocalDateTime.now().plusHours(2).withMinute(0),
                 TournamentStatus.LIVE);
 
             Tournament endedTournament = testDataUtils.createTournament(
-                LocalDateTime.now().minusHours(3),
-                LocalDateTime.now().minusHours(1),
+                LocalDateTime.now().minusHours(3).withMinute(0),
+                LocalDateTime.now().minusHours(1).withMinute(0),
                 TournamentStatus.END);
 
             TournamentAdminUpdateRequestDto updateTournamentDto = testDataUtils.createUpdateRequestDto(
-                LocalDateTime.now().plusDays(2).plusHours(1),
-                LocalDateTime.now().plusDays(2).plusHours(3),
+                LocalDateTime.now().plusDays(2).plusHours(3).withMinute(0),
+                LocalDateTime.now().plusDays(2).plusHours(5).withMinute(0),
                 TournamentType.MASTER);
 
             String url = "/pingpong/admin/tournaments/" + liveTournament.getId();
@@ -274,8 +280,8 @@ class TournamentAdminControllerTest {
             tokenProvider.getUserIdFromAccessToken(accessToken);
 
             Tournament tournamentToChange = testDataUtils.createTournament(
-                LocalDateTime.now().plusDays(2).plusHours(1),
-                LocalDateTime.now().plusDays(2).plusHours(3),
+                LocalDateTime.now().plusDays(2).withHour(14).withMinute(0),
+                LocalDateTime.now().plusDays(2).withHour(16).withMinute(0),
                 TournamentStatus.BEFORE);
 
             TournamentAdminUpdateRequestDto updateDto1 = testDataUtils.createUpdateRequestDto(
@@ -286,6 +292,11 @@ class TournamentAdminControllerTest {
             TournamentAdminUpdateRequestDto updateDto2 = testDataUtils.createUpdateRequestDto(
                 tournamentToChange.getEndTime(),
                 tournamentToChange.getStartTime(),
+                TournamentType.MASTER);
+
+            TournamentAdminUpdateRequestDto updateDto3 = testDataUtils.createUpdateRequestDto(
+                LocalDateTime.now().plusDays(2).withHour(14).withMinute(5),
+                LocalDateTime.now().plusDays(2).withHour(16).withMinute(5),
                 TournamentType.MASTER);
 
             String url = "/pingpong/admin/tournaments/" + tournamentToChange.getId();
@@ -312,6 +323,18 @@ class TournamentAdminControllerTest {
                 .andReturn().getResponse().getContentAsString();
 
             System.out.println(contentAsString);
+
+            // when startTime minute invalid test, then
+            content = objectMapper.writeValueAsString(updateDto3);
+
+            contentAsString = mockMvc.perform(patch(url)
+                    .content(content)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isForbidden())
+                .andReturn().getResponse().getContentAsString();
+
+            System.out.println(contentAsString);
         }
 
         @Test
@@ -322,8 +345,8 @@ class TournamentAdminControllerTest {
             tokenProvider.getUserIdFromAccessToken(accessToken);
 
             Tournament tournamentToChange = testDataUtils.createTournament(
-                LocalDateTime.now().plusDays(2).plusHours(1),
-                LocalDateTime.now().plusDays(2).plusHours(3),
+                LocalDateTime.now().plusDays(2).withHour(14).withMinute(0),
+                LocalDateTime.now().plusDays(2).withHour(16).withMinute(0),
                 TournamentStatus.BEFORE);
 
             TournamentAdminUpdateRequestDto updateDto1 = testDataUtils.createUpdateRequestDto(
@@ -440,8 +463,12 @@ class TournamentAdminControllerTest {
     }
 
     @Nested
-    @DisplayName("토너먼트 관리 생성 컨트롤러 테스트")
+    @DisplayName("토너먼트_관리_생성_컨트롤러_테스트")
     class TournamentAdminControllerCreateTest {
+        @BeforeEach
+        void beforeEach() {
+            testDataUtils.createSlot(15);
+        }
         @Test
         @DisplayName("토너먼트 생성 성공")
         void success() throws Exception {
@@ -449,8 +476,8 @@ class TournamentAdminControllerTest {
             String accessToken = testDataUtils.getAdminLoginAccessToken();
 
             TournamentAdminCreateRequestDto createDto = testDataUtils.createRequestDto(
-                    LocalDateTime.now().plusDays(10).plusHours(3),
-                    LocalDateTime.now().plusDays(10).plusHours(5),
+                    LocalDateTime.now().plusDays(3).withHour(14).withMinute(0),
+                    LocalDateTime.now().plusDays(3).withHour(16).withMinute(0),
                     TournamentType.ROOKIE);
 
             String url = "/pingpong/admin/tournaments";
@@ -478,12 +505,12 @@ class TournamentAdminControllerTest {
             String accessToken = testDataUtils.getAdminLoginAccessToken();
 
             TournamentAdminCreateRequestDto createDto = testDataUtils.createRequestDto(
-                    LocalDateTime.now().plusDays(10).plusHours(3),
-                    LocalDateTime.now().plusDays(10).plusHours(5),
+                    LocalDateTime.now().plusDays(3).withHour(14).withMinute(0),
+                    LocalDateTime.now().plusDays(3).withHour(16).withMinute(0),
                     TournamentType.ROOKIE);
 
-            testDataUtils.createTournament(createDto.getTitle(), LocalDateTime.now(),
-                    LocalDateTime.now().plusHours(2), TournamentStatus.BEFORE);
+            testDataUtils.createTournament(createDto.getTitle(), LocalDateTime.now().plusHours(-4),
+                    LocalDateTime.now().plusHours(-2), TournamentStatus.BEFORE);
 
             String url = "/pingpong/admin/tournaments";
             String content = objectMapper.writeValueAsString(createDto);
@@ -505,12 +532,13 @@ class TournamentAdminControllerTest {
             // given
             String accessToken = testDataUtils.getAdminLoginAccessToken();
             GameInfoDto game = testDataUtils.createGame(testDataUtils.createNewUser("testUser"),
-                LocalDateTime.now().plusDays(3), LocalDateTime.now().plusDays(3).plusMinutes(15),
+                LocalDateTime.now().plusDays(3).withHour(14).withMinute(0),
+                LocalDateTime.now().plusDays(3).withHour(14).withMinute(15),
                 testDataUtils.createSeason(), Mode.NORMAL);
 
             TournamentAdminCreateRequestDto createDto = testDataUtils.createRequestDto(
-                LocalDateTime.now().plusDays(3).plusHours(0),
-                LocalDateTime.now().plusDays(3).plusHours(5),
+                LocalDateTime.now().plusDays(3).withHour(14).withMinute(0),
+                LocalDateTime.now().plusDays(3).withHour(16).withMinute(0),
                 TournamentType.ROOKIE);
 
             String url = "/pingpong/admin/tournaments";
