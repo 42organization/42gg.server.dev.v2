@@ -4,10 +4,12 @@ import com.gg.server.admin.tournament.dto.*;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.exception.ScoreNotInvalidException;
+import com.gg.server.domain.game.service.GameService;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.match.service.MatchTournamentService;
 import com.gg.server.domain.match.type.TournamentMatchStatus;
 import com.gg.server.domain.team.data.Team;
+import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.tournament.data.*;
 import com.gg.server.domain.tournament.dto.TournamentUserListResponseDto;
 import com.gg.server.domain.tournament.exception.TournamentConflictException;
@@ -26,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.gg.server.domain.match.type.TournamentMatchStatus.*;
@@ -39,6 +42,7 @@ public class TournamentAdminService {
     private final GameRepository gameRepository;
     private final TournamentGameRepository tournamentGameRepository;
     private final MatchTournamentService matchTournamentService;
+    private final GameService gameService;
 
     /***
      * 토너먼트 생성 Method
@@ -292,6 +296,11 @@ public class TournamentAdminService {
         updateTeamScore(game, reqDto);
         TournamentMatchStatus matchStatus = matchTournamentService.checkTournamentGame(game);
         TournamentRound nextRound = tournamentGame.getTournamentRound().getNextRound();
+        List<TeamUser> teamUsers = new ArrayList<>();
+        for(Team team : game.getTeams()){
+            teamUsers.add(team.getTeamUsers().get(0));
+        }
+        gameService.savePChange(game, teamUsers, teamUsers.get(0).getUser().getId());
         if (POSSIBLE.equals(matchStatus)) {
             matchTournamentService.matchGames(tournament, nextRound);
         } else if (ALREADY_MATCHED.equals(matchStatus)) {
@@ -329,6 +338,9 @@ public class TournamentAdminService {
         if (reqDto.getNextTournamentGameId() == null &&
                 tournamentGame.getTournamentRound() == TournamentRound.THE_FINAL) {
             return true;
+        }
+        if (tournamentGame.getGame().getStatus() == StatusType.BEFORE) {
+            return false;
         }
         TournamentGame nextTournamentGame = tournamentGameRepository.findById(reqDto.getNextTournamentGameId())
                 .orElseThrow(TournamentGameNotFoundException::new);
