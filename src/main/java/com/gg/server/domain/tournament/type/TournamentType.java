@@ -1,9 +1,10 @@
 package com.gg.server.domain.tournament.type;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import java.util.Locale;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Locale;
 
 @Getter
 @RequiredArgsConstructor
@@ -14,6 +15,7 @@ public enum TournamentType {
 
     private final String code;
     private final String desc;
+
 
     @JsonCreator
     public static TournamentType getEnumFromValue(String value) {

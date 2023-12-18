@@ -1,6 +1,8 @@
 package com.gg.server.domain.team.data;
 
 import com.gg.server.domain.user.data.User;
+import com.gg.server.global.exception.ErrorCode;
+import com.gg.server.global.utils.BusinessChecker;
 import lombok.*;
 
 import javax.persistence.*;
@@ -30,5 +32,10 @@ public class TeamUser {
         this.team = team;
         this.user = user;
         team.addTeamUser(this);
+    }
+
+    public void updateUser(User user) {
+        BusinessChecker.mustNotNull(user, ErrorCode.NULL_POINT);
+        this.user = user;
     }
 }

@@ -11,15 +11,13 @@ import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentGameUpdateRequestDto;
 import com.gg.server.admin.tournament.service.TournamentAdminService;
 import com.gg.server.domain.game.type.Mode;
+import com.gg.server.utils.MatchTestUtils;
 import com.gg.server.utils.annotation.IntegrationTest;
 import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentUser;
 import com.gg.server.domain.tournament.data.TournamentUserRepository;
 import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentRepository;
-import com.gg.server.domain.game.data.Game;
-import com.gg.server.domain.game.type.Mode;
-import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.team.dto.TeamReqDto;
 import com.gg.server.domain.tournament.data.*;
 import com.gg.server.domain.tournament.type.TournamentRound;
@@ -32,7 +30,6 @@ import com.gg.server.global.exception.custom.CustomRuntimeException;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpHeaders;
@@ -852,28 +849,25 @@ class TournamentAdminControllerTest {
     @Nested
     @DisplayName("[Patch] /pingpong/admin/tournaments/{tournamentId}/games")
     class AdminUpdateTournamentGameTest {
-        String accessToken;
-        Tournament tournament;
+        @Autowired
+        private MatchTestUtils matchTestUtils;
+        private String accessToken;
+        private Tournament tournament;
+        private List<TournamentGame> allTournamentGames;
         @BeforeEach
         void setUp() {
-            tournament = testDataUtils.createTournament("testTournament",
-                LocalDateTime.now().plusDays(2).plusHours(1),
-                LocalDateTime.now().plusDays(2).plusHours(3),
-                TournamentStatus.LIVE);
+            // 토너먼트 생성하고 8강 & 4강은 게임 점수 입력하고 종료된 상태이고 결승전 매칭된 상태로 초기화
+            testDataUtils.createSeason();
+            testDataUtils.createSlotManagement(15);
+            tournament = testDataUtils.createTournamentWithUser(Tournament.ALLOWED_JOINED_NUMBER, 4, "test");
+            allTournamentGames = testDataUtils.createTournamentGameList(tournament, 7);
+            tournament.updateStatus(TournamentStatus.LIVE);
+            List<TournamentGame> quarterGames = matchTestUtils.matchTournamentGames(tournament, TournamentRound.QUARTER_FINAL_1);
+            matchTestUtils.updateTournamentGamesResult(quarterGames, List.of(2, 0));
+            List<TournamentGame> semiGames = matchTestUtils.matchTournamentGames(tournament, TournamentRound.SEMI_FINAL_1);
+            matchTestUtils.updateTournamentGamesResult(semiGames, List.of(2, 0));
+
             accessToken = testDataUtils.getAdminLoginAccessToken();
-            List<User> userList = testDataUtils.createUsers(7);
-            int index = 0;
-            Season season = testDataUtils.createSeason();
-            for (TournamentRound tournamentRound : TournamentRound.values()){
-                LocalDateTime time = LocalDateTime.now().minusHours(4 - index).plusMinutes(15);
-                GameInfoDto game = testDataUtils.createGame(userList.get(index), time, time.plusMinutes(15), season, Mode.TOURNAMENT);
-                if (tournamentRound == TournamentRound.THE_FINAL) {
-                    TournamentGame tournamentGame = new TournamentGame(null, tournament, tournamentRound);
-                    tournamentGameRepository.save(tournamentGame);
-                }else {
-                    testDataUtils.createTournamentGame(tournament, tournamentRound, game);
-                }
-            }
         }
 
         @Test
@@ -884,9 +878,9 @@ class TournamentAdminControllerTest {
 
             int myTeamScore = 2;
             int otherTeamScore = 1;
-            List<TournamentGame> tournamentGameList = tournamentGameRepository.findAllByTournamentId(tournament.getId());
-            TournamentGame tournamentGame = tournamentGameList.stream().filter(tg -> tg.getTournamentRound() == TournamentRound.SEMI_FINAL_1).findAny().orElseThrow();
-            TournamentGame nextTournamentGame = tournamentGameList.stream().filter(tg -> tg.getTournamentRound() == TournamentRound.THE_FINAL).findAny().orElseThrow();
+            TournamentGame tournamentGame = allTournamentGames.stream().filter(tg -> tg.getTournamentRound() == TournamentRound.SEMI_FINAL_1).findAny().orElseThrow();
+            TournamentGame nextTournamentGame = allTournamentGames.stream().filter(tg -> tg.getTournamentRound() == TournamentRound.THE_FINAL).findAny().orElseThrow();
+
             TournamentGameUpdateRequestDto requestDto = new TournamentGameUpdateRequestDto(tournamentGame.getId(), nextTournamentGame.getId(),
                     new TeamReqDto(tournamentGame.getGame().getTeams().get(0).getId(), myTeamScore),
                     new TeamReqDto(tournamentGame.getGame().getTeams().get(1).getId(), otherTeamScore));
@@ -910,9 +904,8 @@ class TournamentAdminControllerTest {
             String url = "/pingpong/admin/tournaments/" + tournament.getId() + "/games";
             int myTeamScore = 2;
             int otherTeamScore = 1;
-            List<TournamentGame> tournamentGameList = tournamentGameRepository.findAllByTournamentId(tournament.getId());
-            TournamentGame tournamentGame = tournamentGameList.stream().filter(tg -> tg.getTournamentRound() == TournamentRound.QUARTER_FINAL_1).findAny().orElseThrow();
-            TournamentGame nextTournamentGame = tournamentGameList.stream().filter(tg -> tg.getTournamentRound() == TournamentRound.SEMI_FINAL_1).findAny().orElseThrow();
+            TournamentGame tournamentGame = allTournamentGames.stream().filter(tg -> tg.getTournamentRound() == TournamentRound.QUARTER_FINAL_1).findAny().orElseThrow();
+            TournamentGame nextTournamentGame = allTournamentGames.stream().filter(tg -> tg.getTournamentRound() == TournamentRound.SEMI_FINAL_1).findAny().orElseThrow();
             TournamentGameUpdateRequestDto requestDto = new TournamentGameUpdateRequestDto(tournamentGame.getId(), nextTournamentGame.getId(),
                     new TeamReqDto(tournamentGame.getGame().getTeams().get(0).getId(), myTeamScore),
                     new TeamReqDto(tournamentGame.getGame().getTeams().get(1).getId(), otherTeamScore));

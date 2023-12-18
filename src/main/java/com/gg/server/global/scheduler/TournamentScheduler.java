@@ -11,7 +11,7 @@ public class TournamentScheduler extends AbstractScheduler {
 
     public TournamentScheduler(TournamentService tournamentService) {
         this.tournamentService = tournamentService;
-        this.cron = "0 0 0 * * *";
+        this.cron = "0 0/10 * * * *";       // TODO QA 이후 0 0 0 * * * 로 변경
     }
 
     @Override

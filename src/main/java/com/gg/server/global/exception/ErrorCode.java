@@ -76,6 +76,9 @@ public enum ErrorCode {
     TEAM_ID_NOT_MATCH(400, "TM201", "TEAM id 가 일치하지 않습니다."),
     TEAM_DUPLICATION(409, "TM202", "중복된 Team 이 한 Game 에 존재할 수 없습니다."),
     TEAM_SIZE_EXCEED(500, "TM203", "게임 최대 Team 의 수(2)를 초과하였습니다."),
+    TEAM_NOT_FOUND(404, "TM204", "TEAM이 존재하지 않습니다."),
+    WINNING_TEAM_NOT_FOUND(404, "TM205", "WINNING TEAM이 존재하지 않습니다."),
+
 
     /**
      * team_user
@@ -93,6 +96,7 @@ public enum ErrorCode {
     SCORE_ALREADY_ENTERED(400, "GM206", "점수가 이미 입력되었습니다."),
     GAME_DUPLICATION_EXCPETION(409, "GM204", "GAME ALREADY EXISTS"),
     SCORE_NOT_INVALID(400, "GM205", "score 입력이 유효하지 않습니다."),
+    GAME_NOT_TOURNAMENT(400, "GM206", "토너먼트 게임이 아닙니다."),
 
     /** match **/
     SLOT_ENROLLED(400, "MA300", "SLOT ALREADY ENROLLED"),
@@ -148,8 +152,8 @@ public enum ErrorCode {
     TOURNAMENT_USER_DUPLICATION(409, "TN015", "중복된 토너먼트 유저입니다!"),
     TOURNAMENT_GAME_EXCEED(500, "TN016", "토너먼트 게임 최대 사이즈를 초과하였습니다!")
     ;
-    private int status;
-    private String errCode;
+    private final int status;
+    private final String errCode;
     private String message;
 
     public void setMessage(String msg) {

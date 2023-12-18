@@ -11,6 +11,8 @@ import com.gg.server.domain.game.dto.request.TournamentResultReqDto;
 import com.gg.server.domain.game.exception.GameNotExistException;
 import com.gg.server.domain.game.exception.GameStatusNotMatchedException;
 import com.gg.server.domain.game.exception.ScoreAlreadyEnteredException;
+import com.gg.server.domain.match.service.MatchTournamentService;
+import com.gg.server.domain.match.type.TournamentMatchStatus;
 import com.gg.server.domain.pchange.data.PChange;
 import com.gg.server.domain.pchange.data.PChangeRepository;
 import com.gg.server.domain.pchange.exception.PChangeNotExistException;
@@ -22,10 +24,10 @@ import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.team.data.TeamUserRepository;
 import com.gg.server.domain.team.exception.TeamIdNotMatchException;
 import com.gg.server.domain.tier.service.TierService;
+import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentGameRepository;
-import com.gg.server.domain.tournament.type.TournamentRound;
-import com.gg.server.domain.tournament.type.TournamentStatus;
+import com.gg.server.domain.tournament.exception.TournamentGameNotFoundException;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.InvalidParameterException;
 import com.gg.server.global.utils.ExpLevelCalculator;
@@ -50,6 +52,7 @@ public class GameService {
     private final UserCoinChangeService userCoinChangeService;
     private final TierService tierService;
     private final TournamentGameRepository tournamentGameRepository;
+    private final MatchTournamentService matchTournamentService;
 
   /**
    * 게임 정보를 가져온다.
@@ -105,6 +108,12 @@ public class GameService {
             throw new GameStatusNotMatchedException();
         }
         updateTournamentGameScore(game, scoreDto, userId);
+        if (TournamentMatchStatus.POSSIBLE.equals(matchTournamentService.checkTournamentGame(game))) {
+            TournamentGame tournamentGame = tournamentGameRepository.findByGameId(game.getId())
+                    .orElseThrow(TournamentGameNotFoundException::new);
+            Tournament tournament = tournamentGame.getTournament();
+            matchTournamentService.matchGames(tournament, tournamentGame.getTournamentRound().getNextRound());
+        }
     }
 
     /**
@@ -274,11 +283,6 @@ public class GameService {
             setTeamScore(myTeam, scoreDto.getMyTeamScore(), scoreDto.getMyTeamScore() > scoreDto.getEnemyTeamScore());
             setTeamScore(enemyTeam, scoreDto.getEnemyTeamScore(), scoreDto.getMyTeamScore() < scoreDto.getEnemyTeamScore());
             expUpdates(game, teams);
-            Optional<TournamentGame> tournamentGame = tournamentGameRepository.findByGameId(scoreDto.getGameId());
-            if (tournamentGame.isPresent() && tournamentGame.get().getTournamentRound().equals(TournamentRound.THE_FINAL)) {
-                //토너먼트 결승전 게임일 경우, 토너먼트 상태 END로 변경
-                tournamentGame.get().getTournament().updateStatus(TournamentStatus.END);
-            }
         } else {
             // score 가 이미 입력됨
             throw new ScoreAlreadyEnteredException(ErrorCode.SCORE_ALREADY_ENTERED.getMessage(), ErrorCode.SCORE_ALREADY_ENTERED);
