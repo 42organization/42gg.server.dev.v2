@@ -109,7 +109,7 @@ public class GameController {
             throw new InvalidParameterException("점수를 잘못 입력했습니다.", ErrorCode.VALID_FAILED);
         }
         gameService.createTournamentGameResult(reqDto, user.getId());
-        return new ResponseEntity<Void>(HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/{gameId}/result/normal")

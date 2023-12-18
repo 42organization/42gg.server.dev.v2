@@ -211,7 +211,7 @@ public class GameService {
                 });
     }
 
-    private void savePChange(Game game, List<TeamUser> teamUsers, Long loginUserId) {
+    public void savePChange(Game game, List<TeamUser> teamUsers, Long loginUserId) {
         Long team1UserId = teamUsers.get(0).getUser().getId();
         Long team2UserId = teamUsers.get(1).getUser().getId();
         pChangeService.addPChange(game, teamUsers.get(0).getUser(),
@@ -283,6 +283,7 @@ public class GameService {
             setTeamScore(myTeam, scoreDto.getMyTeamScore(), scoreDto.getMyTeamScore() > scoreDto.getEnemyTeamScore());
             setTeamScore(enemyTeam, scoreDto.getEnemyTeamScore(), scoreDto.getMyTeamScore() < scoreDto.getEnemyTeamScore());
             expUpdates(game, teams);
+            savePChange(game, teams, userId);
         } else {
             // score 가 이미 입력됨
             throw new ScoreAlreadyEnteredException(ErrorCode.SCORE_ALREADY_ENTERED.getMessage(), ErrorCode.SCORE_ALREADY_ENTERED);

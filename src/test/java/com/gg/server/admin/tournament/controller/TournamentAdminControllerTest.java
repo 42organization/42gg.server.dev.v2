@@ -11,6 +11,7 @@ import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentGameUpdateRequestDto;
 import com.gg.server.admin.tournament.service.TournamentAdminService;
 import com.gg.server.domain.game.type.Mode;
+import com.gg.server.domain.pchange.data.PChangeRepository;
 import com.gg.server.utils.MatchTestUtils;
 import com.gg.server.utils.annotation.IntegrationTest;
 import com.gg.server.domain.tournament.data.Tournament;
@@ -72,6 +73,12 @@ class TournamentAdminControllerTest {
 
     @Autowired
     TournamentGameRepository tournamentGameRepository;
+
+    @Autowired
+    PChangeRepository pChangeRepository;
+
+    @Autowired
+    private MatchTestUtils matchTestUtils;
 
     @Nested
     @DisplayName("토너먼트_관리_수정_컨트롤러_테스트")
@@ -849,8 +856,6 @@ class TournamentAdminControllerTest {
     @Nested
     @DisplayName("[Patch] /pingpong/admin/tournaments/{tournamentId}/games")
     class AdminUpdateTournamentGameTest {
-        @Autowired
-        private MatchTestUtils matchTestUtils;
         private String accessToken;
         private Tournament tournament;
         private List<TournamentGame> allTournamentGames;
@@ -896,6 +901,10 @@ class TournamentAdminControllerTest {
             TournamentGame resTournamentGame = tournamentGameRepository.findById(tournamentGame.getId()).orElseThrow();
             assertThat(resTournamentGame.getGame().getTeams().get(0).getScore()).isEqualTo(myTeamScore);
             assertThat(resTournamentGame.getGame().getTeams().get(1).getScore()).isEqualTo(otherTeamScore);
+            User user1 = tournamentGame.getGame().getTeams().get(0).getTeamUsers().get(0).getUser();
+            User user2 = tournamentGame.getGame().getTeams().get(1).getTeamUsers().get(0).getUser();
+            assertThat(pChangeRepository.findByUserIdAndGameId(user1.getId(), tournamentGame.getGame().getId())).isNotEmpty();
+            assertThat(pChangeRepository.findByUserIdAndGameId(user2.getId(), tournamentGame.getGame().getId())).isNotEmpty();
         }
         @Test
         @DisplayName("토너먼트_게임_수정_불가능")

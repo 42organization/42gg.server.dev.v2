@@ -445,7 +445,6 @@ public class GameControllerTest {
 
         // TODO : 랭크 게임 결과 입력 실패 테스트 (잘못된 점수 입력할 경우 InvalidParameterException 발생)
     }
-
     @Nested
     @DisplayName("토너먼트 게임 점수 결과 입력")
     class CreateTournamentResultTest {
@@ -482,6 +481,8 @@ public class GameControllerTest {
 
             //then
             assertThat(game.getStatus()).isEqualTo(StatusType.END);
+            assertThat(pChangeRepository.findByUserIdAndGameId(team1.getTeamUsers().get(0).getUser().getId(), game.getId())).isNotEmpty();
+            assertThat(pChangeRepository.findByUserIdAndGameId(team2.getTeamUsers().get(0).getUser().getId(), game.getId())).isNotEmpty();
             System.out.println(contentAsString);
         }
 
