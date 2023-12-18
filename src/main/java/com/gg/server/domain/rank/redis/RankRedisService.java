@@ -133,6 +133,7 @@ public class RankRedisService {
         log.info("Before: userId: " + teamUser.getUser().getIntraId() + ", " + "ppp: rank(" + rank.getPpp() + "), redis(" + myTeam.getPpp() + ")");
         rank.modifyUserRank(ppp, win, losses);
         myTeam.changedRank(ppp, win, losses);
+        rankRepository.flush();
         updateRankUser(hashkey, RedisKeyManager.getZSetKey(seasonId), teamUser.getUser().getId(), myTeam);
         log.info("After: userId: " + teamUser.getUser().getIntraId() + ", " + "ppp: rank(" + rank.getPpp() + "), redis(" + myTeam.getPpp() + ")");
     }

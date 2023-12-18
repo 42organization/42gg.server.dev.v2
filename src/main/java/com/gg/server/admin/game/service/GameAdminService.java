@@ -6,6 +6,7 @@ import com.gg.server.admin.game.data.GameAdminRepository;
 import com.gg.server.admin.game.dto.RankGamePPPModifyReqDto;
 import com.gg.server.admin.game.exception.NotRecentlyGameException;
 import com.gg.server.admin.pchange.data.PChangeAdminRepository;
+import com.gg.server.admin.pchange.exception.PChangeNotExistException;
 import com.gg.server.admin.season.data.SeasonAdminRepository;
 import com.gg.server.admin.team.data.TeamUserAdminRepository;
 import com.gg.server.admin.user.data.UserAdminRepository;
@@ -68,7 +69,7 @@ public class GameAdminService {
 
     @Transactional(readOnly = true)
     public GameLogListAdminResponseDto findGamesByIntraId(String intraId, Pageable pageable){
-        User user = userAdminRepository.findByIntraId(intraId).orElseThrow(() -> new UserNotFoundException());
+        User user = userAdminRepository.findByIntraId(intraId).orElseThrow(UserNotFoundException::new);
         List<PChange> pChangeList = pChangeRepository.findAllByUserId(user.getId());
         List<Game> gameList = new ArrayList<>();
 
@@ -102,7 +103,11 @@ public class GameAdminService {
         for (TeamUser teamUser :
                 teamUsers) {
             List<PChange> pChanges = pChangeAdminRepository.findByTeamUser(teamUser.getUser().getId());
+            if (!pChanges.get(0).getGame().getId().equals(gameId)) {
+                throw new PChangeNotExistException();
+            }
             rollbackGameResult(reqDto, season, teamUser, pChanges);
+            teamUserAdminRepository.flush();
             pChangeAdminRepository.delete(pChanges.get(0));
         }
         rankRedisService.updateRankRedis(teamUsers.get(0), teamUsers.get(1), game);
