@@ -12,6 +12,7 @@ import com.gg.server.admin.user.data.UserAdminRepository;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.dto.GameTeamUser;
 import com.gg.server.domain.game.exception.GameNotExistException;
+import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.match.data.RedisMatchUserRepository;
 import com.gg.server.domain.pchange.data.PChange;
@@ -47,16 +48,26 @@ public class GameAdminService {
     private final TeamUserAdminRepository teamUserAdminRepository;
     private final RedisMatchUserRepository redisMatchUserRepository;
 
+    /**
+     * <p>토너먼트 게임을 제외한 일반, 랭크 게임들을 찾아서 반환해준다.</p>
+     * @param pageable
+     * @return
+     */
     @Transactional(readOnly = true)
     public GameLogListAdminResponseDto findAllGamesByAdmin(Pageable pageable) {
-        Page<Game> gamePage = gameAdminRepository.findAll(pageable); //모든 게임 정보 가져오기
+        Page<Game> gamePage = gameAdminRepository.findAllByModeIn(pageable, List.of(Mode.NORMAL, Mode.RANK));
         return new GameLogListAdminResponseDto(getGameLogList(gamePage.getContent().stream().map(Game::getId).collect(Collectors.toList())), gamePage.getTotalPages());
     }
 
+    /**
+     * <p>토너먼트 게임을 제외한 해당 시즌의 일반, 랭크 게임들을 찾아서 반환해준다.</p>
+     * @param pageable
+     * @return
+     */
     @Transactional(readOnly = true)
     public GameLogListAdminResponseDto findGamesBySeasonId(Long seasonId, Pageable pageable){
-        Season season = seasonAdminRepository.findById(seasonId).orElseThrow(()-> new SeasonNotFoundException());
-        Page<Game> games = gameAdminRepository.findBySeason(pageable, season);   //시즌 id로 게임들 찾아오기
+        Season season = seasonAdminRepository.findById(seasonId).orElseThrow(SeasonNotFoundException::new);
+        Page<Game> games = gameAdminRepository.findBySeasonAndModeIn(pageable, season, List.of(Mode.NORMAL, Mode.RANK));
         return new GameLogListAdminResponseDto(getGameLogList(games.getContent().stream().map(Game::getId).collect(Collectors.toList())), games.getTotalPages());
     }
 
