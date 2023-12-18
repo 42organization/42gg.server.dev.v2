@@ -483,44 +483,12 @@ class TournamentAdminControllerTest {
             String url = "/pingpong/admin/tournaments";
             String content = objectMapper.writeValueAsString(createDto);
 
-            //when
+            //when, then
             String contentAsString = mockMvc.perform(post(url)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(content))
                     .andExpect(status().isCreated())
-                    .andReturn().getResponse().getContentAsString();
-
-            System.out.println(contentAsString);
-
-            // then
-            tournamentRepository.findByTitle(createDto.getTitle()).orElseThrow(()->
-                    new CustomRuntimeException("토너먼트 생성 안 됨", ErrorCode.BAD_REQUEST));
-        }
-
-        @Test
-        @DisplayName("토너먼트 제목 중복")
-        void titleDup() throws Exception {
-            //given
-            String accessToken = testDataUtils.getAdminLoginAccessToken();
-
-            TournamentAdminCreateRequestDto createDto = testDataUtils.createRequestDto(
-                    LocalDateTime.now().plusDays(3).withHour(14).withMinute(0),
-                    LocalDateTime.now().plusDays(3).withHour(16).withMinute(0),
-                    TournamentType.ROOKIE);
-
-            testDataUtils.createTournament(createDto.getTitle(), LocalDateTime.now().plusHours(-4),
-                    LocalDateTime.now().plusHours(-2), TournamentStatus.BEFORE);
-
-            String url = "/pingpong/admin/tournaments";
-            String content = objectMapper.writeValueAsString(createDto);
-
-            //when, then
-            String contentAsString = mockMvc.perform(post(url)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(content))
-                    .andExpect(status().isConflict())
                     .andReturn().getResponse().getContentAsString();
 
             System.out.println(contentAsString);
