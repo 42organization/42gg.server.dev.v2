@@ -15,7 +15,6 @@ import com.gg.server.domain.tournament.data.TournamentGameRepository;
 import com.gg.server.domain.tournament.data.TournamentRepository;
 import com.gg.server.domain.tournament.data.TournamentUser;
 import com.gg.server.domain.tournament.data.TournamentUserRepository;
-import com.gg.server.admin.tournament.exception.TournamentTitleConflictException;
 import com.gg.server.domain.tournament.exception.TournamentConflictException;
 import com.gg.server.domain.tournament.exception.TournamentNotFoundException;
 import com.gg.server.domain.tournament.exception.TournamentUpdateException;
@@ -101,7 +100,7 @@ class TournamentAdminServiceTest {
             given(tournamentRepository.findByTitle(tournament.getTitle())).willReturn(Optional.of(tournament));
             // when, then
             assertThatThrownBy(() -> tournamentAdminService.createTournament(tournamentAdminCreateRequestDto))
-                    .isInstanceOf(TournamentTitleConflictException.class);
+                    .isInstanceOf(TournamentConflictException.class);
         }
 
         @Test
@@ -127,13 +126,13 @@ class TournamentAdminServiceTest {
             given(tournamentRepository.findByTitle(tournament.getTitle())).willReturn(Optional.empty());
             // when, then
             assertThatThrownBy(() -> tournamentAdminService.createTournament(tournamentAdminCreateRequestDto1))
-                    .isInstanceOf(InvalidParameterException.class);
+                    .isInstanceOf(TournamentUpdateException.class);
             assertThatThrownBy(() -> tournamentAdminService.createTournament(tournamentAdminCreateRequestDto2))
-                    .isInstanceOf(InvalidParameterException.class);
+                    .isInstanceOf(TournamentUpdateException.class);
             assertThatThrownBy(() -> tournamentAdminService.createTournament(tournamentAdminCreateRequestDto3))
-                    .isInstanceOf(InvalidParameterException.class);
+                    .isInstanceOf(TournamentUpdateException.class);
             assertThatThrownBy(() -> tournamentAdminService.createTournament(tournamentAdminCreateRequestDto4))
-                    .isInstanceOf(InvalidParameterException.class);
+                    .isInstanceOf(TournamentUpdateException.class);
         }
 
         @Test
@@ -260,11 +259,11 @@ class TournamentAdminServiceTest {
             given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
             // when then
             assertThatThrownBy(() -> tournamentAdminService.updateTournamentInfo(tournament.getId(), invalidRequestDto1))
-                .isInstanceOf(InvalidParameterException.class);
+                .isInstanceOf(TournamentUpdateException.class);
             assertThatThrownBy(() -> tournamentAdminService.updateTournamentInfo(tournament.getId(), invalidRequestDto2))
-                .isInstanceOf(InvalidParameterException.class);
+                .isInstanceOf(TournamentUpdateException.class);
             assertThatThrownBy(() -> tournamentAdminService.updateTournamentInfo(tournament.getId(), invalidRequestDto3))
-                .isInstanceOf(InvalidParameterException.class);
+                .isInstanceOf(TournamentUpdateException.class);
         }
 
         @Test
