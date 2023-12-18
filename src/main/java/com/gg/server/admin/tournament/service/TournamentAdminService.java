@@ -41,7 +41,7 @@ public class TournamentAdminService {
     private final UserRepository userRepository;
     private final GameRepository gameRepository;
     private final TournamentGameRepository tournamentGameRepository;
-    private final SlotManagementRepository slotManagementRepository;////
+    private final SlotManagementRepository slotManagementRepository;
     private final MatchTournamentService matchTournamentService;
 
     /***
