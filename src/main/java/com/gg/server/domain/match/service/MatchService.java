@@ -202,19 +202,16 @@ public class MatchService {
      */
     private boolean isExistTournamentNotEnded(LocalDateTime time) {
         List<Tournament> tournamentList = tournamentRepository.findAllByStatusIsNot(TournamentStatus.END);
-        if (tournamentList.isEmpty()) {
-            return false;
-        }
         for (Tournament tournament : tournamentList) {
             if (time.isAfter(tournament.getStartTime()) &&
                 time.isBefore(tournament.getEndTime())) {
-                return false;
+                return true;
             }
             if (time.isEqual(tournament.getStartTime()) ||
                 time.isEqual(tournament.getEndTime())) {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 }
