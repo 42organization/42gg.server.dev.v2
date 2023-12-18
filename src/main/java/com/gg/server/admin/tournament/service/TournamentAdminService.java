@@ -54,7 +54,6 @@ public class TournamentAdminService {
      */
     @Transactional
     public Tournament createTournament(TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto) {
-        checkTournamentTitle(tournamentAdminCreateRequestDto.getTitle());
         checkValidTournamentTime(tournamentAdminCreateRequestDto.getStartTime(), tournamentAdminCreateRequestDto.getEndTime());
         checkConflictedTournament(-1L, tournamentAdminCreateRequestDto.getStartTime(), tournamentAdminCreateRequestDto.getEndTime());
         checkGameExistence(tournamentAdminCreateRequestDto.getStartTime(), tournamentAdminCreateRequestDto.getEndTime());
@@ -231,16 +230,6 @@ public class TournamentAdminService {
             }
             throw new TournamentConflictException();
         }
-    }
-
-    /***
-     * 토너먼트 제목 중복 체크
-     * @param tournamentTitle 요청 데이터에서 받아온 토너먼트 제목
-     * @throws TournamentConflictException 토너먼트의 제목이 겹칠 때
-     */
-    private void checkTournamentTitle(String tournamentTitle) {
-        tournamentRepository.findByTitle(tournamentTitle)
-            .ifPresent(a -> {throw new TournamentConflictException(ErrorCode.TOURNAMENT_TITLE_CONFLICT);});
     }
 
     /**
