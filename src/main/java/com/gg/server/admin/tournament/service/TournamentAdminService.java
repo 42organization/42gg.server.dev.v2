@@ -53,7 +53,7 @@ public class TournamentAdminService {
      * @return 새로 생성된 tournament
      */
     @Transactional
-    public Tournament createTournament(TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto) {
+    public void createTournament(TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto) {
         checkValidTournamentTime(tournamentAdminCreateRequestDto.getStartTime(), tournamentAdminCreateRequestDto.getEndTime());
         checkConflictedTournament(-1L, tournamentAdminCreateRequestDto.getStartTime(), tournamentAdminCreateRequestDto.getEndTime());
         checkGameExistence(tournamentAdminCreateRequestDto.getStartTime(), tournamentAdminCreateRequestDto.getEndTime());
@@ -66,7 +66,7 @@ public class TournamentAdminService {
                 .type(tournamentAdminCreateRequestDto.getType())
                 .status(TournamentStatus.BEFORE).build();
         createTournamentGameList(tournament, 7);
-        return tournamentRepository.save(tournament);
+        tournamentRepository.save(tournament);
     }
 
     /**
