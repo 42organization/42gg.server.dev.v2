@@ -5,6 +5,9 @@ import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.exception.ScoreNotInvalidException;
 import com.gg.server.domain.game.type.StatusType;
+import com.gg.server.domain.match.exception.SlotNotFoundException;
+import com.gg.server.domain.slotmanagement.SlotManagement;
+import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
 import com.gg.server.domain.match.service.MatchTournamentService;
 import com.gg.server.domain.match.type.TournamentMatchStatus;
 import com.gg.server.domain.team.data.Team;
@@ -38,6 +41,7 @@ public class TournamentAdminService {
     private final UserRepository userRepository;
     private final GameRepository gameRepository;
     private final TournamentGameRepository tournamentGameRepository;
+    private final SlotManagementRepository slotManagementRepository;
     private final MatchTournamentService matchTournamentService;
 
     /***
@@ -199,9 +203,14 @@ public class TournamentAdminService {
      * @throws InvalidParameterException 토너먼트 시간으로 부적합 할 때
      */
     private void checkValidTournamentTime(LocalDateTime startTime, LocalDateTime endTime) {
+        SlotManagement slotManagement = slotManagementRepository.findCurrent(startTime)
+            .orElseThrow(SlotNotFoundException::new);
+        int interval = slotManagement.getGameInterval();
+
         if (startTime.isAfter(endTime) || startTime.isEqual(endTime) ||
-                startTime.isBefore(LocalDateTime.now().plusDays(Tournament.ALLOWED_MINIMAL_START_DAYS)) ||
-                startTime.plusHours(Tournament.MINIMUM_TOURNAMENT_DURATION).isAfter(endTime)) {
+            startTime.getDayOfMonth() - LocalDateTime.now().getDayOfMonth() < Tournament.ALLOWED_MINIMAL_START_DAYS ||
+            startTime.plusHours(Tournament.MINIMUM_TOURNAMENT_DURATION).isAfter(endTime) ||
+            startTime.getMinute() % interval != 0 || endTime.getMinute() % interval != 0) {
             throw new TournamentUpdateException(ErrorCode.TOURNAMENT_INVALID_TIME);
         }
     }

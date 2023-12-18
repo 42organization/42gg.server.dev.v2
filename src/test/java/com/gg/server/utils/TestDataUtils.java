@@ -713,4 +713,15 @@ public class TestDataUtils {
         slotManagementRepository.save(slotManagement);
         return slotManagement;
     }
+
+    public SlotManagement createSlot(int gameInterval) {
+        SlotManagement slotManagement = SlotManagement.builder()
+            .pastSlotTime(0)
+            .futureSlotTime(0)
+            .openMinute(0)
+            .gameInterval(gameInterval)
+            .startTime(LocalDateTime.now().minusHours(1))
+            .build();
+        return slotManagementRepository.save(slotManagement);
+    }
 }
