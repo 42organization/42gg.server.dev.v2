@@ -468,6 +468,10 @@ public class GameControllerTest {
                 gameRepository.save(game);
                 tournamentGameList.get(i).updateGame(game);
             }
+
+            testDataUtils.createUserRank(team1.getTeamUsers().get(0).getUser(), "", season);
+            testDataUtils.createUserRank(team2.getTeamUsers().get(0).getUser(), "", season);
+
             String ac1 = tokenProvider.createToken(team1.getTeamUsers().get(0).getUser().getId());
             String content = objectMapper.writeValueAsString(new TournamentResultReqDto(game.getId(), team1.getId(), 1, team2.getId(), 2));
 

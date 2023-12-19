@@ -12,6 +12,7 @@ import com.gg.server.admin.tournament.dto.TournamentGameUpdateRequestDto;
 import com.gg.server.admin.tournament.service.TournamentAdminService;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.pchange.data.PChangeRepository;
+import com.gg.server.domain.season.data.Season;
 import com.gg.server.utils.MatchTestUtils;
 import com.gg.server.utils.annotation.IntegrationTest;
 import com.gg.server.domain.tournament.data.Tournament;
@@ -859,10 +860,11 @@ class TournamentAdminControllerTest {
         private String accessToken;
         private Tournament tournament;
         private List<TournamentGame> allTournamentGames;
+        Season season;
         @BeforeEach
         void setUp() {
             // 토너먼트 생성하고 8강 & 4강은 게임 점수 입력하고 종료된 상태이고 결승전 매칭된 상태로 초기화
-            testDataUtils.createSeason();
+            season = testDataUtils.createSeason();
             testDataUtils.createSlotManagement(15);
             tournament = testDataUtils.createTournamentWithUser(Tournament.ALLOWED_JOINED_NUMBER, 4, "test");
             allTournamentGames = testDataUtils.createTournamentGameList(tournament, 7);
@@ -885,6 +887,10 @@ class TournamentAdminControllerTest {
             int otherTeamScore = 1;
             TournamentGame tournamentGame = allTournamentGames.stream().filter(tg -> tg.getTournamentRound() == TournamentRound.SEMI_FINAL_1).findAny().orElseThrow();
             TournamentGame nextTournamentGame = allTournamentGames.stream().filter(tg -> tg.getTournamentRound() == TournamentRound.THE_FINAL).findAny().orElseThrow();
+            User user1 = tournamentGame.getGame().getTeams().get(0).getTeamUsers().get(0).getUser();
+            User user2 = tournamentGame.getGame().getTeams().get(1).getTeamUsers().get(0).getUser();
+            testDataUtils.createUserRank(user1, "" ,season);
+            testDataUtils.createUserRank(user2, "" ,season);
 
             TournamentGameUpdateRequestDto requestDto = new TournamentGameUpdateRequestDto(tournamentGame.getId(), nextTournamentGame.getId(),
                     new TeamReqDto(tournamentGame.getGame().getTeams().get(0).getId(), myTeamScore),
@@ -901,8 +907,6 @@ class TournamentAdminControllerTest {
             TournamentGame resTournamentGame = tournamentGameRepository.findById(tournamentGame.getId()).orElseThrow();
             assertThat(resTournamentGame.getGame().getTeams().get(0).getScore()).isEqualTo(myTeamScore);
             assertThat(resTournamentGame.getGame().getTeams().get(1).getScore()).isEqualTo(otherTeamScore);
-            User user1 = tournamentGame.getGame().getTeams().get(0).getTeamUsers().get(0).getUser();
-            User user2 = tournamentGame.getGame().getTeams().get(1).getTeamUsers().get(0).getUser();
             assertThat(pChangeRepository.findByUserIdAndGameId(user1.getId(), tournamentGame.getGame().getId())).isNotEmpty();
             assertThat(pChangeRepository.findByUserIdAndGameId(user2.getId(), tournamentGame.getGame().getId())).isNotEmpty();
         }
