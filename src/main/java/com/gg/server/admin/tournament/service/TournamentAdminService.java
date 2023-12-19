@@ -335,7 +335,6 @@ public class TournamentAdminService {
      * @return 수정 가능 여부
      */
     private boolean canUpdateScore(TournamentGame tournamentGame, TournamentGameUpdateRequestDto reqDto) {
-        System.out.println("sgotest tournamentgame status : " + tournamentGame.getGame().getStatus());
         if (tournamentGame.getGame().getStatus() == StatusType.BEFORE) {
             return false;
         }
