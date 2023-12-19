@@ -56,7 +56,7 @@ public interface GameRepository extends JpaRepository<Game, Long>, GameRepositor
             "t2.win t2IsWin, t2.teamId t2TeamId, t2.score t2Score, t2.intraId t2IntraId, t2.wins t2Wins, t2.losses t2Losses, t2.image t2Image, t2.total_exp t2Exp " +
             "from v_rank_game_detail t1, v_rank_game_detail t2 " +
             "where t1.gameId = (:gameId) and t1.teamId <t2.teamId and t1.gameId=t2.gameId order by t1.startTime desc;", nativeQuery = true)
-    GameTeamUser findTeamsByGameId(@Param("gameId") Long gameId);
+    Optional<GameTeamUser> findTeamsByGameId(@Param("gameId") Long gameId);
 
     @Query(value = "SELECT teamId, gameId, score, startTime, status, mode, userId, intraId, image, total_exp exp" +
             " FROM v_teamuser where gameId = :gameId", nativeQuery = true)
@@ -93,7 +93,7 @@ public interface GameRepository extends JpaRepository<Game, Long>, GameRepositor
 
     @Query(value = "select gameId " +
             "from v_teamuser " +
-            "where intraId = :intra and mode=:mode and seasonId = :seasonId and status=:status", nativeQuery = true)
+            "where intraId = :intra and mode=:mode and seasonId = :seasonId and status = :status", nativeQuery = true)
     Slice<Long> findGamesByUserAndModeAndSeason(@Param("intra") String intra, @Param("mode") String mode, @Param("seasonId") Long seasonId, @Param("status") String status, Pageable pageable);
 
     List<Game> findAllByStatusAndStartTimeLessThanEqual(StatusType status, LocalDateTime startTime);

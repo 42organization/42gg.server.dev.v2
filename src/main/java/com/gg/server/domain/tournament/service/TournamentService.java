@@ -25,6 +25,7 @@ import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.domain.user.dto.UserImageDto;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.global.exception.ErrorCode;
+import com.gg.server.global.exception.custom.BusinessException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -257,7 +258,8 @@ public class TournamentService {
             TournamentGame nextTournamentGame = findNextTournamentGame(tournamentGames, tournamentGame);
             GameTeamUser gameTeamUser = null;
             if (tournamentGame.getGame() != null) {
-                gameTeamUser = gameRepository.findTeamsByGameId(tournamentGame.getGame().getId());
+                gameTeamUser = gameRepository.findTeamsByGameId(tournamentGame.getGame().getId())
+                    .orElseThrow(() -> new BusinessException(ErrorCode.TEAM_USER_NOT_FOUND));
             }
             tournamentGameResDtoList.add(new TournamentGameResDto(tournamentGame, gameTeamUser, tournamentGame.getTournamentRound(), nextTournamentGame));
         }
