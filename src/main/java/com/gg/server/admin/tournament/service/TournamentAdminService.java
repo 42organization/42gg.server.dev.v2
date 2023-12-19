@@ -335,12 +335,12 @@ public class TournamentAdminService {
      * @return 수정 가능 여부
      */
     private boolean canUpdateScore(TournamentGame tournamentGame, TournamentGameUpdateRequestDto reqDto) {
-        if (reqDto.getNextTournamentGameId() == null &&
-                tournamentGame.getTournamentRound() == TournamentRound.THE_FINAL) {
-            return true;
-        }
+        System.out.println("sgotest tournamentgame status : " + tournamentGame.getGame().getStatus());
         if (tournamentGame.getGame().getStatus() == StatusType.BEFORE) {
             return false;
+        }
+        if (reqDto.getNextTournamentGameId() == null){
+            return tournamentGame.getTournamentRound() == TournamentRound.THE_FINAL;
         }
         TournamentGame nextTournamentGame = tournamentGameRepository.findById(reqDto.getNextTournamentGameId())
                 .orElseThrow(TournamentGameNotFoundException::new);
