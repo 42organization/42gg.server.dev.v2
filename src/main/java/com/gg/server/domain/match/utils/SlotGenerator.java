@@ -69,9 +69,11 @@ public class SlotGenerator {
             LocalDateTime startTime = tournament.getStartTime();
             int startTimeMinute = startTime.getMinute();
             startTimeMinute = startTimeMinute - (startTimeMinute % interval);
+            startTime = startTime.withMinute(startTimeMinute);
             LocalDateTime endTime = tournament.getEndTime();
             int endTimeMinute = endTime.getMinute();
             endTimeMinute = endTimeMinute + (interval - (endTimeMinute % interval));
+            endTime = endTime.withMinute(endTimeMinute);
             for (LocalDateTime time = startTime; time.isBefore(endTime); time = time.plusMinutes(interval)) {
                 slots.put(time, new SlotStatusDto(time, SlotStatus.CLOSE, interval));
             }
