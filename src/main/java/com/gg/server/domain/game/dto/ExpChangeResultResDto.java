@@ -1,12 +1,16 @@
 package com.gg.server.domain.game.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.gg.server.domain.coin.dto.UserGameCoinResultDto;
 import com.gg.server.global.utils.ExpLevelCalculator;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@JsonInclude(Include.NON_NULL)
 public class ExpChangeResultResDto {
     private Integer beforeExp;
     private Integer beforeMaxExp;
@@ -17,6 +21,8 @@ public class ExpChangeResultResDto {
     private int beforeCoin;
     private int afterCoin;
     private int coinIncrement;
+    protected Integer changedPpp;
+    protected Integer beforePpp;
 
     public ExpChangeResultResDto(Integer beforeExp, Integer currentExp, UserGameCoinResultDto userGameCoinResultDto) {
         this.beforeExp = ExpLevelCalculator.getCurrentLevelMyExp(beforeExp);

@@ -1,15 +1,14 @@
 package com.gg.server.domain.game.dto;
 
 import com.gg.server.domain.coin.dto.UserGameCoinResultDto;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class PPPChangeResultResDto extends ExpChangeResultResDto {
-    private Integer changedPpp;
-    private Integer beforePpp;
 
     public PPPChangeResultResDto(Integer beforeExp, Integer currentExp, Integer beforePpp, Integer afterPpp, UserGameCoinResultDto userGameCoinResultDto) {
         super(beforeExp, currentExp, userGameCoinResultDto);

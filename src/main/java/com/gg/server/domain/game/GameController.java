@@ -8,12 +8,14 @@ import com.gg.server.domain.game.dto.GameListResDto;
 import com.gg.server.domain.game.exception.ScoreNotMatchedException;
 import com.gg.server.domain.game.service.GameFindService;
 import com.gg.server.domain.game.service.GameService;
+import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.rank.redis.RankRedisService;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.InvalidParameterException;
 import com.gg.server.global.utils.argumentresolver.Login;
 import io.swagger.v3.oas.annotations.Parameter;
+import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -112,13 +114,11 @@ public class GameController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping("/{gameId}/result/normal")
-    ExpChangeResultResDto getNormalExpChange(@PathVariable Long gameId, @Parameter(hidden = true) @Login UserDto user) {
+    @GetMapping("/{gameId}/result")
+    ExpChangeResultResDto getNormalExpChange(@PathVariable Long gameId,
+        @Parameter(hidden = true) @Login UserDto user, @RequestParam Mode mode) {
+        if (mode == Mode.RANK)
+            return gameService.pppChangeResult(gameId, user.getId());
         return gameService.expChangeResult(gameId, user.getId());
-    }
-
-    @GetMapping("/{gameId}/result/rank")
-    PPPChangeResultResDto getRankPPPChange(@PathVariable Long gameId, @Parameter(hidden = true) @Login UserDto user) {
-        return gameService.pppChangeResult(gameId, user.getId());
     }
 }
