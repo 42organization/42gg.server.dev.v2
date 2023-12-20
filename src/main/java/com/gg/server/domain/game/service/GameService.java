@@ -28,6 +28,8 @@ import com.gg.server.domain.team.exception.TeamIdNotMatchException;
 import com.gg.server.domain.tier.service.TierService;
 import com.gg.server.domain.tournament.data.*;
 import com.gg.server.domain.tournament.exception.TournamentGameNotFoundException;
+import com.gg.server.domain.user.data.User;
+import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.InvalidParameterException;
 import com.gg.server.global.utils.ExpLevelCalculator;
@@ -55,6 +57,7 @@ public class GameService {
     private final MatchTournamentService matchTournamentService;
     private final TournamentUserRepository tournamentUserRepository;
     private final NotiAdminService notiAdminService;
+    private final UserRepository userRepository;
 
   /**
    * 게임 정보를 가져온다.
@@ -116,11 +119,10 @@ public class GameService {
             Tournament tournament = tournamentGame.getTournament();
             matchTournamentService.matchGames(tournament, tournamentGame.getTournamentRound().getNextRound());
             String gameMatchingNotiMessage = "토너먼트 게임이 매칭되었습니다! 경기 상대를 확인해주세요.";
-            for (TournamentUser tournamentUser : tournamentUserRepository.findAllByTournamentId(tournament.getId())) {
-                if (tournamentUser.getIsJoined().equals(true)) {
-                    notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(tournamentUser.getUser().getIntraId(), gameMatchingNotiMessage));
-                }
-            }
+            TeamUser user1 = teamUserRepository.findByTeamId(scoreDto.getMyTeamId());
+            TeamUser user2 = teamUserRepository.findByTeamId(scoreDto.getEnemyTeamId());
+            notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(user1.getUser().getIntraId(), gameMatchingNotiMessage));
+            notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(user2.getUser().getIntraId(), gameMatchingNotiMessage));
         }
     }
 
