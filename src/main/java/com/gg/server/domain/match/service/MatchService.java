@@ -21,6 +21,7 @@ import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.service.SeasonFindService;
+import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
 import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentRepository;
 import com.gg.server.domain.tournament.exception.TournamentConflictException;
@@ -50,6 +51,7 @@ public class MatchService {
     private final GameUpdateService gameUpdateService;
     private final UserRepository userRepository;
     private final TournamentRepository tournamentRepository;
+    private final SlotManagementRepository slotManagementRepository;
 
     /**
      * 1) 매칭 가능한 유저 있을 경우 : 게임 생성
@@ -79,8 +81,6 @@ public class MatchService {
      * 1) 매칭되어 게임 생성된 후 : 게임 삭제하고 알림 전송, 취소한 유저 패널티 부과
      * 복귀 유저는 매칭 가능한 상대 존재하면 다시 매칭해주고 아니면 취소 알림 보내고 큐에 등록 시킴
      * 2) 매칭 전 : 큐에서 유저 삭제
-     * */
-    /**
      * game 매칭된 user 이외에 다른 user가 취소할 경우, 에러 발생
      */
     @Transactional
@@ -92,13 +92,13 @@ public class MatchService {
                 throw new SlotNotFoundException();
             }
             cancelGame(userDto, startTime, game.get(), enemyTeam);
-        }else {
+        } else {
             deleteUserFromQueue(userDto, startTime);
-        };
+        }
     }
 
     private void cancelGame(UserDto userDto, LocalDateTime startTime, Game game, List<User> enemyTeam) {
-        /**취소한 유저 큐에서 삭제 후 패널티 부과*/
+        /*취소한 유저 큐에서 삭제 후 패널티 부과*/
         Long recoveredUserId = enemyTeam.get(0).getId();
         List<RedisMatchUser> allMatchUsers = redisMatchTimeRepository.getAllMatchUsers(startTime);
         RedisMatchUser penaltyUser = allMatchUsers.stream()
@@ -111,7 +111,7 @@ public class MatchService {
                 .orElseThrow(UserNotFoundException::new);
         redisMatchTimeRepository.deleteMatchUser(startTime, penaltyUser);
         penaltyService.givePenalty(userDto, 30);
-        /**취소 당한 유저 매칭 상대 찾고 있으면 다시 게임 생성 아니면 취소 알림*/
+        /*취소 당한 유저 매칭 상대 찾고 있으면 다시 게임 생성 아니면 취소 알림*/
         Season season = seasonFindService.findCurrentSeason(startTime);
         MatchCalculator matchCalculator = new MatchCalculator(season.getPppGap(), recoveredUser);
         List<RedisMatchUser> targetPlayers = allMatchUsers.stream()
@@ -176,7 +176,7 @@ public class MatchService {
                     .stream()
                     .filter(ele -> !ele.getStartTime().equals(targetTIme))
                     .collect(Collectors.toSet());
-            matchTimes.stream().forEach(ele -> redisMatchTimeRepository.deleteMatchUser(ele.getStartTime(), player));
+            matchTimes.forEach(ele -> redisMatchTimeRepository.deleteMatchUser(ele.getStartTime(), player));
             redisMatchUserRepository.deleteMatchUser(player.getUserId());
         }
     }
@@ -197,24 +197,26 @@ public class MatchService {
 
     /**
      * LIVE, BEFORE 상태인 토너먼트와 진행 시간이 겹치지 않으면 true, 겹치면 false
-     * @param time 현재 시간
+     * @param startTime 현재 시간
      * @return 종료되지 않은 토너먼트 있으면 true, 없으면 false
+     * @throws SlotNotFoundException 현재 시간에 해당하는 슬롯이 없을 경우
      */
-    private boolean isExistTournamentNotEnded(LocalDateTime time) {
+    private boolean isExistTournamentNotEnded(LocalDateTime startTime) {
         List<Tournament> tournamentList = tournamentRepository.findAllByStatusIsNot(TournamentStatus.END);
-        if (tournamentList.isEmpty()) {
-            return false;
-        }
+        int gameInterval = slotManagementRepository.findCurrent(startTime)
+            .orElseThrow(SlotNotFoundException::new)
+            .getGameInterval();
+        LocalDateTime endTime = startTime.plusMinutes(gameInterval);
         for (Tournament tournament : tournamentList) {
-            if (time.isAfter(tournament.getStartTime()) &&
-                time.isBefore(tournament.getEndTime())) {
-                return false;
+            if (startTime.isAfter(tournament.getStartTime()) && startTime.isBefore(tournament.getEndTime()) ||
+                    endTime.isAfter(tournament.getStartTime()) && endTime.isBefore(tournament.getEndTime())) {
+                return true;
             }
-            if (time.isEqual(tournament.getStartTime()) ||
-                time.isEqual(tournament.getEndTime())) {
-                return false;
+            if (startTime.isEqual(tournament.getStartTime()) || endTime.isEqual(tournament.getEndTime()) ||
+                    endTime.isEqual(tournament.getStartTime()) || startTime.isEqual(tournament.getEndTime())) {
+                return true;
             }
         }
-        return true;
+        return false;
     }
 }

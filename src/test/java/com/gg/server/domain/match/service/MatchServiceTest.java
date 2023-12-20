@@ -252,7 +252,6 @@ class MatchServiceTest {
 
         @DisplayName("토너먼트 시간과 겹칠 경우 게임 생성 안됨")
         @Test
-        @Disabled
         void addMatchTournamentTime() {
             // given
             Tournament tournament = Tournament.builder()
