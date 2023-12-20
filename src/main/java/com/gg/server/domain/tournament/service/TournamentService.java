@@ -1,5 +1,7 @@
 package com.gg.server.domain.tournament.service;
 
+import com.gg.server.admin.noti.dto.SendNotiAdminRequestDto;
+import com.gg.server.admin.noti.service.NotiAdminService;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.match.service.MatchTournamentService;
 import com.gg.server.domain.tournament.data.*;
@@ -48,6 +50,7 @@ public class TournamentService {
     private final TournamentGameRepository tournamentGameRepository;
     private final GameRepository gameRepository;
     private final MatchTournamentService matchTournamentService;
+    private final NotiAdminService notiAdminService;
 
     /**
      * 토너먼트 리스트 조회
@@ -170,7 +173,6 @@ public class TournamentService {
         return true;
     }
 
-
     /**
      * 오늘 시작하는 토너먼트가 있으면 해당 토너먼트 status를 LIVE로 변경하고 8강 경기 매칭
      * 참가자가 ALLOWED_JOINED_NUMBER보다 적으면 토너먼트 취소
@@ -179,17 +181,27 @@ public class TournamentService {
     public void startTournament() {
         LocalDate date = LocalDate.now();
         List<Tournament> imminentTournaments = findImminentTournament(date);
+        String tournamentStartNotiMessage = "참가 신청한 토너먼트 개최 당일입니다. 개최 시간을 확인하시고 늦지 않게 참석바랍니다!";
+        String tournamentCancelNotiMessage = "참가 신청한 토너먼트가 신청 인원 미달로 취소되었습니다.";
 
         for (Tournament imminentTournament : imminentTournaments) {
             List<TournamentUser> tournamentUsers = imminentTournament.getTournamentUsers();
             if (tournamentUsers.size() < Tournament.ALLOWED_JOINED_NUMBER) {
-                // TODO 취소 알림
+                for (TournamentUser tournamentUser : tournamentUsers) {
+                    if (tournamentUser.getIsJoined().equals(true)) {
+                        notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(tournamentUser.getUser().getIntraId(), tournamentCancelNotiMessage));
+                    }
+                }
                 tournamentRepository.delete(imminentTournament);
                 return;
             }
             imminentTournament.updateStatus(TournamentStatus.LIVE);
             matchTournamentService.matchGames(imminentTournament, QUARTER_FINAL_1);
-            // TODO 시작 알림?
+            for (TournamentUser tournamentUser : tournamentUsers) {
+                if (tournamentUser.getIsJoined().equals(true)) {
+                    notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(tournamentUser.getUser().getIntraId(), tournamentStartNotiMessage));
+                }
+            }
         }
     }
 
