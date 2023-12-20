@@ -78,7 +78,7 @@ public class GameAdminService {
     }
 
     /**
-     * 특정 유저의 게임 목록 조회
+     * 특정 유저의 게임 목록 조회 (토너먼트 게임 제외)
      * @param intraId 조회할 유저의 intraId
      * @param pageable page size
      * @return GameLogListAdminResponseDto
@@ -87,7 +87,7 @@ public class GameAdminService {
     @Transactional(readOnly = true)
     public GameLogListAdminResponseDto findGamesByIntraId(String intraId, Pageable pageable){
         User user = userAdminRepository.findByIntraId(intraId).orElseThrow(UserNotFoundException::new);
-        List<PChange> pChangeList = pChangeRepository.findAllByUserId(user.getId());
+        List<PChange> pChangeList = pChangeRepository.findAllByUserIdGameModeIn(user.getId(), List.of(Mode.NORMAL, Mode.RANK));
         List<Game> gameList = new ArrayList<>();
 
         for(PChange pChange : pChangeList)
