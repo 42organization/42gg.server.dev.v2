@@ -115,7 +115,6 @@ public class GameService {
                     .orElseThrow(TournamentGameNotFoundException::new);
             Tournament tournament = tournamentGame.getTournament();
             matchTournamentService.matchGames(tournament, tournamentGame.getTournamentRound().getNextRound());
-            //매칭 알림
             String gameMatchingNotiMessage = "토너먼트 게임이 매칭되었습니다! 경기 상대를 확인해주세요.";
             for (TournamentUser tournamentUser : tournamentUserRepository.findAllByTournamentId(tournament.getId())) {
                 if (tournamentUser.getIsJoined().equals(true)) {
