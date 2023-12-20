@@ -24,6 +24,7 @@ import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.exception.UserNotFoundException;
+import com.gg.server.global.config.ConstantConfig;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.InvalidParameterException;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +47,7 @@ public class TournamentAdminService {
     private final TournamentGameRepository tournamentGameRepository;
     private final SlotManagementRepository slotManagementRepository;
     private final MatchTournamentService matchTournamentService;
+    private final ConstantConfig constantConfig;
     private final GameService gameService;
 
     /***
@@ -211,7 +213,7 @@ public class TournamentAdminService {
         int interval = slotManagement.getGameInterval();
 
         if (startTime.isAfter(endTime) || startTime.isEqual(endTime) ||
-            startTime.getDayOfMonth() - LocalDateTime.now().getDayOfMonth() < Tournament.ALLOWED_MINIMAL_START_DAYS ||
+            startTime.getDayOfMonth() - LocalDateTime.now().getDayOfMonth() < constantConfig.getAllowedMinimalStartDays()||
             startTime.plusHours(Tournament.MINIMUM_TOURNAMENT_DURATION).isAfter(endTime) ||
             startTime.getMinute() % interval != 0 || endTime.getMinute() % interval != 0) {
             throw new TournamentUpdateException(ErrorCode.TOURNAMENT_INVALID_TIME);

@@ -1,6 +1,7 @@
 package com.gg.server.global.scheduler;
 
 import com.gg.server.domain.tournament.service.TournamentService;
+import com.gg.server.global.config.ConstantConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -9,9 +10,12 @@ import org.springframework.stereotype.Component;
 public class TournamentScheduler extends AbstractScheduler {
     private final TournamentService tournamentService;
 
-    public TournamentScheduler(TournamentService tournamentService) {
+    private final ConstantConfig constantConfig;
+
+    public TournamentScheduler(TournamentService tournamentService, ConstantConfig constantConfig) {
         this.tournamentService = tournamentService;
-        this.cron = "0 0/10 * * * *";       // TODO QA 이후 0 0 0 * * * 로 변경
+        this.constantConfig = constantConfig;
+        this.cron = constantConfig.getTournamentSchedule(); // TODO QA 이후 0 0 0 * * * 로 변경
     }
 
     @Override

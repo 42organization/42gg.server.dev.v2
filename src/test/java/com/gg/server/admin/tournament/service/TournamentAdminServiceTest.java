@@ -3,6 +3,7 @@ package com.gg.server.admin.tournament.service;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 
 import com.gg.server.admin.tournament.dto.TournamentAdminCreateRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminAddUserRequestDto;
@@ -29,6 +30,7 @@ import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.domain.user.type.RacketType;
 import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.domain.user.type.SnsType;
+import com.gg.server.global.config.ConstantConfig;
 import com.gg.server.utils.ReflectionUtilsForUnitTest;
 import com.gg.server.utils.annotation.UnitTest;
 import java.time.LocalDateTime;
@@ -36,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -59,6 +62,8 @@ class TournamentAdminServiceTest {
     UserRepository userRepository;
     @Mock
     GameRepository gameRepository;
+    @Mock
+    ConstantConfig constantConfig;
     @InjectMocks
     TournamentAdminService tournamentAdminService;
 
@@ -93,6 +98,7 @@ class TournamentAdminServiceTest {
         @Test
         @DisplayName("유효하지 않은 시간 입력")
         public void invalidTime() {
+            when(constantConfig.getAllowedMinimalStartDays()).thenReturn(2);
             //given
             Tournament tournament = createTournament(1L, TournamentStatus.BEFORE,
                     getTargetTime(0, 0, 0), getTargetTime(0, 1, 0));
@@ -232,6 +238,7 @@ class TournamentAdminServiceTest {
         @Test
         @DisplayName("업데이트_토너먼트_Dto_Invalid_Time")
         public void Dto_Invalid_Time() {
+            when(constantConfig.getAllowedMinimalStartDays()).thenReturn(2);
             // given
             Tournament tournament = createTournament(1L, TournamentStatus.BEFORE,
                 getTargetTime(2, 1, 0), getTargetTime(2, 3, 0));
