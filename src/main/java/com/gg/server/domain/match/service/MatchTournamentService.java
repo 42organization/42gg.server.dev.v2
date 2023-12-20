@@ -1,5 +1,8 @@
 package com.gg.server.domain.match.service;
 
+import com.gg.server.admin.noti.dto.SendNotiAdminRequestDto;
+import com.gg.server.admin.noti.service.NotiAdminService;
+import com.gg.server.admin.tournament.type.TournamentNotiMessage;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.type.Mode;
@@ -41,6 +44,7 @@ public class MatchTournamentService {
     private final GameRepository gameRepository;
     private final SlotManagementRepository slotManagementRepository;
     private final SeasonFindService seasonFindService;
+    private final NotiAdminService notiAdminService;
 
     /**
      * 토너먼트 진행중 다음 라운드 게임 매칭이 필요한지 확인
@@ -110,6 +114,8 @@ public class MatchTournamentService {
             gameRepository.save(game);
             tournamentGames.get(i).updateGame(game);
             startTime = startTime.plusMinutes((long) gameInterval);
+            notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(user1.getIntraId(), TournamentNotiMessage.GAME_MATCHED.getMessage()));
+            notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(user2.getIntraId(), TournamentNotiMessage.GAME_MATCHED.getMessage()));
         }
     }
 

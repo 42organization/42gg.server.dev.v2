@@ -1,8 +1,5 @@
 package com.gg.server.domain.game.service;
 
-import com.gg.server.admin.noti.dto.SendNotiAdminRequestDto;
-import com.gg.server.admin.noti.service.NotiAdminService;
-import com.gg.server.admin.tournament.type.TournamentNotiMessage;
 import com.gg.server.domain.coin.dto.UserGameCoinResultDto;
 import com.gg.server.domain.coin.service.UserCoinChangeService;
 import com.gg.server.domain.game.data.Game;
@@ -29,7 +26,6 @@ import com.gg.server.domain.team.exception.TeamIdNotMatchException;
 import com.gg.server.domain.tier.service.TierService;
 import com.gg.server.domain.tournament.data.*;
 import com.gg.server.domain.tournament.exception.TournamentGameNotFoundException;
-import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.InvalidParameterException;
 import com.gg.server.global.utils.ExpLevelCalculator;
@@ -55,9 +51,6 @@ public class GameService {
     private final TierService tierService;
     private final TournamentGameRepository tournamentGameRepository;
     private final MatchTournamentService matchTournamentService;
-    private final TournamentUserRepository tournamentUserRepository;
-    private final NotiAdminService notiAdminService;
-    private final UserRepository userRepository;
 
   /**
    * 게임 정보를 가져온다.
@@ -118,10 +111,6 @@ public class GameService {
                     .orElseThrow(TournamentGameNotFoundException::new);
             Tournament tournament = tournamentGame.getTournament();
             matchTournamentService.matchGames(tournament, tournamentGame.getTournamentRound().getNextRound());
-            TeamUser user1 = teamUserRepository.findByTeamId(scoreDto.getMyTeamId());
-            TeamUser user2 = teamUserRepository.findByTeamId(scoreDto.getEnemyTeamId());
-            notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(user1.getUser().getIntraId(), TournamentNotiMessage.GAME_MATCHED.getMessage()));
-            notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(user2.getUser().getIntraId(), TournamentNotiMessage.GAME_MATCHED.getMessage()));
         }
     }
 
