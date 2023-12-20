@@ -94,7 +94,7 @@ public class TournamentGameControllerTest {
             for (TournamentGameResDto tournamentGameResDto : resp.getGames()) {
                 assertThat(tournamentGameResDto.getTournamentGameId()).isNotNull();
                 assertThat(tournamentGameResDto.getTournamentRound()).isNotNull();
-                if (!Objects.equals(tournamentGameResDto.getTournamentRound(), TournamentRound.THE_FINAL.name())) {
+                if (!Objects.equals(tournamentGameResDto.getTournamentRound(), TournamentRound.THE_FINAL)) {
                     assertThat(tournamentGameResDto.getNextTournamentGameId()).isNotNull();
                 }
             }
