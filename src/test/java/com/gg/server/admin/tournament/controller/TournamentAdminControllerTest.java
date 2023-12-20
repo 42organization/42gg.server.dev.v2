@@ -11,6 +11,8 @@ import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentGameUpdateRequestDto;
 import com.gg.server.admin.tournament.service.TournamentAdminService;
 import com.gg.server.domain.game.type.Mode;
+import com.gg.server.domain.pchange.data.PChangeRepository;
+import com.gg.server.domain.season.data.Season;
 import com.gg.server.utils.MatchTestUtils;
 import com.gg.server.utils.annotation.IntegrationTest;
 import com.gg.server.domain.tournament.data.Tournament;
@@ -73,6 +75,12 @@ class TournamentAdminControllerTest {
 
     @Autowired
     TournamentGameRepository tournamentGameRepository;
+
+    @Autowired
+    PChangeRepository pChangeRepository;
+
+    @Autowired
+    private MatchTestUtils matchTestUtils;
 
     @Nested
     @DisplayName("토너먼트_관리_수정_컨트롤러_테스트")
@@ -483,44 +491,12 @@ class TournamentAdminControllerTest {
             String url = "/pingpong/admin/tournaments";
             String content = objectMapper.writeValueAsString(createDto);
 
-            //when
+            //when, then
             String contentAsString = mockMvc.perform(post(url)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(content))
                     .andExpect(status().isCreated())
-                    .andReturn().getResponse().getContentAsString();
-
-            System.out.println(contentAsString);
-
-            // then
-            tournamentRepository.findByTitle(createDto.getTitle()).orElseThrow(()->
-                    new CustomRuntimeException("토너먼트 생성 안 됨", ErrorCode.BAD_REQUEST));
-        }
-
-        @Test
-        @DisplayName("토너먼트 제목 중복")
-        void titleDup() throws Exception {
-            //given
-            String accessToken = testDataUtils.getAdminLoginAccessToken();
-
-            TournamentAdminCreateRequestDto createDto = testDataUtils.createRequestDto(
-                    LocalDateTime.now().plusDays(3).withHour(14).withMinute(0),
-                    LocalDateTime.now().plusDays(3).withHour(16).withMinute(0),
-                    TournamentType.ROOKIE);
-
-            testDataUtils.createTournament(createDto.getTitle(), LocalDateTime.now().plusHours(-4),
-                    LocalDateTime.now().plusHours(-2), TournamentStatus.BEFORE);
-
-            String url = "/pingpong/admin/tournaments";
-            String content = objectMapper.writeValueAsString(createDto);
-
-            //when, then
-            String contentAsString = mockMvc.perform(post(url)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(content))
-                    .andExpect(status().isConflict())
                     .andReturn().getResponse().getContentAsString();
 
             System.out.println(contentAsString);
@@ -877,15 +853,14 @@ class TournamentAdminControllerTest {
     @Nested
     @DisplayName("[Patch] /pingpong/admin/tournaments/{tournamentId}/games")
     class AdminUpdateTournamentGameTest {
-        @Autowired
-        private MatchTestUtils matchTestUtils;
         private String accessToken;
         private Tournament tournament;
         private List<TournamentGame> allTournamentGames;
+        Season season;
         @BeforeEach
         void setUp() {
             // 토너먼트 생성하고 8강 & 4강은 게임 점수 입력하고 종료된 상태이고 결승전 매칭된 상태로 초기화
-            testDataUtils.createSeason();
+            season = testDataUtils.createSeason();
             testDataUtils.createSlotManagement(15);
             tournament = testDataUtils.createTournamentWithUser(Tournament.ALLOWED_JOINED_NUMBER, 4, "test");
             allTournamentGames = testDataUtils.createTournamentGameList(tournament, 7);
@@ -908,6 +883,10 @@ class TournamentAdminControllerTest {
             int otherTeamScore = 1;
             TournamentGame tournamentGame = allTournamentGames.stream().filter(tg -> tg.getTournamentRound() == TournamentRound.SEMI_FINAL_1).findAny().orElseThrow();
             TournamentGame nextTournamentGame = allTournamentGames.stream().filter(tg -> tg.getTournamentRound() == TournamentRound.THE_FINAL).findAny().orElseThrow();
+            User user1 = tournamentGame.getGame().getTeams().get(0).getTeamUsers().get(0).getUser();
+            User user2 = tournamentGame.getGame().getTeams().get(1).getTeamUsers().get(0).getUser();
+            testDataUtils.createUserRank(user1, "" ,season);
+            testDataUtils.createUserRank(user2, "" ,season);
 
             TournamentGameUpdateRequestDto requestDto = new TournamentGameUpdateRequestDto(tournamentGame.getId(), nextTournamentGame.getId(),
                     new TeamReqDto(tournamentGame.getGame().getTeams().get(0).getId(), myTeamScore),
@@ -924,6 +903,8 @@ class TournamentAdminControllerTest {
             TournamentGame resTournamentGame = tournamentGameRepository.findById(tournamentGame.getId()).orElseThrow();
             assertThat(resTournamentGame.getGame().getTeams().get(0).getScore()).isEqualTo(myTeamScore);
             assertThat(resTournamentGame.getGame().getTeams().get(1).getScore()).isEqualTo(otherTeamScore);
+            assertThat(pChangeRepository.findByUserIdAndGameId(user1.getId(), tournamentGame.getGame().getId())).isNotEmpty();
+            assertThat(pChangeRepository.findByUserIdAndGameId(user2.getId(), tournamentGame.getGame().getId())).isNotEmpty();
         }
         @Test
         @DisplayName("토너먼트_게임_수정_불가능")

@@ -4,6 +4,7 @@ import com.gg.server.admin.tournament.dto.*;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.exception.ScoreNotInvalidException;
+import com.gg.server.domain.game.service.GameService;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.match.exception.SlotNotFoundException;
 import com.gg.server.domain.slotmanagement.SlotManagement;
@@ -11,6 +12,7 @@ import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
 import com.gg.server.domain.match.service.MatchTournamentService;
 import com.gg.server.domain.match.type.TournamentMatchStatus;
 import com.gg.server.domain.team.data.Team;
+import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.tournament.data.*;
 import com.gg.server.domain.tournament.dto.TournamentUserListResponseDto;
 import com.gg.server.domain.tournament.exception.TournamentConflictException;
@@ -30,6 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.gg.server.domain.match.type.TournamentMatchStatus.*;
@@ -45,6 +48,7 @@ public class TournamentAdminService {
     private final SlotManagementRepository slotManagementRepository;
     private final MatchTournamentService matchTournamentService;
     private final ConstantConfig constantConfig;
+    private final GameService gameService;
 
     /***
      * 토너먼트 생성 Method
@@ -55,8 +59,7 @@ public class TournamentAdminService {
      * @return 새로 생성된 tournament
      */
     @Transactional
-    public Tournament createTournament(TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto) {
-        checkTournamentTitle(tournamentAdminCreateRequestDto.getTitle());
+    public void createTournament(TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto) {
         checkValidTournamentTime(tournamentAdminCreateRequestDto.getStartTime(), tournamentAdminCreateRequestDto.getEndTime());
         checkConflictedTournament(-1L, tournamentAdminCreateRequestDto.getStartTime(), tournamentAdminCreateRequestDto.getEndTime());
         checkGameExistence(tournamentAdminCreateRequestDto.getStartTime(), tournamentAdminCreateRequestDto.getEndTime());
@@ -69,7 +72,7 @@ public class TournamentAdminService {
                 .type(tournamentAdminCreateRequestDto.getType())
                 .status(TournamentStatus.BEFORE).build();
         createTournamentGameList(tournament, 7);
-        return tournamentRepository.save(tournament);
+        tournamentRepository.save(tournament);
     }
 
     /**
@@ -235,16 +238,6 @@ public class TournamentAdminService {
         }
     }
 
-    /***
-     * 토너먼트 제목 중복 체크
-     * @param tournamentTitle 요청 데이터에서 받아온 토너먼트 제목
-     * @throws TournamentConflictException 토너먼트의 제목이 겹칠 때
-     */
-    private void checkTournamentTitle(String tournamentTitle) {
-        tournamentRepository.findByTitle(tournamentTitle)
-            .ifPresent(a -> {throw new TournamentConflictException(ErrorCode.TOURNAMENT_TITLE_CONFLICT);});
-    }
-
     /**
      * <p>타겟 시간 내에 게임이 존재하는지 체크</p>
      * @param startTime 시작 시간
@@ -303,6 +296,11 @@ public class TournamentAdminService {
         updateTeamScore(game, reqDto);
         TournamentMatchStatus matchStatus = matchTournamentService.checkTournamentGame(game);
         TournamentRound nextRound = tournamentGame.getTournamentRound().getNextRound();
+        List<TeamUser> teamUsers = new ArrayList<>();
+        for(Team team : game.getTeams()){
+            teamUsers.add(team.getTeamUsers().get(0));
+        }
+        gameService.savePChange(game, teamUsers, teamUsers.get(0).getUser().getId());
         if (POSSIBLE.equals(matchStatus)) {
             matchTournamentService.matchGames(tournament, nextRound);
         } else if (ALREADY_MATCHED.equals(matchStatus)) {
@@ -337,9 +335,11 @@ public class TournamentAdminService {
      * @return 수정 가능 여부
      */
     private boolean canUpdateScore(TournamentGame tournamentGame, TournamentGameUpdateRequestDto reqDto) {
-        if (reqDto.getNextTournamentGameId() == null &&
-                tournamentGame.getTournamentRound() == TournamentRound.THE_FINAL) {
-            return true;
+        if (tournamentGame.getGame().getStatus() == StatusType.BEFORE) {
+            return false;
+        }
+        if (reqDto.getNextTournamentGameId() == null){
+            return tournamentGame.getTournamentRound() == TournamentRound.THE_FINAL;
         }
         TournamentGame nextTournamentGame = tournamentGameRepository.findById(reqDto.getNextTournamentGameId())
                 .orElseThrow(TournamentGameNotFoundException::new);

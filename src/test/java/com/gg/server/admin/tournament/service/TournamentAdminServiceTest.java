@@ -85,31 +85,14 @@ class TournamentAdminServiceTest {
             TournamentGame tournamentGame = createTournamentGame(tournament, TournamentRound.THE_FINAL);
 
             given(slotManagementRepository.findCurrent(requestDto.getStartTime())).willReturn(Optional.of(createSlot(15)));
-            given(tournamentRepository.findByTitle(tournament.getTitle())).willReturn(Optional.empty());
             given(tournamentRepository.findAllBetween(requestDto.getStartTime(), requestDto.getEndTime()))
                 .willReturn(new ArrayList<>());
             given(gameRepository.findAllBetweenTournament(requestDto.getStartTime(), requestDto.getEndTime()))
                 .willReturn(new ArrayList<>());
             given(tournamentRepository.save(any(Tournament.class))).willReturn(tournament);
 
-
             // when
             tournamentAdminService.createTournament(requestDto);
-        }
-
-        @Test
-        @DisplayName("토너먼트 제목 중복")
-        public void titleDup() {
-            //given
-            Tournament tournament = createTournament(1L, TournamentStatus.BEFORE,
-                getTargetTime(0, 14, 0), getTargetTime(0, 16, 0));
-            TournamentAdminCreateRequestDto tournamentAdminCreateRequestDto = createTournamentCreateRequestDto(
-                    "1st tournament",
-                    getTargetTime(3, 10, 0), getTargetTime(3, 12, 0));
-            given(tournamentRepository.findByTitle(tournament.getTitle())).willReturn(Optional.of(tournament));
-            // when, then
-            assertThatThrownBy(() -> tournamentAdminService.createTournament(tournamentAdminCreateRequestDto))
-                    .isInstanceOf(TournamentConflictException.class);
         }
 
         @Test
@@ -133,7 +116,6 @@ class TournamentAdminServiceTest {
                     "1st tournament",
                     getTargetTime(3, 1, 10), getTargetTime(3, 2, 10));
             given(slotManagementRepository.findCurrent(any(LocalDateTime.class))).willReturn(Optional.of(createSlot(15)));
-            given(tournamentRepository.findByTitle(tournament.getTitle())).willReturn(Optional.empty());
             // when, then
             assertThatThrownBy(() -> tournamentAdminService.createTournament(requestDto1))
                     .isInstanceOf(TournamentUpdateException.class);
@@ -155,7 +137,6 @@ class TournamentAdminServiceTest {
                     "1st tournament",
                     getTargetTime(3, 11, 0), getTargetTime(3, 13, 0));
             given(slotManagementRepository.findCurrent(createRequestDto.getStartTime())).willReturn(Optional.of(createSlot(15)));
-            given(tournamentRepository.findByTitle(tournament.getTitle())).willReturn(Optional.empty());
             given(tournamentRepository.findAllBetween(createRequestDto.getStartTime(), createRequestDto.getEndTime()))
                 .willReturn(tournamentList);
 
@@ -177,7 +158,6 @@ class TournamentAdminServiceTest {
             List<Game> gameList = new ArrayList<>();
             gameList.add(new Game());
             given(slotManagementRepository.findCurrent(tournamentAdminCreateRequestDto.getStartTime())).willReturn(Optional.of(createSlot(15)));
-            given(tournamentRepository.findByTitle(tournament.getTitle())).willReturn(Optional.empty());
             given(tournamentRepository.findAllBetween(tournamentAdminCreateRequestDto.getStartTime(), tournamentAdminCreateRequestDto.getEndTime()))
                 .willReturn(new ArrayList<>());
             given(gameRepository.findAllBetweenTournament(tournamentAdminCreateRequestDto.getStartTime(), tournamentAdminCreateRequestDto.getEndTime()))

@@ -30,5 +30,4 @@ public interface TournamentRepository extends JpaRepository<Tournament, Long> {
         + "or (:endTime between t.startTime and t.endTime)")
     List<Tournament> findAllBetween(@Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime);
 
-    boolean existsByTitle(String title);
 }

@@ -145,7 +145,6 @@ public enum ErrorCode {
     TOURNAMENT_NOT_PARTICIPANT(404, "TN008", "토너먼트의 신청자가 아닙니다."),
     TOURNAMENT_USER_NOT_FOUND(404, "TN009", "target tournament user not found"),
     TOURNAMENT_CONFLICT(409, "TN010", "tournament conflicted"),
-    TOURNAMENT_TITLE_CONFLICT(409, "TN011", "tournament title conflicted"),
     TOURNAMENT_ALREADY_PARTICIPANT(409, "TN012", "이미 토너먼트의 신청자 입니다."),
     TOURNAMENT_CONFLICT_GAME(409, "TN013", "토너먼트 기간 내 대기중인 게임이 존재합니다."),
     TOURNAMENT_GAME_DUPLICATION(409, "TN014", "중복된 토너먼트 게임입니다!"),
