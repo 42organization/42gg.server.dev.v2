@@ -13,17 +13,17 @@ public enum TournamentRound {
     // semi final  -> 4강
     // quarter final -> 8강
     // ordinal()로 sorting 사용되고 있으므로 순서 중요 -> 이후에 리팩토링으로 해결하겠습니다.
-    THE_FINAL("1", null, 2),
-    SEMI_FINAL_1("4-1", THE_FINAL, 4),
-    SEMI_FINAL_2("4-2", THE_FINAL, 4),
-    QUARTER_FINAL_1("8-1", SEMI_FINAL_1, 8),
-    QUARTER_FINAL_2("8-2", SEMI_FINAL_1, 8),
-    QUARTER_FINAL_3("8-3", SEMI_FINAL_2, 8),
-    QUARTER_FINAL_4("8-4", SEMI_FINAL_2, 8);
+    THE_FINAL(null, 2, 1),
+    SEMI_FINAL_1(THE_FINAL, 4, 1),
+    SEMI_FINAL_2(THE_FINAL, 4, 2),
+    QUARTER_FINAL_1(SEMI_FINAL_1, 8, 1),
+    QUARTER_FINAL_2( SEMI_FINAL_1, 8, 2),
+    QUARTER_FINAL_3(SEMI_FINAL_2, 8, 3),
+    QUARTER_FINAL_4(SEMI_FINAL_2, 8, 4);
 
-    private final String round;
     private final TournamentRound nextRound;
     private final int roundNumber;
+    private final int roundOrder;
 
     public static List<TournamentRound> getSameRounds(TournamentRound round) {
         List<TournamentRound> sameRounds = new ArrayList<>();

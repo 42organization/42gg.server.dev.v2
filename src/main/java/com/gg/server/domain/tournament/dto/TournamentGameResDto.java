@@ -15,13 +15,13 @@ public class TournamentGameResDto {
 
     private Long tournamentGameId;
     private Long nextTournamentGameId;
-    private String tournamentRound;
+    private TournamentRound tournamentRound;
     private GameResultResDto game;
 
     public TournamentGameResDto(TournamentGame tournamentGame, GameTeamUser game, TournamentRound tournamentRound, TournamentGame nextTournamentGame){
         this.tournamentGameId = tournamentGame.getId();
         this.game = game == null? null : new GameResultResDto(game);
-        this.tournamentRound = tournamentRound.name();
+        this.tournamentRound = tournamentRound;
         this.nextTournamentGameId = nextTournamentGame == null? null : nextTournamentGame.getId();
     }
 
