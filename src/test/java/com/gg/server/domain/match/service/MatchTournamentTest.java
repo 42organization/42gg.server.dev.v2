@@ -4,6 +4,7 @@ import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.match.exception.EnrolledSlotException;
+import com.gg.server.domain.match.exception.SlotNotFoundException;
 import com.gg.server.domain.match.exception.WinningTeamNotFoundException;
 import com.gg.server.domain.match.type.TournamentMatchStatus;
 import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
@@ -24,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -71,13 +73,22 @@ public class MatchTournamentTest {
             List<TournamentRound> quarterRounds = TournamentRound.getSameRounds(TournamentRound.QUARTER_FINAL_1);
             List<TournamentGame> quarterRoundGames = allTournamentGames.stream()
                 .filter(o -> quarterRounds.contains(o.getTournamentRound()))
+                .sorted(Comparator.comparing(TournamentGame::getTournamentRound))
                 .collect(Collectors.toList());
+            LocalDateTime startTime = tournament.getStartTime();
+            int gameInterval = slotManagementRepository.findCurrent(startTime)
+                .orElseThrow(SlotNotFoundException::new)
+                .getGameInterval();
             // 4개의 8강 경기가 생성되었는지 확인
             assertThat(quarterRoundGames.size()).isEqualTo(Tournament.ALLOWED_JOINED_NUMBER / 2);
             for (TournamentGame tournamentGame : quarterRoundGames) {
                 assertThat(tournamentGame.getGame()).isNotNull();
                 assertThat(tournamentGame.getGame().getStatus()).isEqualTo(StatusType.BEFORE);
+                assertThat(tournamentGame.getGame().getStartTime()).isEqualTo(startTime);
+                assertThat(tournamentGame.getGame().getEndTime()).isEqualTo(startTime.plusMinutes(gameInterval));
+                startTime = startTime.plusMinutes((long) gameInterval);
             }
+
         }
 
         @Test
