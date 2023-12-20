@@ -1,5 +1,7 @@
 package com.gg.server.domain.game.service;
 
+import com.gg.server.admin.noti.dto.SendNotiAdminRequestDto;
+import com.gg.server.admin.noti.service.NotiAdminService;
 import com.gg.server.domain.coin.dto.UserGameCoinResultDto;
 import com.gg.server.domain.coin.service.UserCoinChangeService;
 import com.gg.server.domain.game.data.Game;
@@ -24,9 +26,7 @@ import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.team.data.TeamUserRepository;
 import com.gg.server.domain.team.exception.TeamIdNotMatchException;
 import com.gg.server.domain.tier.service.TierService;
-import com.gg.server.domain.tournament.data.Tournament;
-import com.gg.server.domain.tournament.data.TournamentGame;
-import com.gg.server.domain.tournament.data.TournamentGameRepository;
+import com.gg.server.domain.tournament.data.*;
 import com.gg.server.domain.tournament.exception.TournamentGameNotFoundException;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.InvalidParameterException;
@@ -53,6 +53,8 @@ public class GameService {
     private final TierService tierService;
     private final TournamentGameRepository tournamentGameRepository;
     private final MatchTournamentService matchTournamentService;
+    private final TournamentUserRepository tournamentUserRepository;
+    private final NotiAdminService notiAdminService;
 
   /**
    * 게임 정보를 가져온다.
@@ -113,6 +115,13 @@ public class GameService {
                     .orElseThrow(TournamentGameNotFoundException::new);
             Tournament tournament = tournamentGame.getTournament();
             matchTournamentService.matchGames(tournament, tournamentGame.getTournamentRound().getNextRound());
+            //매칭 알림
+            String gameMatchingNotiMessage = "토너먼트 게임이 매칭되었습니다! 경기 상대를 확인해주세요.";
+            for (TournamentUser tournamentUser : tournamentUserRepository.findAllByTournamentId(tournament.getId())) {
+                if (tournamentUser.getIsJoined().equals(true)) {
+                    notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(tournamentUser.getUser().getIntraId(), gameMatchingNotiMessage));
+                }
+            }
         }
     }
 
