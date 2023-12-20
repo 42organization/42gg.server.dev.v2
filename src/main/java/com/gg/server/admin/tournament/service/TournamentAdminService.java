@@ -280,8 +280,8 @@ public class TournamentAdminService {
         }
         Tournament tournament = tournamentRepository.findById(tournamentId)
             .orElseThrow(TournamentNotFoundException::new);
-        if (tournament.getStatus() != TournamentStatus.LIVE) {
-            throw new TournamentUpdateException(ErrorCode.TOURNAMENT_NOT_LIVE);
+        if (tournament.getStatus() == TournamentStatus.BEFORE) {
+            throw new TournamentUpdateException(ErrorCode.TOURNAMENT_IS_BEFORE);
         }
         TournamentGame tournamentGame = tournament.getTournamentGames().stream().
                 filter(t->t.getId().equals(reqDto.getTournamentGameId())).findAny()
