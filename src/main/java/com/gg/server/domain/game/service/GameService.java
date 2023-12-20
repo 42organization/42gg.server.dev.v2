@@ -2,6 +2,7 @@ package com.gg.server.domain.game.service;
 
 import com.gg.server.admin.noti.dto.SendNotiAdminRequestDto;
 import com.gg.server.admin.noti.service.NotiAdminService;
+import com.gg.server.admin.tournament.type.TournamentNotiMessage;
 import com.gg.server.domain.coin.dto.UserGameCoinResultDto;
 import com.gg.server.domain.coin.service.UserCoinChangeService;
 import com.gg.server.domain.game.data.Game;
@@ -28,7 +29,6 @@ import com.gg.server.domain.team.exception.TeamIdNotMatchException;
 import com.gg.server.domain.tier.service.TierService;
 import com.gg.server.domain.tournament.data.*;
 import com.gg.server.domain.tournament.exception.TournamentGameNotFoundException;
-import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.InvalidParameterException;
@@ -118,11 +118,10 @@ public class GameService {
                     .orElseThrow(TournamentGameNotFoundException::new);
             Tournament tournament = tournamentGame.getTournament();
             matchTournamentService.matchGames(tournament, tournamentGame.getTournamentRound().getNextRound());
-            String gameMatchingNotiMessage = "토너먼트 게임이 매칭되었습니다! 경기 상대를 확인해주세요.";
             TeamUser user1 = teamUserRepository.findByTeamId(scoreDto.getMyTeamId());
             TeamUser user2 = teamUserRepository.findByTeamId(scoreDto.getEnemyTeamId());
-            notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(user1.getUser().getIntraId(), gameMatchingNotiMessage));
-            notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(user2.getUser().getIntraId(), gameMatchingNotiMessage));
+            notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(user1.getUser().getIntraId(), TournamentNotiMessage.GAME_MATCHED.getMessage()));
+            notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(user2.getUser().getIntraId(), TournamentNotiMessage.GAME_MATCHED.getMessage()));
         }
     }
 

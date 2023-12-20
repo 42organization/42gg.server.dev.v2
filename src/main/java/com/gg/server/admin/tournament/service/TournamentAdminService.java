@@ -3,6 +3,7 @@ package com.gg.server.admin.tournament.service;
 import com.gg.server.admin.noti.dto.SendNotiAdminRequestDto;
 import com.gg.server.admin.noti.service.NotiAdminService;
 import com.gg.server.admin.tournament.dto.*;
+import com.gg.server.admin.tournament.type.TournamentNotiMessage;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.exception.ScoreNotInvalidException;
@@ -309,11 +310,10 @@ public class TournamentAdminService {
         gameService.savePChange(game, teamUsers, teamUsers.get(0).getUser().getId());
         if (POSSIBLE.equals(matchStatus)) {
             matchTournamentService.matchGames(tournament, nextRound);
-            String gameMatchingMessage = "토너먼트 게임이 매칭되었습니다! 경기 상대를 확인해주세요.";
             TeamUser user1 = teamUserRepository.findByTeamId(reqDto.getTeam1().getTeamId());
             TeamUser user2 = teamUserRepository.findByTeamId(reqDto.getTeam2().getTeamId());
-            notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(user1.getUser().getIntraId(), gameMatchingMessage));
-            notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(user2.getUser().getIntraId(), gameMatchingMessage));
+            notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(user1.getUser().getIntraId(), TournamentNotiMessage.GAME_MATCHED.getMessage()));
+            notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(user2.getUser().getIntraId(), TournamentNotiMessage.GAME_MATCHED.getMessage()));
         } else if (ALREADY_MATCHED.equals(matchStatus)) {
             Game nextMatchedGame = tournamentGameRepository.findByTournamentIdAndTournamentRound(tournament.getId(), nextRound)
                 .orElseThrow(TournamentGameNotFoundException::new)

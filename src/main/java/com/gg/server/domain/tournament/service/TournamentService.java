@@ -2,6 +2,7 @@ package com.gg.server.domain.tournament.service;
 
 import com.gg.server.admin.noti.dto.SendNotiAdminRequestDto;
 import com.gg.server.admin.noti.service.NotiAdminService;
+import com.gg.server.admin.tournament.type.TournamentNotiMessage;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.match.service.MatchTournamentService;
 import com.gg.server.domain.tournament.data.*;
@@ -181,15 +182,12 @@ public class TournamentService {
     public void startTournament() {
         LocalDate date = LocalDate.now();
         List<Tournament> imminentTournaments = findImminentTournament(date);
-        String tournamentStartNotiMessage = "참가 신청한 토너먼트 개최 당일입니다. 개최 시간을 확인하시고 늦지 않게 참석하시기 바랍니다!";
-        String tournamentCancelNotiMessage = "참가 신청한 토너먼트가 신청 인원 미달로 취소되었습니다.";
-
         for (Tournament imminentTournament : imminentTournaments) {
             List<TournamentUser> tournamentUsers = imminentTournament.getTournamentUsers();
             if (tournamentUsers.size() < Tournament.ALLOWED_JOINED_NUMBER) {
                 for (TournamentUser tournamentUser : tournamentUsers) {
                     if (tournamentUser.getIsJoined().equals(true)) {
-                        notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(tournamentUser.getUser().getIntraId(), tournamentCancelNotiMessage));
+                        notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(tournamentUser.getUser().getIntraId(), TournamentNotiMessage.TOURNAMENT_CANCELED.getMessage()));
                     }
                 }
                 tournamentRepository.delete(imminentTournament);
@@ -199,7 +197,7 @@ public class TournamentService {
             matchTournamentService.matchGames(imminentTournament, QUARTER_FINAL_1);
             for (TournamentUser tournamentUser : tournamentUsers) {
                 if (tournamentUser.getIsJoined().equals(true)) {
-                    notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(tournamentUser.getUser().getIntraId(), tournamentStartNotiMessage));
+                    notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(tournamentUser.getUser().getIntraId(), TournamentNotiMessage.TOURNAMENT_STARTED.getMessage()));
                 }
             }
         }
