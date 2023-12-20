@@ -15,6 +15,8 @@ import com.gg.server.domain.match.service.MatchTournamentService;
 import com.gg.server.domain.match.type.TournamentMatchStatus;
 import com.gg.server.domain.team.data.Team;
 import com.gg.server.domain.team.data.TeamUser;
+import com.gg.server.domain.team.data.TeamUserRepository;
+import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.tournament.data.*;
 import com.gg.server.domain.tournament.dto.TournamentUserListResponseDto;
 import com.gg.server.domain.tournament.exception.TournamentConflictException;
@@ -52,6 +54,7 @@ public class TournamentAdminService {
     private final NotiAdminService notiAdminService;
     private final ConstantConfig constantConfig;
     private final GameService gameService;
+    private final TeamUserRepository teamUserRepository;
 
     /***
      * 토너먼트 생성 Method
@@ -307,11 +310,10 @@ public class TournamentAdminService {
         if (POSSIBLE.equals(matchStatus)) {
             matchTournamentService.matchGames(tournament, nextRound);
             String gameMatchingMessage = "토너먼트 게임이 매칭되었습니다! 경기 상대를 확인해주세요.";
-            for (TournamentUser tournamentUser : tournamentUserRepository.findAllByTournamentId(tournamentId)) {
-                if (tournamentUser.getIsJoined().equals(true)) {
-                    notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(tournamentUser.getUser().getIntraId(), gameMatchingMessage));
-                }
-            }
+            TeamUser user1 = teamUserRepository.findByTeamId(reqDto.getTeam1().getTeamId());
+            TeamUser user2 = teamUserRepository.findByTeamId(reqDto.getTeam2().getTeamId());
+            notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(user1.getUser().getIntraId(), gameMatchingMessage));
+            notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(user2.getUser().getIntraId(), gameMatchingMessage));
         } else if (ALREADY_MATCHED.equals(matchStatus)) {
             Game nextMatchedGame = tournamentGameRepository.findByTournamentIdAndTournamentRound(tournament.getId(), nextRound)
                 .orElseThrow(TournamentGameNotFoundException::new)
