@@ -181,7 +181,7 @@ public class TournamentService {
     public void startTournament() {
         LocalDate date = LocalDate.now();
         List<Tournament> imminentTournaments = findImminentTournament(date);
-        String tournamentStartNotiMessage = "참가 신청한 토너먼트 개최 당일입니다. 개최 시간을 확인하시고 늦지 않게 참석바랍니다!";
+        String tournamentStartNotiMessage = "참가 신청한 토너먼트 개최 당일입니다. 개최 시간을 확인하시고 늦지 않게 참석하시기 바랍니다!";
         String tournamentCancelNotiMessage = "참가 신청한 토너먼트가 신청 인원 미달로 취소되었습니다.";
 
         for (Tournament imminentTournament : imminentTournaments) {
