@@ -17,4 +17,5 @@ public interface TeamUserRepository extends JpaRepository<TeamUser, Long> {
             "and team.game_id = game.id and game.status = 'END'", nativeQuery = true)
     Integer findByDateAndUser(@Param("today")LocalDateTime today, @Param("userId") Long userId);
 
+    TeamUser findByTeamId(Long teamId);
 }
