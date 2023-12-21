@@ -1,9 +1,6 @@
 package com.gg.server.admin.tournament.service;
 
-import com.gg.server.admin.noti.dto.SendNotiAdminRequestDto;
-import com.gg.server.admin.noti.service.NotiAdminService;
 import com.gg.server.admin.tournament.dto.*;
-import com.gg.server.admin.tournament.type.TournamentNotiMessage;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.exception.ScoreNotInvalidException;
@@ -15,8 +12,6 @@ import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
 import com.gg.server.domain.match.service.MatchTournamentService;
 import com.gg.server.domain.match.type.TournamentMatchStatus;
 import com.gg.server.domain.team.data.Team;
-import com.gg.server.domain.team.data.TeamUser;
-import com.gg.server.domain.team.data.TeamUserRepository;
 import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.tournament.data.*;
 import com.gg.server.domain.tournament.dto.TournamentUserListResponseDto;
