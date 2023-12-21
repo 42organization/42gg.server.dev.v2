@@ -52,10 +52,8 @@ public class TournamentAdminService {
     private final TournamentGameRepository tournamentGameRepository;
     private final SlotManagementRepository slotManagementRepository;
     private final MatchTournamentService matchTournamentService;
-    private final NotiAdminService notiAdminService;
     private final ConstantConfig constantConfig;
     private final GameService gameService;
-    private final TeamUserRepository teamUserRepository;
 
     /***
      * 토너먼트 생성 Method
