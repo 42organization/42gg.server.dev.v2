@@ -3,6 +3,7 @@ package com.gg.server.domain.user.controller;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.user.dto.*;
 import com.gg.server.domain.user.exception.KakaoOauth2AlreadyExistException;
+import com.gg.server.domain.user.exception.TokenNotValidException;
 import com.gg.server.domain.user.service.*;
 import com.gg.server.domain.user.type.OauthType;
 import com.gg.server.domain.user.type.RoleType;
@@ -37,7 +38,9 @@ public class UserController {
     private final UserCoinService userCoinService;
 
     @PostMapping("/accesstoken")
-    public ResponseEntity<UserAccessTokenDto> generateAccessToken(@RequestParam String refreshToken) {
+    public ResponseEntity<UserAccessTokenDto> generateAccessToken(@CookieValue(name = "refresh_token", required = false) String refreshToken) {
+        if (refreshToken == null)
+            throw new TokenNotValidException();
         String accessToken = userAuthenticationService.regenerate(refreshToken);
         return new ResponseEntity<>(new UserAccessTokenDto(accessToken), HttpStatus.CREATED);
     }
