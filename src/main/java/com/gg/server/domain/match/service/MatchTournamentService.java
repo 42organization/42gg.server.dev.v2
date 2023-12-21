@@ -8,6 +8,7 @@ import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.match.exception.EnrolledSlotException;
+import com.gg.server.domain.match.exception.LosingTeamNotFoundException;
 import com.gg.server.domain.match.exception.WinningTeamNotFoundException;
 import com.gg.server.domain.match.type.TournamentMatchStatus;
 import com.gg.server.domain.season.data.Season;
@@ -81,7 +82,6 @@ public class MatchTournamentService {
         return POSSIBLE;
     }
 
-
     /**
      * 토너먼트 게임 매칭
      * @param tournament 토너먼트
@@ -128,6 +128,7 @@ public class MatchTournamentService {
     @Transactional
     public void updateMatchedGameUser(Game modifiedGame, Game nextMatchedGame) {
         User winner = getWinningTeam(modifiedGame).getTeamUsers().get(0).getUser();
+        User loser = getLosingTeam(modifiedGame).getTeamUsers().get(0).getUser();
         List<User> players = modifiedGame.getTeams().stream()
             .map(team -> team.getTeamUsers().get(0).getUser())
             .collect(Collectors.toList());
@@ -140,6 +141,8 @@ public class MatchTournamentService {
                 break;
             }
         }
+        notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(winner.getIntraId(), TournamentNotiMessage.GAME_MATCHED.getMessage()));
+        notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(loser.getIntraId(), TournamentNotiMessage.GAME_CANCELED.getMessage()));
     }
 
     /**
@@ -220,5 +223,17 @@ public class MatchTournamentService {
             .filter(team -> Boolean.TRUE.equals(team.getWin()))
             .findAny()
             .orElseThrow(WinningTeamNotFoundException::new);
+    }
+
+    /**
+     * game의 패자를 찾는다.
+     * @param game
+     * @return
+     */
+    private Team getLosingTeam(Game game) {
+        return game.getTeams().stream()
+                .filter(team -> Boolean.FALSE.equals(team.getWin()))
+                .findAny()
+                .orElseThrow(LosingTeamNotFoundException::new);
     }
 }
