@@ -261,6 +261,15 @@ public class TournamentService {
             }
             tournamentGameResDtoList.add(new TournamentGameResDto(tournamentGame, gameTeamUser, tournamentGame.getTournamentRound(), nextTournamentGame));
         }
+        tournamentGameResDtoList.sort((o1, o2) -> {
+            if (o1.getTournamentRound().getRoundNumber() < o2.getTournamentRound().getRoundNumber()) {
+                return 1;
+            }
+            if (o1.getTournamentRound().getRoundOrder() > o2.getTournamentRound().getRoundOrder()) {
+                return 1;
+            }
+            return -1;
+        });
         return tournamentGameResDtoList;
     }
 

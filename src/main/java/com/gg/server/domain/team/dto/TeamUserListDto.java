@@ -29,7 +29,7 @@ public class TeamUserListDto {
         this.teamId = teamId;
         this.players = players;
         this.isWin = isWin;
-        this.score = score;
+        this.score = score == -1? null : score;
     }
 
     @Override
