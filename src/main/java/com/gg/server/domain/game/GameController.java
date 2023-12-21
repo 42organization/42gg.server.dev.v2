@@ -1,7 +1,7 @@
 package com.gg.server.domain.game;
 
-import com.gg.server.domain.game.dto.GameChangeResultResDto;
 import com.gg.server.domain.game.dto.GameListResDto;
+import com.gg.server.domain.game.dto.GamePChangeResultResDto;
 import com.gg.server.domain.game.dto.GameTeamInfo;
 import com.gg.server.domain.game.dto.request.GameListReqDto;
 import com.gg.server.domain.game.dto.request.NormalGameListReqDto;
@@ -127,8 +127,8 @@ public class GameController {
     /**
      * RANK, NORMAL, TOURNAMENT 게임 결과 반환.
      */
-    @GetMapping("/{gameId}/result")
-    ResponseEntity<GameChangeResultResDto> getGameChangeResult(@PathVariable Long gameId,
+    @GetMapping("/{gameId}/pchange/result")
+    ResponseEntity<GamePChangeResultResDto> getGamePChangeResult(@PathVariable Long gameId,
         @Parameter(hidden = true) @Login UserDto user, @RequestParam Mode mode) {
         if (mode == Mode.RANK)
             return ResponseEntity.ok(gameService.pppChangeResult(gameId, user.getId()));

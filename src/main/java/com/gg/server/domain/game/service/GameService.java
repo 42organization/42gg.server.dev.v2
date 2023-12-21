@@ -153,17 +153,17 @@ public class GameService {
      * normal 게임에 대한 exp 변화 결과를 가져온다.
      * @param gameId
      * @param userId
-     * @return GameChangeResultResDto 경험치 변화 결과
+     * @return GamePChangeResultResDto 경험치 변화 결과
      */
     @Transactional
-    public GameChangeResultResDto expChangeResult(Long gameId, Long userId) {
+    public GamePChangeResultResDto expChangeResult(Long gameId, Long userId) {
         List<PChange> pChanges = pChangeService.findExpChangeHistory(gameId, userId);
         UserGameCoinResultDto userGameCoinResultDto = userCoinChangeService.addNormalGameCoin(userId);
 
         if (pChanges.size() == 1) {
-            return new GameChangeResultResDto(0, pChanges.get(0).getExp(), userGameCoinResultDto);
+            return new GamePChangeResultResDto(0, pChanges.get(0).getExp(), userGameCoinResultDto);
         } else {
-            return new GameChangeResultResDto(pChanges.get(1).getExp(), pChanges.get(0).getExp(), userGameCoinResultDto);
+            return new GamePChangeResultResDto(pChanges.get(1).getExp(), pChanges.get(0).getExp(), userGameCoinResultDto);
         }
     }
 
@@ -171,16 +171,16 @@ public class GameService {
      * rank 게임에 대한 exp, ppp 변화 결과를 가져온다.
      * @param gameId 게임 id
      * @param userId 게임에 참여한 유저 id
-     * @return PPPChangeResultResDto 경험치 변화 결과
+     * @return GamePPPChangeResultResDto 경험치 변화 결과
      * @throws PChangeNotExistException
      */
     @Transactional
-    public PPPChangeResultResDto pppChangeResult(Long gameId, Long userId) throws PChangeNotExistException {
+    public GamePPPChangeResultResDto pppChangeResult(Long gameId, Long userId) throws PChangeNotExistException {
         Season season = gameFindService.findByGameId(gameId).getSeason();
         List<PChange> pppHistory = pChangeService.findPPPChangeHistory(gameId, userId, season.getId());
         List<PChange> expHistory = pChangeService.findExpChangeHistory(gameId, userId);
         UserGameCoinResultDto userGameCoinResultDto = userCoinChangeService.addRankGameCoin(gameId, userId);
-        return new PPPChangeResultResDto(expHistory.size() <= 1 ? 0 : expHistory.get(1).getExp(),
+        return new GamePPPChangeResultResDto(expHistory.size() <= 1 ? 0 : expHistory.get(1).getExp(),
                 pppHistory.get(0).getExp(),
                 pppHistory.size() <= 1 ? season.getStartPpp() : pppHistory.get(1).getPppResult(),
                 pppHistory.get(0).getPppResult(), userGameCoinResultDto);

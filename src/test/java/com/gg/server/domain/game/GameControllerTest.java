@@ -732,7 +732,7 @@ public class GameControllerTest {
             testDataUtils.createUserRank(user1, "hello", season, tiers.get(0));
             testDataUtils.createCoinPolicy(user1, 0, 0, 1, 0);
 
-            String url = "/pingpong/games/" + mockMatch.getId() + "/result?mode=" + Mode.RANK;
+            String url = "/pingpong/games/" + mockMatch.getId() + "/pchange/result?mode=" + Mode.RANK;
             String content = mockMvc.perform(
                     get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -748,7 +748,7 @@ public class GameControllerTest {
                 LocalDateTime.now().minusMinutes(16),
                 LocalDateTime.now().minusMinutes(1), Mode.NORMAL);
             testDataUtils.createCoinPolicy(user1, 0, 1, 0, 0);
-            String url = "/pingpong/games/" + mockMatch.getId() + "/result?mode=" + Mode.NORMAL;
+            String url = "/pingpong/games/" + mockMatch.getId() + "/pchange/result?mode=" + Mode.NORMAL;
             String content = mockMvc.perform(
                     get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -764,7 +764,7 @@ public class GameControllerTest {
                 LocalDateTime.now().minusMinutes(16),
                 LocalDateTime.now().minusMinutes(1), Mode.TOURNAMENT);
             testDataUtils.createCoinPolicy(user1, 0, 1, 0, 0);
-            String url = "/pingpong/games/" + mockMatch.getId() + "/result?mode=" + Mode.TOURNAMENT;
+            String url = "/pingpong/games/" + mockMatch.getId() + "/pchange/result?mode=" + Mode.TOURNAMENT;
             String content = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                     .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
