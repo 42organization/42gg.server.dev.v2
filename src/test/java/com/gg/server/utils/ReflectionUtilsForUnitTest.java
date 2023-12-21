@@ -17,7 +17,7 @@ public class ReflectionUtilsForUnitTest {
   /**
    * 리플렉션을 사용해서 필드값을 설정한다.
    */
-  public void setFieldWithReflection(Object object, String fieldName, Object value) {
+  static public void setFieldWithReflection(Object object, String fieldName, Object value) {
     try {
       Field field = object.getClass().getDeclaredField(fieldName);
       field.setAccessible(true);
