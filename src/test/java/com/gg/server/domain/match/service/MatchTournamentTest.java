@@ -1,5 +1,9 @@
 package com.gg.server.domain.match.service;
 
+import com.gg.server.admin.noti.dto.SendNotiAdminRequestDto;
+import com.gg.server.admin.noti.service.NotiAdminService;
+import com.gg.server.admin.tournament.type.TournamentNotiMessage;
+import com.gg.server.admin.user.data.UserAdminRepository;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.type.StatusType;
@@ -14,6 +18,7 @@ import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.type.TournamentRound;
 import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.user.data.User;
+import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.utils.MatchTestUtils;
 import com.gg.server.utils.TestDataUtils;
 import com.gg.server.utils.annotation.IntegrationTest;
@@ -21,9 +26,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.shaded.com.google.common.base.Verify;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -33,6 +41,9 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.testcontainers.shaded.org.awaitility.Awaitility.given;
 
 @IntegrationTest
 @SpringBootTest
@@ -48,6 +59,8 @@ public class MatchTournamentTest {
     MatchTournamentService matchTournamentService;
     @Autowired
     MatchTestUtils matchTestUtils;
+    @Mock
+    NotiAdminService notiAdminService;
 
     Tournament tournament;
     List<TournamentGame> allTournamentGames;
@@ -68,6 +81,7 @@ public class MatchTournamentTest {
         public void quarterTest() {
             // when
             matchTournamentService.matchGames(tournament, TournamentRound.QUARTER_FINAL_1);
+            SendNotiAdminRequestDto sendNotiAdminRequestDto = new SendNotiAdminRequestDto("spark2", TournamentNotiMessage.GAME_MATCHED.getMessage());
 
             // then
             List<TournamentRound> quarterRounds = TournamentRound.getSameRounds(TournamentRound.QUARTER_FINAL_1);
@@ -79,6 +93,7 @@ public class MatchTournamentTest {
             int gameInterval = slotManagementRepository.findCurrent(startTime)
                 .orElseThrow(SlotNotFoundException::new)
                 .getGameInterval();
+
             // 4개의 8강 경기가 생성되었는지 확인
             assertThat(quarterRoundGames.size()).isEqualTo(Tournament.ALLOWED_JOINED_NUMBER / 2);
             for (TournamentGame tournamentGame : quarterRoundGames) {
@@ -89,6 +104,7 @@ public class MatchTournamentTest {
                 startTime = startTime.plusMinutes((long) gameInterval);
             }
 
+            verify(notiAdminService).sendAnnounceNotiToUser(Mockito.any(SendNotiAdminRequestDto.class));
         }
 
         @Test
@@ -138,6 +154,8 @@ public class MatchTournamentTest {
         @DisplayName("결승 경기 매칭 테스트 성공")
         public void finalTest() {
             // given
+            SendNotiAdminRequestDto sendNotiAdminRequestDto = new SendNotiAdminRequestDto();
+
             // 8강 & 4강 경기 결과 입력
             List<TournamentGame> quarterGames = matchTestUtils.matchTournamentGames(tournament, TournamentRound.QUARTER_FINAL_1);
             matchTestUtils.updateTournamentGamesResult(quarterGames, List.of(2, 0));
@@ -152,12 +170,15 @@ public class MatchTournamentTest {
             TournamentGame finalRoundGame = allTournamentGames.stream()
                 .filter(o -> TournamentRound.THE_FINAL.equals(o.getTournamentRound())).findAny().orElse(null);
             assertThat(finalRoundGame.getGame()).isNotNull();
+            verify(notiAdminService).sendAnnounceNotiToUser(sendNotiAdminRequestDto);
         }
 
         @Test
         @DisplayName("이미 매칭된 게임이 존재할 경우 실패")
         public void failAlreadyMatched() {
             // given
+            SendNotiAdminRequestDto sendNotiAdminRequestDto = new SendNotiAdminRequestDto();
+
             // 8강 경기 매칭 + 4강 경기 매칭
             List<TournamentGame> quarterGames = matchTestUtils.matchTournamentGames(tournament, TournamentRound.QUARTER_FINAL_1);
             matchTestUtils.updateTournamentGamesResult(quarterGames, List.of(2, 0));
@@ -167,6 +188,7 @@ public class MatchTournamentTest {
             // when, then
             assertThatThrownBy(() -> matchTournamentService.matchGames(tournament, TournamentRound.SEMI_FINAL_1))
                 .isInstanceOf(EnrolledSlotException.class);
+//            verify(notiAdminService).sendAnnounceNotiToUser(sendNotiAdminRequestDto);
         }
     }
 
@@ -253,6 +275,8 @@ public class MatchTournamentTest {
         @DisplayName("8강 경기에서 4강 경기로 팀 변경 성공")
         public void quarterToSemiTest() {
             // given
+            SendNotiAdminRequestDto sendNotiAdminRequestDto = new SendNotiAdminRequestDto();
+
             // 8강 경기 결과 + 4강 매칭
             List<TournamentGame> quarterGames = matchTestUtils.matchTournamentGames(tournament, TournamentRound.QUARTER_FINAL_1);
             matchTestUtils.updateTournamentGamesResult(quarterGames, List.of(2, 0));
@@ -272,6 +296,8 @@ public class MatchTournamentTest {
             losingTeam.updateScore(0, false);
             winningTeam.updateScore(2, true);
             matchTournamentService.updateMatchedGameUser(game, nextMatchedGame);
+            assertThatThrownBy(() ->notiAdminService.sendAnnounceNotiToUser(sendNotiAdminRequestDto))
+                    .isInstanceOf(UserNotFoundException.class);
 
             // then
             // 점수 수정으로 8강 경기에서 이긴 팀이 다음 경기로 변경되었는지 확인
@@ -281,6 +307,7 @@ public class MatchTournamentTest {
 
             assertThat(nextGameUsers.contains(winningTeam.getTeamUsers().get(0).getUser())).isTrue();
             assertThat(nextGameUsers.contains(losingTeam.getTeamUsers().get(0).getUser())).isFalse();
+//            verify(notiAdminService).sendAnnounceNotiToUser(sendNotiAdminRequestDto);
         }
 
         @Test
