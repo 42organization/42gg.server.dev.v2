@@ -720,13 +720,9 @@ public class GameControllerTest {
         // TODO HttpStatus.ACCEPTED 테스트 - service 함수에서 BEFORE 상태일 때 false 리턴할 경우
     }
 
-    // GET /pingpong/games/{gameId}/result/rank
     @Nested
-    @DisplayName("랭크 게임 결과 조회")
-    class GetRankPPPChangeTest {
-        /**
-         * GET /pingpong/games/{gameId}/result/rank
-         */
+    @DisplayName("/{gameId}/result?mode=?")
+    class GameChangeRestTest {
         @Test
         @DisplayName("랭크 게임 결과 조회")
         public void successGetRankPPPChange() throws Exception {
@@ -736,22 +732,15 @@ public class GameControllerTest {
             testDataUtils.createUserRank(user1, "hello", season, tiers.get(0));
             testDataUtils.createCoinPolicy(user1, 0, 0, 1, 0);
 
-            String url = "/pingpong/games/" + mockMatch.getId() + "/result/rank";
-            String content = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                    .contentType(MediaType.APPLICATION_JSON))
+            String url = "/pingpong/games/" + mockMatch.getId() + "/pchange/result?mode=" + Mode.RANK;
+            String content = mockMvc.perform(
+                    get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
             System.out.println("result: " + content);
         }
-    }
 
-    // GET /pingpong/games/{gameId}/result/normal
-    @Nested
-    @DisplayName("일반 게임 결과 조회")
-    class GetNormalExpChangeTest {
-        /**
-         * GET /pingpong/games/{gameId}/result/normal
-         */
         @Test
         @DisplayName("일반 게임 결과 조회")
         public void normalGameResult() throws Exception {
@@ -759,7 +748,23 @@ public class GameControllerTest {
                 LocalDateTime.now().minusMinutes(16),
                 LocalDateTime.now().minusMinutes(1), Mode.NORMAL);
             testDataUtils.createCoinPolicy(user1, 0, 1, 0, 0);
-            String url = "/pingpong/games/" + mockMatch.getId() + "/result/normal";
+            String url = "/pingpong/games/" + mockMatch.getId() + "/pchange/result?mode=" + Mode.NORMAL;
+            String content = mockMvc.perform(
+                    get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+            System.out.println("result: " + content);
+        }
+
+        @Test
+        @DisplayName("토너먼트 게임 결과 조회")
+        public void tournamentGameResult() throws Exception {
+            Game mockMatch = testDataUtils.createMockMatch(user1, season,
+                LocalDateTime.now().minusMinutes(16),
+                LocalDateTime.now().minusMinutes(1), Mode.TOURNAMENT);
+            testDataUtils.createCoinPolicy(user1, 0, 1, 0, 0);
+            String url = "/pingpong/games/" + mockMatch.getId() + "/pchange/result?mode=" + Mode.TOURNAMENT;
             String content = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                     .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

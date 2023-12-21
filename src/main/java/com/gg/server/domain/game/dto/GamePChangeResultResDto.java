@@ -1,13 +1,17 @@
 package com.gg.server.domain.game.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.gg.server.domain.coin.dto.UserGameCoinResultDto;
 import com.gg.server.global.utils.ExpLevelCalculator;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class ExpChangeResultResDto {
+@JsonInclude(Include.NON_NULL)
+public class GamePChangeResultResDto {
     private Integer beforeExp;
     private Integer beforeMaxExp;
     private Integer beforeLevel;
@@ -17,8 +21,10 @@ public class ExpChangeResultResDto {
     private int beforeCoin;
     private int afterCoin;
     private int coinIncrement;
+    protected Integer changedPpp;
+    protected Integer beforePpp;
 
-    public ExpChangeResultResDto(Integer beforeExp, Integer currentExp, UserGameCoinResultDto userGameCoinResultDto) {
+    public GamePChangeResultResDto(Integer beforeExp, Integer currentExp, UserGameCoinResultDto userGameCoinResultDto) {
         this.beforeExp = ExpLevelCalculator.getCurrentLevelMyExp(beforeExp);
         this.beforeLevel = ExpLevelCalculator.getLevel(beforeExp);
         this.beforeMaxExp = ExpLevelCalculator.getLevelMaxExp(beforeLevel);
@@ -34,10 +40,10 @@ public class ExpChangeResultResDto {
     public boolean equals(Object obj) {
         if (obj == this) {
             return true;
-        } else if (!(obj instanceof ExpChangeResultResDto)) {
+        } else if (!(obj instanceof GamePChangeResultResDto)) {
             return false;
         } else {
-            ExpChangeResultResDto other = (ExpChangeResultResDto) obj;
+            GamePChangeResultResDto other = (GamePChangeResultResDto) obj;
             return this.beforeExp.equals(other.getBeforeExp())
                     && this.beforeLevel.equals(other.getBeforeLevel())
                     && this.beforeMaxExp.equals(other.getBeforeMaxExp())
