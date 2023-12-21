@@ -3,6 +3,7 @@ package com.gg.server.domain.match.service;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.exception.GameAlreadyExistException;
+import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.match.data.RedisMatchTime;
 import com.gg.server.domain.match.data.RedisMatchTimeRepository;
@@ -30,6 +31,8 @@ import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.domain.user.exception.UserNotFoundException;
+import com.gg.server.global.exception.ErrorCode;
+import com.gg.server.global.exception.custom.BusinessException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -90,6 +93,9 @@ public class MatchService {
             List<User> enemyTeam = userRepository.findEnemyByGameAndUser(game.get().getId(), userDto.getId());
             if (enemyTeam.size() > 1) {
                 throw new SlotNotFoundException();
+            }
+            if (game.get().getMode().equals(Mode.TOURNAMENT)) {
+                throw new BusinessException(ErrorCode.TOURNAMENT_GAME_CAN_NOT_CANCELED);
             }
             cancelGame(userDto, startTime, game.get(), enemyTeam);
         } else {

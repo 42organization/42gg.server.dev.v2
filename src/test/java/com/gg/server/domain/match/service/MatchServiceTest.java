@@ -1,6 +1,7 @@
 package com.gg.server.domain.match.service;
 
 import com.gg.server.admin.penalty.data.PenaltyAdminRepository;
+import com.gg.server.global.exception.custom.BusinessException;
 import com.gg.server.utils.MatchTestUtils;
 import com.gg.server.utils.annotation.IntegrationTest;
 import com.gg.server.domain.game.data.Game;
@@ -332,6 +333,17 @@ class MatchServiceTest {
             List<RedisMatchUser> allMatchUsers = redisMatchTimeRepository.getAllMatchUsers(slotTimes.get(0));
             Assertions.assertThat(allMatchUsers.size()).isEqualTo(2L);
 
+        }
+
+        @Test
+        @DisplayName("토너먼트 게임 취소 테스트")
+        void cancelMatchedTournamentGame() {
+            // given
+            LocalDateTime time = LocalDateTime.now().plusHours(1).withMinute(0).withSecond(0).withNano(0);
+            Game game = testDataUtils.createMockMatch(users.get(0), testSeason, time, time.withMinute(15), Mode.TOURNAMENT);
+            // when, then
+            Assertions.assertThatThrownBy(()->matchService.cancelMatch(UserDto.from(users.get(0)), game.getStartTime()))
+                .isInstanceOf(BusinessException.class);
         }
     }
 
