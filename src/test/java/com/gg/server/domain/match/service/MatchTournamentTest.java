@@ -30,6 +30,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.shaded.com.google.common.base.Verify;
 
@@ -59,7 +60,7 @@ public class MatchTournamentTest {
     MatchTournamentService matchTournamentService;
     @Autowired
     MatchTestUtils matchTestUtils;
-    @Mock
+    @MockBean
     NotiAdminService notiAdminService;
 
     Tournament tournament;
@@ -81,7 +82,6 @@ public class MatchTournamentTest {
         public void quarterTest() {
             // when
             matchTournamentService.matchGames(tournament, TournamentRound.QUARTER_FINAL_1);
-            SendNotiAdminRequestDto sendNotiAdminRequestDto = new SendNotiAdminRequestDto("spark2", TournamentNotiMessage.GAME_MATCHED.getMessage());
 
             // then
             List<TournamentRound> quarterRounds = TournamentRound.getSameRounds(TournamentRound.QUARTER_FINAL_1);
@@ -103,8 +103,7 @@ public class MatchTournamentTest {
                 assertThat(tournamentGame.getGame().getEndTime()).isEqualTo(startTime.plusMinutes(gameInterval));
                 startTime = startTime.plusMinutes((long) gameInterval);
             }
-
-            verify(notiAdminService).sendAnnounceNotiToUser(Mockito.any(SendNotiAdminRequestDto.class));
+            verify(notiAdminService, times(8)).sendAnnounceNotiToUser(Mockito.any(SendNotiAdminRequestDto.class));
         }
 
         @Test
@@ -148,14 +147,13 @@ public class MatchTournamentTest {
             }
             assertThat(semiTeams).contains(quarterWinningTeams.get(0));
             assertThat(semiTeams).contains(quarterWinningTeams.get(1));
+            verify(notiAdminService, times(4)).sendAnnounceNotiToUser(Mockito.any(SendNotiAdminRequestDto.class));
         }
 
         @Test
         @DisplayName("결승 경기 매칭 테스트 성공")
         public void finalTest() {
             // given
-            SendNotiAdminRequestDto sendNotiAdminRequestDto = new SendNotiAdminRequestDto();
-
             // 8강 & 4강 경기 결과 입력
             List<TournamentGame> quarterGames = matchTestUtils.matchTournamentGames(tournament, TournamentRound.QUARTER_FINAL_1);
             matchTestUtils.updateTournamentGamesResult(quarterGames, List.of(2, 0));
@@ -170,15 +168,13 @@ public class MatchTournamentTest {
             TournamentGame finalRoundGame = allTournamentGames.stream()
                 .filter(o -> TournamentRound.THE_FINAL.equals(o.getTournamentRound())).findAny().orElse(null);
             assertThat(finalRoundGame.getGame()).isNotNull();
-            verify(notiAdminService).sendAnnounceNotiToUser(sendNotiAdminRequestDto);
+            verify(notiAdminService, times(2)).sendAnnounceNotiToUser(Mockito.any(SendNotiAdminRequestDto.class));
         }
 
         @Test
         @DisplayName("이미 매칭된 게임이 존재할 경우 실패")
         public void failAlreadyMatched() {
             // given
-            SendNotiAdminRequestDto sendNotiAdminRequestDto = new SendNotiAdminRequestDto();
-
             // 8강 경기 매칭 + 4강 경기 매칭
             List<TournamentGame> quarterGames = matchTestUtils.matchTournamentGames(tournament, TournamentRound.QUARTER_FINAL_1);
             matchTestUtils.updateTournamentGamesResult(quarterGames, List.of(2, 0));
@@ -188,7 +184,6 @@ public class MatchTournamentTest {
             // when, then
             assertThatThrownBy(() -> matchTournamentService.matchGames(tournament, TournamentRound.SEMI_FINAL_1))
                 .isInstanceOf(EnrolledSlotException.class);
-//            verify(notiAdminService).sendAnnounceNotiToUser(sendNotiAdminRequestDto);
         }
     }
 
@@ -275,8 +270,6 @@ public class MatchTournamentTest {
         @DisplayName("8강 경기에서 4강 경기로 팀 변경 성공")
         public void quarterToSemiTest() {
             // given
-            SendNotiAdminRequestDto sendNotiAdminRequestDto = new SendNotiAdminRequestDto();
-
             // 8강 경기 결과 + 4강 매칭
             List<TournamentGame> quarterGames = matchTestUtils.matchTournamentGames(tournament, TournamentRound.QUARTER_FINAL_1);
             matchTestUtils.updateTournamentGamesResult(quarterGames, List.of(2, 0));
@@ -296,8 +289,6 @@ public class MatchTournamentTest {
             losingTeam.updateScore(0, false);
             winningTeam.updateScore(2, true);
             matchTournamentService.updateMatchedGameUser(game, nextMatchedGame);
-            assertThatThrownBy(() ->notiAdminService.sendAnnounceNotiToUser(sendNotiAdminRequestDto))
-                    .isInstanceOf(UserNotFoundException.class);
 
             // then
             // 점수 수정으로 8강 경기에서 이긴 팀이 다음 경기로 변경되었는지 확인
@@ -307,7 +298,7 @@ public class MatchTournamentTest {
 
             assertThat(nextGameUsers.contains(winningTeam.getTeamUsers().get(0).getUser())).isTrue();
             assertThat(nextGameUsers.contains(losingTeam.getTeamUsers().get(0).getUser())).isFalse();
-//            verify(notiAdminService).sendAnnounceNotiToUser(sendNotiAdminRequestDto);
+            verify(notiAdminService, times(2)).sendAnnounceNotiToUser(Mockito.any(SendNotiAdminRequestDto.class));
         }
 
         @Test
@@ -326,7 +317,6 @@ public class MatchTournamentTest {
             // when, then
             assertThatThrownBy(() -> matchTournamentService.updateMatchedGameUser(targetTournamentGame.getGame(), nextMatchedGame))
                 .isInstanceOf(WinningTeamNotFoundException.class);
-
         }
     }
 }
