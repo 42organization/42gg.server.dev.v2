@@ -100,7 +100,6 @@ public class MatchTournamentService {
         LocalDateTime startTime = calculateStartTime(tournament, round, gameInterval);
 
         for (int i = 0; i < tournamentGames.size(); ++i) {
-            startTime = startTime.plusMinutes((long) gameInterval * i);
             Game game = new Game(season, StatusType.BEFORE, Mode.TOURNAMENT, startTime, startTime.plusMinutes(gameInterval));
             Team team1 = new Team(game, -1, false);
             Team team2 = new Team(game, -1, false);
@@ -110,6 +109,7 @@ public class MatchTournamentService {
             new TeamUser(team2, user2);
             gameRepository.save(game);
             tournamentGames.get(i).updateGame(game);
+            startTime = startTime.plusMinutes((long) gameInterval);
         }
     }
 
