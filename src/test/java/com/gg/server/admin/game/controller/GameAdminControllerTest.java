@@ -92,7 +92,7 @@ class GameAdminControllerTest {
         Season season;
 
         static final int TOTAL_PAGE_SIZE = 18;
-
+        static final int TOURNAMENT_GAME_SIZE = 4;
         static final String INTRA_ID = "nheo";
 
         @BeforeEach
@@ -104,6 +104,10 @@ class GameAdminControllerTest {
             testDataUtils.createUserRank(user, "status message", season);
             for (int i = 0; i < TOTAL_PAGE_SIZE; i++) {
                 testDataUtils.createMockMatchWithMockRank(user, season, LocalDateTime.now().minusMinutes(20 + i * 15), LocalDateTime.now().minusMinutes(5 + i * 15));
+            }
+            for (int i = TOTAL_PAGE_SIZE; i< TOTAL_PAGE_SIZE + TOURNAMENT_GAME_SIZE; i++) {
+                testDataUtils.createMockMatch(testDataUtils.createNewUser("testUser"+i), season,
+                    LocalDateTime.now().minusMinutes(20 + i * 15), LocalDateTime.now().minusMinutes(5 + i * 15), Mode.TOURNAMENT);
             }
         }
         private GameLogListAdminResponseDto getPageResult(int currentPage, int pageSize)
@@ -126,7 +130,7 @@ class GameAdminControllerTest {
             //given
             int pageSize = 5;
             //when
-            GameLogListAdminResponseDto result = getPageResult(1, 5);
+            GameLogListAdminResponseDto result = getPageResult(1, pageSize);
             //then
             assertThat(result.getGameLogList().size()).isEqualTo(pageSize);
         }
@@ -138,7 +142,7 @@ class GameAdminControllerTest {
             //given
             int pageSize = 5;
             //when
-            GameLogListAdminResponseDto result = getPageResult(2, 5);
+            GameLogListAdminResponseDto result = getPageResult(2, pageSize);
             //then
             assertThat(result.getGameLogList().size()).isEqualTo(pageSize);
         }
@@ -150,7 +154,7 @@ class GameAdminControllerTest {
             //given
             int pageSize = 5;
             //when
-            GameLogListAdminResponseDto result = getPageResult(4, 5);
+            GameLogListAdminResponseDto result = getPageResult(4, pageSize);
             //then
             assertThat(result.getGameLogList().size()).isEqualTo(TOTAL_PAGE_SIZE % pageSize);
         }
