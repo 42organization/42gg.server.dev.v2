@@ -150,4 +150,9 @@ public class Tournament extends BaseTimeEntity {
         mustNotNull(status, NULL_POINT);
         this.status = status;
     }
+
+    public void updateEndTime(LocalDateTime endTime) {
+        mustNotNull(endTime, NULL_POINT);
+        this.endTime = endTime;
+    }
 }

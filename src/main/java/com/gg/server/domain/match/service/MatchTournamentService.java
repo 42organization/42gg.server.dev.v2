@@ -186,6 +186,7 @@ public class MatchTournamentService {
         User winner = getWinningTeam(finalGame)
             .getTeamUsers().get(0).getUser();
         tournament.updateStatus(TournamentStatus.END);
+        tournament.updateEndTime(finalGame.getEndTime());
         tournament.updateWinner(winner);
 
     }

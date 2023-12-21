@@ -163,7 +163,7 @@ public class MatchTournamentTest {
     @DisplayName("토너먼트 매칭 가능 상태 확인 테스트")
     class CheckTournament {
         @Test
-        @DisplayName("IMPOSSIBLE : 결승 경기 점수 입력 후 토너먼트 END 상태로 업데이트 성공")
+        @DisplayName("IMPOSSIBLE : 결승 경기 점수 입력 후 토너먼트 END 상태로 업데이트 성공 & 종료 시간 갱신")
         public void finalEndTest() {
             // given
             // 8강 & 4강 & 결승 경기 결과 입력
@@ -183,6 +183,7 @@ public class MatchTournamentTest {
             assertThat(TournamentMatchStatus.IMPOSSIBLE).isEqualTo(tournamentMatchStatus);
             assertThat(tournament.getStatus()).isEqualTo(TournamentStatus.END);
             assertThat(tournament.getWinner()).isNotNull();
+            assertThat(tournament.getEndTime()).isEqualTo(finalGame.getEndTime());
         }
 
         @Test
