@@ -21,4 +21,6 @@ public interface PChangeRepository extends JpaRepository<PChange, Long> , PChang
     Optional<PChange> findByUserIdAndGameId(Long userId, Long gameId);
 
     Optional<PChange> findPChangeByUserIdAndGameId(Long userId, Long gameId);
+
+    Optional<PChange> findPChangeByGameId(Long gameId);
 }
