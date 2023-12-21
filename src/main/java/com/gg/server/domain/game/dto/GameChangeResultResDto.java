@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @JsonInclude(Include.NON_NULL)
-public class ExpChangeResultResDto {
+public class GameChangeResultResDto {
     private Integer beforeExp;
     private Integer beforeMaxExp;
     private Integer beforeLevel;
@@ -24,7 +24,7 @@ public class ExpChangeResultResDto {
     protected Integer changedPpp;
     protected Integer beforePpp;
 
-    public ExpChangeResultResDto(Integer beforeExp, Integer currentExp, UserGameCoinResultDto userGameCoinResultDto) {
+    public GameChangeResultResDto(Integer beforeExp, Integer currentExp, UserGameCoinResultDto userGameCoinResultDto) {
         this.beforeExp = ExpLevelCalculator.getCurrentLevelMyExp(beforeExp);
         this.beforeLevel = ExpLevelCalculator.getLevel(beforeExp);
         this.beforeMaxExp = ExpLevelCalculator.getLevelMaxExp(beforeLevel);
@@ -40,10 +40,10 @@ public class ExpChangeResultResDto {
     public boolean equals(Object obj) {
         if (obj == this) {
             return true;
-        } else if (!(obj instanceof ExpChangeResultResDto)) {
+        } else if (!(obj instanceof GameChangeResultResDto)) {
             return false;
         } else {
-            ExpChangeResultResDto other = (ExpChangeResultResDto) obj;
+            GameChangeResultResDto other = (GameChangeResultResDto) obj;
             return this.beforeExp.equals(other.getBeforeExp())
                     && this.beforeLevel.equals(other.getBeforeLevel())
                     && this.beforeMaxExp.equals(other.getBeforeMaxExp())

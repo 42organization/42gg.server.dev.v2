@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class PPPChangeResultResDto extends ExpChangeResultResDto {
+public class PPPChangeResultResDto extends GameChangeResultResDto {
 
     public PPPChangeResultResDto(Integer beforeExp, Integer currentExp, Integer beforePpp, Integer afterPpp, UserGameCoinResultDto userGameCoinResultDto) {
         super(beforeExp, currentExp, userGameCoinResultDto);

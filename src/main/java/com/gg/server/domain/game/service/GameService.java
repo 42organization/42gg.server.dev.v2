@@ -153,17 +153,17 @@ public class GameService {
      * normal 게임에 대한 exp 변화 결과를 가져온다.
      * @param gameId
      * @param userId
-     * @return ExpChangeResultResDto 경험치 변화 결과
+     * @return GameChangeResultResDto 경험치 변화 결과
      */
     @Transactional
-    public ExpChangeResultResDto expChangeResult(Long gameId, Long userId) {
+    public GameChangeResultResDto expChangeResult(Long gameId, Long userId) {
         List<PChange> pChanges = pChangeService.findExpChangeHistory(gameId, userId);
         UserGameCoinResultDto userGameCoinResultDto = userCoinChangeService.addNormalGameCoin(userId);
 
         if (pChanges.size() == 1) {
-            return new ExpChangeResultResDto(0, pChanges.get(0).getExp(), userGameCoinResultDto);
+            return new GameChangeResultResDto(0, pChanges.get(0).getExp(), userGameCoinResultDto);
         } else {
-            return new ExpChangeResultResDto(pChanges.get(1).getExp(), pChanges.get(0).getExp(), userGameCoinResultDto);
+            return new GameChangeResultResDto(pChanges.get(1).getExp(), pChanges.get(0).getExp(), userGameCoinResultDto);
         }
     }
 
