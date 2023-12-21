@@ -310,10 +310,6 @@ public class TournamentAdminService {
         gameService.savePChange(game, teamUsers, teamUsers.get(0).getUser().getId());
         if (POSSIBLE.equals(matchStatus)) {
             matchTournamentService.matchGames(tournament, nextRound);
-            TeamUser user1 = teamUserRepository.findByTeamId(reqDto.getTeam1().getTeamId());
-            TeamUser user2 = teamUserRepository.findByTeamId(reqDto.getTeam2().getTeamId());
-            notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(user1.getUser().getIntraId(), TournamentNotiMessage.GAME_MATCHED.getMessage()));
-            notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(user2.getUser().getIntraId(), TournamentNotiMessage.GAME_MATCHED.getMessage()));
         } else if (ALREADY_MATCHED.equals(matchStatus)) {
             Game nextMatchedGame = tournamentGameRepository.findByTournamentIdAndTournamentRound(tournament.getId(), nextRound)
                 .orElseThrow(TournamentGameNotFoundException::new)
