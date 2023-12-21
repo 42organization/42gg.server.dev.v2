@@ -2,6 +2,7 @@ package com.gg.server.domain.match.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gg.server.domain.game.data.Game;
+import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.match.data.RedisMatchTime;
 import com.gg.server.domain.slotmanagement.SlotManagement;
 
@@ -30,6 +31,7 @@ public class MatchStatusDto {
         this.isMatched = true;
         this.isImminent = game.getStartTime().minusMinutes(slotManagement.getOpenMinute())
                 .isBefore(LocalDateTime.now());
+        if (game.getMode() == Mode.TOURNAMENT) isImminent = true;
         this.myTeam = List.of(userIntraId);
         this.enemyTeam = List.of(enemyIntraId);
 
