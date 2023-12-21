@@ -1,10 +1,14 @@
 package com.gg.server.domain.game;
 
 import com.gg.server.domain.game.dto.ExpChangeResultResDto;
-import com.gg.server.domain.game.dto.GameTeamInfo;
-import com.gg.server.domain.game.dto.PPPChangeResultResDto;
-import com.gg.server.domain.game.dto.request.*;
 import com.gg.server.domain.game.dto.GameListResDto;
+import com.gg.server.domain.game.dto.GameTeamInfo;
+import com.gg.server.domain.game.dto.request.GameListReqDto;
+import com.gg.server.domain.game.dto.request.NormalGameListReqDto;
+import com.gg.server.domain.game.dto.request.NormalResultReqDto;
+import com.gg.server.domain.game.dto.request.RankGameListReqDto;
+import com.gg.server.domain.game.dto.request.RankResultReqDto;
+import com.gg.server.domain.game.dto.request.TournamentResultReqDto;
 import com.gg.server.domain.game.exception.ScoreNotMatchedException;
 import com.gg.server.domain.game.service.GameFindService;
 import com.gg.server.domain.game.service.GameService;
@@ -12,19 +16,25 @@ import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.rank.redis.RankRedisService;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.exception.ErrorCode;
+import com.gg.server.global.exception.custom.BusinessException;
 import com.gg.server.global.exception.custom.InvalidParameterException;
 import com.gg.server.global.utils.argumentresolver.Login;
 import io.swagger.v3.oas.annotations.Parameter;
-import javax.validation.constraints.NotNull;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
@@ -87,14 +97,14 @@ public class GameController {
             throw new ScoreNotMatchedException();
         }
         rankRedisService.updateAllTier(reqDto.getGameId());
-        return new ResponseEntity<Void>(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PostMapping("/normal")
     ResponseEntity<Void> createNormalResult(@Valid @RequestBody NormalResultReqDto reqDto, @Parameter(hidden = true) @Login UserDto user) {
         if (gameService.normalExpResult(reqDto, user.getId()))
-            return new ResponseEntity<Void>(HttpStatus.CREATED);
-        return new ResponseEntity<Void>(HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
     /**
@@ -114,11 +124,16 @@ public class GameController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    /**
+     * RANK, NORMAL, TOURNAMENT 게임 결과 반환.
+     */
     @GetMapping("/{gameId}/result")
-    ExpChangeResultResDto getNormalExpChange(@PathVariable Long gameId,
+    ResponseEntity<ExpChangeResultResDto> getGameChangeResult(@PathVariable Long gameId,
         @Parameter(hidden = true) @Login UserDto user, @RequestParam Mode mode) {
         if (mode == Mode.RANK)
-            return gameService.pppChangeResult(gameId, user.getId());
-        return gameService.expChangeResult(gameId, user.getId());
+            return ResponseEntity.ok(gameService.pppChangeResult(gameId, user.getId()));
+        else if (mode == Mode.NORMAL || mode == Mode.TOURNAMENT)
+            return ResponseEntity.ok(gameService.expChangeResult(gameId, user.getId()));
+        throw new BusinessException(ErrorCode.BAD_ARGU);
     }
 }
