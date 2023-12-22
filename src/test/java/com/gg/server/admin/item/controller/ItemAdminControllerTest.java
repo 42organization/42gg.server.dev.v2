@@ -1,36 +1,41 @@
 package com.gg.server.admin.item.controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.item.data.ItemAdminRepository;
 import com.gg.server.admin.item.dto.ItemListResponseDto;
+import com.gg.server.admin.item.dto.ItemUpdateRequestDto;
 import com.gg.server.admin.item.service.ItemAdminService;
+import com.gg.server.utils.annotation.IntegrationTest;
 import com.gg.server.domain.item.data.Item;
+import com.gg.server.domain.item.type.ItemType;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
+import com.gg.server.global.utils.ItemImageHandler;
+import com.gg.server.utils.ItemTestUtils;
 import com.gg.server.utils.TestDataUtils;
+import java.util.List;
+import javax.transaction.Transactional;
 import org.apache.http.HttpHeaders;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
-
-
-import javax.transaction.Transactional;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-@SpringBootTest
+@IntegrationTest
 @AutoConfigureMockMvc
 @Transactional
 class ItemAdminControllerTest {
@@ -48,6 +53,18 @@ class ItemAdminControllerTest {
     ItemAdminRepository itemAdminRepository;
     @Autowired
     MockMvc mockMvc;
+    @Autowired
+    ItemTestUtils itemTestUtils;
+    @MockBean
+    ItemImageHandler ItemImageHandler;
+
+    Item item;
+    @BeforeEach
+    void setUp() {
+        ItemUpdateRequestDto dto = new ItemUpdateRequestDto("name", "content",
+            "subContent", 100, 50, ItemType.EDGE);
+        item = itemTestUtils.createItem(testDataUtils.createAdminUserForItem(), dto);
+    }
 
     @Test
     @DisplayName("GET /pingpong/admin/items/history")
@@ -77,17 +94,28 @@ class ItemAdminControllerTest {
     }
 
     @Test
-    @DisplayName("PUT /pingpong/admin/items/history/{itemId}")
+    @DisplayName("POST /pingpong/admin/items/history/{itemId}")
     public void updateItemTest() throws Exception {
+        Mockito.when(ItemImageHandler.uploadToS3(Mockito.any(), Mockito.anyString()))
+            .thenAnswer(invocation -> invocation.getArgument(1, String.class));
+
+
         String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
         String creatorId = userRepository.getById(userId).getIntraId();
-        MockMultipartFile image = new MockMultipartFile("file", "imagefile.jpeg", "image/jpeg", "<<jpeg data>>".getBytes());
-        MockMultipartFile jsonFile = new MockMultipartFile("itemRequestDto", "", "application/json", "{\"name\": \"TEST\", \"content\": \"TESTING\", \"price\": 42, \"discount\": 50, \"itemType\": \"MEGAPHONE\"}".getBytes());
-        String contentAsString = mockMvc.perform(multipart("/pingpong/admin/items/{itemId}", 1)
+        MockMultipartFile image = new MockMultipartFile("imgData", "imagefile.jpeg", "image/jpeg", "<<jpeg data>>".getBytes());
+        MockMultipartFile jsonFile = new MockMultipartFile("updateItemInfo", "",
+            "application/json",
+            ("{\"name\": \"TEST\", "
+                + "\"mainContent\": \"TESTING\", "
+                + "\"subContent\": \"TESTING\", "
+                + "\"price\": 42, "
+                + "\"discount\": 50, "
+                + "\"itemType\": \"MEGAPHONE\"}").getBytes());
+        String contentAsString = mockMvc.perform(multipart("/pingpong/admin/items/{itemId}", item.getId())
                 .file(image)
-                        .file(jsonFile)
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .file(jsonFile)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isNoContent())
                 .andReturn().getResponse().getContentAsString();
     }
@@ -98,7 +126,8 @@ class ItemAdminControllerTest {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
         String deleterId = userRepository.getById(userId).getIntraId();
-        String contentAsString = mockMvc.perform(delete("/pingpong/admin/items/{itemId}", 1)
+
+        String contentAsString = mockMvc.perform(delete("/pingpong/admin/items/{itemId}", item.getId())
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isNoContent())
                 .andReturn().getResponse().getContentAsString();

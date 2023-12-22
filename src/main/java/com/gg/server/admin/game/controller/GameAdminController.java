@@ -33,6 +33,11 @@ public class GameAdminController {
         return gameAdminService.findAllGamesByAdmin(pageable);
     }
 
+    /**
+     * 특정 유저의 게임 목록 조회 API
+     * @param reqDto intraId page size
+     * @return GameLogListAdminResponseDto gameLogList totalPage
+     */
     @GetMapping("/users")
     public GameLogListAdminResponseDto gameFindByIntraId(@ModelAttribute GameUserLogAdminReqDto reqDto) {
 
@@ -40,13 +45,20 @@ public class GameAdminController {
         return gameAdminService.findGamesByIntraId(reqDto.getIntraId(), pageable);
     }
 
+    /**
+     * 랭킹 점수 수정 API
+     * @param reqDto team1Id team1Score team2Id team2Score
+     * @param gameId 수정할 게임 id
+     * @return ResponseEntity<Void>
+     * @throws InvalidParameterException 점수가 3점을 초과하거나, 두 팀의 점수가 같을 경우
+     */
     @PutMapping("/{gameId}")
-    public ResponseEntity gameResultEdit(@Valid @RequestBody RankGamePPPModifyReqDto reqDto,
+    public ResponseEntity<Void> gameResultEdit(@Valid @RequestBody RankGamePPPModifyReqDto reqDto,
                                          @PathVariable @Positive Long gameId) {
         if (reqDto.getTeam1Score() + reqDto.getTeam2Score() > 3 || reqDto.getTeam1Score() == reqDto.getTeam2Score()) {
             throw new InvalidParameterException("점수를 잘못 입력했습니다.", ErrorCode.VALID_FAILED);
         }
         gameAdminService.rankResultEdit(reqDto, gameId);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }
 }

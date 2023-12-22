@@ -79,10 +79,10 @@ jobs:
           key: ${{ secrets.MAIN_SERVER_PEM }}
           script: |
             cd ./docker
-            docker stop tomcat
-            docker rm tomcat
+            docker-compose down tomcat
             docker rmi ${{ env.IMAGE_NAME }}:latest
-            docker-compose up -d
+            docker-compose up tomcat -d
+            docker-compose up prometheus -d
 
       - name: Remove Github Actions IP From Security Group
         run: |

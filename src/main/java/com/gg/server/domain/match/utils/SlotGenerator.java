@@ -12,10 +12,11 @@ import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.slotmanagement.SlotManagement;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+
+import com.gg.server.domain.tournament.data.Tournament;
+import com.gg.server.domain.tournament.data.TournamentRepository;
+import com.gg.server.domain.tournament.type.TournamentStatus;
 import lombok.Getter;
 
 
@@ -59,6 +60,26 @@ public class SlotGenerator {
         games.stream().forEach(e -> slots.put(e.getStartTime(),
                 new SlotStatusDto(e.getStartTime(), SlotStatus.CLOSE, interval)));
     }
+
+    /**
+     * BEFORE, LIVE 상태의 토너먼트 진행 시간에 슬롯을 block함
+     */
+    public void addTournamentSlots(List<Tournament> tournaments) {
+        for (Tournament tournament : tournaments) {
+            LocalDateTime startTime = tournament.getStartTime();
+            int startTimeMinute = startTime.getMinute();
+            startTimeMinute = startTimeMinute - (startTimeMinute % interval);
+            startTime = startTime.withMinute(startTimeMinute);
+            LocalDateTime endTime = tournament.getEndTime();
+            int endTimeMinute = endTime.getMinute();
+            endTimeMinute = endTimeMinute + (interval - (endTimeMinute % interval));
+            endTime = endTime.withMinute(endTimeMinute);
+            for (LocalDateTime time = startTime; time.isBefore(endTime); time = time.plusMinutes(interval)) {
+                slots.put(time, new SlotStatusDto(time, SlotStatus.CLOSE, interval));
+            }
+        }
+    }
+
     public void addMySlots(Game myGame) {
         slots.put(myGame.getStartTime(),
                 new SlotStatusDto(myGame.getStartTime(), myGame.getEndTime(),

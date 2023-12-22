@@ -1,9 +1,16 @@
 package com.gg.server.admin.announcement.controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.announcement.data.AnnouncementAdminRepository;
 import com.gg.server.admin.announcement.dto.AnnouncementAdminAddDto;
 import com.gg.server.admin.announcement.dto.AnnouncementAdminListResponseDto;
+import com.gg.server.utils.annotation.IntegrationTest;
 import com.gg.server.domain.announcement.data.Announcement;
 import com.gg.server.domain.announcement.exception.AnnounceNotFoundException;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
@@ -14,17 +21,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @RequiredArgsConstructor
-@SpringBootTest
+@IntegrationTest
 @AutoConfigureMockMvc
 @Transactional
 class AnnouncementAdminControllerTest {
@@ -71,7 +73,7 @@ class AnnouncementAdminControllerTest {
     void addAnnouncement() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
-
+        testDataUtils.createAnnouncements(testDataUtils.createAdminUser(), 20);
         //공지사항 1개 정책 때문에 기존 공지사항 지울 것
         Announcement delDto = announcementAdminRepository.findFirstByOrderByIdDesc().orElseThrow(()-> new AnnounceNotFoundException());
         announcementAdminRepository.delete(delDto);
@@ -120,6 +122,7 @@ class AnnouncementAdminControllerTest {
     void putAnnouncement() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
+        testDataUtils.createAnnouncement(testDataUtils.createAdminUser(), "testContent");
 
         //공지사항 1개 정책 때문에 기존 공지사항 지울 것
 //        Announcement delDto = announcementAdminRepository.findFirstByOrderByIdDesc();

@@ -1,0 +1,18 @@
+coverage:
+  status:
+    project:
+      unit:
+        target: 5%
+        flags:
+          - unitTest
+      integration:
+        target: 60%
+        flags:
+          - integrationTest
+flags:
+  unitTest:
+    paths:
+      - src/main/java/com/gg/server/
+  integrationTest:
+    paths:
+      - src/main/java/com/gg/server/

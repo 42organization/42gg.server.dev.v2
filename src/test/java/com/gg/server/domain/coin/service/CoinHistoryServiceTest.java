@@ -1,24 +1,25 @@
 package com.gg.server.domain.coin.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import com.gg.server.utils.annotation.IntegrationTest;
 import com.gg.server.domain.coin.data.CoinHistory;
 import com.gg.server.domain.coin.data.CoinHistoryRepository;
+import com.gg.server.domain.coin.data.CoinPolicy;
+import com.gg.server.domain.coin.data.CoinPolicyRepository;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-
-@SpringBootTest
+@IntegrationTest
 @RequiredArgsConstructor
 @Transactional
 class CoinHistoryServiceTest {
@@ -36,6 +37,21 @@ class CoinHistoryServiceTest {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    CoinPolicyRepository coinPolicyRepository;
+
+    @BeforeEach
+    void beforeEach() {
+        CoinPolicy coinPolicy = CoinPolicy.builder()
+            .user(testDataUtils.createAdminUser())
+            .attendance(1)
+            .normal(3)
+            .rankWin(10)
+            .rankLose(5)
+            .build();
+        coinPolicyRepository.save(coinPolicy);
+    }
 
     @Test
     @DisplayName("출석 재화이력 등록")

@@ -1,33 +1,33 @@
 package com.gg.server.admin.coin.controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gg.server.admin.announcement.dto.AnnouncementAdminListResponseDto;
 import com.gg.server.admin.coin.data.CoinPolicyAdminRepository;
 import com.gg.server.admin.coin.dto.CoinPolicyAdminAddDto;
 import com.gg.server.admin.coin.dto.CoinPolicyAdminListResponseDto;
+import com.gg.server.utils.annotation.IntegrationTest;
 import com.gg.server.domain.coin.data.CoinPolicy;
 import com.gg.server.domain.coin.exception.CoinPolicyNotFoundException;
+import com.gg.server.domain.user.data.User;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
+import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @RequiredArgsConstructor
-@SpringBootTest
+@IntegrationTest
 @AutoConfigureMockMvc
 @Transactional
 class CoinPolicyAdminControllerTest {
@@ -49,6 +49,9 @@ class CoinPolicyAdminControllerTest {
     @Test
     @DisplayName("[Get]/pingpong/admin/coinpolicy")
     void getCoinPolicy() throws Exception {
+        User admin = testDataUtils.createAdminUser();
+        IntStream.range(0, 3).forEach(i -> testDataUtils
+            .createCoinPolicy(admin, 1, 2, 3, 4));
         String accessToken = testDataUtils.getAdminLoginAccessToken();
         Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
 

@@ -1,16 +1,16 @@
 package com.gg.server.domain.rank.redis;
 
+import com.gg.server.utils.annotation.IntegrationTest;
 import com.gg.server.domain.rank.exception.RedisDataNotFoundException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
-@SpringBootTest
+@IntegrationTest
 class RankRedisRepositoryTest {
 
 
@@ -216,7 +216,7 @@ class RankRedisRepositoryTest {
     }
 
     @Test
-    @DisplayName("")
+    @DisplayName("유저 랭크를 삭제한다")
     public void deleteUserRank () throws Exception
     {
         //given

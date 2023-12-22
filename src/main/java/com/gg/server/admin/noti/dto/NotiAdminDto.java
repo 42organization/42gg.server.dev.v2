@@ -2,14 +2,17 @@ package com.gg.server.admin.noti.dto;
 
 import com.gg.server.domain.noti.data.Noti;
 import com.gg.server.domain.noti.type.NotiType;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class NotiAdminDto {
     private Long id;
     private String intraId;

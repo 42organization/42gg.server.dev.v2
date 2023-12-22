@@ -31,4 +31,14 @@ public class RankDto {
                 .build();
         return dto;
     }
+    public static RankDto from(RankV2Dto dto) {
+        return RankDto.builder()
+                .intraId(dto.getIntraId())
+                .rank(dto.getRanking())
+                .ppp(dto.getPpp())
+                .statusMessage(dto.getStatusMessage())
+                .tierImageUri(dto.getTierImageUri())
+                .textColor(dto.getTextColor())
+                .build();
+    }
 }

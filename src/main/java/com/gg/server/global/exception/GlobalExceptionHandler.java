@@ -7,11 +7,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+
+import java.time.format.DateTimeParseException;
 
 @Slf4j
 @ControllerAdvice
@@ -50,7 +55,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({DuplicationException.class})
     public ResponseEntity<ErrorResponse> duplicatedException(DuplicationException ex) {
-        log.error("Duplicated", ex.getStackTrace());
+        log.error("Duplicated", ex);
         return new ResponseEntity<>(new ErrorResponse(ex.getErrorCode()), HttpStatus.CONFLICT);
     }
 
@@ -107,4 +112,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    protected ResponseEntity handleException(HttpMessageNotReadableException e) {
+        return ResponseEntity.badRequest().body(ErrorCode.UNREADABLE_HTTP_MESSAGE.getMessage());
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    protected ResponseEntity handleException(MissingServletRequestParameterException e) {
+        return ResponseEntity.badRequest().body(ErrorCode.BAD_ARGU.getMessage());
+    }
 }

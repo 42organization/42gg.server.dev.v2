@@ -109,7 +109,7 @@ public class UserService {
                 return new UserLiveResponseDto(notiCnt, "game", game.getMode(), game.getId());
             else if (game.getStatus() == StatusType.END) {
                 PChange userPChange = pChangeRepository.findPChangeByUserIdAndGameId(user.getId(), game.getId()).orElseThrow(() -> new PChangeNotExistException());
-                if (userPChange.getIsChecked() == false) {
+                if (!userPChange.getIsChecked()) {
                     userPChange.checkPChange();
                     return new UserLiveResponseDto(notiCnt, "game", game.getMode(), game.getId());
                 }

@@ -2,16 +2,13 @@ package com.gg.server.global.security.repository;
 
 
 import com.gg.server.global.security.cookie.CookieUtil;
-import com.gg.server.global.utils.ApplicationYmlRead;
 import com.nimbusds.oauth2.sdk.util.StringUtils;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.servlet.i18n.CookieLocaleResolver;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 @Repository
 @RequiredArgsConstructor
