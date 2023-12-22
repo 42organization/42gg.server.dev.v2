@@ -6,7 +6,7 @@ import javax.validation.Valid;
 
 import com.gg.server.domain.tournament.dto.TournamentUserListResponseDto;
 import lombok.AllArgsConstructor;
-import org.checkerframework.checker.index.qual.Positive;
+import javax.validation.constraints.Positive;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;

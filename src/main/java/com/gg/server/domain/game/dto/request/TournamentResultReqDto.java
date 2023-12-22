@@ -3,7 +3,7 @@ package com.gg.server.domain.game.dto.request;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.checkerframework.checker.index.qual.Positive;
+import javax.validation.constraints.Positive;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
