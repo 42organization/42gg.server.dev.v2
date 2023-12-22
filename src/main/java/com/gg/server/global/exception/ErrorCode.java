@@ -85,6 +85,7 @@ public enum ErrorCode {
      */
     TEAM_USER_ALREADY_EXIST(409, "TU201", "중복된 TEAM_USER"),
     TEAM_USER_EXCEED(500, "TU202", "TeamUser 최대 인원의 수(2)를 초과하였습니다."),
+    TEAM_USER_NOT_FOUND(404, "TU203", "TeamUser가 없습니다."),
 
     /** game **/
     GAME_DB_NOT_VALID(500, "GM201", "GAME DB NOT CONSISTENCY"),
@@ -94,7 +95,6 @@ public enum ErrorCode {
     GAME_DUPLICATION_EXCEPTION(409, "GM204", "GAME ALREADY EXISTS"),
     GAME_STATUS_NOT_MATCHED(400, "GM205", "게임 상태 오류입니다."),
     SCORE_ALREADY_ENTERED(400, "GM206", "점수가 이미 입력되었습니다."),
-    GAME_DUPLICATION_EXCPETION(409, "GM204", "GAME ALREADY EXISTS"),
     SCORE_NOT_INVALID(400, "GM205", "score 입력이 유효하지 않습니다."),
     GAME_NOT_TOURNAMENT(400, "GM206", "토너먼트 게임이 아닙니다."),
 

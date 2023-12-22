@@ -395,9 +395,10 @@ public class GameControllerTest {
         @DisplayName("잘못된 query parameter인 경우, Bad Request exception 발생")
         public void failBadRequest2() throws Exception {
             String url = "/pingpong/games?page=1&size=10&status=2";
-            mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+            String contentAsString = mockMvc.perform(get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString();
+            System.out.println(contentAsString);
         }
     }
 

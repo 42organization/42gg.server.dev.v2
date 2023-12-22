@@ -40,7 +40,6 @@ import lombok.ToString;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-@ToString
 public class Tournament extends BaseTimeEntity {
     // 토너먼트 참가자 수 => 현재는 8강 고정
     public static final int ALLOWED_JOINED_NUMBER = 8;
@@ -53,11 +52,11 @@ public class Tournament extends BaseTimeEntity {
     private Long id;
 
     @NotNull
-    @Column(name = "title")
+    @Column(name = "title", length = 30)
     private String title;
 
     @NotNull
-    @Column(name = "contents")
+    @Column(name = "contents", length = 1000)
     private String contents;
 
     @NotNull

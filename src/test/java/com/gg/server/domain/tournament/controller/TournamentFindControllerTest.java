@@ -99,7 +99,7 @@ public class TournamentFindControllerTest {
                     assertThat(tournamentInfoList.get(i).getStatus()).isEqualTo(tournamentResponseDto.getStatus());
                     assertThat(tournamentInfoList.get(i).getWinnerIntraId()).isEqualTo(tournamentResponseDto.getWinnerIntraId());
                     assertThat(tournamentInfoList.get(i).getWinnerImageUrl()).isEqualTo(tournamentResponseDto.getWinnerImageUrl());
-                    assertThat(tournamentInfoList.get(i).getPlayer_cnt()).isEqualTo(tournamentResponseDto.getPlayer_cnt());
+                    assertThat(tournamentInfoList.get(i).getPlayerCnt()).isEqualTo(tournamentResponseDto.getPlayerCnt());
                 }
                 if (i > 0)
                     assertThat(tournamentInfoList.get(i).getStartTime()).isBefore(tournamentInfoList.get(i - 1).getEndTime());
@@ -334,7 +334,7 @@ public class TournamentFindControllerTest {
                 assertThat(tournament.getWinner().getIntraId()).isEqualTo(responseDto.getWinnerIntraId());
                 assertThat(tournament.getWinner().getImageUri()).isEqualTo(responseDto.getWinnerImageUrl());
             }
-            assertThat(tournament.getTournamentUsers().size()).isEqualTo(responseDto.getPlayer_cnt());
+            assertThat(tournament.getTournamentUsers().size()).isEqualTo(responseDto.getPlayerCnt());
         }
 
         @Test

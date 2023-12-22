@@ -8,7 +8,6 @@ import com.gg.server.domain.user.dto.UserImageDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import java.time.LocalDateTime;
 
@@ -26,9 +25,9 @@ public class TournamentResponseDto {
     private TournamentStatus status;
     private String winnerIntraId;
     private String winnerImageUrl;
-    private int player_cnt;
+    private int playerCnt;
 
-    public TournamentResponseDto (Tournament tournament, UserImageDto winner, int player_cnt) {
+    public TournamentResponseDto (Tournament tournament, UserImageDto winner, int playerCnt) {
         this.tournamentId = tournament.getId();
         this.title = tournament.getTitle();
         this.contents = tournament.getContents();
@@ -38,10 +37,10 @@ public class TournamentResponseDto {
         this.status = tournament.getStatus();
         this.winnerIntraId = winner.getIntraId();
         this.winnerImageUrl = winner.getImageUri();
-        this.player_cnt = player_cnt;
+        this.playerCnt = playerCnt;
     }
 
-    public void update_player_cnt(int player_cnt) {
-        this.player_cnt = player_cnt;
+    public void update_player_cnt(int playerCnt) {
+        this.playerCnt = playerCnt;
     }
 }

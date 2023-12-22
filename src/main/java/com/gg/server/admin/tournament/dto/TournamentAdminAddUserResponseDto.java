@@ -10,13 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TournamentAdminAddUserResponseDto {
-    @NotNull
     private Long userId;
 
-    @NotNull
     private String intraId;
 
-    @NotNull
     private Boolean isJoined;
 
 }
