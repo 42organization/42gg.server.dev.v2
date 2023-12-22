@@ -119,8 +119,7 @@ public class MatchTournamentService {
             notiUsers.add(user2);
             startTime = startTime.plusMinutes((long) gameInterval);
         }
-        notiUsers.stream()
-            .parallel()
+        notiUsers.stream().distinct()
             .forEach(user -> notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(user.getIntraId(), NotiType.TOURNAMENT_GAME_MATCHED.getMessage())));
     }
 
