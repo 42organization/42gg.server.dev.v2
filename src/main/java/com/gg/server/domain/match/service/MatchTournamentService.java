@@ -31,6 +31,7 @@ import com.gg.server.domain.match.exception.SlotNotFoundException;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -101,6 +102,7 @@ public class MatchTournamentService {
         List<TournamentGame> allTournamentGames = tournamentGameRepository.findAllByTournamentId(tournament.getId());
         List<TournamentGame> tournamentGames = findSameRoundGames(allTournamentGames, round.getRoundNumber());
         List<TournamentGame> previousRoundTournamentGames = findSameRoundGames(allTournamentGames, TournamentRound.getPreviousRoundNumber(round));
+        List<User> notiUsers = new ArrayList<>();
         LocalDateTime startTime = calculateStartTime(tournament, round, gameInterval);
 
         for (int i = 0; i < tournamentGames.size(); ++i) {
@@ -113,10 +115,13 @@ public class MatchTournamentService {
             new TeamUser(team2, user2);
             gameRepository.save(game);
             tournamentGames.get(i).updateGame(game);
+            notiUsers.add(user1);
+            notiUsers.add(user2);
             startTime = startTime.plusMinutes((long) gameInterval);
-            notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(user1.getIntraId(), NotiType.TOURNAMENT_GAME_MATCHED.getMessage()));
-            notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(user2.getIntraId(), NotiType.TOURNAMENT_GAME_MATCHED.getMessage()));
         }
+        notiUsers.stream()
+            .parallel()
+            .forEach(user -> notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(user.getIntraId(), NotiType.TOURNAMENT_GAME_MATCHED.getMessage())));
     }
 
     /**
