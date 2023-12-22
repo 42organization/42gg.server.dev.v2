@@ -22,7 +22,7 @@ public class Noti extends BaseTimeEntity {
     private User user;
 
     @NotNull
-    @Column(name = "noti_type", length = 15)
+    @Column(name = "noti_type", length = 30)
     @Enumerated(EnumType.STRING)
     private NotiType type;
 

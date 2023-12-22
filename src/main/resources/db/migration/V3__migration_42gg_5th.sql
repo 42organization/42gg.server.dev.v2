@@ -44,3 +44,7 @@ CREATE TABLE tournament_game (
         ON DELETE CASCADE ,
     FOREIGN KEY (game_id)       REFERENCES game(id)
 );
+
+### Noti ###
+ALTER TABLE noti
+MODIFY COLUMN noti_type VARCHAR(30);
