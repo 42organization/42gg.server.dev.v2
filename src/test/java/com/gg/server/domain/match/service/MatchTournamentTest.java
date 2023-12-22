@@ -1,5 +1,7 @@
 package com.gg.server.domain.match.service;
 
+import com.gg.server.admin.noti.dto.SendNotiAdminRequestDto;
+import com.gg.server.admin.noti.service.NotiAdminService;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.type.StatusType;
@@ -21,8 +23,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -33,6 +37,8 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @IntegrationTest
 @SpringBootTest
@@ -48,6 +54,8 @@ public class MatchTournamentTest {
     MatchTournamentService matchTournamentService;
     @Autowired
     MatchTestUtils matchTestUtils;
+    @MockBean
+    NotiAdminService notiAdminService;
 
     Tournament tournament;
     List<TournamentGame> allTournamentGames;
@@ -79,6 +87,7 @@ public class MatchTournamentTest {
             int gameInterval = slotManagementRepository.findCurrent(startTime)
                 .orElseThrow(SlotNotFoundException::new)
                 .getGameInterval();
+
             // 4개의 8강 경기가 생성되었는지 확인
             assertThat(quarterRoundGames.size()).isEqualTo(Tournament.ALLOWED_JOINED_NUMBER / 2);
             for (TournamentGame tournamentGame : quarterRoundGames) {
@@ -88,7 +97,7 @@ public class MatchTournamentTest {
                 assertThat(tournamentGame.getGame().getEndTime()).isEqualTo(startTime.plusMinutes(gameInterval));
                 startTime = startTime.plusMinutes((long) gameInterval);
             }
-
+            verify(notiAdminService, times(8)).sendAnnounceNotiToUser(Mockito.any(SendNotiAdminRequestDto.class));
         }
 
         @Test
@@ -132,6 +141,7 @@ public class MatchTournamentTest {
             }
             assertThat(semiTeams).contains(quarterWinningTeams.get(0));
             assertThat(semiTeams).contains(quarterWinningTeams.get(1));
+            verify(notiAdminService, times(4)).sendAnnounceNotiToUser(Mockito.any(SendNotiAdminRequestDto.class));
         }
 
         @Test
@@ -152,6 +162,7 @@ public class MatchTournamentTest {
             TournamentGame finalRoundGame = allTournamentGames.stream()
                 .filter(o -> TournamentRound.THE_FINAL.equals(o.getTournamentRound())).findAny().orElse(null);
             assertThat(finalRoundGame.getGame()).isNotNull();
+            verify(notiAdminService, times(2)).sendAnnounceNotiToUser(Mockito.any(SendNotiAdminRequestDto.class));
         }
 
         @Test
@@ -281,6 +292,7 @@ public class MatchTournamentTest {
 
             assertThat(nextGameUsers.contains(winningTeam.getTeamUsers().get(0).getUser())).isTrue();
             assertThat(nextGameUsers.contains(losingTeam.getTeamUsers().get(0).getUser())).isFalse();
+            verify(notiAdminService, times(2)).sendAnnounceNotiToUser(Mockito.any(SendNotiAdminRequestDto.class));
         }
 
         @Test
@@ -299,7 +311,6 @@ public class MatchTournamentTest {
             // when, then
             assertThatThrownBy(() -> matchTournamentService.updateMatchedGameUser(targetTournamentGame.getGame(), nextMatchedGame))
                 .isInstanceOf(WinningTeamNotFoundException.class);
-
         }
     }
 }

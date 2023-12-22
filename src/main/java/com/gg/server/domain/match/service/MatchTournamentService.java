@@ -1,12 +1,16 @@
 package com.gg.server.domain.match.service;
 
+import com.gg.server.admin.noti.dto.SendNotiAdminRequestDto;
+import com.gg.server.admin.noti.service.NotiAdminService;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.match.exception.EnrolledSlotException;
+import com.gg.server.domain.match.exception.LosingTeamNotFoundException;
 import com.gg.server.domain.match.exception.WinningTeamNotFoundException;
 import com.gg.server.domain.match.type.TournamentMatchStatus;
+import com.gg.server.domain.noti.type.NotiType;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.service.SeasonFindService;
 import com.gg.server.domain.slotmanagement.SlotManagement;
@@ -27,6 +31,7 @@ import com.gg.server.domain.match.exception.SlotNotFoundException;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,6 +46,7 @@ public class MatchTournamentService {
     private final GameRepository gameRepository;
     private final SlotManagementRepository slotManagementRepository;
     private final SeasonFindService seasonFindService;
+    private final NotiAdminService notiAdminService;
 
     /**
      * 토너먼트 진행중 다음 라운드 게임 매칭이 필요한지 확인
@@ -77,7 +83,6 @@ public class MatchTournamentService {
         return POSSIBLE;
     }
 
-
     /**
      * 토너먼트 게임 매칭
      * @param tournament 토너먼트
@@ -97,6 +102,7 @@ public class MatchTournamentService {
         List<TournamentGame> allTournamentGames = tournamentGameRepository.findAllByTournamentId(tournament.getId());
         List<TournamentGame> tournamentGames = findSameRoundGames(allTournamentGames, round.getRoundNumber());
         List<TournamentGame> previousRoundTournamentGames = findSameRoundGames(allTournamentGames, TournamentRound.getPreviousRoundNumber(round));
+        List<User> notiUsers = new ArrayList<>();
         LocalDateTime startTime = calculateStartTime(tournament, round, gameInterval);
 
         for (int i = 0; i < tournamentGames.size(); ++i) {
@@ -109,8 +115,12 @@ public class MatchTournamentService {
             new TeamUser(team2, user2);
             gameRepository.save(game);
             tournamentGames.get(i).updateGame(game);
+            notiUsers.add(user1);
+            notiUsers.add(user2);
             startTime = startTime.plusMinutes((long) gameInterval);
         }
+        notiUsers.stream().distinct()
+            .forEach(user -> notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(user.getIntraId(), NotiType.TOURNAMENT_GAME_MATCHED.getMessage())));
     }
 
     /**
@@ -122,6 +132,7 @@ public class MatchTournamentService {
     @Transactional
     public void updateMatchedGameUser(Game modifiedGame, Game nextMatchedGame) {
         User winner = getWinningTeam(modifiedGame).getTeamUsers().get(0).getUser();
+        User loser = getLosingTeam(modifiedGame).getTeamUsers().get(0).getUser();
         List<User> players = modifiedGame.getTeams().stream()
             .map(team -> team.getTeamUsers().get(0).getUser())
             .collect(Collectors.toList());
@@ -134,6 +145,8 @@ public class MatchTournamentService {
                 break;
             }
         }
+        notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(winner.getIntraId(), NotiType.TOURNAMENT_GAME_MATCHED.getMessage()));
+        notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(loser.getIntraId(), NotiType.TOURNAMENT_GAME_CANCELED.getMessage()));
     }
 
     /**
@@ -214,5 +227,17 @@ public class MatchTournamentService {
             .filter(team -> Boolean.TRUE.equals(team.getWin()))
             .findAny()
             .orElseThrow(WinningTeamNotFoundException::new);
+    }
+
+    /**
+     * game의 패자를 찾는다.
+     * @param game
+     * @return
+     */
+    private Team getLosingTeam(Game game) {
+        return game.getTeams().stream()
+                .filter(team -> Boolean.FALSE.equals(team.getWin()))
+                .findAny()
+                .orElseThrow(LosingTeamNotFoundException::new);
     }
 }

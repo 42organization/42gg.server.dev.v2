@@ -78,6 +78,7 @@ public enum ErrorCode {
     TEAM_SIZE_EXCEED(500, "TM203", "게임 최대 Team 의 수(2)를 초과하였습니다."),
     TEAM_NOT_FOUND(404, "TM204", "TEAM이 존재하지 않습니다."),
     WINNING_TEAM_NOT_FOUND(404, "TM205", "WINNING TEAM이 존재하지 않습니다."),
+    LOSING_TEAM_NOT_FOUND(404, "TM206", "LOSING TEAM이 존재하지 않습니다."),
 
 
     /**
