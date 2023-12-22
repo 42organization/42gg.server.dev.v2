@@ -18,6 +18,7 @@ import com.gg.server.domain.tournament.dto.TournamentListResponseDto;
 import com.gg.server.domain.tournament.dto.TournamentResponseDto;
 import com.gg.server.domain.tournament.exception.TournamentConflictException;
 import com.gg.server.domain.tournament.exception.TournamentNotFoundException;
+import com.gg.server.domain.tournament.exception.TournamentUpdateException;
 import com.gg.server.domain.tournament.type.TournamentRound;
 import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.tournament.type.TournamentType;
@@ -121,6 +122,9 @@ public class TournamentService {
     @Transactional
     public TournamentUserRegistrationResponseDto registerTournamentUser(Long tournamentId, UserDto user) {
         Tournament targetTournament = tournamentRepository.findById(tournamentId).orElseThrow(TournamentNotFoundException::new);
+        if (!targetTournament.getStatus().equals(TournamentStatus.BEFORE)) {
+            throw new TournamentUpdateException();
+        }
         User loginUser = userRepository.findById(user.getId()).orElseThrow(UserNotFoundException::new);
 
         List<TournamentUser> tournamentUserList = targetTournament.getTournamentUsers();
@@ -145,6 +149,9 @@ public class TournamentService {
     @Transactional
     public TournamentUserRegistrationResponseDto cancelTournamentUserRegistration(Long tournamentId, UserDto user) {
         Tournament targetTournament = tournamentRepository.findById(tournamentId).orElseThrow(TournamentNotFoundException::new);
+        if (!targetTournament.getStatus().equals(TournamentStatus.BEFORE)) {
+            throw new TournamentUpdateException();
+        }
 
         List<TournamentUser> tournamentUserList = targetTournament.getTournamentUsers();
         TournamentUser targetTournamentUser = tournamentUserList.stream()
