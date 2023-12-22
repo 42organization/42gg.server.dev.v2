@@ -2,7 +2,6 @@ package com.gg.server.domain.match.service;
 
 import com.gg.server.admin.noti.dto.SendNotiAdminRequestDto;
 import com.gg.server.admin.noti.service.NotiAdminService;
-import com.gg.server.admin.tournament.type.TournamentNotiMessage;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.type.Mode;
@@ -11,6 +10,7 @@ import com.gg.server.domain.match.exception.EnrolledSlotException;
 import com.gg.server.domain.match.exception.LosingTeamNotFoundException;
 import com.gg.server.domain.match.exception.WinningTeamNotFoundException;
 import com.gg.server.domain.match.type.TournamentMatchStatus;
+import com.gg.server.domain.noti.type.NotiType;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.service.SeasonFindService;
 import com.gg.server.domain.slotmanagement.SlotManagement;
@@ -114,8 +114,8 @@ public class MatchTournamentService {
             gameRepository.save(game);
             tournamentGames.get(i).updateGame(game);
             startTime = startTime.plusMinutes((long) gameInterval);
-            notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(user1.getIntraId(), TournamentNotiMessage.GAME_MATCHED.getMessage()));
-            notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(user2.getIntraId(), TournamentNotiMessage.GAME_MATCHED.getMessage()));
+            notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(user1.getIntraId(), NotiType.TOURNAMENT_GAME_MATCHED.getMessage()));
+            notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(user2.getIntraId(), NotiType.TOURNAMENT_GAME_MATCHED.getMessage()));
         }
     }
 
@@ -141,8 +141,8 @@ public class MatchTournamentService {
                 break;
             }
         }
-        notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(winner.getIntraId(), TournamentNotiMessage.GAME_MATCHED.getMessage()));
-        notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(loser.getIntraId(), TournamentNotiMessage.GAME_CANCELED.getMessage()));
+        notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(winner.getIntraId(), NotiType.TOURNAMENT_GAME_MATCHED.getMessage()));
+        notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(loser.getIntraId(), NotiType.TOURNAMENT_GAME_CANCELED.getMessage()));
     }
 
     /**

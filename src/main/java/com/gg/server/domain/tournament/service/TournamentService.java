@@ -2,9 +2,9 @@ package com.gg.server.domain.tournament.service;
 
 import com.gg.server.admin.noti.dto.SendNotiAdminRequestDto;
 import com.gg.server.admin.noti.service.NotiAdminService;
-import com.gg.server.admin.tournament.type.TournamentNotiMessage;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.match.service.MatchTournamentService;
+import com.gg.server.domain.noti.type.NotiType;
 import com.gg.server.domain.tournament.data.*;
 import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentRepository;
@@ -187,7 +187,7 @@ public class TournamentService {
             if (tournamentUsers.size() < Tournament.ALLOWED_JOINED_NUMBER) {
                 for (TournamentUser tournamentUser : tournamentUsers) {
                     if (tournamentUser.getIsJoined().equals(true)) {
-                        notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(tournamentUser.getUser().getIntraId(), TournamentNotiMessage.TOURNAMENT_CANCELED.getMessage()));
+                        notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(tournamentUser.getUser().getIntraId(), NotiType.TOURNAMENT_CANCELED.getMessage()));
                     }
                 }
                 tournamentRepository.delete(imminentTournament);
@@ -195,11 +195,6 @@ public class TournamentService {
             }
             imminentTournament.updateStatus(TournamentStatus.LIVE);
             matchTournamentService.matchGames(imminentTournament, QUARTER_FINAL_1);
-            for (TournamentUser tournamentUser : tournamentUsers) {
-                if (tournamentUser.getIsJoined().equals(true)) {
-                    notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(tournamentUser.getUser().getIntraId(), TournamentNotiMessage.TOURNAMENT_STARTED.getMessage()));
-                }
-            }
         }
     }
 

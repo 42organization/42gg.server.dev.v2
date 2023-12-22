@@ -15,7 +15,10 @@ public enum NotiType {
     CANCELEDBYTIME("canceledbytime", "매칭이 상대 없음으로 취소되었퐁."),
     IMMINENT("imminent", "매치가 곧 시작될퐁."),
     ANNOUNCE("announce", "공지사항이 도착했퐁."),
-    GIFT("gift", "새로운 선물이 도착했퐁.");
+    GIFT("gift", "새로운 선물이 도착했퐁."),
+    TOURNAMENT_CANCELED("tournament canceled", "참가 신청한 토너먼트가 신청 인원 미달로 취소되었퐁."),
+    TOURNAMENT_GAME_MATCHED("tournament game matched", "토너먼트 게임이 성사되었퐁."),
+    TOURNAMENT_GAME_CANCELED("tournament game canceled", "토너먼트 매칭이 취소되었퐁.");
 
     private final String code;
     private final String message;
