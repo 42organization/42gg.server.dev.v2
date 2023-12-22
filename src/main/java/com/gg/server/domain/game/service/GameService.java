@@ -212,7 +212,7 @@ public class GameService {
     }
 
     public void savePChange(Game game, List<TeamUser> teamUsers, Long loginUserId) {
-        if (pChangeRepository.findPChangeByGameId(game.getId()).isPresent()){
+        if (!pChangeRepository.findPChangesByGameId(game.getId()).isEmpty()){
             return ;
         }
         Long team1UserId = teamUsers.get(0).getUser().getId();
