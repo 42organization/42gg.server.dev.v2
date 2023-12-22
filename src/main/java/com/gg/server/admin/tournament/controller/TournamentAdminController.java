@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/pingpong/admin/tournaments")
+@Validated
 public class TournamentAdminController {
     private final TournamentAdminService tournamentAdminService;
 
