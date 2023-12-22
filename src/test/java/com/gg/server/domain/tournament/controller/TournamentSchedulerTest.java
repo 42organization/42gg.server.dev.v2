@@ -82,7 +82,7 @@ public class TournamentSchedulerTest {
                 assertThat(tournamentGame.getGame()).isNotNull();
             }
             //참가자에게 토너먼트 시작 및 매칭 알림이 전송되었는지 확인
-            verify(notiAdminService, times(16)).sendAnnounceNotiToUser(Mockito.any(SendNotiAdminRequestDto.class));
+            verify(notiAdminService, times(Tournament.ALLOWED_JOINED_NUMBER)).sendAnnounceNotiToUser(Mockito.any(SendNotiAdminRequestDto.class));
         }
 
         @Test
