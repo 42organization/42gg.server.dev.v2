@@ -38,9 +38,7 @@ public class UserController {
     private final UserCoinService userCoinService;
 
     @PostMapping("/accesstoken")
-    public ResponseEntity<UserAccessTokenDto> generateAccessToken(@CookieValue(name = "refresh_token", required = false) String refreshToken) {
-        if (refreshToken == null)
-            throw new TokenNotValidException();
+    public ResponseEntity<UserAccessTokenDto> generateAccessToken(@RequestParam String refreshToken) {
         String accessToken = userAuthenticationService.regenerate(refreshToken);
         return new ResponseEntity<>(new UserAccessTokenDto(accessToken), HttpStatus.CREATED);
     }
