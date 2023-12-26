@@ -37,10 +37,17 @@ https://42gg.kr/
 
 - 4기: 2023.08.01 ~ 2023.09.21
 
+- 5기 : 2023.11.01 ~ 2024.01.31
+
 ## ⚡️ 프로젝트 아키텍처
 <img alt="systemArchitecture" src="https://github.com/42organization/42gg.server.dev.v2/assets/67796301/c51e8d73-d8f2-4f5e-935c-325ec263857e" >&nbsp;&nbsp;&nbsp;&nbsp;
 
-## ⚡️ 3기 진행 사항
+
+## ⚡️ 팀소개
+### 3기
+<details>
+<summary> 3기 진행 사항</summary>
+<div markdown="1">
 
 ### ⚡️⚡ 로그인 연동 추가
 - v1에서 지원하지 않던 카카오계정 연동 기능 추가(좌 : v1, 우: v2) </br></br>
@@ -77,30 +84,9 @@ https://42gg.kr/
 <img width=80% alt="dockerPs" src="https://github.com/42organization/42gg.server.dev.v2/assets/67796301/7da03342-14ed-47c7-9183-a68ad663109c" >&nbsp;&nbsp;&nbsp;&nbsp;
  </div>
 
-## ⚡️ 4기 진행 사항
-### ⚡️⚡ DB table 구조 변경
-- 상점, 티어 등 서비스 확장을 위한 DB 재설계
-<img width="1103" alt="ERD V3" src="https://github.com/8luerose/42GG_Server/assets/105616046/a1eb2c31-53cc-4c12-94ff-5ca51ec2d522">
+</div>
+</details>
 
-### ⚡️⚡ 재화 시스템 추가
-- 출석, 게임 승패에 연관해 재화 시스템 추가
-<img width="400" alt="attendance" src="https://github.com/42organization/42gg.server.dev.v2/assets/95139402/caa564c8-cb1b-45eb-975c-9e685911e764">
-
-### ⚡️⚡ 상점, 아이템 서비스 추가
-- 유저 요구사항을 반영한 기능 확장
-<img width="629" alt="스크린샷 2023-09-23 오후 11 48 01" src="https://github.com/8luerose/42GG_Server/assets/105616046/77ce958b-5901-4638-9833-ab27cc182e88">
-<img width="689" alt="스크린샷 2023-09-23 오후 11 48 18" src="https://github.com/8luerose/42GG_Server/assets/105616046/f953cbc4-9d97-4485-b318-4fe73e3e3222">
-
-### ⚡️⚡ 티어 시스템 추가
-- 랭킹전 활성화를 위한 티어 시스템 추가
-<img width="400" alt="tier" src="https://github.com/42organization/42gg.server.dev.v2/assets/95139402/342e0013-13e0-4482-84b5-4381df0498cf">
-
-### ⚡️⚡ 관리자 페이지 구현
-- 원활한 운영을 위한 관리자 기능 추가
-<img width="400" alt="admin" src="https://github.com/42organization/42gg.server.dev.v2/assets/95139402/59756773-48f3-463a-91e4-6bb263aac2f5">
-
-## ⚡️ 팀소개
-### 3기
 <table>
   <thead>
     <tr>
@@ -129,7 +115,37 @@ https://42gg.kr/
 
 </table>
 
+
+
 ### 4기
+<details>
+<summary> 4기 진행 사항</summary>
+<div markdown="1">
+
+### ⚡️⚡ DB table 구조 변경
+- 상점, 티어 등 서비스 확장을 위한 DB 재설계
+<img width="1103" alt="ERD V3" src="https://github.com/8luerose/42GG_Server/assets/105616046/a1eb2c31-53cc-4c12-94ff-5ca51ec2d522">
+
+### ⚡️⚡ 재화 시스템 추가
+- 출석, 게임 승패에 연관해 재화 시스템 추가
+<img width="400" alt="attendance" src="https://github.com/42organization/42gg.server.dev.v2/assets/95139402/caa564c8-cb1b-45eb-975c-9e685911e764">
+
+### ⚡️⚡ 상점, 아이템 서비스 추가
+- 유저 요구사항을 반영한 기능 확장
+<img width="629" alt="스크린샷 2023-09-23 오후 11 48 01" src="https://github.com/8luerose/42GG_Server/assets/105616046/77ce958b-5901-4638-9833-ab27cc182e88">
+<img width="689" alt="스크린샷 2023-09-23 오후 11 48 18" src="https://github.com/8luerose/42GG_Server/assets/105616046/f953cbc4-9d97-4485-b318-4fe73e3e3222">
+
+### ⚡️⚡ 티어 시스템 추가
+- 랭킹전 활성화를 위한 티어 시스템 추가
+<img width="400" alt="tier" src="https://github.com/42organization/42gg.server.dev.v2/assets/95139402/342e0013-13e0-4482-84b5-4381df0498cf">
+
+### ⚡️⚡ 관리자 페이지 구현
+- 원활한 운영을 위한 관리자 기능 추가
+<img width="400" alt="admin" src="https://github.com/42organization/42gg.server.dev.v2/assets/95139402/59756773-48f3-463a-91e4-6bb263aac2f5">
+
+</div>
+</details>
+
 <table>
   <thead>
     <tr>
@@ -157,8 +173,53 @@ https://42gg.kr/
 
 </table>
 
+### 5기
+<details>
+<summary> 5기 진행 사항</summary>
+<div markdown="1">
+  
+### ⚡️⚡ DB table 구조 변경
+![image](https://github.com/42organization/42gg.server.dev.v2/assets/33301153/d4c68d74-590c-41db-9c47-0bdd4f249bc3)
+
+
+### ⚡️⚡ 토너먼트 개발
+
+### ⚡️⚡ 테스트 커버리지 개선
+
+</div>
+</details>
+
+<table>
+  <thead>
+    <tr>
+        <td align=center>🏓</td>
+        <td align=center>🏓</td>
+        <td align=center>🏓</td>
+        <td align=center>🏓</td>
+        <td align=center>🏓</td>
+    </tr>
+  </thead>
+    <tr>
+        <td align=center><a href="https://github.com/kokomong2">고승준 @kokomong2</a></td> 
+        <td align=center><a href="https://github.com/Kimhan-nah">김한나 @Kimhan-nah</a></td>
+        <td align=center><a href="https://github.com/Newsujin">박수진 @Newsujin</a></td>
+        <td align=center><a href="https://github.com/SONGS4RI"> 이자훈 @SONGS4RI</a></td>
+        <td align=center><a href="https://github.com/middlefitting">정승철 @middlefitting</a></td>
+    </tr>
+    <tr>
+        <td align=center>토너먼트 개발, <br> 테스트 커버리지 개선</td>
+        <td align=center>팀장, 토너먼트 개발, <br> 테스트 커버리지 개선</td>
+        <td align=center>토너먼트 개발, <br> 테스트 커버리지 개선</td>
+        <td align=center>토너먼트 개발, <br> 테스트 커버리지 개선</td>
+        <td align=center>인프라 담당, <br> 테스트 커버리지 개선</td>
+    </tr>
+</table>
 
 ## ⚡️ 필요 파일
+<details>
+<summary> application.yml </summary>
+<div markdown="1">
+
 다음과 같은 양식의 "application.yml"파일이 "src/main/resources/"경로에 필요합니다.
 ```
 spring:
@@ -319,3 +380,6 @@ app:
     refreshTokenExpiry: ""
 
 ```
+
+</div>
+</details>
