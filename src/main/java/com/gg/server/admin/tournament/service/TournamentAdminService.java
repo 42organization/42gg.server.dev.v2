@@ -211,9 +211,11 @@ public class TournamentAdminService {
         SlotManagement slotManagement = slotManagementRepository.findCurrent(startTime)
             .orElseThrow(SlotNotFoundException::new);
         int interval = slotManagement.getGameInterval();
+        int startDays = startTime.getDayOfYear() + (startTime.getYear() - LocalDateTime.now().getYear()) * 365;
+        int curDays = LocalDateTime.now().getDayOfYear();
 
         if (startTime.isAfter(endTime) || startTime.isEqual(endTime) ||
-            startTime.getDayOfMonth() - LocalDateTime.now().getDayOfMonth() < constantConfig.getAllowedMinimalStartDays()||
+            startDays - curDays < constantConfig.getAllowedMinimalStartDays() ||
             startTime.plusHours(Tournament.MINIMUM_TOURNAMENT_DURATION).isAfter(endTime) ||
             startTime.getMinute() % interval != 0 || endTime.getMinute() % interval != 0) {
             throw new TournamentUpdateException(ErrorCode.TOURNAMENT_INVALID_TIME);
