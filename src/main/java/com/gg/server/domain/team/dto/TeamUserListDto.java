@@ -10,6 +10,8 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class TeamUserListDto {
+    Long teamId;
+
     List<TeamUserInfoDto> players;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -21,6 +23,13 @@ public class TeamUserListDto {
         this.isWin = isWin;
         this.score = score;
         this.players = players;
+    }
+
+    public TeamUserListDto(Long teamId, List<TeamUserInfoDto> players, Boolean isWin, Integer score) {
+        this.teamId = teamId;
+        this.players = players;
+        this.isWin = isWin;
+        this.score = score == -1? null : score;
     }
 
     @Override

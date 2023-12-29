@@ -1,32 +1,31 @@
 package com.gg.server.admin.slotmanagement.controller;
 
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.slotmanagement.data.adminSlotManagementRepository;
-import com.gg.server.admin.slotmanagement.dto.SlotAdminDto;
 import com.gg.server.admin.slotmanagement.dto.SlotCreateRequestDto;
+import com.gg.server.utils.annotation.IntegrationTest;
 import com.gg.server.domain.slotmanagement.SlotManagement;
+import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @RequiredArgsConstructor
-@SpringBootTest
+@IntegrationTest
 @AutoConfigureMockMvc
 @Transactional
 public class SlotAdminControllerFailTest {
@@ -44,6 +43,9 @@ public class SlotAdminControllerFailTest {
 
     @Autowired
     adminSlotManagementRepository adminSlotManagementRepository;
+
+    @Autowired
+    SlotManagementRepository slotManagementRepository;
 
 //이거 테스트 할려면 디비 내용 모두 지워야 함
 //    @Test
@@ -130,6 +132,15 @@ public class SlotAdminControllerFailTest {
     @Test
     @DisplayName("fail[Delete]/pingpong/admin/slot-management")
     void 슬롯정보가현재적용중인경우() throws Exception {
+        SlotManagement preSlot = SlotManagement.builder()
+            .futureSlotTime(12)
+            .pastSlotTime(0)
+            .openMinute(5)
+            .gameInterval(15)
+            .startTime(LocalDateTime.now().minusDays(1))
+            .build();
+        slotManagementRepository.save(preSlot);
+
         String accessToken = testDataUtils.getAdminLoginAccessToken();
 
         List<SlotManagement> slotManagements = adminSlotManagementRepository.findAllByOrderByCreatedAtDesc();

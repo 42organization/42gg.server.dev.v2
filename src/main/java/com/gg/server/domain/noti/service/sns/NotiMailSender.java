@@ -34,7 +34,7 @@ public class NotiMailSender {
         } catch (MessagingException e) {
             log.error("MessagingException message = {}", e.getMessage());
         }
-        log.info("Email send", user.getUserId());
+        log.info("Email send {}", user.getUserId());
         asyncMailSender.send(message);
     }
 
@@ -49,7 +49,7 @@ public class NotiMailSender {
         } catch (MessagingException e) {
             log.error("MessagingException message = {}", e.getMessage());
         }
-        log.info("Email send", user.getId());
+        log.info("Email send {}", user.getId());
         asyncMailSender.send(message);
     }
 }

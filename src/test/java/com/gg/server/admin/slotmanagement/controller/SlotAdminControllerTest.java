@@ -1,14 +1,22 @@
 package com.gg.server.admin.slotmanagement.controller;
 
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.slotmanagement.data.adminSlotManagementRepository;
 import com.gg.server.admin.slotmanagement.dto.SlotAdminDto;
 import com.gg.server.admin.slotmanagement.dto.SlotCreateRequestDto;
 import com.gg.server.admin.slotmanagement.dto.SlotListAdminResponseDto;
+import com.gg.server.utils.annotation.IntegrationTest;
 import com.gg.server.domain.slotmanagement.SlotManagement;
 import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,20 +24,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @RequiredArgsConstructor
-@SpringBootTest
+@IntegrationTest
 @AutoConfigureMockMvc
 @Transactional
 class SlotAdminControllerTest {
@@ -47,6 +47,21 @@ class SlotAdminControllerTest {
 
     @Autowired
     adminSlotManagementRepository adminSlotManagementRepository;
+
+    @Autowired
+    SlotManagementRepository slotManagementRepository;
+
+    @BeforeEach
+    void setUp() {
+        SlotManagement preSlot = SlotManagement.builder()
+            .futureSlotTime(12)
+            .pastSlotTime(0)
+            .openMinute(5)
+            .gameInterval(15)
+            .startTime(LocalDateTime.now().minusDays(1))
+            .build();
+        slotManagementRepository.save(preSlot);
+    }
 
     @Test
     @DisplayName("[Get]/pingpong/admin/slot-management")

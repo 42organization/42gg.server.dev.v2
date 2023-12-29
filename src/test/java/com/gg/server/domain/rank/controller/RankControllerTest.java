@@ -1,6 +1,7 @@
 package com.gg.server.domain.rank.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gg.server.utils.annotation.IntegrationTest;
 import com.gg.server.domain.rank.dto.ExpRankPageResponseDto;
 import com.gg.server.domain.rank.dto.RankDto;
 import com.gg.server.domain.rank.dto.RankPageResponseDto;
@@ -19,7 +20,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +31,7 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-@SpringBootTest
+@IntegrationTest
 @Transactional
 @AutoConfigureMockMvc
 class RankControllerTest {
@@ -59,12 +59,12 @@ class RankControllerTest {
     @BeforeEach
     public void flushRedis(){
         redisRepository.deleteAll();
+        testDataUtils.createTierSystem("pingpong");
     }
 
     @AfterEach
     public void flushRedisAfter(){
         redisRepository.deleteAll();
-        redisUploadService.uploadRedis();
     }
 
     @Test

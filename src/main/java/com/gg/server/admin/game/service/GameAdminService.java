@@ -13,6 +13,7 @@ import com.gg.server.admin.user.data.UserAdminRepository;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.dto.GameTeamUser;
 import com.gg.server.domain.game.exception.GameNotExistException;
+import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.match.data.RedisMatchUserRepository;
 import com.gg.server.domain.pchange.data.PChange;
@@ -48,16 +49,26 @@ public class GameAdminService {
     private final TeamUserAdminRepository teamUserAdminRepository;
     private final RedisMatchUserRepository redisMatchUserRepository;
 
+    /**
+     * <p>토너먼트 게임을 제외한 일반, 랭크 게임들을 찾아서 반환해준다.</p>
+     * @param pageable
+     * @return
+     */
     @Transactional(readOnly = true)
     public GameLogListAdminResponseDto findAllGamesByAdmin(Pageable pageable) {
-        Page<Game> gamePage = gameAdminRepository.findAll(pageable); //모든 게임 정보 가져오기
+        Page<Game> gamePage = gameAdminRepository.findAllByModeIn(pageable, List.of(Mode.NORMAL, Mode.RANK));
         return new GameLogListAdminResponseDto(getGameLogList(gamePage.getContent().stream().map(Game::getId).collect(Collectors.toList())), gamePage.getTotalPages());
     }
 
+    /**
+     * <p>토너먼트 게임을 제외한 해당 시즌의 일반, 랭크 게임들을 찾아서 반환해준다.</p>
+     * @param pageable
+     * @return
+     */
     @Transactional(readOnly = true)
     public GameLogListAdminResponseDto findGamesBySeasonId(Long seasonId, Pageable pageable){
-        Season season = seasonAdminRepository.findById(seasonId).orElseThrow(()-> new SeasonNotFoundException());
-        Page<Game> games = gameAdminRepository.findBySeason(pageable, season);   //시즌 id로 게임들 찾아오기
+        Season season = seasonAdminRepository.findById(seasonId).orElseThrow(SeasonNotFoundException::new);
+        Page<Game> games = gameAdminRepository.findBySeasonAndModeIn(pageable, season, List.of(Mode.NORMAL, Mode.RANK));
         return new GameLogListAdminResponseDto(getGameLogList(games.getContent().stream().map(Game::getId).collect(Collectors.toList())), games.getTotalPages());
     }
 
@@ -67,10 +78,17 @@ public class GameAdminService {
         return teamViews.stream().map(GameLogAdminDto::new).collect(Collectors.toList());
     }
 
+    /**
+     * 특정 유저의 게임 목록 조회 (토너먼트 게임 제외)
+     * @param intraId 조회할 유저의 intraId
+     * @param pageable page size
+     * @return GameLogListAdminResponseDto
+     * @throws UserNotFoundException intraId에 해당하는 유저가 없을 경우
+     */
     @Transactional(readOnly = true)
     public GameLogListAdminResponseDto findGamesByIntraId(String intraId, Pageable pageable){
         User user = userAdminRepository.findByIntraId(intraId).orElseThrow(UserNotFoundException::new);
-        List<PChange> pChangeList = pChangeRepository.findAllByUserId(user.getId());
+        List<PChange> pChangeList = pChangeRepository.findAllByUserIdGameModeIn(user.getId(), List.of(Mode.NORMAL, Mode.RANK));
         List<Game> gameList = new ArrayList<>();
 
         for(PChange pChange : pChangeList)
@@ -82,12 +100,21 @@ public class GameAdminService {
         return new GameLogListAdminResponseDto(getGameLogList(games.getContent().stream().map(Game::getId).collect(Collectors.toList())), games.getTotalPages());
     }
 
+    /**
+     * 랭킹 점수 수정
+     * @param reqDto team1Id team1Score team2Id team2Score
+     * @param gameId 수정할 게임 id
+     * @throws GameNotExistException gameId에 해당하는 게임이 없을 경우
+     * @throws SeasonNotFoundException 게임에 해당하는 시즌이 없을 경우
+     * @throws NotRecentlyGameException 게임이 두명 다 가장 마지막 게임이 아닐 경우
+     */
     @Transactional
     @Caching(evict = {
             @CacheEvict(value = "rankGameListByIntra", allEntries = true),
             @CacheEvict(value = "rankGameList", allEntries = true),
             @CacheEvict(value = "allGameList", allEntries = true),
-            @CacheEvict(value = "allGameListByUser", allEntries = true)
+            @CacheEvict(value = "allGameListByUser", allEntries = true),
+            @CacheEvict(value = "ranking", allEntries = true)
     })
     public void rankResultEdit(RankGamePPPModifyReqDto reqDto, Long gameId) {
         // 게임이 두명 다 가장 마지막 게임인지 확인 (그 game에 해당하는 팀이 맞는지 확인)

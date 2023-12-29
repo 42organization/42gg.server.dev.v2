@@ -9,10 +9,8 @@ import com.gg.server.global.utils.argumentresolver.Login;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,7 +26,7 @@ public class RankController {
     public ExpRankPageResponseDto getExpRankPage(@Valid PageRequestDto pageRequestDto, @Parameter(hidden = true) @Login UserDto user) {
         PageRequest pageRequest = PageRequest.of(pageRequestDto.getPage() - 1, pageRequestDto.getSize(),
                 Sort.by("totalExp").descending().and(Sort.by("intraId")));
-        return rankService.getExpRankPage(pageRequest, user);
+        return rankService.getExpRankPageByRedis(pageRequest, user);
     }
 
     /**

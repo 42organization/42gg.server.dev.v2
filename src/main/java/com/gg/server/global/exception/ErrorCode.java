@@ -6,6 +6,8 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum ErrorCode {
+    //common
+    NULL_POINT(500, "G100", "NULL POINT EXCEPTION"),
 
     //user
     USER_NOT_FOUND(404, "UR100", "USER NOT FOUND"),
@@ -72,13 +74,30 @@ public enum ErrorCode {
 
     /** team **/
     TEAM_ID_NOT_MATCH(400, "TM201", "TEAM id 가 일치하지 않습니다."),
+    TEAM_DUPLICATION(409, "TM202", "중복된 Team 이 한 Game 에 존재할 수 없습니다."),
+    TEAM_SIZE_EXCEED(500, "TM203", "게임 최대 Team 의 수(2)를 초과하였습니다."),
+    TEAM_NOT_FOUND(404, "TM204", "TEAM이 존재하지 않습니다."),
+    WINNING_TEAM_NOT_FOUND(404, "TM205", "WINNING TEAM이 존재하지 않습니다."),
+    LOSING_TEAM_NOT_FOUND(404, "TM206", "LOSING TEAM이 존재하지 않습니다."),
+
+
+    /**
+     * team_user
+     */
+    TEAM_USER_ALREADY_EXIST(409, "TU201", "중복된 TEAM_USER"),
+    TEAM_USER_EXCEED(500, "TU202", "TeamUser 최대 인원의 수(2)를 초과하였습니다."),
+    TEAM_USER_NOT_FOUND(404, "TU203", "TeamUser가 없습니다."),
 
     /** game **/
     GAME_DB_NOT_VALID(500, "GM201", "GAME DB NOT CONSISTENCY"),
     SCORE_NOT_MATCHED(400, "GM202", "score 입력이 기존과 다릅니다."),
     GAME_NOT_FOUND(404, "GM101", "GAME 이 존재하지 않습니다."),
     GAME_NOT_RECENTLY(400, "GM203", "가장 최근 게임이 아닙니다."),
-    GAME_DUPLICATION_EXCPETION(409, "GM204", "GAME ALREADY EXISTS"),
+    GAME_DUPLICATION_EXCEPTION(409, "GM204", "GAME ALREADY EXISTS"),
+    GAME_STATUS_NOT_MATCHED(400, "GM205", "게임 상태 오류입니다."),
+    SCORE_ALREADY_ENTERED(400, "GM206", "점수가 이미 입력되었습니다."),
+    SCORE_NOT_INVALID(400, "GM205", "score 입력이 유효하지 않습니다."),
+    GAME_NOT_TOURNAMENT(400, "GM206", "토너먼트 게임이 아닙니다."),
 
     /** match **/
     SLOT_ENROLLED(400, "MA300", "SLOT ALREADY ENROLLED"),
@@ -97,6 +116,7 @@ public enum ErrorCode {
     PAGE_NOT_FOUND(404, "CM006", "PAGE NOT FOUND"),
     VALID_FAILED(400, "CM007" , "Valid Test Failed."),
     BAD_ARGU(400, "ARGUMENT-ERR-400", "잘못된 argument 입니다."),
+    UNREADABLE_HTTP_MESSAGE(400, "CM008", "유효하지 않은 HTTP 메시지입니다."),
 
     //Feedback
     FEEDBACK_NOT_FOUND(404, "FB100", "FB NOT FOUND"),
@@ -114,9 +134,28 @@ public enum ErrorCode {
     SLACK_CH_NOT_FOUND(404, "SL002", "fail to get user dm channel id"),
     SLACK_JSON_PARSE_ERR(400, "SL002", "json parse error"),
     SLACK_SEND_FAIL(400, "SL003","fail to send notification" ),
+
+    // Tournament
+    TOURNAMENT_INVALID_TIME(400, "TN001", "유효한 토너먼트 기간이 아닙니다."),
+    TOURNAMENT_CAN_NOT_UPDATE(403, "TN002", "토너먼트를 업데이트 할 수 없는 기간입니다."),
+    TOURNAMENT_INVALID_SCORE(403, "TN003", "스코어를 업데이트 할 수 없습니다."),
+    TOURNAMENT_NOT_BEFORE(403, "TN004", "tournament status is not before"),
+    TOURNAMENT_NOT_LIVE(403, "TN005", "tournament status is not live"),
+    TOURNAMENT_GAME_CAN_NOT_CANCELED(403, "TN006", "진행중인 토너먼트의 게임은 취소할 수 없습니다."),
+    TOURNAMENT_NOT_FOUND(404, "TN007", "target tournament not found"),
+    TOURNAMENT_GAME_NOT_FOUND(404, "TN008", "tournament game not found"),
+    TOURNAMENT_NOT_PARTICIPANT(404, "TN009", "토너먼트의 신청자가 아닙니다."),
+    TOURNAMENT_USER_NOT_FOUND(404, "TN010", "target tournament user not found"),
+    TOURNAMENT_CONFLICT(409, "TN011", "tournament conflicted"),
+    TOURNAMENT_ALREADY_PARTICIPANT(409, "TN012", "이미 토너먼트의 신청자 입니다."),
+    TOURNAMENT_CONFLICT_GAME(409, "TN013", "토너먼트 기간 내 대기중인 게임이 존재합니다."),
+    TOURNAMENT_GAME_DUPLICATION(409, "TN014", "중복된 토너먼트 게임입니다!"),
+    TOURNAMENT_USER_DUPLICATION(409, "TN015", "중복된 토너먼트 유저입니다!"),
+    TOURNAMENT_GAME_EXCEED(500, "TN016", "토너먼트 게임 최대 사이즈를 초과하였습니다!"),
+    TOURNAMENT_IS_BEFORE(403, "TN017", "before인 토너먼트에서 점수 수정할 수 없습니다.")
     ;
-    private int status;
-    private String errCode;
+    private final int status;
+    private final String errCode;
     private String message;
 
     public void setMessage(String msg) {

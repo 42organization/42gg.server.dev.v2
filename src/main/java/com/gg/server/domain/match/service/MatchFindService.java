@@ -23,6 +23,9 @@ import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
 import com.gg.server.domain.tier.data.Tier;
 import com.gg.server.domain.tier.data.TierRepository;
 import com.gg.server.domain.tier.exception.TierNotFoundException;
+import com.gg.server.domain.tournament.data.Tournament;
+import com.gg.server.domain.tournament.data.TournamentRepository;
+import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
@@ -48,6 +51,7 @@ public class MatchFindService {
     private final RankRedisRepository rankRedisRepository;
     private final RedisMatchTimeRepository redisMatchTimeRepository;
     private final TierRepository tierRepository;
+    private final TournamentRepository tournamentRepository;
 
 
     @Transactional(readOnly = true)
@@ -86,6 +90,8 @@ public class MatchFindService {
         List<Game> games = gameRepository.findAllBetween(slotGenerator.getNow(), slotGenerator.getMaxTime());
         slotGenerator.addPastSlots();
         slotGenerator.addMatchedSlots(games);
+        List<Tournament> tournaments = tournamentRepository.findAllByStatusIsNot(TournamentStatus.END);
+        slotGenerator.addTournamentSlots(tournaments);
 
         Optional<Game> myGame = gameRepository.findByStatusTypeAndUserId(StatusType.BEFORE, userDto.getId());
         Set<LocalDateTime> gameTimes = games.stream().map(Game::getStartTime).collect(Collectors.toSet());

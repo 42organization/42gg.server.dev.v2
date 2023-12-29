@@ -3,6 +3,7 @@ package com.gg.server.admin.feedback.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gg.server.admin.feedback.data.FeedbackAdminRepository;
 import com.gg.server.admin.feedback.dto.FeedbackListAdminResponseDto;
+import com.gg.server.utils.annotation.IntegrationTest;
 import com.gg.server.domain.feedback.data.Feedback;
 import com.gg.server.domain.feedback.type.FeedbackType;
 import com.gg.server.domain.user.data.User;
@@ -15,7 +16,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +24,7 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RequiredArgsConstructor
-@SpringBootTest
+@IntegrationTest
 @AutoConfigureMockMvc
 @Transactional
 class FeedbackAdminControllerTest {
@@ -49,7 +49,15 @@ class FeedbackAdminControllerTest {
     @DisplayName("[Get]/pingpong/admin/feedback")
     void getFeedback() throws Exception {
         String accessToken = testDataUtils.getAdminLoginAccessToken();
-        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
+
+        for (int i = 0; i < 6; i++) {
+            Feedback feedback = Feedback.builder()
+                    .category(FeedbackType.ETC)
+                    .content("test" + i)
+                    .user(testDataUtils.createNewUser())
+                    .build();
+            feedbackAdminRepository.save(feedback);
+        }
 
         Integer currentPage = 1;
         Integer pageSize = 5;//페이지 사이즈 크기가 실제 디비 정보보다 큰지 확인할 것

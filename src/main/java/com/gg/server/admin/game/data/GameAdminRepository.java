@@ -2,6 +2,7 @@ package com.gg.server.admin.game.data;
 
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.dto.GameTeamUser;
+import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.season.data.Season;
 import java.util.Optional;
@@ -16,6 +17,10 @@ import java.util.List;
 public interface GameAdminRepository extends JpaRepository<Game, Long> {
 
     Page<Game> findBySeason(Pageable pageable, Season season);
+
+    Page<Game> findBySeasonAndModeIn(Pageable pageable, Season season, List<Mode> modes);
+
+    Page<Game> findAllByModeIn(Pageable pageable, List<Mode> modes);
 
     @Query(value = "select t1.gameId, t1.startTime, t1.endTime, t1.status, t1.mode, " +
             "t1.teamId t1TeamId, t1.intraId t1IntraId, t1.win t1IsWin, t1.score t1Score, t1.image t1Image, t1.total_exp t1Exp, t1.wins t1Wins, t1.losses t1Losses, " +

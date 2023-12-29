@@ -1,15 +1,13 @@
 package com.gg.server;
 
+import com.gg.server.utils.annotation.IntegrationTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.aop.scope.ScopedProxyUtils;
-import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.LocalDateTime;
 import java.util.TimeZone;
 
-@SpringBootTest
+@IntegrationTest
 class ServerApplicationTests {
 
 	@Test
