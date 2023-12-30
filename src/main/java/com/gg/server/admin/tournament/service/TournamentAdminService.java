@@ -27,6 +27,7 @@ import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.global.config.ConstantConfig;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.InvalidParameterException;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -211,11 +212,9 @@ public class TournamentAdminService {
         SlotManagement slotManagement = slotManagementRepository.findCurrent(startTime)
             .orElseThrow(SlotNotFoundException::new);
         int interval = slotManagement.getGameInterval();
-        int startDays = startTime.getDayOfYear() + (startTime.getYear() - LocalDateTime.now().getYear()) * 365;
-        int curDays = LocalDateTime.now().getDayOfYear();
 
         if (startTime.isAfter(endTime) || startTime.isEqual(endTime) ||
-            startDays - curDays < constantConfig.getAllowedMinimalStartDays() ||
+            LocalDate.now().plusDays(constantConfig.getAllowedMinimalStartDays()).isAfter(startTime.toLocalDate()) ||
             startTime.plusHours(Tournament.MINIMUM_TOURNAMENT_DURATION).isAfter(endTime) ||
             startTime.getMinute() % interval != 0 || endTime.getMinute() % interval != 0) {
             throw new TournamentUpdateException(ErrorCode.TOURNAMENT_INVALID_TIME);
