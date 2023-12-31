@@ -16,6 +16,12 @@ import com.gg.server.domain.announcement.exception.AnnounceDupException;
 import com.gg.server.domain.announcement.exception.AnnounceNotFoundException;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
@@ -31,37 +37,24 @@ public class AnnouncementAdminService {
 			responseDtos.getTotalPages());
 	}
 
-	@Transactional
-	public void addAnnouncement(AnnouncementAdminAddDto addDto) {
-		if (findAnnouncementExist() == true) {
-			throw new AnnounceDupException();
-		}
+    @Transactional
+    public void addAnnouncement(AnnouncementAdminAddDto addDto){
+        Announcement announcement = announcementAdminRepository.findFirstByOrderByIdDesc()
+            .orElseThrow(AnnounceNotFoundException::new);
+        if (announcement.getDeletedAt() == null) {
+            throw new AnnounceDupException();
+        }
 
-		Announcement announcementAdmin = Announcement.from(addDto);
+        announcementAdminRepository.save(Announcement.from(addDto));
+    }
 
-		announcementAdminRepository.save(announcementAdmin);
-	}
-
-	@Transactional
-	public void modifyAnnouncementIsDel(String deleterIntraId) {
-		if (findAnnouncementExist() == false) {
-			throw new AnnounceNotFoundException();
-		}
-
-		Announcement announcement = announcementAdminRepository.findFirstByOrderByIdDesc()
-			.orElseThrow(() -> new AnnounceNotFoundException());
-		announcement.update(deleterIntraId, LocalDateTime.now());
-	}
-
-	private Boolean findAnnouncementExist() {
-		Announcement announcement = announcementAdminRepository.findFirstByOrderByIdDesc()
-			.orElseThrow(() -> new AnnounceNotFoundException());
-
-		if (announcement.getDeletedAt() == null) {
-			return true;
-		}
-
-		return false;
-	}
-
+    @Transactional
+    public void modifyAnnouncementIsDel(String deleterIntraId) {
+        Announcement announcement = announcementAdminRepository.findFirstByOrderByIdDesc()
+            .orElseThrow(AnnounceNotFoundException::new);
+        if (announcement.getDeletedAt() != null) {
+            throw new AnnounceNotFoundException();
+        }
+        announcement.update(deleterIntraId, LocalDateTime.now());
+    }
 }
