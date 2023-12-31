@@ -67,8 +67,6 @@ class TournamentAdminServiceTest {
     @InjectMocks
     TournamentAdminService tournamentAdminService;
 
-    ReflectionUtilsForUnitTest reflectionUtilsForUnitTest = new ReflectionUtilsForUnitTest();
-
     // 토너먼트 생성 서비스 테스트
     @Nested
     @DisplayName("토너먼트 관리자 생성 서비스 테스트")
@@ -362,7 +360,7 @@ class TournamentAdminServiceTest {
             User user = createUser("testUser");
             given(tournamentRepository.findById(1L)).willReturn(Optional.of(tournament));
             given(userRepository.findByIntraId("testUser")).willReturn(Optional.of(user));
-
+            given(tournamentUserRepository.save(any(TournamentUser.class))).willReturn(null);
             // when, then
             tournamentAdminService.addTournamentUser(1L, requestDto);
         }
@@ -503,7 +501,7 @@ class TournamentAdminServiceTest {
             .type(TournamentType.ROOKIE)
             .status(status)
             .build();
-        reflectionUtilsForUnitTest.setFieldWithReflection(tournament, "id", id);
+        ReflectionUtilsForUnitTest.setFieldWithReflection(tournament, "id", id);
         return tournament;
     }
 

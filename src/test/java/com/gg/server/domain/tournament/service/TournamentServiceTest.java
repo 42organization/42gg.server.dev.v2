@@ -53,7 +53,6 @@ class TournamentServiceTest {
     UserRepository userRepository;
     @InjectMocks
     TournamentService tournamentService;
-    ReflectionUtilsForUnitTest reflectionUtilsForUnitTest = new ReflectionUtilsForUnitTest();
 
     @Nested
     @DisplayName("토너먼트_유저_상태_테스트")
@@ -160,15 +159,14 @@ class TournamentServiceTest {
     class cancelTournamentUserRegistration {
         @Test
         @DisplayName("유저_참가_취소_성공")
-        @Disabled
         void success() {
             // given
             Tournament tournament = createTournament(1L, TournamentStatus.BEFORE,
                 LocalDateTime.now(), LocalDateTime.now().plusHours(2));
             User user = createUser("testUser");
+            ReflectionUtilsForUnitTest.setFieldWithReflection(user, "id", 1L);
             TournamentUser tournamentUser = new TournamentUser(user, tournament, true, LocalDateTime.now());
             given(tournamentRepository.findById(tournament.getId())).willReturn(Optional.of(tournament));
-            given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
 
             // when, then
             tournamentService.cancelTournamentUserRegistration(tournament.getId(), UserDto.from(user));
@@ -234,7 +232,7 @@ class TournamentServiceTest {
           .type(TournamentType.ROOKIE)
           .status(status)
           .build();
-      reflectionUtilsForUnitTest.setFieldWithReflection(tournament, "id", id);
+      ReflectionUtilsForUnitTest.setFieldWithReflection(tournament, "id", id);
       return tournament;
     }
 
