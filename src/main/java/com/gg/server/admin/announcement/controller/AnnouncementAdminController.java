@@ -41,17 +41,18 @@ public class AnnouncementAdminController {
 			.body(announcementAdminService.findAllAnnouncement(pageable));
 	}
 
-	@PostMapping("/announcement")
-	public ResponseEntity addaAnnouncement(@Valid @RequestBody AnnouncementAdminAddDto addDto) {
-		announcementAdminService.addAnnouncement(addDto);
+    @PostMapping("/announcement")
+    public ResponseEntity<Void> addAnnouncement(@Valid @RequestBody AnnouncementAdminAddDto addDto){
+        announcementAdminService.addAnnouncement(addDto);
 
-		return new ResponseEntity(HttpStatus.CREATED);
-	}
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
 
-	@DeleteMapping("/announcement/{deleterIntraId}")
-	public ResponseEntity announcementModify(@PathVariable String deleterIntraId) {
-		announcementAdminService.modifyAnnouncementIsDel(deleterIntraId);
 
-		return new ResponseEntity(HttpStatus.NO_CONTENT);
-	}
+    @DeleteMapping("/announcement/{deleterIntraId}")
+    public ResponseEntity<Void> announcementModify(@PathVariable String deleterIntraId) {
+        announcementAdminService.modifyAnnouncementIsDel(deleterIntraId);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }
