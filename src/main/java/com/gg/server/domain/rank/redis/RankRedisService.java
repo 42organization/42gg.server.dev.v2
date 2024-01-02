@@ -77,6 +77,7 @@ public class RankRedisService {
         log.info("update after: intraId: " + teamuser.getUser().getIntraId() + ", win: db(" + rank.getWins()
                 + "), redis(" + myTeam.getWins() + "), losses: db(" + rank.getLosses()
                 + "), redis(" + myTeam.getLosses() + ")");
+        rankRepository.flush();
     }
 
     @Transactional
