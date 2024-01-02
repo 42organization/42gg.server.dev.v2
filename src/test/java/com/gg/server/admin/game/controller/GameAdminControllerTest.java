@@ -183,10 +183,16 @@ class GameAdminControllerTest {
         gameService.createRankResult(rankResultReqDto, adminUserId);
 
         Rank adminUserRank = rankRepository.findByUserIdAndSeasonId(adminUserId, season.getId()).get();
-        Rank enemyUser1Rank = rankRepository.findByUserIdAndSeasonId(enemyUser1.getId(), season.getId()).get();
-        System.out.println("MANGO ADMIN1 before DB PPP : " + adminUserRank.getPpp());
-        System.out.println("MANGO ENEMY1 before DB PPP : " + enemyUser1Rank.getPpp());
-
+        Rank enemyUser1Rank = rankRepository.findByUserIdAndSeasonId(enemyUser1.getId(),
+                season.getId()).get();
+        // win 1, losses 0, ppp 1020
+//        System.out.println("MANGO ADMIN1 before DB PPP : " + adminUserRank.getPpp());
+        assertThat(adminUserRank.getLosses()).isEqualTo(0);
+        assertThat(adminUserRank.getWins()).isEqualTo(1);
+        // win 0, losses 1, ppp 982
+//        System.out.println("MANGO ENEMY1 before DB PPP : " + enemyUser1Rank.getPpp());
+        assertThat(enemyUser1Rank.getWins()).isEqualTo(0);
+        assertThat(enemyUser1Rank.getLosses()).isEqualTo(1);
 
         RankGamePPPModifyReqDto modifyReqDto = new RankGamePPPModifyReqDto(game1Info.getMyTeamId(), 1, game1Info.getEnemyTeamId(), 0);
         mockMvc.perform(put("/pingpong/admin/games/" + game1Info.getGameId())
@@ -198,10 +204,18 @@ class GameAdminControllerTest {
         GameTeamUser historyGame1 = gameRepository.findTeamsByGameIsIn(List.of(game1Info.getGameId())).get(0);
 
         adminUserRank = rankRepository.findByUserIdAndSeasonId(adminUserId, season.getId()).get();
-        enemyUser1Rank = rankRepository.findByUserIdAndSeasonId(enemyUser1.getId(), season.getId()).get();
-        System.out.println("MANGO ADMIN1 after DB PPP : " + adminUserRank.getPpp());
-        System.out.println("MANGO ENEMY1 after DB PPP : " + enemyUser1Rank.getPpp());
-
+        enemyUser1Rank = rankRepository.findByUserIdAndSeasonId(enemyUser1.getId(), season.getId())
+                .get();
+        // win 1, losses 0, ppp 1020
+        // MANGO ADMIN1 after DB
+        assertThat(adminUserRank.getPpp()).isEqualTo(1020);
+        assertThat(adminUserRank.getWins()).isEqualTo(1);
+        assertThat(adminUserRank.getLosses()).isEqualTo(0);
+        // win 0, losses 1, ppp 982
+        // MANGO ENEMY1 after DB
+        assertThat(enemyUser1Rank.getWins()).isEqualTo(0);
+        assertThat(enemyUser1Rank.getLosses()).isEqualTo(1);
+        assertThat(enemyUser1Rank.getPpp()).isEqualTo(982);
         //////////////////////////////
         sleep(1000);
         //////////////////////////////
@@ -216,12 +230,20 @@ class GameAdminControllerTest {
         gameService.createRankResult(rankResultReqDto, adminUserId);
 
         adminUserRank = rankRepository.findByUserIdAndSeasonId(adminUserId, season.getId()).get();
-        Rank enemyUser2Rank = rankRepository.findByUserIdAndSeasonId(enemyUser2.getId(), season.getId()).get();
-        System.out.println("MANGO ADMIN2 before DB PPP : " + adminUserRank.getPpp());
-        System.out.println("MANGO ENEMY2 before DB PPP : " + enemyUser2Rank.getPpp());
+        Rank enemyUser2Rank = rankRepository.findByUserIdAndSeasonId(enemyUser2.getId(),
+                season.getId()).get();
+        // win 1, losses 1, ppp 1001
+        // MANGO ADMIN2 before DB
+        assertThat(adminUserRank.getWins()).isEqualTo(1);
+        assertThat(adminUserRank.getLosses()).isEqualTo(1);
+        assertThat(adminUserRank.getPpp()).isEqualTo(1001);
+        // win1, losses 0, ppp 1021
+        // MANGO ENEMY2 before DB
+        assertThat(enemyUser2Rank.getWins()).isEqualTo(1);
+        assertThat(enemyUser2Rank.getLosses()).isEqualTo(0);
+        assertThat(enemyUser2Rank.getPpp()).isEqualTo(1021);
 
-
-        modifyReqDto = new RankGamePPPModifyReqDto(game2Info.getMyTeamId(), 0, game2Info.getEnemyTeamId(), 1);
+        modifyReqDto = new RankGamePPPModifyReqDto(game2Info.getMyTeamId(), 2, game2Info.getEnemyTeamId(), 1);
         mockMvc.perform(put("/pingpong/admin/games/" + game2Info.getGameId())
                         .content(objectMapper.writeValueAsString(modifyReqDto))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -231,7 +253,17 @@ class GameAdminControllerTest {
 
         adminUserRank = rankRepository.findByUserIdAndSeasonId(adminUserId, season.getId()).get();
         enemyUser2Rank = rankRepository.findByUserIdAndSeasonId(enemyUser2.getId(), season.getId()).get();
-        System.out.println("MANGO ADMIN2 after DB PPP : " + adminUserRank.getPpp());
-        System.out.println("MANGO ENEMY2 after DB PPP : " + enemyUser2Rank.getPpp());
+        // win 2, losses 0, ppp 1038
+//        System.out.println("MANGO ADMIN2 after DB PPP : " + adminUserRank.getPpp() + ", WIN: "
+//                + adminUserRank.getWins() + ", LOSSES" + adminUserRank.getLosses());
+        assertThat(adminUserRank.getWins()).isEqualTo(2);
+        assertThat(adminUserRank.getLosses()).isEqualTo(0);
+        assertThat(adminUserRank.getPpp()).isEqualTo(1038);
+        // win 0, losses 1, ppp
+        System.out.println("MANGO ENEMY2 after DB PPP : " + enemyUser2Rank.getPpp() + ", WIN: "
+                + enemyUser2Rank.getWins() + ", LOSSES" + enemyUser2Rank.getLosses());
+        assertThat(enemyUser2Rank.getWins()).isEqualTo(0);
+        assertThat(enemyUser2Rank.getLosses()).isEqualTo(1);
+//        assertThat(enemyUser2Rank.getPpp()).isEqualTo()
     }
 }
