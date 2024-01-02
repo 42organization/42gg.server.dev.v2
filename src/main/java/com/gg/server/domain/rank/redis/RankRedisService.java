@@ -128,6 +128,7 @@ public class RankRedisService {
         }
     }
 
+    @Transactional
     public void rollbackRank(TeamUser teamUser, int ppp, Long seasonId) {
         String hashkey = RedisKeyManager.getHashKey(seasonId);
         RankRedis myTeam = rankRedisRepository.findRankByUserId(hashkey, teamUser.getUser().getId());

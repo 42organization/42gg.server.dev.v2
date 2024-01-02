@@ -23,6 +23,7 @@ import com.gg.server.domain.rank.redis.RankRedisService;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.exception.SeasonNotFoundException;
 import com.gg.server.domain.team.data.TeamUser;
+import com.gg.server.domain.tier.service.TierService;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +49,7 @@ public class GameAdminService {
     private final RankRedisService rankRedisService;
     private final TeamUserAdminRepository teamUserAdminRepository;
     private final RedisMatchUserRepository redisMatchUserRepository;
+    private final TierService tierService;
 
     /**
      * <p>토너먼트 게임을 제외한 일반, 랭크 게임들을 찾아서 반환해준다.</p>
@@ -138,7 +140,7 @@ public class GameAdminService {
             pChangeAdminRepository.delete(pChanges.get(0));
         }
         rankRedisService.updateRankRedis(teamUsers.get(0), teamUsers.get(1), game);
-        rankRedisService.updateAllTier(gameId);
+        tierService.updateAllTier(game.getSeason());
     }
 
     private void rollbackGameResult(RankGamePPPModifyReqDto reqDto, Season season, TeamUser teamUser, List<PChange> pChanges) {
