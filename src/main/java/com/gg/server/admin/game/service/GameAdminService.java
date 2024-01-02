@@ -27,6 +27,7 @@ import com.gg.server.domain.tier.service.TierService;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.*;
@@ -39,6 +40,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class GameAdminService {
 
     private final GameAdminRepository gameAdminRepository;
@@ -136,9 +138,13 @@ public class GameAdminService {
                 throw new PChangeNotExistException();
             }
             rollbackGameResult(reqDto, season, teamUser, pChanges);
-            teamUserAdminRepository.flush();
             pChangeAdminRepository.delete(pChanges.get(0));
         }
+        for (TeamUser teamUser :
+                teamUsers) {
+            updateScore(reqDto, teamUser);
+        }
+        teamUserAdminRepository.flush();
         rankRedisService.updateRankRedis(teamUsers.get(0), teamUsers.get(1), game);
         tierService.updateAllTier(game.getSeason());
     }
@@ -156,6 +162,9 @@ public class GameAdminService {
             rankRedisService.rollbackRank(teamUser, pChanges.get(1).getPppResult(), season.getId());
             teamUser.getUser().updateExp(pChanges.get(1).getExp());
         }
+    }
+
+    private void updateScore(RankGamePPPModifyReqDto reqDto, TeamUser teamUser) {
         if (teamUser.getTeam().getId().equals(reqDto.getTeam1Id())) {
             teamUser.getTeam().updateScore(reqDto.getTeam1Score(), reqDto.getTeam1Score() > reqDto.getTeam2Score());
         } else if (teamUser.getTeam().getId().equals(reqDto.getTeam2Id())) {

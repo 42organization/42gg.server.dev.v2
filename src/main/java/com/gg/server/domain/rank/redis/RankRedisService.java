@@ -133,10 +133,10 @@ public class RankRedisService {
     public void rollbackRank(TeamUser teamUser, int ppp, Long seasonId) {
         String hashkey = RedisKeyManager.getHashKey(seasonId);
         RankRedis myTeam = rankRedisRepository.findRankByUserId(hashkey, teamUser.getUser().getId());
-        int win = teamUser.getTeam().getWin() ? myTeam.getWins() - 1 : myTeam.getWins();
-        int losses = !teamUser.getTeam().getWin() ? myTeam.getLosses() - 1: myTeam.getLosses();
         Rank rank = rankRepository.findByUserIdAndSeasonId(myTeam.getUserId(), seasonId)
                 .orElseThrow(RankNotFoundException::new);
+        int win = teamUser.getTeam().getWin() ? rank.getWins() - 1 : rank.getWins();
+        int losses = !teamUser.getTeam().getWin() ? rank.getLosses() - 1: rank.getLosses();
         log.info("Before: userId: " + teamUser.getUser().getIntraId() + ", " + "ppp: rank("
                 + rank.getPpp() + "), redis(" + myTeam.getPpp() + "), win: " + myTeam.getWins()
                 + ", losses: " + myTeam.getLosses());
