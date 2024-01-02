@@ -2,7 +2,6 @@ package com.gg.server.domain.tournament.data;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 
 import com.gg.server.domain.tournament.type.TournamentStatus;
@@ -10,6 +9,7 @@ import com.gg.server.domain.user.data.User;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.BusinessException;
 import com.gg.server.utils.annotation.UnitTest;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,7 +18,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 
 @UnitTest
@@ -315,6 +314,40 @@ class TournamentUnitTest {
 
       //then
       assertEquals(status, tournament.getStatus());
+    }
+  }
+
+  @Nested
+  @DisplayName("UpdateStatus")
+  class UpdateEndTime {
+    @Test
+    @DisplayName("null 포인터 전달 시 실패")
+    void nullAddFailed() {
+      //given
+      Tournament tournament = tournaments.get(0);
+
+      //when
+      LocalDateTime endTime = null;
+
+      //then
+      BusinessException businessException = assertThrows(BusinessException.class,
+          () -> tournament.updateEndTime(endTime));
+      assertEquals(ErrorCode.NULL_POINT, businessException.getErrorCode());
+      assertEquals(ErrorCode.NULL_POINT.getMessage(), businessException.getMessage());
+    }
+
+    @Test
+    @DisplayName("endTime 업데이트 성공")
+    void updateEndTimeSuccess() {
+      //given
+      Tournament tournament = tournaments.get(0);
+      LocalDateTime endTime = LocalDateTime.now().withMinute(0).withNano(0);
+
+      //when
+      tournament.updateEndTime(endTime);
+
+      //then
+      assertEquals(endTime, tournament.getEndTime());
     }
   }
 }
