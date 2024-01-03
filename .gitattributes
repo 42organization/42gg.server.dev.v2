@@ -3,6 +3,7 @@
 
 # Explicitly declare text files you want to always be normalized and converted
 # to native line endings on checkout.
+# 아래 내용은 LF로 통합하고 싶을 경우 사용합니다. 기존 CRLF 파일이 모두 수정되므로 사용하지 않습니다.
 # *.java text eol=lf
 # *.sql text eol=lf
 # *.md text eol=lf
