@@ -3,16 +3,15 @@
 
 # Explicitly declare text files you want to always be normalized and converted
 # to native line endings on checkout.
-# 아래 내용은 LF로 통합하고 싶을 경우 사용합니다. 기존 CRLF 파일이 모두 수정되므로 사용하지 않습니다.
-# *.java text eol=lf
-# *.sql text eol=lf
-# *.md text eol=lf
-# *.txt text eol=lf
-# *.gradle text eol=lf
-# Dockerfile text eol=lf
-# *.yml text eol=lf
-# *.yaml text eol=lf
-# *.sh text eol=lf
+*.java text
+*.sql text
+*.md text
+*.txt text
+*.gradle text
+Dockerfile text
+*.yml text
+*.yaml text
+*.sh text
 
 # Denote all files that are truly binary and should not be modified.
 *.png binary
