@@ -10,6 +10,7 @@ import com.gg.server.domain.noti.exception.SlackUserGetFailedException;
 import com.gg.server.domain.noti.service.NotiService;
 import com.gg.server.domain.user.dto.UserDto;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -27,20 +28,15 @@ import static com.gg.server.domain.noti.service.sns.SlackbotUtils.*;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class SlackbotService {
     @Value("${slack.xoxbToken}")
     private String authenticationToken;
 
-    private final RestTemplate restTemplate;
-    private final ObjectMapper objectMapper;
     private final NotiService notiService;
-    public SlackbotService(RestTemplateBuilder builder, ObjectMapper objectMapper, NotiService notiService) {
-        this.restTemplate = builder.build();
-        this.objectMapper = objectMapper;
-        this.notiService = notiService;
-    }
+    private final ApiUtil apiUtil;
 
-    private String getSlackUserId(String intraId) throws SlackUserGetFailedException {
+    private String getSlackUserId(String intraId) {
         String userEmail = intraId + intraEmailSuffix;
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -49,39 +45,23 @@ public class SlackbotService {
         MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
         parameters.add("email", userEmail);
 
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(parameters, headers);
-
-        ResponseEntity<SlackUserInfoResponse> responseEntity = restTemplate
-                .exchange(userIdGetUrl, HttpMethod.POST, request, SlackUserInfoResponse.class);
-        if (!responseEntity.getBody().ok)
-            throw new SlackUserGetFailedException();
-        return responseEntity.getBody().user.id;
+        SlackUserInfoResponse res = apiUtil.apiCall(userIdGetUrl, SlackUserInfoResponse.class, headers, parameters, HttpMethod.POST);
+        return res.user.id;
     }
 
-    private String getDmChannelId(String slackUserId) throws SlackJsonParseException {
+    private String getDmChannelId(String slackUserId) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(HttpHeaders.AUTHORIZATION,
                 authenticationPrefix + authenticationToken);
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
-        Map<String, String> map = new HashMap<>();
-        map.put("users", slackUserId);
-        String contentBody = null;
-        try {
-            contentBody = objectMapper.writeValueAsString(map);
-        } catch (JsonProcessingException e) {
-            throw new SlackJsonParseException();
-        }
+        Map<String, String> bodyMap = new HashMap<>();
+        bodyMap.put("users", slackUserId);
 
-        HttpEntity<String> entity = new HttpEntity<>(contentBody, httpHeaders);
+        ConversationResponse res = apiUtil.apiCall(conversationsUrl, ConversationResponse.class,
+                httpHeaders, bodyMap, HttpMethod.POST);
 
-        ResponseEntity<ConversationResponse> responseEntity = restTemplate
-                .exchange(conversationsUrl, HttpMethod.POST, entity, ConversationResponse.class);
-        if(!responseEntity.getBody().ok) {
-            log.error("fail to get user dm channel id");
-            throw new SlackUserGetFailedException();
-        }
-        return responseEntity.getBody().channel.id;
+        return res.channel.id;
     }
 
     @Async("asyncExecutor")
@@ -104,7 +84,7 @@ public class SlackbotService {
         }
     }
 
-    private void startSendNoti(String intraId, Noti noti) throws SlackSendException {
+    private void startSendNoti(String intraId, Noti noti) {
         String slackUserId = getSlackUserId(intraId);
         String slackChannelId = getDmChannelId(slackUserId);
         String message = notiService.getMessage(noti);
@@ -117,20 +97,7 @@ public class SlackbotService {
         Map<String, String> map = new HashMap<>();
         map.put("channel",slackChannelId);
         map.put("text", message);
-        String contentBody = null;
-        try {
-            contentBody = objectMapper.writeValueAsString(map);
-        } catch (JsonProcessingException e) {
-            log.error("start send Slack Noti", e);
-            throw new SlackJsonParseException();
-        }
-
-        HttpEntity<String> entity = new HttpEntity<>(contentBody, httpHeaders);
-
-        ResponseEntity<String> respEntity = restTemplate
-                .exchange(sendMessageUrl, HttpMethod.POST, entity, String.class);
-        if(respEntity.getStatusCode() != HttpStatus.OK)
-            throw new SlackSendException();
+        apiUtil.apiCall(sendMessageUrl, String.class, httpHeaders, map, HttpMethod.POST);
     }
 
     @Getter
