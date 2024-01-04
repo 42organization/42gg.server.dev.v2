@@ -27,6 +27,7 @@ import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.global.config.ConstantConfig;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.InvalidParameterException;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -213,7 +214,7 @@ public class TournamentAdminService {
         int interval = slotManagement.getGameInterval();
 
         if (startTime.isAfter(endTime) || startTime.isEqual(endTime) ||
-            startTime.getDayOfMonth() - LocalDateTime.now().getDayOfMonth() < constantConfig.getAllowedMinimalStartDays()||
+            LocalDate.now().plusDays(constantConfig.getAllowedMinimalStartDays()).isAfter(startTime.toLocalDate()) ||
             startTime.plusHours(Tournament.MINIMUM_TOURNAMENT_DURATION).isAfter(endTime) ||
             startTime.getMinute() % interval != 0 || endTime.getMinute() % interval != 0) {
             throw new TournamentUpdateException(ErrorCode.TOURNAMENT_INVALID_TIME);

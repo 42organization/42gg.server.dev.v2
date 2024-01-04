@@ -66,12 +66,17 @@ public class RankRedisService {
         Rank rank = rankRepository.findByUserIdAndSeasonId(myTeam.getUserId(), seasonId)
                 .orElseThrow(() -> new NotExistException("rank 정보가 없습니다.", ErrorCode.NOT_FOUND));
         Integer changedPpp = EloRating.pppChange(myPPP, enemyPPP,
-                teamuser.getTeam().getWin(), Math.abs(teamuser.getTeam().getScore() - enemyScore) == 2);
+                teamuser.getTeam().getWin(),
+                Math.abs(teamuser.getTeam().getScore() - enemyScore) == 2);
+        log.info("update before: intraId: " + teamuser.getUser().getIntraId() + ", win: db(" + rank.getWins()
+                + "), redis(" + myTeam.getWins() + "), losses: db(" + rank.getLosses()
+                + "), redis(" + myTeam.getLosses() + ")");
         rank.modifyUserRank(rank.getPpp() + changedPpp, win, losses);
-
         myTeam.updateRank(changedPpp,
                 win, losses);
-
+        log.info("update after: intraId: " + teamuser.getUser().getIntraId() + ", win: db(" + rank.getWins()
+                + "), redis(" + myTeam.getWins() + "), losses: db(" + rank.getLosses()
+                + "), redis(" + myTeam.getLosses() + ")");
     }
 
     @Transactional
@@ -130,11 +135,15 @@ public class RankRedisService {
         int losses = !teamUser.getTeam().getWin() ? myTeam.getLosses() - 1: myTeam.getLosses();
         Rank rank = rankRepository.findByUserIdAndSeasonId(myTeam.getUserId(), seasonId)
                 .orElseThrow(RankNotFoundException::new);
-        log.info("Before: userId: " + teamUser.getUser().getIntraId() + ", " + "ppp: rank(" + rank.getPpp() + "), redis(" + myTeam.getPpp() + ")");
+        log.info("Before: userId: " + teamUser.getUser().getIntraId() + ", " + "ppp: rank("
+                + rank.getPpp() + "), redis(" + myTeam.getPpp() + "), win: " + myTeam.getWins()
+                + ", losses: " + myTeam.getLosses());
         rank.modifyUserRank(ppp, win, losses);
         myTeam.changedRank(ppp, win, losses);
         rankRepository.flush();
         updateRankUser(hashkey, RedisKeyManager.getZSetKey(seasonId), teamUser.getUser().getId(), myTeam);
-        log.info("After: userId: " + teamUser.getUser().getIntraId() + ", " + "ppp: rank(" + rank.getPpp() + "), redis(" + myTeam.getPpp() + ")");
+        log.info("After: userId: " + teamUser.getUser().getIntraId() + ", " + "ppp: rank("
+                + rank.getPpp() + "), redis(" + myTeam.getPpp() + "), win: " + myTeam.getWins()
+                + ", losses: " + myTeam.getLosses());
     }
 }
