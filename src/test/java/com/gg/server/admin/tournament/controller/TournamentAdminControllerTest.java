@@ -34,6 +34,8 @@ import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Random;
+
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
@@ -529,6 +531,38 @@ class TournamentAdminControllerTest {
                 .andReturn().getResponse().getContentAsString();
 
             System.out.println(contentAsString);
+        }
+
+        @Test
+        @DisplayName("잘못된 DTO - 길이 초과")
+        void invalidLength() throws Exception {
+            //given
+            String accessToken = testDataUtils.getAdminLoginAccessToken();
+            int leftLimit = 97; // letter 'a'
+            int rightLimit = 122; // letter 'z'
+            int targetStringLength = 3100;
+            Random random = new Random();
+            String contents = random.ints(leftLimit, rightLimit + 1)
+                .limit(targetStringLength)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
+            TournamentAdminCreateRequestDto createDto = new TournamentAdminCreateRequestDto(
+                "1st rookie tournament",
+                contents,
+                LocalDateTime.now().plusDays(3).withHour(14).withMinute(0),
+                LocalDateTime.now().plusDays(3).withHour(16).withMinute(0),
+                TournamentType.ROOKIE);
+
+            String url = "/pingpong/admin/tournaments";
+            String content = objectMapper.writeValueAsString(createDto);
+
+            //when, then
+            String contentAsString = mockMvc.perform(post(url)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(content))
+                .andExpect(status().isBadRequest())
+                .andReturn().getResponse().getContentAsString();
         }
     }
 
