@@ -90,8 +90,6 @@ public class MatchFindService {
         List<Game> games = gameRepository.findAllBetween(slotGenerator.getNow(), slotGenerator.getMaxTime());
         slotGenerator.addPastSlots();
         slotGenerator.addMatchedSlots(games);
-        List<Tournament> tournaments = tournamentRepository.findAllByStatusIsNot(TournamentStatus.END);
-        slotGenerator.addTournamentSlots(tournaments);
 
         Optional<Game> myGame = gameRepository.findByStatusTypeAndUserId(StatusType.BEFORE, userDto.getId());
         Set<LocalDateTime> gameTimes = games.stream().map(Game::getStartTime).collect(Collectors.toSet());
