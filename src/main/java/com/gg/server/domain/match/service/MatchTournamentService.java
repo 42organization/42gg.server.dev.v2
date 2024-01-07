@@ -20,6 +20,7 @@ import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentGameRepository;
+import com.gg.server.domain.tournament.data.TournamentUser;
 import com.gg.server.domain.tournament.exception.TournamentGameNotFoundException;
 import com.gg.server.domain.tournament.type.TournamentRound;
 import com.gg.server.domain.tournament.type.TournamentStatus;
@@ -31,9 +32,7 @@ import com.gg.server.domain.match.exception.SlotNotFoundException;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.gg.server.domain.match.type.TournamentMatchStatus.*;
@@ -101,25 +100,22 @@ public class MatchTournamentService {
         int gameInterval = slotManagement.getGameInterval();
         List<TournamentGame> allTournamentGames = tournamentGameRepository.findAllByTournamentId(tournament.getId());
         List<TournamentGame> tournamentGames = findSameRoundGames(allTournamentGames, round.getRoundNumber());
-        List<TournamentGame> previousRoundTournamentGames = findSameRoundGames(allTournamentGames, TournamentRound.getPreviousRoundNumber(round));
-        List<User> notiUsers = new ArrayList<>();
+        List<User> players = findSortedPlayers(tournament, round);
         LocalDateTime startTime = calculateStartTime(tournament, round, gameInterval);
 
         for (int i = 0; i < tournamentGames.size(); ++i) {
             Game game = new Game(season, StatusType.BEFORE, Mode.TOURNAMENT, startTime, startTime.plusMinutes(gameInterval));
             Team team1 = new Team(game, -1, false);
             Team team2 = new Team(game, -1, false);
-            User user1 = findMatchUser(previousRoundTournamentGames, i * 2, tournament);
-            User user2 = findMatchUser(previousRoundTournamentGames, i * 2 + 1, tournament);
+            User user1 = players.get(i * 2);
+            User user2 = players.get(i * 2 + 1);
             new TeamUser(team1, user1);
             new TeamUser(team2, user2);
             gameRepository.save(game);
             tournamentGames.get(i).updateGame(game);
-            notiUsers.add(user1);
-            notiUsers.add(user2);
             startTime = startTime.plusMinutes((long) gameInterval);
         }
-        notiUsers.stream().distinct()
+        players.stream().distinct()
             .forEach(user -> notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(user.getIntraId(), NotiType.TOURNAMENT_GAME_MATCHED.getMessage())));
     }
 
@@ -166,12 +162,39 @@ public class MatchTournamentService {
         return lastGame.getGame().getEndTime().plusMinutes(gameInterval);
     }
 
-    private User findMatchUser(List<TournamentGame> previousTournamentGames, int index, Tournament tournament) {
-        if (previousTournamentGames.isEmpty()) {
-            return tournament.getTournamentUsers().get(index).getUser();
+    /**
+     * 토너먼트 라운드에 매칭될 플레이어를 찾는다.
+     * @param tournament 토너먼트
+     * @param round 매칭할 토너먼트 라운드
+     * @return 토너먼트 라운드에 매칭될 플레이어 List (정렬된 상태)
+     */
+    private List<User> findSortedPlayers(Tournament tournament, TournamentRound round) {
+        List<User> players = new ArrayList<>();
+
+        if (TournamentRound.QUARTER_FINAL_1.getRoundNumber() == round.getRoundNumber()) {
+            Map<Integer, Integer> randomNumbers = new LinkedHashMap<>();
+            Random random = new Random();
+            while (randomNumbers.size() < Tournament.ALLOWED_JOINED_NUMBER) {
+                int randomNumber = random.nextInt(Tournament.ALLOWED_JOINED_NUMBER);
+                if (!randomNumbers.containsValue(randomNumber)) {
+                    randomNumbers.put(randomNumbers.size(), randomNumber);
+                }
+            }
+            for (Integer randomNumber : randomNumbers.values()) {
+                List<TournamentUser> tournamentUsers = tournament.getTournamentUsers();
+                User user = tournamentUsers.get(randomNumber).getUser();
+                players.add(user);
+            }
+        } else {
+            List<TournamentGame> previousRoundTournamentGames = findSameRoundGames(tournament.getTournamentGames(), TournamentRound.getPreviousRoundNumber(round));
+            int roundNum = round.getRoundNumber();
+            for (int i = 0; i < roundNum; ++i) {
+                User user = getWinningTeam(previousRoundTournamentGames.get(i).getGame())
+                    .getTeamUsers().get(0).getUser();
+                players.add(user);
+            }
         }
-        return getWinningTeam(previousTournamentGames.get(index).getGame())
-            .getTeamUsers().get(0).getUser();
+        return players;
     }
 
     /**
@@ -206,9 +229,9 @@ public class MatchTournamentService {
 
     /**
      * 같은 round의 토너먼트 게임을 찾는다.
-     * @param tournamentGames - 토너먼트 게임 List
-     * @param roundNum - 토너먼트 라운드 number
-     * @return - 같은 roundNum의 tournamentGame List
+     * @param tournamentGames 토너먼트 게임 List
+     * @param roundNum 토너먼트 라운드 number (2, 4, 8, ...) (잘못된 roundNum일 경우 Empty List 반환한다.)
+     * @return tournamentGames 중 roundNum과 동일한 roundNum을 가진 round 순으로 정렬된 tournamentGame List 반환
      */
     private List<TournamentGame> findSameRoundGames(List<TournamentGame> tournamentGames, int roundNum) {
         return tournamentGames.stream()
