@@ -86,11 +86,13 @@ public class RankService {
                 users.getTotalPages(),
                 expRankDtos);
     }
+
     @Cacheable(value = "expRanking", cacheManager = "gameCacheManager",
             key = "#pageRequest.pageNumber + #pageRequest.pageSize")
     public List<ExpRankDto> getExpRankList(PageRequest pageRequest) {
         Season curSeason = seasonFindService.findCurrentSeason(LocalDateTime.now());
-        List<ExpRankV2Dto> expRankV2Dtos = userRepository.findExpRank(pageRequest.getPageNumber(), pageRequest.getPageSize(), curSeason.getId());
+        int pageOffset = pageRequest.getPageNumber() * pageRequest.getPageSize();
+        List<ExpRankV2Dto> expRankV2Dtos = userRepository.findExpRank(pageOffset, pageRequest.getPageSize(), curSeason.getId());
         return expRankV2Dtos.stream().map(ExpRankDto::from).collect(Collectors.toList());
     }
 
@@ -119,7 +121,8 @@ public class RankService {
 
         int myRank = rankRepository.findRankByUserIdAndSeasonId(curUser.getId(), season.getId())
                 .orElse(-1);
-        List<RankDto> rankList = rankRepository.findPppRankBySeasonId(pageRequest.getPageNumber(), pageRequest.getPageSize(), season.getId())
+        int pageOffset = pageRequest.getPageNumber() * pageRequest.getPageSize();
+        List<RankDto> rankList = rankRepository.findPppRankBySeasonId(pageOffset, pageRequest.getPageSize(), season.getId())
                 .stream().map(RankDto::from).collect(Collectors.toList());
         return new RankPageResponseDto(myRank, pageRequest.getPageNumber() + 1, totalPage, rankList);
     }
