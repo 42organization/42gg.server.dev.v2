@@ -22,7 +22,7 @@ public class TournamentAdminUpdateRequestDto {
     private String title;
 
     @NotNull(message = "내용이 필요합니다.")
-    @Length(max = 1000, message = "내용은 1000자 이내로 작성해주세요.")
+    @Length(max = 3000, message = "내용은 3000자 이내로 작성해주세요.")
     private String contents;
 
     @NotNull(message = "시작 시간이 필요합니다.")

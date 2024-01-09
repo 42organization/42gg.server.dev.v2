@@ -56,7 +56,7 @@ public class Tournament extends BaseTimeEntity {
     private String title;
 
     @NotNull
-    @Column(name = "contents", length = 1000)
+    @Column(name = "contents", length = 3000)
     private String contents;
 
     @NotNull
