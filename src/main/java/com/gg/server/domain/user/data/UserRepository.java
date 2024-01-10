@@ -45,7 +45,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             + "FROM User u LEFT JOIN Ranks r "
             + "ON u.id = r.user_id "
             + "WHERE r.season_id = :seasonId AND u.total_exp > 0 "
-            + "LIMIT :pageSize OFFSET :pageNum", nativeQuery = true)
-    List<ExpRankV2Dto> findExpRank(@Param("pageNum")int pageNum, @Param("pageSize")int pageSize, @Param("seasonId")Long seasonId);
+            + "LIMIT :limit OFFSET :offset", nativeQuery = true)
+    List<ExpRankV2Dto> findExpRank(@Param("offset")int offset, @Param("limit")int limit, @Param("seasonId")Long seasonId);
 
 }

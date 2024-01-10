@@ -45,8 +45,8 @@ public interface RankRepository extends JpaRepository<Rank, Long> {
             + "            GROUP BY p.user_id) pg "
             + "ON pg.user_id = u.id "
             + "WHERE r.season_id = :seasonId AND (r.losses > 0 OR r.wins > 0) "
-            + "LIMIT :pageSize OFFSET :pageNum ", nativeQuery = true)
-    List<RankV2Dto> findPppRankBySeasonId(@Param("pageNum")int pageNum, @Param("pageSize")int pageSize, @Param("seasonId") Long seasonId);
+            + "LIMIT :limit OFFSET :offset ", nativeQuery = true)
+    List<RankV2Dto> findPppRankBySeasonId(@Param("offset")int offset, @Param("limit")int limit, @Param("seasonId") Long seasonId);
 
     @Query(value = "SELECT count(*) "
             + "FROM Ranks r "
