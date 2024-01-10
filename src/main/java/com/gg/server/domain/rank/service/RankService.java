@@ -88,7 +88,7 @@ public class RankService {
     }
 
     @Cacheable(value = "expRanking", cacheManager = "gameCacheManager",
-            key = "#pageRequest.pageNumber + #pageRequest.pageSize")
+            key = "#pageRequest.pageNumber + #pageRequest.pageSize.toString()")
     public List<ExpRankDto> getExpRankList(PageRequest pageRequest) {
         Season curSeason = seasonFindService.findCurrentSeason(LocalDateTime.now());
         int pageOffset = pageRequest.getPageNumber() * pageRequest.getPageSize();
@@ -105,7 +105,7 @@ public class RankService {
      */
     @Transactional(readOnly = true)
     @Cacheable(value = "ranking", cacheManager = "gameCacheManager",
-            key = "#pageRequest.pageSize + #pageRequest.pageNumber + #curUser.id + #seasonId")
+            key = "#pageRequest.pageSize.toString() + #pageRequest.pageNumber + #curUser.id + #seasonId")
     public RankPageResponseDto getRankPageV2(PageRequest pageRequest, UserDto curUser, Long seasonId) {
         Season season;
         if (seasonId == null || seasonId == 0) {
