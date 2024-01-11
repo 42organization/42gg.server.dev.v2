@@ -102,7 +102,7 @@ public class TournamentFindControllerTest {
                     assertThat(tournamentInfoList.get(i).getPlayerCnt()).isEqualTo(tournamentResponseDto.getPlayerCnt());
                 }
                 if (i > 0)
-                    assertThat(tournamentInfoList.get(i).getStartTime()).isBefore(tournamentInfoList.get(i - 1).getEndTime());
+                    assertThat(tournamentInfoList.get(i).getStartTime()).isAfter(tournamentInfoList.get(i - 1).getEndTime());
             }
         }
 
