@@ -9,17 +9,17 @@ import com.gg.server.domain.noti.exception.SlackSendException;
 import com.gg.server.domain.noti.exception.SlackUserGetFailedException;
 import com.gg.server.domain.noti.service.NotiService;
 import com.gg.server.domain.user.dto.UserDto;
+import com.gg.server.global.utils.external.ApiUtil;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
