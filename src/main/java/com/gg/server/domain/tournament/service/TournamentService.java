@@ -1,6 +1,6 @@
 package com.gg.server.domain.tournament.service;
 
-import static com.gg.server.domain.tournament.type.RoundNumber.*;
+import static com.gg.server.domain.tournament.type.TournamentRound.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -67,22 +67,19 @@ public class TournamentService {
 	 */
 	public TournamentListResponseDto getAllTournamentList(Pageable pageRequest, TournamentType type,
 		TournamentStatus status) {
-
-		Page<TournamentResponseDto> tournaments;
+		Page<Tournament> tournaments;
 		if (type == null && status == null) {
-			tournaments = tournamentRepository.findAll(pageRequest)
-				.map(o -> new TournamentResponseDto(o, findTournamentWinner(o), findJoinedPlayerCnt(o)));
+			tournaments = tournamentRepository.findAll(pageRequest);
 		} else if (type == null) {
-			tournaments = tournamentRepository.findAllByStatus(status, pageRequest)
-				.map(o -> new TournamentResponseDto(o, findTournamentWinner(o), findJoinedPlayerCnt(o)));
+			tournaments = tournamentRepository.findAllByStatus(status, pageRequest);
 		} else if (status == null) {
-			tournaments = tournamentRepository.findAllByType(type, pageRequest)
-				.map(o -> new TournamentResponseDto(o, findTournamentWinner(o), findJoinedPlayerCnt(o)));
+			tournaments = tournamentRepository.findAllByType(type, pageRequest);
 		} else {
-			tournaments = tournamentRepository.findAllByTypeAndStatus(type, status, pageRequest)
-				.map(o -> new TournamentResponseDto(o, findTournamentWinner(o), findJoinedPlayerCnt(o)));
+			tournaments = tournamentRepository.findAllByTypeAndStatus(type, status, pageRequest);
 		}
-		return new TournamentListResponseDto(tournaments.getContent(), tournaments.getTotalPages());
+		Page<TournamentResponseDto> tournamentsDto = tournaments
+			.map(o -> new TournamentResponseDto(o, findTournamentWinner(o), findJoinedPlayerCnt(o)));
+		return new TournamentListResponseDto(tournamentsDto);
 	}
 
 	/**
@@ -190,8 +187,8 @@ public class TournamentService {
 	public boolean isNotEndedTournament(LocalDateTime time) {
 		List<Tournament> tournamentList = tournamentRepository.findAllByStatusIsNot(TournamentStatus.END);
 		for (Tournament tournament : tournamentList) {
-			if (time.isAfter(tournament.getStartTime())
-				&& time.isBefore(tournament.getEndTime())) {
+			if (time.isAfter(tournament.getStartTime()) &&
+				time.isBefore(tournament.getEndTime())) {
 				return false;
 			}
 		}
@@ -220,7 +217,7 @@ public class TournamentService {
 				return;
 			}
 			imminentTournament.updateStatus(TournamentStatus.LIVE);
-			matchTournamentService.matchGames(imminentTournament, QUARTER_FINAL);
+			matchTournamentService.matchGames(imminentTournament, QUARTER_FINAL_1);
 		}
 	}
 
@@ -295,9 +292,7 @@ public class TournamentService {
 					nextTournamentGame));
 		}
 		tournamentGameResDtoList.sort((o1, o2) -> {
-			if (o1.getTournamentRound().getRoundNumber().getRound() < o2.getTournamentRound()
-				.getRoundNumber()
-				.getRound()) {
+			if (o1.getTournamentRound().getRoundNumber() < o2.getTournamentRound().getRoundNumber()) {
 				return 1;
 			}
 			if (o1.getTournamentRound().getRoundOrder() > o2.getTournamentRound().getRoundOrder()) {
