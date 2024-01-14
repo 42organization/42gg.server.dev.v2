@@ -1,5 +1,6 @@
 package com.gg.server.utils.annotation;
 
+import com.gg.server.utils.config.MySQLInitializer;
 import com.gg.server.utils.config.RedisInitializer;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -20,8 +21,8 @@ import org.springframework.test.context.ContextConfiguration;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @SpringBootTest
-@ContextConfiguration(initializers = RedisInitializer.class)
-@Tag(TestType.INTEGRATION_TEST)
+@ContextConfiguration(initializers = {RedisInitializer.class, MySQLInitializer.class})
+@Tag(TestTypeConstant.INTEGRATION_TEST)
 public @interface IntegrationTestWithRedisTransaction {
 
 }
