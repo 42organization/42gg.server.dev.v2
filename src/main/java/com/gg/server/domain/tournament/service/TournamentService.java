@@ -26,7 +26,6 @@ import com.gg.server.domain.tournament.type.TournamentUserStatus;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
-import com.gg.server.domain.user.dto.UserImageDto;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.BusinessException;
@@ -86,6 +85,7 @@ public class TournamentService {
         Tournament tournament = tournamentRepository.findById(tournamentId).orElseThrow(TournamentNotFoundException::new);
         return (new TournamentResponseDto(tournament));
     }
+
 
     /**
      * <p>유저 해당 토너먼트 참여 여부 확인 매서드</p>
@@ -163,22 +163,6 @@ public class TournamentService {
     }
 
     /**
-     * 진행중인 토너먼트 유무 확인
-     * @param time 현재 시간
-     * @return 종료되지 않은 토너먼트 있으면 true, 없으면 false
-     */
-    public boolean isNotEndedTournament(LocalDateTime time) {
-        List<Tournament> tournamentList = tournamentRepository.findAllByStatusIsNot(TournamentStatus.END);
-        for (Tournament tournament : tournamentList) {
-            if (time.isAfter(tournament.getStartTime()) &&
-                time.isBefore(tournament.getEndTime())) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
      * 오늘 시작하는 토너먼트가 있으면 해당 토너먼트 status를 LIVE로 변경하고 8강 경기 매칭
      * 참가자가 ALLOWED_JOINED_NUMBER보다 적으면 토너먼트 취소
      */
@@ -218,26 +202,6 @@ public class TournamentService {
             }
         }
         return imminentTournaments;
-    }
-
-
-    /**
-     * 토너먼트 우승자 조회
-     * @param tournament 토너먼트
-     * @return 토너먼트 우승자 정보
-     */
-    private UserImageDto findTournamentWinner(Tournament tournament) {
-        User winner = tournament.getWinner();
-        return new UserImageDto(winner);
-    }
-
-    /**
-     * 토너먼트 참가자 수 조회
-     * @param tournament 토너먼트
-     * @return 토너먼트 참가자 수
-     */
-    private int findJoinedPlayerCnt(Tournament tournament) {
-        return tournamentUserRepository.countByTournamentAndIsJoined(tournament, true);
     }
 
     /**
