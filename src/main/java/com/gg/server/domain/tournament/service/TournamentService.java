@@ -98,7 +98,8 @@ public class TournamentService {
         Tournament targetTournament = tournamentRepository.findById(tournamentId).orElseThrow(TournamentNotFoundException::new);
 
         TournamentUserStatus tournamentUserStatus = TournamentUserStatus.BEFORE;
-        Optional<TournamentUser> tournamentUser = tournamentUserRepository.findByTournamentIdAndUserId(tournamentId, user.getId());
+        Optional<TournamentUser> tournamentUser = targetTournament.findTournamentUserByUserId(user.getId());
+
         if (tournamentUser.isPresent()) {
             tournamentUserStatus = tournamentUser.get().getIsJoined() ? TournamentUserStatus.PLAYER : TournamentUserStatus.WAIT;
         }
