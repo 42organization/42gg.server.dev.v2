@@ -8,8 +8,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.gg.server.admin.noti.dto.SendNotiAdminRequestDto;
+import com.gg.server.admin.noti.service.NotiAdminService;
 import com.gg.server.admin.tournament.dto.TournamentAdminCreateRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
+import com.gg.server.domain.match.service.MatchTournamentService;
 import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentGameRepository;
@@ -34,6 +37,7 @@ import com.gg.server.domain.user.type.SnsType;
 import com.gg.server.utils.ReflectionUtilsForUnitTest;
 import com.gg.server.utils.annotation.UnitTest;
 import java.util.function.Function;
+import java.util.stream.IntStream;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.data.domain.Page;
@@ -62,8 +66,13 @@ class TournamentServiceUnitTest {
     TournamentUserRepository tournamentUserRepository;
     @Mock
     UserRepository userRepository;
+    @Mock
+    MatchTournamentService matchTournamentService;
+    @Mock
+    NotiAdminService notiAdminService;
     @InjectMocks
     TournamentService tournamentService;
+
 
 
     @Nested
@@ -364,6 +373,114 @@ class TournamentServiceUnitTest {
             assertThatThrownBy(()->tournamentService.cancelTournamentUserRegistration(tournamentId, UserDto.from(user)))
                 .isInstanceOf(TournamentNotFoundException.class);
         }
+    }
+
+    @Nested
+    @DisplayName("startTournament")
+    class StartTournament {
+        @Test
+        @DisplayName("금일 진행하는 토너먼트 없음")
+        void tournamentNotFound() {
+            //Arrange
+            List<Tournament> tournaments = new ArrayList<>();
+            IntStream.range(0, 2).forEach((i) -> tournaments.add(i, mock(Tournament.class)));
+
+            when(tournaments.get(0).getStartTime()).thenReturn(LocalDateTime.now().minusDays(1));
+            when(tournaments.get(1).getStartTime()).thenReturn(LocalDateTime.now().plusDays(1));
+
+            when(tournamentRepository.findAllByStatus((TournamentStatus.BEFORE))).thenReturn(tournaments);
+
+            //Act
+            tournamentService.startTournament();
+
+            //Assert
+            verify(tournaments.get(0), times(1)).getStartTime();
+            verify(tournaments.get(1), times(1)).getStartTime();
+            verify(tournaments.get(0), times(0)).updateStatus(TournamentStatus.LIVE);
+            verify(tournaments.get(1), times(0)).updateStatus(TournamentStatus.LIVE);
+            verify(notiAdminService, times(0)).sendAnnounceNotiToUser(any(SendNotiAdminRequestDto.class));
+            verify(matchTournamentService, times(0)).matchGames(any(), any());
+        }
+
+        @Test
+        @DisplayName("금일 진행하는 토너먼트 모두 인원수 미달")
+        void 전부인원수미달() {
+            //Arrange
+            User user = mock(User.class);
+            List<Tournament> tournaments = new ArrayList<>();
+            List<TournamentUser> tournamentUsers = new ArrayList<>();
+            IntStream.range(0, 2).forEach((i) -> tournaments.add(i, mock(Tournament.class)));
+            IntStream.range(0, 7).forEach((i) -> tournamentUsers.add(i, mock(TournamentUser.class)));
+
+            when(user.getIntraId()).thenReturn("testUser");
+            when(tournaments.get(0).getStartTime()).thenReturn(LocalDateTime.now());
+            when(tournaments.get(1).getStartTime()).thenReturn(LocalDateTime.now());
+            when(tournamentRepository.findAllByStatus((TournamentStatus.BEFORE))).thenReturn(tournaments);
+
+            tournaments.stream().forEach((t) -> when(t.getTournamentUsers()).thenReturn(tournamentUsers));
+
+            tournamentUsers.stream().forEach((t) -> when(t.getIsJoined()).thenReturn(true));
+            tournamentUsers.stream().forEach((t) -> when(t.getUser()).thenReturn(user));
+
+            //Act
+            tournamentService.startTournament();
+
+            //Assert
+            verify(tournaments.get(0), times(1))
+                .getStartTime();
+            verify(tournaments.get(1), times(1))
+                .getStartTime();
+            verify(tournaments.get(0), times(0))
+                .updateStatus(TournamentStatus.LIVE);
+            verify(tournaments.get(1), times(0))
+                .updateStatus(TournamentStatus.LIVE);
+            verify(notiAdminService, times(14))
+                .sendAnnounceNotiToUser(any(SendNotiAdminRequestDto.class));
+            verify(matchTournamentService, times(0))
+                .matchGames(any(), any());
+        }
+    }
+
+    @Test
+    @DisplayName("하나만 인원수 미달")
+    void 하나만인원수미달() {
+        //Arrange
+        User user = mock(User.class);
+        List<Tournament> tournaments = new ArrayList<>();
+        List<TournamentUser> notFullTournamentUsers = new ArrayList<>();
+        List<TournamentUser> fullTournamentUsers = new ArrayList<>();
+        IntStream.range(0, 2).forEach((i) -> tournaments.add(i, mock(Tournament.class)));
+        IntStream.range(0, 7).forEach((i) -> notFullTournamentUsers.add(i, mock(TournamentUser.class)));
+        IntStream.range(0, 16).forEach((i) -> fullTournamentUsers.add(i, mock(TournamentUser.class)));
+
+        when(user.getIntraId()).thenReturn("testUser");
+        when(tournaments.get(0).getStartTime()).thenReturn(LocalDateTime.now());
+        when(tournaments.get(1).getStartTime()).thenReturn(LocalDateTime.now());
+        when(tournamentRepository.findAllByStatus((TournamentStatus.BEFORE))).thenReturn(tournaments);
+
+        when(tournaments.get(0).getTournamentUsers()).thenReturn(notFullTournamentUsers);
+        when(tournaments.get(1).getTournamentUsers()).thenReturn(fullTournamentUsers);
+
+        IntStream.range(0, 4).forEach((i) -> when(notFullTournamentUsers.get(i).getIsJoined()).thenReturn(true));
+        IntStream.range(0, 4).forEach((i) -> when(notFullTournamentUsers.get(i).getUser()).thenReturn(user));
+        IntStream.range(4, 7).forEach((i) -> when(notFullTournamentUsers.get(i).getIsJoined()).thenReturn(false));
+
+        //Act
+        tournamentService.startTournament();
+
+        //Assert
+        verify(tournaments.get(0), times(1))
+            .getStartTime();
+        verify(tournaments.get(1), times(1))
+            .getStartTime();
+        verify(tournaments.get(0), times(0))
+            .updateStatus(TournamentStatus.LIVE);
+        verify(tournaments.get(1), times(1))
+            .updateStatus(TournamentStatus.LIVE);
+        verify(notiAdminService, times(4))
+            .sendAnnounceNotiToUser(any(SendNotiAdminRequestDto.class));
+        verify(matchTournamentService, times(1))
+            .matchGames(any(), any());
     }
 
     /**
