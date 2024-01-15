@@ -32,6 +32,7 @@ import com.gg.server.global.exception.custom.BusinessException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -171,19 +172,31 @@ public class TournamentService {
     public void startTournament() {
         LocalDate date = LocalDate.now();
         List<Tournament> imminentTournaments = findImminentTournament(date);
+
         for (Tournament imminentTournament : imminentTournaments) {
             List<TournamentUser> tournamentUsers = imminentTournament.getTournamentUsers();
             if (tournamentUsers.size() < Tournament.ALLOWED_JOINED_NUMBER) {
-                for (TournamentUser tournamentUser : tournamentUsers) {
-                    if (tournamentUser.getIsJoined().equals(true)) {
-                        notiAdminService.sendAnnounceNotiToUser(new SendNotiAdminRequestDto(tournamentUser.getUser().getIntraId(), NotiType.TOURNAMENT_CANCELED.getMessage()));
-                    }
-                }
+                sendNotification(tournamentUsers, NotiType.TOURNAMENT_CANCELED);
                 tournamentRepository.delete(imminentTournament);
-                return;
+                continue;
             }
             imminentTournament.updateStatus(TournamentStatus.LIVE);
             matchTournamentService.matchGames(imminentTournament, QUARTER_FINAL_1);
+        }
+    }
+
+    /**
+     * 토너먼트 취소 알림.
+     */
+    private void sendNotification(List<TournamentUser> tournamentUsers, NotiType type) {
+        for (TournamentUser tournamentUser : tournamentUsers) {
+            String message = type.getMessage();
+
+            if (tournamentUser.getIsJoined().equals(true)) {
+                String intraId = tournamentUser.getUser().getIntraId();
+                SendNotiAdminRequestDto dto = new SendNotiAdminRequestDto(intraId, message);
+                notiAdminService.sendAnnounceNotiToUser(dto);
+            }
         }
     }
 
@@ -194,15 +207,9 @@ public class TournamentService {
      */
     private List<Tournament> findImminentTournament(LocalDate date) {
         List<Tournament> tournaments = tournamentRepository.findAllByStatus(TournamentStatus.BEFORE);
-        List<Tournament> imminentTournaments = new ArrayList<>();
-
-        for (Tournament tournament : tournaments) {
-            LocalDate startDate = tournament.getStartTime().toLocalDate();
-            if (startDate.isEqual(date)) {
-                imminentTournaments.add(tournament);
-            }
-        }
-        return imminentTournaments;
+        return tournaments.stream()
+            .filter(tournament -> tournament.getStartTime().toLocalDate().isEqual(date))
+            .collect(Collectors.toList());
     }
 
     /**
