@@ -30,6 +30,7 @@ import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.BusinessException;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -43,6 +44,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 import static com.gg.server.domain.tournament.type.TournamentRound.*;
+import static java.util.Comparator.comparing;
 
 @Service
 @RequiredArgsConstructor
@@ -186,7 +188,7 @@ public class TournamentService {
     }
 
     /**
-     * 토너먼트 취소 알림.
+     * 토너먼트 참가중인 유저에게 알림 전송.
      */
     private void sendNotification(List<TournamentUser> tournamentUsers, NotiType type) {
         for (TournamentUser tournamentUser : tournamentUsers) {
@@ -243,15 +245,9 @@ public class TournamentService {
             }
             tournamentGameResDtoList.add(new TournamentGameResDto(tournamentGame, gameTeamUser, tournamentGame.getTournamentRound(), nextTournamentGame));
         }
-        tournamentGameResDtoList.sort((o1, o2) -> {
-            if (o1.getTournamentRound().getRoundNumber() < o2.getTournamentRound().getRoundNumber()) {
-                return 1;
-            }
-            if (o1.getTournamentRound().getRoundOrder() > o2.getTournamentRound().getRoundOrder()) {
-                return 1;
-            }
-            return -1;
-        });
+        tournamentGameResDtoList.sort(comparing(TournamentGameResDto::getTournamentRound,
+            comparing(TournamentRound::getRoundNumber).thenComparing(TournamentRound::getRoundOrder)));
+
         return tournamentGameResDtoList;
     }
 
