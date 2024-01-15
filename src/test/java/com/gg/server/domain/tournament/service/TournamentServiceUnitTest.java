@@ -23,6 +23,7 @@ import com.gg.server.domain.tournament.exception.TournamentNotFoundException;
 import com.gg.server.domain.tournament.type.TournamentRound;
 import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.tournament.type.TournamentType;
+import com.gg.server.domain.tournament.type.TournamentUserStatus;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
@@ -33,6 +34,7 @@ import com.gg.server.domain.user.type.SnsType;
 import com.gg.server.utils.ReflectionUtilsForUnitTest;
 import com.gg.server.utils.annotation.UnitTest;
 import java.util.function.Function;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -72,7 +74,6 @@ class TournamentServiceUnitTest {
         Page<TournamentResponseDto> responseDto;
         @BeforeEach
         void init() {
-//            pageRequest = mock(Pageable.class);
             pageRequest = PageRequest.of(1, 10);
             page = mock(Page.class);
             responseDto = mock(Page.class);
@@ -148,29 +149,49 @@ class TournamentServiceUnitTest {
 
     }
 
+    @Nested
+    @DisplayName("getTournament")
+    class GetTournament {
+        @Test
+        @DisplayName("success")
+        void success() {
+            //Arrange
+            Long id = 1L;
+            Tournament tournament = mock(Tournament.class);
+            when(tournamentRepository.findById(id)).thenReturn(Optional.of(tournament));
 
+            //Act
+            TournamentResponseDto dto = tournamentService.getTournament(id);
 
+            //Assert
+            verify(tournamentRepository, times(1)).findById(id);
+            Assertions.assertThat(dto).isNotNull();
+        }
 
+        @Test
+        @DisplayName("TournamentNotFound")
+        void TournamentNotFound() {
+            //Arrange
+            Long id = 1L;
+            when(tournamentRepository.findById(id)).thenReturn(Optional.empty());
 
+            //Act, Assert
+            assertThatThrownBy(() -> tournamentService.getTournament(id))
+                .isInstanceOf(TournamentNotFoundException.class);
+        }
+    }
 
     @Nested
-    @DisplayName("토너먼트_유저_상태_테스트")
-    class UserStatusInTournamentTest {
-        @Test
-        @DisplayName("유저_상태_반환_성공")
-        void success() {
-            // given
-            Tournament tournament = createTournament(1L, TournamentStatus.BEFORE,
-                LocalDateTime.now(), LocalDateTime.now().plusHours(2));
-            User user = createUser("testUser");
-            TournamentUser tournamentUser = new TournamentUser(user, tournament, true, LocalDateTime.now());
-            given(tournamentRepository.findById(tournament.getId())).willReturn(Optional.of(tournament));
-            given(tournamentUserRepository.findByTournamentIdAndUserId(tournament.getId(), user.getId()))
-                .willReturn(Optional.of(tournamentUser));
-
-            // when, then
-            TournamentUserRegistrationResponseDto responseDto =
-                tournamentService.getUserStatusInTournament(tournament.getId(), UserDto.from(user));
+    @DisplayName("getUserStatusInTournament")
+    class GetUserStatusInTournament {
+        Tournament tournament;
+        TournamentUser tournamentUser;
+        UserDto requestDto;
+        @BeforeEach
+        void init() {
+            tournament = mock(Tournament.class);
+            tournamentUser = mock(TournamentUser.class);
+            requestDto = mock(UserDto.class);
         }
 
         @Test
@@ -178,12 +199,72 @@ class TournamentServiceUnitTest {
         void tournamentNotFound() {
             // given
             Long tournamentId = 1L;
-            User user = createUser("testUser");
             given(tournamentRepository.findById(tournamentId)).willReturn(Optional.empty());
 
             // when, then
-            assertThatThrownBy(() -> tournamentService.getUserStatusInTournament(tournamentId, UserDto.from(user)))
+            assertThatThrownBy(() -> tournamentService
+                .getUserStatusInTournament(tournamentId, requestDto))
                 .isInstanceOf(TournamentNotFoundException.class);
+        }
+
+        @Test
+        @DisplayName("토너먼트 참가중인 유저")
+        void player() {
+            // given
+            given(tournamentRepository.findById(tournament.getId()))
+                .willReturn(Optional.of(tournament));
+
+            given(tournament.findTournamentUserByUserId(requestDto.getId()))
+                .willReturn(Optional.of(tournamentUser));
+
+            given(tournamentUser.getIsJoined())
+                .willReturn(true);
+
+            // when
+            TournamentUserRegistrationResponseDto responseDto =
+                tournamentService.getUserStatusInTournament(tournament.getId(), requestDto);
+
+            // then
+            Assertions.assertThat(responseDto.getStatus()).isEqualTo(TournamentUserStatus.PLAYER);
+        }
+
+        @Test
+        @DisplayName("토너먼트 대기중인 유저")
+        void waitPlayer() {
+            // given
+            given(tournamentRepository.findById(tournament.getId()))
+                .willReturn(Optional.of(tournament));
+
+            given(tournament.findTournamentUserByUserId(requestDto.getId()))
+                .willReturn(Optional.of(tournamentUser));
+
+            given(tournamentUser.getIsJoined())
+                .willReturn(false);
+
+            // when
+            TournamentUserRegistrationResponseDto responseDto =
+                tournamentService.getUserStatusInTournament(tournament.getId(), requestDto);
+
+            // then
+            Assertions.assertThat(responseDto.getStatus()).isEqualTo(TournamentUserStatus.WAIT);
+        }
+
+        @Test
+        @DisplayName("토너먼트 신청하지 않은 유저")
+        void beforePlayer() {
+            // given
+            given(tournamentRepository.findById(tournament.getId()))
+                .willReturn(Optional.of(tournament));
+
+            given(tournament.findTournamentUserByUserId(requestDto.getId()))
+                .willReturn(Optional.empty());
+
+            // when
+            TournamentUserRegistrationResponseDto responseDto =
+                tournamentService.getUserStatusInTournament(tournament.getId(), requestDto);
+
+            // then
+            Assertions.assertThat(responseDto.getStatus()).isEqualTo(TournamentUserStatus.BEFORE);
         }
     }
 
