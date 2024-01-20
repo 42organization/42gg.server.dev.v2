@@ -41,7 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 @AutoConfigureMockMvc
 @Transactional
 @Slf4j
-public class GameDbTest {
+public class GameDBTest {
 
 	@Autowired
 	GameFindService gameFindService;

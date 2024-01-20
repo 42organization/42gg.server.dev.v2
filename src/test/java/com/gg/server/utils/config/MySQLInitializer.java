@@ -15,7 +15,7 @@ import org.testcontainers.containers.MySQLContainer;
  * @author : middlefitting
  * @since : 2024/01/09
  */
-public class MySqlInitializer implements
+public class MySQLInitializer implements
 	ApplicationContextInitializer<ConfigurableApplicationContext> {
 	private static final String params = "?serverTimezone=Asia/Seoul&characterEncoding=UTF-8";
 	private static final MySQLContainer<?> MYSQL_CONTAINER =

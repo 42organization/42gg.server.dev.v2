@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 
-import com.gg.server.utils.config.MySqlInitializer;
+import com.gg.server.utils.config.MySQLInitializer;
 import com.gg.server.utils.config.RedisInitializer;
 import com.gg.server.utils.config.TestRedisConfig;
 
@@ -25,7 +25,7 @@ import com.gg.server.utils.config.TestRedisConfig;
 @Retention(RetentionPolicy.RUNTIME)
 @SpringBootTest
 @Import(TestRedisConfig.class)
-@ContextConfiguration(initializers = {RedisInitializer.class, MySqlInitializer.class})
+@ContextConfiguration(initializers = {RedisInitializer.class, MySQLInitializer.class})
 @Tag(TestTypeConstant.INTEGRATION_TEST)
 public @interface IntegrationTest {
 

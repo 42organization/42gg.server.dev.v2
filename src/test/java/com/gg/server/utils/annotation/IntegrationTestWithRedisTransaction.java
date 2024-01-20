@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Tag;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 
-import com.gg.server.utils.config.MySqlInitializer;
+import com.gg.server.utils.config.MySQLInitializer;
 import com.gg.server.utils.config.RedisInitializer;
 
 /**
@@ -23,7 +23,7 @@ import com.gg.server.utils.config.RedisInitializer;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @SpringBootTest
-@ContextConfiguration(initializers = {RedisInitializer.class, MySqlInitializer.class})
+@ContextConfiguration(initializers = {RedisInitializer.class, MySQLInitializer.class})
 @Tag(TestTypeConstant.INTEGRATION_TEST)
 public @interface IntegrationTestWithRedisTransaction {
 
