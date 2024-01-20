@@ -7,7 +7,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gg.server.admin.slotmanagement.data.AdminSlotManagementRepository;
+import com.gg.server.admin.slotmanagement.data.AdminSlotManagementsRepository;
 import com.gg.server.admin.slotmanagement.dto.SlotAdminDto;
 import com.gg.server.admin.slotmanagement.dto.SlotCreateRequestDto;
 import com.gg.server.admin.slotmanagement.dto.SlotListAdminResponseDto;
@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class SlotAdminService {
-	private final AdminSlotManagementRepository adminSlotManagementRepository;
+	private final AdminSlotManagementsRepository adminSlotManagementRepository;
 
 	@Transactional(readOnly = true)
 	public SlotListAdminResponseDto getSlotSetting() {

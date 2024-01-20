@@ -17,7 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gg.server.admin.slotmanagement.data.AdminSlotManagementRepository;
+import com.gg.server.admin.slotmanagement.data.AdminSlotManagementsRepository;
 import com.gg.server.admin.slotmanagement.dto.SlotAdminDto;
 import com.gg.server.admin.slotmanagement.dto.SlotCreateRequestDto;
 import com.gg.server.admin.slotmanagement.dto.SlotListAdminResponseDto;
@@ -47,7 +47,7 @@ class SlotAdminControllerTest {
 	AuthTokenProvider tokenProvider;
 
 	@Autowired
-	AdminSlotManagementRepository adminSlotManagementRepository;
+	AdminSlotManagementsRepository adminSlotManagementRepository;
 
 	@Autowired
 	SlotManagementRepository slotManagementRepository;

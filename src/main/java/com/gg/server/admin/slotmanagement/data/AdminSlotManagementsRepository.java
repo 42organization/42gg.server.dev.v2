@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.gg.server.domain.slotmanagement.SlotManagement;
 
-public interface AdminSlotManagementRepository extends JpaRepository<SlotManagement, Long> {
+public interface AdminSlotManagementsRepository extends JpaRepository<SlotManagement, Long> {
 	@Query("select slot from SlotManagement slot "
 		+ "where slot.endTime > :nowTime or slot.startTime > :nowTime or slot.endTime = null "
 		+ "order by slot.startTime desc")
