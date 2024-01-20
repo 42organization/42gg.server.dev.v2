@@ -1,11 +1,12 @@
 package com.gg.server.admin.announcement.data;
 
-import com.gg.server.domain.announcement.data.Announcement;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
+import com.gg.server.domain.announcement.data.Announcement;
 
 public interface AnnouncementAdminRepository extends JpaRepository<Announcement, Long> {
 
-    Optional<Announcement> findFirstByOrderByIdDesc();
+	Optional<Announcement> findFirstByOrderByIdDesc();
 }

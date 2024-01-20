@@ -6,9 +6,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class UserCoinResponseDto {
-    private int coin;
+	private int coin;
 
-    public UserCoinResponseDto(int userCoin) {
-        this.coin = userCoin;
-    }
+	public UserCoinResponseDto(int userCoin) {
+		this.coin = userCoin;
+	}
 }

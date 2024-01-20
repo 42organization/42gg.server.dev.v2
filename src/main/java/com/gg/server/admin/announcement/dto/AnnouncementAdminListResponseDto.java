@@ -1,15 +1,15 @@
 package com.gg.server.admin.announcement.dto;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 public class AnnouncementAdminListResponseDto {
-    private List<AnnouncementAdminResponseDto> announcementList;
-    private int totalPage;
+	private List<AnnouncementAdminResponseDto> announcementList;
+	private int totalPage;
 }

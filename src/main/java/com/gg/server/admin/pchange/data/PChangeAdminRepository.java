@@ -1,7 +1,8 @@
 package com.gg.server.admin.pchange.data;
 
-import com.gg.server.domain.pchange.data.PChange;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.gg.server.domain.pchange.data.PChange;
 
 public interface PChangeAdminRepository extends JpaRepository<PChange, Long>, PChangeAdminRepositoryCustom {
 }

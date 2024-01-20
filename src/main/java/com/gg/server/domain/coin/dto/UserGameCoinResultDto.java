@@ -6,13 +6,13 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class UserGameCoinResultDto {
-    private int beforeCoin;
-    private int afterCoin;
-    private int coinIncrement;
+	private int beforeCoin;
+	private int afterCoin;
+	private int coinIncrement;
 
-    public UserGameCoinResultDto(int afterCoin, int coinIncrement) {
-        this.beforeCoin = afterCoin - coinIncrement;
-        this.afterCoin = afterCoin;
-        this.coinIncrement = coinIncrement;
-    }
+	public UserGameCoinResultDto(int afterCoin, int coinIncrement) {
+		this.beforeCoin = afterCoin - coinIncrement;
+		this.afterCoin = afterCoin;
+		this.coinIncrement = coinIncrement;
+	}
 }

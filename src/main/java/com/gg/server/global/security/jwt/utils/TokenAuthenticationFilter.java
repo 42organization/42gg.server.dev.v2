@@ -1,12 +1,14 @@
 package com.gg.server.global.security.jwt.utils;
 
-import com.gg.server.global.security.config.properties.AppProperties;
-import com.gg.server.global.security.cookie.CookieUtil;
-import com.gg.server.global.security.service.CustomUserDetailsService;
-import com.gg.server.global.utils.HeaderUtil;
-import io.jsonwebtoken.Claims;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import static org.apache.commons.lang3.StringUtils.*;
+
+import java.io.IOException;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,50 +18,48 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import com.gg.server.global.security.service.CustomUserDetailsService;
+import com.gg.server.global.utils.HeaderUtil;
 
-import static org.apache.commons.lang3.StringUtils.isEmpty;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor
 @Component
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
-    private final AuthTokenProvider tokenProvider;
-    private final CustomUserDetailsService customUserDetailsService;
+	private final AuthTokenProvider tokenProvider;
+	private final CustomUserDetailsService customUserDetailsService;
 
-    @Override
-    protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain)  throws ServletException, IOException {
-        try {
-            String tokenHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-            if (isEmpty(tokenHeader) || !tokenHeader.startsWith("Bearer ")) {
-                filterChain.doFilter(request, response);
-                return;
-            }
-            OAuth2AuthenticationToken authentication = validate(request);
-            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        } catch (Exception e) {
-            log.error("Security Context에서 사용자 인증을 설정할 수 없습니다.", e);
-        }
-        filterChain.doFilter(request, response);
-    }
+	@Override
+	protected void doFilterInternal(
+		HttpServletRequest request,
+		HttpServletResponse response,
+		FilterChain filterChain) throws ServletException, IOException {
+		try {
+			String tokenHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+			if (isEmpty(tokenHeader) || !tokenHeader.startsWith("Bearer ")) {
+				filterChain.doFilter(request, response);
+				return;
+			}
+			OAuth2AuthenticationToken authentication = validate(request);
+			authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+		} catch (Exception e) {
+			log.error("Security Context에서 사용자 인증을 설정할 수 없습니다.", e);
+		}
+		filterChain.doFilter(request, response);
+	}
 
-    private OAuth2AuthenticationToken validate(HttpServletRequest request) {
-        String accessToken = HeaderUtil.getAccessToken(request);
-        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
-        //access token 검증
-        if (userId != null){
-            UserDetails userDetails = customUserDetailsService.loadUserById(userId);
-            return new OAuth2AuthenticationToken((OAuth2User) userDetails, userDetails.getAuthorities(), "42");
-        }
-        throw new RuntimeException("token not validated");
-    }
+	private OAuth2AuthenticationToken validate(HttpServletRequest request) {
+		String accessToken = HeaderUtil.getAccessToken(request);
+		Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
+		//access token 검증
+		if (userId != null) {
+			UserDetails userDetails = customUserDetailsService.loadUserById(userId);
+			return new OAuth2AuthenticationToken((OAuth2User)userDetails, userDetails.getAuthorities(), "42");
+		}
+		throw new RuntimeException("token not validated");
+	}
 
 }

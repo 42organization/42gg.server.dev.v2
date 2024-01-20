@@ -11,9 +11,9 @@ import lombok.ToString;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
 public class UserRankResponseDto {
-    private int rank;
-    private int ppp;
-    private int wins;
-    private int losses;
-    private double winRate;
+	private int rank;
+	private int ppp;
+	private int wins;
+	private int losses;
+	private double winRate;
 }
