@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -22,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.gg.server.domain.tournament.dto.TournamentFilterRequestDto;
 import com.gg.server.domain.tournament.dto.TournamentListResponseDto;
+import com.gg.server.domain.tournament.dto.TournamentResponseDto;
 import com.gg.server.domain.tournament.dto.TournamentUserRegistrationResponseDto;
 import com.gg.server.domain.tournament.service.TournamentService;
 import com.gg.server.domain.user.dto.UserDto;
@@ -107,6 +107,34 @@ class TournamentControllerMvcTest {
 			//Act
 			ResponseEntity<TournamentUserRegistrationResponseDto> response = tournamentController
 				.getUserStatusInTournament(1L, userDto);
+
+			//Assert
+			assertThat(response.getStatusCodeValue()).isEqualTo(200);
+			assertThat(response.getBody()).isEqualTo(resultDto);
+		}
+	}
+
+	@Nested
+	@DisplayName("getTournnament")
+	class getTournnament {
+		@DisplayName("id가 양수가 아닐경우 에러 발생")
+		@ParameterizedTest()
+		@ValueSource(longs = {-1, 0})
+		void idGreaterThanZero(Long id) {
+			//Act, Assert
+			assertThatThrownBy(() -> tournamentController.getTournnament(id))
+				.isInstanceOf(ConstraintViolationException.class);
+		}
+
+		@DisplayName("Success")
+		@Test
+		void success() {
+			//Arrange
+			TournamentResponseDto resultDto = Mockito.mock(TournamentResponseDto.class);
+			when(tournamentService.getTournament(anyLong())).thenReturn(resultDto);
+
+			//Act
+			ResponseEntity<TournamentResponseDto> response = tournamentController.getTournnament(1L);
 
 			//Assert
 			assertThat(response.getStatusCodeValue()).isEqualTo(200);
