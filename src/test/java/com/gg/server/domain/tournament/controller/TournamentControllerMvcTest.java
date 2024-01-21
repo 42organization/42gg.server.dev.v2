@@ -16,10 +16,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.gg.server.domain.tournament.dto.TournamentFilterRequestDto;
+import com.gg.server.domain.tournament.dto.TournamentGameListResponseDto;
 import com.gg.server.domain.tournament.dto.TournamentListResponseDto;
 import com.gg.server.domain.tournament.dto.TournamentResponseDto;
 import com.gg.server.domain.tournament.dto.TournamentUserRegistrationResponseDto;
@@ -88,7 +90,7 @@ class TournamentControllerMvcTest {
 			ResponseEntity<TournamentListResponseDto> response = tournamentController.getAllTournamentList(dto);
 
 			//Assert
-			assertThat(response.getStatusCodeValue()).isEqualTo(200);
+			assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 			assertThat(response.getBody()).isEqualTo(resultDto);
 		}
 	}
@@ -109,7 +111,7 @@ class TournamentControllerMvcTest {
 				.getUserStatusInTournament(1L, userDto);
 
 			//Assert
-			assertThat(response.getStatusCodeValue()).isEqualTo(200);
+			assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 			assertThat(response.getBody()).isEqualTo(resultDto);
 		}
 	}
@@ -137,7 +139,7 @@ class TournamentControllerMvcTest {
 			ResponseEntity<TournamentResponseDto> response = tournamentController.getTournnament(1L);
 
 			//Assert
-			assertThat(response.getStatusCodeValue()).isEqualTo(200);
+			assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 			assertThat(response.getBody()).isEqualTo(resultDto);
 		}
 	}
@@ -159,7 +161,57 @@ class TournamentControllerMvcTest {
 			response = tournamentController.cancelTournamentUserRegistration(1L, userDto);
 
 			//Assert
-			assertThat(response.getStatusCodeValue()).isEqualTo(200);
+			assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+			assertThat(response.getBody()).isEqualTo(resultDto);
+		}
+	}
+
+	@Nested
+	@DisplayName("getTournamentGames")
+	class getTournamentGames {
+		@DisplayName("id가 양수가 아닐경우 에러 발생")
+		@ParameterizedTest()
+		@ValueSource(longs = {-1, 0})
+		void idGreaterThanZero(Long id) {
+			//Act, Assert
+			assertThatThrownBy(() -> tournamentController.getTournamentGames(id))
+				.isInstanceOf(ConstraintViolationException.class);
+		}
+
+		@DisplayName("Success")
+		@Test
+		void success() {
+			//Arrange
+			TournamentGameListResponseDto resultDto = Mockito.mock(TournamentGameListResponseDto.class);
+			when(tournamentService.getTournamentGames(anyLong())).thenReturn(resultDto);
+
+			//Act
+			ResponseEntity<TournamentGameListResponseDto> response = tournamentController.getTournamentGames(1L);
+
+			//Assert
+			assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+			assertThat(response.getBody()).isEqualTo(resultDto);
+		}
+	}
+
+	@Nested
+	@DisplayName("registerTournamentUser")
+	class registerTournamentUser {
+
+		@DisplayName("Success")
+		@Test
+		void success() {
+			//Arrange
+			UserDto userDto = Mockito.mock(UserDto.class);
+			TournamentUserRegistrationResponseDto resultDto = Mockito.mock(TournamentUserRegistrationResponseDto.class);
+			when(tournamentService.registerTournamentUser(anyLong(), any())).thenReturn(resultDto);
+
+			//Act
+			ResponseEntity<TournamentUserRegistrationResponseDto> response;
+			response = tournamentController.registerTournamentUser(1L, userDto);
+
+			//Assert
+			assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 			assertThat(response.getBody()).isEqualTo(resultDto);
 		}
 	}
