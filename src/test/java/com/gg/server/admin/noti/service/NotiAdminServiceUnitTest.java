@@ -49,6 +49,7 @@ class NotiAdminServiceUnitTest {
         @DisplayName("성공")
         void success() {
             //given
+            //TODO sendNotiAdminRequestDto 내 메서드 검증 로직 추가
             given(userAdminRepository.findByIntraId(any(String.class))).willReturn(Optional.of(mock(User.class)));
             given(notiAdminRepository.save(any(Noti.class))).willReturn(new Noti());
             willDoNothing().given(snsNotiService).sendSnsNotification(any(Noti.class), any(UserDto.class));
@@ -79,6 +80,7 @@ class NotiAdminServiceUnitTest {
         void success() {
             //given
             given(notiAdminRepository.findAll(any(Pageable.class))).willReturn(new PageImpl<>(Collections.emptyList()));
+            //TODO Page 내 map 메서드 검증 로직 추가
 
             //when
             notiAdminService.getAllNoti(mock(org.springframework.data.domain.Pageable.class));
@@ -97,6 +99,7 @@ class NotiAdminServiceUnitTest {
             //given
             given(notiAdminRepository.findNotisByUserIntraId(any(org.springframework.data.domain.Pageable.class), any(String.class)))
                     .willReturn(new PageImpl<>(Collections.emptyList()));
+            //TODO Page 내 map 메서드 검증 로직 추가
 
             //when
             notiAdminService.getFilteredNotifications(PageRequest.of(1, 1), "TestUser");
