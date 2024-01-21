@@ -141,4 +141,26 @@ class TournamentControllerMvcTest {
 			assertThat(response.getBody()).isEqualTo(resultDto);
 		}
 	}
+
+	@Nested
+	@DisplayName("cancelTournamentUserRegistration")
+	class cancelTournamentUserRegistration {
+
+		@DisplayName("Success")
+		@Test
+		void success() {
+			//Arrange
+			UserDto userDto = Mockito.mock(UserDto.class);
+			TournamentUserRegistrationResponseDto resultDto = Mockito.mock(TournamentUserRegistrationResponseDto.class);
+			when(tournamentService.cancelTournamentUserRegistration(anyLong(), any())).thenReturn(resultDto);
+
+			//Act
+			ResponseEntity<TournamentUserRegistrationResponseDto> response;
+			response = tournamentController.cancelTournamentUserRegistration(1L, userDto);
+
+			//Assert
+			assertThat(response.getStatusCodeValue()).isEqualTo(200);
+			assertThat(response.getBody()).isEqualTo(resultDto);
+		}
+	}
 }
