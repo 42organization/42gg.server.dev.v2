@@ -38,6 +38,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.persistence.EntityManager;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -52,6 +54,7 @@ public class GameAdminService {
     private final TeamUserAdminRepository teamUserAdminRepository;
     private final RedisMatchUserRepository redisMatchUserRepository;
     private final TierService tierService;
+    private final EntityManager entityManager;
 
     /**
      * <p>토너먼트 게임을 제외한 일반, 랭크 게임들을 찾아서 반환해준다.</p>
@@ -139,12 +142,13 @@ public class GameAdminService {
             }
             rollbackGameResult(reqDto, season, teamUser, pChanges);
             pChangeAdminRepository.delete(pChanges.get(0));
+            entityManager.flush();
+            entityManager.clear();
         }
         for (TeamUser teamUser :
                 teamUsers) {
             updateScore(reqDto, teamUser);
         }
-        teamUserAdminRepository.flush();
         rankRedisService.updateRankRedis(teamUsers.get(0), teamUsers.get(1), game);
         tierService.updateAllTier(game.getSeason());
     }

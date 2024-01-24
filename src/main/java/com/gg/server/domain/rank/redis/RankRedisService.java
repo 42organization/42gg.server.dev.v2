@@ -22,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -31,6 +33,7 @@ public class RankRedisService {
     private final PChangeService pChangeService;
     private final RankRepository rankRepository;
     private final SeasonFindService seasonFindService;
+    private final EntityManager entityManager;
 
     public Integer getUserPpp(Long userId, Long seasonId) {
         String hashKey = RedisKeyManager.getHashKey(seasonId);
@@ -142,7 +145,6 @@ public class RankRedisService {
                 + ", losses: " + myTeam.getLosses());
         rank.modifyUserRank(ppp, win, losses);
         myTeam.changedRank(ppp, win, losses);
-        rankRepository.flush();
         updateRankUser(hashkey, RedisKeyManager.getZSetKey(seasonId), teamUser.getUser().getId(), myTeam);
         log.info("After: userId: " + teamUser.getUser().getIntraId() + ", " + "ppp: rank("
                 + rank.getPpp() + "), redis(" + myTeam.getPpp() + "), win: " + myTeam.getWins()
