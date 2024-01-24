@@ -1,5 +1,8 @@
 package com.gg.server.utils.annotation;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 /**
  * TestType.
  *
@@ -8,7 +11,8 @@ package com.gg.server.utils.annotation;
  * </p>
  *
  */
-public class TestType {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class TestTypeConstant {
     public static final String UNIT_TEST = "UnitTest";
     public static final String INTEGRATION_TEST = "IntegrationTest";
 }
