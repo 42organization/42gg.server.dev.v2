@@ -141,14 +141,14 @@ public class GameAdminService {
                 throw new PChangeNotExistException();
             }
             rollbackGameResult(reqDto, season, teamUser, pChanges);
-            pChangeAdminRepository.delete(pChanges.get(0));
-            entityManager.flush();
+            pChangeAdminRepository.deleteById(pChanges.get(0).getId());
         }
-        entityManager.clear();
         for (TeamUser teamUser :
                 teamUsers) {
             updateScore(reqDto, teamUser);
         }
+        entityManager.flush();
+        entityManager.clear();
         rankRedisService.updateRankRedis(teamUsers.get(0), teamUsers.get(1), game);
         tierService.updateAllTier(game.getSeason());
     }

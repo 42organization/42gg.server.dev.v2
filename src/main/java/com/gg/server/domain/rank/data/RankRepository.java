@@ -16,6 +16,13 @@ public interface RankRepository extends JpaRepository<Rank, Long> {
     Optional<Rank> findByUserIdAndSeasonId(Long userId, Long seasonId);
 
     @Modifying(clearAutomatically = true)
+    @Query("UPDATE Rank r "
+        + "SET r.ppp=:ppp, r.wins=:wins, r.losses=:losses "
+        + "WHERE r.user.id=:userId AND r.season.id=:seasonId")
+    void updateByUserIdAndSeasonId(@Param("userId") Long userId, @Param("seasonId") Long seasonId,
+        @Param("ppp") Integer ppp, @Param("wins") Integer wins, @Param("losses") Integer losses);
+
+    @Modifying(clearAutomatically = true)
     @Query("delete from Rank r where r.season.id=:seasonId")
     void deleteAllBySeasonId(@Param("seasonId") Long seasonId);
 

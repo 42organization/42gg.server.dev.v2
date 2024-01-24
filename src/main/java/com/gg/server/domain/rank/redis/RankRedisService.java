@@ -75,12 +75,14 @@ public class RankRedisService {
                 + "), redis(" + myTeam.getWins() + "), losses: db(" + rank.getLosses()
                 + "), redis(" + myTeam.getLosses() + ")");
         rank.modifyUserRank(rank.getPpp() + changedPpp, win, losses);
+        rankRepository.updateByUserIdAndSeasonId(rank.getUser().getId(), seasonId, rank.getPpp(), win, losses);
         myTeam.updateRank(changedPpp,
                 win, losses);
         log.info("update after: intraId: " + teamuser.getUser().getIntraId() + ", win: db(" + rank.getWins()
                 + "), redis(" + myTeam.getWins() + "), losses: db(" + rank.getLosses()
                 + "), redis(" + myTeam.getLosses() + ")");
-        rankRepository.flush();
+        // entityManager.flush();
+        // entityManager.clear();
     }
 
     @Transactional
@@ -146,8 +148,11 @@ public class RankRedisService {
         rank.modifyUserRank(ppp, win, losses);
         myTeam.changedRank(ppp, win, losses);
         updateRankUser(hashkey, RedisKeyManager.getZSetKey(seasonId), teamUser.getUser().getId(), myTeam);
+        rankRepository.updateByUserIdAndSeasonId(rank.getUser().getId(), seasonId, ppp, win, losses);
         log.info("After: userId: " + teamUser.getUser().getIntraId() + ", " + "ppp: rank("
                 + rank.getPpp() + "), redis(" + myTeam.getPpp() + "), win: " + myTeam.getWins()
                 + ", losses: " + myTeam.getLosses());
+        entityManager.flush();
+        entityManager.clear();
     }
 }

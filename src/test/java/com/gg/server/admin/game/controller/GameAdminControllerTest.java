@@ -42,6 +42,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import javax.persistence.EntityManager;
+
 @RequiredArgsConstructor
 @IntegrationTest
 @AutoConfigureMockMvc
@@ -77,6 +79,8 @@ class GameAdminControllerTest {
 
     @Autowired
     RankRedisRepository rankRedisRepository;
+    @Autowired
+    EntityManager entityManager;
 
     @AfterEach
     void redisDown() {
@@ -203,6 +207,8 @@ class GameAdminControllerTest {
                 .andReturn().getResponse().getContentAsString();
         GameTeamUser historyGame1 = gameRepository.findTeamsByGameIsIn(List.of(game1Info.getGameId())).get(0);
 
+        entityManager.flush();
+        entityManager.clear();
         adminUserRank = rankRepository.findByUserIdAndSeasonId(adminUserId, season.getId()).get();
         enemyUser1Rank = rankRepository.findByUserIdAndSeasonId(enemyUser1.getId(), season.getId())
                 .get();
@@ -216,8 +222,8 @@ class GameAdminControllerTest {
         assertThat(enemyUser1Rank.getWins()).isEqualTo(0);
         assertThat(enemyUser1Rank.getLosses()).isEqualTo(1);
         assertThat(enemyUser1Rank.getPpp()).isEqualTo(982);
-        //////////////////////////////
-        sleep(1000);
+        // //////////////////////////////
+        // sleep(1000);
         //////////////////////////////
         GameInfoDto game2Info = testDataUtils.createGameWithTierAndRank(adminUser, LocalDateTime.now().minusMinutes(4), LocalDateTime.now().plusMinutes(6), season, currentMatchMode, tierList.get(0));
         User enemyUser2 = userRepository.findById(game2Info.getEnemyUserId()).get();
