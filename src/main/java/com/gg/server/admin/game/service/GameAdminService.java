@@ -140,7 +140,7 @@ public class GameAdminService {
             if (!pChanges.get(0).getGame().getId().equals(gameId)) {
                 throw new PChangeNotExistException();
             }
-            rollbackGameResult(reqDto, season, teamUser, pChanges);
+            rollbackGameResult(season, teamUser, pChanges);
             pChangeAdminRepository.deleteById(pChanges.get(0).getId());
         }
         for (TeamUser teamUser :
@@ -153,7 +153,7 @@ public class GameAdminService {
         tierService.updateAllTier(game.getSeason());
     }
 
-    private void rollbackGameResult(RankGamePPPModifyReqDto reqDto, Season season, TeamUser teamUser, List<PChange> pChanges) {
+    private void rollbackGameResult(Season season, TeamUser teamUser, List<PChange> pChanges) {
         // pchange ppp도 update
         // rankredis 에 ppp 다시 반영
         // rank zset 도 update

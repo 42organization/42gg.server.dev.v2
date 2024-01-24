@@ -152,7 +152,5 @@ public class RankRedisService {
         log.info("After: userId: " + teamUser.getUser().getIntraId() + ", " + "ppp: rank("
                 + rank.getPpp() + "), redis(" + myTeam.getPpp() + "), win: " + myTeam.getWins()
                 + ", losses: " + myTeam.getLosses());
-        entityManager.flush();
-        entityManager.clear();
     }
 }
