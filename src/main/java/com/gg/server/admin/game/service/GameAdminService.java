@@ -143,8 +143,8 @@ public class GameAdminService {
             rollbackGameResult(reqDto, season, teamUser, pChanges);
             pChangeAdminRepository.delete(pChanges.get(0));
             entityManager.flush();
-            entityManager.clear();
         }
+        entityManager.clear();
         for (TeamUser teamUser :
                 teamUsers) {
             updateScore(reqDto, teamUser);
