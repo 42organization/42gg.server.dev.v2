@@ -148,6 +148,8 @@ public class RankRedisService {
         rank.modifyUserRank(ppp, win, losses);
         myTeam.changedRank(ppp, win, losses);
         updateRankUser(hashkey, RedisKeyManager.getZSetKey(seasonId), teamUser.getUser().getId(), myTeam);
+        entityManager.flush();
+        entityManager.clear();
         // rankRepository.updateByUserIdAndSeasonId(rank.getUser().getId(), seasonId, ppp, win, losses);
         log.info("After: userId: " + teamUser.getUser().getIntraId() + ", " + "ppp: rank("
                 + rank.getPpp() + "), redis(" + myTeam.getPpp() + "), win: " + myTeam.getWins()
