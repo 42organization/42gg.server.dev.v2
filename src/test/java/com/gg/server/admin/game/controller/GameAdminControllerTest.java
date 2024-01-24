@@ -205,10 +205,7 @@ class GameAdminControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn().getResponse().getContentAsString();
-        GameTeamUser historyGame1 = gameRepository.findTeamsByGameIsIn(List.of(game1Info.getGameId())).get(0);
 
-        entityManager.flush();
-        entityManager.clear();
         adminUserRank = rankRepository.findByUserIdAndSeasonId(adminUserId, season.getId()).get();
         enemyUser1Rank = rankRepository.findByUserIdAndSeasonId(enemyUser1.getId(), season.getId())
                 .get();
