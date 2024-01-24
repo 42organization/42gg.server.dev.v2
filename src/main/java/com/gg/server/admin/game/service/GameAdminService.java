@@ -134,21 +134,19 @@ public class GameAdminService {
             throw new NotRecentlyGameException();
         }
         // pchange 가져와서 rank ppp 이전 값을 가지고 새 점수를 바탕으로 다시 계산
-        for (TeamUser teamUser :
-                teamUsers) {
-            List<PChange> pChanges = pChangeAdminRepository.findByTeamUser(teamUser.getUser().getId());
+        for (int i = 0; i < teamUsers.size(); i++) {
+            List<PChange> pChanges = pChangeAdminRepository.findByTeamUser(teamUsers.get(i).getUser().getId());
             if (!pChanges.get(0).getGame().getId().equals(gameId)) {
                 throw new PChangeNotExistException();
             }
-            rollbackGameResult(season, teamUser, pChanges);
+            rollbackGameResult(season, teamUsers.get(i), pChanges);
             pChangeAdminRepository.deleteById(pChanges.get(0).getId());
+            entityManager.flush();
         }
-        for (TeamUser teamUser :
-                teamUsers) {
-            updateScore(reqDto, teamUser);
+        for (int i = 0; i < teamUsers.size(); i++) {
+            updateScore(reqDto, teamUsers.get(i));
         }
-        entityManager.flush();
-        entityManager.clear();
+        teamUserAdminRepository.flush();
         rankRedisService.updateRankRedis(teamUsers.get(0), teamUsers.get(1), game);
         tierService.updateAllTier(game.getSeason());
     }

@@ -16,10 +16,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.hibernate.annotations.DynamicUpdate;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Entity
+@DynamicUpdate
 public class Game {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
