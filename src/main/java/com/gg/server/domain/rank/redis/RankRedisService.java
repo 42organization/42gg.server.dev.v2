@@ -63,11 +63,11 @@ public class RankRedisService {
 
     @Transactional
     public void updatePPP(TeamUser teamuser, RankRedis myTeam, int enemyScore, Integer myPPP, Integer enemyPPP, Long seasonId) {
-        int win = teamuser.getTeam().getWin() ? myTeam.getWins() + 1 : myTeam.getWins();
-        int losses = !teamuser.getTeam().getWin() ? myTeam.getLosses() + 1: myTeam.getLosses();
         // rank table 수정
         Rank rank = rankRepository.findByUserIdAndSeasonId(myTeam.getUserId(), seasonId)
                 .orElseThrow(() -> new NotExistException("rank 정보가 없습니다.", ErrorCode.NOT_FOUND));
+        int win = teamuser.getTeam().getWin() ? rank.getWins() + 1 : rank.getWins();
+        int losses = !teamuser.getTeam().getWin() ? rank.getLosses() + 1: rank.getLosses();
         Integer changedPpp = EloRating.pppChange(myPPP, enemyPPP,
                 teamuser.getTeam().getWin(),
                 Math.abs(teamuser.getTeam().getScore() - enemyScore) == 2);
