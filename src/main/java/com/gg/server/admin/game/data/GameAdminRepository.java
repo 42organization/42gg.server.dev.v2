@@ -31,4 +31,7 @@ public interface GameAdminRepository extends JpaRepository<Game, Long> {
     @Query(value = "SELECT g FROM Game g, Team t, TeamUser tu WHERE g.status = :status AND g.id = t.game.id"
             + " AND t.id = tu.team.id AND tu.user.id = :userId")
     Optional<Game> findByStatusTypeAndUserId(@Param("status") StatusType status, @Param("userId") Long userId);
+
+    @Query(value = "SELECT g FROM Game g JOIN FETCH g.season WHERE g.id = :gameId")
+    Optional<Game> findGameWithSeasonByGameId(@Param("gameId")Long gameId);
 }

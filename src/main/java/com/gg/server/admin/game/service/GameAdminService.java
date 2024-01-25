@@ -130,12 +130,10 @@ public class GameAdminService {
     public void rankResultEdit(RankGamePPPModifyReqDto reqDto, Long gameId) {
         // 게임이 두명 다 가장 마지막 게임인지 확인 (그 game에 해당하는 팀이 맞는지 확인)
         List<TeamUser> teamUsers = teamUserAdminRepository.findUsersByTeamIdIn(List.of(reqDto.getTeam1Id(), reqDto.getTeam2Id()));
-        Game game = gameAdminRepository.findById(gameId)
+        Game game = gameAdminRepository.findGameWithSeasonByGameId(gameId)
                 .orElseThrow(GameNotExistException::new);
-        Season season = seasonAdminRepository.findById(game.getSeason().getId())
-                .orElseThrow(SeasonNotFoundException::new);
         CurSeason curSeason = seasonService.getCurSeason();
-        if (!isRecentlyGame(teamUsers, gameId) || EnrollSlots(teamUsers) || !season.getId().equals(curSeason.getId())) {
+        if (!isRecentlyGame(teamUsers, gameId) || EnrollSlots(teamUsers) || !game.getSeason().getId().equals(curSeason.getId())) {
             throw new NotRecentlyGameException();
         }
         // pchange 가져와서 rank ppp 이전 값을 가지고 새 점수를 바탕으로 다시 계산
@@ -144,14 +142,14 @@ public class GameAdminService {
         if (!pChanges.get(0).getGame().getId().equals(gameId)) {
             throw new PChangeNotExistException();
         }
-        RankRedis rankRedis1 = rollbackGameResult(season, teamUsers.get(0), pChanges);
+        RankRedis rankRedis1 = rollbackGameResult(game.getSeason(), teamUsers.get(0), pChanges);
         pChangeAdminRepository.deleteById(pChanges.get(0).getId());
         // user 2
         pChanges = pChangeAdminRepository.findByTeamUser(teamUsers.get(1).getUser().getId());
         if (!pChanges.get(0).getGame().getId().equals(gameId)) {
             throw new PChangeNotExistException();
         }
-        RankRedis rankRedis2 = rollbackGameResult(season, teamUsers.get(1), pChanges);
+        RankRedis rankRedis2 = rollbackGameResult(game.getSeason(), teamUsers.get(1), pChanges);
         pChangeAdminRepository.deleteById(pChanges.get(0).getId());
         entityManager.flush();
         for (int i = 0; i < teamUsers.size(); i++) {
