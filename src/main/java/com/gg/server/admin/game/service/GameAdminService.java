@@ -19,9 +19,12 @@ import com.gg.server.domain.match.data.RedisMatchUserRepository;
 import com.gg.server.domain.pchange.data.PChange;
 import com.gg.server.domain.pchange.data.PChangeRepository;
 
+import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisService;
 import com.gg.server.domain.season.data.Season;
+import com.gg.server.domain.season.dto.CurSeason;
 import com.gg.server.domain.season.exception.SeasonNotFoundException;
+import com.gg.server.domain.season.service.SeasonService;
 import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.tier.service.TierService;
 import com.gg.server.domain.user.data.User;
@@ -54,6 +57,7 @@ public class GameAdminService {
     private final TeamUserAdminRepository teamUserAdminRepository;
     private final RedisMatchUserRepository redisMatchUserRepository;
     private final TierService tierService;
+    private final SeasonService seasonService;
     private final EntityManager entityManager;
 
     /**
@@ -130,40 +134,49 @@ public class GameAdminService {
                 .orElseThrow(GameNotExistException::new);
         Season season = seasonAdminRepository.findById(game.getSeason().getId())
                 .orElseThrow(SeasonNotFoundException::new);
-        if (!isRecentlyGame(teamUsers, gameId) || EnrollSlots(teamUsers)) {
+        CurSeason curSeason = seasonService.getCurSeason();
+        if (!isRecentlyGame(teamUsers, gameId) || EnrollSlots(teamUsers) || !season.getId().equals(curSeason.getId())) {
             throw new NotRecentlyGameException();
         }
         // pchange 가져와서 rank ppp 이전 값을 가지고 새 점수를 바탕으로 다시 계산
-        for (int i = 0; i < teamUsers.size(); i++) {
-            List<PChange> pChanges = pChangeAdminRepository.findByTeamUser(teamUsers.get(i).getUser().getId());
-            if (!pChanges.get(0).getGame().getId().equals(gameId)) {
-                throw new PChangeNotExistException();
-            }
-            rollbackGameResult(season, teamUsers.get(i), pChanges);
-            pChangeAdminRepository.deleteById(pChanges.get(0).getId());
-            entityManager.flush();
+        // user 1
+        List<PChange> pChanges = pChangeAdminRepository.findByTeamUser(teamUsers.get(0).getUser().getId());
+        if (!pChanges.get(0).getGame().getId().equals(gameId)) {
+            throw new PChangeNotExistException();
         }
+        RankRedis rankRedis1 = rollbackGameResult(season, teamUsers.get(0), pChanges);
+        pChangeAdminRepository.deleteById(pChanges.get(0).getId());
+        // user 2
+        pChanges = pChangeAdminRepository.findByTeamUser(teamUsers.get(1).getUser().getId());
+        if (!pChanges.get(0).getGame().getId().equals(gameId)) {
+            throw new PChangeNotExistException();
+        }
+        RankRedis rankRedis2 = rollbackGameResult(season, teamUsers.get(1), pChanges);
+        pChangeAdminRepository.deleteById(pChanges.get(0).getId());
+        entityManager.flush();
         for (int i = 0; i < teamUsers.size(); i++) {
             updateScore(reqDto, teamUsers.get(i));
         }
         teamUserAdminRepository.flush();
-        rankRedisService.updateRankRedis(teamUsers.get(0), teamUsers.get(1), game);
+        rankRedisService.updateAdminRankData(teamUsers.get(0), teamUsers.get(1), game, rankRedis1, rankRedis2);
         tierService.updateAllTier(game.getSeason());
     }
 
-    private void rollbackGameResult(Season season, TeamUser teamUser, List<PChange> pChanges) {
+    private RankRedis rollbackGameResult(Season season, TeamUser teamUser, List<PChange> pChanges) {
         // pchange ppp도 update
         // rankredis 에 ppp 다시 반영
         // rank zset 도 update
         // 이전 ppp, exp 되돌리기
         // rank data 에 있는 ppp 되돌리기
+        RankRedis rankRedis;
         if (pChanges.size() == 1) {
-            rankRedisService.rollbackRank(teamUser, season.getStartPpp(), season.getId());
+            rankRedis = rankRedisService.rollbackRank(teamUser, season.getStartPpp(), season.getId());
             teamUser.getUser().updateExp(0);
         } else {
-            rankRedisService.rollbackRank(teamUser, pChanges.get(1).getPppResult(), season.getId());
+            rankRedis = rankRedisService.rollbackRank(teamUser, pChanges.get(1).getPppResult(), season.getId());
             teamUser.getUser().updateExp(pChanges.get(1).getExp());
         }
+        return rankRedis;
     }
 
     private void updateScore(RankGamePPPModifyReqDto reqDto, TeamUser teamUser) {

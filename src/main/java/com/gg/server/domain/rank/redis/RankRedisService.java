@@ -39,6 +39,19 @@ public class RankRedisService {
         String hashKey = RedisKeyManager.getHashKey(seasonId);
         return rankRedisRepository.findRankByUserId(hashKey, userId).getPpp();
     }
+    public void updateAdminRankData(TeamUser myTeamUser, TeamUser enemyTeamUser, Game game, RankRedis myTeam, RankRedis enemyTeam) {
+        // 단식 -> 2명 기준
+        String key = RedisKeyManager.getHashKey(game.getSeason().getId());
+        String zsetKey = RedisKeyManager.getZSetKey(game.getSeason().getId());
+        Integer myPPP = myTeam.getPpp();
+        Integer enemyPPP = enemyTeam.getPpp();
+        updatePPP(myTeamUser, myTeam, enemyTeamUser.getTeam().getScore(), myPPP, enemyPPP, game.getSeason().getId());
+        updatePPP(enemyTeamUser, enemyTeam, myTeamUser.getTeam().getScore(), enemyPPP, myPPP, game.getSeason().getId());
+        updateRankUser(key, zsetKey, myTeamUser.getUser().getId(), myTeam);
+        updateRankUser(key, zsetKey, enemyTeamUser.getUser().getId(), enemyTeam);
+        pChangeService.addPChange(game, myTeamUser.getUser(), myTeam.getPpp(), false);
+        pChangeService.addPChange(game, enemyTeamUser.getUser(), enemyTeam.getPpp(), false);
+    }
     public void updateRankRedis(TeamUser myTeamUser, TeamUser enemyTeamUser, Game game) {
         // 단식 -> 2명 기준
         String key = RedisKeyManager.getHashKey(game.getSeason().getId());
@@ -132,7 +145,7 @@ public class RankRedisService {
     }
 
     @Transactional
-    public void rollbackRank(TeamUser teamUser, int ppp, Long seasonId) {
+    public RankRedis rollbackRank(TeamUser teamUser, int ppp, Long seasonId) {
         String hashkey = RedisKeyManager.getHashKey(seasonId);
         RankRedis myTeam = rankRedisRepository.findRankByUserId(hashkey, teamUser.getUser().getId());
         Rank rank = rankRepository.findByUserIdAndSeasonId(myTeam.getUserId(), seasonId)
@@ -149,5 +162,6 @@ public class RankRedisService {
         log.info("After: userId: " + teamUser.getUser().getIntraId() + ", " + "ppp: rank("
                 + rank.getPpp() + "), redis(" + myTeam.getPpp() + "), win: " + myTeam.getWins()
                 + ", losses: " + myTeam.getLosses());
+        return myTeam;
     }
 }
