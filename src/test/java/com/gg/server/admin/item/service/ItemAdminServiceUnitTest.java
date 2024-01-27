@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 import com.gg.server.admin.item.data.ItemAdminRepository;
 import com.gg.server.admin.item.dto.ItemUpdateRequestDto;
@@ -63,6 +63,7 @@ class ItemAdminServiceUnitTest {
             given(itemAdminRepository.findAll(any(Pageable.class))).willReturn(new PageImpl<>(new ArrayList<>()));
             // when, then
             itemAdminService.getAllItemHistory(mock(Pageable.class));
+            verify(itemAdminRepository, times(1)).findAll(any(Pageable.class));
         }
     }
 
@@ -79,6 +80,9 @@ class ItemAdminServiceUnitTest {
             itemAdminService.updateItem(1L, mock(ItemUpdateRequestDto.class), mock(MultipartFile.class), UserDto.from(user));
             setFieldWithReflection(item, "isVisible", true);
             itemAdminService.updateItem(1L, mock(ItemUpdateRequestDto.class), null, UserDto.from(user));
+            verify(itemAdminRepository, times(2)).findById(any(Long.class));
+            verify(asyncNewItemImageUploader, times(1)).upload(any(), any());
+            verify(itemAdminRepository, times(2)).save(any(Item.class));
         }
         @Test
         @DisplayName("ItemNotAvailableTest")
@@ -87,9 +91,9 @@ class ItemAdminServiceUnitTest {
             setFieldWithReflection(item, "isVisible", false);
             given(itemAdminRepository.findById(any(Long.class))).willReturn(Optional.of(item));
             // when, then
-
             assertThatThrownBy(()->itemAdminService.updateItem(1L, mock(ItemUpdateRequestDto.class), mock(MultipartFile.class), UserDto.from(user)))
                 .isInstanceOf(ItemNotAvailableException.class);
+            verify(itemAdminRepository, times(1)).findById(any(Long.class));
         }
         @Test
         @DisplayName("ItemNotFoundTest")
@@ -97,9 +101,9 @@ class ItemAdminServiceUnitTest {
             // given
             given(itemAdminRepository.findById(any(Long.class))).willReturn(Optional.empty());
             // when, then
-
             assertThatThrownBy(()->itemAdminService.updateItem(1L, mock(ItemUpdateRequestDto.class), mock(MultipartFile.class), UserDto.from(user)))
                 .isInstanceOf(ItemNotFoundException.class);
+            verify(itemAdminRepository, times(1)).findById(any(Long.class));
         }
     }
 
@@ -114,6 +118,9 @@ class ItemAdminServiceUnitTest {
             given(itemAdminRepository.save(any(Item.class))).willReturn(mock(Item.class));
             // when, then
             itemAdminService.updateItem(1L, mock(ItemUpdateRequestDto.class), UserDto.from(user));
+            assertThat(item.getDeleterIntraId()).isEqualTo(user.getIntraId());
+            verify(itemAdminRepository, times(1)).findById(any(Long.class));
+            verify(itemAdminRepository, times(1)).save(any(Item.class));
         }
         @Test
         @DisplayName("ItemNotAvailableTest")
@@ -122,9 +129,9 @@ class ItemAdminServiceUnitTest {
             setFieldWithReflection(item, "isVisible", false);
             given(itemAdminRepository.findById(any(Long.class))).willReturn(Optional.of(item));
             // when, then
-
             assertThatThrownBy(()->itemAdminService.updateItem(1L, mock(ItemUpdateRequestDto.class), UserDto.from(user)))
                 .isInstanceOf(ItemNotAvailableException.class);
+            verify(itemAdminRepository, times(1)).findById(any(Long.class));
         }
         @Test
         @DisplayName("ItemNotFoundTest")
@@ -132,9 +139,9 @@ class ItemAdminServiceUnitTest {
             // given
             given(itemAdminRepository.findById(any(Long.class))).willReturn(Optional.empty());
             // when, then
-
             assertThatThrownBy(()->itemAdminService.updateItem(1L, mock(ItemUpdateRequestDto.class), UserDto.from(user)))
                 .isInstanceOf(ItemNotFoundException.class);
+            verify(itemAdminRepository, times(1)).findById(any(Long.class));
         }
     }
 
@@ -149,6 +156,7 @@ class ItemAdminServiceUnitTest {
             // when, then
             itemAdminService.deleteItem(1L, UserDto.from(user));
             assertThat(item.getIsVisible()).isFalse();
+            verify(itemAdminRepository, times(1)).findById(any(Long.class));
         }
         @Test
         @DisplayName("ItemNotFoundTest")
@@ -158,6 +166,7 @@ class ItemAdminServiceUnitTest {
             // when, then
             assertThatThrownBy(()->itemAdminService.deleteItem(1L, UserDto.from(user)))
                 .isInstanceOf(ItemNotFoundException.class);
+            verify(itemAdminRepository, times(1)).findById(any(Long.class));
         }
     }
 }

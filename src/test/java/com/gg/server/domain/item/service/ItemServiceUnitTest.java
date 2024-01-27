@@ -4,7 +4,7 @@ import static com.gg.server.utils.ReflectionUtilsForUnitTest.setFieldWithReflect
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 import com.gg.server.domain.coin.service.UserCoinChangeService;
 import com.gg.server.domain.item.data.Item;
@@ -33,7 +33,6 @@ import com.gg.server.utils.annotation.UnitTest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -74,6 +73,7 @@ class ItemServiceUnitTest {
             given(itemRepository.findAllByCreatedAtDesc()).willReturn(items);
             // when, then
             itemService.getAllItems();
+            verify(itemRepository, times(1)).findAllByCreatedAtDesc();
         }
     }
 
@@ -103,6 +103,11 @@ class ItemServiceUnitTest {
             // when, then 2
             setFieldWithReflection(item, "discount", 0);
             itemService.purchaseItem(1L, userDto);
+            verify(itemRepository, times(2)).findById(any(Long.class));
+            verify(userRepository, times(2)).findById(any(Long.class));
+            verify(userCoinChangeService, times(2)).purchaseItemCoin(any(), any(), any());
+            verify(receiptRepository, times(2)).save(any(Receipt.class));
+
         }
         @Test
         @DisplayName("success -> discount")
@@ -115,6 +120,10 @@ class ItemServiceUnitTest {
             given(receiptRepository.save(any(Receipt.class))).willReturn(mock(Receipt.class));
             // when, then
             itemService.purchaseItem(1L, userDto);
+            verify(itemRepository, times(1)).findById(any(Long.class));
+            verify(userRepository, times(1)).findById(any(Long.class));
+            verify(userCoinChangeService, times(1)).purchaseItemCoin(any(), any(), any());
+            verify(receiptRepository, times(1)).save(any(Receipt.class));
         }
         @Test
         @DisplayName("item not found")
@@ -124,6 +133,7 @@ class ItemServiceUnitTest {
             // when, then
             assertThatThrownBy(()->itemService.purchaseItem(1L, userDto))
                 .isInstanceOf(ItemNotFoundException.class);
+            verify(itemRepository, times(1)).findById(any(Long.class));
         }
         @Test
         @DisplayName("Item Not Purchasable")
@@ -134,6 +144,7 @@ class ItemServiceUnitTest {
             // when, then
             assertThatThrownBy(()->itemService.purchaseItem(1L, userDto))
                 .isInstanceOf(ItemNotPurchasableException.class);
+            verify(itemRepository, times(1)).findById(any(Long.class));
         }
         @Test
         @DisplayName("User Not Found")
@@ -144,6 +155,8 @@ class ItemServiceUnitTest {
             // when, then
             assertThatThrownBy(()->itemService.purchaseItem(1L, userDto))
                 .isInstanceOf(UserNotFoundException.class);
+            verify(itemRepository, times(1)).findById(any(Long.class));
+            verify(userRepository, times(1)).findById(any(Long.class));
         }
         @Test
         @DisplayName("GuestUser Exception")
@@ -155,6 +168,8 @@ class ItemServiceUnitTest {
             // when, then
             assertThatThrownBy(()->itemService.purchaseItem(1L, userDto))
                 .isInstanceOf(KakaoPurchaseException.class);
+            verify(itemRepository, times(1)).findById(any(Long.class));
+            verify(userRepository, times(1)).findById(any(Long.class));
         }
 
     }
@@ -188,6 +203,13 @@ class ItemServiceUnitTest {
             // when, then 2
             setFieldWithReflection(item, "discount", 0);
             itemService.giftItem(1L, "owner", userDto);
+            verify(itemRepository, times(2)).findById(any(Long.class));
+            verify(userRepository, times(2)).findById(any(Long.class));
+            verify(userRepository, times(2)).findByIntraId(any(String.class));
+            verify(userCoinChangeService, times(2)).giftItemCoin(any(), any(), any(), any());
+            verify(receiptRepository, times(2)).save(any(Receipt.class));
+            verify(notiService, times(2)).createGiftNoti(any(), any(), any());
+
         }
         @Test
         @DisplayName("success -> Discount")
@@ -201,6 +223,12 @@ class ItemServiceUnitTest {
             given(userRepository.findByIntraId(any(String.class))).willReturn(Optional.of(owner));
             // when, then
             itemService.giftItem(1L, "owner", userDto);
+            verify(itemRepository, times(1)).findById(any(Long.class));
+            verify(userRepository, times(1)).findById(any(Long.class));
+            verify(userRepository, times(1)).findByIntraId(any(String.class));
+            verify(userCoinChangeService, times(1)).giftItemCoin(any(), any(), any(), any());
+            verify(receiptRepository, times(1)).save(any(Receipt.class));
+            verify(notiService, times(1)).createGiftNoti(any(), any(), any());
         }
         @Test
         @DisplayName("guest Owner")
@@ -213,6 +241,9 @@ class ItemServiceUnitTest {
             // when, then
             assertThatThrownBy(()->itemService.giftItem(1L, "owner", userDto))
                 .isInstanceOf(KakaoGiftException.class);
+            verify(itemRepository, times(1)).findById(any(Long.class));
+            verify(userRepository, times(1)).findById(any(Long.class));
+            verify(userRepository, times(1)).findByIntraId(any(String.class));
         }
         @Test
         @DisplayName("Owner not Found")
@@ -225,6 +256,9 @@ class ItemServiceUnitTest {
             // when, then
             assertThatThrownBy(()->itemService.giftItem(1L, "owner", userDto))
                 .isInstanceOf(UserNotFoundException.class);
+            verify(itemRepository, times(1)).findById(any(Long.class));
+            verify(userRepository, times(1)).findById(any(Long.class));
+            verify(userRepository, times(1)).findByIntraId(any(String.class));
         }
         @Test
         @DisplayName("guest payUser")
@@ -236,6 +270,8 @@ class ItemServiceUnitTest {
             // when, then
             assertThatThrownBy(()->itemService.giftItem(1L, "owner", userDto))
                 .isInstanceOf(KakaoPurchaseException.class);
+            verify(itemRepository, times(1)).findById(any(Long.class));
+            verify(userRepository, times(1)).findById(any(Long.class));
         }
         @Test
         @DisplayName("payUser Not Found")
@@ -247,6 +283,8 @@ class ItemServiceUnitTest {
             // when, then
             assertThatThrownBy(()->itemService.giftItem(1L, "owner", userDto))
                 .isInstanceOf(UserNotFoundException.class);
+            verify(itemRepository, times(1)).findById(any(Long.class));
+            verify(userRepository, times(1)).findById(any(Long.class));
         }
         @Test
         @DisplayName("Item Not Purchasable")
@@ -257,6 +295,7 @@ class ItemServiceUnitTest {
             // when, then
             assertThatThrownBy(()->itemService.giftItem(1L, "owner", userDto))
                 .isInstanceOf(ItemNotPurchasableException.class);
+            verify(itemRepository, times(1)).findById(any(Long.class));
         }
         @Test
         @DisplayName("Item Not Found")
@@ -266,6 +305,7 @@ class ItemServiceUnitTest {
             // when, then
             assertThatThrownBy(()->itemService.giftItem(1L, "owner", userDto))
                 .isInstanceOf(ItemNotFoundException.class);
+            verify(itemRepository, times(1)).findById(any(Long.class));
         }
     }
 
@@ -281,6 +321,7 @@ class ItemServiceUnitTest {
                 .willReturn(new PageImpl<>(new ArrayList<>()));
             // when, then
             itemService.getItemByUser(UserDto.from(user), mock(Pageable.class));
+            verify(userItemRepository, times(1)).findByOwnerIntraId(any(String.class), any(Pageable.class));
         }
     }
 
@@ -310,7 +351,6 @@ class ItemServiceUnitTest {
             // when, then
             assertThatThrownBy(()->itemService.checkItemOwner(user, receipt))
                 .isInstanceOf(ReceiptNotOwnerException.class);
-            ;
         }
     }
 
@@ -339,7 +379,6 @@ class ItemServiceUnitTest {
             // when, then
             assertThatThrownBy(()->itemService.checkItemType(receipt, ItemType.EDGE))
                 .isInstanceOf(ItemTypeException.class);
-            ;
         }
     }
 
