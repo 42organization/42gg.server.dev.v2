@@ -41,6 +41,8 @@ class FeedbackServiceUnitTest {
             given(feedbackRepository.save(any(Feedback.class))).willReturn(mock(Feedback.class));
             // when, then
             feedbackService.addFeedback(new FeedbackRequestDto(), 1L);
+            verify(userRepository, times(1)).findById(any(Long.class));
+            verify(feedbackRepository, times(1)).save(any(Feedback.class));
         }
 
         @Test
@@ -51,6 +53,7 @@ class FeedbackServiceUnitTest {
             // when, then
             Assertions.assertThatThrownBy(()->feedbackService.addFeedback(new FeedbackRequestDto(), 1L))
                 .isInstanceOf(UserNotFoundException.class);
+            verify(userRepository, times(1)).findById(any(Long.class));
         }
     }
 }

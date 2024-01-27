@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 import com.gg.server.admin.feedback.data.FeedbackAdminRepository;
 import com.gg.server.domain.feedback.data.Feedback;
@@ -42,6 +42,7 @@ class FeedbackAdminServiceUnitTest {
             PageImpl<Feedback> feedbackList = new PageImpl<>(new ArrayList<>());
             given(feedbackAdminRepository.findAll(any(Pageable.class))).willReturn(feedbackList);
             feedbackAdminService.findAllFeedback(mock(Pageable.class));
+            verify(feedbackAdminRepository, times(1)).findAll(any(Pageable.class));
         }
     }
 
@@ -58,6 +59,7 @@ class FeedbackAdminServiceUnitTest {
             // when, then
             feedbackAdminService.toggleFeedbackIsSolvedByAdmin(1L);
             assertThat(feedback.getIsSolved()).isFalse();
+            verify(feedbackAdminRepository, times(1)).findById(any(Long.class));
         }
 
         @Test
@@ -68,6 +70,7 @@ class FeedbackAdminServiceUnitTest {
             // when, then
             assertThatThrownBy(()->feedbackAdminService.toggleFeedbackIsSolvedByAdmin(1L))
                 .isInstanceOf(FeedbackNotFoundException.class);
+            verify(feedbackAdminRepository, times(1)).findById(any(Long.class));
         }
     }
 
@@ -81,6 +84,7 @@ class FeedbackAdminServiceUnitTest {
             given(feedbackAdminRepository.findFeedbacksByUserIntraId(any(String.class))).willReturn(new ArrayList<>());
             // when, then
             feedbackAdminService.findByPartsOfIntraId("intraId", mock(Pageable.class));
+            verify(feedbackAdminRepository, times(1)).findFeedbacksByUserIntraId(any(String.class));
         }
     }
 }
