@@ -18,6 +18,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.DynamicUpdate;
+
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.match.dto.GameAddDto;
@@ -29,8 +31,6 @@ import com.gg.server.global.utils.BusinessChecker;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import org.hibernate.annotations.DynamicUpdate;
 
 @NoArgsConstructor
 @AllArgsConstructor
