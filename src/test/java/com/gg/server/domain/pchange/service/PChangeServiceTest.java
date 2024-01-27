@@ -36,7 +36,6 @@ class PChangeServiceTest {
     private PChangeService pChangeService;
 
     @Test
-    @Transactional
     public void testAddPChange() {
         Game game = new Game();
         User user = new User("intra", "email", "image", RacketType.PENHOLDER,
