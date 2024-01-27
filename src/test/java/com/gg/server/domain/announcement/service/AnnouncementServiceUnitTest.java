@@ -2,6 +2,7 @@ package com.gg.server.domain.announcement.service;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 
 import com.gg.server.domain.announcement.data.Announcement;
 import com.gg.server.domain.announcement.data.AnnouncementRepository;
@@ -38,6 +39,7 @@ class AnnouncementServiceUnitTest {
             given(announcementRepository.findFirstByOrderByIdDesc()).willReturn(Optional.of(announcement));
             // when, then
             assertThat(announcementService.findLastAnnouncement().getContent()).isEqualTo(content);
+            verify(announcementRepository, times(1)).findFirstByOrderByIdDesc();
         }
 
         @Test
@@ -50,6 +52,7 @@ class AnnouncementServiceUnitTest {
             given(announcementRepository.findFirstByOrderByIdDesc()).willReturn(Optional.of(announcement));
             // when, then
             assertThat(announcementService.findLastAnnouncement().getContent()).isEqualTo("");
+            verify(announcementRepository, times(1)).findFirstByOrderByIdDesc();
         }
 
         @Test
@@ -60,6 +63,8 @@ class AnnouncementServiceUnitTest {
             // when, then
             assertThatThrownBy(()->announcementService.findLastAnnouncement())
                 .isInstanceOf(AnnounceNotFoundException.class);
+            verify(announcementRepository, times(1)).findFirstByOrderByIdDesc();
+
         }
     }
 }

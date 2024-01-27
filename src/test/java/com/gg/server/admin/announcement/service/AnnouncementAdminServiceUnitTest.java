@@ -3,7 +3,7 @@ package com.gg.server.admin.announcement.service;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 import com.gg.server.admin.announcement.data.AnnouncementAdminRepository;
 import com.gg.server.admin.announcement.dto.AnnouncementAdminAddDto;
@@ -43,6 +43,7 @@ class AnnouncementAdminServiceUnitTest {
             List<Announcement> announcementList = new ArrayList<>();
             given(announcementAdminRepository.findAll(any(Pageable.class))).willReturn(new PageImpl<>(announcementList));
             announcementAdminService.findAllAnnouncement(mock(Pageable.class));
+            verify(announcementAdminRepository, times(1)).findAll(any(Pageable.class));
         }
     }
 
@@ -58,6 +59,7 @@ class AnnouncementAdminServiceUnitTest {
             announcement.update(IntraId, curTime);
             given(announcementAdminRepository.findFirstByOrderByIdDesc()).willReturn(Optional.of(announcement));
             announcementAdminService.addAnnouncement(new AnnouncementAdminAddDto());
+            verify(announcementAdminRepository, times(1)).findFirstByOrderByIdDesc();
         }
 
         @Test
@@ -66,6 +68,7 @@ class AnnouncementAdminServiceUnitTest {
             given(announcementAdminRepository.findFirstByOrderByIdDesc()).willReturn(Optional.empty());
             assertThatThrownBy(()->announcementAdminService.addAnnouncement(new AnnouncementAdminAddDto()))
                 .isInstanceOf(AnnounceNotFoundException.class);
+            verify(announcementAdminRepository, times(1)).findFirstByOrderByIdDesc();
         }
 
         @Test
@@ -75,6 +78,7 @@ class AnnouncementAdminServiceUnitTest {
             given(announcementAdminRepository.findFirstByOrderByIdDesc()).willReturn(Optional.of(announcement));
             assertThatThrownBy(()->announcementAdminService.addAnnouncement(new AnnouncementAdminAddDto()))
                 .isInstanceOf(AnnounceDupException.class);
+            verify(announcementAdminRepository, times(1)).findFirstByOrderByIdDesc();
         }
     }
 
@@ -88,6 +92,7 @@ class AnnouncementAdminServiceUnitTest {
             Announcement announcement = new Announcement();
             given(announcementAdminRepository.findFirstByOrderByIdDesc()).willReturn(Optional.of(announcement));
             announcementAdminService.modifyAnnouncementIsDel(intraId);
+            verify(announcementAdminRepository, times(1)).findFirstByOrderByIdDesc();
         }
 
         @Test
@@ -96,6 +101,7 @@ class AnnouncementAdminServiceUnitTest {
             given(announcementAdminRepository.findFirstByOrderByIdDesc()).willReturn(Optional.empty());
             assertThatThrownBy(()->announcementAdminService.modifyAnnouncementIsDel(intraId))
                 .isInstanceOf(AnnounceNotFoundException.class);
+            verify(announcementAdminRepository, times(1)).findFirstByOrderByIdDesc();
         }
 
         @Test
@@ -106,6 +112,7 @@ class AnnouncementAdminServiceUnitTest {
             given(announcementAdminRepository.findFirstByOrderByIdDesc()).willReturn(Optional.of(announcement));
             assertThatThrownBy(()->announcementAdminService.modifyAnnouncementIsDel(intraId))
                 .isInstanceOf(AnnounceNotFoundException.class);
+            verify(announcementAdminRepository, times(1)).findFirstByOrderByIdDesc();
         }
     }
 }
