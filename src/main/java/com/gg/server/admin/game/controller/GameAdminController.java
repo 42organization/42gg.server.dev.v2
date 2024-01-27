@@ -4,6 +4,7 @@ import com.gg.server.admin.game.dto.GameLogListAdminResponseDto;
 import com.gg.server.admin.game.dto.GameUserLogAdminReqDto;
 import com.gg.server.admin.game.dto.RankGamePPPModifyReqDto;
 import com.gg.server.admin.game.service.GameAdminService;
+import com.gg.server.domain.rank.redis.RankRedisService;
 import com.gg.server.global.dto.PageRequestDto;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.InvalidParameterException;
@@ -23,6 +24,7 @@ import javax.validation.constraints.Positive;
 @RequestMapping("/pingpong/admin/games")
 public class GameAdminController {
     private final GameAdminService gameAdminService;
+    private final RankRedisService rankRedisService;
 
     @GetMapping
     public GameLogListAdminResponseDto gameFindBySeasonId(@ModelAttribute @Valid PageRequestDto pageRequestDto) {
@@ -59,6 +61,7 @@ public class GameAdminController {
             throw new InvalidParameterException("점수를 잘못 입력했습니다.", ErrorCode.VALID_FAILED);
         }
         gameAdminService.rankResultEdit(reqDto, gameId);
+        rankRedisService.updateAllTier(gameId);
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }
 }

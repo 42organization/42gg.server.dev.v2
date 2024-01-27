@@ -42,6 +42,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import javax.persistence.EntityManager;
+
 @RequiredArgsConstructor
 @IntegrationTest
 @AutoConfigureMockMvc
@@ -77,6 +79,8 @@ class GameAdminControllerTest {
 
     @Autowired
     RankRedisRepository rankRedisRepository;
+    @Autowired
+    EntityManager entityManager;
 
     @AfterEach
     void redisDown() {
@@ -203,6 +207,8 @@ class GameAdminControllerTest {
                 .andReturn().getResponse().getContentAsString();
         GameTeamUser historyGame1 = gameRepository.findTeamsByGameIsIn(List.of(game1Info.getGameId())).get(0);
 
+        entityManager.flush();
+        entityManager.clear();
         adminUserRank = rankRepository.findByUserIdAndSeasonId(adminUserId, season.getId()).get();
         enemyUser1Rank = rankRepository.findByUserIdAndSeasonId(enemyUser1.getId(), season.getId())
                 .get();

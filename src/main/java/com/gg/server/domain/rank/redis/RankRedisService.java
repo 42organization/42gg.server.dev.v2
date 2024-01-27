@@ -22,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -31,10 +33,24 @@ public class RankRedisService {
     private final PChangeService pChangeService;
     private final RankRepository rankRepository;
     private final SeasonFindService seasonFindService;
+    private final EntityManager entityManager;
 
     public Integer getUserPpp(Long userId, Long seasonId) {
         String hashKey = RedisKeyManager.getHashKey(seasonId);
         return rankRedisRepository.findRankByUserId(hashKey, userId).getPpp();
+    }
+    public void updateAdminRankData(TeamUser myTeamUser, TeamUser enemyTeamUser, Game game, RankRedis myTeam, RankRedis enemyTeam) {
+        // 단식 -> 2명 기준
+        String key = RedisKeyManager.getHashKey(game.getSeason().getId());
+        String zsetKey = RedisKeyManager.getZSetKey(game.getSeason().getId());
+        Integer myPPP = myTeam.getPpp();
+        Integer enemyPPP = enemyTeam.getPpp();
+        updatePPP(myTeamUser, myTeam, enemyTeamUser.getTeam().getScore(), myPPP, enemyPPP, game.getSeason().getId());
+        updatePPP(enemyTeamUser, enemyTeam, myTeamUser.getTeam().getScore(), enemyPPP, myPPP, game.getSeason().getId());
+        updateRankUser(key, zsetKey, myTeamUser.getUser().getId(), myTeam);
+        updateRankUser(key, zsetKey, enemyTeamUser.getUser().getId(), enemyTeam);
+        pChangeService.addPChange(game, myTeamUser.getUser(), myTeam.getPpp(), false);
+        pChangeService.addPChange(game, enemyTeamUser.getUser(), enemyTeam.getPpp(), false);
     }
     public void updateRankRedis(TeamUser myTeamUser, TeamUser enemyTeamUser, Game game) {
         // 단식 -> 2명 기준
@@ -60,11 +76,11 @@ public class RankRedisService {
 
     @Transactional
     public void updatePPP(TeamUser teamuser, RankRedis myTeam, int enemyScore, Integer myPPP, Integer enemyPPP, Long seasonId) {
-        int win = teamuser.getTeam().getWin() ? myTeam.getWins() + 1 : myTeam.getWins();
-        int losses = !teamuser.getTeam().getWin() ? myTeam.getLosses() + 1: myTeam.getLosses();
         // rank table 수정
         Rank rank = rankRepository.findByUserIdAndSeasonId(myTeam.getUserId(), seasonId)
                 .orElseThrow(() -> new NotExistException("rank 정보가 없습니다.", ErrorCode.NOT_FOUND));
+        int win = teamuser.getTeam().getWin() ? rank.getWins() + 1 : rank.getWins();
+        int losses = !teamuser.getTeam().getWin() ? rank.getLosses() + 1: rank.getLosses();
         Integer changedPpp = EloRating.pppChange(myPPP, enemyPPP,
                 teamuser.getTeam().getWin(),
                 Math.abs(teamuser.getTeam().getScore() - enemyScore) == 2);
@@ -128,22 +144,24 @@ public class RankRedisService {
         }
     }
 
-    public void rollbackRank(TeamUser teamUser, int ppp, Long seasonId) {
+    @Transactional
+    public RankRedis rollbackRank(TeamUser teamUser, int ppp, Long seasonId) {
         String hashkey = RedisKeyManager.getHashKey(seasonId);
         RankRedis myTeam = rankRedisRepository.findRankByUserId(hashkey, teamUser.getUser().getId());
-        int win = teamUser.getTeam().getWin() ? myTeam.getWins() - 1 : myTeam.getWins();
-        int losses = !teamUser.getTeam().getWin() ? myTeam.getLosses() - 1: myTeam.getLosses();
         Rank rank = rankRepository.findByUserIdAndSeasonId(myTeam.getUserId(), seasonId)
                 .orElseThrow(RankNotFoundException::new);
+        int win = teamUser.getTeam().getWin() ? rank.getWins() - 1 : rank.getWins();
+        int losses = !teamUser.getTeam().getWin() ? rank.getLosses() - 1: rank.getLosses();
         log.info("Before: userId: " + teamUser.getUser().getIntraId() + ", " + "ppp: rank("
                 + rank.getPpp() + "), redis(" + myTeam.getPpp() + "), win: " + myTeam.getWins()
                 + ", losses: " + myTeam.getLosses());
         rank.modifyUserRank(ppp, win, losses);
         myTeam.changedRank(ppp, win, losses);
-        rankRepository.flush();
         updateRankUser(hashkey, RedisKeyManager.getZSetKey(seasonId), teamUser.getUser().getId(), myTeam);
+        entityManager.flush();
         log.info("After: userId: " + teamUser.getUser().getIntraId() + ", " + "ppp: rank("
                 + rank.getPpp() + "), redis(" + myTeam.getPpp() + "), win: " + myTeam.getWins()
                 + ", losses: " + myTeam.getLosses());
+        return myTeam;
     }
 }
