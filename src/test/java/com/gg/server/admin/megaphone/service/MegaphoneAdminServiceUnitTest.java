@@ -2,10 +2,9 @@ package com.gg.server.admin.megaphone.service;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 import com.gg.server.admin.megaphone.data.MegaphoneAdminRepository;
-import com.gg.server.domain.megaphone.data.Megaphone;
 import com.gg.server.utils.annotation.UnitTest;
 import java.util.ArrayList;
 import org.junit.jupiter.api.DisplayName;
@@ -36,6 +35,7 @@ class MegaphoneAdminServiceUnitTest {
             given(megaphoneAdminRepository.findAll(any(Pageable.class))).willReturn(new PageImpl<>(new ArrayList<>()));
             // when, then
             megaphoneAdminService.getMegaphoneHistory(mock(Pageable.class));
+            verify(megaphoneAdminRepository, times(1)).findAll(any(Pageable.class));
         }
     }
 
@@ -50,6 +50,7 @@ class MegaphoneAdminServiceUnitTest {
                 Pageable.class))).willReturn(new PageImpl<>(new ArrayList<>()));
             // when, then
             megaphoneAdminService.getMegaphoneHistoryByIntraId("testUser", mock(Pageable.class));
+            verify(megaphoneAdminRepository, times(1)).findMegaphonesByUserIntraId(any(String.class), any(Pageable.class));
         }
     }
 }

@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 import com.gg.server.domain.item.data.Item;
 import com.gg.server.domain.item.service.ItemService;
@@ -94,10 +94,13 @@ class MegaphoneServiceUnitTest {
             megaphoneService.useMegaphone(megaphoneUseRequestDto, UserDto.from(user), LocalTime.now().withHour(23).withMinute(54));
             setFieldWithReflection(receipt, "status", ItemStatus.BEFORE);
             megaphoneService.useMegaphone(megaphoneUseRequestDto, UserDto.from(user), LocalTime.now().withHour(0).withMinute(6));
-
             // then
             assertThat(receipt.getStatus()).isEqualTo(ItemStatus.WAITING);
-
+            verify(userRepository, times(2)).findById(any(Long.class));
+            verify(receiptRepository, times(2)).findById(any(Long.class));
+            verify(itemService, times(2)).checkItemType(any(), any());
+            verify(itemService, times(2)).checkItemOwner(any(), any());
+            verify(megaphoneRepository, times(2)).save(any(Megaphone.class));
         }
         @Test
         @DisplayName("MegaphoneContentException")
@@ -107,9 +110,12 @@ class MegaphoneServiceUnitTest {
             given(receiptRepository.findById(any(Long.class))).willReturn(Optional.of(receipt));
             setFieldWithReflection(megaphoneUseRequestDto, "content", "");
             // when, then
-
             Assertions.assertThatThrownBy(()->megaphoneService.useMegaphone(megaphoneUseRequestDto, UserDto.from(user), LocalTime.now().withHour(23).withMinute(54)))
                 .isInstanceOf(MegaphoneContentException.class);
+            verify(userRepository, times(1)).findById(any(Long.class));
+            verify(receiptRepository, times(1)).findById(any(Long.class));
+            verify(itemService, times(1)).checkItemType(any(), any());
+            verify(itemService, times(1)).checkItemOwner(any(), any());
         }
         @Test
         @DisplayName("ItemStatusException")
@@ -121,6 +127,10 @@ class MegaphoneServiceUnitTest {
             // when, then
             Assertions.assertThatThrownBy(()->megaphoneService.useMegaphone(megaphoneUseRequestDto, UserDto.from(user), LocalTime.now().withHour(23).withMinute(54)))
                 .isInstanceOf(ItemStatusException.class);
+            verify(userRepository, times(1)).findById(any(Long.class));
+            verify(receiptRepository, times(1)).findById(any(Long.class));
+            verify(itemService, times(1)).checkItemType(any(), any());
+            verify(itemService, times(1)).checkItemOwner(any(), any());
         }
         @Test
         @DisplayName("ReceiptNotFoundException")
@@ -131,6 +141,8 @@ class MegaphoneServiceUnitTest {
             // when, then
             Assertions.assertThatThrownBy(()->megaphoneService.useMegaphone(megaphoneUseRequestDto, UserDto.from(user), LocalTime.now().withHour(23).withMinute(54)))
                 .isInstanceOf(ReceiptNotFoundException.class);
+            verify(userRepository, times(1)).findById(any(Long.class));
+            verify(receiptRepository, times(1)).findById(any(Long.class));
         }
         @Test
         @DisplayName("MegaphoneTimeException")
@@ -142,6 +154,7 @@ class MegaphoneServiceUnitTest {
                 .isInstanceOf(MegaphoneTimeException.class);
             Assertions.assertThatThrownBy(()->megaphoneService.useMegaphone(megaphoneUseRequestDto, UserDto.from(user), LocalTime.now().withHour(0).withMinute(3)))
                 .isInstanceOf(MegaphoneTimeException.class);
+            verify(userRepository, times(2)).findById(any(Long.class));
         }
         @Test
         @DisplayName("UserNotFoundException")
@@ -151,6 +164,7 @@ class MegaphoneServiceUnitTest {
             // when, then
             Assertions.assertThatThrownBy(()->megaphoneService.useMegaphone(megaphoneUseRequestDto, UserDto.from(user), LocalTime.now().withHour(23).withMinute(56)))
                 .isInstanceOf(UserNotFoundException.class);
+            verify(userRepository, times(1)).findById(any(Long.class));
         }
     }
 
@@ -169,16 +183,18 @@ class MegaphoneServiceUnitTest {
         @DisplayName("success")
         void success() {
             // given
-            given(megaphoneRepository.findAllByUsedAtAndReceiptStatus(LocalDate.now(),
-                ItemStatus.USING))
+            given(megaphoneRepository.findAllByUsedAtAndReceiptStatus(LocalDate.now(), ItemStatus.USING))
                 .willReturn(usingList);
-            given(megaphoneRepository.findAllByUsedAtAndReceiptStatus(LocalDate.now().plusDays(1),
-                ItemStatus.WAITING))
+            given(megaphoneRepository.findAllByUsedAtAndReceiptStatus(LocalDate.now().plusDays(1), ItemStatus.WAITING))
                 .willReturn(waitList);
             // when, then
             megaphoneService.setMegaphoneList(LocalDate.now());
             assertThat(usingList.get(0).getReceipt().getStatus()).isEqualTo(ItemStatus.USED);
             assertThat(waitList.get(0).getReceipt().getStatus()).isEqualTo(ItemStatus.USING);
+            verify(megaphoneRepository, times(1)).findAllByUsedAtAndReceiptStatus(LocalDate.now(), ItemStatus.USING);
+            verify(megaphoneRedisRepository, times(1)).deleteAllMegaphone();
+            verify(megaphoneRepository, times(1)).findAllByUsedAtAndReceiptStatus(LocalDate.now().plusDays(1), ItemStatus.WAITING);
+            verify(megaphoneRedisRepository, times(waitList.size())).addMegaphone(any());
         }
     }
 
@@ -196,15 +212,21 @@ class MegaphoneServiceUnitTest {
             // given
             given(userRepository.findById(any(Long.class))).willReturn(Optional.of(user));
             given(megaphoneRepository.findById(any(Long.class))).willReturn(Optional.of(megaphone));
-            setFieldWithReflection(receipt, "status", ItemStatus.USING);
-            // when
+            // when deleted by user
             megaphoneService.deleteMegaphone(1L, UserDto.from(user));
+            // when deleted by admin, using megaphone
             setFieldWithReflection(user, "roleType", RoleType.ADMIN);
             megaphoneService.deleteMegaphone(1L, UserDto.from(user));
+            // when deleting using megaphone
             setFieldWithReflection(receipt, "status", ItemStatus.USING);
             megaphoneService.deleteMegaphone(1L, UserDto.from(user));
             // then
             assertThat(receipt.getStatus()).isEqualTo(ItemStatus.DELETED);
+            verify(userRepository, times(3)).findById(any(Long.class));
+            verify(megaphoneRepository, times(3)).findById(any(Long.class));
+            verify(itemService, times(1)).checkItemOwner(any(), any());
+            verify(itemService, times(3)).checkItemStatus(any());
+            verify(megaphoneRedisRepository, times(1)).deleteMegaphoneById(any());
         }
         @Test
         @DisplayName("MegaphoneNotFoundException")
@@ -215,6 +237,8 @@ class MegaphoneServiceUnitTest {
             // when, then
             assertThatThrownBy(()->megaphoneService.deleteMegaphone(1L, UserDto.from(user)))
                 .isInstanceOf(MegaphoneNotFoundException.class);
+            verify(userRepository, times(1)).findById(any(Long.class));
+            verify(megaphoneRepository, times(1)).findById(any(Long.class));
         }
         @Test
         @DisplayName("UserNotFoundException")
@@ -224,6 +248,7 @@ class MegaphoneServiceUnitTest {
             // when, then
             assertThatThrownBy(()->megaphoneService.deleteMegaphone(1L, UserDto.from(user)))
                 .isInstanceOf(UserNotFoundException.class);
+            verify(userRepository, times(1)).findById(any(Long.class));
         }
     }
 
@@ -244,6 +269,13 @@ class MegaphoneServiceUnitTest {
             given(megaphoneRepository.findByReceipt(any(Receipt.class))).willReturn(Optional.of(megaphone));
             // when, then
             megaphoneService.getMegaphoneDetail(1L, UserDto.from(user));
+            verify(userRepository, times(1)).findById(any(Long.class));
+            verify(receiptRepository, times(1)).findById(any(Long.class));
+            verify(itemService, times(1)).checkItemType(any(), any());
+            verify(itemService, times(1)).checkItemOwner(any(), any());
+            verify(itemService, times(1)).checkItemStatus(any());
+            verify(megaphoneRepository, times(1)).findByReceipt(any(Receipt.class));
+
         }
         @Test
         @DisplayName("MegaphoneNotFoundException")
@@ -255,6 +287,12 @@ class MegaphoneServiceUnitTest {
             // when, then
             assertThatThrownBy(()->megaphoneService.getMegaphoneDetail(1L, UserDto.from(user)))
                 .isInstanceOf(MegaphoneNotFoundException.class);
+            verify(userRepository, times(1)).findById(any(Long.class));
+            verify(receiptRepository, times(1)).findById(any(Long.class));
+            verify(itemService, times(1)).checkItemType(any(), any());
+            verify(itemService, times(1)).checkItemOwner(any(), any());
+            verify(itemService, times(1)).checkItemStatus(any());
+            verify(megaphoneRepository, times(1)).findByReceipt(any(Receipt.class));
         }
         @Test
         @DisplayName("ReceiptNotFoundException")
@@ -265,6 +303,8 @@ class MegaphoneServiceUnitTest {
             // when, then
             assertThatThrownBy(()->megaphoneService.getMegaphoneDetail(1L, UserDto.from(user)))
                 .isInstanceOf(ReceiptNotFoundException.class);
+            verify(userRepository, times(1)).findById(any(Long.class));
+            verify(receiptRepository, times(1)).findById(any(Long.class));
         }
         @Test
         @DisplayName("UserNotFoundException")
@@ -274,6 +314,7 @@ class MegaphoneServiceUnitTest {
             // when, then
             assertThatThrownBy(()->megaphoneService.getMegaphoneDetail(1L, UserDto.from(user)))
                 .isInstanceOf(UserNotFoundException.class);
+            verify(userRepository, times(1)).findById(any(Long.class));
         }
     }
 
@@ -287,6 +328,7 @@ class MegaphoneServiceUnitTest {
             given(megaphoneRedisRepository.getAllMegaphone()).willReturn(new ArrayList<>());
             // when, then
             megaphoneService.getMegaphoneTodayList();
+            verify(megaphoneRedisRepository, times(1)).getAllMegaphone();
         }
     }
 }
