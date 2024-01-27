@@ -43,7 +43,7 @@ import static org.mockito.Mockito.verify;
 @IntegrationTest
 @SpringBootTest
 @Transactional
-public class MatchTournamentTest {
+public class MatchTournamentServiceTest {
     @Autowired
     TestDataUtils testDataUtils;
     @Autowired

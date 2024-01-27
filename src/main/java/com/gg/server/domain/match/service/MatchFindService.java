@@ -51,7 +51,6 @@ public class MatchFindService {
     private final RankRedisRepository rankRedisRepository;
     private final RedisMatchTimeRepository redisMatchTimeRepository;
     private final TierRepository tierRepository;
-    private final TournamentRepository tournamentRepository;
 
 
     @Transactional(readOnly = true)
