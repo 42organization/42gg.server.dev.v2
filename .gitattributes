@@ -12,7 +12,7 @@ Dockerfile text=auto eol=lf
 *.yml text=auto eol=lf
 *.yaml text=auto eol=lf
 *.sh text=auto eol=lf
-
+*.bat text=auto eol=crlf
 # Denote all files that are truly binary and should not be modified.
 *.png binary
 *.jpg binary
