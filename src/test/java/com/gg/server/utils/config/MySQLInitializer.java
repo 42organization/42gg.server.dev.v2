@@ -16,24 +16,24 @@ import org.testcontainers.containers.MySQLContainer;
  * @since : 2024/01/09
  */
 public class MySQLInitializer implements
-    ApplicationContextInitializer<ConfigurableApplicationContext> {
-  private static final String params = "?serverTimezone=Asia/Seoul&characterEncoding=UTF-8";
-  private static final MySQLContainer<?> MYSQL_CONTAINER =
-      new MySQLContainer<>("mysql:8.0")
-          .withDatabaseName("test")
-          .withUsername("root")
-          .withPassword("1234");
+	ApplicationContextInitializer<ConfigurableApplicationContext> {
+	private static final String params = "?serverTimezone=Asia/Seoul&characterEncoding=UTF-8";
+	private static final MySQLContainer<?> MYSQL_CONTAINER =
+		new MySQLContainer<>("mysql:8.0")
+			.withDatabaseName("test")
+			.withUsername("root")
+			.withPassword("1234");
 
-  static {
-    MYSQL_CONTAINER.start();
-  }
+	static {
+		MYSQL_CONTAINER.start();
+	}
 
-  @Override
-  public void initialize(ConfigurableApplicationContext applicationContext) {
-    TestPropertyValues.of(
-        "spring.datasource.url=" + MYSQL_CONTAINER.getJdbcUrl() + params,
-        "spring.datasource.username=" + MYSQL_CONTAINER.getUsername(),
-        "spring.datasource.password=" + MYSQL_CONTAINER.getPassword()
-    ).applyTo(applicationContext.getEnvironment());
-  }
+	@Override
+	public void initialize(ConfigurableApplicationContext applicationContext) {
+		TestPropertyValues.of(
+			"spring.datasource.url=" + MYSQL_CONTAINER.getJdbcUrl() + params,
+			"spring.datasource.username=" + MYSQL_CONTAINER.getUsername(),
+			"spring.datasource.password=" + MYSQL_CONTAINER.getPassword()
+		).applyTo(applicationContext.getEnvironment());
+	}
 }

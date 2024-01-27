@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserAttendanceResponseDto {
-    private int beforeCoin;
-    private int afterCoin;
-    private int coinIncrement;
+	private int beforeCoin;
+	private int afterCoin;
+	private int coinIncrement;
 }

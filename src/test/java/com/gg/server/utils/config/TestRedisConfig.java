@@ -19,19 +19,19 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @TestConfiguration
 public class TestRedisConfig {
 
-  @Primary
-  @Bean(name = "testRedisTemplate")
-  public RedisTemplate<?, ?> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-    final RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+	@Primary
+	@Bean(name = "testRedisTemplate")
+	public RedisTemplate<?, ?> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+		final RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
 
-    redisTemplate.setConnectionFactory(redisConnectionFactory);
-    redisTemplate.setKeySerializer(new StringRedisSerializer());
-    redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+		redisTemplate.setConnectionFactory(redisConnectionFactory);
+		redisTemplate.setKeySerializer(new StringRedisSerializer());
+		redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
 
-    redisTemplate.setHashKeySerializer(new GenericJackson2JsonRedisSerializer());
-    redisTemplate.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
-    redisTemplate.setEnableTransactionSupport(false);
+		redisTemplate.setHashKeySerializer(new GenericJackson2JsonRedisSerializer());
+		redisTemplate.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+		redisTemplate.setEnableTransactionSupport(false);
 
-    return redisTemplate;
-  }
+		return redisTemplate;
+	}
 }

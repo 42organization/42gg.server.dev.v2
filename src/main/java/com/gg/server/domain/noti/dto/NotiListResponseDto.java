@@ -1,29 +1,34 @@
 package com.gg.server.domain.noti.dto;
 
+import java.util.List;
+import java.util.Objects;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
-import java.util.Objects;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class NotiListResponseDto {
-    private List<NotiResponseDto> notifications;
-    @Override
-    public String toString() {
-        return "NotiResponseDto{" +
-                "notifications=" + notifications +
-                '}';
-    }
+	private List<NotiResponseDto> notifications;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        NotiListResponseDto other = (NotiListResponseDto) o;
-        return Objects.equals(notifications, other.notifications);
-    }
+	@Override
+	public String toString() {
+		return "NotiResponseDto{"
+			+ "notifications=" + notifications
+			+ '}';
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null || getClass() != obj.getClass()) {
+			return false;
+		}
+		NotiListResponseDto other = (NotiListResponseDto)obj;
+		return Objects.equals(notifications, other.notifications);
+	}
 }

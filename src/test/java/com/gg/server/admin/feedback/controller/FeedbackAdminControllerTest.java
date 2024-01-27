@@ -1,16 +1,9 @@
 package com.gg.server.admin.feedback.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gg.server.admin.feedback.data.FeedbackAdminRepository;
-import com.gg.server.admin.feedback.dto.FeedbackListAdminResponseDto;
-import com.gg.server.utils.annotation.IntegrationTest;
-import com.gg.server.domain.feedback.data.Feedback;
-import com.gg.server.domain.feedback.type.FeedbackType;
-import com.gg.server.domain.user.data.User;
-import com.gg.server.domain.user.data.UserRepository;
-import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
-import com.gg.server.utils.TestDataUtils;
-import lombok.RequiredArgsConstructor;
+import static org.assertj.core.api.Assertions.*;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,118 +12,128 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gg.server.admin.feedback.data.FeedbackAdminRepository;
+import com.gg.server.admin.feedback.dto.FeedbackListAdminResponseDto;
+import com.gg.server.domain.feedback.data.Feedback;
+import com.gg.server.domain.feedback.type.FeedbackType;
+import com.gg.server.domain.user.data.User;
+import com.gg.server.domain.user.data.UserRepository;
+import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
+import com.gg.server.utils.TestDataUtils;
+import com.gg.server.utils.annotation.IntegrationTest;
+
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @IntegrationTest
 @AutoConfigureMockMvc
 @Transactional
 class FeedbackAdminControllerTest {
-    @Autowired
-    TestDataUtils testDataUtils;
+	@Autowired
+	TestDataUtils testDataUtils;
 
-    @Autowired
-    private MockMvc mockMvc;
+	@Autowired
+	private MockMvc mockMvc;
 
-    @Autowired
-    ObjectMapper objectMapper;
+	@Autowired
+	ObjectMapper objectMapper;
 
-    @Autowired
-    AuthTokenProvider tokenProvider;
+	@Autowired
+	AuthTokenProvider tokenProvider;
 
-    @Autowired
-    FeedbackAdminRepository feedbackAdminRepository;
-    @Autowired
-    UserRepository userRepository;
+	@Autowired
+	FeedbackAdminRepository feedbackAdminRepository;
+	@Autowired
+	UserRepository userRepository;
 
-    @Test
-    @DisplayName("[Get]/pingpong/admin/feedback")
-    void getFeedback() throws Exception {
-        String accessToken = testDataUtils.getAdminLoginAccessToken();
+	@Test
+	@DisplayName("[Get]/pingpong/admin/feedback")
+	void getFeedback() throws Exception {
+		String accessToken = testDataUtils.getAdminLoginAccessToken();
 
-        for (int i = 0; i < 6; i++) {
-            Feedback feedback = Feedback.builder()
-                    .category(FeedbackType.ETC)
-                    .content("test" + i)
-                    .user(testDataUtils.createNewUser())
-                    .build();
-            feedbackAdminRepository.save(feedback);
-        }
+		for (int i = 0; i < 6; i++) {
+			Feedback feedback = Feedback.builder()
+				.category(FeedbackType.ETC)
+				.content("test" + i)
+				.user(testDataUtils.createNewUser())
+				.build();
+			feedbackAdminRepository.save(feedback);
+		}
 
-        Integer currentPage = 1;
-        Integer pageSize = 5;//페이지 사이즈 크기가 실제 디비 정보보다 큰지 확인할 것
+		Integer currentPage = 1;
+		Integer pageSize = 5; //페이지 사이즈 크기가 실제 디비 정보보다 큰지 확인할 것
 
-        String url = "/pingpong/admin/feedback?page=" + currentPage + "&size=" + pageSize;
+		String url = "/pingpong/admin/feedback?page=" + currentPage + "&size=" + pageSize;
 
-        String contentAsString = mockMvc.perform(get(url)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
-                .andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString();
+		String contentAsString = mockMvc.perform(get(url)
+				.header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+			.andExpect(status().isOk())
+			.andReturn().getResponse().getContentAsString();
 
+		FeedbackListAdminResponseDto result = objectMapper.readValue(contentAsString,
+			FeedbackListAdminResponseDto.class);
+		assertThat(result.getFeedbackList().size()).isEqualTo(5);
+		System.out.println(result.getFeedbackList().get(0).getId());
+		System.out.println(result.getFeedbackList().get(0).getContent());
 
-        FeedbackListAdminResponseDto result = objectMapper.readValue(contentAsString, FeedbackListAdminResponseDto.class);
-        assertThat(result.getFeedbackList().size()).isEqualTo(5);
-        System.out.println(result.getFeedbackList().get(0).getId());
-        System.out.println(result.getFeedbackList().get(0).getContent());
+	}
 
-    }
+	@Test
+	@DisplayName("[Patch]pingpong/admin/feedback/{id}")
+	void patchFeedback() throws Exception {
+		String accessToken = testDataUtils.getAdminLoginAccessToken();
+		Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
 
-    @Test
-    @DisplayName("[Patch]pingpong/admin/feedback/{id}")
-    void patchFeedback() throws Exception {
-        String accessToken = testDataUtils.getAdminLoginAccessToken();
-        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
+		Feedback feedback = Feedback.builder()
+			.category(FeedbackType.ETC)
+			.content("test1234")
+			.user(userRepository.findById(userId).get())
+			.build();
+		feedbackAdminRepository.save(feedback);
 
-        Feedback feedback = Feedback.builder()
-                .category(FeedbackType.ETC)
-                .content("test1234")
-                .user(userRepository.findById(userId).get())
-                .build();
-        feedbackAdminRepository.save(feedback);
+		String url = "/pingpong/admin/feedback/" + feedback.getId().toString();
+		Boolean status = feedback.getIsSolved();
 
-        String url = "/pingpong/admin/feedback/" + feedback.getId().toString();
-        Boolean status = feedback.getIsSolved();
+		String contentAsString = mockMvc.perform(patch(url)
+				.header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+			.andExpect(status().isNoContent())
+			.andReturn().getResponse().getContentAsString();
 
-        String contentAsString = mockMvc.perform(patch(url)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
-                .andExpect(status().isNoContent())
-                .andReturn().getResponse().getContentAsString();
+	}
 
+	@Test
+	@DisplayName("[get]pingpong/admin/feedback?intraId=${intraId}&page=${pageNumber}&size={size}")
+	void findFeedbackByIntraId() throws Exception {
+		String accessToken = testDataUtils.getAdminLoginAccessToken();
+		Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
 
-    }
+		User user = userRepository.findById(userId).get();
 
-    @Test
-    @DisplayName("[get]pingpong/admin/feedback?intraId=${intraId}&page=${pageNumber}&size={size}")
-    void findFeedbackByIntraId() throws Exception {
-        String accessToken = testDataUtils.getAdminLoginAccessToken();
-        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
+		Feedback feedback = Feedback.builder()
+			.category(FeedbackType.ETC)
+			.content("test1234")
+			.user(user)
+			.build();
+		feedbackAdminRepository.save(feedback);
 
-        User user = userRepository.findById(userId).get();
+		Integer currentPage = 1;
+		Integer pageSize = 5; //페이지 사이즈 크기가 실제 디비 정보보다 큰지 확인할 것
 
-        Feedback feedback = Feedback.builder()
-                .category(FeedbackType.ETC)
-                .content("test1234")
-                .user(user)
-                .build();
-        feedbackAdminRepository.save(feedback);
+		String url =
+			"/pingpong/admin/feedback?intraId=" + user.getIntraId() + "&page=" + currentPage + "&size=" + pageSize;
+		Boolean status = feedback.getIsSolved();
 
-        Integer currentPage = 1;
-        Integer pageSize = 5;//페이지 사이즈 크기가 실제 디비 정보보다 큰지 확인할 것
+		String contentAsString = mockMvc.perform(get(url)
+				.header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+			.andExpect(status().isOk())
+			.andReturn().getResponse().getContentAsString();
 
-        String url = "/pingpong/admin/feedback?intraId=" + user.getIntraId() + "&page=" + currentPage + "&size=" + pageSize;
-        Boolean status = feedback.getIsSolved();
-
-        String contentAsString = mockMvc.perform(get(url)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
-                .andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString();
-
-        FeedbackListAdminResponseDto result = objectMapper.readValue(contentAsString, FeedbackListAdminResponseDto.class);
-        assertThat(result.getFeedbackList().size()).isBetween(0, 5);
-        assertThat(result.getFeedbackList().get(0).getIntraId()).isEqualTo(user.getIntraId());
-        assertThat(result.getFeedbackList().get(0).getContent()).isEqualTo("test1234");
-        assertThat(result.getFeedbackList().get(0).getIntraId()).isEqualTo(user.getIntraId());
-    }
+		FeedbackListAdminResponseDto result = objectMapper.readValue(contentAsString,
+			FeedbackListAdminResponseDto.class);
+		assertThat(result.getFeedbackList().size()).isBetween(0, 5);
+		assertThat(result.getFeedbackList().get(0).getIntraId()).isEqualTo(user.getIntraId());
+		assertThat(result.getFeedbackList().get(0).getContent()).isEqualTo("test1234");
+		assertThat(result.getFeedbackList().get(0).getIntraId()).isEqualTo(user.getIntraId());
+	}
 }

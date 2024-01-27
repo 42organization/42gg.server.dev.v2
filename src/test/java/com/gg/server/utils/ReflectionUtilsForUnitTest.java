@@ -1,8 +1,9 @@
 package com.gg.server.utils;
 
+import java.lang.reflect.Field;
+
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.BusinessException;
-import java.lang.reflect.Field;
 
 /**
  * ReflectionUtilsForUnitTest.
@@ -14,16 +15,16 @@ import java.lang.reflect.Field;
  */
 public class ReflectionUtilsForUnitTest {
 
-  /**
-   * 리플렉션을 사용해서 필드값을 설정한다.
-   */
-  static public void setFieldWithReflection(Object object, String fieldName, Object value) {
-    try {
-      Field field = object.getClass().getDeclaredField(fieldName);
-      field.setAccessible(true);
-      field.set(object, value);
-    } catch (NoSuchFieldException | IllegalAccessException e) {
-      throw new BusinessException(ErrorCode.BAD_REQUEST);
-    }
-  }
+	/**
+	 * 리플렉션을 사용해서 필드값을 설정한다.
+	 */
+	public static void setFieldWithReflection(Object object, String fieldName, Object value) {
+		try {
+			Field field = object.getClass().getDeclaredField(fieldName);
+			field.setAccessible(true);
+			field.set(object, value);
+		} catch (NoSuchFieldException | IllegalAccessException e) {
+			throw new BusinessException(ErrorCode.BAD_REQUEST);
+		}
+	}
 }

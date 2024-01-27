@@ -1,25 +1,26 @@
 package com.gg.server.global.utils;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import javax.mail.internet.MimeMessage;
+
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import javax.mail.internet.MimeMessage;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @AllArgsConstructor
 @Slf4j
 public class AsyncMailSender {
-    private final JavaMailSender javaMailSender;
+	private final JavaMailSender javaMailSender;
 
-    @Async("asyncExecutor")
-    public void send(MimeMessage message) {
-        try {
-                javaMailSender.send(message);
-        } catch(Exception ex) {
-            log.error(ex.getMessage());
-        }
-    }
+	@Async("asyncExecutor")
+	public void send(MimeMessage message) {
+		try {
+			javaMailSender.send(message);
+		} catch (Exception ex) {
+			log.error(ex.getMessage());
+		}
+	}
 }

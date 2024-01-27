@@ -1,10 +1,11 @@
 package com.gg.server.admin.coin.data;
 
-import com.gg.server.domain.coin.data.CoinPolicy;
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.gg.server.domain.coin.data.CoinPolicy;
+
 public interface CoinPolicyAdminRepository extends JpaRepository<CoinPolicy, Long> {
-    Optional<CoinPolicy> findFirstByOrderByIdDesc();
+	Optional<CoinPolicy> findFirstByOrderByIdDesc();
 }

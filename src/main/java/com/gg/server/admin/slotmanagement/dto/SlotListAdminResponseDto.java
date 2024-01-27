@@ -1,16 +1,16 @@
 package com.gg.server.admin.slotmanagement.dto;
 
+import java.util.List;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Getter
 @NoArgsConstructor
 public class SlotListAdminResponseDto {
-    List<SlotAdminDto> slotList;
+	List<SlotAdminDto> slotList;
 
-    public SlotListAdminResponseDto(List<SlotAdminDto> slotList) {
-        this.slotList = slotList;
-    }
+	public SlotListAdminResponseDto(List<SlotAdminDto> slotList) {
+		this.slotList = slotList;
+	}
 }
