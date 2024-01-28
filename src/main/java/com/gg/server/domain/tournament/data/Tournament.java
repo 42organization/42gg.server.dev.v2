@@ -112,7 +112,7 @@ public class Tournament extends BaseTimeEntity {
 	 */
 	protected void addTournamentGame(TournamentGame tournamentGame) {
 		mustNotNull(tournamentGame, NULL_POINT);
-		mustNotExceed(ALLOWED_JOINED_NUMBER - 2, tournamentGames, TOURNAMENT_GAME_EXCEED);
+		mustNotExceed(ALLOWED_JOINED_NUMBER - 1, tournamentGames, TOURNAMENT_GAME_EXCEED);
 		mustNotContains(tournamentGame, tournamentGames, TOURNAMENT_GAME_DUPLICATION);
 		this.tournamentGames.add(tournamentGame);
 	}
