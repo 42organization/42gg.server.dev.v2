@@ -57,7 +57,7 @@ import com.gg.server.domain.tournament.type.TournamentType;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.exception.custom.BusinessException;
-import com.gg.server.utils.MatchTestUtils;
+import com.gg.server.domain.match.utils.MatchIntegrationTestUtils;
 import com.gg.server.utils.TestDataUtils;
 import com.gg.server.utils.annotation.IntegrationTest;
 
@@ -80,7 +80,7 @@ class MatchServiceTest {
 	@Autowired
 	RedisTemplate<String, Object> redisTemplate;
 	@Autowired
-	MatchTestUtils matchTestSetting;
+	MatchIntegrationTestUtils matchTestSetting;
 	@Autowired
 	GameRepository gameRepository;
 	@Autowired

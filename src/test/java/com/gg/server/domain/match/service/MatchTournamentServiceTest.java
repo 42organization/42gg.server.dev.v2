@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.gg.server.domain.match.utils.TournamentGameTestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -35,7 +36,7 @@ import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.type.TournamentRound;
 import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.user.data.User;
-import com.gg.server.utils.MatchTestUtils;
+import com.gg.server.domain.match.utils.MatchIntegrationTestUtils;
 import com.gg.server.utils.TestDataUtils;
 import com.gg.server.utils.annotation.IntegrationTest;
 
@@ -52,7 +53,7 @@ public class MatchTournamentServiceTest {
 	@Autowired
 	MatchTournamentService matchTournamentService;
 	@Autowired
-	MatchTestUtils matchTestUtils;
+	MatchIntegrationTestUtils matchTestUtils;
 	@MockBean
 	NotiAdminService notiAdminService;
 
@@ -136,7 +137,7 @@ public class MatchTournamentServiceTest {
 				semiTeams.add(semiRoundGame.getGame().getTeams().get(1).getTeamUsers().get(0).getUser());
 			}
 			for (TournamentGame quarterRoundGame : quarterRoundGames) {
-				Team winningTeam = matchTestUtils.getWinningTeam(quarterRoundGame.getGame());
+				Team winningTeam = TournamentGameTestUtils.getWinningTeam(quarterRoundGame.getGame());
 				quarterWinningTeams.add(winningTeam.getTeamUsers().get(0).getUser());
 			}
 			assertThat(semiTeams).contains(quarterWinningTeams.get(0));

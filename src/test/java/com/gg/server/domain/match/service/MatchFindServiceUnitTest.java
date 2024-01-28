@@ -1,9 +1,11 @@
 package com.gg.server.domain.match.service;
 
+import static com.gg.server.domain.match.utils.GameTestUtils.createNormalGame;
+import static com.gg.server.domain.match.utils.UserTestUtils.createGuestUser;
+import static com.gg.server.domain.match.utils.UserTestUtils.createUser;
 import static com.gg.server.utils.ReflectionUtilsForUnitTest.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
-import static org.mockito.Mockito.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,7 +24,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
-import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.match.data.RedisMatchTime;
 import com.gg.server.domain.match.data.RedisMatchTimeRepository;
@@ -36,8 +37,6 @@ import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.service.SeasonFindService;
 import com.gg.server.domain.slotmanagement.SlotManagement;
 import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
-import com.gg.server.domain.team.data.Team;
-import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.tier.data.Tier;
 import com.gg.server.domain.tier.data.TierRepository;
 import com.gg.server.domain.user.data.User;
@@ -85,21 +84,10 @@ public class MatchFindServiceUnitTest {
 		setFieldWithReflection(tier, "id", 1L);
 	}
 
-	private Game createGame(User user, User enemy) {
-		LocalDateTime startTime = LocalDateTime.of(2024, 1, 1, 0, 0);
-		Game game = new Game(season, StatusType.BEFORE, Mode.NORMAL, startTime, startTime.plusMinutes(15));
-		Team teamA = new Team(game, -1, false);
-		Team teamB = new Team(game, -1, false);
-		new TeamUser(teamA, user);
-		new TeamUser(teamB, enemy);
-		setFieldWithReflection(game, "id", 1L);
-		return game;
-	}
-
 	@Nested
 	@DisplayName("현재 내가 등록한 슬롯 정보 가져오기")
 	class GetCurrentMatch {
-		private final User user = User.builder().roleType(RoleType.USER).intraId("hannkim").build();
+		private final User user = createUser();
 
 		@BeforeEach
 		public void init() {
@@ -133,9 +121,10 @@ public class MatchFindServiceUnitTest {
 		void successMatchedSlot() {
 			// given
 			UserDto userDto = UserDto.from(user);
-			User enemy = User.builder().roleType(RoleType.USER).intraId("enemy").build();
+			User enemy = createUser();
+			Game myGame = createNormalGame(user, enemy, season);
 			setFieldWithReflection(enemy, "id", 2L);
-			Game myGame = createGame(user, enemy);
+			setFieldWithReflection(myGame, "id", 1L);
 			given(slotManagementRepository.findCurrent(any(LocalDateTime.class))).willReturn(
 				Optional.of(slotManagement));
 			given(gameRepository.findByStatusTypeAndUserId(StatusType.BEFORE, user.getId())).willReturn(
@@ -156,7 +145,7 @@ public class MatchFindServiceUnitTest {
 	@Nested
 	@DisplayName("경기 매칭 가능 상태 조회")
 	class GetAllMatchStatus {
-		private final User user = User.builder().roleType(RoleType.USER).intraId("hannkim").build();
+		private final User user = createUser();
 		private SlotGenerator slotGenerator;
 
 		@BeforeEach
@@ -213,7 +202,7 @@ public class MatchFindServiceUnitTest {
 		@DisplayName("GUEST 유저가 슬롯 정보를 가져온다. - 내가 등록한 슬롯 없는 경우")
 		void successGuest() {
 			// given
-			User guest = User.builder().intraId("guest").roleType(RoleType.GUEST).build();
+			User guest = createGuestUser();
 			RankRedis redisUser = RankRedis.from(UserDto.from(guest), season.getStartPpp(), tier.getImageUri());
 			slotGenerator = new SlotGenerator(redisUser, slotManagement, season, Option.BOTH);
 			given(gameRepository.findByStatusTypeAndUserId(StatusType.BEFORE, UserDto.from(guest).getId())).willReturn(
@@ -241,8 +230,8 @@ public class MatchFindServiceUnitTest {
 			UserDto userDto = UserDto.from(user);
 			RankRedis redisUser = RankRedis.from(userDto, season.getStartPpp(), tier.getImageUri());
 			String hashKey = RedisKeyManager.getHashKey(season.getId());
-			User enemy = User.builder().roleType(RoleType.USER).intraId("enemy").build();
-			Game game = createGame(user, enemy);
+			User enemy = createUser();
+			Game game = createNormalGame(user, enemy, season);
 			setFieldWithReflection(enemy, "id", 2L);
 			setFieldWithReflection(game, "id", 1L);
 			given(rankRedisRepository.findRankByUserId(hashKey, user.getId())).willReturn(redisUser);
