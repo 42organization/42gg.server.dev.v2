@@ -104,7 +104,7 @@ public class MatchTournamentServiceUnitTest {
 		@DisplayName("8강에 종료되지 않은 게임이 존재할 경우, 4강 매칭이 불필요하므로 UNNECESSARY 반환")
 		void checkImpossibleMatch() {
 			// given
-			given(tournamentGameRepository.findByGameId(1L)).willReturn(null);
+//			given(tournamentGameRepository.findByGameId(1L)).willReturn(null);
 
 			// when
 //			matchTournamentService.checkTournamentGame(game);
@@ -120,7 +120,7 @@ public class MatchTournamentServiceUnitTest {
 		@DisplayName("이미 다음 라운드의 게임 매칭이 완료된 경우, ALREADY_MATCHED를 반환한다.")
 		void checkAlreadyMatched() {
 			// given
-			given(tournamentGameRepository.findByGameId(1L)).willReturn(null);
+//			given(tournamentGameRepository.findByGameId(1L)).willReturn(null);
 		}
 	}
 

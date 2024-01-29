@@ -84,7 +84,7 @@ class TournamentUnitTest {
 			Tournament tournament = tournaments.get(0);
 
 			//when
-			IntStream.range(0, 7).forEach(i -> tournament.addTournamentGame(mockTournamentGames.get(i)));
+			IntStream.range(0, 8).forEach(i -> tournament.addTournamentGame(mockTournamentGames.get(i)));
 
 			//then
 			BusinessException businessException = assertThrows(BusinessException.class,
