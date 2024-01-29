@@ -211,7 +211,7 @@ public class MatchTournamentServiceTest {
 			// then
 			// 토너먼트 상태가 END로 변경되었는지
 			// winner가 존재하는지 확인
-			assertThat(TournamentMatchStatus.IMPOSSIBLE).isEqualTo(tournamentMatchStatus);
+			assertThat(TournamentMatchStatus.UNNECESSARY).isEqualTo(tournamentMatchStatus);
 			assertThat(tournament.getStatus()).isEqualTo(TournamentStatus.END);
 			assertThat(tournament.getWinner()).isNotNull();
 			assertThat(tournament.getEndTime()).isEqualTo(finalGame.getEndTime());
@@ -231,7 +231,7 @@ public class MatchTournamentServiceTest {
 				quarterGames.get(0).getGame());
 
 			// then
-			assertThat(tournamentMatchStatus).isEqualTo(TournamentMatchStatus.IMPOSSIBLE);
+			assertThat(tournamentMatchStatus).isEqualTo(TournamentMatchStatus.UNNECESSARY);
 		}
 
 		@Test
@@ -268,7 +268,7 @@ public class MatchTournamentServiceTest {
 				quarterGames.get(0).getGame());
 
 			// then
-			assertThat(tournamentMatchStatus).isEqualTo(TournamentMatchStatus.POSSIBLE);
+			assertThat(tournamentMatchStatus).isEqualTo(TournamentMatchStatus.REQUIRED);
 		}
 
 	}

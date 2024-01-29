@@ -113,7 +113,7 @@ public class GameService {
 			throw new GameStatusNotMatchedException();
 		}
 		updateTournamentGameScore(game, scoreDto, userId);
-		if (TournamentMatchStatus.POSSIBLE.equals(matchTournamentService.checkTournamentGame(game))) {
+		if (TournamentMatchStatus.REQUIRED.equals(matchTournamentService.checkTournamentGame(game))) {
 			TournamentGame tournamentGame = tournamentGameRepository.findByGameId(game.getId())
 				.orElseThrow(TournamentGameNotFoundException::new);
 			Tournament tournament = tournamentGame.getTournament();

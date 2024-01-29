@@ -68,7 +68,7 @@ public class MatchTournamentService {
 		// 토너먼트 결승전 게임일 경우, 토너먼트 상태 END로 변경
 		if (TournamentRound.THE_FINAL.equals(tournamentGame.getTournamentRound())) {
 			closeTournament(tournamentGame.getTournament(), game);
-			return IMPOSSIBLE;
+			return NO_MORE_MATCHES;
 		}
 
 		// 같은 round의 모든 게임이 END인 경우, 다음 round의 토너먼트 게임 매칭 가능
@@ -80,13 +80,13 @@ public class MatchTournamentService {
 			.collect(Collectors.toList());
 		for (TournamentGame tg : sameRoundGames) {
 			if (!StatusType.END.equals(tg.getGame().getStatus())) {
-				return IMPOSSIBLE;
+				return UNNECESSARY;
 			}
 		}
 		if (isAlreadyExistMatchedGame(tournamentGame.getTournament(), round.getNextRound())) {
 			return ALREADY_MATCHED;
 		}
-		return POSSIBLE;
+		return REQUIRED;
 	}
 
 	/**
