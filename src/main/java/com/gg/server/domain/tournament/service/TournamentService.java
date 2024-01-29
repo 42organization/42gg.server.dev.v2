@@ -295,7 +295,7 @@ public class TournamentService {
 					nextTournamentGame));
 		}
 		tournamentGameResDtoList.sort((o1, o2) -> {
-			if (o1.getTournamentRound().getRoundNumber() < o2.getTournamentRound().getRoundNumber()) {
+			if (o1.getTournamentRound().getRoundNumber().getRoundNumber() < o2.getTournamentRound().getRoundNumber().getRoundNumber()) {
 				return 1;
 			}
 			if (o1.getTournamentRound().getRoundOrder() > o2.getTournamentRound().getRoundOrder()) {

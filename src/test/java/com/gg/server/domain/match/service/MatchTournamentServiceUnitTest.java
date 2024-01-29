@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.gg.server.domain.tournament.type.RoundNumber.QUARTER_FINAL;
 import static com.gg.server.utils.ReflectionUtilsForUnitTest.setFieldWithReflection;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -63,16 +64,17 @@ public class MatchTournamentServiceUnitTest {
 			for (TournamentRound round : TournamentRound.values()) {
 				new TournamentGame(null, tournament, round);
 			}
-			TournamentGameTestUtils.matchTournamentGames(tournament, TournamentRound.QUARTER_FINAL_1, season);
+			TournamentGameTestUtils.matchTournamentGames(tournament, QUARTER_FINAL, season);
 		}
 
 		@Test
-		@DisplayName("8강의 모든 게임이 종료된 경우, 4강이 매칭 가능하므로 POSSIBLE을 반환한다.")
+		@DisplayName("8강의 모든 게임이 종료된 경우, 4강이 매칭 필요하므로 REQUIRED 반환")
 		void checkPossibleMatch() {
 			// given
 			List<TournamentGame> quarterGames = tournament.getTournamentGames().stream()
 				.filter(o -> o.getTournamentRound().getRoundNumber() == TournamentRound.QUARTER_FINAL_1.getRoundNumber())
 				.collect(Collectors.toList());
+//			List<TournamentGame> quarterGames = TournamentRound.getSameRounds()
 			long id = 1L;
 			for (TournamentGame quarterGame : quarterGames) {
 				Game game = quarterGame.getGame();
@@ -95,22 +97,27 @@ public class MatchTournamentServiceUnitTest {
 			TournamentMatchStatus tournamentMatchStatus = matchTournamentService.checkTournamentGame(checkTournamentGame.getGame());
 
 			// then
-			assertThat(tournamentMatchStatus).isEqualTo(TournamentMatchStatus.POSSIBLE);
-		}
-
-		@Nested
-		@DisplayName("다음 라운드의 게임 매칭이 불가능한 경우 IMPOSSIBLE을 반환한다.")
-		class CheckImpossibleMatch {
-			@Test
-			@DisplayName("")
-			void checkImpossibleMatch() {
-				// given
-				given(tournamentGameRepository.findByGameId(1L)).willReturn(null);
-			}
+			assertThat(tournamentMatchStatus).isEqualTo(TournamentMatchStatus.REQUIRED);
 		}
 
 		@Test
-		@DisplayName("이미 다음 라운드의 게임 매칭이 완료된 경우 ALREADY_MATCHED를 반환한다.")
+		@DisplayName("8강에 종료되지 않은 게임이 존재할 경우, 4강 매칭이 불필요하므로 UNNECESSARY 반환")
+		void checkImpossibleMatch() {
+			// given
+			given(tournamentGameRepository.findByGameId(1L)).willReturn(null);
+
+			// when
+//			matchTournamentService.checkTournamentGame(game);
+		}
+
+		@Test
+		@DisplayName("결승전 게임일 경우, 매칭할 경기가 없으므로 NO_MORE_MATCHES을 반환하고 토너먼트는 종료된다.")
+		void checkFinalGame() {
+
+		}
+
+		@Test
+		@DisplayName("이미 다음 라운드의 게임 매칭이 완료된 경우, ALREADY_MATCHED를 반환한다.")
 		void checkAlreadyMatched() {
 			// given
 			given(tournamentGameRepository.findByGameId(1L)).willReturn(null);

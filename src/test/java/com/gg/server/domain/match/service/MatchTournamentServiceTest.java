@@ -1,5 +1,7 @@
 package com.gg.server.domain.match.service;
 
+import static com.gg.server.domain.tournament.type.RoundNumber.QUARTER_FINAL;
+import static com.gg.server.domain.tournament.type.RoundNumber.SEMI_FINAL;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -78,7 +80,7 @@ public class MatchTournamentServiceTest {
 			matchTournamentService.matchGames(tournament, TournamentRound.QUARTER_FINAL_1);
 
 			// then
-			List<TournamentRound> quarterRounds = TournamentRound.getSameRounds(TournamentRound.QUARTER_FINAL_1);
+			List<TournamentRound> quarterRounds = TournamentRound.getSameRounds(QUARTER_FINAL);
 			List<TournamentGame> quarterRoundGames = allTournamentGames.stream()
 				.filter(o -> quarterRounds.contains(o.getTournamentRound()))
 				.sorted(Comparator.comparing(TournamentGame::getTournamentRound))
@@ -113,7 +115,7 @@ public class MatchTournamentServiceTest {
 			matchTournamentService.matchGames(tournament, TournamentRound.SEMI_FINAL_1);
 
 			// then
-			List<TournamentRound> semiRounds = TournamentRound.getSameRounds(TournamentRound.SEMI_FINAL_1);
+			List<TournamentRound> semiRounds = TournamentRound.getSameRounds(SEMI_FINAL);
 			List<TournamentGame> semiRoundGames = allTournamentGames.stream()
 				.filter(o -> semiRounds.contains(o.getTournamentRound()))
 				.sorted(Comparator.comparing(TournamentGame::getTournamentRound))
@@ -125,7 +127,7 @@ public class MatchTournamentServiceTest {
 				assertThat(tournamentGame.getGame().getStatus()).isEqualTo(StatusType.BEFORE);
 			}
 			// 8강에서 이긴 유저끼리 4강에 매칭되었는지 확인
-			List<TournamentRound> quarterRounds = TournamentRound.getSameRounds(TournamentRound.QUARTER_FINAL_1);
+			List<TournamentRound> quarterRounds = TournamentRound.getSameRounds(QUARTER_FINAL);
 			List<TournamentGame> quarterRoundGames = allTournamentGames.stream()
 				.filter(o -> quarterRounds.contains(o.getTournamentRound()))
 				.sorted(Comparator.comparing(TournamentGame::getTournamentRound))
@@ -211,7 +213,7 @@ public class MatchTournamentServiceTest {
 			// then
 			// 토너먼트 상태가 END로 변경되었는지
 			// winner가 존재하는지 확인
-			assertThat(TournamentMatchStatus.UNNECESSARY).isEqualTo(tournamentMatchStatus);
+			assertThat(TournamentMatchStatus.NO_MORE_MATCHES).isEqualTo(tournamentMatchStatus);
 			assertThat(tournament.getStatus()).isEqualTo(TournamentStatus.END);
 			assertThat(tournament.getWinner()).isNotNull();
 			assertThat(tournament.getEndTime()).isEqualTo(finalGame.getEndTime());

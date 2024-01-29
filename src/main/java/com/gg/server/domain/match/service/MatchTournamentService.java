@@ -1,6 +1,7 @@
 package com.gg.server.domain.match.service;
 
 import static com.gg.server.domain.match.type.TournamentMatchStatus.*;
+import static com.gg.server.domain.tournament.type.RoundNumber.QUARTER_FINAL;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import com.gg.server.domain.tournament.type.RoundNumber;
 import org.springframework.stereotype.Service;
 
 import com.gg.server.admin.noti.dto.SendNotiAdminRequestDto;
@@ -108,7 +110,7 @@ public class MatchTournamentService {
 		List<TournamentGame> allTournamentGames = tournamentGameRepository.findAllByTournamentId(tournament.getId());
 		List<TournamentGame> tournamentGames = findSameRoundGames(allTournamentGames, round.getRoundNumber());
 		List<User> players = findSortedPlayers(tournament, round);
-		LocalDateTime startTime = calculateStartTime(tournament, round, gameInterval);
+		LocalDateTime startTime = calculateStartTime(tournament, round.getRoundNumber(), gameInterval);
 
 		for (int i = 0; i < tournamentGames.size(); ++i) {
 			Game game = new Game(season, StatusType.BEFORE, Mode.TOURNAMENT, startTime,
@@ -158,18 +160,18 @@ public class MatchTournamentService {
 
 	/**
 	 * @param tournament 토너먼트
-	 * @param round 토너먼트 라운드
+	 * @param roundNumber 토너먼트 라운드
 	 * @param gameInterval 경기 간격
 	 * @return 마지막 경기 종료 시간 + interval
 	 * <p>8강의 경우 토너먼트 시작 시간</p>
 	 * <p>4강, 결승일 경우 이전 라운드의 마지막 경기 종료 시간 + 15분</p>
 	 */
-	private LocalDateTime calculateStartTime(Tournament tournament, TournamentRound round, int gameInterval) {
-		if (TournamentRound.QUARTER_FINAL_1.getRoundNumber() == round.getRoundNumber()) {
+	private LocalDateTime calculateStartTime(Tournament tournament, RoundNumber roundNumber, int gameInterval) {
+		if (QUARTER_FINAL == roundNumber) {
 			return tournament.getStartTime();
 		}
 		List<TournamentGame> previousRoundTournamentGames = findSameRoundGames(tournament.getTournamentGames(),
-			TournamentRound.getPreviousRoundNumber(round));
+			TournamentRound.getPreviousRoundNumber(roundNumber));
 		TournamentGame lastGame = previousRoundTournamentGames.get(previousRoundTournamentGames.size() - 1);
 		return lastGame.getGame().getEndTime().plusMinutes(gameInterval);
 	}
@@ -199,8 +201,8 @@ public class MatchTournamentService {
 			}
 		} else {
 			List<TournamentGame> previousRoundTournamentGames = findSameRoundGames(tournament.getTournamentGames(),
-				TournamentRound.getPreviousRoundNumber(round));
-			int roundNum = round.getRoundNumber();
+				TournamentRound.getPreviousRoundNumber(round.getRoundNumber()));
+			int roundNum = round.getRoundNumber().getRoundNumber();
 			for (int i = 0; i < roundNum; ++i) {
 				User user = getWinningTeam(previousRoundTournamentGames.get(i).getGame())
 					.getTeamUsers().get(0).getUser();
@@ -247,7 +249,7 @@ public class MatchTournamentService {
 	 * @param roundNum 토너먼트 라운드 number (2, 4, 8, ...) (잘못된 roundNum일 경우 Empty List 반환한다.)
 	 * @return tournamentGames 중 roundNum과 동일한 roundNum을 가진 round 순으로 정렬된 tournamentGame List 반환
 	 */
-	private List<TournamentGame> findSameRoundGames(List<TournamentGame> tournamentGames, int roundNum) {
+	private List<TournamentGame> findSameRoundGames(List<TournamentGame> tournamentGames, RoundNumber roundNum) {
 		return tournamentGames.stream()
 			.filter(tournamentGame -> roundNum == tournamentGame.getTournamentRound().getRoundNumber())
 			.sorted(Comparator.comparing(TournamentGame::getTournamentRound))

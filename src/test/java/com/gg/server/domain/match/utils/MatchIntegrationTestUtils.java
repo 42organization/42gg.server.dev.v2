@@ -116,7 +116,7 @@ public class MatchIntegrationTestUtils {
 	public List<TournamentGame> matchTournamentGames(Tournament tournament, TournamentRound round) {
 		Season season = seasonRepository.findCurrentSeason(LocalDateTime.now())
 			.orElseThrow(() -> new IllegalArgumentException("현재 시즌이 존재하지 않습니다."));
-		List<TournamentGame> sameRoundGames = TournamentGameTestUtils.matchTournamentGames(tournament, round, season);
+		List<TournamentGame> sameRoundGames = TournamentGameTestUtils.matchTournamentGames(tournament, round.getRoundNumber(), season);
 		for (TournamentGame tournamentGame : sameRoundGames) {
 			Game game = tournamentGame.getGame();
 			gameRepository.save(game);
