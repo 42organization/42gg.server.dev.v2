@@ -14,6 +14,7 @@ import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentGameRepository;
 import com.gg.server.domain.tournament.exception.TournamentGameNotFoundException;
+import com.gg.server.domain.tournament.type.RoundNumber;
 import com.gg.server.domain.tournament.type.TournamentRound;
 import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.utils.annotation.UnitTest;
@@ -33,7 +34,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 import static com.gg.server.domain.match.utils.TournamentGameTestUtils.*;
-import static com.gg.server.domain.tournament.type.RoundNumber.QUARTER_FINAL;
+import static com.gg.server.domain.tournament.type.RoundNumber.*;
 import static com.gg.server.utils.ReflectionUtilsForUnitTest.setFieldWithReflection;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -89,11 +90,13 @@ public class MatchTournamentServiceUnitTest {
 			finishTournamentGames(quarterGames);
 			Random random = new Random();
 			TournamentGame target = quarterGames.get(random.nextInt(quarterGames.size()));
+			RoundNumber nextRound = target.getTournamentRound().getNextRound().getRoundNumber();
 			given(tournamentGameRepository.findByGameId(target.getGame().getId())).willReturn(Optional.of(target));
 			given(tournamentGameRepository.findAllByTournamentId(tournament.getId()))
 				.willReturn(tournament.getTournamentGames());
-			given(tournamentGameRepository.findByTournamentIdAndTournamentRound(tournament.getId(), target.getTournamentRound().getNextRound()))
-				.willReturn(getTournamentGameByRound(tournament, target.getTournamentRound().getNextRound()));
+			given(tournamentGameRepository.findByTournamentIdAndTournamentRoundIn(
+				tournament.getId(), TournamentRound.getSameRounds(nextRound)))
+				.willReturn(getTournamentGamesByRoundNum(tournament, nextRound));
 
 			// when
 			TournamentMatchStatus tournamentMatchStatus = matchTournamentService.checkTournamentGame(target.getGame());
@@ -121,7 +124,20 @@ public class MatchTournamentServiceUnitTest {
 		@Test
 		@DisplayName("결승전 게임일 경우, 매칭할 경기가 없으므로 NO_MORE_MATCHES을 반환하고 토너먼트는 종료된다.")
 		void checkFinalGame() {
+			// given
+//			matchTournamentGames(tournament, SEMI_FINAL, season);
+//			matchTournamentGames(tournament, THE_FINAL, season);
+//			List<Game> games = tournament.getTournamentGames().stream()
+//				.filter(tournamentGame -> tournamentGame.getTournamentRound().getRoundNumber() == QUARTER_FINAL)
+//				.map(TournamentGame::getGame).collect(Collectors.toList());
+//			setGameIds(games);
 
+
+			// when
+//			TournamentMatchStatus matchStatus = matchTournamentService.checkTournamentGame(quarterGame.getGame());
+
+			// then
+//			assertThat(matchStatus).isEqualTo(TournamentMatchStatus.NO_MORE_MATCHES);
 		}
 
 		@Test
