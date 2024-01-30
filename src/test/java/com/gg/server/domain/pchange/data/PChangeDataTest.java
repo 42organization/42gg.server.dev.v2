@@ -1,41 +1,40 @@
 package com.gg.server.domain.pchange.data;
 
-
-import com.gg.server.utils.annotation.UnitTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.parameters.P;
+
+import com.gg.server.utils.annotation.UnitTest;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)
 public class PChangeDataTest {
 
-    @Test
-    public void checkPChangeTest(){
+	@Test
+	public void checkPChangeTest() {
 
-        //given
-        PChange pChange = new PChange();
+		//given
+		PChange pChange = new PChange();
 
-        //when
-        pChange.checkPChange();
+		//when
+		pChange.checkPChange();
 
-        //then
-        Assertions.assertThat(pChange.getIsChecked()).isEqualTo(true);
-    }
+		//then
+		Assertions.assertThat(pChange.getIsChecked()).isEqualTo(true);
+	}
 
-    @Test
-    public void updatePPPTest() {
+	@Test
+	public void updatePPPTest() {
 
-        //given
-        PChange pChange = new PChange();
-        int testPPP = 4242;
+		//given
+		PChange pChange = new PChange();
+		int testPPP = 4242;
 
-        //when
-        pChange.updatePPP(testPPP);
+		//when
+		pChange.updatePPP(testPPP);
 
-        //then
-        Assertions.assertThat(pChange.getPppResult()).isEqualTo(testPPP);
-    }
+		//then
+		Assertions.assertThat(pChange.getPppResult()).isEqualTo(testPPP);
+	}
 }
