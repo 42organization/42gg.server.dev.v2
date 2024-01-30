@@ -10,6 +10,6 @@ public enum RoundNumber {
 	SEMI_FINAL(4, "4강"),
 	QUARTER_FINAL(8, "8강");
 
-	private final int roundNumber;
+	private final int round;
 	private final String code;
 }

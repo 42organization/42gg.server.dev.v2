@@ -40,7 +40,7 @@ public class TournamentGameTestUtils {
 							? findSameRoundGames(tournament.getTournamentGames(), previousRoundNumber)
 							: new ArrayList<>();
 
-		for (int i = 0; i < roundNumber.getRoundNumber() / 2; ++i) {
+		for (int i = 0; i < roundNumber.getRound() / 2; ++i) {
 			Game game = new Game(season, StatusType.BEFORE, Mode.TOURNAMENT, LocalDateTime.now(), LocalDateTime.now());
 			Team team1 = new Team(game, -1, false);
 			Team team2 = new Team(game, -1, false);

@@ -3,6 +3,7 @@ package com.gg.server.domain.game.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.gg.server.domain.tournament.type.RoundNumber;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
@@ -117,7 +118,8 @@ public class GameService {
 			TournamentGame tournamentGame = tournamentGameRepository.findByGameId(game.getId())
 				.orElseThrow(TournamentGameNotFoundException::new);
 			Tournament tournament = tournamentGame.getTournament();
-			matchTournamentService.matchGames(tournament, tournamentGame.getTournamentRound().getNextRound());
+			RoundNumber matchRound = tournamentGame.getTournamentRound().getNextRound().getRoundNumber();
+			matchTournamentService.matchGames(tournament, matchRound);
 		}
 	}
 

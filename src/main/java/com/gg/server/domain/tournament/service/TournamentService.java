@@ -1,5 +1,6 @@
 package com.gg.server.domain.tournament.service;
 
+import static com.gg.server.domain.tournament.type.RoundNumber.QUARTER_FINAL;
 import static com.gg.server.domain.tournament.type.TournamentRound.*;
 
 import java.time.LocalDate;
@@ -220,7 +221,7 @@ public class TournamentService {
 				return;
 			}
 			imminentTournament.updateStatus(TournamentStatus.LIVE);
-			matchTournamentService.matchGames(imminentTournament, QUARTER_FINAL_1);
+			matchTournamentService.matchGames(imminentTournament, QUARTER_FINAL);
 		}
 	}
 
@@ -295,7 +296,7 @@ public class TournamentService {
 					nextTournamentGame));
 		}
 		tournamentGameResDtoList.sort((o1, o2) -> {
-			if (o1.getTournamentRound().getRoundNumber().getRoundNumber() < o2.getTournamentRound().getRoundNumber().getRoundNumber()) {
+			if (o1.getTournamentRound().getRoundNumber().getRound() < o2.getTournamentRound().getRoundNumber().getRound()) {
 				return 1;
 			}
 			if (o1.getTournamentRound().getRoundOrder() > o2.getTournamentRound().getRoundOrder()) {

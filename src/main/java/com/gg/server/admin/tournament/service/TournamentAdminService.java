@@ -332,7 +332,7 @@ public class TournamentAdminService {
 		}
 		gameService.savePChange(game, teamUsers, teamUsers.get(0).getUser().getId());
 		if (REQUIRED.equals(matchStatus)) {
-			matchTournamentService.matchGames(tournament, nextRound);
+			matchTournamentService.matchGames(tournament, nextRound.getRoundNumber());
 		} else if (ALREADY_MATCHED.equals(matchStatus)) {
 			Game nextMatchedGame = tournamentGameRepository.findByTournamentIdAndTournamentRound(tournament.getId(),
 					nextRound)

@@ -12,5 +12,7 @@ public interface TournamentGameRepository extends JpaRepository<TournamentGame, 
 
 	Optional<TournamentGame> findByTournamentIdAndTournamentRound(Long id, TournamentRound tournamentRound);
 
+	List<TournamentGame> findByTournamentIdAndTournamentRoundIn(Long id, List<TournamentRound> tournamentRounds);
+
 	Optional<TournamentGame> findByGameId(Long gameId);
 }

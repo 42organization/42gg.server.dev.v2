@@ -1,7 +1,6 @@
 package com.gg.server.domain.match.service;
 
-import static com.gg.server.domain.tournament.type.RoundNumber.QUARTER_FINAL;
-import static com.gg.server.domain.tournament.type.RoundNumber.SEMI_FINAL;
+import static com.gg.server.domain.tournament.type.RoundNumber.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -43,7 +42,6 @@ import com.gg.server.utils.TestDataUtils;
 import com.gg.server.utils.annotation.IntegrationTest;
 
 @IntegrationTest
-@SpringBootTest
 @Transactional
 public class MatchTournamentServiceTest {
 	@Autowired
@@ -77,7 +75,7 @@ public class MatchTournamentServiceTest {
 		@DisplayName("8강 경기 매칭 성공")
 		public void quarterTest() {
 			// when
-			matchTournamentService.matchGames(tournament, TournamentRound.QUARTER_FINAL_1);
+			matchTournamentService.matchGames(tournament, QUARTER_FINAL);
 
 			// then
 			List<TournamentRound> quarterRounds = TournamentRound.getSameRounds(QUARTER_FINAL);
@@ -112,7 +110,7 @@ public class MatchTournamentServiceTest {
 			matchTestUtils.updateTournamentGamesResult(tournamentGames, List.of(2, 0));
 
 			// when
-			matchTournamentService.matchGames(tournament, TournamentRound.SEMI_FINAL_1);
+			matchTournamentService.matchGames(tournament, SEMI_FINAL);
 
 			// then
 			List<TournamentRound> semiRounds = TournamentRound.getSameRounds(SEMI_FINAL);
@@ -160,7 +158,7 @@ public class MatchTournamentServiceTest {
 			matchTestUtils.updateTournamentGamesResult(semiGames, List.of(2, 0));
 
 			// when
-			matchTournamentService.matchGames(tournament, TournamentRound.THE_FINAL);
+			matchTournamentService.matchGames(tournament, THE_FINAL);
 
 			// then
 			// 1개의 결승 경기가 생성되었는지 확인
@@ -183,7 +181,7 @@ public class MatchTournamentServiceTest {
 			matchTestUtils.updateTournamentGamesResult(semiGames, List.of(2, 0));
 
 			// when, then
-			assertThatThrownBy(() -> matchTournamentService.matchGames(tournament, TournamentRound.SEMI_FINAL_1))
+			assertThatThrownBy(() -> matchTournamentService.matchGames(tournament, SEMI_FINAL))
 				.isInstanceOf(EnrolledSlotException.class);
 		}
 	}
