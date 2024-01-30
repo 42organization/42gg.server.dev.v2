@@ -1,28 +1,17 @@
 package com.gg.server.domain.match.service;
 
-import com.gg.server.admin.noti.service.NotiAdminService;
-import com.gg.server.domain.game.data.Game;
-import com.gg.server.domain.game.data.GameRepository;
-import com.gg.server.domain.game.type.Mode;
-import com.gg.server.domain.game.type.StatusType;
-import com.gg.server.domain.match.type.TournamentMatchStatus;
-import com.gg.server.domain.match.utils.GameTestUtils;
-import com.gg.server.domain.match.utils.TournamentGameTestUtils;
-import com.gg.server.domain.match.utils.TournamentTestUtils;
-import com.gg.server.domain.match.utils.UserTestUtils;
-import com.gg.server.domain.season.data.Season;
-import com.gg.server.domain.season.service.SeasonFindService;
-import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
-import com.gg.server.domain.team.data.Team;
-import com.gg.server.domain.tournament.data.Tournament;
-import com.gg.server.domain.tournament.data.TournamentGame;
-import com.gg.server.domain.tournament.data.TournamentGameRepository;
-import com.gg.server.domain.tournament.exception.TournamentGameNotFoundException;
-import com.gg.server.domain.tournament.type.RoundNumber;
-import com.gg.server.domain.tournament.type.TournamentRound;
-import com.gg.server.domain.tournament.type.TournamentStatus;
-import com.gg.server.domain.user.data.User;
-import com.gg.server.utils.annotation.UnitTest;
+import static com.gg.server.domain.match.utils.TournamentGameTestUtils.*;
+import static com.gg.server.domain.tournament.type.RoundNumber.*;
+import static com.gg.server.utils.ReflectionUtilsForUnitTest.*;
+import static org.assertj.core.api.AssertionsForClassTypes.*;
+import static org.mockito.BDDMockito.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
+import java.util.stream.Collectors;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -32,17 +21,27 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import java.util.stream.Collectors;
-
-import static com.gg.server.domain.match.utils.TournamentGameTestUtils.*;
-import static com.gg.server.domain.tournament.type.RoundNumber.*;
-import static com.gg.server.utils.ReflectionUtilsForUnitTest.setFieldWithReflection;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.BDDMockito.given;
+import com.gg.server.admin.noti.service.NotiAdminService;
+import com.gg.server.domain.game.data.Game;
+import com.gg.server.domain.game.data.GameRepository;
+import com.gg.server.domain.game.type.Mode;
+import com.gg.server.domain.game.type.StatusType;
+import com.gg.server.domain.match.type.TournamentMatchStatus;
+import com.gg.server.domain.match.utils.GameTestUtils;
+import com.gg.server.domain.match.utils.TournamentTestUtils;
+import com.gg.server.domain.match.utils.UserTestUtils;
+import com.gg.server.domain.season.data.Season;
+import com.gg.server.domain.season.service.SeasonFindService;
+import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
+import com.gg.server.domain.team.data.Team;
+import com.gg.server.domain.tournament.data.Tournament;
+import com.gg.server.domain.tournament.data.TournamentGame;
+import com.gg.server.domain.tournament.data.TournamentGameRepository;
+import com.gg.server.domain.tournament.type.RoundNumber;
+import com.gg.server.domain.tournament.type.TournamentRound;
+import com.gg.server.domain.tournament.type.TournamentStatus;
+import com.gg.server.domain.user.data.User;
+import com.gg.server.utils.annotation.UnitTest;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)
@@ -59,8 +58,9 @@ public class MatchTournamentServiceUnitTest {
 	private SeasonFindService seasonFindService;
 	@Mock
 	private NotiAdminService notiAdminService;
-	private static final Season season  = Season.builder().startTime(LocalDateTime.now()).startPpp(123).build();
-	private static Long gameId, tournamentGameId;
+	private static final Season season = Season.builder().startTime(LocalDateTime.now()).startPpp(123).build();
+	private static Long gameId;
+	private static Long tournamentGameId;
 
 	@BeforeEach
 	void init() {
@@ -115,7 +115,8 @@ public class MatchTournamentServiceUnitTest {
 		void checkUnnecessaryMatch() {
 			// given
 			TournamentGame quarterGame = getTournamentGameByRound(tournament, TournamentRound.QUARTER_FINAL_1).get();
-			given(tournamentGameRepository.findByGameId(quarterGame.getGame().getId())).willReturn(Optional.of(quarterGame));
+			given(tournamentGameRepository.findByGameId(quarterGame.getGame().getId())).willReturn(
+				Optional.of(quarterGame));
 			given(tournamentGameRepository.findAllByTournamentId(tournament.getId()))
 				.willReturn(tournament.getTournamentGames());
 
@@ -135,7 +136,8 @@ public class MatchTournamentServiceUnitTest {
 			Game finalGame = GameTestUtils.createGame(user, enemy, season, Mode.TOURNAMENT);
 			TournamentGame finalTournamentGame = new TournamentGame(finalGame, tournament, TournamentRound.THE_FINAL);
 			finishTournamentGame(finalTournamentGame);
-			given(tournamentGameRepository.findByGameId(finalGame.getId())).willReturn(Optional.of(finalTournamentGame));
+			given(tournamentGameRepository.findByGameId(finalGame.getId())).willReturn(
+				Optional.of(finalTournamentGame));
 
 			// when
 			TournamentMatchStatus matchStatus = matchTournamentService.checkTournamentGame(finalGame);
@@ -171,7 +173,7 @@ public class MatchTournamentServiceUnitTest {
 
 	@Nested
 	@DisplayName("토너먼트의 게임 매칭")
-	class  MatchTournamentGameTest {
+	class MatchTournamentGameTest {
 	}
 
 	@Nested

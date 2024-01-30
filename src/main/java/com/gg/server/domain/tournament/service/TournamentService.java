@@ -1,7 +1,6 @@
 package com.gg.server.domain.tournament.service;
 
-import static com.gg.server.domain.tournament.type.RoundNumber.QUARTER_FINAL;
-import static com.gg.server.domain.tournament.type.TournamentRound.*;
+import static com.gg.server.domain.tournament.type.RoundNumber.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -296,7 +295,9 @@ public class TournamentService {
 					nextTournamentGame));
 		}
 		tournamentGameResDtoList.sort((o1, o2) -> {
-			if (o1.getTournamentRound().getRoundNumber().getRound() < o2.getTournamentRound().getRoundNumber().getRound()) {
+			if (o1.getTournamentRound().getRoundNumber().getRound() < o2.getTournamentRound()
+				.getRoundNumber()
+				.getRound()) {
 				return 1;
 			}
 			if (o1.getTournamentRound().getRoundOrder() > o2.getTournamentRound().getRoundOrder()) {

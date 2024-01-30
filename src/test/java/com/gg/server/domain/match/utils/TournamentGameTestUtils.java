@@ -1,5 +1,12 @@
 package com.gg.server.domain.match.utils;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
@@ -13,13 +20,6 @@ import com.gg.server.domain.tournament.type.RoundNumber;
 import com.gg.server.domain.tournament.type.TournamentRound;
 import com.gg.server.domain.user.data.User;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 public class TournamentGameTestUtils {
 
 	/**
@@ -29,7 +29,8 @@ public class TournamentGameTestUtils {
 	 *              ex ) 8강의 경우 8강의 4경기를 매칭
 	 * @return 매칭된 토너먼트 게임
 	 */
-	public static List<TournamentGame> matchTournamentGames(Tournament tournament, RoundNumber roundNumber, Season season) {
+	public static List<TournamentGame> matchTournamentGames(Tournament tournament, RoundNumber roundNumber,
+		Season season) {
 		List<TournamentRound> sameRounds = TournamentRound.getSameRounds(roundNumber);
 		List<TournamentGame> sameRoundGames = tournament.getTournamentGames().stream()
 			.filter(o -> sameRounds.contains(o.getTournamentRound()))
@@ -37,8 +38,8 @@ public class TournamentGameTestUtils {
 			.collect(Collectors.toList());
 		RoundNumber previousRoundNumber = TournamentRound.getPreviousRoundNumber(roundNumber);
 		List<TournamentGame> previousRoundTournamentGames = previousRoundNumber != null
-							? findSameRoundGames(tournament.getTournamentGames(), previousRoundNumber)
-							: new ArrayList<>();
+			? findSameRoundGames(tournament.getTournamentGames(), previousRoundNumber)
+			: new ArrayList<>();
 
 		for (int i = 0; i < roundNumber.getRound() / 2; ++i) {
 			Game game = new Game(season, StatusType.BEFORE, Mode.TOURNAMENT, LocalDateTime.now(), LocalDateTime.now());

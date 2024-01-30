@@ -2,7 +2,6 @@ package com.gg.server.domain.match.utils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -12,9 +11,6 @@ import org.springframework.stereotype.Component;
 
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
-import com.gg.server.domain.game.type.Mode;
-import com.gg.server.domain.game.type.StatusType;
-import com.gg.server.domain.match.exception.WinningTeamNotFoundException;
 import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
@@ -23,15 +19,11 @@ import com.gg.server.domain.season.data.SeasonRepository;
 import com.gg.server.domain.slotmanagement.SlotManagement;
 import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
 import com.gg.server.domain.team.data.Team;
-import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.type.TournamentRound;
 import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
-import com.gg.server.domain.user.type.RacketType;
-import com.gg.server.domain.user.type.RoleType;
-import com.gg.server.domain.user.type.SnsType;
 
 import lombok.RequiredArgsConstructor;
 
@@ -116,7 +108,8 @@ public class MatchIntegrationTestUtils {
 	public List<TournamentGame> matchTournamentGames(Tournament tournament, TournamentRound round) {
 		Season season = seasonRepository.findCurrentSeason(LocalDateTime.now())
 			.orElseThrow(() -> new IllegalArgumentException("현재 시즌이 존재하지 않습니다."));
-		List<TournamentGame> sameRoundGames = TournamentGameTestUtils.matchTournamentGames(tournament, round.getRoundNumber(), season);
+		List<TournamentGame> sameRoundGames = TournamentGameTestUtils.matchTournamentGames(tournament,
+			round.getRoundNumber(), season);
 		for (TournamentGame tournamentGame : sameRoundGames) {
 			Game game = tournamentGame.getGame();
 			gameRepository.save(game);

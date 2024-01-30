@@ -3,7 +3,6 @@ package com.gg.server.domain.game.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.gg.server.domain.tournament.type.RoundNumber;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
@@ -40,6 +39,7 @@ import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentGameRepository;
 import com.gg.server.domain.tournament.exception.TournamentGameNotFoundException;
+import com.gg.server.domain.tournament.type.RoundNumber;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.InvalidParameterException;
 import com.gg.server.global.utils.ExpLevelCalculator;

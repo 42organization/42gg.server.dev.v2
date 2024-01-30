@@ -1,7 +1,7 @@
 package com.gg.server.domain.match.service;
 
 import static com.gg.server.domain.match.type.TournamentMatchStatus.*;
-import static com.gg.server.domain.tournament.type.RoundNumber.QUARTER_FINAL;
+import static com.gg.server.domain.tournament.type.RoundNumber.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
-import com.gg.server.domain.tournament.type.RoundNumber;
 import org.springframework.stereotype.Service;
 
 import com.gg.server.admin.noti.dto.SendNotiAdminRequestDto;
@@ -40,6 +39,7 @@ import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentGameRepository;
 import com.gg.server.domain.tournament.data.TournamentUser;
 import com.gg.server.domain.tournament.exception.TournamentGameNotFoundException;
+import com.gg.server.domain.tournament.type.RoundNumber;
 import com.gg.server.domain.tournament.type.TournamentRound;
 import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.user.data.User;

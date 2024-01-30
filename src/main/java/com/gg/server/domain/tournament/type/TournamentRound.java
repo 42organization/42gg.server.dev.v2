@@ -1,12 +1,12 @@
 package com.gg.server.domain.tournament.type;
 
+import static com.gg.server.domain.tournament.type.RoundNumber.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
-import static com.gg.server.domain.tournament.type.RoundNumber.*;
 
 @RequiredArgsConstructor
 @Getter
