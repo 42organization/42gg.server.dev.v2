@@ -13,6 +13,8 @@ import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
 import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentGameRepository;
+import com.gg.server.domain.tournament.exception.TournamentGameNotFoundException;
+import com.gg.server.domain.tournament.type.TournamentRound;
 import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.utils.annotation.UnitTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +32,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import static com.gg.server.domain.match.utils.TournamentGameTestUtils.*;
 import static com.gg.server.domain.tournament.type.RoundNumber.QUARTER_FINAL;
 import static com.gg.server.utils.ReflectionUtilsForUnitTest.setFieldWithReflection;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -71,7 +74,7 @@ public class MatchTournamentServiceUnitTest {
 			for (TournamentGame tournamentGame : tournament.getTournamentGames()) {
 				setFieldWithReflection(tournamentGame, "id", tournamentGameId++);
 			}
-			TournamentGameTestUtils.matchTournamentGames(tournament, QUARTER_FINAL, season);
+			matchTournamentGames(tournament, QUARTER_FINAL, season);
 			List<Game> games = tournament.getTournamentGames().stream()
 				.filter(tournamentGame -> tournamentGame.getTournamentRound().getRoundNumber() == QUARTER_FINAL)
 				.map(TournamentGame::getGame).collect(Collectors.toList());
@@ -82,7 +85,7 @@ public class MatchTournamentServiceUnitTest {
 		@DisplayName("8강의 모든 게임이 종료된 경우, 4강이 매칭 필요하므로 REQUIRED 반환")
 		void checkRequiredMatch() {
 			// given
-			List<TournamentGame> quarterGames = TournamentGameTestUtils.getTournamentGamesByRoundNum(tournament, QUARTER_FINAL);
+			List<TournamentGame> quarterGames = getTournamentGamesByRoundNum(tournament, QUARTER_FINAL);
 			finishTournamentGames(quarterGames);
 			Random random = new Random();
 			TournamentGame target = quarterGames.get(random.nextInt(quarterGames.size()));
@@ -90,7 +93,7 @@ public class MatchTournamentServiceUnitTest {
 			given(tournamentGameRepository.findAllByTournamentId(tournament.getId()))
 				.willReturn(tournament.getTournamentGames());
 			given(tournamentGameRepository.findByTournamentIdAndTournamentRound(tournament.getId(), target.getTournamentRound().getNextRound()))
-				.willReturn(TournamentGameTestUtils.getTournamentGameByRound(tournament, target.getTournamentRound().getNextRound()));
+				.willReturn(getTournamentGameByRound(tournament, target.getTournamentRound().getNextRound()));
 
 			// when
 			TournamentMatchStatus tournamentMatchStatus = matchTournamentService.checkTournamentGame(target.getGame());
@@ -103,13 +106,16 @@ public class MatchTournamentServiceUnitTest {
 		@DisplayName("8강에 종료되지 않은 게임이 존재할 경우, 4강 매칭이 불필요하므로 UNNECESSARY 반환")
 		void checkUnnecessaryMatch() {
 			// given
-			List<TournamentGame> quarterGames = TournamentGameTestUtils.getTournamentGamesByRoundNum(tournament, QUARTER_FINAL);
+			TournamentGame quarterGame = getTournamentGameByRound(tournament, TournamentRound.QUARTER_FINAL_1).get();
+			given(tournamentGameRepository.findByGameId(quarterGame.getGame().getId())).willReturn(Optional.of(quarterGame));
+			given(tournamentGameRepository.findAllByTournamentId(tournament.getId()))
+				.willReturn(tournament.getTournamentGames());
 
 			// when
-//			TournamentMatchStatus matchStatus = matchTournamentService.checkTournamentGame(game);
+			TournamentMatchStatus matchStatus = matchTournamentService.checkTournamentGame(quarterGame.getGame());
 
 			// then
-//			assertThat(matchStatus).isEqualTo(TournamentMatchStatus.UNNECESSARY);
+			assertThat(matchStatus).isEqualTo(TournamentMatchStatus.UNNECESSARY);
 		}
 
 		@Test
