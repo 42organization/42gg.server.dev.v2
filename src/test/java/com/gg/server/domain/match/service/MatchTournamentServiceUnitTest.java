@@ -3,13 +3,17 @@ package com.gg.server.domain.match.service;
 import com.gg.server.admin.noti.service.NotiAdminService;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
+import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.match.type.TournamentMatchStatus;
+import com.gg.server.domain.match.utils.GameTestUtils;
 import com.gg.server.domain.match.utils.TournamentGameTestUtils;
 import com.gg.server.domain.match.utils.TournamentTestUtils;
+import com.gg.server.domain.match.utils.UserTestUtils;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.service.SeasonFindService;
 import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
+import com.gg.server.domain.team.data.Team;
 import com.gg.server.domain.tournament.data.Tournament;
 import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentGameRepository;
@@ -17,6 +21,7 @@ import com.gg.server.domain.tournament.exception.TournamentGameNotFoundException
 import com.gg.server.domain.tournament.type.RoundNumber;
 import com.gg.server.domain.tournament.type.TournamentRound;
 import com.gg.server.domain.tournament.type.TournamentStatus;
+import com.gg.server.domain.user.data.User;
 import com.gg.server.utils.annotation.UnitTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -125,19 +130,20 @@ public class MatchTournamentServiceUnitTest {
 		@DisplayName("결승전 게임일 경우, 매칭할 경기가 없으므로 NO_MORE_MATCHES을 반환하고 토너먼트는 종료된다.")
 		void checkFinalGame() {
 			// given
-//			matchTournamentGames(tournament, SEMI_FINAL, season);
-//			matchTournamentGames(tournament, THE_FINAL, season);
-//			List<Game> games = tournament.getTournamentGames().stream()
-//				.filter(tournamentGame -> tournamentGame.getTournamentRound().getRoundNumber() == QUARTER_FINAL)
-//				.map(TournamentGame::getGame).collect(Collectors.toList());
-//			setGameIds(games);
-
+			User user = UserTestUtils.createUser();
+			User enemy = UserTestUtils.createUser();
+			Game finalGame = GameTestUtils.createGame(user, enemy, season, Mode.TOURNAMENT);
+			TournamentGame finalTournamentGame = new TournamentGame(finalGame, tournament, TournamentRound.THE_FINAL);
+			finishTournamentGame(finalTournamentGame);
+			given(tournamentGameRepository.findByGameId(finalGame.getId())).willReturn(Optional.of(finalTournamentGame));
 
 			// when
-//			TournamentMatchStatus matchStatus = matchTournamentService.checkTournamentGame(quarterGame.getGame());
+			TournamentMatchStatus matchStatus = matchTournamentService.checkTournamentGame(finalGame);
 
 			// then
-//			assertThat(matchStatus).isEqualTo(TournamentMatchStatus.NO_MORE_MATCHES);
+			assertThat(matchStatus).isEqualTo(TournamentMatchStatus.NO_MORE_MATCHES);
+			assertThat(tournament.getStatus()).isEqualTo(TournamentStatus.END);
+			assertThat(tournament.getWinner()).isNotNull();
 		}
 
 		@Test
@@ -161,6 +167,9 @@ public class MatchTournamentServiceUnitTest {
 	private void finishTournamentGame(TournamentGame tournamentGame) {
 		Game game = tournamentGame.getGame();
 		setFieldWithReflection(game, "status", StatusType.END);
+		List<Team> teams = game.getTeams();
+		teams.get(0).updateScore(2, true);
+		teams.get(1).updateScore(1, false);
 	}
 
 	private void finishTournamentGames(List<TournamentGame> tournamentGames) {
