@@ -147,10 +147,25 @@ public class MatchTournamentServiceUnitTest {
 		}
 
 		@Test
-		@DisplayName("이미 다음 라운드의 게임 매칭이 완료된 경우, ALREADY_MATCHED를 반환한다.")
+		@DisplayName("다음 라운드인 4강 경기가 이미 매칭된 경우, ALREADY_MATCHED를 반환한다.")
 		void checkAlreadyMatched() {
 			// given
-//			given(tournamentGameRepository.findByGameId(1L)).willReturn(null);
+			finishTournamentGames(getTournamentGamesByRoundNum(tournament, QUARTER_FINAL));
+			matchTournamentGames(tournament, SEMI_FINAL, season);
+			Game targetGame = getTournamentGameByRound(tournament, TournamentRound.QUARTER_FINAL_1).get().getGame();
+			given(tournamentGameRepository.findByGameId(targetGame.getId())).willReturn(Optional.of(
+				getTournamentGameByRound(tournament, TournamentRound.QUARTER_FINAL_1).get()));
+			given(tournamentGameRepository.findAllByTournamentId(tournament.getId()))
+				.willReturn(tournament.getTournamentGames());
+			given(tournamentGameRepository.findByTournamentIdAndTournamentRoundIn(
+				tournament.getId(), TournamentRound.getSameRounds(SEMI_FINAL)))
+				.willReturn(getTournamentGamesByRoundNum(tournament, SEMI_FINAL));
+
+			// when
+			TournamentMatchStatus matchStatus = matchTournamentService.checkTournamentGame(targetGame);
+
+			// then
+			assertThat(matchStatus).isEqualTo(TournamentMatchStatus.ALREADY_MATCHED);
 		}
 	}
 
