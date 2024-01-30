@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class TournamentGameTestUtils {
@@ -50,6 +51,30 @@ public class TournamentGameTestUtils {
 			sameRoundGames.get(i).updateGame(game);
 		}
 		return sameRoundGames;
+	}
+
+	/**
+	 *
+	 * @param tournament 토너먼트
+	 * @param roundNumber 해당 라운드와 동일한 라운드를 찾는다.
+	 * @return 해당 라운드의 모든 토너먼트 게임을 반환한다.
+	 */
+	public static List<TournamentGame> getTournamentGamesByRoundNum(Tournament tournament, RoundNumber roundNumber) {
+		return tournament.getTournamentGames().stream()
+			.filter(tournamentGame -> roundNumber == tournamentGame.getTournamentRound().getRoundNumber())
+			.collect(Collectors.toList());
+	}
+
+	/**
+	 *
+	 * @param tournament 토너먼트
+	 * @param round 해당 라운드와 동일한 라운드를 찾는다.
+	 * @return 해당 라운드의 토너먼트 게임을 반환한다.
+	 */
+	public static Optional<TournamentGame> getTournamentGameByRound(Tournament tournament, TournamentRound round) {
+		return tournament.getTournamentGames().stream()
+			.filter(tournamentGame -> round == tournamentGame.getTournamentRound())
+			.findFirst();
 	}
 
 	public static Team getWinningTeam(Game game) {

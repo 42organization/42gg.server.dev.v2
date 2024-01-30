@@ -28,6 +28,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import static com.gg.server.domain.tournament.type.RoundNumber.QUARTER_FINAL;
@@ -56,45 +57,35 @@ public class MatchTournamentServiceUnitTest {
 	@DisplayName("진행중인 토너먼트에서 다음 라운드의 게임 매칭이 가능한지 확인한다.")
 	class CheckNextRoundTest {
 		private Tournament tournament;
+		private Long gameId;
 
 		@BeforeEach
 		void init() {
 			tournament = TournamentTestUtils.createLiveTournament(TournamentType.ROOKIE);
 			setFieldWithReflection(tournament, "id", 1L);
+			gameId = 1L;
 			for (TournamentRound round : TournamentRound.values()) {
 				new TournamentGame(null, tournament, round);
 			}
 			TournamentGameTestUtils.matchTournamentGames(tournament, QUARTER_FINAL, season);
 		}
-
 		@Test
 		@DisplayName("8강의 모든 게임이 종료된 경우, 4강이 매칭 필요하므로 REQUIRED 반환")
 		void checkPossibleMatch() {
 			// given
-			List<TournamentGame> quarterGames = tournament.getTournamentGames().stream()
-				.filter(o -> o.getTournamentRound().getRoundNumber() == TournamentRound.QUARTER_FINAL_1.getRoundNumber())
-				.collect(Collectors.toList());
-//			List<TournamentGame> quarterGames = TournamentRound.getSameRounds()
-			long id = 1L;
-			for (TournamentGame quarterGame : quarterGames) {
-				Game game = quarterGame.getGame();
-				setFieldWithReflection(game, "status", StatusType.END);
-				setFieldWithReflection(game, "id", id++);
-			}
-			TournamentGame checkTournamentGame = quarterGames.get(0);
-			given(tournamentGameRepository.findByGameId(checkTournamentGame.getGame().getId()))
-				.willReturn(Optional.of(checkTournamentGame));
+			List<TournamentGame> quarterGames = TournamentGameTestUtils.getTournamentGamesByRoundNum(tournament, QUARTER_FINAL);
+			finishTournamentGames(quarterGames);
+			setGameIds(quarterGames.stream().map(TournamentGame::getGame).collect(Collectors.toList()));
+			Random random = new Random();
+			TournamentGame target = quarterGames.get(random.nextInt(quarterGames.size()));
+			given(tournamentGameRepository.findByGameId(target.getGame().getId())).willReturn(Optional.of(target));
 			given(tournamentGameRepository.findAllByTournamentId(tournament.getId()))
 				.willReturn(tournament.getTournamentGames());
-			TournamentGame semiFinalGame = tournament.getTournamentGames().stream()
-				.filter(o -> o.getTournamentRound().getRoundNumber() == TournamentRound.SEMI_FINAL_1.getRoundNumber())
-				.findFirst()
-				.orElseThrow(() -> new IllegalArgumentException("해당 라운드의 게임이 존재하지 않습니다."));
-			given(tournamentGameRepository.findByTournamentIdAndTournamentRound(tournament.getId(), TournamentRound.SEMI_FINAL_1))
-				.willReturn(Optional.of(semiFinalGame));
+			given(tournamentGameRepository.findByTournamentIdAndTournamentRound(tournament.getId(), target.getTournamentRound().getNextRound()))
+				.willReturn(TournamentGameTestUtils.getTournamentGameByRound(tournament, target.getTournamentRound().getNextRound()));
 
 			// when
-			TournamentMatchStatus tournamentMatchStatus = matchTournamentService.checkTournamentGame(checkTournamentGame.getGame());
+			TournamentMatchStatus tournamentMatchStatus = matchTournamentService.checkTournamentGame(target.getGame());
 
 			// then
 			assertThat(tournamentMatchStatus).isEqualTo(TournamentMatchStatus.REQUIRED);
@@ -107,7 +98,10 @@ public class MatchTournamentServiceUnitTest {
 //			given(tournamentGameRepository.findByGameId(1L)).willReturn(null);
 
 			// when
-//			matchTournamentService.checkTournamentGame(game);
+//			TournamentMatchStatus matchStatus = matchTournamentService.checkTournamentGame(game);
+
+			// then
+//			assertThat(matchStatus).isEqualTo(TournamentMatchStatus.UNNECESSARY);
 		}
 
 		@Test
@@ -121,6 +115,27 @@ public class MatchTournamentServiceUnitTest {
 		void checkAlreadyMatched() {
 			// given
 //			given(tournamentGameRepository.findByGameId(1L)).willReturn(null);
+		}
+
+		private void finishTournamentGame(TournamentGame tournamentGame) {
+			Game game = tournamentGame.getGame();
+			setFieldWithReflection(game, "status", StatusType.END);
+		}
+
+		private void finishTournamentGames(List<TournamentGame> tournamentGames) {
+			for (TournamentGame tournamentGame : tournamentGames) {
+				finishTournamentGame(tournamentGame);
+			}
+		}
+
+		private void setGameId(Game game) {
+			setFieldWithReflection(game, "id", gameId++);
+		}
+
+		private void setGameIds(List<Game> games) {
+			for (Game game : games) {
+				setGameId(game);
+			}
 		}
 	}
 
