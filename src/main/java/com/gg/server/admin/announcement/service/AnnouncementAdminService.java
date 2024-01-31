@@ -16,12 +16,6 @@ import com.gg.server.domain.announcement.exception.AnnounceDupException;
 import com.gg.server.domain.announcement.exception.AnnounceNotFoundException;
 
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
@@ -37,24 +31,24 @@ public class AnnouncementAdminService {
 			responseDtos.getTotalPages());
 	}
 
-    @Transactional
-    public void addAnnouncement(AnnouncementAdminAddDto addDto){
-        Announcement announcement = announcementAdminRepository.findFirstByOrderByIdDesc()
-            .orElseThrow(AnnounceNotFoundException::new);
-        if (announcement.getDeletedAt() == null) {
-            throw new AnnounceDupException();
-        }
+	@Transactional
+	public void addAnnouncement(AnnouncementAdminAddDto addDto) {
+		Announcement announcement = announcementAdminRepository.findFirstByOrderByIdDesc()
+			.orElseThrow(AnnounceNotFoundException::new);
+		if (announcement.getDeletedAt() == null) {
+			throw new AnnounceDupException();
+		}
 
-        announcementAdminRepository.save(Announcement.from(addDto));
-    }
+		announcementAdminRepository.save(Announcement.from(addDto));
+	}
 
-    @Transactional
-    public void modifyAnnouncementIsDel(String deleterIntraId) {
-        Announcement announcement = announcementAdminRepository.findFirstByOrderByIdDesc()
-            .orElseThrow(AnnounceNotFoundException::new);
-        if (announcement.getDeletedAt() != null) {
-            throw new AnnounceNotFoundException();
-        }
-        announcement.update(deleterIntraId, LocalDateTime.now());
-    }
+	@Transactional
+	public void modifyAnnouncementIsDel(String deleterIntraId) {
+		Announcement announcement = announcementAdminRepository.findFirstByOrderByIdDesc()
+			.orElseThrow(AnnounceNotFoundException::new);
+		if (announcement.getDeletedAt() != null) {
+			throw new AnnounceNotFoundException();
+		}
+		announcement.update(deleterIntraId, LocalDateTime.now());
+	}
 }
