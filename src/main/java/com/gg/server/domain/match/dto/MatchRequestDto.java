@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.gg.server.domain.match.type.Option;
+import com.gg.server.data.match.type.Option;
 
 import lombok.AccessLevel;
 import lombok.Getter;

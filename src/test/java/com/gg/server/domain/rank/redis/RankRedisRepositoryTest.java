@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.gg.server.data.game.redis.RankRedis;
 import com.gg.server.domain.rank.exception.RedisDataNotFoundException;
 import com.gg.server.utils.annotation.IntegrationTest;
 

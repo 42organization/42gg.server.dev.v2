@@ -1,6 +1,6 @@
 package com.gg.server.domain.match.service;
 
-import static com.gg.server.domain.match.type.TournamentMatchStatus.*;
+import static com.gg.server.data.match.type.TournamentMatchStatus.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -17,30 +17,30 @@ import org.springframework.stereotype.Service;
 
 import com.gg.server.admin.noti.dto.SendNotiAdminRequestDto;
 import com.gg.server.admin.noti.service.NotiAdminService;
-import com.gg.server.domain.game.data.Game;
+import com.gg.server.data.game.Game;
+import com.gg.server.data.game.Season;
+import com.gg.server.data.game.Team;
+import com.gg.server.data.game.TeamUser;
+import com.gg.server.data.game.Tournament;
+import com.gg.server.data.game.TournamentGame;
+import com.gg.server.data.game.TournamentUser;
+import com.gg.server.data.game.type.Mode;
+import com.gg.server.data.game.type.StatusType;
+import com.gg.server.data.game.type.TournamentRound;
+import com.gg.server.data.game.type.TournamentStatus;
+import com.gg.server.data.match.type.TournamentMatchStatus;
+import com.gg.server.data.noti.type.NotiType;
+import com.gg.server.data.user.User;
 import com.gg.server.domain.game.data.GameRepository;
-import com.gg.server.domain.game.type.Mode;
-import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.match.exception.EnrolledSlotException;
 import com.gg.server.domain.match.exception.LosingTeamNotFoundException;
 import com.gg.server.domain.match.exception.SlotNotFoundException;
 import com.gg.server.domain.match.exception.WinningTeamNotFoundException;
-import com.gg.server.domain.match.type.TournamentMatchStatus;
-import com.gg.server.domain.noti.type.NotiType;
-import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.service.SeasonFindService;
 import com.gg.server.domain.slotmanagement.SlotManagement;
 import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
-import com.gg.server.domain.team.data.Team;
-import com.gg.server.domain.team.data.TeamUser;
-import com.gg.server.domain.tournament.data.Tournament;
-import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentGameRepository;
-import com.gg.server.domain.tournament.data.TournamentUser;
 import com.gg.server.domain.tournament.exception.TournamentGameNotFoundException;
-import com.gg.server.domain.tournament.type.TournamentRound;
-import com.gg.server.domain.tournament.type.TournamentStatus;
-import com.gg.server.domain.user.data.User;
 
 import lombok.RequiredArgsConstructor;
 

@@ -3,10 +3,10 @@ package com.gg.server.domain.feedback.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gg.server.domain.feedback.data.Feedback;
+import com.gg.server.data.manage.Feedback;
+import com.gg.server.data.user.User;
 import com.gg.server.domain.feedback.data.FeedbackRepository;
 import com.gg.server.domain.feedback.dto.FeedbackRequestDto;
-import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 

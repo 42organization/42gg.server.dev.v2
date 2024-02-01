@@ -13,7 +13,7 @@ import com.gg.server.admin.item.dto.ItemHistoryResponseDto;
 import com.gg.server.admin.item.dto.ItemListResponseDto;
 import com.gg.server.admin.item.dto.ItemUpdateRequestDto;
 import com.gg.server.admin.item.exception.ItemNotFoundException;
-import com.gg.server.domain.item.data.Item;
+import com.gg.server.data.store.Item;
 import com.gg.server.domain.item.exception.ItemNotAvailableException;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.utils.aws.AsyncNewItemImageUploader;

@@ -8,8 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.gg.server.domain.user.data.User;
-import com.gg.server.domain.user.data.UserImage;
+import com.gg.server.data.user.User;
+import com.gg.server.data.user.UserImage;
 
 public interface UserImageAdminRepository extends JpaRepository<UserImage, Long> {
 	Optional<UserImage> findTopByUserAndIsCurrentIsTrueOrderByCreatedAtDesc(User user);

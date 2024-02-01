@@ -5,20 +5,20 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.gg.server.domain.game.data.Game;
+import com.gg.server.data.game.Game;
+import com.gg.server.data.game.Team;
+import com.gg.server.data.game.TeamUser;
+import com.gg.server.data.noti.Noti;
+import com.gg.server.data.user.User;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.match.dto.GameAddDto;
 import com.gg.server.domain.match.exception.SlotNotFoundException;
-import com.gg.server.domain.noti.data.Noti;
 import com.gg.server.domain.noti.service.NotiService;
 import com.gg.server.domain.noti.service.SnsNotiService;
 import com.gg.server.domain.slotmanagement.SlotManagement;
 import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
-import com.gg.server.domain.team.data.Team;
 import com.gg.server.domain.team.data.TeamRepository;
-import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.team.data.TeamUserRepository;
-import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.domain.user.exception.UserNotFoundException;

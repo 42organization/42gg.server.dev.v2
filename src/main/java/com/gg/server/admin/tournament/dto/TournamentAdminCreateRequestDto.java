@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.gg.server.domain.tournament.type.TournamentType;
+import com.gg.server.data.game.type.TournamentType;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

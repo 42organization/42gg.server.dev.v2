@@ -6,7 +6,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.gg.server.domain.game.data.Game;
+import com.gg.server.data.game.Game;
+import com.gg.server.data.game.TournamentGame;
 import com.gg.server.utils.annotation.UnitTest;
 
 @UnitTest
@@ -22,7 +23,7 @@ public class TournamentGameUnitTest {
 		@DisplayName("TournamentGame의 게임 업데이트 성공")
 		void updateSuccess() {
 			//given
-			tournamentGame = new TournamentGame();
+			tournamentGame = new TournamentGame(null, null, null);
 			Game game = Mockito.mock(Game.class);
 
 			//when

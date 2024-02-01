@@ -3,12 +3,12 @@ package com.gg.server.domain.noti.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gg.server.domain.noti.data.Noti;
+import com.gg.server.data.noti.Noti;
+import com.gg.server.data.user.type.SnsType;
 import com.gg.server.domain.noti.dto.UserNotiDto;
 import com.gg.server.domain.noti.service.sns.NotiMailSender;
 import com.gg.server.domain.noti.service.sns.SlackbotService;
 import com.gg.server.domain.user.dto.UserDto;
-import com.gg.server.domain.user.type.SnsType;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -1,6 +1,6 @@
 package com.gg.server.domain.team.dto;
 
-import com.gg.server.domain.user.type.SnsType;
+import com.gg.server.data.user.type.SnsType;
 
 public interface GameUser {
 	Long getGameId();

@@ -4,7 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
 
-import com.gg.server.domain.feedback.data.Feedback;
+import com.gg.server.data.manage.Feedback;
 
 public interface FeedbackAdminRepositorySearch {
 	Page<Feedback> findFeedbacksByUserIntraId(@Param("intraId") String intraId, Pageable pageable);

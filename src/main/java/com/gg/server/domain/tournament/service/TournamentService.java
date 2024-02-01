@@ -1,6 +1,6 @@
 package com.gg.server.domain.tournament.service;
 
-import static com.gg.server.domain.tournament.type.TournamentRound.*;
+import static com.gg.server.data.game.type.TournamentRound.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,15 +15,20 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gg.server.admin.noti.dto.SendNotiAdminRequestDto;
 import com.gg.server.admin.noti.service.NotiAdminService;
+import com.gg.server.data.game.Tournament;
+import com.gg.server.data.game.TournamentGame;
+import com.gg.server.data.game.TournamentUser;
+import com.gg.server.data.game.type.TournamentRound;
+import com.gg.server.data.game.type.TournamentStatus;
+import com.gg.server.data.game.type.TournamentType;
+import com.gg.server.data.game.type.TournamentUserStatus;
+import com.gg.server.data.noti.type.NotiType;
+import com.gg.server.data.user.User;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.dto.GameTeamUser;
 import com.gg.server.domain.match.service.MatchTournamentService;
-import com.gg.server.domain.noti.type.NotiType;
-import com.gg.server.domain.tournament.data.Tournament;
-import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentGameRepository;
 import com.gg.server.domain.tournament.data.TournamentRepository;
-import com.gg.server.domain.tournament.data.TournamentUser;
 import com.gg.server.domain.tournament.data.TournamentUserRepository;
 import com.gg.server.domain.tournament.dto.TournamentGameListResponseDto;
 import com.gg.server.domain.tournament.dto.TournamentGameResDto;
@@ -33,11 +38,6 @@ import com.gg.server.domain.tournament.dto.TournamentUserRegistrationResponseDto
 import com.gg.server.domain.tournament.exception.TournamentConflictException;
 import com.gg.server.domain.tournament.exception.TournamentNotFoundException;
 import com.gg.server.domain.tournament.exception.TournamentUpdateException;
-import com.gg.server.domain.tournament.type.TournamentRound;
-import com.gg.server.domain.tournament.type.TournamentStatus;
-import com.gg.server.domain.tournament.type.TournamentType;
-import com.gg.server.domain.tournament.type.TournamentUserStatus;
-import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.domain.user.dto.UserImageDto;

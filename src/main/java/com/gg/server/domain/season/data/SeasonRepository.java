@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.gg.server.data.game.Season;
+
 public interface SeasonRepository extends JpaRepository<Season, Long> {
 	@Query("select s from Season s where s.startTime <= :now and s.endTime >= :now")
 	Optional<Season> findCurrentSeason(@Param("now") LocalDateTime now);

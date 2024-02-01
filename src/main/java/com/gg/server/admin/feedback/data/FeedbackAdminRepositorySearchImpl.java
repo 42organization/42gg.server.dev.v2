@@ -8,7 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
-import com.gg.server.domain.feedback.data.Feedback;
+import com.gg.server.data.manage.Feedback;
 
 import lombok.RequiredArgsConstructor;
 

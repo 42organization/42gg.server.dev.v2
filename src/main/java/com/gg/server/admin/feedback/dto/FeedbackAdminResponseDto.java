@@ -2,8 +2,8 @@ package com.gg.server.admin.feedback.dto;
 
 import java.time.LocalDateTime;
 
-import com.gg.server.domain.feedback.data.Feedback;
-import com.gg.server.domain.feedback.type.FeedbackType;
+import com.gg.server.data.manage.Feedback;
+import com.gg.server.data.manage.type.FeedbackType;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -9,9 +9,14 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gg.server.data.store.Megaphone;
+import com.gg.server.data.store.Receipt;
+import com.gg.server.data.store.redis.MegaphoneRedis;
+import com.gg.server.data.store.type.ItemStatus;
+import com.gg.server.data.store.type.ItemType;
+import com.gg.server.data.user.User;
+import com.gg.server.data.user.type.RoleType;
 import com.gg.server.domain.item.service.ItemService;
-import com.gg.server.domain.item.type.ItemType;
-import com.gg.server.domain.megaphone.data.Megaphone;
 import com.gg.server.domain.megaphone.data.MegaphoneRepository;
 import com.gg.server.domain.megaphone.dto.MegaphoneDetailResponseDto;
 import com.gg.server.domain.megaphone.dto.MegaphoneTodayListResponseDto;
@@ -19,18 +24,13 @@ import com.gg.server.domain.megaphone.dto.MegaphoneUseRequestDto;
 import com.gg.server.domain.megaphone.exception.MegaphoneContentException;
 import com.gg.server.domain.megaphone.exception.MegaphoneNotFoundException;
 import com.gg.server.domain.megaphone.exception.MegaphoneTimeException;
-import com.gg.server.domain.megaphone.redis.MegaphoneRedis;
 import com.gg.server.domain.megaphone.redis.MegaphoneRedisRepository;
-import com.gg.server.domain.receipt.data.Receipt;
 import com.gg.server.domain.receipt.data.ReceiptRepository;
 import com.gg.server.domain.receipt.exception.ItemStatusException;
 import com.gg.server.domain.receipt.exception.ReceiptNotFoundException;
-import com.gg.server.domain.receipt.type.ItemStatus;
-import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.domain.user.exception.UserNotFoundException;
-import com.gg.server.domain.user.type.RoleType;
 
 import lombok.RequiredArgsConstructor;
 

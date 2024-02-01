@@ -11,8 +11,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import com.gg.server.domain.game.data.Game;
-import com.gg.server.domain.game.type.Mode;
+import com.gg.server.data.game.Game;
+import com.gg.server.data.game.type.Mode;
 import com.gg.server.domain.slotmanagement.SlotManagement;
 import com.gg.server.utils.annotation.UnitTest;
 

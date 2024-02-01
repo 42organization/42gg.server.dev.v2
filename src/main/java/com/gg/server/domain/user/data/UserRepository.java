@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.gg.server.data.user.User;
 import com.gg.server.domain.rank.dto.ExpRankV2Dto;
 
 public interface UserRepository extends JpaRepository<User, Long> {

@@ -3,7 +3,7 @@ package com.gg.server.domain.announcement.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gg.server.domain.announcement.data.Announcement;
+import com.gg.server.data.manage.Announcement;
 import com.gg.server.domain.announcement.data.AnnouncementRepository;
 import com.gg.server.domain.announcement.dto.AnnouncementDto;
 import com.gg.server.domain.announcement.exception.AnnounceNotFoundException;

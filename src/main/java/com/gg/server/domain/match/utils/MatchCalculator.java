@@ -3,9 +3,9 @@ package com.gg.server.domain.match.utils;
 import java.util.List;
 import java.util.Optional;
 
-import com.gg.server.domain.match.data.RedisMatchUser;
-import com.gg.server.domain.match.type.Option;
-import com.gg.server.domain.match.type.SlotStatus;
+import com.gg.server.data.match.RedisMatchUser;
+import com.gg.server.data.match.type.Option;
+import com.gg.server.data.match.type.SlotStatus;
 
 public class MatchCalculator {
 	private final Integer pppGap;

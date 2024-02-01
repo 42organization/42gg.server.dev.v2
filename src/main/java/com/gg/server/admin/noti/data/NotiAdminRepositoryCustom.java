@@ -4,7 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
 
-import com.gg.server.domain.noti.data.Noti;
+import com.gg.server.data.noti.Noti;
 
 public interface NotiAdminRepositoryCustom {
 

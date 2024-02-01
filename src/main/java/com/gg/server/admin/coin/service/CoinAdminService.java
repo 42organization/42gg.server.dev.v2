@@ -4,9 +4,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gg.server.admin.coin.dto.CoinUpdateRequestDto;
-import com.gg.server.domain.coin.data.CoinHistory;
+import com.gg.server.data.store.CoinHistory;
+import com.gg.server.data.user.User;
 import com.gg.server.domain.coin.service.CoinHistoryService;
-import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 

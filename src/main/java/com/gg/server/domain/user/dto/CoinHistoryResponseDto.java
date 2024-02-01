@@ -2,7 +2,7 @@ package com.gg.server.domain.user.dto;
 
 import java.time.LocalDateTime;
 
-import com.gg.server.domain.coin.data.CoinHistory;
+import com.gg.server.data.store.CoinHistory;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

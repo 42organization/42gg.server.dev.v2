@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.gg.server.domain.item.data.Item;
+import com.gg.server.data.store.Item;
 import com.gg.server.global.utils.ItemImageHandler;
 
 @Component

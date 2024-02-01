@@ -14,8 +14,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import com.gg.server.domain.tournament.type.TournamentStatus;
-import com.gg.server.domain.user.data.User;
+import com.gg.server.data.game.Tournament;
+import com.gg.server.data.game.TournamentGame;
+import com.gg.server.data.game.TournamentUser;
+import com.gg.server.data.game.type.TournamentStatus;
+import com.gg.server.data.game.type.TournamentType;
+import com.gg.server.data.user.User;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.BusinessException;
 import com.gg.server.utils.annotation.UnitTest;
@@ -39,7 +43,8 @@ class TournamentUnitTest {
 			.collect(Collectors.toCollection(ArrayList::new));
 
 		tournaments = IntStream.range(0, 10)
-			.mapToObj(i -> new Tournament())
+			.mapToObj(i -> new Tournament("", "", LocalDateTime.now(), LocalDateTime.now(),
+				TournamentType.MASTER, TournamentStatus.END))
 			.collect(Collectors.toCollection(ArrayList::new));
 	}
 

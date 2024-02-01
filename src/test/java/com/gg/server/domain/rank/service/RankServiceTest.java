@@ -17,15 +17,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
+import com.gg.server.data.game.Season;
+import com.gg.server.data.user.User;
 import com.gg.server.domain.rank.data.RankRepository;
 import com.gg.server.domain.rank.dto.ExpRankPageResponseDto;
 import com.gg.server.domain.rank.dto.ExpRankV2Dto;
 import com.gg.server.domain.rank.dto.RankPageResponseDto;
 import com.gg.server.domain.rank.dto.RankV2Dto;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
-import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.service.SeasonFindService;
-import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
 

@@ -3,7 +3,7 @@ package com.gg.server.domain.match.dto;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.gg.server.domain.match.type.SlotStatus;
+import com.gg.server.data.match.type.SlotStatus;
 
 import lombok.AccessLevel;
 import lombok.Getter;

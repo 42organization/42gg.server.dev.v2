@@ -1,6 +1,6 @@
 package com.gg.server.domain.game.dto.request;
 
-import com.gg.server.domain.game.type.StatusType;
+import com.gg.server.data.game.type.StatusType;
 
 import lombok.Getter;
 

@@ -14,10 +14,11 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.gg.server.data.game.Game;
+import com.gg.server.data.game.type.Mode;
+import com.gg.server.data.game.type.StatusType;
 import com.gg.server.domain.game.dto.GameTeamUser;
 import com.gg.server.domain.game.dto.GameTeamUserInfo;
-import com.gg.server.domain.game.type.Mode;
-import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.team.dto.GameUser;
 
 public interface GameRepository extends JpaRepository<Game, Long>, GameRepositoryCustom {

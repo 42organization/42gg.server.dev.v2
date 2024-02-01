@@ -8,7 +8,11 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.gg.server.domain.user.data.User;
+import com.gg.server.data.game.Tournament;
+import com.gg.server.data.game.TournamentUser;
+import com.gg.server.data.game.type.TournamentStatus;
+import com.gg.server.data.game.type.TournamentType;
+import com.gg.server.data.user.User;
 import com.gg.server.utils.annotation.UnitTest;
 
 @UnitTest
@@ -26,7 +30,8 @@ public class TournamentUserUnitTest {
 		void deleteSuccess() {
 			//given
 			user = Mockito.mock(User.class);
-			tournament = new Tournament();
+			tournament = new Tournament("", "", LocalDateTime.now(), LocalDateTime.now(),
+				TournamentType.MASTER, TournamentStatus.END);
 			tournamentUser = new TournamentUser(user, tournament, false, LocalDateTime.now());
 
 			//when
@@ -44,7 +49,7 @@ public class TournamentUserUnitTest {
 		@DisplayName("참가 정보 업데이트 성공")
 		void updateSuccess() {
 			//given
-			tournamentUser = new TournamentUser();
+			tournamentUser = new TournamentUser(null, null, false, LocalDateTime.now());
 			boolean isjoined = true;
 
 			//when
