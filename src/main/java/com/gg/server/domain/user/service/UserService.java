@@ -29,6 +29,8 @@ import com.gg.server.domain.pchange.data.PChange;
 import com.gg.server.domain.pchange.data.PChangeRepository;
 import com.gg.server.domain.pchange.exception.PChangeNotExistException;
 import com.gg.server.domain.rank.data.Rank;
+import com.gg.server.domain.rank.data.RankRepository;
+import com.gg.server.domain.rank.dto.RankV2Dto;
 import com.gg.server.domain.rank.exception.RankNotFoundException;
 import com.gg.server.domain.rank.exception.RedisDataNotFoundException;
 import com.gg.server.domain.rank.redis.RankRedis;
@@ -97,6 +99,7 @@ public class UserService {
 	private final UserImageRepository userImageRepository;
 	private final ItemService itemService;
 	private final TierRepository tierRepository;
+	private final RankRepository rankRepository;
 
 	/**
 	 * @param intraId
@@ -260,19 +263,17 @@ public class UserService {
 			targetSeason = seasonFindService.findSeasonById(seasonId);
 		}
 		try {
-			String zSetKey = RedisKeyManager.getZSetKey(targetSeason.getId());
-			List<Long> userIds = rankRedisRepository.getUserIdsByRangeFromZSet(zSetKey, 0, 2);
-			List<User> users = userRepository.findUsersByIdIn(userIds);
 			List<UserImageDto> userImages = new ArrayList<>();
-			userIds.forEach(userId -> {
+			List<RankV2Dto> dtos = rankRepository.findPppRankBySeasonId(0, 3, targetSeason.getId());
+			List<User> users = userRepository.findByIntraIdIn(
+				dtos.stream().map(RankV2Dto::getIntraId).collect(Collectors.toList()));
+			for (RankV2Dto dto : dtos) {
 				User user = users.stream()
-					.filter(u -> u.getId().equals(userId))
+					.filter(u -> u.getIntraId().equals(dto.getIntraId()))
 					.findFirst()
 					.orElseThrow(UserNotFoundException::new);
-				Tier tier = rankFindService.findByUserIdAndSeasonId(user.getId(), targetSeason.getId()).getTier();
-				userImages.add(
-					new UserImageDto(user.getIntraId(), user.getImageUri(), user.getEdge(), tier.getImageUri()));
-			});
+				userImages.add(new UserImageDto(user.getIntraId(), user.getImageUri(), user.getEdge(), dto.getTierImageUri()));
+			}
 			return new UserImageResponseDto(userImages);
 		} catch (RedisDataNotFoundException ex) {
 			return new UserImageResponseDto(new ArrayList<>());
