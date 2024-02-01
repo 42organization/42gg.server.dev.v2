@@ -49,7 +49,9 @@ public class TournamentUserUnitTest {
 		@DisplayName("참가 정보 업데이트 성공")
 		void updateSuccess() {
 			//given
-			tournamentUser = new TournamentUser(null, null, false, LocalDateTime.now());
+			tournamentUser = new TournamentUser(null,
+				new Tournament("", "", LocalDateTime.now(), LocalDateTime.now(), null, null),
+				false, LocalDateTime.now());
 			boolean isjoined = true;
 
 			//when
