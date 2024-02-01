@@ -1,4 +1,4 @@
-package com.gg.server.domain.tournament.data;
+package com.gg.server.data.game;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -14,9 +14,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import com.gg.server.data.game.Tournament;
-import com.gg.server.data.game.TournamentGame;
-import com.gg.server.data.game.TournamentUser;
 import com.gg.server.data.game.type.TournamentStatus;
 import com.gg.server.data.game.type.TournamentType;
 import com.gg.server.data.user.User;

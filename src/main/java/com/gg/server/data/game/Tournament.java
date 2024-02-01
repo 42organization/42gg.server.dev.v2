@@ -110,7 +110,7 @@ public class Tournament extends BaseTimeEntity {
 	/**
 	 * TournamentGame 에서 호출하는 연관관계 편의 메서드, 기타 호출 금지.
 	 */
-	public void addTournamentGame(TournamentGame tournamentGame) {
+	protected void addTournamentGame(TournamentGame tournamentGame) {
 		mustNotNull(tournamentGame, NULL_POINT);
 		mustNotExceed(ALLOWED_JOINED_NUMBER - 2, tournamentGames, TOURNAMENT_GAME_EXCEED);
 		mustNotContains(tournamentGame, tournamentGames, TOURNAMENT_GAME_DUPLICATION);
@@ -120,7 +120,7 @@ public class Tournament extends BaseTimeEntity {
 	/**
 	 * TournamentUser 에서 호출하는 연관관계 편의 메서드, 기타 호출 금지.
 	 */
-	public void addTournamentUser(@NotNull TournamentUser tournamentUser) {
+	protected void addTournamentUser(@NotNull TournamentUser tournamentUser) {
 		mustNotNull(tournamentUser, NULL_POINT);
 		mustNotContains(tournamentUser, tournamentUsers, TOURNAMENT_USER_DUPLICATION);
 		this.tournamentUsers.add(tournamentUser);
@@ -129,7 +129,7 @@ public class Tournament extends BaseTimeEntity {
 	/**
 	 * TournamentGame 에서 호출하는 연관관계 편의 메서드, 기타 호출 금지.
 	 */
-	public void deleteTournamentUser(TournamentUser tournamentUser) {
+	protected void deleteTournamentUser(TournamentUser tournamentUser) {
 		mustNotNull(tournamentUser, NULL_POINT);
 		mustContains(tournamentUser, tournamentUsers, TOURNAMENT_USER_NOT_FOUND);
 		this.tournamentUsers.remove(tournamentUser);
