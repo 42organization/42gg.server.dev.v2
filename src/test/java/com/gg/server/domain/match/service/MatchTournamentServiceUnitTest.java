@@ -140,7 +140,8 @@ public class MatchTournamentServiceUnitTest {
 			User user = UserTestUtils.createUser();
 			User enemy = UserTestUtils.createUser();
 			Game finalGame = GameTestUtils.createGame(user, enemy, season, Mode.TOURNAMENT);
-			TournamentGame finalTournamentGame = new TournamentGame(finalGame, tournament, TournamentRound.THE_FINAL);
+			TournamentGame finalTournamentGame = getTournamentGameByRound(tournament, TournamentRound.THE_FINAL).get();
+			finalTournamentGame.updateGame(finalGame);
 			finishTournamentGame(finalTournamentGame);
 			given(tournamentGameRepository.findByGameId(finalGame.getId())).willReturn(
 				Optional.of(finalTournamentGame));
