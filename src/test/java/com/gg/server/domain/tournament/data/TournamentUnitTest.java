@@ -88,7 +88,7 @@ class TournamentUnitTest {
 
 			//then
 			BusinessException businessException = assertThrows(BusinessException.class,
-				() -> tournament.addTournamentGame(mockTournamentGames.get(7)));
+				() -> tournament.addTournamentGame(mockTournamentGames.get(8)));
 			assertEquals(ErrorCode.TOURNAMENT_GAME_EXCEED, businessException.getErrorCode());
 			assertEquals(ErrorCode.TOURNAMENT_GAME_EXCEED.getMessage(), businessException.getMessage());
 		}
