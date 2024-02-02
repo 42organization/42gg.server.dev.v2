@@ -21,17 +21,20 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.gg.server.admin.noti.dto.SendNotiAdminRequestDto;
 import com.gg.server.admin.noti.service.NotiAdminService;
 import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
+import com.gg.server.domain.match.exception.EnrolledSlotException;
 import com.gg.server.domain.match.type.TournamentMatchStatus;
 import com.gg.server.domain.match.utils.GameTestUtils;
 import com.gg.server.domain.match.utils.TournamentTestUtils;
 import com.gg.server.domain.match.utils.UserTestUtils;
 import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.service.SeasonFindService;
+import com.gg.server.domain.slotmanagement.SlotManagement;
 import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
 import com.gg.server.domain.team.data.Team;
 import com.gg.server.domain.tournament.data.Tournament;
@@ -69,7 +72,7 @@ public class MatchTournamentServiceUnitTest {
 	}
 
 	@Nested
-	@DisplayName("8강 경기가 진행중인 토너먼트에서 다음 라운드의 매칭 필요 유무를 확인한다.")
+	@DisplayName("checkTournamentGame() - 8강 경기가 진행중인 토너먼트에서 다음 라운드의 매칭 필요 유무를 확인한다.")
 	class CheckNextRoundTest {
 		private Tournament tournament;
 
@@ -172,12 +175,71 @@ public class MatchTournamentServiceUnitTest {
 	}
 
 	@Nested
-	@DisplayName("토너먼트의 게임 매칭")
+	@DisplayName("matchGames() - 토너먼트의 게임 매칭")
 	class MatchTournamentGameTest {
+		private Tournament tournament;
+		private SlotManagement slotManagement;
+
+		@BeforeEach
+		void init() {
+			tournament = TournamentTestUtils.createTournament(TournamentStatus.LIVE);
+			setFieldWithReflection(tournament, "id", 1L);
+			for (TournamentGame tournamentGame : tournament.getTournamentGames()) {
+				setFieldWithReflection(tournamentGame, "id", tournamentGameId++);
+			}
+			matchTournamentGames(tournament, QUARTER_FINAL, season);
+			List<Game> games = tournament.getTournamentGames().stream()
+				.filter(tournamentGame -> tournamentGame.getTournamentRound().getRoundNumber() == QUARTER_FINAL)
+				.map(TournamentGame::getGame).collect(Collectors.toList());
+			setGameIds(games);
+
+			slotManagement = SlotManagement.builder()
+				.startTime(tournament.getStartTime())
+				.gameInterval(10)
+				.build();
+		}
+
+		@Test
+		@DisplayName("이미 매칭된 8강을 매칭하려고 할 때, EnrolledSlotException 발생")
+		void matchAlreadyMatchedGame() {
+			// given
+			given(tournamentGameRepository.findByTournamentIdAndTournamentRoundIn(
+				tournament.getId(), TournamentRound.getSameRounds(QUARTER_FINAL)))
+				.willReturn(getTournamentGamesByRoundNum(tournament, QUARTER_FINAL));
+
+			// when, then
+			assertThatThrownBy(() -> matchTournamentService.matchGames(tournament, QUARTER_FINAL))
+				.isInstanceOf(EnrolledSlotException.class);
+		}
+
+		@Test
+		@DisplayName("4강 매칭 성공")
+		void matchSuccess() {
+			// given
+			List<TournamentGame> quarterGames = getTournamentGamesByRoundNum(tournament, QUARTER_FINAL);
+			finishTournamentGames(quarterGames);
+			given(seasonFindService.findCurrentSeason(tournament.getStartTime())).willReturn(season);
+			given(slotManagementRepository.findCurrent(tournament.getStartTime())).willReturn(
+				Optional.of(slotManagement));
+			given(tournamentGameRepository.findAllByTournamentId(tournament.getId()))
+				.willReturn(tournament.getTournamentGames());
+
+			// when
+			matchTournamentService.matchGames(tournament, SEMI_FINAL);
+
+			// then
+			verify(gameRepository, times(SEMI_FINAL.getRound() / 2)).save(any(Game.class));
+			verify(notiAdminService, times(SEMI_FINAL.getRound())).sendAnnounceNotiToUser(
+				any(SendNotiAdminRequestDto.class));
+			List<TournamentGame> semiGames = getTournamentGamesByRoundNum(tournament, SEMI_FINAL);
+			for (TournamentGame semiGame : semiGames) {
+				assertThat(semiGame.getGame()).isNotNull();
+			}
+		}
 	}
 
 	@Nested
-	@DisplayName("이전 경기의 결과를 수정하고 결과에 따라 다음 매칭된 경기의 플레이어 수정")
+	@DisplayName("updateMatchedGameUser() - 이전 경기의 결과를 수정하고 결과에 따라 다음 매칭된 경기의 플레이어 수정")
 	class UpdateMatchResultTest {
 	}
 
