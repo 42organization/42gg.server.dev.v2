@@ -85,6 +85,13 @@ public class TournamentGameTestUtils {
 			.orElseThrow(WinningTeamNotFoundException::new);
 	}
 
+	public static Team getLosingTeam(Game game) {
+		return game.getTeams().stream()
+			.filter(team -> Boolean.FALSE.equals(team.getWin()))
+			.findAny()
+			.orElseThrow(WinningTeamNotFoundException::new);
+	}
+
 	private static User findMatchUser(List<TournamentGame> previousTournamentGames, int index, Tournament tournament) {
 		if (previousTournamentGames.isEmpty()) {
 			return tournament.getTournamentUsers().get(index).getUser();

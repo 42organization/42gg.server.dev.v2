@@ -3,10 +3,12 @@ package com.gg.server.domain.match.service;
 import static com.gg.server.domain.match.utils.TournamentGameTestUtils.*;
 import static com.gg.server.domain.tournament.type.RoundNumber.*;
 import static com.gg.server.utils.ReflectionUtilsForUnitTest.*;
-import static org.assertj.core.api.AssertionsForClassTypes.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.BDDMockito.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -28,6 +30,7 @@ import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.match.exception.EnrolledSlotException;
+import com.gg.server.domain.match.exception.WinningTeamNotFoundException;
 import com.gg.server.domain.match.type.TournamentMatchStatus;
 import com.gg.server.domain.match.utils.GameTestUtils;
 import com.gg.server.domain.match.utils.TournamentTestUtils;
@@ -213,7 +216,7 @@ public class MatchTournamentServiceUnitTest {
 		}
 
 		@Test
-		@DisplayName("4강 매칭 성공")
+		@DisplayName("4강 매칭 성공 후 noti 전송 및 게임 저장 확인")
 		void matchSuccess() {
 			// given
 			List<TournamentGame> quarterGames = getTournamentGamesByRoundNum(tournament, QUARTER_FINAL);
@@ -239,8 +242,66 @@ public class MatchTournamentServiceUnitTest {
 	}
 
 	@Nested
-	@DisplayName("updateMatchedGameUser() - 이전 경기의 결과를 수정하고 결과에 따라 다음 매칭된 경기의 플레이어 수정")
+	@DisplayName("updateMatchedGameUser() - 이전 경기 8강의 수정된 결과에 따라 다음 매칭된 4강 경기의 플레이어 수정")
 	class UpdateMatchResultTest {
+		private Tournament tournament;
+
+		@BeforeEach
+		void init() {
+			tournament = TournamentTestUtils.createTournament(TournamentStatus.LIVE);
+			setFieldWithReflection(tournament, "id", 1L);
+			for (TournamentGame tournamentGame : tournament.getTournamentGames()) {
+				setFieldWithReflection(tournamentGame, "id", tournamentGameId++);
+			}
+			matchTournamentGames(tournament, QUARTER_FINAL, season);
+			List<Game> games = tournament.getTournamentGames().stream()
+				.filter(tournamentGame -> tournamentGame.getTournamentRound().getRoundNumber() == QUARTER_FINAL)
+				.map(TournamentGame::getGame).collect(Collectors.toList());
+			setGameIds(games);
+		}
+
+		@Test
+		@DisplayName("이전 경기 8강의 결과가 없는 경우, WinningTeamNotFoundException 발생")
+		void updateMatchResultWithoutWinner() {
+			// given
+			Game game = getTournamentGameByRound(tournament, TournamentRound.QUARTER_FINAL_1).get().getGame();
+
+			// when, then
+			Game nextMatchedGame = getTournamentGameByRound(tournament, TournamentRound.SEMI_FINAL_1).get().getGame();
+			assertThatThrownBy(() -> matchTournamentService.updateMatchedGameUser(game, nextMatchedGame))
+				.isInstanceOf(WinningTeamNotFoundException.class);
+		}
+
+		@Test
+		@DisplayName("이미 매칭된 4강 경기의 플레이어를 성공적으로 업데이트")
+		void success() {
+			// given
+			finishTournamentGames(getTournamentGamesByRoundNum(tournament, QUARTER_FINAL));
+			matchTournamentGames(tournament, SEMI_FINAL, season);
+			List<Game> semiGames = tournament.getTournamentGames().stream()
+				.filter(tournamentGame -> tournamentGame.getTournamentRound().getRoundNumber() == SEMI_FINAL)
+				.map(TournamentGame::getGame).collect(Collectors.toList());
+			setGameIds(semiGames);
+			Game modifiedGame = getTournamentGameByRound(tournament, TournamentRound.QUARTER_FINAL_1).get().getGame();
+			Game nextMatchedGame = getTournamentGameByRound(tournament, TournamentRound.SEMI_FINAL_1).get().getGame();
+			Team losingTeam = getWinningTeam(modifiedGame);
+			Team winningTeam = getLosingTeam(modifiedGame);
+			losingTeam.updateScore(1, false);
+			winningTeam.updateScore(2, true);
+
+			// when
+			matchTournamentService.updateMatchedGameUser(modifiedGame, nextMatchedGame);
+
+			// then
+			List<User> nextGameUsers = new ArrayList<>();
+			nextGameUsers.add(nextMatchedGame.getTeams().get(0).getTeamUsers().get(0).getUser());
+			nextGameUsers.add(nextMatchedGame.getTeams().get(1).getTeamUsers().get(0).getUser());
+
+			assertThat(nextGameUsers.contains(winningTeam.getTeamUsers().get(0).getUser())).isTrue();
+			assertThat(nextGameUsers.contains(losingTeam.getTeamUsers().get(0).getUser())).isFalse();
+			verify(notiAdminService, times(2)).sendAnnounceNotiToUser(
+				any(SendNotiAdminRequestDto.class));
+		}
 	}
 
 	private void finishTournamentGame(TournamentGame tournamentGame) {
