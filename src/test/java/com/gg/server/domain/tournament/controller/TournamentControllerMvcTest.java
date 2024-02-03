@@ -52,7 +52,7 @@ class TournamentControllerMvcTest {
 
 	@Nested
 	@DisplayName("getAllTournamentList")
-	class getAllTournamentList {
+	class GetAllTournamentList {
 
 		@DisplayName("페이지번호가 1보다 작을 경우 에러 발생")
 		@ParameterizedTest()
@@ -97,7 +97,7 @@ class TournamentControllerMvcTest {
 
 	@Nested
 	@DisplayName("getUserStatusInTournament")
-	class getUserStatusInTournament {
+	class GetUserStatusInTournament {
 		@DisplayName("Success")
 		@Test
 		void success() {
@@ -118,7 +118,7 @@ class TournamentControllerMvcTest {
 
 	@Nested
 	@DisplayName("getTournnament")
-	class getTournnament {
+	class GetTournnament {
 		@DisplayName("id가 양수가 아닐경우 에러 발생")
 		@ParameterizedTest()
 		@ValueSource(longs = {-1, 0})
@@ -146,7 +146,7 @@ class TournamentControllerMvcTest {
 
 	@Nested
 	@DisplayName("cancelTournamentUserRegistration")
-	class cancelTournamentUserRegistration {
+	class CancelTournamentUserRegistration {
 
 		@DisplayName("Success")
 		@Test
@@ -168,7 +168,7 @@ class TournamentControllerMvcTest {
 
 	@Nested
 	@DisplayName("getTournamentGames")
-	class getTournamentGames {
+	class GetTournamentGames {
 		@DisplayName("id가 양수가 아닐경우 에러 발생")
 		@ParameterizedTest()
 		@ValueSource(longs = {-1, 0})
@@ -196,7 +196,7 @@ class TournamentControllerMvcTest {
 
 	@Nested
 	@DisplayName("registerTournamentUser")
-	class registerTournamentUser {
+	class RegisterTournamentUser {
 
 		@DisplayName("Success")
 		@Test
