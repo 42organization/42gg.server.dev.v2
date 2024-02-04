@@ -27,6 +27,10 @@ public class SeasonAdminService {
 	private final RankRedisAdminService rankRedisAdminService;
 	private final RankAdminService rankAdminService;
 
+	/**
+	 * <p>모든 시즌을 찾아서 반환해주는 메서드입니다.</p>
+	 * @return
+	 */
 	public List<SeasonAdminDto> findAllSeasons() {
 		List<Season> seasons = seasonAdminRepository.findAllByOrderByStartTimeDesc();
 		List<SeasonAdminDto> dtoList = new ArrayList<>();
@@ -37,6 +41,11 @@ public class SeasonAdminService {
 		return dtoList;
 	}
 
+	/**
+	 * <p>현재 시간보다 이후의 시간에 시작하는 새로운 시즌을 추가한다.</p>
+	 * <p>새로운 시즌을 예약하는 메서드이다. 예약 중인 시즌이 여러개일 수 도 있다.</p>
+	 * @param createDto dto
+	 */
 	@Transactional
 	public void createSeason(SeasonCreateRequestDto createDto) {
 		Season newSeason = new Season(createDto);
@@ -46,81 +55,83 @@ public class SeasonAdminService {
 
 		checkSeasonAtDB();
 
-		Long seasonId = newSeason.getId();
-		SeasonAdminDto seasonAdminDto = findSeasonById(seasonId);
-
-		if (LocalDateTime.now().isBefore(seasonAdminDto.getStartTime())) {
-			rankAdminService.addAllUserRankByNewSeason(seasonAdminDto);
-			rankRedisAdminService.addAllUserRankByNewSeason(seasonAdminDto);
-		}
+		SeasonAdminDto seasonAdminDto = new SeasonAdminDto(newSeason);
+		rankAdminService.addAllUserRankByNewSeason(seasonAdminDto);
+		rankRedisAdminService.addAllUserRankByNewSeason(seasonAdminDto);
 	}
 
+	/**
+	 * <p>타겟 시즌을 찾는 메서드입니다.</p>
+	 * @param seasonId 타겟 시즌 아이디
+	 * @return
+	 */
 	@Transactional
 	public SeasonAdminDto findSeasonById(Long seasonId) {
-		Season season = seasonAdminRepository.findById(seasonId).orElseThrow(() -> new SeasonNotFoundException());
+		Season season = seasonAdminRepository.findById(seasonId).orElseThrow(SeasonNotFoundException::new);
 
 		return new SeasonAdminDto(season);
 	}
 
+	/**
+	 * <p>예약된 시즌을 삭제한다.</p>
+	 * @param seasonId 타겟 예약 시즌 아이디
+	 */
 	@Transactional
 	public void deleteSeason(Long seasonId) {
-		SeasonAdminDto seasonDto = findSeasonById(seasonId);
-
-		Season season = seasonAdminRepository.findById(seasonDto.getSeasonId())
-			.orElseThrow(() -> new SeasonNotFoundException());
+		Season season = seasonAdminRepository.findById(seasonId).orElseThrow(SeasonNotFoundException::new);
 		detach(season);
-
-		if (LocalDateTime.now().isBefore(seasonDto.getStartTime())) {
-			rankAdminService.deleteAllUserRankBySeason(seasonDto);
-			rankRedisAdminService.deleteSeasonRankBySeasonId(seasonDto.getSeasonId());
-			seasonAdminRepository.delete(season);
-		}
+		SeasonAdminDto seasonDto = new SeasonAdminDto(season);
+		rankAdminService.deleteAllUserRankBySeason(seasonDto);
+		rankRedisAdminService.deleteSeasonRankBySeasonId(seasonId);
+		seasonAdminRepository.delete(season);
 		checkSeasonAtDB();
 	}
 
+	/**
+	 * <p>예약된 시즌을 정보를 수정합니다.</p>
+	 * <p>현재 시즌은 수정 버튼이 있지만 구현이 안되어 있어서 에러가 발생함. -> 추후 수정해야함</p>
+	 * @param seasonId
+	 * @param updateDto
+	 */
 	@Transactional
 	public void updateSeason(Long seasonId, SeasonUpdateRequestDto updateDto) {
-		Season season = seasonAdminRepository.findById(seasonId)
-			.orElseThrow(() -> new SeasonNotFoundException());
+		Season season = seasonAdminRepository.findById(seasonId).orElseThrow(SeasonNotFoundException::new);
 
 		if (LocalDateTime.now().isAfter(season.getStartTime())) {
 			throw new SeasonForbiddenException();
 		}
+		// 예약 시즌 수정
+		detach(season);
+		season.setSeasonName(updateDto.getSeasonName());
+		season.setStartTime(updateDto.getStartTime());
+		season.setStartPpp(updateDto.getStartPpp());
+		season.setPppGap(updateDto.getPppGap());
+		insert(season);
+		seasonAdminRepository.save(season);
+		checkSeasonAtDB();
 
-		if (LocalDateTime.now().isBefore(season.getStartTime())) {
-			detach(season);
-			season.setSeasonName(updateDto.getSeasonName());
-			season.setStartTime(updateDto.getStartTime());
-			season.setStartPpp(updateDto.getStartPpp());
-			season.setPppGap(updateDto.getPppGap());
-			insert(season);
-			seasonAdminRepository.save(season);
-			checkSeasonAtDB();
-		}
+		SeasonAdminDto seasonAdminDto = new SeasonAdminDto(season);
+		rankAdminService.deleteAllUserRankBySeason(seasonAdminDto);
+		rankAdminService.addAllUserRankByNewSeason(seasonAdminDto);
+		rankRedisAdminService.deleteSeasonRankBySeasonId(seasonAdminDto.getSeasonId());
+		rankRedisAdminService.addAllUserRankByNewSeason(seasonAdminDto);
 
-		SeasonAdminDto seasonAdminDto = findSeasonById(seasonId);
-		if (LocalDateTime.now().isBefore(seasonAdminDto.getStartTime())) {
-			rankAdminService.deleteAllUserRankBySeason(seasonAdminDto);
-			rankAdminService.addAllUserRankByNewSeason(seasonAdminDto);
-			rankRedisAdminService.deleteSeasonRankBySeasonId(seasonAdminDto.getSeasonId());
-			rankRedisAdminService.addAllUserRankByNewSeason(seasonAdminDto);
-		}
 	}
 
+	/**
+	 * <p>추가 하고자하는 season이 현재 시간부터 24시간 후가 아니면 에러</p>
+	 * @param season
+	 */
 	private void insert(Season season) {
-		List<Season> beforeSeasons = seasonAdminRepository.findBeforeSeasons(season.getStartTime());
-		Season beforeSeason;
-		if (beforeSeasons.isEmpty()) {
-			beforeSeason = null;
-		} else {
-			beforeSeason = beforeSeasons.get(0).getId() != season.getId() ? beforeSeasons.get(0) : beforeSeasons.get(1);
-		}
-		List<Season> afterSeasons = seasonAdminRepository.findAfterSeasons(season.getStartTime());
-		Season afterSeason = afterSeasons.isEmpty() ? null : afterSeasons.get(0);
-
 		if (LocalDateTime.now().plusHours(24).isAfter(season.getStartTime())) {
 			throw new SeasonTimeBeforeException();
 		}
+
+		List<Season> beforeSeasons = seasonAdminRepository.findBeforeSeasons(season.getStartTime());
+		Season beforeSeason = beforeSeasons.isEmpty() ? null : beforeSeasons.get(0);
+		List<Season> afterSeasons = seasonAdminRepository.findAfterSeasons(season.getStartTime());
+		Season afterSeason = afterSeasons.isEmpty() ? null : afterSeasons.get(0);
+
 		if (beforeSeason != null) {
 			if (beforeSeason.getStartTime().plusDays(1).isAfter(season.getStartTime())) {
 				throw new SeasonForbiddenException();
@@ -134,36 +145,50 @@ public class SeasonAdminService {
 		}
 	}
 
+	/**
+	 * <p>타겟 시즌의 앞뒤 시즌끼리 이어주는 메서드이다</p>
+	 * @param season
+	 */
 	private void detach(Season season) {
+		// 이미 해당 시즌 중간 || 이전 시즌
+		if ((LocalDateTime.now().isAfter(season.getStartTime()) && LocalDateTime.now().isBefore(season.getEndTime()))
+			|| season.getEndTime().isBefore(LocalDateTime.now())) {
+			throw new SeasonForbiddenException();
+		}
+
 		List<Season> beforeSeasons = seasonAdminRepository.findBeforeSeasons(season.getStartTime());
 		Season beforeSeason = beforeSeasons.isEmpty() ? null : beforeSeasons.get(0);
 		List<Season> afterSeasons = seasonAdminRepository.findAfterSeasons(season.getStartTime());
 		Season afterSeason = afterSeasons.isEmpty() ? null : afterSeasons.get(0);
 
-		if ((LocalDateTime.now().isAfter(season.getStartTime()) && LocalDateTime.now().isBefore(season.getEndTime()))
-			|| season.getEndTime().isBefore(LocalDateTime.now())) {
-			throw new SeasonForbiddenException();
-		}
 		if (beforeSeason != null) {
 			if (afterSeason != null) {
 				beforeSeason.setEndTime(afterSeason.getStartTime().minusSeconds(1));
 			} else {
-				beforeSeason.setEndTime(LocalDateTime.of(9999, 12, 31, 23, 59, 59));
+				beforeSeason.setEndTime(
+					LocalDateTime.of(9999, 12, 31, 23, 59, 59));
 			}
 		}
 	}
 
+	/**
+	 * <p>시즌들의 시작, 종료 시간 체크 메서드이다</p>
+	 */
 	private void checkSeasonAtDB() {
-		List<Season> seasons = seasonAdminRepository.findAll();
-		for (int i = 0; i < seasons.size(); i++) {
-			for (int j = i + 1; j < seasons.size(); j++) {
-				if (isOverlap(seasons.get(i), seasons.get(j))) {
-					throw new SeasonForbiddenException();
-				}
+		List<Season> seasons = seasonAdminRepository.findAllByOrderByStartTimeAsc();
+		for (int i = 1; i < seasons.size(); i++) {
+			if (isOverlap(seasons.get(i - 1), seasons.get(i))) {
+				throw new SeasonForbiddenException();
 			}
 		}
 	}
 
+	/**
+	 * <p>시즌끼리의 겹치는 기간이 있는지 판별하느 메서드 입니다.</p>
+	 * @param season1
+	 * @param season2
+	 * @return
+	 */
 	private boolean isOverlap(Season season1, Season season2) {
 		LocalDateTime start1 = season1.getStartTime();
 		LocalDateTime end1 = season1.getEndTime();
