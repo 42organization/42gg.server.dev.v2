@@ -45,34 +45,20 @@ public class TierService {
 
 		for (int i = 0; i < rankList.size(); i++) {
 			Rank rank = rankList.get(i);
-			if (rank.getWins() == 0 && rank.getLosses() == 0) {
+			if (!rank.isParticipated()) {
 				rank.updateTier(tierList.get(0));
+			} else if (i < 3) {
+				rank.updateTier(tierList.get(6));
+			} else if (rank.getPpp() < 970) {
+				rank.updateTier(tierList.get(1));
+			} else if (rank.getPpp() < 1010) {
+				rank.updateTier(tierList.get(2));
+			} else if (rank.getPpp() < 1050 || rank.getPpp() < top30percentPpp) {
+				rank.updateTier(tierList.get(3));
+			} else if (rank.getPpp() < top10percentPpp) {
+				rank.updateTier(tierList.get(4));
 			} else {
-				if (i < 3) {
-					rank.updateTier(tierList.get(6));
-					continue;
-				}
-				if (rank.getPpp() < 970) {
-					// 970 미만
-					rank.updateTier(tierList.get(1));
-				} else if (rank.getPpp() < 1010) {
-					// 970 - 1009
-					rank.updateTier(tierList.get(2));
-				} else if (rank.getPpp() < 1050) {
-					// 1010 - 1049
-					rank.updateTier(tierList.get(3));
-				} else if (rank.getPpp() >= 1050) {
-					if (rank.getPpp() >= top30percentPpp && rank.getPpp() < top10percentPpp) {
-						// 1050 이상, 30% 이상, 10% 미만
-						rank.updateTier(tierList.get(4));
-					} else if (rank.getPpp() >= top10percentPpp) {
-						// 1050 이상, 10% 이상
-						rank.updateTier(tierList.get(5));
-					} else {
-						// 1050 이상, 30% 미만
-						rank.updateTier(tierList.get(3));
-					}
-				}
+				rank.updateTier(tierList.get(5));
 			}
 		}
 	}

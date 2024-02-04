@@ -107,4 +107,8 @@ public class Rank extends BaseTimeEntity implements Serializable {
 	public void updateTier(Tier tier) {
 		this.tier = tier;
 	}
+
+	public boolean isParticipated() {
+		return wins + losses > 0;
+	}
 }
