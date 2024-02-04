@@ -99,16 +99,13 @@ public class NotiService {
 	public String getMessage(Noti noti) {
 		String message;
 		if (noti.getType() != NotiType.ANNOUNCE) {
-			message = notiMsg(noti.getType());
+			message =
+				"🧚: \"새로운 알림이 도착했핑.\"\n" + "🧚: \"" + noti.getType().getMessage() + "\"\n\n 🏓42GG와 함께하는 행복한 탁구생활🏓"
+					+ "\n$$지금 즉시 접속$$ ----> https://42gg.kr";
 		} else {
 			message = "🧚: \"새로운 알림이 도착했핑.\"\n" + "🧚: \"" + noti.getType().getMessage() + "\"\n\n공지사항: "
 				+ noti.getMessage() + "\n\n 🏓42GG와 함께하는 행복한 탁구생활🏓" + "\n$$지금 즉시 접속$$ ----> https://42gg.kr";
 		}
 		return message;
-	}
-
-	public String notiMsg(NotiType notiType) {
-		return "🧚: \"새로운 알림이 도착했핑.\"\n" + "🧚: \"" + notiType.getMessage() + "\"\n\n 🏓42GG와 함께하는 행복한 탁구생활🏓"
-			+ "\n$$지금 즉시 접속$$ ----> https://42gg.kr";
 	}
 }
