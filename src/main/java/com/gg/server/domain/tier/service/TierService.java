@@ -20,6 +20,20 @@ public class TierService {
 	private final TierRepository tierRepository;
 	private final RankRepository rankRepository;
 
+	/**
+	 * 해당 시즌 랭킹의 티어를 모두 업데이트한다.
+	 * <p>
+	 *     참여한적 없으면 0번 티어. <br/>
+	 *     ppp 970 미만 1번 티어. <br/>
+	 *     ppp 1010 미만 2번 티어. <br/>
+	 *     ppp 1050 미만 3번 티어. <br/>
+	 *     ppp 상위 30프로 미만 4번 티어. <br/>
+	 *     ppp 상위 10프로 미만 5번 티어. <br/>
+	 *     최상위 3명 6번티어.
+	 * <p/>
+	 *
+	 * @param season
+	 */
 	@Transactional
 	public void updateAllTier(Season season) {
 		List<Rank> rankList = rankRepository.findAllBySeasonIdOrderByPppDesc(season.getId());
