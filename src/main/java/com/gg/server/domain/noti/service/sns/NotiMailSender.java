@@ -24,6 +24,12 @@ public class NotiMailSender {
 	private final AsyncMailSender asyncMailSender;
 	private final NotiService notiService;
 
+	/**
+	 * 알림을 전송합니다.
+	 * UserNotiDto 이용
+	 * @param user 유저
+	 * @param noti 알림
+	 */
 	public void send(UserNotiDto user, Noti noti) {
 		MimeMessage message = javaMailSender.createMimeMessage();
 		MimeMessageHelper helper = new MimeMessageHelper(message);
@@ -39,6 +45,12 @@ public class NotiMailSender {
 		asyncMailSender.send(message);
 	}
 
+	/**
+	 * 알림을 전송합니다.
+	 * UserDto 이용
+	 * @param user 유저
+	 * @param noti 알림
+	 */
 	public void send(UserDto user, Noti noti) {
 		MimeMessage message = javaMailSender.createMimeMessage();
 		MimeMessageHelper helper = new MimeMessageHelper(message);
