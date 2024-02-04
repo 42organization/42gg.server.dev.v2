@@ -260,7 +260,7 @@ public class TournamentService {
 					nextTournamentGame));
 		}
 		tournamentGameResDtoList.sort(comparing(TournamentGameResDto::getTournamentRound,
-			comparing(TournamentRound::getRoundNumber).thenComparing(TournamentRound::getRoundOrder)));
+			comparing(TournamentRound::getRoundNumber).reversed().thenComparing(TournamentRound::getRoundOrder)));
 
 		return tournamentGameResDtoList;
 	}
