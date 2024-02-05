@@ -1,5 +1,20 @@
 package com.gg.server.domain.noti.service.sns;
 
+import static com.gg.server.domain.noti.service.sns.SlackbotUtils.*;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+
+import com.gg.server.data.noti.Noti;
 import com.gg.server.domain.noti.dto.UserNotiDto;
 import com.gg.server.domain.noti.exception.SlackSendException;
 import com.gg.server.domain.noti.service.NotiService;
@@ -9,23 +24,6 @@ import com.gg.server.global.utils.external.ApiUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-
-import static com.gg.server.domain.noti.service.sns.SlackbotUtils.*;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-
-import com.gg.server.data.noti.Noti;
 
 @Component
 @Slf4j
@@ -46,7 +44,8 @@ public class SlackbotService {
 		MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
 		parameters.add("email", userEmail);
 
-		SlackUserInfoResponse res = apiUtil.apiCall(userIdGetUrl, SlackUserInfoResponse.class, headers, parameters, HttpMethod.POST);
+		SlackUserInfoResponse res = apiUtil.apiCall(userIdGetUrl, SlackUserInfoResponse.class,
+			headers, parameters, HttpMethod.POST);
 		return res.user.id;
 	}
 
@@ -96,7 +95,7 @@ public class SlackbotService {
 		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
 		Map<String, String> map = new HashMap<>();
-		map.put("channel",slackChannelId);
+		map.put("channel", slackChannelId);
 		map.put("text", message);
 		apiUtil.apiCall(sendMessageUrl, String.class, httpHeaders, map, HttpMethod.POST);
 	}
@@ -119,7 +118,7 @@ public class SlackbotService {
 		private SlackUser user;
 
 		@Getter
-		static class SlackUser{
+		static class SlackUser {
 			private String id;
 		}
 	}
