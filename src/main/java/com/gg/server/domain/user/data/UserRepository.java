@@ -16,6 +16,8 @@ import com.gg.server.domain.rank.dto.ExpRankV2Dto;
 public interface UserRepository extends JpaRepository<User, Long> {
 	Optional<User> findByIntraId(String intraId);
 
+	List<User> findByIntraIdIn(List<String> intraIds);
+
 	Optional<User> getUserByIntraId(String intraId);
 
 	Page<User> findByIntraIdContains(Pageable pageable, String intraId);
