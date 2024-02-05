@@ -2,7 +2,7 @@ package com.gg.server.domain.rank.service;
 
 import org.springframework.stereotype.Service;
 
-import com.gg.server.domain.rank.data.Rank;
+import com.gg.server.data.game.Rank;
 import com.gg.server.domain.rank.data.RankRepository;
 import com.gg.server.domain.rank.exception.RankNotFoundException;
 

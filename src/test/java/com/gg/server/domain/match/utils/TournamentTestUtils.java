@@ -2,12 +2,12 @@ package com.gg.server.domain.match.utils;
 
 import java.time.LocalDateTime;
 
-import com.gg.server.domain.tournament.data.Tournament;
-import com.gg.server.domain.tournament.data.TournamentGame;
-import com.gg.server.domain.tournament.data.TournamentUser;
-import com.gg.server.domain.tournament.type.TournamentRound;
-import com.gg.server.domain.tournament.type.TournamentStatus;
-import com.gg.server.domain.tournament.type.TournamentType;
+import com.gg.server.data.game.Tournament;
+import com.gg.server.data.game.TournamentGame;
+import com.gg.server.data.game.TournamentUser;
+import com.gg.server.data.game.type.TournamentRound;
+import com.gg.server.data.game.type.TournamentStatus;
+import com.gg.server.data.game.type.TournamentType;
 
 public class TournamentTestUtils {
 	/**

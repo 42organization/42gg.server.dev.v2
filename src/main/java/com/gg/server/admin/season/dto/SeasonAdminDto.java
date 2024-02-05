@@ -3,7 +3,7 @@ package com.gg.server.admin.season.dto;
 import java.time.LocalDateTime;
 
 import com.gg.server.admin.season.type.SeasonStatus;
-import com.gg.server.domain.season.data.Season;
+import com.gg.server.data.game.Season;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

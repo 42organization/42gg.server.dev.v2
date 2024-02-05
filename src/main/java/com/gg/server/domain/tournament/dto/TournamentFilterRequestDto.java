@@ -1,7 +1,7 @@
 package com.gg.server.domain.tournament.dto;
 
-import com.gg.server.domain.tournament.type.TournamentStatus;
-import com.gg.server.domain.tournament.type.TournamentType;
+import com.gg.server.data.game.type.TournamentStatus;
+import com.gg.server.data.game.type.TournamentType;
 import com.gg.server.global.dto.PageRequestDto;
 
 import lombok.Getter;

@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.gg.server.data.game.Rank;
 import com.gg.server.domain.rank.dto.RankV2Dto;
 
 @Repository

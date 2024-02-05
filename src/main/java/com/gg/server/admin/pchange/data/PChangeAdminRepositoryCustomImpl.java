@@ -5,7 +5,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 
-import com.gg.server.domain.pchange.data.PChange;
+import com.gg.server.data.game.PChange;
 
 import lombok.RequiredArgsConstructor;
 

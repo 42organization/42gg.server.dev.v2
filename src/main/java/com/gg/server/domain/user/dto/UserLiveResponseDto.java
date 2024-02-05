@@ -1,6 +1,6 @@
 package com.gg.server.domain.user.dto;
 
-import com.gg.server.domain.game.type.Mode;
+import com.gg.server.data.game.type.Mode;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

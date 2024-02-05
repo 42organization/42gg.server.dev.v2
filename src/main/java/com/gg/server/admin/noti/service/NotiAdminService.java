@@ -10,10 +10,10 @@ import com.gg.server.admin.noti.dto.NotiAdminDto;
 import com.gg.server.admin.noti.dto.NotiListAdminResponseDto;
 import com.gg.server.admin.noti.dto.SendNotiAdminRequestDto;
 import com.gg.server.admin.user.data.UserAdminRepository;
-import com.gg.server.domain.noti.data.Noti;
+import com.gg.server.data.noti.Noti;
+import com.gg.server.data.noti.type.NotiType;
+import com.gg.server.data.user.User;
 import com.gg.server.domain.noti.service.SnsNotiService;
-import com.gg.server.domain.noti.type.NotiType;
-import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 

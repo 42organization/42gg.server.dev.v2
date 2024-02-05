@@ -2,10 +2,10 @@ package com.gg.server.domain.tournament.dto;
 
 import java.time.LocalDateTime;
 
-import com.gg.server.domain.tournament.data.Tournament;
-import com.gg.server.domain.tournament.data.TournamentUser;
-import com.gg.server.domain.tournament.type.TournamentStatus;
-import com.gg.server.domain.tournament.type.TournamentType;
+import com.gg.server.data.game.Tournament;
+import com.gg.server.data.game.TournamentUser;
+import com.gg.server.data.game.type.TournamentStatus;
+import com.gg.server.data.game.type.TournamentType;
 import com.gg.server.domain.user.dto.UserImageDto;
 
 import lombok.AllArgsConstructor;

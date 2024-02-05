@@ -12,7 +12,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.gg.server.admin.penalty.type.PenaltyKey;
-import com.gg.server.domain.penalty.redis.RedisPenaltyUser;
+import com.gg.server.data.manage.redis.RedisPenaltyUser;
 
 import lombok.RequiredArgsConstructor;
 

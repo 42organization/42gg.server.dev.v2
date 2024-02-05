@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gg.server.data.game.type.Mode;
 import com.gg.server.domain.game.dto.GameListResDto;
 import com.gg.server.domain.game.dto.GamePChangeResultResDto;
 import com.gg.server.domain.game.dto.GameTeamInfo;
@@ -28,7 +29,6 @@ import com.gg.server.domain.game.dto.request.TournamentResultReqDto;
 import com.gg.server.domain.game.exception.ScoreNotMatchedException;
 import com.gg.server.domain.game.service.GameFindService;
 import com.gg.server.domain.game.service.GameService;
-import com.gg.server.domain.game.type.Mode;
 import com.gg.server.domain.rank.redis.RankRedisService;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.exception.ErrorCode;

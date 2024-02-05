@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.gg.server.domain.team.data.TeamUser;
-import com.gg.server.domain.user.data.User;
+import com.gg.server.data.game.TeamUser;
+import com.gg.server.data.user.User;
 
 public interface TeamUserAdminRepository extends JpaRepository<TeamUser, Long> {
 	@Query("SELECT tu.user FROM TeamUser tu WHERE tu.team.id = :teamId")

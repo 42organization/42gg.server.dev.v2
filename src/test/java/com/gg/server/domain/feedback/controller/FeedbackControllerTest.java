@@ -14,10 +14,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gg.server.domain.feedback.data.Feedback;
+import com.gg.server.data.manage.Feedback;
+import com.gg.server.data.manage.type.FeedbackType;
 import com.gg.server.domain.feedback.data.FeedbackRepository;
 import com.gg.server.domain.feedback.dto.FeedbackRequestDto;
-import com.gg.server.domain.feedback.type.FeedbackType;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import com.gg.server.utils.annotation.IntegrationTest;

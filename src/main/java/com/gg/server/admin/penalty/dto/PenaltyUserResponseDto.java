@@ -2,8 +2,8 @@ package com.gg.server.admin.penalty.dto;
 
 import java.time.LocalDateTime;
 
-import com.gg.server.domain.penalty.data.Penalty;
-import com.gg.server.domain.penalty.redis.RedisPenaltyUser;
+import com.gg.server.data.manage.Penalty;
+import com.gg.server.data.manage.redis.RedisPenaltyUser;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

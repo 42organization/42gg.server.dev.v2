@@ -8,12 +8,12 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gg.server.domain.noti.data.Noti;
+import com.gg.server.data.noti.Noti;
+import com.gg.server.data.noti.type.NotiType;
+import com.gg.server.data.user.User;
 import com.gg.server.domain.noti.data.NotiRepository;
 import com.gg.server.domain.noti.dto.NotiDto;
 import com.gg.server.domain.noti.dto.NotiResponseDto;
-import com.gg.server.domain.noti.type.NotiType;
-import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.domain.user.exception.UserNotFoundException;

@@ -1,6 +1,6 @@
 package com.gg.server.domain.match.service;
 
-import static com.gg.server.domain.tournament.type.RoundNumber.*;
+import static com.gg.server.data.game.type.RoundNumber.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -21,22 +21,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gg.server.admin.noti.dto.SendNotiAdminRequestDto;
 import com.gg.server.admin.noti.service.NotiAdminService;
-import com.gg.server.domain.game.data.Game;
+import com.gg.server.data.game.Game;
+import com.gg.server.data.game.Team;
+import com.gg.server.data.game.Tournament;
+import com.gg.server.data.game.TournamentGame;
+import com.gg.server.data.game.type.RoundNumber;
+import com.gg.server.data.game.type.StatusType;
+import com.gg.server.data.game.type.TournamentRound;
+import com.gg.server.data.game.type.TournamentStatus;
+import com.gg.server.data.match.type.TournamentMatchStatus;
+import com.gg.server.data.user.User;
 import com.gg.server.domain.game.data.GameRepository;
-import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.match.exception.EnrolledSlotException;
 import com.gg.server.domain.match.exception.SlotNotFoundException;
 import com.gg.server.domain.match.exception.WinningTeamNotFoundException;
-import com.gg.server.domain.match.type.TournamentMatchStatus;
 import com.gg.server.domain.match.utils.MatchIntegrationTestUtils;
 import com.gg.server.domain.match.utils.TournamentGameTestUtils;
 import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
-import com.gg.server.domain.team.data.Team;
-import com.gg.server.domain.tournament.data.Tournament;
-import com.gg.server.domain.tournament.data.TournamentGame;
-import com.gg.server.domain.tournament.type.TournamentRound;
-import com.gg.server.domain.tournament.type.TournamentStatus;
-import com.gg.server.domain.user.data.User;
 import com.gg.server.utils.TestDataUtils;
 import com.gg.server.utils.annotation.IntegrationTest;
 
@@ -74,10 +75,10 @@ public class MatchTournamentServiceTest {
 		@DisplayName("8강 경기 매칭 성공")
 		public void quarterTest() {
 			// when
-			matchTournamentService.matchGames(tournament, QUARTER_FINAL);
+			matchTournamentService.matchGames(tournament, RoundNumber.QUARTER_FINAL);
 
 			// then
-			List<TournamentRound> quarterRounds = TournamentRound.getSameRounds(QUARTER_FINAL);
+			List<TournamentRound> quarterRounds = TournamentRound.getSameRounds(RoundNumber.QUARTER_FINAL);
 			List<TournamentGame> quarterRoundGames = allTournamentGames.stream()
 				.filter(o -> quarterRounds.contains(o.getTournamentRound()))
 				.sorted(Comparator.comparing(TournamentGame::getTournamentRound))

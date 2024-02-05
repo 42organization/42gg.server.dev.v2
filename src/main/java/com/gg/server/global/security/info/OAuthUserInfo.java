@@ -2,7 +2,7 @@ package com.gg.server.global.security.info;
 
 import java.util.Map;
 
-import com.gg.server.domain.user.type.RoleType;
+import com.gg.server.data.user.type.RoleType;
 
 public abstract class OAuthUserInfo {
 	protected Map<String, Object> attributes;

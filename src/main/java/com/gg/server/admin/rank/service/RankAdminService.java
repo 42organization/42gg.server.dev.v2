@@ -1,6 +1,6 @@
 package com.gg.server.admin.rank.service;
 
-import static com.gg.server.domain.user.type.RoleType.*;
+import static com.gg.server.data.user.type.RoleType.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -11,16 +11,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gg.server.admin.season.dto.SeasonAdminDto;
 import com.gg.server.admin.user.data.UserAdminRepository;
-import com.gg.server.domain.rank.data.Rank;
+import com.gg.server.data.game.Rank;
+import com.gg.server.data.game.Season;
+import com.gg.server.data.game.Tier;
+import com.gg.server.data.user.User;
 import com.gg.server.domain.rank.data.RankRepository;
-import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.data.SeasonRepository;
 import com.gg.server.domain.season.exception.SeasonForbiddenException;
 import com.gg.server.domain.season.exception.SeasonTimeBeforeException;
-import com.gg.server.domain.tier.data.Tier;
 import com.gg.server.domain.tier.data.TierRepository;
 import com.gg.server.domain.tier.exception.TierNotFoundException;
-import com.gg.server.domain.user.data.User;
 
 import lombok.AllArgsConstructor;
 

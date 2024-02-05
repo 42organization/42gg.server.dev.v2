@@ -2,7 +2,7 @@ package com.gg.server.admin.item.dto;
 
 import java.time.LocalDateTime;
 
-import com.gg.server.domain.item.data.Item;
+import com.gg.server.data.store.Item;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

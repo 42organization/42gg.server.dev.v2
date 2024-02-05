@@ -7,18 +7,18 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.gg.server.domain.game.data.Game;
-import com.gg.server.domain.game.type.Mode;
-import com.gg.server.domain.game.type.StatusType;
+import com.gg.server.data.game.Game;
+import com.gg.server.data.game.Season;
+import com.gg.server.data.game.Team;
+import com.gg.server.data.game.TeamUser;
+import com.gg.server.data.game.Tournament;
+import com.gg.server.data.game.TournamentGame;
+import com.gg.server.data.game.type.Mode;
+import com.gg.server.data.game.type.RoundNumber;
+import com.gg.server.data.game.type.StatusType;
+import com.gg.server.data.game.type.TournamentRound;
+import com.gg.server.data.user.User;
 import com.gg.server.domain.match.exception.WinningTeamNotFoundException;
-import com.gg.server.domain.season.data.Season;
-import com.gg.server.domain.team.data.Team;
-import com.gg.server.domain.team.data.TeamUser;
-import com.gg.server.domain.tournament.data.Tournament;
-import com.gg.server.domain.tournament.data.TournamentGame;
-import com.gg.server.domain.tournament.type.RoundNumber;
-import com.gg.server.domain.tournament.type.TournamentRound;
-import com.gg.server.domain.user.data.User;
 
 public class TournamentGameTestUtils {
 

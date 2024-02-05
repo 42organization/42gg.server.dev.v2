@@ -1,9 +1,9 @@
 package com.gg.server.domain.tournament.dto;
 
+import com.gg.server.data.game.TournamentGame;
+import com.gg.server.data.game.type.TournamentRound;
 import com.gg.server.domain.game.dto.GameResultResDto;
 import com.gg.server.domain.game.dto.GameTeamUser;
-import com.gg.server.domain.tournament.data.TournamentGame;
-import com.gg.server.domain.tournament.type.TournamentRound;
 
 import lombok.AccessLevel;
 import lombok.Getter;

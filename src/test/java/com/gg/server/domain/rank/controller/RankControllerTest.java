@@ -18,14 +18,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gg.server.data.game.Season;
+import com.gg.server.data.user.User;
 import com.gg.server.domain.rank.dto.ExpRankPageResponseDto;
 import com.gg.server.domain.rank.dto.RankDto;
 import com.gg.server.domain.rank.dto.RankPageResponseDto;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.service.RedisUploadService;
-import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.data.SeasonRepository;
-import com.gg.server.domain.user.data.User;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import com.gg.server.utils.annotation.IntegrationTest;

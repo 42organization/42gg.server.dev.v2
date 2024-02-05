@@ -3,8 +3,8 @@ package com.gg.server.admin.noti.dto;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import com.gg.server.domain.noti.data.Noti;
-import com.gg.server.domain.noti.type.NotiType;
+import com.gg.server.data.noti.Noti;
+import com.gg.server.data.noti.type.NotiType;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

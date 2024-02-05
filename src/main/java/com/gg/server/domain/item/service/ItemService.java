@@ -9,8 +9,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gg.server.data.store.Item;
+import com.gg.server.data.store.Receipt;
+import com.gg.server.data.store.type.ItemStatus;
+import com.gg.server.data.store.type.ItemType;
+import com.gg.server.data.user.User;
+import com.gg.server.data.user.type.RoleType;
 import com.gg.server.domain.coin.service.UserCoinChangeService;
-import com.gg.server.domain.item.data.Item;
 import com.gg.server.domain.item.data.ItemRepository;
 import com.gg.server.domain.item.data.UserItemRepository;
 import com.gg.server.domain.item.dto.ItemStoreListResponseDto;
@@ -22,18 +27,13 @@ import com.gg.server.domain.item.exception.ItemNotPurchasableException;
 import com.gg.server.domain.item.exception.ItemTypeException;
 import com.gg.server.domain.item.exception.KakaoGiftException;
 import com.gg.server.domain.item.exception.KakaoPurchaseException;
-import com.gg.server.domain.item.type.ItemType;
 import com.gg.server.domain.noti.service.NotiService;
-import com.gg.server.domain.receipt.data.Receipt;
 import com.gg.server.domain.receipt.data.ReceiptRepository;
 import com.gg.server.domain.receipt.exception.ItemStatusException;
 import com.gg.server.domain.receipt.exception.ReceiptNotOwnerException;
-import com.gg.server.domain.receipt.type.ItemStatus;
-import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.domain.user.exception.UserNotFoundException;
-import com.gg.server.domain.user.type.RoleType;
 
 import lombok.RequiredArgsConstructor;
 

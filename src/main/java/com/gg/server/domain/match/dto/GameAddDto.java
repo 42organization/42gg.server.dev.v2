@@ -3,9 +3,9 @@ package com.gg.server.domain.match.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.gg.server.domain.game.type.Mode;
-import com.gg.server.domain.match.data.RedisMatchUser;
-import com.gg.server.domain.season.data.Season;
+import com.gg.server.data.game.Season;
+import com.gg.server.data.game.type.Mode;
+import com.gg.server.data.match.RedisMatchUser;
 
 import lombok.AccessLevel;
 import lombok.Getter;

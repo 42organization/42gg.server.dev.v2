@@ -5,7 +5,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gg.server.domain.user.data.User;
+import com.gg.server.data.user.User;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.domain.user.service.UserFindService;
 import com.gg.server.global.security.UserPrincipal;

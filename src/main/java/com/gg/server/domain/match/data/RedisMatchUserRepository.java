@@ -10,9 +10,10 @@ import java.util.stream.Collectors;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.gg.server.data.match.RedisMatchTime;
+import com.gg.server.data.match.type.MatchKey;
+import com.gg.server.data.match.type.Option;
 import com.gg.server.domain.match.exception.PastSlotException;
-import com.gg.server.domain.match.type.MatchKey;
-import com.gg.server.domain.match.type.Option;
 
 import lombok.RequiredArgsConstructor;
 

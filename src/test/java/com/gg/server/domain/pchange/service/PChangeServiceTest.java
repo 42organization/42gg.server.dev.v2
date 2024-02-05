@@ -14,14 +14,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.gg.server.domain.game.data.Game;
-import com.gg.server.domain.pchange.data.PChange;
+import com.gg.server.data.game.Game;
+import com.gg.server.data.game.PChange;
+import com.gg.server.data.user.User;
+import com.gg.server.data.user.type.RacketType;
+import com.gg.server.data.user.type.RoleType;
+import com.gg.server.data.user.type.SnsType;
 import com.gg.server.domain.pchange.data.PChangeRepository;
 import com.gg.server.domain.pchange.exception.PChangeNotExistException;
-import com.gg.server.domain.user.data.User;
-import com.gg.server.domain.user.type.RacketType;
-import com.gg.server.domain.user.type.RoleType;
-import com.gg.server.domain.user.type.SnsType;
 import com.gg.server.utils.ReflectionUtilsForUnitTest;
 import com.gg.server.utils.annotation.UnitTest;
 

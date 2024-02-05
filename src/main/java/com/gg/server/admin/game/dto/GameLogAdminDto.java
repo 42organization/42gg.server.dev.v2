@@ -3,8 +3,8 @@ package com.gg.server.admin.game.dto;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
+import com.gg.server.data.game.type.StatusType;
 import com.gg.server.domain.game.dto.GameTeamUser;
-import com.gg.server.domain.game.type.StatusType;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.gg.server.domain.user.data.User;
+import com.gg.server.data.user.User;
 
 public interface UserAdminRepository extends JpaRepository<User, Long> {
 	Optional<User> findByIntraId(String intraId);

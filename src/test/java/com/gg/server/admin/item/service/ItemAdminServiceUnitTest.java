@@ -23,13 +23,13 @@ import org.springframework.web.multipart.MultipartFile;
 import com.gg.server.admin.item.data.ItemAdminRepository;
 import com.gg.server.admin.item.dto.ItemUpdateRequestDto;
 import com.gg.server.admin.item.exception.ItemNotFoundException;
-import com.gg.server.domain.item.data.Item;
+import com.gg.server.data.store.Item;
+import com.gg.server.data.user.User;
+import com.gg.server.data.user.type.RacketType;
+import com.gg.server.data.user.type.RoleType;
+import com.gg.server.data.user.type.SnsType;
 import com.gg.server.domain.item.exception.ItemNotAvailableException;
-import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.dto.UserDto;
-import com.gg.server.domain.user.type.RacketType;
-import com.gg.server.domain.user.type.RoleType;
-import com.gg.server.domain.user.type.SnsType;
 import com.gg.server.global.utils.aws.AsyncNewItemImageUploader;
 import com.gg.server.utils.annotation.UnitTest;
 

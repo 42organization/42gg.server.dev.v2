@@ -1,8 +1,7 @@
 package com.gg.server.domain.match.service;
 
-import static com.gg.server.domain.match.utils.GameTestUtils.createNormalGame;
-import static com.gg.server.domain.match.utils.UserTestUtils.createGuestUser;
-import static com.gg.server.domain.match.utils.UserTestUtils.createUser;
+import static com.gg.server.domain.match.utils.GameTestUtils.*;
+import static com.gg.server.domain.match.utils.UserTestUtils.*;
 import static com.gg.server.utils.ReflectionUtilsForUnitTest.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
@@ -22,27 +21,26 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.gg.server.domain.game.data.Game;
+import com.gg.server.data.game.Game;
+import com.gg.server.data.game.Season;
+import com.gg.server.data.game.Tier;
+import com.gg.server.data.game.redis.RankRedis;
+import com.gg.server.data.game.type.StatusType;
+import com.gg.server.data.match.RedisMatchTime;
+import com.gg.server.data.match.type.Option;
+import com.gg.server.data.user.User;
 import com.gg.server.domain.game.data.GameRepository;
-import com.gg.server.domain.game.type.StatusType;
-import com.gg.server.domain.match.data.RedisMatchTime;
 import com.gg.server.domain.match.data.RedisMatchTimeRepository;
 import com.gg.server.domain.match.data.RedisMatchUserRepository;
-import com.gg.server.domain.match.type.Option;
 import com.gg.server.domain.match.utils.SlotGenerator;
-import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
-import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.service.SeasonFindService;
 import com.gg.server.domain.slotmanagement.SlotManagement;
 import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
-import com.gg.server.domain.tier.data.Tier;
 import com.gg.server.domain.tier.data.TierRepository;
-import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
-import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.utils.annotation.UnitTest;
 
 @UnitTest

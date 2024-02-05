@@ -10,7 +10,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.gg.server.domain.user.data.User;
+import com.gg.server.data.store.CoinHistory;
+import com.gg.server.data.user.User;
 
 public interface CoinHistoryRepository extends JpaRepository<CoinHistory, Long> {
 	@Query("SELECT CASE WHEN COUNT(ch) > 0 THEN true ELSE false END FROM CoinHistory ch "

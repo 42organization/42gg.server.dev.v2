@@ -19,7 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import com.gg.server.admin.feedback.data.FeedbackAdminRepository;
-import com.gg.server.domain.feedback.data.Feedback;
+import com.gg.server.data.manage.Feedback;
 import com.gg.server.domain.feedback.exception.FeedbackNotFoundException;
 import com.gg.server.utils.annotation.UnitTest;
 

@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gg.server.admin.feedback.data.FeedbackAdminRepository;
 import com.gg.server.admin.feedback.dto.FeedbackAdminResponseDto;
 import com.gg.server.admin.feedback.dto.FeedbackListAdminResponseDto;
-import com.gg.server.domain.feedback.data.Feedback;
+import com.gg.server.data.manage.Feedback;
 import com.gg.server.domain.feedback.exception.FeedbackNotFoundException;
 
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,7 @@
 package com.gg.server.domain.match.service;
 
+import static com.gg.server.data.game.type.RoundNumber.*;
 import static com.gg.server.domain.match.utils.TournamentGameTestUtils.*;
-import static com.gg.server.domain.tournament.type.RoundNumber.*;
 import static com.gg.server.utils.ReflectionUtilsForUnitTest.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -25,28 +25,28 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.gg.server.admin.noti.dto.SendNotiAdminRequestDto;
 import com.gg.server.admin.noti.service.NotiAdminService;
-import com.gg.server.domain.game.data.Game;
+import com.gg.server.data.game.Game;
+import com.gg.server.data.game.Season;
+import com.gg.server.data.game.Team;
+import com.gg.server.data.game.Tournament;
+import com.gg.server.data.game.TournamentGame;
+import com.gg.server.data.game.type.Mode;
+import com.gg.server.data.game.type.RoundNumber;
+import com.gg.server.data.game.type.StatusType;
+import com.gg.server.data.game.type.TournamentRound;
+import com.gg.server.data.game.type.TournamentStatus;
+import com.gg.server.data.match.type.TournamentMatchStatus;
+import com.gg.server.data.user.User;
 import com.gg.server.domain.game.data.GameRepository;
-import com.gg.server.domain.game.type.Mode;
-import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.match.exception.EnrolledSlotException;
 import com.gg.server.domain.match.exception.WinningTeamNotFoundException;
-import com.gg.server.domain.match.type.TournamentMatchStatus;
 import com.gg.server.domain.match.utils.GameTestUtils;
 import com.gg.server.domain.match.utils.TournamentTestUtils;
 import com.gg.server.domain.match.utils.UserTestUtils;
-import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.service.SeasonFindService;
 import com.gg.server.domain.slotmanagement.SlotManagement;
 import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
-import com.gg.server.domain.team.data.Team;
-import com.gg.server.domain.tournament.data.Tournament;
-import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentGameRepository;
-import com.gg.server.domain.tournament.type.RoundNumber;
-import com.gg.server.domain.tournament.type.TournamentRound;
-import com.gg.server.domain.tournament.type.TournamentStatus;
-import com.gg.server.domain.user.data.User;
 import com.gg.server.utils.annotation.UnitTest;
 
 @UnitTest

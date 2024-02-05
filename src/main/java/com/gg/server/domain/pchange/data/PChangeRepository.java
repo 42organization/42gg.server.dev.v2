@@ -7,7 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.gg.server.domain.game.type.Mode;
+import com.gg.server.data.game.PChange;
+import com.gg.server.data.game.type.Mode;
 
 public interface PChangeRepository extends JpaRepository<PChange, Long>, PChangeRepositoryCustom {
 

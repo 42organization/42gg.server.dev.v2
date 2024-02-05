@@ -15,8 +15,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gg.server.domain.game.type.Mode;
-import com.gg.server.domain.season.data.Season;
+import com.gg.server.data.game.Season;
+import com.gg.server.data.game.type.Mode;
 import com.gg.server.domain.season.data.SeasonRepository;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;

@@ -6,14 +6,14 @@ import java.time.LocalDateTime;
 import org.springframework.stereotype.Component;
 
 import com.gg.server.admin.item.dto.ItemUpdateRequestDto;
-import com.gg.server.domain.item.data.Item;
+import com.gg.server.data.store.Item;
+import com.gg.server.data.store.Megaphone;
+import com.gg.server.data.store.Receipt;
+import com.gg.server.data.store.type.ItemStatus;
+import com.gg.server.data.user.User;
 import com.gg.server.domain.item.data.ItemRepository;
-import com.gg.server.domain.megaphone.data.Megaphone;
 import com.gg.server.domain.megaphone.data.MegaphoneRepository;
-import com.gg.server.domain.receipt.data.Receipt;
 import com.gg.server.domain.receipt.data.ReceiptRepository;
-import com.gg.server.domain.receipt.type.ItemStatus;
-import com.gg.server.domain.user.data.User;
 
 import lombok.AllArgsConstructor;
 

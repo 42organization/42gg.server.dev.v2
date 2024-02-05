@@ -5,11 +5,11 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gg.server.domain.game.data.Game;
-import com.gg.server.domain.pchange.data.PChange;
+import com.gg.server.data.game.Game;
+import com.gg.server.data.game.PChange;
+import com.gg.server.data.user.User;
 import com.gg.server.domain.pchange.data.PChangeRepository;
 import com.gg.server.domain.pchange.exception.PChangeNotExistException;
-import com.gg.server.domain.user.data.User;
 
 import lombok.RequiredArgsConstructor;
 

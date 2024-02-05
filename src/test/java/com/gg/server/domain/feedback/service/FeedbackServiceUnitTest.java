@@ -13,10 +13,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.gg.server.domain.feedback.data.Feedback;
+import com.gg.server.data.manage.Feedback;
+import com.gg.server.data.user.User;
 import com.gg.server.domain.feedback.data.FeedbackRepository;
 import com.gg.server.domain.feedback.dto.FeedbackRequestDto;
-import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.utils.annotation.UnitTest;

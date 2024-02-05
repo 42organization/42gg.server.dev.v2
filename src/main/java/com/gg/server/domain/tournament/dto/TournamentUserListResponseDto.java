@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import com.gg.server.domain.tournament.data.TournamentUser;
+import com.gg.server.data.game.TournamentUser;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

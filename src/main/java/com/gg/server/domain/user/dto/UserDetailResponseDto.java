@@ -1,10 +1,10 @@
 package com.gg.server.domain.user.dto;
 
-import com.gg.server.domain.tier.data.Tier;
-import com.gg.server.domain.user.data.User;
-import com.gg.server.domain.user.type.BackgroundType;
-import com.gg.server.domain.user.type.EdgeType;
-import com.gg.server.domain.user.type.SnsType;
+import com.gg.server.data.game.Tier;
+import com.gg.server.data.user.User;
+import com.gg.server.data.user.type.BackgroundType;
+import com.gg.server.data.user.type.EdgeType;
+import com.gg.server.data.user.type.SnsType;
 import com.gg.server.global.utils.ExpLevelCalculator;
 
 import lombok.AccessLevel;

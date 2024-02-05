@@ -5,12 +5,12 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.gg.server.domain.penalty.data.Penalty;
+import com.gg.server.data.manage.Penalty;
+import com.gg.server.data.manage.redis.RedisPenaltyUser;
+import com.gg.server.data.user.User;
 import com.gg.server.domain.penalty.data.PenaltyRepository;
 import com.gg.server.domain.penalty.redis.PenaltyUserRedisRepository;
-import com.gg.server.domain.penalty.redis.RedisPenaltyUser;
 import com.gg.server.domain.penalty.type.PenaltyType;
-import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.domain.user.service.UserFindService;
 

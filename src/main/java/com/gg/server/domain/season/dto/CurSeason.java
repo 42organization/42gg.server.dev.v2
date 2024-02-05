@@ -2,7 +2,7 @@ package com.gg.server.domain.season.dto;
 
 import java.time.LocalDateTime;
 
-import com.gg.server.domain.season.data.Season;
+import com.gg.server.data.game.Season;
 
 import lombok.Getter;
 

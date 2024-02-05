@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.gg.server.domain.feedback.data.Feedback;
+import com.gg.server.data.manage.Feedback;
 
 public interface FeedbackAdminRepository extends JpaRepository<Feedback, Long> {
 	@Query(value = "select f from Feedback f join fetch f.user "

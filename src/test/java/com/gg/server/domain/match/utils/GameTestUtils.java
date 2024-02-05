@@ -2,13 +2,13 @@ package com.gg.server.domain.match.utils;
 
 import java.time.LocalDateTime;
 
-import com.gg.server.domain.game.data.Game;
-import com.gg.server.domain.game.type.Mode;
-import com.gg.server.domain.game.type.StatusType;
-import com.gg.server.domain.season.data.Season;
-import com.gg.server.domain.team.data.Team;
-import com.gg.server.domain.team.data.TeamUser;
-import com.gg.server.domain.user.data.User;
+import com.gg.server.data.game.Game;
+import com.gg.server.data.game.Season;
+import com.gg.server.data.game.Team;
+import com.gg.server.data.game.TeamUser;
+import com.gg.server.data.game.type.Mode;
+import com.gg.server.data.game.type.StatusType;
+import com.gg.server.data.user.User;
 
 public class GameTestUtils {
 	public static Game createGame(User user, User enemy, Season season, Mode mode) {

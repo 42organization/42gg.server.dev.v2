@@ -1,7 +1,7 @@
 package com.gg.server.admin.user.dto;
 
-import com.gg.server.domain.user.data.User;
-import com.gg.server.domain.user.type.RoleType;
+import com.gg.server.data.user.User;
+import com.gg.server.data.user.type.RoleType;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
