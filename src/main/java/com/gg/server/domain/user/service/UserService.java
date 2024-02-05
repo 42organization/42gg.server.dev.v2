@@ -41,10 +41,8 @@ import com.gg.server.domain.match.data.RedisMatchUserRepository;
 import com.gg.server.domain.noti.data.NotiRepository;
 import com.gg.server.domain.pchange.data.PChangeRepository;
 import com.gg.server.domain.pchange.exception.PChangeNotExistException;
-
 import com.gg.server.domain.rank.data.RankRepository;
 import com.gg.server.domain.rank.dto.RankV2Dto;
-
 import com.gg.server.domain.rank.exception.RankNotFoundException;
 import com.gg.server.domain.rank.exception.RedisDataNotFoundException;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
