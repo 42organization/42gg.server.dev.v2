@@ -33,35 +33,22 @@ public class AnnouncementAdminService {
 
 	@Transactional
 	public void addAnnouncement(AnnouncementAdminAddDto addDto) {
-		if (findAnnouncementExist() == true) {
+		Announcement announcement = announcementAdminRepository.findFirstByOrderByIdDesc()
+			.orElseThrow(AnnounceNotFoundException::new);
+		if (announcement.getDeletedAt() == null) {
 			throw new AnnounceDupException();
 		}
 
-		Announcement announcementAdmin = Announcement.from(addDto);
-
-		announcementAdminRepository.save(announcementAdmin);
+		announcementAdminRepository.save(Announcement.from(addDto));
 	}
 
 	@Transactional
 	public void modifyAnnouncementIsDel(String deleterIntraId) {
-		if (findAnnouncementExist() == false) {
+		Announcement announcement = announcementAdminRepository.findFirstByOrderByIdDesc()
+			.orElseThrow(AnnounceNotFoundException::new);
+		if (announcement.getDeletedAt() != null) {
 			throw new AnnounceNotFoundException();
 		}
-
-		Announcement announcement = announcementAdminRepository.findFirstByOrderByIdDesc()
-			.orElseThrow(() -> new AnnounceNotFoundException());
 		announcement.update(deleterIntraId, LocalDateTime.now());
 	}
-
-	private Boolean findAnnouncementExist() {
-		Announcement announcement = announcementAdminRepository.findFirstByOrderByIdDesc()
-			.orElseThrow(() -> new AnnounceNotFoundException());
-
-		if (announcement.getDeletedAt() == null) {
-			return true;
-		}
-
-		return false;
-	}
-
 }
