@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.gg.server.domain.season.data.Season;
+import com.gg.server.data.game.Season;
 
 public interface SeasonAdminRepository extends JpaRepository<Season, Long> {
 	/* 입력시간과 모드로 입력시간 이후 가장 가까운 시즌 가져오기 */

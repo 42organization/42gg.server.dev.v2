@@ -6,16 +6,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import com.gg.server.domain.game.data.Game;
-import com.gg.server.domain.game.type.Mode;
-import com.gg.server.domain.match.data.RedisMatchTime;
-import com.gg.server.domain.match.data.RedisMatchUser;
+import com.gg.server.data.game.Game;
+import com.gg.server.data.game.Season;
+import com.gg.server.data.game.redis.RankRedis;
+import com.gg.server.data.game.type.Mode;
+import com.gg.server.data.match.RedisMatchTime;
+import com.gg.server.data.match.RedisMatchUser;
+import com.gg.server.data.match.type.Option;
+import com.gg.server.data.match.type.SlotStatus;
 import com.gg.server.domain.match.dto.SlotStatusDto;
 import com.gg.server.domain.match.dto.SlotStatusResponseListDto;
-import com.gg.server.domain.match.type.Option;
-import com.gg.server.domain.match.type.SlotStatus;
-import com.gg.server.domain.rank.redis.RankRedis;
-import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.slotmanagement.SlotManagement;
 
 import lombok.Getter;

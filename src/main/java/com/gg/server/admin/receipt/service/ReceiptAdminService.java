@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gg.server.admin.receipt.data.ReceiptAdminRepository;
 import com.gg.server.admin.receipt.dto.ReceiptListResponseDto;
 import com.gg.server.admin.receipt.dto.ReceiptResponseDto;
-import com.gg.server.domain.receipt.data.Receipt;
+import com.gg.server.data.store.Receipt;
 
 import lombok.RequiredArgsConstructor;
 

@@ -6,10 +6,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gg.server.domain.rank.data.Rank;
+import com.gg.server.data.game.Rank;
+import com.gg.server.data.game.Season;
+import com.gg.server.data.game.Tier;
 import com.gg.server.domain.rank.data.RankRepository;
-import com.gg.server.domain.season.data.Season;
-import com.gg.server.domain.tier.data.Tier;
 import com.gg.server.domain.tier.data.TierRepository;
 
 import lombok.RequiredArgsConstructor;

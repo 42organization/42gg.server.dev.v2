@@ -4,9 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.gg.server.domain.game.data.Game;
-import com.gg.server.domain.game.type.Mode;
-import com.gg.server.domain.match.data.RedisMatchTime;
+import com.gg.server.data.game.Game;
+import com.gg.server.data.game.type.Mode;
+import com.gg.server.data.match.RedisMatchTime;
 import com.gg.server.domain.slotmanagement.SlotManagement;
 
 import lombok.AccessLevel;

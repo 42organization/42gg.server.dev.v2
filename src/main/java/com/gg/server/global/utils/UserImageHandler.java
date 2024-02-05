@@ -12,7 +12,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.gg.server.domain.user.data.User;
+import com.gg.server.data.user.User;
 import com.gg.server.domain.user.data.UserImageRepository;
 
 @Component

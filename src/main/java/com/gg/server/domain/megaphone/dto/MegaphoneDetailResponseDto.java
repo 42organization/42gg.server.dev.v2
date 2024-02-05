@@ -1,6 +1,6 @@
 package com.gg.server.domain.megaphone.dto;
 
-import com.gg.server.domain.megaphone.data.Megaphone;
+import com.gg.server.data.store.Megaphone;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

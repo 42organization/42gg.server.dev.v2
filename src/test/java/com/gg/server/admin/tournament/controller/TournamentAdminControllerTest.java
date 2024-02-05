@@ -25,25 +25,25 @@ import com.gg.server.admin.tournament.dto.TournamentAdminCreateRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentGameUpdateRequestDto;
 import com.gg.server.admin.tournament.service.TournamentAdminService;
-import com.gg.server.domain.game.type.Mode;
+import com.gg.server.data.game.Season;
+import com.gg.server.data.game.Tournament;
+import com.gg.server.data.game.TournamentGame;
+import com.gg.server.data.game.TournamentUser;
+import com.gg.server.data.game.type.Mode;
+import com.gg.server.data.game.type.TournamentRound;
+import com.gg.server.data.game.type.TournamentStatus;
+import com.gg.server.data.game.type.TournamentType;
+import com.gg.server.data.user.User;
+import com.gg.server.domain.match.utils.MatchIntegrationTestUtils;
 import com.gg.server.domain.pchange.data.PChangeRepository;
-import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.team.dto.TeamReqDto;
-import com.gg.server.domain.tournament.data.Tournament;
-import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentGameRepository;
 import com.gg.server.domain.tournament.data.TournamentRepository;
-import com.gg.server.domain.tournament.data.TournamentUser;
 import com.gg.server.domain.tournament.data.TournamentUserRepository;
-import com.gg.server.domain.tournament.type.TournamentRound;
-import com.gg.server.domain.tournament.type.TournamentStatus;
-import com.gg.server.domain.tournament.type.TournamentType;
 import com.gg.server.domain.user.controller.dto.GameInfoDto;
-import com.gg.server.domain.user.data.User;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.CustomRuntimeException;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
-import com.gg.server.utils.MatchTestUtils;
 import com.gg.server.utils.TestDataUtils;
 import com.gg.server.utils.annotation.IntegrationTest;
 
@@ -83,7 +83,7 @@ class TournamentAdminControllerTest {
 	PChangeRepository pChangeRepository;
 
 	@Autowired
-	private MatchTestUtils matchTestUtils;
+	private MatchIntegrationTestUtils matchTestUtils;
 
 	@Nested
 	@DisplayName("토너먼트_관리_수정_컨트롤러_테스트")
@@ -994,6 +994,5 @@ class TournamentAdminControllerTest {
 				.andExpect(status().isForbidden())
 				.andReturn().getResponse().getContentAsString();
 		}
-
 	}
 }

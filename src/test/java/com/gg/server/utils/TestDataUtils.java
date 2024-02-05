@@ -11,54 +11,54 @@ import org.springframework.stereotype.Component;
 
 import com.gg.server.admin.tournament.dto.TournamentAdminCreateRequestDto;
 import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
-import com.gg.server.domain.announcement.data.Announcement;
+import com.gg.server.data.game.Game;
+import com.gg.server.data.game.PChange;
+import com.gg.server.data.game.Rank;
+import com.gg.server.data.game.Season;
+import com.gg.server.data.game.Team;
+import com.gg.server.data.game.TeamUser;
+import com.gg.server.data.game.Tier;
+import com.gg.server.data.game.Tournament;
+import com.gg.server.data.game.TournamentGame;
+import com.gg.server.data.game.TournamentUser;
+import com.gg.server.data.game.redis.RankRedis;
+import com.gg.server.data.game.type.Mode;
+import com.gg.server.data.game.type.StatusType;
+import com.gg.server.data.game.type.TournamentRound;
+import com.gg.server.data.game.type.TournamentStatus;
+import com.gg.server.data.game.type.TournamentType;
+import com.gg.server.data.manage.Announcement;
+import com.gg.server.data.manage.CoinPolicy;
+import com.gg.server.data.noti.Noti;
+import com.gg.server.data.noti.type.NotiType;
+import com.gg.server.data.user.User;
+import com.gg.server.data.user.UserImage;
+import com.gg.server.data.user.type.RacketType;
+import com.gg.server.data.user.type.RoleType;
+import com.gg.server.data.user.type.SnsType;
 import com.gg.server.domain.announcement.data.AnnouncementRepository;
-import com.gg.server.domain.coin.data.CoinPolicy;
 import com.gg.server.domain.coin.data.CoinPolicyRepository;
-import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.exception.GameNotExistException;
-import com.gg.server.domain.game.type.Mode;
-import com.gg.server.domain.game.type.StatusType;
-import com.gg.server.domain.noti.data.Noti;
 import com.gg.server.domain.noti.data.NotiRepository;
-import com.gg.server.domain.noti.type.NotiType;
-import com.gg.server.domain.pchange.data.PChange;
 import com.gg.server.domain.pchange.data.PChangeRepository;
-import com.gg.server.domain.rank.data.Rank;
 import com.gg.server.domain.rank.data.RankRepository;
-import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
-import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.data.SeasonRepository;
 import com.gg.server.domain.slotmanagement.SlotManagement;
 import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
-import com.gg.server.domain.team.data.Team;
 import com.gg.server.domain.team.data.TeamRepository;
-import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.team.data.TeamUserRepository;
-import com.gg.server.domain.tier.data.Tier;
 import com.gg.server.domain.tier.data.TierRepository;
-import com.gg.server.domain.tournament.data.Tournament;
-import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentGameRepository;
 import com.gg.server.domain.tournament.data.TournamentRepository;
-import com.gg.server.domain.tournament.data.TournamentUser;
 import com.gg.server.domain.tournament.data.TournamentUserRepository;
 import com.gg.server.domain.tournament.dto.TournamentResponseDto;
-import com.gg.server.domain.tournament.type.TournamentRound;
-import com.gg.server.domain.tournament.type.TournamentStatus;
-import com.gg.server.domain.tournament.type.TournamentType;
 import com.gg.server.domain.user.controller.dto.GameInfoDto;
-import com.gg.server.domain.user.data.User;
-import com.gg.server.domain.user.data.UserImage;
 import com.gg.server.domain.user.data.UserImageRepository;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserImageDto;
-import com.gg.server.domain.user.type.RacketType;
-import com.gg.server.domain.user.type.RoleType;
-import com.gg.server.domain.user.type.SnsType;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 
 import lombok.RequiredArgsConstructor;
@@ -454,7 +454,8 @@ public class TestDataUtils {
 	 * @param status 상태
 	 * @return 테스트용 토너먼트
 	 */
-	public Tournament createTournament(String title, String contents, LocalDateTime startTime, LocalDateTime endTime,
+	public Tournament createTournament(String title, String contents, LocalDateTime startTime, LocalDateTime
+		endTime,
 		TournamentType type, TournamentStatus status) {
 		Tournament tournament = Tournament.builder()
 			.title(title)
@@ -563,7 +564,8 @@ public class TestDataUtils {
 		for (TournamentType type : TournamentType.values()) {
 			for (TournamentStatus status : TournamentStatus.values()) {
 				for (int i = 0; i < 5; i++) {
-					Tournament tournament = createTournamentByEnum(type, status, LocalDateTime.now().plusDays(day++));
+					Tournament tournament = createTournamentByEnum(type, status,
+						LocalDateTime.now().plusDays(day++));
 					tournamentResponseDtos.add(new TournamentResponseDto(tournament, winnerImage, joinUserCnt));
 					tournament.updateWinner(winner);
 					for (int j = 0; j < joinUserCnt; j++) {
@@ -571,14 +573,14 @@ public class TestDataUtils {
 							userRepository.findByIntraId("42gg_tester" + j).get(), tournament, true,
 							LocalDateTime.now());
 						tournamentUserRepository.save(tournamentUser);
-						tournament.getTournamentUsers().add(tournamentUser);
+						//                        tournament.getTournamentUsers().add(tournamentUser);
 					}
 					for (int j = joinUserCnt; j < joinUserCnt + notJoinUserCnt; j++) {
 						TournamentUser tournamentUser = new TournamentUser(
 							userRepository.findByIntraId("42gg_tester" + j).get(), tournament, false,
 							LocalDateTime.now());
 						tournamentUserRepository.save(tournamentUser);
-						tournament.getTournamentUsers().add(tournamentUser);
+						//                        tournament.getTournamentUsers().add(tournamentUser);
 					}
 					tournamentRepository.save(tournament);
 				}
@@ -597,7 +599,8 @@ public class TestDataUtils {
 			.type(TournamentType.ROOKIE)
 			.status(TournamentStatus.BEFORE).build();
 		for (int i = 0; i < joinUserCnt + notJoinUserCnt; i++) {
-			User newUser = createNewUser(testName + i, "tester" + i + "@gmail.com", RacketType.PENHOLDER, SnsType.NONE,
+			User newUser = createNewUser(testName + i, "tester" + i + "@gmail.com", RacketType.PENHOLDER,
+				SnsType.NONE,
 				RoleType.USER);
 			userRepository.save(newUser);
 		}
@@ -612,7 +615,8 @@ public class TestDataUtils {
 		return tournamentRepository.save(tournament);
 	}
 
-	public TournamentGame createTournamentGame(Tournament tournament, TournamentRound round, GameInfoDto gameInfoDto) {
+	public TournamentGame createTournamentGame(Tournament tournament, TournamentRound round, GameInfoDto
+		gameInfoDto) {
 		TournamentGame tournamentGame = new TournamentGame(
 			gameRepository.findById(gameInfoDto.getGameId()).orElseThrow(GameNotExistException::new), tournament,
 			round);
@@ -735,8 +739,7 @@ public class TestDataUtils {
 		List<User> users = new ArrayList<>();
 		for (int i = 0; i < cnt; i++) {
 			users.add(
-				createNewUser("testUser" + i, "testUser" + i + "@gmail.com", RacketType.PENHOLDER,
-					SnsType.NONE,
+				createNewUser("testUser" + i, "testUser" + i + "@gmail.com", RacketType.PENHOLDER, SnsType.NONE,
 					RoleType.USER));
 		}
 		userRepository.saveAll(users);

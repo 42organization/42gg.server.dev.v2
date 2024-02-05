@@ -2,9 +2,9 @@ package com.gg.server.admin.receipt.dto;
 
 import java.time.LocalDateTime;
 
-import com.gg.server.domain.item.data.Item;
-import com.gg.server.domain.receipt.data.Receipt;
-import com.gg.server.domain.receipt.type.ItemStatus;
+import com.gg.server.data.store.Item;
+import com.gg.server.data.store.Receipt;
+import com.gg.server.data.store.type.ItemStatus;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -5,10 +5,10 @@ import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gg.server.domain.game.data.Game;
+import com.gg.server.data.game.Game;
+import com.gg.server.data.game.Season;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.exception.GameNotExistException;
-import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.data.SeasonRepository;
 import com.gg.server.domain.season.exception.SeasonNotFoundException;
 

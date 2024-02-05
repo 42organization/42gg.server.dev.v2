@@ -21,7 +21,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gg.server.domain.noti.data.Noti;
+import com.gg.server.data.noti.Noti;
 import com.gg.server.domain.noti.dto.UserNotiDto;
 import com.gg.server.domain.noti.exception.SlackJsonParseException;
 import com.gg.server.domain.noti.exception.SlackSendException;

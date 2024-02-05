@@ -1,9 +1,9 @@
 package com.gg.server.domain.user.dto;
 
-import com.gg.server.domain.user.data.User;
-import com.gg.server.domain.user.type.RacketType;
-import com.gg.server.domain.user.type.RoleType;
-import com.gg.server.domain.user.type.SnsType;
+import com.gg.server.data.user.User;
+import com.gg.server.data.user.type.RacketType;
+import com.gg.server.data.user.type.RoleType;
+import com.gg.server.data.user.type.SnsType;
 
 import lombok.Builder;
 import lombok.Getter;

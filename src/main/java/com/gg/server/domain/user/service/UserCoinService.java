@@ -5,9 +5,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gg.server.domain.coin.data.CoinHistory;
+import com.gg.server.data.store.CoinHistory;
+import com.gg.server.data.user.User;
 import com.gg.server.domain.coin.data.CoinHistoryRepository;
-import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.CoinHistoryResponseDto;
 import com.gg.server.domain.user.dto.UserCoinHistoryListResponseDto;

@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.gg.server.domain.user.data.User;
-import com.gg.server.domain.user.data.UserImage;
+import com.gg.server.data.user.User;
+import com.gg.server.data.user.UserImage;
 import com.gg.server.domain.user.data.UserImageRepository;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.global.utils.UserImageHandler;

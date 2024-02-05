@@ -5,13 +5,13 @@ import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gg.server.data.game.Season;
+import com.gg.server.data.game.redis.RankRedis;
+import com.gg.server.data.user.User;
 import com.gg.server.domain.rank.exception.RedisDataNotFoundException;
-import com.gg.server.domain.rank.redis.RankRedis;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
-import com.gg.server.domain.season.data.Season;
 import com.gg.server.domain.season.service.SeasonFindService;
-import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 

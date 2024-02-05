@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 
-import com.gg.server.domain.user.type.RoleType;
+import com.gg.server.data.user.type.RoleType;
 import com.gg.server.global.security.info.OAuthUserInfo;
 
 public class KakaoOAuthUserInfo extends OAuthUserInfo {

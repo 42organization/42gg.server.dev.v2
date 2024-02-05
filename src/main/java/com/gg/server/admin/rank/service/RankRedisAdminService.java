@@ -1,6 +1,6 @@
 package com.gg.server.admin.rank.service;
 
-import static com.gg.server.domain.user.type.RoleType.*;
+import static com.gg.server.data.user.type.RoleType.*;
 
 import java.util.List;
 
@@ -8,13 +8,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gg.server.admin.season.dto.SeasonAdminDto;
-import com.gg.server.domain.rank.redis.RankRedis;
+import com.gg.server.data.game.Tier;
+import com.gg.server.data.game.redis.RankRedis;
+import com.gg.server.data.user.User;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
-import com.gg.server.domain.tier.data.Tier;
 import com.gg.server.domain.tier.data.TierRepository;
 import com.gg.server.domain.tier.exception.TierNotFoundException;
-import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
 

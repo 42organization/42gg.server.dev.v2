@@ -9,11 +9,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.gg.server.domain.game.data.Game;
+import com.gg.server.data.game.Game;
+import com.gg.server.data.game.Season;
+import com.gg.server.data.game.type.Mode;
+import com.gg.server.data.game.type.StatusType;
 import com.gg.server.domain.game.dto.GameTeamUser;
-import com.gg.server.domain.game.type.Mode;
-import com.gg.server.domain.game.type.StatusType;
-import com.gg.server.domain.season.data.Season;
 
 public interface GameAdminRepository extends JpaRepository<Game, Long> {
 

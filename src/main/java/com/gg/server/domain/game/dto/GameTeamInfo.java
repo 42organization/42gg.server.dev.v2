@@ -3,9 +3,9 @@ package com.gg.server.domain.game.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.gg.server.data.game.type.Mode;
+import com.gg.server.data.game.type.StatusType;
 import com.gg.server.domain.game.exception.GameDataConsistencyException;
-import com.gg.server.domain.game.type.Mode;
-import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.team.dto.MatchTeamsInfoDto;
 
 import lombok.Getter;

@@ -10,14 +10,14 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gg.server.domain.game.data.Game;
+import com.gg.server.data.game.Game;
+import com.gg.server.data.game.type.Mode;
+import com.gg.server.data.game.type.StatusType;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.dto.GameListResDto;
 import com.gg.server.domain.game.dto.GameResultResDto;
 import com.gg.server.domain.game.dto.GameTeamUser;
 import com.gg.server.domain.game.exception.GameNotExistException;
-import com.gg.server.domain.game.type.Mode;
-import com.gg.server.domain.game.type.StatusType;
 
 import lombok.RequiredArgsConstructor;
 

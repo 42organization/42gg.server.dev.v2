@@ -5,7 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.gg.server.domain.receipt.data.Receipt;
+import com.gg.server.data.store.Receipt;
 
 public interface ReceiptAdminRepositorySearch {
 	@Query(value = "select re from Receipt re where re.purchaserIntraId = :intraId or re.ownerIntraId = :intraId")

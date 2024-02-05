@@ -10,10 +10,10 @@ import com.gg.server.admin.noti.dto.NotiAdminDto;
 import com.gg.server.admin.noti.dto.NotiListAdminResponseDto;
 import com.gg.server.admin.noti.dto.SendNotiAdminRequestDto;
 import com.gg.server.admin.user.data.UserAdminRepository;
-import com.gg.server.domain.noti.data.Noti;
+import com.gg.server.data.noti.Noti;
+import com.gg.server.data.noti.type.NotiType;
+import com.gg.server.data.user.User;
 import com.gg.server.domain.noti.service.SnsNotiService;
-import com.gg.server.domain.noti.type.NotiType;
-import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 
@@ -26,6 +26,11 @@ public class NotiAdminService {
 	private final UserAdminRepository userAdminRepository;
 	private final SnsNotiService snsNotiService;
 
+	/**
+	 * 유저에게 알림을 전송합니다.
+	 * @param sendNotiAdminRequestDto 알림 요청 Dto
+	 * @exception UserNotFoundException 유저가 존재하지 않을 경우
+	 */
 	@Transactional
 	public void sendAnnounceNotiToUser(SendNotiAdminRequestDto sendNotiAdminRequestDto) {
 		String message = sendNotiAdminRequestDto.getMessage();
@@ -37,6 +42,11 @@ public class NotiAdminService {
 		snsNotiService.sendSnsNotification(noti, UserDto.from(user));
 	}
 
+	/**
+	 * 전체 알림 목록을 조회합니다.
+	 * @param pageable 알림 목록 페이지
+	 * @return 알림 목록 응답 Dto
+	 */
 	@Transactional(readOnly = true)
 	public NotiListAdminResponseDto getAllNoti(Pageable pageable) {
 		Page<Noti> allNotiPage = notiAdminRepository.findAll(pageable);
@@ -44,6 +54,12 @@ public class NotiAdminService {
 		return new NotiListAdminResponseDto(notiAdminDtoPage.getContent(), notiAdminDtoPage.getTotalPages());
 	}
 
+	/**
+	 * 특정 유저의 알림 목록을 조회합니다.
+	 * @param pageable 유저의 알림 목록 페이지
+	 * @param intraId 인트라 Id
+	 * @return 알림 목록 응답 Dto
+	 */
 	@Transactional(readOnly = true)
 	public NotiListAdminResponseDto getFilteredNotifications(Pageable pageable, String intraId) {
 		Page<Noti> findNotis = notiAdminRepository.findNotisByUserIntraId(pageable, intraId);

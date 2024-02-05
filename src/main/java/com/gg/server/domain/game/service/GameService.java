@@ -8,9 +8,17 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gg.server.data.game.Game;
+import com.gg.server.data.game.PChange;
+import com.gg.server.data.game.Season;
+import com.gg.server.data.game.TeamUser;
+import com.gg.server.data.game.Tournament;
+import com.gg.server.data.game.TournamentGame;
+import com.gg.server.data.game.type.RoundNumber;
+import com.gg.server.data.game.type.StatusType;
+import com.gg.server.data.match.type.TournamentMatchStatus;
 import com.gg.server.domain.coin.dto.UserGameCoinResultDto;
 import com.gg.server.domain.coin.service.UserCoinChangeService;
-import com.gg.server.domain.game.data.Game;
 import com.gg.server.domain.game.data.GameRepository;
 import com.gg.server.domain.game.dto.GamePChangeResultResDto;
 import com.gg.server.domain.game.dto.GamePPPChangeResultResDto;
@@ -22,21 +30,14 @@ import com.gg.server.domain.game.dto.request.TournamentResultReqDto;
 import com.gg.server.domain.game.exception.GameNotExistException;
 import com.gg.server.domain.game.exception.GameStatusNotMatchedException;
 import com.gg.server.domain.game.exception.ScoreAlreadyEnteredException;
-import com.gg.server.domain.game.type.StatusType;
 import com.gg.server.domain.match.service.MatchTournamentService;
-import com.gg.server.domain.match.type.TournamentMatchStatus;
-import com.gg.server.domain.pchange.data.PChange;
 import com.gg.server.domain.pchange.data.PChangeRepository;
 import com.gg.server.domain.pchange.exception.PChangeNotExistException;
 import com.gg.server.domain.pchange.service.PChangeService;
 import com.gg.server.domain.rank.redis.RankRedisService;
-import com.gg.server.domain.season.data.Season;
-import com.gg.server.domain.team.data.TeamUser;
 import com.gg.server.domain.team.data.TeamUserRepository;
 import com.gg.server.domain.team.exception.TeamIdNotMatchException;
 import com.gg.server.domain.tier.service.TierService;
-import com.gg.server.domain.tournament.data.Tournament;
-import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentGameRepository;
 import com.gg.server.domain.tournament.exception.TournamentGameNotFoundException;
 import com.gg.server.global.exception.ErrorCode;
@@ -113,11 +114,12 @@ public class GameService {
 			throw new GameStatusNotMatchedException();
 		}
 		updateTournamentGameScore(game, scoreDto, userId);
-		if (TournamentMatchStatus.POSSIBLE.equals(matchTournamentService.checkTournamentGame(game))) {
+		if (TournamentMatchStatus.REQUIRED.equals(matchTournamentService.checkTournamentGame(game))) {
 			TournamentGame tournamentGame = tournamentGameRepository.findByGameId(game.getId())
 				.orElseThrow(TournamentGameNotFoundException::new);
 			Tournament tournament = tournamentGame.getTournament();
-			matchTournamentService.matchGames(tournament, tournamentGame.getTournamentRound().getNextRound());
+			RoundNumber matchRound = tournamentGame.getTournamentRound().getNextRound().getRoundNumber();
+			matchTournamentService.matchGames(tournament, matchRound);
 		}
 	}
 

@@ -10,8 +10,8 @@ import com.gg.server.admin.coin.dto.CoinPolicyAdminAddDto;
 import com.gg.server.admin.coin.dto.CoinPolicyAdminListResponseDto;
 import com.gg.server.admin.coin.dto.CoinPolicyAdminResponseDto;
 import com.gg.server.admin.user.data.UserAdminRepository;
-import com.gg.server.domain.coin.data.CoinPolicy;
-import com.gg.server.domain.user.data.User;
+import com.gg.server.data.manage.CoinPolicy;
+import com.gg.server.data.user.User;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 

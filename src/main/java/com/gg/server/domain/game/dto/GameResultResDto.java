@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.gg.server.domain.game.type.Mode;
+import com.gg.server.data.game.type.Mode;
 import com.gg.server.domain.team.dto.TeamUserInfoDto;
 import com.gg.server.domain.team.dto.TeamUserListDto;
 

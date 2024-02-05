@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.gg.server.domain.announcement.data.Announcement;
+import com.gg.server.data.manage.Announcement;
 
 public interface AnnouncementAdminRepository extends JpaRepository<Announcement, Long> {
 

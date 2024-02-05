@@ -13,13 +13,13 @@ import com.gg.server.admin.penalty.data.PenaltyAdminRepository;
 import com.gg.server.admin.penalty.data.PenaltyUserAdminRedisRepository;
 import com.gg.server.admin.penalty.dto.PenaltyListResponseDto;
 import com.gg.server.admin.penalty.dto.PenaltyUserResponseDto;
-import com.gg.server.domain.penalty.data.Penalty;
+import com.gg.server.data.manage.Penalty;
+import com.gg.server.data.manage.redis.RedisPenaltyUser;
+import com.gg.server.data.user.User;
 import com.gg.server.domain.penalty.exception.PenaltyExpiredException;
 import com.gg.server.domain.penalty.exception.PenaltyNotFoundException;
 import com.gg.server.domain.penalty.exception.RedisPenaltyUserNotFoundException;
-import com.gg.server.domain.penalty.redis.RedisPenaltyUser;
 import com.gg.server.domain.penalty.type.PenaltyType;
-import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.service.UserFindService;
 
 import lombok.RequiredArgsConstructor;

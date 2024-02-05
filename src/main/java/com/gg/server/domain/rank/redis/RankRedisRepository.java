@@ -10,6 +10,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Repository;
 
+import com.gg.server.data.game.redis.RankRedis;
 import com.gg.server.domain.rank.exception.RedisDataNotFoundException;
 
 @Repository

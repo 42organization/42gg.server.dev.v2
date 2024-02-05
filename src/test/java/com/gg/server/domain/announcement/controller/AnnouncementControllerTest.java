@@ -15,10 +15,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gg.server.domain.announcement.data.Announcement;
+import com.gg.server.data.manage.Announcement;
+import com.gg.server.data.user.User;
 import com.gg.server.domain.announcement.data.AnnouncementRepository;
 import com.gg.server.domain.announcement.exception.AnnounceNotFoundException;
-import com.gg.server.domain.user.data.User;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import com.gg.server.utils.annotation.IntegrationTest;

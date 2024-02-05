@@ -2,7 +2,7 @@ package com.gg.server.domain.user.dto;
 
 import java.time.LocalDateTime;
 
-import com.gg.server.domain.pchange.data.PChange;
+import com.gg.server.data.game.PChange;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

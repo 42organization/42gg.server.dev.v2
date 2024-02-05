@@ -2,7 +2,7 @@ package com.gg.server.admin.item.dto;
 
 import javax.validation.constraints.NotNull;
 
-import com.gg.server.domain.item.type.ItemType;
+import com.gg.server.data.store.type.ItemType;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

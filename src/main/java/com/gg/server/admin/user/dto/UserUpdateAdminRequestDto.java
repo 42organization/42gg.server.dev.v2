@@ -1,6 +1,6 @@
 package com.gg.server.admin.user.dto;
 
-import com.gg.server.domain.user.type.RacketType;
+import com.gg.server.data.user.type.RacketType;
 
 import lombok.Builder;
 import lombok.Getter;

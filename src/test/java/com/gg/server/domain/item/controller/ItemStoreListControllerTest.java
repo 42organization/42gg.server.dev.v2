@@ -1,6 +1,6 @@
 package com.gg.server.domain.item.controller;
 
-import static com.gg.server.domain.item.type.ItemType.*;
+import static com.gg.server.data.store.type.ItemType.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;

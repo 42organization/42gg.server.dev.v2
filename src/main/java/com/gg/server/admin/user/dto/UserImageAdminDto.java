@@ -2,7 +2,7 @@ package com.gg.server.admin.user.dto;
 
 import java.time.LocalDateTime;
 
-import com.gg.server.domain.user.data.UserImage;
+import com.gg.server.data.user.UserImage;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

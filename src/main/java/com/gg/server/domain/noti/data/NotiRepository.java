@@ -5,7 +5,8 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.gg.server.domain.user.data.User;
+import com.gg.server.data.noti.Noti;
+import com.gg.server.data.user.User;
 
 public interface NotiRepository extends JpaRepository<Noti, Long>, NotiRepositoryCustom {
 	List<Noti> findByUser(User user);

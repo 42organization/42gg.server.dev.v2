@@ -12,10 +12,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.gg.server.domain.user.data.User;
+import com.gg.server.data.user.User;
+import com.gg.server.data.user.type.RoleType;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.exception.UserNotFoundException;
-import com.gg.server.domain.user.type.RoleType;
 import com.gg.server.global.security.UserPrincipal;
 import com.gg.server.global.security.config.properties.AppProperties;
 import com.gg.server.global.security.cookie.CookieUtil;

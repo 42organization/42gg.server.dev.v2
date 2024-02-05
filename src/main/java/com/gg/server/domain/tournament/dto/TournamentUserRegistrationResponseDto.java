@@ -1,6 +1,6 @@
 package com.gg.server.domain.tournament.dto;
 
-import com.gg.server.domain.tournament.type.TournamentUserStatus;
+import com.gg.server.data.game.type.TournamentUserStatus;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

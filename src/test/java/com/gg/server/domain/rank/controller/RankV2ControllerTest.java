@@ -19,10 +19,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.gg.server.data.user.User;
 import com.gg.server.domain.rank.dto.ExpRankPageResponseDto;
 import com.gg.server.domain.rank.dto.RankPageResponseDto;
 import com.gg.server.domain.rank.service.RankService;
-import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.config.WebConfig;

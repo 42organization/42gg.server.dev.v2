@@ -2,8 +2,8 @@ package com.gg.server.domain.game.dto;
 
 import java.time.LocalDateTime;
 
-import com.gg.server.domain.game.type.Mode;
-import com.gg.server.domain.game.type.StatusType;
+import com.gg.server.data.game.type.Mode;
+import com.gg.server.data.game.type.StatusType;
 
 public interface GameTeamUser {
 	Long getGameId();

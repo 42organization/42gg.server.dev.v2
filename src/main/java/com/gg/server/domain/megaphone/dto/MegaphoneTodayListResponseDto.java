@@ -1,6 +1,6 @@
 package com.gg.server.domain.megaphone.dto;
 
-import com.gg.server.domain.megaphone.redis.MegaphoneRedis;
+import com.gg.server.data.store.redis.MegaphoneRedis;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
