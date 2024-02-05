@@ -272,7 +272,8 @@ public class UserService {
 					.filter(u -> u.getIntraId().equals(dto.getIntraId()))
 					.findFirst()
 					.orElseThrow(UserNotFoundException::new);
-				userImages.add(new UserImageDto(user.getIntraId(), user.getImageUri(), user.getEdge(), dto.getTierImageUri()));
+				userImages.add(new UserImageDto(user.getIntraId(), user.getImageUri(),
+					user.getEdge(), dto.getTierImageUri()));
 			}
 			return new UserImageResponseDto(userImages);
 		} catch (RedisDataNotFoundException ex) {
