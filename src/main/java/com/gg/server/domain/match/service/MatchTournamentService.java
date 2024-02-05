@@ -1,6 +1,7 @@
 package com.gg.server.domain.match.service;
 
 import static com.gg.server.domain.match.type.TournamentMatchStatus.*;
+import static com.gg.server.domain.tournament.type.RoundNumber.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.data.TournamentGameRepository;
 import com.gg.server.domain.tournament.data.TournamentUser;
 import com.gg.server.domain.tournament.exception.TournamentGameNotFoundException;
+import com.gg.server.domain.tournament.type.RoundNumber;
 import com.gg.server.domain.tournament.type.TournamentRound;
 import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.user.data.User;
@@ -68,7 +70,7 @@ public class MatchTournamentService {
 		// 토너먼트 결승전 게임일 경우, 토너먼트 상태 END로 변경
 		if (TournamentRound.THE_FINAL.equals(tournamentGame.getTournamentRound())) {
 			closeTournament(tournamentGame.getTournament(), game);
-			return IMPOSSIBLE;
+			return NO_MORE_MATCHES;
 		}
 
 		// 같은 round의 모든 게임이 END인 경우, 다음 round의 토너먼트 게임 매칭 가능
@@ -80,25 +82,25 @@ public class MatchTournamentService {
 			.collect(Collectors.toList());
 		for (TournamentGame tg : sameRoundGames) {
 			if (!StatusType.END.equals(tg.getGame().getStatus())) {
-				return IMPOSSIBLE;
+				return UNNECESSARY;
 			}
 		}
-		if (isAlreadyExistMatchedGame(tournamentGame.getTournament(), round.getNextRound())) {
+		if (isAlreadyExistMatchedGame(tournamentGame.getTournament(), round.getNextRound().getRoundNumber())) {
 			return ALREADY_MATCHED;
 		}
-		return POSSIBLE;
+		return REQUIRED;
 	}
 
 	/**
 	 * 토너먼트 게임 매칭
 	 * @param tournament 토너먼트
-	 * @param round 새로 매칭할 토너먼트 라운드
+	 * @param roundNumber 새로 매칭할 토너먼트 라운드
 	 * @throws EnrolledSlotException 이미 매칭된 게임이 존재할 경우
 	 * @throws SlotNotFoundException 슬롯이 존재하지 않을 경우
 	 */
 	@Transactional
-	public void matchGames(Tournament tournament, TournamentRound round) {
-		if (isAlreadyExistMatchedGame(tournament, round)) {
+	public void matchGames(Tournament tournament, RoundNumber roundNumber) {
+		if (isAlreadyExistMatchedGame(tournament, roundNumber)) {
 			throw new EnrolledSlotException();
 		}
 		Season season = seasonFindService.findCurrentSeason(tournament.getStartTime());
@@ -106,9 +108,9 @@ public class MatchTournamentService {
 			.orElseThrow(SlotNotFoundException::new);
 		int gameInterval = slotManagement.getGameInterval();
 		List<TournamentGame> allTournamentGames = tournamentGameRepository.findAllByTournamentId(tournament.getId());
-		List<TournamentGame> tournamentGames = findSameRoundGames(allTournamentGames, round.getRoundNumber());
-		List<User> players = findSortedPlayers(tournament, round);
-		LocalDateTime startTime = calculateStartTime(tournament, round, gameInterval);
+		List<TournamentGame> tournamentGames = findSameRoundGames(allTournamentGames, roundNumber);
+		List<User> players = findSortedPlayers(tournament, roundNumber);
+		LocalDateTime startTime = calculateStartTime(tournament, roundNumber, gameInterval);
 
 		for (int i = 0; i < tournamentGames.size(); ++i) {
 			Game game = new Game(season, StatusType.BEFORE, Mode.TOURNAMENT, startTime,
@@ -133,6 +135,7 @@ public class MatchTournamentService {
 	 * @param modifiedGame 경기 결과가 수정된 토너먼트 게임
 	 * @param nextMatchedGame 수정된 우승자로 수정할 다음 게임
 	 * @throws WinningTeamNotFoundException 우승팀이 존재하지 않을 경우
+	 * @throws LosingTeamNotFoundException 패자팀이 존재하지 않을 경우
 	 */
 	@Transactional
 	public void updateMatchedGameUser(Game modifiedGame, Game nextMatchedGame) {
@@ -158,18 +161,18 @@ public class MatchTournamentService {
 
 	/**
 	 * @param tournament 토너먼트
-	 * @param round 토너먼트 라운드
+	 * @param roundNumber 토너먼트 라운드
 	 * @param gameInterval 경기 간격
 	 * @return 마지막 경기 종료 시간 + interval
 	 * <p>8강의 경우 토너먼트 시작 시간</p>
 	 * <p>4강, 결승일 경우 이전 라운드의 마지막 경기 종료 시간 + 15분</p>
 	 */
-	private LocalDateTime calculateStartTime(Tournament tournament, TournamentRound round, int gameInterval) {
-		if (TournamentRound.QUARTER_FINAL_1.getRoundNumber() == round.getRoundNumber()) {
+	private LocalDateTime calculateStartTime(Tournament tournament, RoundNumber roundNumber, int gameInterval) {
+		if (QUARTER_FINAL == roundNumber) {
 			return tournament.getStartTime();
 		}
 		List<TournamentGame> previousRoundTournamentGames = findSameRoundGames(tournament.getTournamentGames(),
-			TournamentRound.getPreviousRoundNumber(round));
+			TournamentRound.getPreviousRoundNumber(roundNumber));
 		TournamentGame lastGame = previousRoundTournamentGames.get(previousRoundTournamentGames.size() - 1);
 		return lastGame.getGame().getEndTime().plusMinutes(gameInterval);
 	}
@@ -177,13 +180,13 @@ public class MatchTournamentService {
 	/**
 	 * 토너먼트 라운드에 매칭될 플레이어를 찾는다.
 	 * @param tournament 토너먼트
-	 * @param round 매칭할 토너먼트 라운드
+	 * @param roundNumber 매칭할 토너먼트 라운드
 	 * @return 토너먼트 라운드에 매칭될 플레이어 List (정렬된 상태)
 	 */
-	private List<User> findSortedPlayers(Tournament tournament, TournamentRound round) {
+	private List<User> findSortedPlayers(Tournament tournament, RoundNumber roundNumber) {
 		List<User> players = new ArrayList<>();
 
-		if (TournamentRound.QUARTER_FINAL_1.getRoundNumber() == round.getRoundNumber()) {
+		if (QUARTER_FINAL == roundNumber) {
 			Map<Integer, Integer> randomNumbers = new LinkedHashMap<>();
 			Random random = new Random();
 			while (randomNumbers.size() < Tournament.ALLOWED_JOINED_NUMBER) {
@@ -199,8 +202,8 @@ public class MatchTournamentService {
 			}
 		} else {
 			List<TournamentGame> previousRoundTournamentGames = findSameRoundGames(tournament.getTournamentGames(),
-				TournamentRound.getPreviousRoundNumber(round));
-			int roundNum = round.getRoundNumber();
+				TournamentRound.getPreviousRoundNumber(roundNumber));
+			int roundNum = roundNumber.getRound();
 			for (int i = 0; i < roundNum; ++i) {
 				User user = getWinningTeam(previousRoundTournamentGames.get(i).getGame())
 					.getTeamUsers().get(0).getUser();
@@ -213,15 +216,20 @@ public class MatchTournamentService {
 	/**
 	 * round에 매칭된 게임이 이미 존재하는지 확인
 	 * @param tournament 토너먼트
-	 * @param round 토너먼트 라운드
+	 * @param roundNumber 토너먼트 라운드
 	 * @return true - 매칭된 게임이 존재, false - 아직 매칭된 게임이 존재하지 않음
 	 * @throws TournamentGameNotFoundException 토너먼트 게임이 존재하지 않을 경우
 	 */
-	private boolean isAlreadyExistMatchedGame(Tournament tournament, TournamentRound round) {
-		TournamentGame tournamentGame = tournamentGameRepository.findByTournamentIdAndTournamentRound(
-				tournament.getId(), round)
-			.orElseThrow(TournamentGameNotFoundException::new);
-		return tournamentGame.getGame() != null;
+	private boolean isAlreadyExistMatchedGame(Tournament tournament, RoundNumber roundNumber) {
+		List<TournamentRound> sameRounds = TournamentRound.getSameRounds(roundNumber);
+		List<TournamentGame> tournamentGames = tournamentGameRepository.findByTournamentIdAndTournamentRoundIn(
+			tournament.getId(), sameRounds);
+		for (TournamentGame tournamentGame : tournamentGames) {
+			if (tournamentGame.getGame() != null) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -247,7 +255,7 @@ public class MatchTournamentService {
 	 * @param roundNum 토너먼트 라운드 number (2, 4, 8, ...) (잘못된 roundNum일 경우 Empty List 반환한다.)
 	 * @return tournamentGames 중 roundNum과 동일한 roundNum을 가진 round 순으로 정렬된 tournamentGame List 반환
 	 */
-	private List<TournamentGame> findSameRoundGames(List<TournamentGame> tournamentGames, int roundNum) {
+	private List<TournamentGame> findSameRoundGames(List<TournamentGame> tournamentGames, RoundNumber roundNum) {
 		return tournamentGames.stream()
 			.filter(tournamentGame -> roundNum == tournamentGame.getTournamentRound().getRoundNumber())
 			.sorted(Comparator.comparing(TournamentGame::getTournamentRound))

@@ -1,5 +1,6 @@
 package com.gg.server.domain.match.service;
 
+import static com.gg.server.domain.tournament.type.RoundNumber.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -15,7 +16,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +28,8 @@ import com.gg.server.domain.match.exception.EnrolledSlotException;
 import com.gg.server.domain.match.exception.SlotNotFoundException;
 import com.gg.server.domain.match.exception.WinningTeamNotFoundException;
 import com.gg.server.domain.match.type.TournamentMatchStatus;
+import com.gg.server.domain.match.utils.MatchIntegrationTestUtils;
+import com.gg.server.domain.match.utils.TournamentGameTestUtils;
 import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
 import com.gg.server.domain.team.data.Team;
 import com.gg.server.domain.tournament.data.Tournament;
@@ -35,12 +37,10 @@ import com.gg.server.domain.tournament.data.TournamentGame;
 import com.gg.server.domain.tournament.type.TournamentRound;
 import com.gg.server.domain.tournament.type.TournamentStatus;
 import com.gg.server.domain.user.data.User;
-import com.gg.server.utils.MatchTestUtils;
 import com.gg.server.utils.TestDataUtils;
 import com.gg.server.utils.annotation.IntegrationTest;
 
 @IntegrationTest
-@SpringBootTest
 @Transactional
 public class MatchTournamentServiceTest {
 	@Autowired
@@ -52,7 +52,7 @@ public class MatchTournamentServiceTest {
 	@Autowired
 	MatchTournamentService matchTournamentService;
 	@Autowired
-	MatchTestUtils matchTestUtils;
+	MatchIntegrationTestUtils matchTestUtils;
 	@MockBean
 	NotiAdminService notiAdminService;
 
@@ -74,10 +74,10 @@ public class MatchTournamentServiceTest {
 		@DisplayName("8강 경기 매칭 성공")
 		public void quarterTest() {
 			// when
-			matchTournamentService.matchGames(tournament, TournamentRound.QUARTER_FINAL_1);
+			matchTournamentService.matchGames(tournament, QUARTER_FINAL);
 
 			// then
-			List<TournamentRound> quarterRounds = TournamentRound.getSameRounds(TournamentRound.QUARTER_FINAL_1);
+			List<TournamentRound> quarterRounds = TournamentRound.getSameRounds(QUARTER_FINAL);
 			List<TournamentGame> quarterRoundGames = allTournamentGames.stream()
 				.filter(o -> quarterRounds.contains(o.getTournamentRound()))
 				.sorted(Comparator.comparing(TournamentGame::getTournamentRound))
@@ -109,10 +109,10 @@ public class MatchTournamentServiceTest {
 			matchTestUtils.updateTournamentGamesResult(tournamentGames, List.of(2, 0));
 
 			// when
-			matchTournamentService.matchGames(tournament, TournamentRound.SEMI_FINAL_1);
+			matchTournamentService.matchGames(tournament, SEMI_FINAL);
 
 			// then
-			List<TournamentRound> semiRounds = TournamentRound.getSameRounds(TournamentRound.SEMI_FINAL_1);
+			List<TournamentRound> semiRounds = TournamentRound.getSameRounds(SEMI_FINAL);
 			List<TournamentGame> semiRoundGames = allTournamentGames.stream()
 				.filter(o -> semiRounds.contains(o.getTournamentRound()))
 				.sorted(Comparator.comparing(TournamentGame::getTournamentRound))
@@ -124,7 +124,7 @@ public class MatchTournamentServiceTest {
 				assertThat(tournamentGame.getGame().getStatus()).isEqualTo(StatusType.BEFORE);
 			}
 			// 8강에서 이긴 유저끼리 4강에 매칭되었는지 확인
-			List<TournamentRound> quarterRounds = TournamentRound.getSameRounds(TournamentRound.QUARTER_FINAL_1);
+			List<TournamentRound> quarterRounds = TournamentRound.getSameRounds(QUARTER_FINAL);
 			List<TournamentGame> quarterRoundGames = allTournamentGames.stream()
 				.filter(o -> quarterRounds.contains(o.getTournamentRound()))
 				.sorted(Comparator.comparing(TournamentGame::getTournamentRound))
@@ -136,7 +136,7 @@ public class MatchTournamentServiceTest {
 				semiTeams.add(semiRoundGame.getGame().getTeams().get(1).getTeamUsers().get(0).getUser());
 			}
 			for (TournamentGame quarterRoundGame : quarterRoundGames) {
-				Team winningTeam = matchTestUtils.getWinningTeam(quarterRoundGame.getGame());
+				Team winningTeam = TournamentGameTestUtils.getWinningTeam(quarterRoundGame.getGame());
 				quarterWinningTeams.add(winningTeam.getTeamUsers().get(0).getUser());
 			}
 			assertThat(semiTeams).contains(quarterWinningTeams.get(0));
@@ -157,7 +157,7 @@ public class MatchTournamentServiceTest {
 			matchTestUtils.updateTournamentGamesResult(semiGames, List.of(2, 0));
 
 			// when
-			matchTournamentService.matchGames(tournament, TournamentRound.THE_FINAL);
+			matchTournamentService.matchGames(tournament, THE_FINAL);
 
 			// then
 			// 1개의 결승 경기가 생성되었는지 확인
@@ -180,7 +180,7 @@ public class MatchTournamentServiceTest {
 			matchTestUtils.updateTournamentGamesResult(semiGames, List.of(2, 0));
 
 			// when, then
-			assertThatThrownBy(() -> matchTournamentService.matchGames(tournament, TournamentRound.SEMI_FINAL_1))
+			assertThatThrownBy(() -> matchTournamentService.matchGames(tournament, SEMI_FINAL))
 				.isInstanceOf(EnrolledSlotException.class);
 		}
 	}
@@ -210,7 +210,7 @@ public class MatchTournamentServiceTest {
 			// then
 			// 토너먼트 상태가 END로 변경되었는지
 			// winner가 존재하는지 확인
-			assertThat(TournamentMatchStatus.IMPOSSIBLE).isEqualTo(tournamentMatchStatus);
+			assertThat(TournamentMatchStatus.NO_MORE_MATCHES).isEqualTo(tournamentMatchStatus);
 			assertThat(tournament.getStatus()).isEqualTo(TournamentStatus.END);
 			assertThat(tournament.getWinner()).isNotNull();
 			assertThat(tournament.getEndTime()).isEqualTo(finalGame.getEndTime());
@@ -230,7 +230,7 @@ public class MatchTournamentServiceTest {
 				quarterGames.get(0).getGame());
 
 			// then
-			assertThat(tournamentMatchStatus).isEqualTo(TournamentMatchStatus.IMPOSSIBLE);
+			assertThat(tournamentMatchStatus).isEqualTo(TournamentMatchStatus.UNNECESSARY);
 		}
 
 		@Test
@@ -267,7 +267,7 @@ public class MatchTournamentServiceTest {
 				quarterGames.get(0).getGame());
 
 			// then
-			assertThat(tournamentMatchStatus).isEqualTo(TournamentMatchStatus.POSSIBLE);
+			assertThat(tournamentMatchStatus).isEqualTo(TournamentMatchStatus.REQUIRED);
 		}
 
 	}
