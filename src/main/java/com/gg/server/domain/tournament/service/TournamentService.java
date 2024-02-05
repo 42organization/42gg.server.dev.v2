@@ -1,12 +1,13 @@
 package com.gg.server.domain.tournament.service;
 
-import static com.gg.server.data.game.type.TournamentRound.*;
+import static java.util.Comparator.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +19,7 @@ import com.gg.server.admin.noti.service.NotiAdminService;
 import com.gg.server.data.game.Tournament;
 import com.gg.server.data.game.TournamentGame;
 import com.gg.server.data.game.TournamentUser;
+import com.gg.server.data.game.type.RoundNumber;
 import com.gg.server.data.game.type.TournamentRound;
 import com.gg.server.data.game.type.TournamentStatus;
 import com.gg.server.data.game.type.TournamentType;
@@ -40,7 +42,6 @@ import com.gg.server.domain.tournament.exception.TournamentNotFoundException;
 import com.gg.server.domain.tournament.exception.TournamentUpdateException;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
-import com.gg.server.domain.user.dto.UserImageDto;
 import com.gg.server.domain.user.exception.UserNotFoundException;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.BusinessException;
@@ -67,22 +68,18 @@ public class TournamentService {
 	 */
 	public TournamentListResponseDto getAllTournamentList(Pageable pageRequest, TournamentType type,
 		TournamentStatus status) {
-
-		Page<TournamentResponseDto> tournaments;
+		Page<Tournament> tournaments;
 		if (type == null && status == null) {
-			tournaments = tournamentRepository.findAll(pageRequest)
-				.map(o -> new TournamentResponseDto(o, findTournamentWinner(o), findJoinedPlayerCnt(o)));
+			tournaments = tournamentRepository.findAll(pageRequest);
 		} else if (type == null) {
-			tournaments = tournamentRepository.findAllByStatus(status, pageRequest)
-				.map(o -> new TournamentResponseDto(o, findTournamentWinner(o), findJoinedPlayerCnt(o)));
+			tournaments = tournamentRepository.findAllByStatus(status, pageRequest);
 		} else if (status == null) {
-			tournaments = tournamentRepository.findAllByType(type, pageRequest)
-				.map(o -> new TournamentResponseDto(o, findTournamentWinner(o), findJoinedPlayerCnt(o)));
+			tournaments = tournamentRepository.findAllByType(type, pageRequest);
 		} else {
-			tournaments = tournamentRepository.findAllByTypeAndStatus(type, status, pageRequest)
-				.map(o -> new TournamentResponseDto(o, findTournamentWinner(o), findJoinedPlayerCnt(o)));
+			tournaments = tournamentRepository.findAllByTypeAndStatus(type, status, pageRequest);
 		}
-		return new TournamentListResponseDto(tournaments.getContent(), tournaments.getTotalPages());
+		Page<TournamentResponseDto> tournamentsDto = tournaments.map(TournamentResponseDto::new);
+		return new TournamentListResponseDto(tournamentsDto);
 	}
 
 	/**
@@ -93,8 +90,7 @@ public class TournamentService {
 	public TournamentResponseDto getTournament(long tournamentId) {
 		Tournament tournament = tournamentRepository.findById(tournamentId)
 			.orElseThrow(TournamentNotFoundException::new);
-		return (new TournamentResponseDto(tournament, findTournamentWinner(tournament),
-			findJoinedPlayerCnt(tournament)));
+		return (new TournamentResponseDto(tournament));
 	}
 
 	/**
@@ -109,8 +105,8 @@ public class TournamentService {
 			.orElseThrow(TournamentNotFoundException::new);
 
 		TournamentUserStatus tournamentUserStatus = TournamentUserStatus.BEFORE;
-		Optional<TournamentUser> tournamentUser = tournamentUserRepository.findByTournamentIdAndUserId(tournamentId,
-			user.getId());
+		Optional<TournamentUser> tournamentUser = targetTournament.findTournamentUserByUserId(user.getId());
+
 		if (tournamentUser.isPresent()) {
 			tournamentUserStatus =
 				tournamentUser.get().getIsJoined() ? TournamentUserStatus.PLAYER : TournamentUserStatus.WAIT;
@@ -183,22 +179,6 @@ public class TournamentService {
 	}
 
 	/**
-	 * 진행중인 토너먼트 유무 확인
-	 * @param time 현재 시간
-	 * @return 종료되지 않은 토너먼트 있으면 true, 없으면 false
-	 */
-	public boolean isNotEndedTournament(LocalDateTime time) {
-		List<Tournament> tournamentList = tournamentRepository.findAllByStatusIsNot(TournamentStatus.END);
-		for (Tournament tournament : tournamentList) {
-			if (time.isAfter(tournament.getStartTime())
-				&& time.isBefore(tournament.getEndTime())) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
 	 * 오늘 시작하는 토너먼트가 있으면 해당 토너먼트 status를 LIVE로 변경하고 8강 경기 매칭
 	 * 참가자가 ALLOWED_JOINED_NUMBER보다 적으면 토너먼트 취소
 	 */
@@ -206,21 +186,31 @@ public class TournamentService {
 	public void startTournament() {
 		LocalDate date = LocalDate.now();
 		List<Tournament> imminentTournaments = findImminentTournament(date);
+
 		for (Tournament imminentTournament : imminentTournaments) {
 			List<TournamentUser> tournamentUsers = imminentTournament.getTournamentUsers();
 			if (tournamentUsers.size() < Tournament.ALLOWED_JOINED_NUMBER) {
-				for (TournamentUser tournamentUser : tournamentUsers) {
-					if (tournamentUser.getIsJoined().equals(true)) {
-						notiAdminService.sendAnnounceNotiToUser(
-							new SendNotiAdminRequestDto(tournamentUser.getUser().getIntraId(),
-								NotiType.TOURNAMENT_CANCELED.getMessage()));
-					}
-				}
+				sendNotification(tournamentUsers, NotiType.TOURNAMENT_CANCELED);
 				tournamentRepository.delete(imminentTournament);
-				return;
+				continue;
 			}
 			imminentTournament.updateStatus(TournamentStatus.LIVE);
-			matchTournamentService.matchGames(imminentTournament, QUARTER_FINAL_1);
+			matchTournamentService.matchGames(imminentTournament, RoundNumber.QUARTER_FINAL);
+		}
+	}
+
+	/**
+	 * 토너먼트 참가중인 유저에게 알림 전송.
+	 */
+	private void sendNotification(List<TournamentUser> tournamentUsers, NotiType type) {
+		for (TournamentUser tournamentUser : tournamentUsers) {
+			String message = type.getMessage();
+
+			if (tournamentUser.getIsJoined().equals(true)) {
+				String intraId = tournamentUser.getUser().getIntraId();
+				SendNotiAdminRequestDto dto = new SendNotiAdminRequestDto(intraId, message);
+				notiAdminService.sendAnnounceNotiToUser(dto);
+			}
 		}
 	}
 
@@ -231,34 +221,9 @@ public class TournamentService {
 	 */
 	private List<Tournament> findImminentTournament(LocalDate date) {
 		List<Tournament> tournaments = tournamentRepository.findAllByStatus(TournamentStatus.BEFORE);
-		List<Tournament> imminentTournaments = new ArrayList<>();
-
-		for (Tournament tournament : tournaments) {
-			LocalDate startDate = tournament.getStartTime().toLocalDate();
-			if (startDate.isEqual(date)) {
-				imminentTournaments.add(tournament);
-			}
-		}
-		return imminentTournaments;
-	}
-
-	/**
-	 * 토너먼트 우승자 조회
-	 * @param tournament 토너먼트
-	 * @return 토너먼트 우승자 정보
-	 */
-	private UserImageDto findTournamentWinner(Tournament tournament) {
-		User winner = tournament.getWinner();
-		return new UserImageDto(winner);
-	}
-
-	/**
-	 * 토너먼트 참가자 수 조회
-	 * @param tournament 토너먼트
-	 * @return 토너먼트 참가자 수
-	 */
-	private int findJoinedPlayerCnt(Tournament tournament) {
-		return tournamentUserRepository.countByTournamentAndIsJoined(tournament, true);
+		return tournaments.stream()
+			.filter(tournament -> tournament.getStartTime().toLocalDate().isEqual(date))
+			.collect(Collectors.toList());
 	}
 
 	/**
@@ -294,15 +259,9 @@ public class TournamentService {
 				new TournamentGameResDto(tournamentGame, gameTeamUser, tournamentGame.getTournamentRound(),
 					nextTournamentGame));
 		}
-		tournamentGameResDtoList.sort((o1, o2) -> {
-			if (o1.getTournamentRound().getRoundNumber() < o2.getTournamentRound().getRoundNumber()) {
-				return 1;
-			}
-			if (o1.getTournamentRound().getRoundOrder() > o2.getTournamentRound().getRoundOrder()) {
-				return 1;
-			}
-			return -1;
-		});
+		tournamentGameResDtoList.sort(comparing(TournamentGameResDto::getTournamentRound,
+			comparing(TournamentRound::getRoundNumber).reversed().thenComparing(TournamentRound::getRoundOrder)));
+
 		return tournamentGameResDtoList;
 	}
 

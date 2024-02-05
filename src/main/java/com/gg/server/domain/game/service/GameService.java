@@ -14,6 +14,7 @@ import com.gg.server.data.game.Season;
 import com.gg.server.data.game.TeamUser;
 import com.gg.server.data.game.Tournament;
 import com.gg.server.data.game.TournamentGame;
+import com.gg.server.data.game.type.RoundNumber;
 import com.gg.server.data.game.type.StatusType;
 import com.gg.server.data.match.type.TournamentMatchStatus;
 import com.gg.server.domain.coin.dto.UserGameCoinResultDto;
@@ -113,11 +114,12 @@ public class GameService {
 			throw new GameStatusNotMatchedException();
 		}
 		updateTournamentGameScore(game, scoreDto, userId);
-		if (TournamentMatchStatus.POSSIBLE.equals(matchTournamentService.checkTournamentGame(game))) {
+		if (TournamentMatchStatus.REQUIRED.equals(matchTournamentService.checkTournamentGame(game))) {
 			TournamentGame tournamentGame = tournamentGameRepository.findByGameId(game.getId())
 				.orElseThrow(TournamentGameNotFoundException::new);
 			Tournament tournament = tournamentGame.getTournament();
-			matchTournamentService.matchGames(tournament, tournamentGame.getTournamentRound().getNextRound());
+			RoundNumber matchRound = tournamentGame.getTournamentRound().getNextRound().getRoundNumber();
+			matchTournamentService.matchGames(tournament, matchRound);
 		}
 	}
 

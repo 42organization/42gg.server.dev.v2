@@ -1,5 +1,6 @@
 package com.gg.server.domain.megaphone.controller;
 
+import java.time.LocalTime;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -31,14 +32,14 @@ public class MegaphoneController {
 	private final MegaphoneService megaphoneService;
 
 	@PostMapping()
-	public ResponseEntity useMegaphone(@RequestBody @Valid MegaphoneUseRequestDto megaphoneUseRequestDto,
+	public ResponseEntity<Void> useMegaphone(@RequestBody @Valid MegaphoneUseRequestDto megaphoneUseRequestDto,
 		@Parameter(hidden = true) @Login UserDto user) {
-		megaphoneService.useMegaphone(megaphoneUseRequestDto, user);
+		megaphoneService.useMegaphone(megaphoneUseRequestDto, user, LocalTime.now());
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
 	@DeleteMapping("/{megaphoneId}")
-	public ResponseEntity deleteMegaphone(@PathVariable Long megaphoneId,
+	public ResponseEntity<Void> deleteMegaphone(@PathVariable Long megaphoneId,
 		@Parameter(hidden = true) @Login UserDto user) {
 		megaphoneService.deleteMegaphone(megaphoneId, user);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

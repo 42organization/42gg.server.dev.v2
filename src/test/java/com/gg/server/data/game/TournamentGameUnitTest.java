@@ -1,4 +1,4 @@
-package com.gg.server.domain.tournament.data;
+package com.gg.server.data.game;
 
 import java.time.LocalDateTime;
 
@@ -8,9 +8,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.gg.server.data.game.Game;
-import com.gg.server.data.game.Tournament;
-import com.gg.server.data.game.TournamentGame;
 import com.gg.server.data.game.type.TournamentStatus;
 import com.gg.server.data.game.type.TournamentType;
 import com.gg.server.utils.annotation.UnitTest;

@@ -1,8 +1,7 @@
-package com.gg.server.utils;
+package com.gg.server.domain.match.utils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -13,19 +12,12 @@ import org.springframework.stereotype.Component;
 import com.gg.server.data.game.Game;
 import com.gg.server.data.game.Season;
 import com.gg.server.data.game.Team;
-import com.gg.server.data.game.TeamUser;
 import com.gg.server.data.game.Tournament;
 import com.gg.server.data.game.TournamentGame;
 import com.gg.server.data.game.redis.RankRedis;
-import com.gg.server.data.game.type.Mode;
-import com.gg.server.data.game.type.StatusType;
 import com.gg.server.data.game.type.TournamentRound;
 import com.gg.server.data.user.User;
-import com.gg.server.data.user.type.RacketType;
-import com.gg.server.data.user.type.RoleType;
-import com.gg.server.data.user.type.SnsType;
 import com.gg.server.domain.game.data.GameRepository;
-import com.gg.server.domain.match.exception.WinningTeamNotFoundException;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.SeasonRepository;
@@ -37,7 +29,7 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class MatchTestUtils {
+public class MatchIntegrationTestUtils {
 	private final UserRepository userRepository;
 	private final SeasonRepository seasonRepository;
 	private final RankRedisRepository rankRedisRepository;
@@ -45,31 +37,15 @@ public class MatchTestUtils {
 	private final GameRepository gameRepository;
 
 	public User createUser() {
-		String randomId = UUID.randomUUID().toString().substring(0, 30);
-		User user = User.builder()
-			.eMail("email")
-			.intraId(randomId)
-			.racketType(RacketType.PENHOLDER)
-			.snsNotiOpt(SnsType.NONE)
-			.roleType(RoleType.USER)
-			.totalExp(1000)
-			.build();
+		User user = UserTestUtils.createUser();
 		userRepository.save(user);
 		return user;
 	}
 
 	public User createGuestUser() {
-		String randomId = UUID.randomUUID().toString().substring(0, 30);
-		User user = User.builder()
-			.eMail("email")
-			.intraId(randomId)
-			.racketType(RacketType.PENHOLDER)
-			.snsNotiOpt(SnsType.NONE)
-			.roleType(RoleType.GUEST)
-			.totalExp(1000)
-			.build();
-		userRepository.save(user);
-		return user;
+		User guest = UserTestUtils.createGuestUser();
+		userRepository.save(guest);
+		return guest;
 	}
 
 	public RankRedis addUsertoRankRedis(Long userId, Integer ppp, Long seasonId) {
@@ -132,24 +108,11 @@ public class MatchTestUtils {
 	public List<TournamentGame> matchTournamentGames(Tournament tournament, TournamentRound round) {
 		Season season = seasonRepository.findCurrentSeason(LocalDateTime.now())
 			.orElseThrow(() -> new IllegalArgumentException("현재 시즌이 존재하지 않습니다."));
-		List<TournamentRound> sameRounds = TournamentRound.getSameRounds(round);
-		List<TournamentGame> sameRoundGames = tournament.getTournamentGames().stream()
-			.filter(o -> sameRounds.contains(o.getTournamentRound()))
-			.sorted(Comparator.comparing(TournamentGame::getTournamentRound))
-			.collect(Collectors.toList());
-		List<TournamentGame> previousRoundTournamentGames = findSameRoundGames(tournament.getTournamentGames(),
-			TournamentRound.getPreviousRoundNumber(round));
-
-		for (int i = 0; i < round.getRoundNumber() / 2; ++i) {
-			Game game = new Game(season, StatusType.BEFORE, Mode.TOURNAMENT, LocalDateTime.now(), LocalDateTime.now());
-			Team team1 = new Team(game, -1, false);
-			Team team2 = new Team(game, -1, false);
-			User user1 = findMatchUser(previousRoundTournamentGames, i * 2, tournament);
-			User user2 = findMatchUser(previousRoundTournamentGames, i * 2 + 1, tournament);
-			new TeamUser(team1, user1);
-			new TeamUser(team2, user2);
+		List<TournamentGame> sameRoundGames = TournamentGameTestUtils.matchTournamentGames(tournament,
+			round.getRoundNumber(), season);
+		for (TournamentGame tournamentGame : sameRoundGames) {
+			Game game = tournamentGame.getGame();
 			gameRepository.save(game);
-			sameRoundGames.get(i).updateGame(game);
 		}
 		return sameRoundGames;
 	}
@@ -187,29 +150,6 @@ public class MatchTestUtils {
 		game.updateStatus();
 		game.updateStatus();
 		game.updateStatus();
-
 	}
 
-	public Team getWinningTeam(Game game) {
-		return game.getTeams().stream()
-			.filter(team -> Boolean.TRUE.equals(team.getWin()))
-			.findAny()
-			.orElseThrow(WinningTeamNotFoundException::new);
-	}
-
-	private User findMatchUser(List<TournamentGame> previousTournamentGames, int index, Tournament tournament) {
-		if (previousTournamentGames.isEmpty()) {
-			return tournament.getTournamentUsers().get(index).getUser();
-		}
-		Game game = previousTournamentGames.get(index).getGame();
-		return getWinningTeam(game)
-			.getTeamUsers().get(0).getUser();
-	}
-
-	private List<TournamentGame> findSameRoundGames(List<TournamentGame> tournamentGames, int roundNum) {
-		return tournamentGames.stream()
-			.filter(tournamentGame -> roundNum == tournamentGame.getTournamentRound().getRoundNumber())
-			.sorted(Comparator.comparing(TournamentGame::getTournamentRound))
-			.collect(Collectors.toList());
-	}
 }
