@@ -35,6 +35,7 @@ class PChangeServiceTest {
 	private PChangeService pChangeService;
 
 	@Test
+	@DisplayName("addPChange Success Test")
 	public void testAddPChange() {
 		Game game = new Game();
 		User user = new User("intra", "email", "image", RacketType.PENHOLDER,
@@ -54,10 +55,11 @@ class PChangeServiceTest {
 	}
 
 	@Nested
+	@DisplayName("FindExpChangeHistory Test")
 	class TestFindExpChangeHistory {
 
 		@Test
-		@DisplayName("success")
+		@DisplayName("성공")
 		public void successFindExpChangeHistory() {
 			PChange pChange = new PChange();
 			ReflectionUtilsForUnitTest.setFieldWithReflection(pChange, "game", mock(Game.class));
@@ -76,7 +78,7 @@ class PChangeServiceTest {
 		}
 
 		@Test
-		@DisplayName("nowExistGameId")
+		@DisplayName("실패 : nowExistGameId")
 		public void pchangeNotExistExceptionTest() {
 			Long gameId = 1L;
 			Long userId = 1L;
@@ -92,9 +94,11 @@ class PChangeServiceTest {
 	}
 
 	@Nested
+	@DisplayName("FindPPPChangeHistory Test")
 	class TestFindPPPChangeHistory {
 
 		@Test
+		@DisplayName("성공")
 		public void success() {
 			Long gameId = 1L;
 			Long userId = 1L;
@@ -117,6 +121,7 @@ class PChangeServiceTest {
 		}
 
 		@Test
+		@DisplayName("실패 : notExist")
 		public void notExist() {
 			Long gameId = 1L;
 			Long userId = 1L;
