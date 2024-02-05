@@ -22,7 +22,7 @@ jobs:
       - name: mv for separate report name
         run: mv ./build/reports/jacoco/unitTest/jacocoTestReport.xml ./build/reports/jacoco/unitTest/unitTestReport.xml
       - name: 📲 Upload unitTest coverage to Codecov
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
@@ -33,7 +33,7 @@ jobs:
       - name: 👨‍👨‍👧‍👦 Integration Test with Gradle
         run: ./gradlew --console verbose clean integrationTestCoverage
       - name: 📲 Upload integrationTest coverage to Codecov
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true

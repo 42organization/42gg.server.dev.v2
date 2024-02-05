@@ -4,7 +4,7 @@ import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.exception.custom.DuplicationException;
 
 public class AnnounceDupException extends DuplicationException {
-    public AnnounceDupException() {
-        super(ErrorCode.ANNOUNCE_DUPLICATE.getMessage(), ErrorCode.ANNOUNCE_DUPLICATE);
-    }
+	public AnnounceDupException() {
+		super(ErrorCode.ANNOUNCE_DUPLICATE.getMessage(), ErrorCode.ANNOUNCE_DUPLICATE);
+	}
 }

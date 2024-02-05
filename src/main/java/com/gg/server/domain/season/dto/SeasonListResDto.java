@@ -1,16 +1,16 @@
 package com.gg.server.domain.season.dto;
 
+import java.util.List;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Getter
 @NoArgsConstructor
 public class SeasonListResDto {
-    List<SeasonResDto> seasonList;
+	List<SeasonResDto> seasonList;
 
-    public SeasonListResDto(List<SeasonResDto> seasonList) {
-        this.seasonList = seasonList;
-    }
+	public SeasonListResDto(List<SeasonResDto> seasonList) {
+		this.seasonList = seasonList;
+	}
 }

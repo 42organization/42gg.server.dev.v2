@@ -1,17 +1,23 @@
 package com.gg.server.domain.tournament.dto;
 
+import java.util.List;
+
+import org.springframework.data.domain.Page;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @Getter
 public class TournamentListResponseDto {
 
-    private List<TournamentResponseDto> tournaments;
-    private int totalPage;
+	private List<TournamentResponseDto> tournaments;
+	private int totalPage;
+
+	public TournamentListResponseDto(Page<TournamentResponseDto> tournamentsDto) {
+		tournaments = tournamentsDto.getContent();
+		totalPage = tournamentsDto.getTotalPages();
+	}
 }

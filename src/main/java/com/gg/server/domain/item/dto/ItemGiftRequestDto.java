@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ItemGiftRequestDto {
-    private String ownerId;
+	private String ownerId;
 }

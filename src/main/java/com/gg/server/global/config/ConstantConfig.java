@@ -1,13 +1,9 @@
 package com.gg.server.global.config;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+
+import lombok.Getter;
 
 /**
  * ConstantConfig.
@@ -20,9 +16,9 @@ import org.springframework.stereotype.Component;
 @Component
 @Getter
 public class ConstantConfig {
-  @Value("${constant.allowedMinimalStartDays}")
-  private int allowedMinimalStartDays;
+	@Value("${constant.allowedMinimalStartDays}")
+	private int allowedMinimalStartDays;
 
-  @Value("${constant.tournamentSchedule}")
-  private String tournamentSchedule;
+	@Value("${constant.tournamentSchedule}")
+	private String tournamentSchedule;
 }

@@ -1,6 +1,5 @@
 package com.gg.server.admin.tournament.dto;
 
-import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,10 +9,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TournamentAdminAddUserResponseDto {
-    private Long userId;
+	private Long userId;
 
-    private String intraId;
+	private String intraId;
 
-    private Boolean isJoined;
+	private Boolean isJoined;
 
 }

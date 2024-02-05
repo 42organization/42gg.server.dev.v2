@@ -1,9 +1,9 @@
 package com.gg.server.admin.pchange.data;
 
-import com.gg.server.domain.pchange.data.PChange;
-
 import java.util.List;
 
+import com.gg.server.data.game.PChange;
+
 public interface PChangeAdminRepositoryCustom {
-    List<PChange> findByTeamUser(Long userId);
+	List<PChange> findByTeamUser(Long userId);
 }

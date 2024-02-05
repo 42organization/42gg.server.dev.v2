@@ -1,12 +1,13 @@
 package com.gg.server.admin.team.data;
 
-import com.gg.server.domain.game.data.Game;
-import com.gg.server.domain.team.data.Team;
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.List;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.gg.server.data.game.Game;
+import com.gg.server.data.game.Team;
+
 public interface TeamAdminRepository extends JpaRepository<Team, Long> {
-    List<Team> findAllByGame(Game game);
+	List<Team> findAllByGame(Game game);
 
 }

@@ -2,8 +2,12 @@ package com.gg.server.domain.pchange.data;
 
 import java.util.List;
 
+import com.gg.server.data.game.PChange;
+
 public interface PChangeRepositoryCustom {
-    List<PChange> findPChangesHistory(String intraId, Long seasonId);
-    List<PChange> findExpHistory(Long userId, Long gameId);
-    List<PChange> findPPPHistory(Long userId, Long gameId, Long seasonId);
+	List<PChange> findPChangesHistory(String intraId, Long seasonId);
+
+	List<PChange> findExpHistory(Long userId, Long gameId);
+
+	List<PChange> findPPPHistory(Long userId, Long gameId, Long seasonId);
 }

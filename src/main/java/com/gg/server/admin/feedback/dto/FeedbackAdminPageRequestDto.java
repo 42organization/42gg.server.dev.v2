@@ -1,16 +1,15 @@
 package com.gg.server.admin.feedback.dto;
 
 import com.gg.server.global.dto.PageRequestDto;
-import lombok.Getter;
 
-import javax.validation.constraints.NotNull;
+import lombok.Getter;
 
 @Getter
 public class FeedbackAdminPageRequestDto extends PageRequestDto {
-    String intraId;
+	String intraId;
 
-    public FeedbackAdminPageRequestDto(String intraId, Integer page, Integer size) {
-        super(page, size);
-        this.intraId = intraId;
-    }
+	public FeedbackAdminPageRequestDto(String intraId, Integer page, Integer size) {
+		super(page, size);
+		this.intraId = intraId;
+	}
 }

@@ -1,8 +1,8 @@
 package com.gg.server.domain.announcement.dto;
 
-import com.gg.server.domain.announcement.data.Announcement;
+import com.gg.server.data.manage.Announcement;
+
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AnnouncementDto {
-    private String content;
+	private String content;
 
-    public static AnnouncementDto from(Announcement announcement) {
-        return new AnnouncementDto(announcement.getContent());
-    }
+	public static AnnouncementDto from(Announcement announcement) {
+		return new AnnouncementDto(announcement.getContent());
+	}
 }
