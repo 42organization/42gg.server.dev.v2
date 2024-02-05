@@ -66,9 +66,15 @@ class NotiAdminServiceUnitTest {
 		@Test
 		@DisplayName("user_not_found")
 		void userNotFound() {
+			//given
+			SendNotiAdminRequestDto requestDto = new SendNotiAdminRequestDto("testIntraId", "TestMessage");
+			when(userAdminRepository.findByIntraId(any(String.class))).thenThrow(new UserNotFoundException());
+
 			//when, then
-			assertThatThrownBy(() -> notiAdminService.sendAnnounceNotiToUser(mock(SendNotiAdminRequestDto.class)))
+			assertThatThrownBy(() -> notiAdminService.sendAnnounceNotiToUser(requestDto))
 				.isInstanceOf(UserNotFoundException.class);
+			verify(notiAdminRepository, never()).save(any(Noti.class));
+			verify(snsNotiService, never()).sendSnsNotification(any(Noti.class), any(UserDto.class));
 		}
 	}
 
