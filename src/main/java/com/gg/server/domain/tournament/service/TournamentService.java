@@ -1,6 +1,6 @@
 package com.gg.server.domain.tournament.service;
 
-import static com.gg.server.domain.tournament.type.TournamentRound.*;
+import static com.gg.server.domain.tournament.type.RoundNumber.*;
 import static java.util.Comparator.*;
 
 import java.time.LocalDate;
@@ -195,7 +195,7 @@ public class TournamentService {
 				continue;
 			}
 			imminentTournament.updateStatus(TournamentStatus.LIVE);
-			matchTournamentService.matchGames(imminentTournament, QUARTER_FINAL_1);
+			matchTournamentService.matchGames(imminentTournament, QUARTER_FINAL);
 		}
 	}
 
