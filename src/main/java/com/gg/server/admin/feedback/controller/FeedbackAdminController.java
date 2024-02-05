@@ -29,23 +29,33 @@ import lombok.RequiredArgsConstructor;
 public class FeedbackAdminController {
 	private final FeedbackAdminService feedbackAdminService;
 
+	/**
+	 * <p>intraId 가 없다면 전체, 있다면 타겟 유저의 피드백들을 반환해줍니다.</p>
+	 * @param req dto
+	 * @return FeedbackListAdminResponseDto
+	 */
 	@GetMapping
-	public FeedbackListAdminResponseDto feedbackAll(@ModelAttribute @Valid FeedbackAdminPageRequestDto req) {
-
+	public ResponseEntity<FeedbackListAdminResponseDto> feedbackAll(
+		@ModelAttribute @Valid FeedbackAdminPageRequestDto req) {
 		if (req.getIntraId() == null) {
 			Pageable pageable = PageRequest.of(req.getPage() - 1, req.getSize(),
 				Sort.by("isSolved").and(Sort.by("createdAt")));
-			return feedbackAdminService.findAllFeedback(pageable);
+			return ResponseEntity.status(HttpStatus.OK).body(feedbackAdminService.findAllFeedback(pageable));
 		}
 		Pageable pageable = PageRequest.of(req.getPage() - 1, req.getSize(),
-			Sort.by("intra_id").and(Sort.by("createdAt")));
-		return feedbackAdminService.findByPartsOfIntraId(req.getIntraId(), pageable);
+			Sort.by("isSolved").and(Sort.by("createdAt")));
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(feedbackAdminService.findByPartsOfIntraId(req.getIntraId(), pageable));
 	}
 
+	/**
+	 * <p>타겟 피드백의 처리 상태를 변경해줍니다.</p>
+	 * @param feedbackId 타겟 피드백 id
+	 */
 	@PatchMapping("/{feedbackId}")
-	public ResponseEntity feedbackIsSolvedToggle(@PathVariable @NotNull Long feedbackId) {
+	public ResponseEntity<Void> feedbackIsSolvedToggle(@PathVariable @NotNull Long feedbackId) {
 		feedbackAdminService.toggleFeedbackIsSolvedByAdmin(feedbackId);
-		return new ResponseEntity(HttpStatus.NO_CONTENT);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
 }
