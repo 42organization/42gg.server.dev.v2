@@ -6,9 +6,11 @@ import static org.mockito.Mockito.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -88,7 +90,7 @@ class TournamentUnitTest {
 
 			//then
 			BusinessException businessException = assertThrows(BusinessException.class,
-				() -> tournament.addTournamentGame(mockTournamentGames.get(8)));
+				() -> tournament.addTournamentGame(mockTournamentGames.get(7)));
 			assertEquals(ErrorCode.TOURNAMENT_GAME_EXCEED, businessException.getErrorCode());
 			assertEquals(ErrorCode.TOURNAMENT_GAME_EXCEED.getMessage(), businessException.getMessage());
 		}
@@ -348,6 +350,75 @@ class TournamentUnitTest {
 
 			//then
 			assertEquals(endTime, tournament.getEndTime());
+		}
+	}
+
+	@Nested
+	@DisplayName("findTournamentUserByUserId")
+	class FindTournamentUserByUserId {
+		@Test
+		@DisplayName("Long null 전달 시 토너먼트 유저 없으면 exception")
+		void ifNullException() {
+			//given
+			Tournament tournament = tournaments.get(0);
+			TournamentUser tournamentUser = mockTournamentUsers.get(0);
+			tournament.getTournamentUsers().add(tournamentUser);
+			Long userId = null;
+
+			//when, then
+			assertThrows(NullPointerException.class, () -> tournament.findTournamentUserByUserId(userId));
+		}
+
+		@Test
+		@DisplayName("Long null 전달 시 토너먼트 유저 있으면 Optional.null")
+		void ifNullOptionalNull() {
+			//given
+			Tournament tournament = tournaments.get(0);
+			Long userId = null;
+
+			//when
+			Optional<TournamentUser> result = tournament.findTournamentUserByUserId(userId);
+
+			//then
+			Assertions.assertThat(result).isEqualTo(Optional.empty());
+		}
+
+		@Test
+		@DisplayName("존재하는 토너먼트 유저면 반환")
+		void userFind() {
+			//given
+			Tournament tournament = tournaments.get(0);
+			TournamentUser tournamentUser = mockTournamentUsers.get(0);
+			tournament.getTournamentUsers().add(tournamentUser);
+			User user = mock(User.class);
+			when(user.getId()).thenReturn(1L);
+			when(tournamentUser.getUser()).thenReturn(user);
+			Long userId = 1L;
+
+			//when
+			Optional<TournamentUser> result = tournament.findTournamentUserByUserId(userId);
+
+			//then
+			Assertions.assertThat(result.get()).isEqualTo(tournamentUser);
+		}
+
+		@Test
+		@DisplayName("존재하지 않는 토너먼트 유저면 optional.empty 반환")
+		void userNotFind() {
+			//given
+			Tournament tournament = tournaments.get(0);
+			TournamentUser tournamentUser = mockTournamentUsers.get(0);
+			User user = mock(User.class);
+			when(user.getId()).thenReturn(1L);
+			when(tournamentUser.getUser()).thenReturn(user);
+			tournament.getTournamentUsers().add(tournamentUser);
+			Long userId = 2L;
+
+			//when
+			Optional<TournamentUser> result = tournament.findTournamentUserByUserId(userId);
+
+			//then
+			Assertions.assertThat(result).isEqualTo(Optional.empty());
 		}
 	}
 }

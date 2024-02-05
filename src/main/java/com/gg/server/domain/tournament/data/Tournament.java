@@ -6,6 +6,7 @@ import static com.gg.server.global.utils.BusinessChecker.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -148,5 +149,11 @@ public class Tournament extends BaseTimeEntity {
 	public void updateEndTime(LocalDateTime endTime) {
 		mustNotNull(endTime, NULL_POINT);
 		this.endTime = endTime;
+	}
+
+	public Optional<TournamentUser> findTournamentUserByUserId(Long userId) {
+		return tournamentUsers.stream()
+			.filter(tournamentUser -> tournamentUser.getUser().getId().equals(userId))
+			.findFirst();
 	}
 }
