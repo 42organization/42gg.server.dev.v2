@@ -22,12 +22,12 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.data.domain.Sort;
 
-import com.gg.server.domain.rank.data.Rank;
+import com.gg.server.data.game.Rank;
+import com.gg.server.data.game.Season;
+import com.gg.server.data.game.Tier;
+import com.gg.server.data.user.User;
 import com.gg.server.domain.rank.data.RankRepository;
-import com.gg.server.domain.season.data.Season;
-import com.gg.server.domain.tier.data.Tier;
 import com.gg.server.domain.tier.data.TierRepository;
-import com.gg.server.domain.user.data.User;
 import com.gg.server.utils.annotation.UnitTest;
 
 @UnitTest
