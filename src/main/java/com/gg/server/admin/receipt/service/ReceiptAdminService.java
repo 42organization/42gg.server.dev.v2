@@ -19,14 +19,14 @@ public class ReceiptAdminService {
 
 	@Transactional(readOnly = true)
 	public ReceiptListResponseDto getAllReceipt(Pageable pageable) {
-		Page<ReceiptResponseDto> responseDtos = receiptAdminRepository.findAll(pageable).map(ReceiptResponseDto::new);
-		return new ReceiptListResponseDto(responseDtos.getContent(), responseDtos.getTotalPages());
+		Page<ReceiptResponseDto> responseDto = receiptAdminRepository.findAll(pageable).map(ReceiptResponseDto::new);
+		return new ReceiptListResponseDto(responseDto.getContent(), responseDto.getTotalPages());
 	}
 
 	@Transactional(readOnly = true)
 	public ReceiptListResponseDto findByIntraId(String intraId, Pageable pageable) {
 		Page<Receipt> receipts = receiptAdminRepository.findReceiptByIntraId(intraId, pageable);
-		Page<ReceiptResponseDto> responseDtos = receipts.map(ReceiptResponseDto::new);
-		return new ReceiptListResponseDto(responseDtos.getContent(), responseDtos.getTotalPages());
+		Page<ReceiptResponseDto> responseDto = receipts.map(ReceiptResponseDto::new);
+		return new ReceiptListResponseDto(responseDto.getContent(), responseDto.getTotalPages());
 	}
 }
