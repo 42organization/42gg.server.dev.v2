@@ -15,7 +15,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import com.gg.server.admin.receipt.data.ReceiptAdminRepository;
-import com.gg.server.domain.receipt.data.Receipt;
+import com.gg.server.data.store.Receipt;
 import com.gg.server.utils.annotation.UnitTest;
 
 @UnitTest
