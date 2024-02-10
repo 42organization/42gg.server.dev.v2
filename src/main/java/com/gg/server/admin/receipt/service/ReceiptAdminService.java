@@ -17,12 +17,23 @@ import lombok.RequiredArgsConstructor;
 public class ReceiptAdminService {
 	private final ReceiptAdminRepository receiptAdminRepository;
 
+	/**
+	 * <p>모든 영수증 데이터를 가져옵니다.</p>
+	 * @param pageable
+	 * @return
+	 */
 	@Transactional(readOnly = true)
 	public ReceiptListResponseDto getAllReceipt(Pageable pageable) {
 		Page<ReceiptResponseDto> responseDto = receiptAdminRepository.findAll(pageable).map(ReceiptResponseDto::new);
 		return new ReceiptListResponseDto(responseDto.getContent(), responseDto.getTotalPages());
 	}
 
+	/**
+	 * <p>특정 유저가 사용한 영수증 내역을 가져옵니다.</p>
+	 * @param intraId
+	 * @param pageable
+	 * @return
+	 */
 	@Transactional(readOnly = true)
 	public ReceiptListResponseDto findByIntraId(String intraId, Pageable pageable) {
 		Page<Receipt> receipts = receiptAdminRepository.findReceiptByIntraId(intraId, pageable);
