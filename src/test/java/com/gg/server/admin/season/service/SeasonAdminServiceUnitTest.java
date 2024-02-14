@@ -24,7 +24,7 @@ import com.gg.server.admin.rank.service.RankRedisAdminService;
 import com.gg.server.admin.season.data.SeasonAdminRepository;
 import com.gg.server.admin.season.dto.SeasonCreateRequestDto;
 import com.gg.server.admin.season.dto.SeasonUpdateRequestDto;
-import com.gg.server.domain.season.data.Season;
+import com.gg.server.data.game.Season;
 import com.gg.server.domain.season.exception.SeasonForbiddenException;
 import com.gg.server.domain.season.exception.SeasonNotFoundException;
 import com.gg.server.domain.season.exception.SeasonTimeBeforeException;

@@ -10,13 +10,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.gg.server.domain.noti.data.Noti;
+import com.gg.server.data.noti.Noti;
+import com.gg.server.data.user.type.SnsType;
 import com.gg.server.domain.noti.dto.UserNotiDto;
 import com.gg.server.domain.noti.service.sns.NotiMailSender;
 import com.gg.server.domain.noti.service.sns.SlackbotService;
 import com.gg.server.domain.team.dto.GameUser;
 import com.gg.server.domain.user.dto.UserDto;
-import com.gg.server.domain.user.type.SnsType;
 import com.gg.server.utils.annotation.UnitTest;
 
 @UnitTest

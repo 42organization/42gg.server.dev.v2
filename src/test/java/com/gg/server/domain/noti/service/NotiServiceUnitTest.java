@@ -16,16 +16,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.gg.server.domain.noti.data.Noti;
+import com.gg.server.data.noti.Noti;
+import com.gg.server.data.noti.type.NotiType;
+import com.gg.server.data.user.User;
+import com.gg.server.data.user.type.RacketType;
+import com.gg.server.data.user.type.RoleType;
+import com.gg.server.data.user.type.SnsType;
 import com.gg.server.domain.noti.data.NotiRepository;
-import com.gg.server.domain.noti.type.NotiType;
-import com.gg.server.domain.user.data.User;
 import com.gg.server.domain.user.data.UserRepository;
 import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.domain.user.exception.UserNotFoundException;
-import com.gg.server.domain.user.type.RacketType;
-import com.gg.server.domain.user.type.RoleType;
-import com.gg.server.domain.user.type.SnsType;
 import com.gg.server.global.exception.custom.NotExistException;
 import com.gg.server.utils.annotation.UnitTest;
 

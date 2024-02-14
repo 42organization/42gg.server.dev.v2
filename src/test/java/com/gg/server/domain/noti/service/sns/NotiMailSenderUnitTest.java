@@ -12,7 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.javamail.JavaMailSender;
 
-import com.gg.server.domain.noti.data.Noti;
+import com.gg.server.data.noti.Noti;
 import com.gg.server.domain.noti.dto.UserNotiDto;
 import com.gg.server.domain.noti.service.NotiService;
 import com.gg.server.domain.team.dto.GameUser;
