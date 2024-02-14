@@ -14,7 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.gg.server.domain.season.data.Season;
+import com.gg.server.data.game.Season;
 import com.gg.server.domain.season.data.SeasonRepository;
 import com.gg.server.domain.season.exception.SeasonNotFoundException;
 import com.gg.server.utils.annotation.UnitTest;
