@@ -23,6 +23,12 @@ public class SnsNotiService {
 		this.slackbotService = slackbotService;
 	}
 
+	/**
+	 * 유저가 설정해둔 알림 옵션(email, slack, both, none)에 따라 알림을 전송합니다.
+	 * UserNotiDto 이용
+	 * @param noti 알림
+	 * @param user 유저
+	 */
 	@Transactional(readOnly = true)
 	public void sendSnsNotification(Noti noti, UserNotiDto user) {
 		log.info("Send Sns Noti");
@@ -40,6 +46,12 @@ public class SnsNotiService {
 		}
 	}
 
+	/**
+	 * 유저가 설정해둔 알림 옵션(email, slack, both, none)에 따라 알림을 전송합니다.
+	 * UserDto 이용
+	 * @param noti 알림
+	 * @param user 유저
+	 */
 	@Transactional(readOnly = true)
 	public void sendSnsNotification(Noti noti, UserDto user) {
 		log.info("Send Sns Noti");
