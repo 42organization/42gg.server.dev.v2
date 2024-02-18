@@ -37,16 +37,23 @@ class SlotAdminServiceUnitTest {
 	@BeforeEach
 	void beforeEach() {
 		slotManagementList = new ArrayList<>();
-		slotManagementList.add(new SlotManagement(12, 11, 5, 15, LocalDateTime.now().plusHours(1), null));
+		slotManagementList.add(new SlotManagement(12, 11, 5, 15,
+			LocalDateTime.now().plusHours(1), null));
 		requestDtoList = new ArrayList<>();
 		// success case
-		requestDtoList.add(new SlotCreateRequestDto(12, 11, 15, 5, LocalDateTime.now().plusDays(1)));
+		requestDtoList.add(new SlotCreateRequestDto(12, 11, 15, 5,
+			LocalDateTime.now().plusDays(1)));
 		// Exception case
-		requestDtoList.add(new SlotCreateRequestDto(24, 11, 15, 5, LocalDateTime.now().plusHours(1)));
-		requestDtoList.add(new SlotCreateRequestDto(12, 13, 15, 5, LocalDateTime.now()));
-		requestDtoList.add(new SlotCreateRequestDto(12, 11, 13, 5, LocalDateTime.now()));
-		requestDtoList.add(new SlotCreateRequestDto(12, 11, 12, 5, LocalDateTime.now()));
-		requestDtoList.add(new SlotCreateRequestDto(15, 11, 10, 5, LocalDateTime.now()));
+		requestDtoList.add(new SlotCreateRequestDto(24, 11, 15, 5,
+			LocalDateTime.now().plusHours(1)));
+		requestDtoList.add(new SlotCreateRequestDto(12, 13, 15, 5,
+			LocalDateTime.now()));
+		requestDtoList.add(new SlotCreateRequestDto(12, 11, 13, 5,
+			LocalDateTime.now()));
+		requestDtoList.add(new SlotCreateRequestDto(12, 11, 12, 5,
+			LocalDateTime.now()));
+		requestDtoList.add(new SlotCreateRequestDto(15, 11, 10, 5,
+			LocalDateTime.now()));
 	}
 
 	@Nested
