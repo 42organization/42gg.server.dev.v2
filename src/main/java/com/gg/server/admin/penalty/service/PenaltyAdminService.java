@@ -31,6 +31,12 @@ public class PenaltyAdminService {
 	private final UserFindService userFindService;
 	private final PenaltyAdminRepository penaltyRepository;
 
+	/**
+	 * 패널티 부여
+	 * @param intraId
+	 * @param penaltyTime
+	 * @param reason
+	 */
 	@Transactional
 	public void givePenalty(String intraId, Integer penaltyTime, String reason) {
 		User user = userFindService.findByIntraId(intraId);
@@ -54,6 +60,12 @@ public class PenaltyAdminService {
 		penaltyUserAdminRedisRepository.addPenaltyUser(penaltyUser, releaseTime);
 	}
 
+	/**
+	 * 모든 패널티 조회
+	 * @param pageable
+	 * @param current
+	 * @return PenaltyListResponseDto
+	 */
 	@Transactional(readOnly = true)
 	public PenaltyListResponseDto getAllPenalties(Pageable pageable, Boolean current) {
 		Page<Penalty> allPenalties;
@@ -66,6 +78,12 @@ public class PenaltyAdminService {
 		return new PenaltyListResponseDto(responseDtos.getContent(), responseDtos.getTotalPages());
 	}
 
+	/**
+	 * 패널티 삭제
+	 * 패널티 시간이 지났을 경우 삭제 불가능
+	 * redis 에서도 삭제
+	 * @param penaltyId
+	 */
 	@Transactional
 	public void deletePenalty(Long penaltyId) {
 		Penalty penalty = penaltyRepository.findById(penaltyId).orElseThrow(()
@@ -83,6 +101,13 @@ public class PenaltyAdminService {
 		penaltyRepository.delete(penalty);
 	}
 
+	/**
+	 * intraId 로 패널티 리스트 조회
+	 * @param pageable
+	 * @param intraId
+	 * @param current
+	 * @return PenaltyListResponseDto
+	 */
 	@Transactional(readOnly = true)
 	public PenaltyListResponseDto getAllPenaltiesByIntraId(Pageable pageable, String intraId, Boolean current) {
 		Page<Penalty> allPenalties;
