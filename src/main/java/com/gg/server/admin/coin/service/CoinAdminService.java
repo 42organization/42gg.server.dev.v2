@@ -18,11 +18,6 @@ public class CoinAdminService {
 	private final UserRepository userRepository;
 	private final CoinHistoryService coinHistoryService;
 
-	/***
-	 * 유저의 코인 정보를 업데이트합니다.
-	 * @param coinUpdateRequestDto 코인 업데이트에 필요한 Dto
-	 * @throws UserNotFoundException 유저가 존재하지 않을 경우
-	 */
 	@Transactional
 	public void updateUserCoin(CoinUpdateRequestDto coinUpdateRequestDto) {
 		User user = userRepository.findByIntraId(coinUpdateRequestDto.getIntraId())
