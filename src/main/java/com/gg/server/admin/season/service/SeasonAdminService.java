@@ -102,10 +102,9 @@ public class SeasonAdminService {
 		}
 		// 예약 시즌 수정
 		detach(season);
-		season.setSeasonName(updateDto.getSeasonName());
-		season.setStartTime(updateDto.getStartTime());
-		season.setStartPpp(updateDto.getStartPpp());
-		season.setPppGap(updateDto.getPppGap());
+		seasonAdminRepository.updateReserveSeasonById(seasonId, updateDto.getSeasonName(), updateDto.getStartTime(),
+			updateDto.getStartPpp(), updateDto.getPppGap());
+		season = seasonAdminRepository.findById(seasonId).orElseThrow(SeasonNotFoundException::new);
 		insert(season);
 		seasonAdminRepository.save(season);
 		checkSeasonAtDB();
@@ -126,7 +125,6 @@ public class SeasonAdminService {
 		if (LocalDateTime.now().plusHours(24).isAfter(season.getStartTime())) {
 			throw new SeasonTimeBeforeException();
 		}
-
 		List<Season> beforeSeasons = seasonAdminRepository.findBeforeSeasons(season.getStartTime());
 		Season beforeSeason = beforeSeasons.isEmpty() ? null : beforeSeasons.get(0);
 		List<Season> afterSeasons = seasonAdminRepository.findAfterSeasons(season.getStartTime());
