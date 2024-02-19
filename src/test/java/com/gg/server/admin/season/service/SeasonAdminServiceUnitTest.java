@@ -351,7 +351,7 @@ class SeasonAdminServiceUnitTest {
 			// when, then
 			seasonAdminService.updateSeason(1L, requestDto);
 
-			verify(seasonAdminRepository, times(1)).findById(any());
+			verify(seasonAdminRepository, times(2)).findById(any());
 			verify(seasonAdminRepository, times(2)).findBeforeSeasons(any());
 			verify(seasonAdminRepository, times(2)).findAfterSeasons(any());
 			verify(seasonAdminRepository, times(1)).save(any());
