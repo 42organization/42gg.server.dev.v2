@@ -79,7 +79,8 @@ public class MatchFindService {
 		Tier tier = tierRepository.findStartTier().orElseThrow(TierNotFoundException::new);
 		RankRedis user;
 		if (userDto.getRoleType().equals(RoleType.GUEST)) {
-			user = RankRedis.from(userDto, season.getStartPpp(), tier.getImageUri());
+			user = RankRedis.from(userDto.getId(), userDto.getIntraId(), userDto.getTextColor(),
+				season.getStartPpp(), tier.getImageUri());
 		} else {
 			user = rankRedisRepository
 				.findRankByUserId(RedisKeyManager.getHashKey(season.getId()), userDto.getId());

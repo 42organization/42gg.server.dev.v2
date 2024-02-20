@@ -9,8 +9,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
-import com.gg.server.admin.season.dto.SeasonCreateRequestDto;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -58,13 +56,5 @@ public class Season {
 		this.endTime = endTime;
 		this.startPpp = startPpp;
 		this.pppGap = pppGap;
-	}
-
-	@Builder
-	public Season(SeasonCreateRequestDto createDto) {
-		this.seasonName = createDto.getSeasonName();
-		this.startTime = createDto.getStartTime();
-		this.startPpp = createDto.getStartPpp();
-		this.pppGap = createDto.getPppGap();
 	}
 }

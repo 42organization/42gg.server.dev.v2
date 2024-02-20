@@ -31,7 +31,6 @@ import com.gg.server.domain.rank.redis.RankRedisRepository;
 import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.tier.data.TierRepository;
 import com.gg.server.domain.tier.exception.TierNotFoundException;
-import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import com.gg.server.utils.annotation.IntegrationTest;
@@ -80,7 +79,8 @@ public class GameFindServiceTest {
 		testDataUtils.createMockMatch(newUser, season, startTime2, endTime2);
 
 		testDataUtils.createUserRank(newUser, statusMsg, season);
-		RankRedis userRank = RankRedis.from(UserDto.from(newUser), season.getStartPpp(), tier.getImageUri());
+		RankRedis userRank = RankRedis.from(newUser.getId(), newUser.getIntraId(), newUser.getTextColor(),
+			season.getStartPpp(), tier.getImageUri());
 		String redisHashKey = RedisKeyManager.getHashKey(season.getId());
 		rankRedisRepository.addRankData(redisHashKey, newUser.getId(), userRank);
 	}

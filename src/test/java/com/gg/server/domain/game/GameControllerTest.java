@@ -57,7 +57,6 @@ import com.gg.server.domain.team.data.TeamRepository;
 import com.gg.server.domain.team.data.TeamUserRepository;
 import com.gg.server.domain.tier.data.TierRepository;
 import com.gg.server.domain.tournament.data.TournamentRepository;
-import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import com.gg.server.utils.annotation.IntegrationTest;
@@ -124,10 +123,12 @@ public class GameControllerTest {
 		Tier tier = tiers.get(0);
 		rankRepository.save(Rank.from(user1, season, season.getStartPpp(), tier));
 		rankRepository.save(Rank.from(user2, season, season.getStartPpp(), tier));
-		RankRedis userRank = RankRedis.from(UserDto.from(user1), season.getStartPpp(), tier.getImageUri());
+		RankRedis userRank = RankRedis.from(user1.getId(), user1.getIntraId(), user1.getTextColor(),
+			season.getStartPpp(), tier.getImageUri());
 		String redisHashKey = RedisKeyManager.getHashKey(season.getId());
 		rankRedisRepository.addRankData(redisHashKey, user1.getId(), userRank);
-		userRank = RankRedis.from(UserDto.from(user2), season.getStartPpp(), tier.getImageUri());
+		userRank = RankRedis.from(user2.getId(), user2.getIntraId(), user2.getTextColor(),
+			season.getStartPpp(), tier.getImageUri());
 		rankRedisRepository.addRankData(redisHashKey, user2.getId(), userRank);
 
 		game1 = gameRepository.save(

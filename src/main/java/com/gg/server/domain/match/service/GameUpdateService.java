@@ -45,7 +45,8 @@ public class GameUpdateService {
 	public void make(GameAddDto addDto, Long recoveredUserId) {
 		SlotManagement slotManagement = slotManagementRepository.findCurrent(LocalDateTime.now())
 			.orElseThrow(SlotNotFoundException::new);
-		Game game = new Game(addDto, slotManagement.getGameInterval());
+		Game game = new Game(addDto.getSeason(), addDto.getMode(), addDto.getStartTime(),
+			slotManagement.getGameInterval());
 		gameRepository.save(game);
 		Team enemyTeam = new Team(game, -1, false);
 		Team myTeam = new Team(game, -1, false);

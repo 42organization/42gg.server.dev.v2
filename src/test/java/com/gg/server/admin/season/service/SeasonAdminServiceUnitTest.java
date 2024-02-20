@@ -87,7 +87,7 @@ class SeasonAdminServiceUnitTest {
 		void beforeEach() {
 			requestDto = new SeasonCreateRequestDto("season", LocalDateTime.now().plusDays(1).plusSeconds(1),
 				1000, 200);
-			season = new Season(requestDto);
+			season = requestDto.toSeason();
 			setFieldWithReflection(beforeSeasons.get(0), "id", 2L);
 			beforeSeasonsAsc = new ArrayList<>(beforeSeasons);
 			Collections.reverse(beforeSeasonsAsc);

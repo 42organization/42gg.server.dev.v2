@@ -5,7 +5,6 @@ import java.io.Serializable;
 import org.springframework.data.redis.core.RedisHash;
 
 import com.gg.server.data.game.Rank;
-import com.gg.server.domain.user.dto.UserDto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -48,16 +47,16 @@ public class RankRedis implements Serializable {
 		this.statusMessage = msg;
 	}
 
-	public static RankRedis from(UserDto user, Integer ppp, String tierImageUri) {
+	public static RankRedis from(Long id, String intraId, String textColor, Integer ppp, String tierImageUri) {
 		RankRedis rankRedis = RankRedis.builder()
-			.userId(user.getId())
-			.intraId(user.getIntraId())
+			.userId(id)
+			.intraId(intraId)
 			.ppp(ppp)
 			.wins(0)
 			.losses(0)
 			.statusMessage("")
 			.tierImageUri(tierImageUri)
-			.textColor(user.getTextColor())
+			.textColor(textColor)
 			.build();
 		return rankRedis;
 	}

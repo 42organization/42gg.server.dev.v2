@@ -118,7 +118,7 @@ public class UserAdminService {
 		RankRedis userCurrRankRedis = rankRedisRepository.findRankByUserId(RedisKeyManager.getHashKey(currSeasonId),
 			userId);
 
-		userCurrRank.modifyUserRank(updateReq);
+		userCurrRank.modifyUserRank(updateReq.getPpp(), updateReq.getWins(), updateReq.getLosses());
 		userCurrRank.setStatusMessage(updateReq.getStatusMessage());
 
 		userCurrRankRedis.changedRank(updateReq.getPpp(),
