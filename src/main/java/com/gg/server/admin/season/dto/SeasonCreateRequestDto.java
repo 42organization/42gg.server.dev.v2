@@ -40,7 +40,7 @@ public class SeasonCreateRequestDto {
 			+ '}';
 	}
 
-	public Season toEntity() {
+	public Season toSeason() {
 		return Season.builder()
 			.seasonName(this.seasonName)
 			.startTime(this.startTime)
