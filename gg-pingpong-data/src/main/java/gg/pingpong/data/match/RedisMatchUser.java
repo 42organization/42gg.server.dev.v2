@@ -6,8 +6,7 @@ import javax.persistence.Id;
 
 import org.springframework.data.redis.core.RedisHash;
 
-import com.gg.server.data.match.type.Option;
-
+import gg.pingpong.data.match.type.Option;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
