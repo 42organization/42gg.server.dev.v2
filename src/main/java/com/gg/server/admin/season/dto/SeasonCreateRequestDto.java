@@ -7,6 +7,8 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.gg.server.data.game.Season;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,5 +38,14 @@ public class SeasonCreateRequestDto {
 			+ ", startPpp='" + startPpp + '\''
 			+ ", pppGap='" + pppGap + '\''
 			+ '}';
+	}
+
+	public Season toEntity() {
+		return Season.builder()
+			.seasonName(this.seasonName)
+			.startTime(this.startTime)
+			.startPpp(this.startPpp)
+			.pppGap(this.pppGap)
+			.build();
 	}
 }

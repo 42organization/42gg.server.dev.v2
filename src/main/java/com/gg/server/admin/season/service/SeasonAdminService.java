@@ -48,7 +48,7 @@ public class SeasonAdminService {
 	 */
 	@Transactional
 	public void createSeason(SeasonCreateRequestDto createDto) {
-		Season newSeason = new Season(createDto);
+		Season newSeason = createDto.toEntity();
 
 		insert(newSeason);
 		seasonAdminRepository.save(newSeason);
