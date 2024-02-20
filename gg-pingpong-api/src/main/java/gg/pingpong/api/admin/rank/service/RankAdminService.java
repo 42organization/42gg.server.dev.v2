@@ -1,6 +1,6 @@
 package gg.pingpong.api.admin.rank.service;
 
-import static com.gg.server.data.user.type.RoleType.*;
+import static gg.pingpong.data.user.type.RoleType.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -9,19 +9,18 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gg.server.admin.season.dto.SeasonAdminDto;
-import com.gg.server.admin.user.data.UserAdminRepository;
-import com.gg.server.data.game.Rank;
-import com.gg.server.data.game.Season;
-import com.gg.server.data.game.Tier;
-import com.gg.server.data.user.User;
-import com.gg.server.domain.rank.data.RankRepository;
-import com.gg.server.domain.season.data.SeasonRepository;
-import com.gg.server.domain.season.exception.SeasonForbiddenException;
-import com.gg.server.domain.season.exception.SeasonTimeBeforeException;
-import com.gg.server.domain.tier.data.TierRepository;
-import com.gg.server.domain.tier.exception.TierNotFoundException;
-
+import gg.pingpong.admin.repo.user.UserAdminRepository;
+import gg.pingpong.api.admin.season.dto.SeasonAdminDto;
+import gg.pingpong.data.game.Rank;
+import gg.pingpong.data.game.Season;
+import gg.pingpong.data.game.Tier;
+import gg.pingpong.data.user.User;
+import gg.pingpong.repo.rank.RankRepository;
+import gg.pingpong.repo.season.SeasonRepository;
+import gg.pingpong.repo.tier.TierRepository;
+import gg.pingpong.utils.exception.season.SeasonForbiddenException;
+import gg.pingpong.utils.exception.season.SeasonTimeBeforeException;
+import gg.pingpong.utils.exception.tier.TierNotFoundException;
 import lombok.AllArgsConstructor;
 
 @Service

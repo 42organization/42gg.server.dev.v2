@@ -7,17 +7,16 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gg.server.admin.rank.service.RankAdminService;
-import com.gg.server.admin.rank.service.RankRedisAdminService;
-import com.gg.server.admin.season.data.SeasonAdminRepository;
-import com.gg.server.admin.season.dto.SeasonAdminDto;
-import com.gg.server.admin.season.dto.SeasonCreateRequestDto;
-import com.gg.server.admin.season.dto.SeasonUpdateRequestDto;
-import com.gg.server.data.game.Season;
-import com.gg.server.domain.season.exception.SeasonForbiddenException;
-import com.gg.server.domain.season.exception.SeasonNotFoundException;
-import com.gg.server.domain.season.exception.SeasonTimeBeforeException;
-
+import gg.pingpong.admin.repo.season.SeasonAdminRepository;
+import gg.pingpong.api.admin.rank.service.RankAdminService;
+import gg.pingpong.api.admin.rank.service.RankRedisAdminService;
+import gg.pingpong.api.admin.season.dto.SeasonAdminDto;
+import gg.pingpong.api.admin.season.dto.SeasonCreateRequestDto;
+import gg.pingpong.api.admin.season.dto.SeasonUpdateRequestDto;
+import gg.pingpong.data.game.Season;
+import gg.pingpong.utils.exception.season.SeasonForbiddenException;
+import gg.pingpong.utils.exception.season.SeasonNotFoundException;
+import gg.pingpong.utils.exception.season.SeasonTimeBeforeException;
 import lombok.AllArgsConstructor;
 
 @Service

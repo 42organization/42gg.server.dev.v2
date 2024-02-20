@@ -7,14 +7,13 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gg.server.admin.slotmanagement.data.AdminSlotManagementsRepository;
-import com.gg.server.admin.slotmanagement.dto.SlotAdminDto;
-import com.gg.server.admin.slotmanagement.dto.SlotCreateRequestDto;
-import com.gg.server.admin.slotmanagement.dto.SlotListAdminResponseDto;
-import com.gg.server.domain.slotmanagement.SlotManagement;
-import com.gg.server.domain.slotmanagement.exception.SlotManagementForbiddenException;
-import com.gg.server.domain.slotmanagement.exception.SlotManagementNotFoundException;
-
+import gg.pingpong.admin.repo.slotmanagement.AdminSlotManagementsRepository;
+import gg.pingpong.api.admin.slotmanagement.dto.SlotAdminDto;
+import gg.pingpong.api.admin.slotmanagement.dto.SlotCreateRequestDto;
+import gg.pingpong.api.admin.slotmanagement.dto.SlotListAdminResponseDto;
+import gg.pingpong.data.manage.SlotManagement;
+import gg.pingpong.utils.exception.slotmanagement.SlotManagementForbiddenException;
+import gg.pingpong.utils.exception.slotmanagement.SlotManagementNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service

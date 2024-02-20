@@ -3,8 +3,7 @@ package gg.pingpong.api.admin.tournament.dto;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import com.gg.server.domain.team.dto.TeamReqDto;
-
+import gg.pingpong.api.user.team.dto.TeamReqDto;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,13 +1,5 @@
 package com.gg.server.admin.penalty.dto;
 
-import javax.validation.constraints.PositiveOrZero;
-
-import org.hibernate.validator.constraints.Length;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
