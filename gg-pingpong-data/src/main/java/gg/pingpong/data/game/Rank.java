@@ -90,12 +90,6 @@ public class Rank extends BaseTimeEntity implements Serializable {
 		this.statusMessage = statusMessage;
 	}
 
-	// public void modifyUserRank(UserUpdateAdminRequestDto userUpdateAdminRequestDto) {
-	// 	this.ppp = userUpdateAdminRequestDto.getPpp();
-	// 	this.wins = userUpdateAdminRequestDto.getWins();
-	// 	this.losses = userUpdateAdminRequestDto.getLosses();
-	// }
-
 	public void modifyUserRank(Integer ppp, int wins, int losses) {
 		this.ppp = ppp;
 		this.wins = wins;

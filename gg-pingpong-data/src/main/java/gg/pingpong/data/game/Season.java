@@ -57,12 +57,4 @@ public class Season {
 		this.startPpp = startPpp;
 		this.pppGap = pppGap;
 	}
-
-	// @Builder
-	// public Season(SeasonCreateRequestDto createDto) {
-	// 	this.seasonName = createDto.getSeasonName();
-	// 	this.startTime = createDto.getStartTime();
-	// 	this.startPpp = createDto.getStartPpp();
-	// 	this.pppGap = createDto.getPppGap();
-	// }
 }
