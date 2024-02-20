@@ -9,8 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
-import com.gg.server.data.manage.Penalty;
-
+import gg.pingpong.data.manage.Penalty;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

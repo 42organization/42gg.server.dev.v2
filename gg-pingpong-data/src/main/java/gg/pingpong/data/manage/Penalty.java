@@ -14,10 +14,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
-import com.gg.server.data.user.User;
-import com.gg.server.domain.penalty.type.PenaltyType;
-import com.gg.server.global.utils.BaseTimeEntity;
-
+import gg.pingpong.data.BaseTimeEntity;
+import gg.pingpong.data.manage.type.PenaltyType;
+import gg.pingpong.data.user.User;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

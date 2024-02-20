@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.gg.server.data.manage.Penalty;
+import gg.pingpong.data.manage.Penalty;
 
 public interface PenaltyAdminRepositoryCustom {
 	Page<Penalty> findAllCurrent(Pageable pageable, LocalDateTime targetTime);
