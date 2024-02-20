@@ -71,13 +71,13 @@ public class Game {
 		this.endTime = endTime;
 	}
 
-	// public Game(GameAddDto dto, Integer interval) {
-	// 	this.season = dto.getSeason();
-	// 	this.status = StatusType.BEFORE;
-	// 	this.mode = dto.getMode();
-	// 	this.startTime = dto.getStartTime();
-	// 	this.endTime = dto.getStartTime().plusMinutes(interval);
-	// }
+	public Game(Season season, Mode mode, LocalDateTime startTime, Integer interval) {
+		this.season = season;
+		this.status = StatusType.BEFORE;
+		this.mode = mode;
+		this.startTime = startTime;
+		this.endTime = startTime.plusMinutes(interval);
+	}
 
 	@Override
 	public String toString() {
