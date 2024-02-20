@@ -50,11 +50,7 @@ public class ItemTestUtils {
 	 * 아이템을 생성한다.
 	 */
 	public Item createItem(User creator, ItemUpdateRequestDto updateRequestDto) {
-		Item item = Item.builder()
-			.creatorIntraId(creator.getIntraId())
-			.itemImageUri("42gg-s3")
-			.updateRequestDto(updateRequestDto)
-			.build();
+		Item item = updateRequestDto.toItem(creator.getIntraId(), "42gg-s3");
 		itemRepository.save(item);
 		return item;
 	}
