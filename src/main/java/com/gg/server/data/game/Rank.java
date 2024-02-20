@@ -15,7 +15,6 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.DynamicUpdate;
 
-import com.gg.server.admin.user.dto.UserUpdateAdminRequestDto;
 import com.gg.server.data.user.User;
 import com.gg.server.global.utils.BaseTimeEntity;
 
@@ -90,12 +89,6 @@ public class Rank extends BaseTimeEntity implements Serializable {
 
 	public void setStatusMessage(String statusMessage) {
 		this.statusMessage = statusMessage;
-	}
-
-	public void modifyUserRank(UserUpdateAdminRequestDto userUpdateAdminRequestDto) {
-		this.ppp = userUpdateAdminRequestDto.getPpp();
-		this.wins = userUpdateAdminRequestDto.getWins();
-		this.losses = userUpdateAdminRequestDto.getLosses();
 	}
 
 	public void modifyUserRank(Integer ppp, int wins, int losses) {
