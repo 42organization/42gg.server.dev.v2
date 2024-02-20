@@ -43,7 +43,7 @@ public class ItemUpdateRequestDto {
 			+ '}';
 	}
 
-	public Item createItem(String intraId, String imageUrl) {
+	public Item toItem(String intraId, String imageUrl) {
 		return Item.builder()
 			.name(name)
 			.mainContent(mainContent)

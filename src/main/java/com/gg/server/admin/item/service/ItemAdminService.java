@@ -59,7 +59,7 @@ public class ItemAdminService {
 		}
 		item.setVisibility(user.getIntraId());
 
-		Item newItem = itemUpdateRequestDto.createItem(user.getIntraId(), null);
+		Item newItem = itemUpdateRequestDto.toItem(user.getIntraId(), null);
 		if (itemImageFile != null) {
 			asyncNewItemImageUploader.upload(newItem, itemImageFile);
 		}
@@ -82,7 +82,7 @@ public class ItemAdminService {
 			throw new ItemNotAvailableException();
 		}
 		item.setVisibility(user.getIntraId());
-		Item newItem = itemUpdateRequestDto.createItem(user.getIntraId(), item.getImageUri());
+		Item newItem = itemUpdateRequestDto.toItem(user.getIntraId(), item.getImageUri());
 		itemAdminRepository.save(newItem);
 	}
 
