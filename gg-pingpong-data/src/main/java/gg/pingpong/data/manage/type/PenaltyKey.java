@@ -1,4 +1,4 @@
-package gg.pingpong.api.admin.penalty.type;
+package gg.pingpong.data.manage.type;
 
 public class PenaltyKey {
 	public static final String ALL = "PENALTY:";

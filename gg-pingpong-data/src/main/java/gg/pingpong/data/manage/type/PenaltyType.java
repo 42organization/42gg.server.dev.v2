@@ -1,4 +1,4 @@
-package gg.pingpong.api.user.penalty.type;
+package gg.pingpong.data.manage.type;
 
 import java.util.Arrays;
 import java.util.Locale;

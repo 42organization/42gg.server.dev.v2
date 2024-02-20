@@ -6,9 +6,9 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.gg.server.data.store.Megaphone;
-import com.gg.server.data.store.Receipt;
-import com.gg.server.data.store.type.ItemStatus;
+import gg.pingpong.data.store.Megaphone;
+import gg.pingpong.data.store.Receipt;
+import gg.pingpong.data.store.type.ItemStatus;
 
 public interface MegaphoneRepository extends JpaRepository<Megaphone, Long> {
 	List<Megaphone> findAllByUsedAtAndReceiptStatus(LocalDate date, ItemStatus itemStatus);

@@ -12,10 +12,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
-import com.gg.server.data.noti.type.NotiType;
-import com.gg.server.data.user.User;
-import com.gg.server.global.utils.BaseTimeEntity;
-
+import gg.pingpong.data.BaseTimeEntity;
+import gg.pingpong.data.noti.type.NotiType;
+import gg.pingpong.data.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

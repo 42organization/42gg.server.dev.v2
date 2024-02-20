@@ -1,6 +1,6 @@
 package gg.pingpong.repo.game;
 
-import com.gg.server.data.user.type.SnsType;
+import gg.pingpong.data.user.type.SnsType;
 
 public interface GameUser {
 	Long getGameId();

@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.gg.server.data.store.Receipt;
+import gg.pingpong.data.store.Receipt;
 
 public interface UserItemRepository extends JpaRepository<Receipt, Long> {
 
