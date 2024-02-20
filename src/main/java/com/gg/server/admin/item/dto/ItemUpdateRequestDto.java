@@ -2,6 +2,7 @@ package com.gg.server.admin.item.dto;
 
 import javax.validation.constraints.NotNull;
 
+import com.gg.server.data.store.Item;
 import com.gg.server.data.store.type.ItemType;
 
 import lombok.AllArgsConstructor;
@@ -41,4 +42,19 @@ public class ItemUpdateRequestDto {
 			+ ", itemType='" + itemType + '\''
 			+ '}';
 	}
+
+	public Item createItem(String intraId, String imageUrl) {
+		return Item.builder()
+			.name(name)
+			.mainContent(mainContent)
+			.subContent(subContent)
+			.imageUri(imageUrl)
+			.price(price)
+			.discount(discount)
+			.isVisible(true)
+			.creatorIntraId(intraId)
+			.type(itemType)
+			.build();
+	}
+
 }

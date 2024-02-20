@@ -58,7 +58,8 @@ public class ItemAdminService {
 			throw new ItemNotAvailableException();
 		}
 		item.setVisibility(user.getIntraId());
-		Item newItem = new Item(itemUpdateRequestDto, user.getIntraId(), null);
+
+		Item newItem = itemUpdateRequestDto.createItem(user.getIntraId(), null);
 		if (itemImageFile != null) {
 			asyncNewItemImageUploader.upload(newItem, itemImageFile);
 		}
@@ -81,7 +82,7 @@ public class ItemAdminService {
 			throw new ItemNotAvailableException();
 		}
 		item.setVisibility(user.getIntraId());
-		Item newItem = new Item(itemUpdateRequestDto, user.getIntraId(), item.getImageUri());
+		Item newItem = itemUpdateRequestDto.createItem(user.getIntraId(), item.getImageUri());
 		itemAdminRepository.save(newItem);
 	}
 
