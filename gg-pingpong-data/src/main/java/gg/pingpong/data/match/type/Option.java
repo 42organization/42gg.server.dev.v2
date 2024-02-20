@@ -3,8 +3,8 @@ package gg.pingpong.data.match.type;
 import java.util.Locale;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.gg.server.domain.match.exception.OptionInvalidException;
 
+import gg.pingpong.utils.exception.match.OptionInvalidException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

@@ -11,9 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
-import com.gg.server.admin.item.dto.ItemUpdateRequestDto;
-import com.gg.server.data.store.type.ItemType;
-
+import gg.pingpong.data.store.type.ItemType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -65,6 +63,7 @@ public class Item {
 	@Column(name = "deleter_intra_id", length = 10)
 	private String deleterIntraId;
 
+	@Builder
 	public Item(String name, String mainContent, String subContent, String imageUri, Integer price,
 		Boolean isVisible, Integer discount, ItemType type, LocalDateTime createdAt, String creatorIntraId) {
 		this.name = name;
@@ -77,20 +76,6 @@ public class Item {
 		this.type = type;
 		this.createdAt = createdAt;
 		this.creatorIntraId = creatorIntraId;
-	}
-
-	@Builder
-	public Item(ItemUpdateRequestDto updateRequestDto, String creatorIntraId, String itemImageUri) {
-		this.name = updateRequestDto.getName();
-		this.mainContent = updateRequestDto.getMainContent();
-		this.subContent = updateRequestDto.getSubContent();
-		this.imageUri = itemImageUri;
-		this.price = updateRequestDto.getPrice();
-		this.discount = updateRequestDto.getDiscount();
-		this.isVisible = true;
-		this.creatorIntraId = creatorIntraId;
-		this.createdAt = LocalDateTime.now();
-		this.type = updateRequestDto.getItemType();
 	}
 
 	public void imageUpdate(String imageUri) {
