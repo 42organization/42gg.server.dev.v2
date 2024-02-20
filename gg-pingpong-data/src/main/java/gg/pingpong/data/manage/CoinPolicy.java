@@ -58,13 +58,13 @@ public class CoinPolicy {
 		this.createdAt = LocalDateTime.now();
 	}
 
-	// public static CoinPolicy from(User user, CoinPolicyAdminAddDto addDto) {
-	// 	return CoinPolicy.builder()
-	// 		.user(user)
-	// 		.attendance(addDto.getAttendance())
-	// 		.normal(addDto.getNormal())
-	// 		.rankWin(addDto.getRankWin())
-	// 		.rankLose(addDto.getRankLose())
-	// 		.build();
-	// }
+	public static CoinPolicy from(User user, int attendance, int normal, int rankWin, int rankLose) {
+		return CoinPolicy.builder()
+			.user(user)
+			.attendance(attendance)
+			.normal(normal)
+			.rankWin(rankWin)
+			.rankLose(rankLose)
+			.build();
+	}
 }

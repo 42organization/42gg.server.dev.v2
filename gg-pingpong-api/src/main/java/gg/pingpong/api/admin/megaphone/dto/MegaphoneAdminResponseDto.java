@@ -1,7 +1,6 @@
 package gg.pingpong.api.admin.megaphone.dto;
 
-import com.gg.server.data.store.Megaphone;
-
+import gg.pingpong.data.store.Megaphone;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

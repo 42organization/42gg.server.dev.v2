@@ -20,15 +20,14 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.gg.server.admin.item.dto.ItemListResponseDto;
-import com.gg.server.admin.item.dto.ItemUpdateRequestDto;
-import com.gg.server.admin.item.service.ItemAdminService;
-import com.gg.server.domain.item.exception.ItemImageLargeException;
-import com.gg.server.domain.item.exception.ItemImageTypeException;
-import com.gg.server.domain.user.dto.UserDto;
-import com.gg.server.global.dto.PageRequestDto;
-import com.gg.server.global.utils.argumentresolver.Login;
-
+import gg.pingpong.api.admin.item.dto.ItemListResponseDto;
+import gg.pingpong.api.admin.item.dto.ItemUpdateRequestDto;
+import gg.pingpong.api.admin.item.service.ItemAdminService;
+import gg.pingpong.api.global.dto.PageRequestDto;
+import gg.pingpong.api.global.utils.argumentresolver.Login;
+import gg.pingpong.api.user.user.dto.UserDto;
+import gg.pingpong.utils.exception.item.ItemImageLargeException;
+import gg.pingpong.utils.exception.item.ItemImageTypeException;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 

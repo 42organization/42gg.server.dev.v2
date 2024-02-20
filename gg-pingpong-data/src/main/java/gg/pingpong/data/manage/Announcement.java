@@ -9,8 +9,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
-import com.gg.server.admin.announcement.dto.AnnouncementAdminAddDto;
-
 import gg.pingpong.data.BaseTimeEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -47,10 +45,10 @@ public class Announcement extends BaseTimeEntity {
 		this.deletedAt = deletedAt;
 	}
 
-	public static Announcement from(AnnouncementAdminAddDto addDto) {
+	public static Announcement from(String content, String creatorIntraId) {
 		return Announcement.builder()
-			.content(addDto.getContent())
-			.creatorIntraId(addDto.getCreatorIntraId())
+			.content(content)
+			.creatorIntraId(creatorIntraId)
 			.build();
 	}
 }

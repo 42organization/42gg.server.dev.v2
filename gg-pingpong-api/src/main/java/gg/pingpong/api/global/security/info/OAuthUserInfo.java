@@ -2,7 +2,7 @@ package gg.pingpong.api.global.security.info;
 
 import java.util.Map;
 
-import com.gg.server.data.user.type.RoleType;
+import gg.pingpong.data.user.type.RoleType;
 
 public abstract class OAuthUserInfo {
 	protected Map<String, Object> attributes;

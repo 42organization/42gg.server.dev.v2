@@ -4,10 +4,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.gg.server.admin.megaphone.data.MegaphoneAdminRepository;
-import com.gg.server.admin.megaphone.dto.MegaphoneAdminResponseDto;
-import com.gg.server.admin.megaphone.dto.MegaphoneHistoryResponseDto;
-
+import gg.pingpong.admin.repo.megaphone.MegaphoneAdminRepository;
+import gg.pingpong.api.admin.megaphone.dto.MegaphoneAdminResponseDto;
+import gg.pingpong.api.admin.megaphone.dto.MegaphoneHistoryResponseDto;
 import lombok.RequiredArgsConstructor;
 
 @Service

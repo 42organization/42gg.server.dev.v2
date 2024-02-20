@@ -3,13 +3,12 @@ package gg.pingpong.api.user.noti.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gg.server.data.noti.Noti;
-import com.gg.server.data.user.type.SnsType;
-import com.gg.server.domain.noti.dto.UserNotiDto;
-import com.gg.server.domain.noti.service.sns.NotiMailSender;
-import com.gg.server.domain.noti.service.sns.SlackbotService;
-import com.gg.server.domain.user.dto.UserDto;
-
+import gg.pingpong.api.user.noti.dto.UserNotiDto;
+import gg.pingpong.api.user.noti.service.sns.NotiMailSender;
+import gg.pingpong.api.user.noti.service.sns.SlackbotService;
+import gg.pingpong.api.user.user.dto.UserDto;
+import gg.pingpong.data.noti.Noti;
+import gg.pingpong.data.user.type.SnsType;
 import lombok.extern.slf4j.Slf4j;
 
 @Service

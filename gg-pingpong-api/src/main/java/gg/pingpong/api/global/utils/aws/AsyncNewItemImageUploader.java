@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.gg.server.data.store.Item;
-import com.gg.server.global.utils.ItemImageHandler;
+import gg.pingpong.api.global.utils.ItemImageHandler;
+import gg.pingpong.data.store.Item;
 
 @Component
 public class AsyncNewItemImageUploader {
