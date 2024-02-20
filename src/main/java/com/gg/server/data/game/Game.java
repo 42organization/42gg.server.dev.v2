@@ -22,7 +22,6 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import com.gg.server.data.game.type.Mode;
 import com.gg.server.data.game.type.StatusType;
-import com.gg.server.domain.match.dto.GameAddDto;
 import com.gg.server.global.exception.ErrorCode;
 import com.gg.server.global.utils.BusinessChecker;
 
@@ -73,12 +72,12 @@ public class Game {
 		this.endTime = endTime;
 	}
 
-	public Game(GameAddDto dto, Integer interval) {
-		this.season = dto.getSeason();
+	public Game(Season season, Mode mode, LocalDateTime startTime, Integer interval) {
+		this.season = season;
 		this.status = StatusType.BEFORE;
-		this.mode = dto.getMode();
-		this.startTime = dto.getStartTime();
-		this.endTime = dto.getStartTime().plusMinutes(interval);
+		this.mode = mode;
+		this.startTime = startTime;
+		this.endTime = startTime.plusMinutes(interval);
 	}
 
 	@Override

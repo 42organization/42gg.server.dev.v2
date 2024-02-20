@@ -16,7 +16,6 @@ import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.tier.data.TierRepository;
 import com.gg.server.domain.tier.exception.TierNotFoundException;
 import com.gg.server.domain.user.data.UserRepository;
-import com.gg.server.domain.user.dto.UserDto;
 
 import lombok.AllArgsConstructor;
 
@@ -36,8 +35,8 @@ public class RankRedisAdminService {
 
 		users.forEach(user -> {
 			if (user.getRoleType() != GUEST) {
-				UserDto userDto = UserDto.from(user);
-				RankRedis userRank = RankRedis.from(userDto, seasonAdminDto.getStartPpp(), tier.getImageUri());
+				RankRedis userRank = RankRedis.from(user.getId(), user.getIntraId(), user.getTextColor(),
+					seasonAdminDto.getStartPpp(), tier.getImageUri());
 
 				rankRedisRepository.addRankData(redisHashKey, user.getId(), userRank);
 			}
