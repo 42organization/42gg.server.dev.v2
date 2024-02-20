@@ -38,7 +38,8 @@ public class SlotAdminService {
 		checkVaildSlotManagement(requestDto);
 		requestDto.updateStartTime();
 		updateNowSlotManagementEndTime(requestDto.getStartTime());
-		SlotManagement slotManagement = new SlotManagement(requestDto);
+		SlotManagement slotManagement = new SlotManagement(requestDto.getPastSlotTime(), requestDto.getFutureSlotTime(),
+			requestDto.getInterval(), requestDto.getOpenMinute(), requestDto.getStartTime());
 
 		adminSlotManagementRepository.save(slotManagement);
 	}
