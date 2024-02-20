@@ -170,7 +170,8 @@ public class MatchFindServiceUnitTest {
 		void success() {
 			// given
 			UserDto userDto = UserDto.from(user);
-			RankRedis redisUser = RankRedis.from(userDto, season.getStartPpp(), tier.getImageUri());
+			RankRedis redisUser = RankRedis.from(userDto.getId(), userDto.getIntraId(), userDto.getTextColor(),
+				season.getStartPpp(), tier.getImageUri());
 			String hashKey = RedisKeyManager.getHashKey(season.getId());
 			slotGenerator = new SlotGenerator(redisUser, slotManagement, season, Option.BOTH);
 			given(rankRedisRepository.findRankByUserId(hashKey, user.getId())).willReturn(
@@ -201,7 +202,8 @@ public class MatchFindServiceUnitTest {
 		void successGuest() {
 			// given
 			User guest = createGuestUser();
-			RankRedis redisUser = RankRedis.from(UserDto.from(guest), season.getStartPpp(), tier.getImageUri());
+			RankRedis redisUser = RankRedis.from(guest.getId(), guest.getIntraId(), guest.getTextColor(),
+				season.getStartPpp(), tier.getImageUri());
 			slotGenerator = new SlotGenerator(redisUser, slotManagement, season, Option.BOTH);
 			given(gameRepository.findByStatusTypeAndUserId(StatusType.BEFORE, UserDto.from(guest).getId())).willReturn(
 				Optional.empty());
@@ -226,7 +228,8 @@ public class MatchFindServiceUnitTest {
 		void successWithMySlot() {
 			// given
 			UserDto userDto = UserDto.from(user);
-			RankRedis redisUser = RankRedis.from(userDto, season.getStartPpp(), tier.getImageUri());
+			RankRedis redisUser = RankRedis.from(userDto.getId(), userDto.getIntraId(), userDto.getTextColor(),
+				season.getStartPpp(), tier.getImageUri());
 			String hashKey = RedisKeyManager.getHashKey(season.getId());
 			User enemy = createUser();
 			Game game = createNormalGame(user, enemy, season);

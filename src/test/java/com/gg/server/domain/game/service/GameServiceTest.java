@@ -30,7 +30,6 @@ import com.gg.server.domain.team.data.TeamRepository;
 import com.gg.server.domain.team.data.TeamUserRepository;
 import com.gg.server.domain.tier.data.TierRepository;
 import com.gg.server.domain.tier.exception.TierNotFoundException;
-import com.gg.server.domain.user.dto.UserDto;
 import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
 import com.gg.server.utils.TestDataUtils;
 import com.gg.server.utils.annotation.IntegrationTest;
@@ -90,12 +89,14 @@ public class GameServiceTest {
 		String statusMsg = "status message test1";
 
 		testDataUtils.createUserRank(user1, statusMsg, season);
-		RankRedis userRank = RankRedis.from(UserDto.from(user1), season.getStartPpp(), tier.getImageUri());
+		RankRedis userRank = RankRedis.from(user1.getId(), user1.getIntraId(), user1.getTextColor(),
+			season.getStartPpp(), tier.getImageUri());
 		String redisHashKey = RedisKeyManager.getHashKey(season.getId());
 		rankRedisRepository.addRankData(redisHashKey, user1.getId(), userRank);
 		statusMsg = "status message test2";
 		testDataUtils.createUserRank(user2, statusMsg, season);
-		RankRedis userRank2 = RankRedis.from(UserDto.from(user2), season.getStartPpp(), tier.getImageUri());
+		RankRedis userRank2 = RankRedis.from(user2.getId(), user2.getIntraId(), user2.getTextColor(),
+			season.getStartPpp(), tier.getImageUri());
 		rankRedisRepository.addRankData(redisHashKey, user2.getId(), userRank2);
 	}
 
