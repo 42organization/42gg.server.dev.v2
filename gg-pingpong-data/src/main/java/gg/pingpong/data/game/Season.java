@@ -57,4 +57,5 @@ public class Season {
 		this.startPpp = startPpp;
 		this.pppGap = pppGap;
 	}
+
 }
