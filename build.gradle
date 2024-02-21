@@ -12,14 +12,6 @@ editorconfig {
     excludes = ['build']
 }
 
-checkstyle {
-    maxWarnings = 0
-    configFile = file("${rootDir}/naver-checkstyle-rules.xml")
-    configProperties = ["suppressionFile": "${rootDir}/naver-checkstyle-suppressions.xml"]
-    toolVersion = "8.24"
-}
-
-
 springBoot {
     mainClass = "gg.pingpong.api.PingPongApiApplication"
 }
@@ -48,6 +40,13 @@ subprojects {
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'jacoco'
     apply plugin: 'checkstyle'
+
+    checkstyle {
+        maxWarnings = 0
+        configFile = file("${rootDir}/naver-checkstyle-rules.xml")
+        configProperties = ["suppressionFile": "${rootDir}/naver-checkstyle-suppressions.xml"]
+        toolVersion = "8.24"
+    }
 
     dependencies {
         /* spring */
