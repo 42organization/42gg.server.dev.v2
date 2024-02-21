@@ -32,7 +32,7 @@ public class ItemUpdateRequestDto {
 	@NotNull(message = "[Request] 아이템 타입은 Null 일 수 없습니다.")
 	private ItemType itemType;
 
-	public Item createItem(String imageUrl, String userIntraId) {
+	public Item toItem(String imageUrl, String userIntraId) {
 		return Item.builder()
 			.name(name)
 			.mainContent(mainContent)
