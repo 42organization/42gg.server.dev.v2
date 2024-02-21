@@ -21,7 +21,7 @@ checkstyle {
 
 
 springBoot {
-    mainClass = "com.gg.server.Application"
+    mainClass = "gg.pingpong.api.PingPongApiApplication"
 }
 
 group = 'io.42pp'

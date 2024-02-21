@@ -8,21 +8,20 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gg.server.data.game.Game;
-import com.gg.server.data.game.type.StatusType;
-import com.gg.server.data.noti.Noti;
-import com.gg.server.data.noti.type.NotiType;
-import com.gg.server.domain.game.data.GameRepository;
-import com.gg.server.domain.game.exception.GameDataConsistencyException;
-import com.gg.server.domain.match.exception.SlotNotFoundException;
-import com.gg.server.domain.noti.dto.UserNotiDto;
-import com.gg.server.domain.noti.service.NotiService;
-import com.gg.server.domain.noti.service.SnsNotiService;
-import com.gg.server.domain.slotmanagement.SlotManagement;
-import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
-import com.gg.server.domain.team.dto.GameUser;
-import com.gg.server.domain.user.service.UserService;
-
+import gg.pingpong.api.user.noti.dto.UserNotiDto;
+import gg.pingpong.api.user.noti.service.NotiService;
+import gg.pingpong.api.user.noti.service.SnsNotiService;
+import gg.pingpong.api.user.user.service.UserService;
+import gg.pingpong.data.game.Game;
+import gg.pingpong.data.game.type.StatusType;
+import gg.pingpong.data.manage.SlotManagement;
+import gg.pingpong.data.noti.Noti;
+import gg.pingpong.data.noti.type.NotiType;
+import gg.pingpong.repo.game.GameRepository;
+import gg.pingpong.repo.game.GameUser;
+import gg.pingpong.repo.slotmanagement.SlotManagementRepository;
+import gg.pingpong.utils.exception.game.GameDataConsistencyException;
+import gg.pingpong.utils.exception.match.SlotNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

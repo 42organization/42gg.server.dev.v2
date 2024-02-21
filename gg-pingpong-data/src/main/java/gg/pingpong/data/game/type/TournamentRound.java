@@ -1,6 +1,6 @@
 package gg.pingpong.data.game.type;
 
-import static com.gg.server.data.game.type.RoundNumber.*;
+import static gg.pingpong.data.game.type.RoundNumber.*;
 
 import java.util.ArrayList;
 import java.util.List;

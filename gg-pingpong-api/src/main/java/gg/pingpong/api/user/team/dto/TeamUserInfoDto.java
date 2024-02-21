@@ -1,8 +1,8 @@
 package gg.pingpong.api.user.team.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.gg.server.global.utils.ExpLevelCalculator;
 
+import gg.pingpong.api.global.utils.ExpLevelCalculator;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
