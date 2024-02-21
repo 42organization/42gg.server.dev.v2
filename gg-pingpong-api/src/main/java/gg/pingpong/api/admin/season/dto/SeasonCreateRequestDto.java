@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import gg.pingpong.data.game.Season;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,6 +29,15 @@ public class SeasonCreateRequestDto {
 
 	@NotNull(message = "plz. pppGap")
 	private Integer pppGap;
+
+	public Season toSeason() {
+		return Season.builder()
+			.seasonName(seasonName)
+			.startTime(startTime)
+			.startPpp(startPpp)
+			.pppGap(pppGap)
+			.build();
+	}
 
 	public String toString() {
 		return "SeasonCreateRequestAdminDto{" + '\''
