@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.pingpong.api.admin.season.dto.SeasonAdminDto;
-import gg.pingpong.api.user.user.dto.UserDto;
 import gg.pingpong.data.game.Tier;
 import gg.pingpong.data.game.redis.RankRedis;
 import gg.pingpong.data.user.User;
@@ -35,8 +34,7 @@ public class RankRedisAdminService {
 
 		users.forEach(user -> {
 			if (user.getRoleType() != GUEST) {
-				UserDto userDto = UserDto.from(user);
-				RankRedis userRank = RankRedis.from(userDto.getId(), userDto.getIntraId(), userDto.getTextColor(),
+				RankRedis userRank = RankRedis.from(user.getId(), user.getIntraId(), user.getTextColor(),
 					seasonAdminDto.getStartPpp(), tier.getImageUri());
 
 				rankRedisRepository.addRankData(redisHashKey, user.getId(), userRank);
