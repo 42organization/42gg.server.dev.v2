@@ -21,8 +21,6 @@ import gg.pingpong.api.admin.item.dto.ItemUpdateRequestDto;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.user.megaphone.dto.MegaphoneUseRequestDto;
 import gg.pingpong.api.utils.ItemTestUtils;
-import gg.pingpong.api.utils.TestDataUtils;
-import gg.pingpong.api.utils.annotation.IntegrationTest;
 import gg.pingpong.data.store.Item;
 import gg.pingpong.data.store.Megaphone;
 import gg.pingpong.data.store.Receipt;
@@ -34,6 +32,8 @@ import gg.pingpong.data.user.type.RoleType;
 import gg.pingpong.data.user.type.SnsType;
 import gg.pingpong.repo.megaphone.MegaphoneRepository;
 import gg.pingpong.repo.receipt.ReceiptRepository;
+import gg.pingpong.utils.TestDataUtils;
+import gg.pingpong.utils.annotation.IntegrationTest;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

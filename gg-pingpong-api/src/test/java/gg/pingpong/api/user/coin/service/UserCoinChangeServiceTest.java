@@ -12,8 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.user.coin.dto.UserGameCoinResultDto;
-import gg.pingpong.api.utils.TestDataUtils;
-import gg.pingpong.api.utils.annotation.IntegrationTest;
 import gg.pingpong.data.game.Game;
 import gg.pingpong.data.game.Season;
 import gg.pingpong.data.game.type.Mode;
@@ -25,6 +23,8 @@ import gg.pingpong.repo.coin.CoinHistoryRepository;
 import gg.pingpong.repo.coin.CoinPolicyRepository;
 import gg.pingpong.repo.item.ItemRepository;
 import gg.pingpong.repo.user.UserRepository;
+import gg.pingpong.utils.TestDataUtils;
+import gg.pingpong.utils.annotation.IntegrationTest;
 import gg.pingpong.utils.exception.coin.CoinHistoryNotFoundException;
 import gg.pingpong.utils.exception.coin.CoinPolicyNotFoundException;
 import lombok.RequiredArgsConstructor;

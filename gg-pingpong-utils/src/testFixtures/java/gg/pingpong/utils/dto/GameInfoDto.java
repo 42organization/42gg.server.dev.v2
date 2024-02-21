@@ -1,4 +1,4 @@
-package gg.pingpong.api.user.user.controller.dto;
+package gg.pingpong.utils.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

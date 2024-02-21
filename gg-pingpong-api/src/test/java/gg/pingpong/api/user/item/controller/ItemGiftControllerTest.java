@@ -21,8 +21,8 @@ import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.user.item.dto.ItemGiftRequestDto;
 import gg.pingpong.api.user.item.service.ItemService;
 import gg.pingpong.api.user.user.dto.UserDto;
-import gg.pingpong.api.utils.TestDataUtils;
-import gg.pingpong.api.utils.annotation.IntegrationTest;
+import gg.pingpong.utils.TestDataUtils;
+import gg.pingpong.utils.annotation.IntegrationTest;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

@@ -1,4 +1,4 @@
-package gg.pingpong.api.utils.annotation;
+package gg.pingpong.utils.annotation;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

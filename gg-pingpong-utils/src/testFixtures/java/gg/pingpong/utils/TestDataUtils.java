@@ -1,4 +1,4 @@
-package gg.pingpong.api.utils;
+package gg.pingpong.utils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -13,7 +13,6 @@ import gg.pingpong.api.admin.tournament.dto.TournamentAdminCreateRequestDto;
 import gg.pingpong.api.admin.tournament.dto.TournamentAdminUpdateRequestDto;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.user.tournament.dto.TournamentResponseDto;
-import gg.pingpong.api.user.user.controller.dto.GameInfoDto;
 import gg.pingpong.api.user.user.dto.UserImageDto;
 import gg.pingpong.data.game.Game;
 import gg.pingpong.data.game.PChange;
@@ -58,7 +57,7 @@ import gg.pingpong.repo.tournarment.TournamentRepository;
 import gg.pingpong.repo.tournarment.TournamentUserRepository;
 import gg.pingpong.repo.user.UserImageRepository;
 import gg.pingpong.repo.user.UserRepository;
-import gg.pingpong.utils.RedisKeyManager;
+import gg.pingpong.utils.dto.GameInfoDto;
 import gg.pingpong.utils.exception.game.GameNotExistException;
 import lombok.RequiredArgsConstructor;
 

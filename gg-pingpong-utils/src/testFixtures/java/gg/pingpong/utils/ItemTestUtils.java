@@ -1,4 +1,4 @@
-package gg.pingpong.api.utils;
+package gg.pingpong.utils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

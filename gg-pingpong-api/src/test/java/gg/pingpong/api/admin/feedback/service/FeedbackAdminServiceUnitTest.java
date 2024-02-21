@@ -19,8 +19,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import gg.pingpong.admin.repo.feedback.FeedbackAdminRepository;
-import gg.pingpong.api.utils.annotation.UnitTest;
 import gg.pingpong.data.manage.Feedback;
+import gg.pingpong.utils.annotation.UnitTest;
 import gg.pingpong.utils.exception.feedback.FeedbackNotFoundException;
 
 @UnitTest

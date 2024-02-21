@@ -18,14 +18,14 @@ import org.springframework.transaction.annotation.Transactional;
 import gg.pingpong.api.admin.noti.dto.SendNotiAdminRequestDto;
 import gg.pingpong.api.admin.noti.service.NotiAdminService;
 import gg.pingpong.api.user.tournament.service.TournamentService;
-import gg.pingpong.api.utils.TestDataUtils;
-import gg.pingpong.api.utils.annotation.IntegrationTest;
 import gg.pingpong.data.game.Tournament;
 import gg.pingpong.data.game.TournamentGame;
 import gg.pingpong.data.game.type.TournamentStatus;
 import gg.pingpong.data.manage.SlotManagement;
 import gg.pingpong.repo.slotmanagement.SlotManagementRepository;
 import gg.pingpong.repo.tournarment.TournamentGameRepository;
+import gg.pingpong.utils.TestDataUtils;
+import gg.pingpong.utils.annotation.IntegrationTest;
 
 @IntegrationTest
 @Transactional

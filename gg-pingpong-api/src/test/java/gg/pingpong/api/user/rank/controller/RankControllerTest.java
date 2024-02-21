@@ -24,12 +24,12 @@ import gg.pingpong.api.user.rank.dto.ExpRankPageResponseDto;
 import gg.pingpong.api.user.rank.dto.RankDto;
 import gg.pingpong.api.user.rank.dto.RankPageResponseDto;
 import gg.pingpong.api.user.rank.service.RedisUploadService;
-import gg.pingpong.api.utils.TestDataUtils;
-import gg.pingpong.api.utils.annotation.IntegrationTest;
 import gg.pingpong.data.game.Season;
 import gg.pingpong.data.user.User;
 import gg.pingpong.repo.rank.redis.RankRedisRepository;
 import gg.pingpong.repo.season.SeasonRepository;
+import gg.pingpong.utils.TestDataUtils;
+import gg.pingpong.utils.annotation.IntegrationTest;
 
 @IntegrationTest
 @Transactional

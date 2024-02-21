@@ -17,12 +17,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gg.pingpong.admin.repo.feedback.FeedbackAdminRepository;
 import gg.pingpong.api.admin.feedback.dto.FeedbackListAdminResponseDto;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
-import gg.pingpong.api.utils.TestDataUtils;
-import gg.pingpong.api.utils.annotation.IntegrationTest;
 import gg.pingpong.data.manage.Feedback;
 import gg.pingpong.data.manage.type.FeedbackType;
 import gg.pingpong.data.user.User;
 import gg.pingpong.repo.user.UserRepository;
+import gg.pingpong.utils.TestDataUtils;
+import gg.pingpong.utils.annotation.IntegrationTest;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

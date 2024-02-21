@@ -24,7 +24,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import gg.pingpong.api.user.match.utils.SlotGenerator;
 import gg.pingpong.api.user.season.service.SeasonFindService;
 import gg.pingpong.api.user.user.dto.UserDto;
-import gg.pingpong.api.utils.annotation.UnitTest;
 import gg.pingpong.data.game.Game;
 import gg.pingpong.data.game.Season;
 import gg.pingpong.data.game.Tier;
@@ -42,6 +41,7 @@ import gg.pingpong.repo.slotmanagement.SlotManagementRepository;
 import gg.pingpong.repo.tier.TierRepository;
 import gg.pingpong.repo.user.UserRepository;
 import gg.pingpong.utils.RedisKeyManager;
+import gg.pingpong.utils.annotation.UnitTest;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)

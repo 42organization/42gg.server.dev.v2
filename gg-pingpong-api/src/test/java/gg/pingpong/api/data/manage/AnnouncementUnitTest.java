@@ -10,8 +10,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.gg.server.admin.announcement.dto.AnnouncementAdminAddDto;
-import com.gg.server.utils.annotation.UnitTest;
+import gg.pingpong.api.admin.announcement.dto.AnnouncementAdminAddDto;
+import gg.pingpong.data.manage.Announcement;
+import gg.pingpong.utils.annotation.UnitTest;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)
@@ -38,7 +39,7 @@ class AnnouncementUnitTest {
 		@DisplayName("from_메서드_unitTest")
 		void fromTest() {
 			AnnouncementAdminAddDto dto = new AnnouncementAdminAddDto(content, intraId);
-			Announcement announcement = Announcement.from(dto);
+			Announcement announcement = Announcement.from(dto.getContent(), dto.getCreatorIntraId());
 			assertThat(announcement.getContent()).isEqualTo(dto.getContent());
 			assertThat(announcement.getCreatorIntraId()).isEqualTo(dto.getCreatorIntraId());
 		}

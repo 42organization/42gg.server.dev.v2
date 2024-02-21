@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'java-test-fixtures'
 }
 
 group 'gg.pingpong.utils'
@@ -10,8 +11,23 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.projectlombok:lombok:1.18.22'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+
+    testFixturesImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+
+    testFixturesImplementation('org.springframework.boot:spring-boot-starter-data-jpa')
+    testFixturesImplementation("org.springframework.boot:spring-boot-starter-test:2.5.5")
+    testFixturesImplementation("org.testcontainers:testcontainers:1.19.3")
+    testFixturesImplementation("org.testcontainers:junit-jupiter:1.19.3")
+    testFixturesImplementation("org.testcontainers:mysql:1.19.3")
+    testFixturesImplementation("org.projectlombok:lombok:1.18.26")
+
+    testFixturesImplementation project(":gg-pingpong-data")
+    testFixturesImplementation project(":gg-pingpong-repo")
+    testFixturesImplementation project(":gg-pingpong-admin-repo")
+    testFixturesImplementation project(":gg-pingpong-api")
 }
 
 test {

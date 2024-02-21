@@ -14,7 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import gg.pingpong.api.user.announcement.dto.AnnouncementDto;
 import gg.pingpong.api.user.announcement.dto.AnnouncementResponseDto;
 import gg.pingpong.api.user.announcement.service.AnnouncementService;
-import gg.pingpong.api.utils.annotation.UnitTest;
+import gg.pingpong.utils.annotation.UnitTest;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)

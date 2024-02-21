@@ -19,8 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import gg.pingpong.api.admin.game.service.GameAdminService;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
-import gg.pingpong.api.utils.TestDataUtils;
-import gg.pingpong.api.utils.annotation.IntegrationTest;
 import gg.pingpong.data.game.Game;
 import gg.pingpong.data.game.Season;
 import gg.pingpong.data.game.Team;
@@ -32,6 +30,8 @@ import gg.pingpong.repo.pchange.PChangeRepository;
 import gg.pingpong.repo.rank.redis.RankRedisRepository;
 import gg.pingpong.repo.team.TeamRepository;
 import gg.pingpong.repo.team.TeamUserRepository;
+import gg.pingpong.utils.TestDataUtils;
+import gg.pingpong.utils.annotation.IntegrationTest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

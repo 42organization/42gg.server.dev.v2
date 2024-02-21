@@ -31,7 +31,7 @@ import gg.pingpong.api.user.tournament.dto.TournamentResponseDto;
 import gg.pingpong.api.user.tournament.dto.TournamentUserRegistrationResponseDto;
 import gg.pingpong.api.user.tournament.service.TournamentService;
 import gg.pingpong.api.user.user.dto.UserDto;
-import gg.pingpong.api.utils.annotation.UnitTest;
+import gg.pingpong.utils.annotation.UnitTest;
 
 @UnitTest
 @WebMvcTest(controllers = TournamentController.class, excludeFilters = {

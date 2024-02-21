@@ -17,8 +17,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gg.pingpong.admin.repo.coin.CoinPolicyAdminRepository;
 import gg.pingpong.api.admin.coin.dto.CoinPolicyAdminAddDto;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
-import gg.pingpong.api.utils.TestDataUtils;
-import gg.pingpong.api.utils.annotation.IntegrationTest;
+import gg.pingpong.utils.TestDataUtils;
+import gg.pingpong.utils.annotation.IntegrationTest;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

@@ -23,9 +23,9 @@ import gg.pingpong.admin.repo.user.UserAdminRepository;
 import gg.pingpong.api.admin.noti.dto.SendNotiAdminRequestDto;
 import gg.pingpong.api.user.noti.service.SnsNotiService;
 import gg.pingpong.api.user.user.dto.UserDto;
-import gg.pingpong.api.utils.annotation.UnitTest;
 import gg.pingpong.data.noti.Noti;
 import gg.pingpong.data.user.User;
+import gg.pingpong.utils.annotation.UnitTest;
 import gg.pingpong.utils.exception.user.UserNotFoundException;
 
 @UnitTest

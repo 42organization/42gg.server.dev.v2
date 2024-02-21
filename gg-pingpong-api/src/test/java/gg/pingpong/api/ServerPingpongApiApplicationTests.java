@@ -6,7 +6,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import gg.pingpong.api.utils.annotation.IntegrationTest;
+import gg.pingpong.utils.annotation.IntegrationTest;
 
 @IntegrationTest
 class ServerPingpongApiApplicationTests {

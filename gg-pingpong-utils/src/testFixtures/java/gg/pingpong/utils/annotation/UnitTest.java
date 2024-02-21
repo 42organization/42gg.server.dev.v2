@@ -1,4 +1,4 @@
-package gg.pingpong.api.utils.annotation;
+package gg.pingpong.utils.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,16 +6,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.junit.jupiter.api.Tag;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
- * WebMvc 테스트를 위한 어노테이션
+ * Unit 테스트를 위한 어노테이션
  *
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Tag(TestTypeConstant.UNIT_TEST)
-@WebMvcTest
-public @interface WebMvcUnitTest {
+@ExtendWith(MockitoExtension.class)
+public @interface UnitTest {
 
 }

@@ -22,8 +22,6 @@ import gg.pingpong.admin.repo.penalty.PenaltyAdminRepository;
 import gg.pingpong.api.user.match.utils.MatchIntegrationTestUtils;
 import gg.pingpong.api.user.penalty.redis.PenaltyUserRedisRepository;
 import gg.pingpong.api.user.user.dto.UserDto;
-import gg.pingpong.api.utils.TestDataUtils;
-import gg.pingpong.api.utils.annotation.IntegrationTest;
 import gg.pingpong.data.game.Game;
 import gg.pingpong.data.game.Season;
 import gg.pingpong.data.manage.SlotManagement;
@@ -36,6 +34,8 @@ import gg.pingpong.repo.match.RedisMatchUserRepository;
 import gg.pingpong.repo.noti.NotiRepository;
 import gg.pingpong.repo.rank.redis.RankRedisRepository;
 import gg.pingpong.repo.slotmanagement.SlotManagementRepository;
+import gg.pingpong.utils.TestDataUtils;
+import gg.pingpong.utils.annotation.IntegrationTest;
 import gg.pingpong.utils.exception.match.SlotNotFoundException;
 import lombok.RequiredArgsConstructor;
 

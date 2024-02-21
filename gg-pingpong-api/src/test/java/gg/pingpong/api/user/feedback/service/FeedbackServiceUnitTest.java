@@ -14,11 +14,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import gg.pingpong.api.user.feedback.dto.FeedbackRequestDto;
-import gg.pingpong.api.utils.annotation.UnitTest;
 import gg.pingpong.data.manage.Feedback;
 import gg.pingpong.data.user.User;
 import gg.pingpong.repo.feedback.FeedbackRepository;
 import gg.pingpong.repo.user.UserRepository;
+import gg.pingpong.utils.annotation.UnitTest;
 import gg.pingpong.utils.exception.user.UserNotFoundException;
 
 @UnitTest

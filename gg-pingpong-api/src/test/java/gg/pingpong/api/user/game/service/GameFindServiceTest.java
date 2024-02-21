@@ -19,8 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.user.game.dto.GameListResDto;
 import gg.pingpong.api.user.game.dto.GameResultResDto;
-import gg.pingpong.api.utils.TestDataUtils;
-import gg.pingpong.api.utils.annotation.IntegrationTest;
 import gg.pingpong.data.game.Game;
 import gg.pingpong.data.game.Season;
 import gg.pingpong.data.game.Tier;
@@ -33,6 +31,8 @@ import gg.pingpong.repo.game.GameTeamUser;
 import gg.pingpong.repo.rank.redis.RankRedisRepository;
 import gg.pingpong.repo.tier.TierRepository;
 import gg.pingpong.utils.RedisKeyManager;
+import gg.pingpong.utils.TestDataUtils;
+import gg.pingpong.utils.annotation.IntegrationTest;
 import gg.pingpong.utils.exception.tier.TierNotFoundException;
 import lombok.RequiredArgsConstructor;
 

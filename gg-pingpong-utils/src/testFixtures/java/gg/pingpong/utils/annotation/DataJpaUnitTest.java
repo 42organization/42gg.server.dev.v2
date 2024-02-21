@@ -1,4 +1,4 @@
-package gg.pingpong.api.utils.annotation;
+package gg.pingpong.utils.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -34,8 +34,6 @@ import gg.pingpong.api.admin.penalty.dto.PenaltyListResponseDto;
 import gg.pingpong.api.admin.penalty.dto.PenaltyRequestDto;
 import gg.pingpong.api.admin.penalty.service.PenaltyAdminService;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
-import gg.pingpong.api.utils.TestDataUtils;
-import gg.pingpong.api.utils.annotation.IntegrationTest;
 import gg.pingpong.data.manage.Penalty;
 import gg.pingpong.data.manage.redis.RedisPenaltyUser;
 import gg.pingpong.data.manage.type.PenaltyType;
@@ -44,6 +42,8 @@ import gg.pingpong.data.user.type.RacketType;
 import gg.pingpong.data.user.type.RoleType;
 import gg.pingpong.data.user.type.SnsType;
 import gg.pingpong.repo.user.UserRepository;
+import gg.pingpong.utils.TestDataUtils;
+import gg.pingpong.utils.annotation.IntegrationTest;
 
 @IntegrationTest
 @AutoConfigureMockMvc

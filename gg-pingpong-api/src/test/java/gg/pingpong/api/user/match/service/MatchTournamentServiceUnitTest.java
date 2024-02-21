@@ -29,7 +29,6 @@ import gg.pingpong.api.user.match.utils.GameTestUtils;
 import gg.pingpong.api.user.match.utils.TournamentTestUtils;
 import gg.pingpong.api.user.match.utils.UserTestUtils;
 import gg.pingpong.api.user.season.service.SeasonFindService;
-import gg.pingpong.api.utils.annotation.UnitTest;
 import gg.pingpong.data.game.Game;
 import gg.pingpong.data.game.Season;
 import gg.pingpong.data.game.Team;
@@ -46,6 +45,7 @@ import gg.pingpong.data.user.User;
 import gg.pingpong.repo.game.GameRepository;
 import gg.pingpong.repo.slotmanagement.SlotManagementRepository;
 import gg.pingpong.repo.tournarment.TournamentGameRepository;
+import gg.pingpong.utils.annotation.UnitTest;
 import gg.pingpong.utils.exception.match.EnrolledSlotException;
 import gg.pingpong.utils.exception.match.WinningTeamNotFoundException;
 

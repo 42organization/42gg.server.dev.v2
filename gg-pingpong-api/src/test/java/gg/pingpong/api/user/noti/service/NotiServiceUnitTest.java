@@ -17,7 +17,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import gg.pingpong.api.user.user.dto.UserDto;
-import gg.pingpong.api.utils.annotation.UnitTest;
 import gg.pingpong.data.noti.Noti;
 import gg.pingpong.data.noti.type.NotiType;
 import gg.pingpong.data.user.User;
@@ -26,6 +25,7 @@ import gg.pingpong.data.user.type.RoleType;
 import gg.pingpong.data.user.type.SnsType;
 import gg.pingpong.repo.noti.NotiRepository;
 import gg.pingpong.repo.user.UserRepository;
+import gg.pingpong.utils.annotation.UnitTest;
 import gg.pingpong.utils.exception.custom.NotExistException;
 import gg.pingpong.utils.exception.user.UserNotFoundException;
 

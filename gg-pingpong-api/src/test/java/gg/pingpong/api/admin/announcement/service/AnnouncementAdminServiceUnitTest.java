@@ -21,8 +21,8 @@ import org.springframework.data.domain.Pageable;
 
 import gg.pingpong.admin.repo.announcement.AnnouncementAdminRepository;
 import gg.pingpong.api.admin.announcement.dto.AnnouncementAdminAddDto;
-import gg.pingpong.api.utils.annotation.UnitTest;
 import gg.pingpong.data.manage.Announcement;
+import gg.pingpong.utils.annotation.UnitTest;
 import gg.pingpong.utils.exception.announcement.AnnounceDupException;
 import gg.pingpong.utils.exception.announcement.AnnounceNotFoundException;
 

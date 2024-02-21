@@ -1,4 +1,4 @@
-package gg.pingpong.api.utils.config;
+package gg.pingpong.utils.config;
 
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;

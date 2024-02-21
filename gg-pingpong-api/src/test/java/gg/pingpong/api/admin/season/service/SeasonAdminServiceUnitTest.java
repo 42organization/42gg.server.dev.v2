@@ -24,8 +24,8 @@ import gg.pingpong.api.admin.rank.service.RankAdminService;
 import gg.pingpong.api.admin.rank.service.RankRedisAdminService;
 import gg.pingpong.api.admin.season.dto.SeasonCreateRequestDto;
 import gg.pingpong.api.admin.season.dto.SeasonUpdateRequestDto;
-import gg.pingpong.api.utils.annotation.UnitTest;
 import gg.pingpong.data.game.Season;
+import gg.pingpong.utils.annotation.UnitTest;
 import gg.pingpong.utils.exception.season.SeasonForbiddenException;
 import gg.pingpong.utils.exception.season.SeasonNotFoundException;
 import gg.pingpong.utils.exception.season.SeasonTimeBeforeException;
@@ -87,7 +87,13 @@ class SeasonAdminServiceUnitTest {
 		void beforeEach() {
 			requestDto = new SeasonCreateRequestDto("season", LocalDateTime.now().plusDays(1).plusSeconds(1),
 				1000, 200);
-			season = new Season(requestDto);
+			season = Season.builder().
+				seasonName(requestDto.getSeasonName()).
+				startTime(requestDto.getStartTime()).
+				startPpp(requestDto.getStartPpp()).
+				pppGap(requestDto.getPppGap()).
+				build();
+
 			setFieldWithReflection(beforeSeasons.get(0), "id", 2L);
 			beforeSeasonsAsc = new ArrayList<>(beforeSeasons);
 			Collections.reverse(beforeSeasonsAsc);

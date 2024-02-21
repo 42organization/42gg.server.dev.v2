@@ -24,12 +24,12 @@ import gg.pingpong.admin.repo.item.ItemAdminRepository;
 import gg.pingpong.api.admin.item.dto.ItemUpdateRequestDto;
 import gg.pingpong.api.global.utils.aws.AsyncNewItemImageUploader;
 import gg.pingpong.api.user.user.dto.UserDto;
-import gg.pingpong.api.utils.annotation.UnitTest;
 import gg.pingpong.data.store.Item;
 import gg.pingpong.data.user.User;
 import gg.pingpong.data.user.type.RacketType;
 import gg.pingpong.data.user.type.RoleType;
 import gg.pingpong.data.user.type.SnsType;
+import gg.pingpong.utils.annotation.UnitTest;
 import gg.pingpong.utils.exception.item.ItemNotAvailableException;
 import gg.pingpong.utils.exception.item.ItemNotFoundException;
 
