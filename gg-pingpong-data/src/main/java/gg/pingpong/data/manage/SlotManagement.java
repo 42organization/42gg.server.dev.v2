@@ -9,10 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
-import com.gg.server.admin.slotmanagement.dto.SlotCreateRequestDto;
-import com.gg.server.domain.slotmanagement.exception.SlotManagementForbiddenException;
-import com.gg.server.global.utils.BaseTimeEntity;
-
+import gg.pingpong.data.BaseTimeEntity;
+import gg.pingpong.utils.exception.slotmanagement.SlotManagementForbiddenException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -62,12 +60,13 @@ public class SlotManagement extends BaseTimeEntity {
 	}
 
 	@Builder
-	public SlotManagement(SlotCreateRequestDto requestDto) {
-		this.pastSlotTime = requestDto.getPastSlotTime();
-		this.futureSlotTime = requestDto.getFutureSlotTime();
-		this.openMinute = requestDto.getOpenMinute();
-		this.gameInterval = requestDto.getInterval();
-		this.startTime = requestDto.getStartTime();
+	public SlotManagement(Integer pastSlotTime, Integer futureSlotTime, Integer openMinute, Integer gameInterval,
+		LocalDateTime startTime) {
+		this.pastSlotTime = pastSlotTime;
+		this.futureSlotTime = futureSlotTime;
+		this.openMinute = openMinute;
+		this.gameInterval = gameInterval;
+		this.startTime = startTime;
 		this.endTime = null;
 	}
 

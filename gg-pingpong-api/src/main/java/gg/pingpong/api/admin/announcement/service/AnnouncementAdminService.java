@@ -38,8 +38,7 @@ public class AnnouncementAdminService {
 			throw new AnnounceDupException();
 		}
 
-		// TODO: 2/20/24
-		announcementAdminRepository.save(Announcement.from(addDto));
+		announcementAdminRepository.save(Announcement.from(addDto.getContent(), addDto.getCreatorIntraId()));
 	}
 
 	@Transactional

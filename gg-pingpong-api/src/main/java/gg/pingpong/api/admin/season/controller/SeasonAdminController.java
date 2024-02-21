@@ -15,12 +15,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gg.server.admin.season.dto.SeasonAdminDto;
-import com.gg.server.admin.season.dto.SeasonCreateRequestDto;
-import com.gg.server.admin.season.dto.SeasonListAdminResponseDto;
-import com.gg.server.admin.season.dto.SeasonUpdateRequestDto;
-import com.gg.server.admin.season.service.SeasonAdminService;
-
+import gg.pingpong.api.admin.season.dto.SeasonAdminDto;
+import gg.pingpong.api.admin.season.dto.SeasonCreateRequestDto;
+import gg.pingpong.api.admin.season.dto.SeasonListAdminResponseDto;
+import gg.pingpong.api.admin.season.dto.SeasonUpdateRequestDto;
+import gg.pingpong.api.admin.season.service.SeasonAdminService;
 import lombok.AllArgsConstructor;
 
 @RestController

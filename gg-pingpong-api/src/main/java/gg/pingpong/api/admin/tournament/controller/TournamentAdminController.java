@@ -16,14 +16,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gg.server.admin.tournament.dto.TournamentAdminAddUserRequestDto;
-import com.gg.server.admin.tournament.dto.TournamentAdminAddUserResponseDto;
-import com.gg.server.admin.tournament.dto.TournamentAdminCreateRequestDto;
-import com.gg.server.admin.tournament.dto.TournamentAdminUpdateRequestDto;
-import com.gg.server.admin.tournament.dto.TournamentGameUpdateRequestDto;
-import com.gg.server.admin.tournament.service.TournamentAdminService;
-import com.gg.server.domain.tournament.dto.TournamentUserListResponseDto;
-
+import gg.pingpong.api.admin.tournament.dto.TournamentAdminAddUserRequestDto;
+import gg.pingpong.api.admin.tournament.dto.TournamentAdminAddUserResponseDto;
+import gg.pingpong.api.admin.tournament.dto.TournamentAdminCreateRequestDto;
+import gg.pingpong.api.admin.tournament.dto.TournamentAdminUpdateRequestDto;
+import gg.pingpong.api.admin.tournament.dto.TournamentGameUpdateRequestDto;
+import gg.pingpong.api.admin.tournament.service.TournamentAdminService;
+import gg.pingpong.api.user.tournament.dto.TournamentUserListResponseDto;
 import lombok.AllArgsConstructor;
 
 @RestController

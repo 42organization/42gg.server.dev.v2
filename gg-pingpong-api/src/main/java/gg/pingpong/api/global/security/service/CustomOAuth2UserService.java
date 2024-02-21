@@ -17,6 +17,7 @@ import gg.pingpong.api.global.security.info.OAuthUserInfo;
 import gg.pingpong.api.global.security.info.OAuthUserInfoFactory;
 import gg.pingpong.api.global.security.info.ProviderType;
 import gg.pingpong.api.global.utils.aws.AsyncNewUserImageUploader;
+import gg.pingpong.api.user.user.dto.UserDto;
 import gg.pingpong.data.game.Rank;
 import gg.pingpong.data.game.Tier;
 import gg.pingpong.data.game.redis.RankRedis;

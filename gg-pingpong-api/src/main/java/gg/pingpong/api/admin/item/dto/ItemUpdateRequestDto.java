@@ -2,8 +2,7 @@ package gg.pingpong.api.admin.item.dto;
 
 import javax.validation.constraints.NotNull;
 
-import com.gg.server.data.store.type.ItemType;
-
+import gg.pingpong.data.store.type.ItemType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

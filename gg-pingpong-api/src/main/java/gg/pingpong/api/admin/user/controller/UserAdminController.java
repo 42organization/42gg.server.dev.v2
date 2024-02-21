@@ -18,16 +18,15 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.gg.server.admin.user.dto.UserDetailAdminResponseDto;
-import com.gg.server.admin.user.dto.UserImageListAdminResponseDto;
-import com.gg.server.admin.user.dto.UserSearchAdminRequestDto;
-import com.gg.server.admin.user.dto.UserSearchAdminResponseDto;
-import com.gg.server.admin.user.dto.UserUpdateAdminRequestDto;
-import com.gg.server.admin.user.service.UserAdminService;
-import com.gg.server.domain.user.exception.UserImageLargeException;
-import com.gg.server.domain.user.exception.UserImageTypeException;
-import com.gg.server.global.dto.PageRequestDto;
-
+import gg.pingpong.api.admin.user.dto.UserDetailAdminResponseDto;
+import gg.pingpong.api.admin.user.dto.UserImageListAdminResponseDto;
+import gg.pingpong.api.admin.user.dto.UserSearchAdminRequestDto;
+import gg.pingpong.api.admin.user.dto.UserSearchAdminResponseDto;
+import gg.pingpong.api.admin.user.dto.UserUpdateAdminRequestDto;
+import gg.pingpong.api.admin.user.service.UserAdminService;
+import gg.pingpong.api.global.dto.PageRequestDto;
+import gg.pingpong.utils.exception.user.UserImageLargeException;
+import gg.pingpong.utils.exception.user.UserImageTypeException;
 import lombok.AllArgsConstructor;
 
 @RestController

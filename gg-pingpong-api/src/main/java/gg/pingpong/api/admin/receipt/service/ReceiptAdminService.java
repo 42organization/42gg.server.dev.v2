@@ -5,11 +5,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gg.server.admin.receipt.data.ReceiptAdminRepository;
-import com.gg.server.admin.receipt.dto.ReceiptListResponseDto;
-import com.gg.server.admin.receipt.dto.ReceiptResponseDto;
-import com.gg.server.data.store.Receipt;
-
+import gg.pingpong.admin.repo.receipt.ReceiptAdminRepository;
+import gg.pingpong.api.admin.receipt.dto.ReceiptListResponseDto;
+import gg.pingpong.api.admin.receipt.dto.ReceiptResponseDto;
+import gg.pingpong.data.store.Receipt;
 import lombok.RequiredArgsConstructor;
 
 @Service
