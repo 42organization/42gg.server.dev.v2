@@ -9,19 +9,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gg.server.admin.penalty.data.PenaltyAdminRepository;
-import com.gg.server.admin.penalty.data.PenaltyUserAdminRedisRepository;
-import com.gg.server.admin.penalty.dto.PenaltyListResponseDto;
-import com.gg.server.admin.penalty.dto.PenaltyUserResponseDto;
-import com.gg.server.data.manage.Penalty;
-import com.gg.server.data.manage.redis.RedisPenaltyUser;
-import com.gg.server.data.user.User;
-import com.gg.server.domain.penalty.exception.PenaltyExpiredException;
-import com.gg.server.domain.penalty.exception.PenaltyNotFoundException;
-import com.gg.server.domain.penalty.exception.RedisPenaltyUserNotFoundException;
-import com.gg.server.domain.penalty.type.PenaltyType;
-import com.gg.server.domain.user.service.UserFindService;
-
+import gg.pingpong.admin.repo.penalty.PenaltyAdminRepository;
+import gg.pingpong.admin.repo.penalty.PenaltyUserAdminRedisRepository;
+import gg.pingpong.api.admin.penalty.dto.PenaltyListResponseDto;
+import gg.pingpong.api.admin.penalty.dto.PenaltyUserResponseDto;
+import gg.pingpong.api.user.user.service.UserFindService;
+import gg.pingpong.data.manage.Penalty;
+import gg.pingpong.data.manage.redis.RedisPenaltyUser;
+import gg.pingpong.data.manage.type.PenaltyType;
+import gg.pingpong.data.user.User;
+import gg.pingpong.utils.exception.penalty.PenaltyExpiredException;
+import gg.pingpong.utils.exception.penalty.PenaltyNotFoundException;
+import gg.pingpong.utils.exception.penalty.RedisPenaltyUserNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service

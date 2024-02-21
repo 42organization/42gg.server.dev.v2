@@ -1,7 +1,6 @@
 package gg.pingpong.api.admin.receipt.dto;
 
-import com.gg.server.global.dto.PageRequestDto;
-
+import gg.pingpong.api.global.dto.PageRequestDto;
 import lombok.Getter;
 
 @Getter

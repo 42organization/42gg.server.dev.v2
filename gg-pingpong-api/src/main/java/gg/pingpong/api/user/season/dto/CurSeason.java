@@ -2,8 +2,7 @@ package gg.pingpong.api.user.season.dto;
 
 import java.time.LocalDateTime;
 
-import com.gg.server.data.game.Season;
-
+import gg.pingpong.data.game.Season;
 import lombok.Getter;
 
 @Getter

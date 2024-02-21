@@ -2,9 +2,8 @@ package gg.pingpong.api.admin.penalty.dto;
 
 import java.time.LocalDateTime;
 
-import com.gg.server.data.manage.Penalty;
-import com.gg.server.data.manage.redis.RedisPenaltyUser;
-
+import gg.pingpong.data.manage.Penalty;
+import gg.pingpong.data.manage.redis.RedisPenaltyUser;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

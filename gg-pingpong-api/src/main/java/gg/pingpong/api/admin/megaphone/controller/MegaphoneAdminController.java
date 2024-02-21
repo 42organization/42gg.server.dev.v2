@@ -11,10 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gg.server.admin.megaphone.dto.MegaphoneHistoryResponseDto;
-import com.gg.server.admin.megaphone.service.MegaphoneAdminService;
-import com.gg.server.global.dto.PageRequestDto;
-
+import gg.pingpong.api.admin.megaphone.dto.MegaphoneHistoryResponseDto;
+import gg.pingpong.api.admin.megaphone.service.MegaphoneAdminService;
+import gg.pingpong.api.global.dto.PageRequestDto;
 import lombok.RequiredArgsConstructor;
 
 @RestController

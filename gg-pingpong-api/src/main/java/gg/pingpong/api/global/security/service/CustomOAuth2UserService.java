@@ -12,26 +12,25 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gg.server.data.game.Rank;
-import com.gg.server.data.game.Tier;
-import com.gg.server.data.game.redis.RankRedis;
-import com.gg.server.data.user.User;
-import com.gg.server.data.user.type.RacketType;
-import com.gg.server.data.user.type.SnsType;
-import com.gg.server.domain.rank.data.RankRepository;
-import com.gg.server.domain.rank.redis.RankRedisRepository;
-import com.gg.server.domain.rank.redis.RedisKeyManager;
-import com.gg.server.domain.season.data.SeasonRepository;
-import com.gg.server.domain.tier.data.TierRepository;
-import com.gg.server.domain.tier.exception.TierNotFoundException;
-import com.gg.server.domain.user.data.UserRepository;
-import com.gg.server.domain.user.dto.UserDto;
-import com.gg.server.global.security.UserPrincipal;
-import com.gg.server.global.security.info.OAuthUserInfo;
-import com.gg.server.global.security.info.OAuthUserInfoFactory;
-import com.gg.server.global.security.info.ProviderType;
-import com.gg.server.global.utils.aws.AsyncNewUserImageUploader;
-
+import gg.pingpong.api.global.security.UserPrincipal;
+import gg.pingpong.api.global.security.info.OAuthUserInfo;
+import gg.pingpong.api.global.security.info.OAuthUserInfoFactory;
+import gg.pingpong.api.global.security.info.ProviderType;
+import gg.pingpong.api.global.utils.aws.AsyncNewUserImageUploader;
+import gg.pingpong.api.user.user.dto.UserDto;
+import gg.pingpong.data.game.Rank;
+import gg.pingpong.data.game.Tier;
+import gg.pingpong.data.game.redis.RankRedis;
+import gg.pingpong.data.user.User;
+import gg.pingpong.data.user.type.RacketType;
+import gg.pingpong.data.user.type.SnsType;
+import gg.pingpong.repo.rank.RankRepository;
+import gg.pingpong.repo.rank.redis.RankRedisRepository;
+import gg.pingpong.repo.season.SeasonRepository;
+import gg.pingpong.repo.tier.TierRepository;
+import gg.pingpong.repo.user.UserRepository;
+import gg.pingpong.utils.RedisKeyManager;
+import gg.pingpong.utils.exception.tier.TierNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service

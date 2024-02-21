@@ -2,10 +2,9 @@ package gg.pingpong.api.admin.receipt.dto;
 
 import java.time.LocalDateTime;
 
-import com.gg.server.data.store.Item;
-import com.gg.server.data.store.Receipt;
-import com.gg.server.data.store.type.ItemStatus;
-
+import gg.pingpong.data.store.Item;
+import gg.pingpong.data.store.Receipt;
+import gg.pingpong.data.store.type.ItemStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
