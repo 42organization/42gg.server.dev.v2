@@ -102,10 +102,9 @@ public class SeasonAdminService {
 		}
 		// 예약 시즌 수정
 		detach(season);
-		season.setSeasonName(updateDto.getSeasonName());
-		season.setStartTime(updateDto.getStartTime());
-		season.setStartPpp(updateDto.getStartPpp());
-		season.setPppGap(updateDto.getPppGap());
+		seasonAdminRepository.updateReserveSeasonById(seasonId, updateDto.getSeasonName(), updateDto.getStartTime(),
+			updateDto.getStartPpp(), updateDto.getPppGap());
+		season = seasonAdminRepository.findById(seasonId).orElseThrow(SeasonNotFoundException::new);
 		insert(season);
 		seasonAdminRepository.save(season);
 		checkSeasonAtDB();

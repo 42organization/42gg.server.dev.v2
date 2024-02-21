@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -24,4 +25,13 @@ public interface SeasonAdminRepository extends JpaRepository<Season, Long> {
 	List<Season> findAllByOrderByStartTimeDesc();
 
 	List<Season> findAllByOrderByStartTimeAsc();
+
+	@Modifying(clearAutomatically = true, flushAutomatically = true)
+	@Query(value = "UPDATE Season s "
+		+ "SET s.seasonName = :seasonName, s.startTime = :startTime, "
+		+ "s.startPpp = :startPpp, s.pppGap = :pppGap "
+		+ "WHERE s.id = :id")
+	void updateReserveSeasonById(@Param("id") Long seasonId, @Param("seasonName") String seasonName,
+		@Param("startTime") LocalDateTime startTime,
+		@Param("startPpp") Integer startPpp, @Param("pppGap") Integer pppGap);
 }
