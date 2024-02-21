@@ -1,7 +1,6 @@
 package gg.pingpong.api.user.game.dto.request;
 
-import com.gg.server.data.game.type.StatusType;
-
+import gg.pingpong.data.game.type.StatusType;
 import lombok.Getter;
 
 @Getter

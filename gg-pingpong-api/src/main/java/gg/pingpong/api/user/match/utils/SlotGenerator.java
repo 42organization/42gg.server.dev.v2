@@ -6,18 +6,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import com.gg.server.data.game.Game;
-import com.gg.server.data.game.Season;
-import com.gg.server.data.game.redis.RankRedis;
-import com.gg.server.data.game.type.Mode;
-import com.gg.server.data.match.RedisMatchTime;
-import com.gg.server.data.match.RedisMatchUser;
-import com.gg.server.data.match.type.Option;
-import com.gg.server.data.match.type.SlotStatus;
-import com.gg.server.domain.match.dto.SlotStatusDto;
-import com.gg.server.domain.match.dto.SlotStatusResponseListDto;
-import com.gg.server.domain.slotmanagement.SlotManagement;
-
+import gg.pingpong.api.user.match.dto.SlotStatusDto;
+import gg.pingpong.api.user.match.dto.SlotStatusResponseListDto;
+import gg.pingpong.data.game.Game;
+import gg.pingpong.data.game.Season;
+import gg.pingpong.data.game.redis.RankRedis;
+import gg.pingpong.data.game.type.Mode;
+import gg.pingpong.data.manage.SlotManagement;
+import gg.pingpong.data.match.RedisMatchTime;
+import gg.pingpong.data.match.RedisMatchUser;
+import gg.pingpong.data.match.type.Option;
+import gg.pingpong.data.match.type.SlotStatus;
 import lombok.Getter;
 
 @Getter

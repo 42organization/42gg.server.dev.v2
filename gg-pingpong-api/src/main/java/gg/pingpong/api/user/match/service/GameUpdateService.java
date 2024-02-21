@@ -5,24 +5,23 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.gg.server.data.game.Game;
-import com.gg.server.data.game.Team;
-import com.gg.server.data.game.TeamUser;
-import com.gg.server.data.noti.Noti;
-import com.gg.server.data.user.User;
-import com.gg.server.domain.game.data.GameRepository;
-import com.gg.server.domain.match.dto.GameAddDto;
-import com.gg.server.domain.match.exception.SlotNotFoundException;
-import com.gg.server.domain.noti.service.NotiService;
-import com.gg.server.domain.noti.service.SnsNotiService;
-import com.gg.server.domain.slotmanagement.SlotManagement;
-import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
-import com.gg.server.domain.team.data.TeamRepository;
-import com.gg.server.domain.team.data.TeamUserRepository;
-import com.gg.server.domain.user.data.UserRepository;
-import com.gg.server.domain.user.dto.UserDto;
-import com.gg.server.domain.user.exception.UserNotFoundException;
-
+import gg.pingpong.api.user.match.dto.GameAddDto;
+import gg.pingpong.api.user.noti.service.NotiService;
+import gg.pingpong.api.user.noti.service.SnsNotiService;
+import gg.pingpong.api.user.user.dto.UserDto;
+import gg.pingpong.data.game.Game;
+import gg.pingpong.data.game.Team;
+import gg.pingpong.data.game.TeamUser;
+import gg.pingpong.data.manage.SlotManagement;
+import gg.pingpong.data.noti.Noti;
+import gg.pingpong.data.user.User;
+import gg.pingpong.repo.game.GameRepository;
+import gg.pingpong.repo.slotmanagement.SlotManagementRepository;
+import gg.pingpong.repo.team.TeamRepository;
+import gg.pingpong.repo.team.TeamUserRepository;
+import gg.pingpong.repo.user.UserRepository;
+import gg.pingpong.utils.exception.match.SlotNotFoundException;
+import gg.pingpong.utils.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -45,7 +44,8 @@ public class GameUpdateService {
 	public void make(GameAddDto addDto, Long recoveredUserId) {
 		SlotManagement slotManagement = slotManagementRepository.findCurrent(LocalDateTime.now())
 			.orElseThrow(SlotNotFoundException::new);
-		Game game = new Game(addDto, slotManagement.getGameInterval());
+		Game game = new Game(addDto.getSeason(), addDto.getMode(), addDto.getStartTime(),
+			slotManagement.getGameInterval());
 		gameRepository.save(game);
 		Team enemyTeam = new Team(game, -1, false);
 		Team myTeam = new Team(game, -1, false);

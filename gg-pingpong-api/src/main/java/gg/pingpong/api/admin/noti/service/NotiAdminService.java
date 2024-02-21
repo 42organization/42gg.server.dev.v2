@@ -5,18 +5,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gg.server.admin.noti.data.NotiAdminRepository;
-import com.gg.server.admin.noti.dto.NotiAdminDto;
-import com.gg.server.admin.noti.dto.NotiListAdminResponseDto;
-import com.gg.server.admin.noti.dto.SendNotiAdminRequestDto;
-import com.gg.server.admin.user.data.UserAdminRepository;
-import com.gg.server.data.noti.Noti;
-import com.gg.server.data.noti.type.NotiType;
-import com.gg.server.data.user.User;
-import com.gg.server.domain.noti.service.SnsNotiService;
-import com.gg.server.domain.user.dto.UserDto;
-import com.gg.server.domain.user.exception.UserNotFoundException;
-
+import gg.pingpong.admin.repo.noti.NotiAdminRepository;
+import gg.pingpong.admin.repo.user.UserAdminRepository;
+import gg.pingpong.api.admin.noti.dto.NotiAdminDto;
+import gg.pingpong.api.admin.noti.dto.NotiListAdminResponseDto;
+import gg.pingpong.api.admin.noti.dto.SendNotiAdminRequestDto;
+import gg.pingpong.api.user.noti.service.SnsNotiService;
+import gg.pingpong.api.user.user.dto.UserDto;
+import gg.pingpong.data.noti.Noti;
+import gg.pingpong.data.noti.type.NotiType;
+import gg.pingpong.data.user.User;
+import gg.pingpong.utils.exception.user.UserNotFoundException;
 import lombok.AllArgsConstructor;
 
 @Service

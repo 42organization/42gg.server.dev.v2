@@ -10,34 +10,33 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gg.server.data.game.Game;
-import com.gg.server.data.game.Season;
-import com.gg.server.data.game.Tier;
-import com.gg.server.data.game.redis.RankRedis;
-import com.gg.server.data.game.type.StatusType;
-import com.gg.server.data.match.RedisMatchTime;
-import com.gg.server.data.match.RedisMatchUser;
-import com.gg.server.data.match.type.Option;
-import com.gg.server.data.user.User;
-import com.gg.server.data.user.type.RoleType;
-import com.gg.server.domain.game.data.GameRepository;
-import com.gg.server.domain.match.data.RedisMatchTimeRepository;
-import com.gg.server.domain.match.data.RedisMatchUserRepository;
-import com.gg.server.domain.match.dto.MatchStatusDto;
-import com.gg.server.domain.match.dto.MatchStatusResponseListDto;
-import com.gg.server.domain.match.dto.SlotStatusResponseListDto;
-import com.gg.server.domain.match.exception.SlotNotFoundException;
-import com.gg.server.domain.match.utils.SlotGenerator;
-import com.gg.server.domain.rank.redis.RankRedisRepository;
-import com.gg.server.domain.rank.redis.RedisKeyManager;
-import com.gg.server.domain.season.service.SeasonFindService;
-import com.gg.server.domain.slotmanagement.SlotManagement;
-import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
-import com.gg.server.domain.tier.data.TierRepository;
-import com.gg.server.domain.tier.exception.TierNotFoundException;
-import com.gg.server.domain.user.data.UserRepository;
-import com.gg.server.domain.user.dto.UserDto;
-
+import gg.pingpong.api.user.match.dto.MatchStatusDto;
+import gg.pingpong.api.user.match.dto.MatchStatusResponseListDto;
+import gg.pingpong.api.user.match.dto.SlotStatusResponseListDto;
+import gg.pingpong.api.user.match.utils.SlotGenerator;
+import gg.pingpong.api.user.season.service.SeasonFindService;
+import gg.pingpong.api.user.user.dto.UserDto;
+import gg.pingpong.data.game.Game;
+import gg.pingpong.data.game.Season;
+import gg.pingpong.data.game.Tier;
+import gg.pingpong.data.game.redis.RankRedis;
+import gg.pingpong.data.game.type.StatusType;
+import gg.pingpong.data.manage.SlotManagement;
+import gg.pingpong.data.match.RedisMatchTime;
+import gg.pingpong.data.match.RedisMatchUser;
+import gg.pingpong.data.match.type.Option;
+import gg.pingpong.data.user.User;
+import gg.pingpong.data.user.type.RoleType;
+import gg.pingpong.repo.game.GameRepository;
+import gg.pingpong.repo.match.RedisMatchTimeRepository;
+import gg.pingpong.repo.match.RedisMatchUserRepository;
+import gg.pingpong.repo.rank.redis.RankRedisRepository;
+import gg.pingpong.repo.slotmanagement.SlotManagementRepository;
+import gg.pingpong.repo.tier.TierRepository;
+import gg.pingpong.repo.user.UserRepository;
+import gg.pingpong.utils.RedisKeyManager;
+import gg.pingpong.utils.exception.match.SlotNotFoundException;
+import gg.pingpong.utils.exception.tier.TierNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -79,7 +78,8 @@ public class MatchFindService {
 		Tier tier = tierRepository.findStartTier().orElseThrow(TierNotFoundException::new);
 		RankRedis user;
 		if (userDto.getRoleType().equals(RoleType.GUEST)) {
-			user = RankRedis.from(userDto, season.getStartPpp(), tier.getImageUri());
+			user = RankRedis.from(userDto.getId(), userDto.getIntraId(), userDto.getTextColor(),
+				season.getStartPpp(), tier.getImageUri());
 		} else {
 			user = rankRedisRepository
 				.findRankByUserId(RedisKeyManager.getHashKey(season.getId()), userDto.getId());

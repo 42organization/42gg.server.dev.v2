@@ -1,7 +1,7 @@
 package gg.pingpong.api.user.match.service;
 
-import static com.gg.server.data.game.type.RoundNumber.*;
-import static com.gg.server.data.match.type.TournamentMatchStatus.*;
+import static gg.pingpong.data.game.type.RoundNumber.*;
+import static gg.pingpong.data.match.type.TournamentMatchStatus.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -16,34 +16,33 @@ import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
-import com.gg.server.admin.noti.dto.SendNotiAdminRequestDto;
-import com.gg.server.admin.noti.service.NotiAdminService;
-import com.gg.server.data.game.Game;
-import com.gg.server.data.game.Season;
-import com.gg.server.data.game.Team;
-import com.gg.server.data.game.TeamUser;
-import com.gg.server.data.game.Tournament;
-import com.gg.server.data.game.TournamentGame;
-import com.gg.server.data.game.TournamentUser;
-import com.gg.server.data.game.type.Mode;
-import com.gg.server.data.game.type.RoundNumber;
-import com.gg.server.data.game.type.StatusType;
-import com.gg.server.data.game.type.TournamentRound;
-import com.gg.server.data.game.type.TournamentStatus;
-import com.gg.server.data.match.type.TournamentMatchStatus;
-import com.gg.server.data.noti.type.NotiType;
-import com.gg.server.data.user.User;
-import com.gg.server.domain.game.data.GameRepository;
-import com.gg.server.domain.match.exception.EnrolledSlotException;
-import com.gg.server.domain.match.exception.LosingTeamNotFoundException;
-import com.gg.server.domain.match.exception.SlotNotFoundException;
-import com.gg.server.domain.match.exception.WinningTeamNotFoundException;
-import com.gg.server.domain.season.service.SeasonFindService;
-import com.gg.server.domain.slotmanagement.SlotManagement;
-import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
-import com.gg.server.domain.tournament.data.TournamentGameRepository;
-import com.gg.server.domain.tournament.exception.TournamentGameNotFoundException;
-
+import gg.pingpong.api.admin.noti.dto.SendNotiAdminRequestDto;
+import gg.pingpong.api.admin.noti.service.NotiAdminService;
+import gg.pingpong.api.user.season.service.SeasonFindService;
+import gg.pingpong.data.game.Game;
+import gg.pingpong.data.game.Season;
+import gg.pingpong.data.game.Team;
+import gg.pingpong.data.game.TeamUser;
+import gg.pingpong.data.game.Tournament;
+import gg.pingpong.data.game.TournamentGame;
+import gg.pingpong.data.game.TournamentUser;
+import gg.pingpong.data.game.type.Mode;
+import gg.pingpong.data.game.type.RoundNumber;
+import gg.pingpong.data.game.type.StatusType;
+import gg.pingpong.data.game.type.TournamentRound;
+import gg.pingpong.data.game.type.TournamentStatus;
+import gg.pingpong.data.manage.SlotManagement;
+import gg.pingpong.data.match.type.TournamentMatchStatus;
+import gg.pingpong.data.noti.type.NotiType;
+import gg.pingpong.data.user.User;
+import gg.pingpong.repo.game.GameRepository;
+import gg.pingpong.repo.slotmanagement.SlotManagementRepository;
+import gg.pingpong.repo.tournarment.TournamentGameRepository;
+import gg.pingpong.utils.exception.match.EnrolledSlotException;
+import gg.pingpong.utils.exception.match.LosingTeamNotFoundException;
+import gg.pingpong.utils.exception.match.SlotNotFoundException;
+import gg.pingpong.utils.exception.match.WinningTeamNotFoundException;
+import gg.pingpong.utils.exception.tournament.TournamentGameNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -143,10 +142,10 @@ public class MatchTournamentService {
 		User loser = getLosingTeam(modifiedGame).getTeamUsers().get(0).getUser();
 		List<User> players = modifiedGame.getTeams().stream()
 			.map(team -> team.getTeamUsers().get(0).getUser())
-			.collect(Collectors.toList());
+			.toList();
 		List<TeamUser> nextMatchedGameTeamUsers = nextMatchedGame.getTeams().stream()
 			.map(team -> team.getTeamUsers().get(0))
-			.collect(Collectors.toList());
+			.toList();
 		for (TeamUser nextGameTeamUser : nextMatchedGameTeamUsers) {
 			if (players.contains(nextGameTeamUser.getUser())) {
 				nextGameTeamUser.updateUser(winner);

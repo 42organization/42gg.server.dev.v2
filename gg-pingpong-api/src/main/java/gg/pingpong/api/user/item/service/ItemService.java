@@ -9,32 +9,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gg.server.data.store.Item;
-import com.gg.server.data.store.Receipt;
-import com.gg.server.data.store.type.ItemStatus;
-import com.gg.server.data.store.type.ItemType;
-import com.gg.server.data.user.User;
-import com.gg.server.data.user.type.RoleType;
-import com.gg.server.domain.coin.service.UserCoinChangeService;
-import com.gg.server.domain.item.data.ItemRepository;
-import com.gg.server.domain.item.data.UserItemRepository;
-import com.gg.server.domain.item.dto.ItemStoreListResponseDto;
-import com.gg.server.domain.item.dto.ItemStoreResponseDto;
-import com.gg.server.domain.item.dto.UserItemListResponseDto;
-import com.gg.server.domain.item.dto.UserItemResponseDto;
-import com.gg.server.domain.item.exception.ItemNotFoundException;
-import com.gg.server.domain.item.exception.ItemNotPurchasableException;
-import com.gg.server.domain.item.exception.ItemTypeException;
-import com.gg.server.domain.item.exception.KakaoGiftException;
-import com.gg.server.domain.item.exception.KakaoPurchaseException;
-import com.gg.server.domain.noti.service.NotiService;
-import com.gg.server.domain.receipt.data.ReceiptRepository;
-import com.gg.server.domain.receipt.exception.ItemStatusException;
-import com.gg.server.domain.receipt.exception.ReceiptNotOwnerException;
-import com.gg.server.domain.user.data.UserRepository;
-import com.gg.server.domain.user.dto.UserDto;
-import com.gg.server.domain.user.exception.UserNotFoundException;
-
+import gg.pingpong.api.user.coin.service.UserCoinChangeService;
+import gg.pingpong.api.user.item.dto.ItemStoreListResponseDto;
+import gg.pingpong.api.user.item.dto.ItemStoreResponseDto;
+import gg.pingpong.api.user.noti.service.NotiService;
+import gg.pingpong.repo.item.ItemRepository;
+import gg.pingpong.repo.item.UserItemRepository;
+import gg.pingpong.repo.receipt.ReceiptRepository;
+import gg.pingpong.repo.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service

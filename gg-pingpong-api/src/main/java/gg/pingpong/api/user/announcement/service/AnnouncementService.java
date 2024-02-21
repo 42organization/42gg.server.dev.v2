@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import gg.pingpong.api.user.announcement.dto.AnnouncementDto;
 import gg.pingpong.data.manage.Announcement;
 import gg.pingpong.repo.announcement.AnnouncementRepository;
+import gg.pingpong.utils.exception.announcement.AnnounceNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service

@@ -15,13 +15,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gg.server.domain.megaphone.dto.MegaphoneDetailResponseDto;
-import com.gg.server.domain.megaphone.dto.MegaphoneTodayListResponseDto;
-import com.gg.server.domain.megaphone.dto.MegaphoneUseRequestDto;
-import com.gg.server.domain.megaphone.service.MegaphoneService;
-import com.gg.server.domain.user.dto.UserDto;
-import com.gg.server.global.utils.argumentresolver.Login;
-
+import gg.pingpong.api.global.utils.argumentresolver.Login;
+import gg.pingpong.api.user.megaphone.dto.MegaphoneDetailResponseDto;
+import gg.pingpong.api.user.megaphone.dto.MegaphoneTodayListResponseDto;
+import gg.pingpong.api.user.megaphone.dto.MegaphoneUseRequestDto;
+import gg.pingpong.api.user.megaphone.service.MegaphoneService;
+import gg.pingpong.api.user.user.dto.UserDto;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 

@@ -11,9 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
-import com.gg.server.admin.item.dto.ItemUpdateRequestDto;
-import com.gg.server.data.store.type.ItemType;
-
+import gg.pingpong.data.store.type.ItemType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

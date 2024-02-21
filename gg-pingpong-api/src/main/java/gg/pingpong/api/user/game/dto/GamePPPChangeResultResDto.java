@@ -1,7 +1,6 @@
 package gg.pingpong.api.user.game.dto;
 
-import com.gg.server.domain.coin.dto.UserGameCoinResultDto;
-
+import gg.pingpong.api.user.coin.dto.UserGameCoinResultDto;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -9,12 +9,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gg.server.domain.noti.dto.NotiListResponseDto;
-import com.gg.server.domain.noti.dto.NotiResponseDto;
-import com.gg.server.domain.noti.service.NotiService;
-import com.gg.server.domain.user.dto.UserDto;
-import com.gg.server.global.utils.argumentresolver.Login;
-
+import gg.pingpong.api.global.utils.argumentresolver.Login;
+import gg.pingpong.api.user.noti.dto.NotiListResponseDto;
+import gg.pingpong.api.user.noti.dto.NotiResponseDto;
+import gg.pingpong.api.user.noti.service.NotiService;
+import gg.pingpong.api.user.user.dto.UserDto;
 import lombok.AllArgsConstructor;
 
 @RestController
