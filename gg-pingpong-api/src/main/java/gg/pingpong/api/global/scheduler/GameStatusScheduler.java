@@ -2,8 +2,7 @@ package gg.pingpong.api.global.scheduler;
 
 import org.springframework.stereotype.Component;
 
-import com.gg.server.domain.game.service.GameStatusService;
-
+import gg.pingpong.api.user.game.service.GameStatusService;
 import lombok.extern.slf4j.Slf4j;
 
 @Component

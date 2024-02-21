@@ -5,15 +5,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gg.server.data.store.CoinHistory;
-import com.gg.server.data.user.User;
-import com.gg.server.domain.coin.data.CoinHistoryRepository;
-import com.gg.server.domain.user.data.UserRepository;
-import com.gg.server.domain.user.dto.CoinHistoryResponseDto;
-import com.gg.server.domain.user.dto.UserCoinHistoryListResponseDto;
-import com.gg.server.domain.user.dto.UserCoinResponseDto;
-import com.gg.server.domain.user.exception.UserNotFoundException;
-
+import gg.pingpong.api.user.user.dto.CoinHistoryResponseDto;
+import gg.pingpong.api.user.user.dto.UserCoinHistoryListResponseDto;
+import gg.pingpong.api.user.user.dto.UserCoinResponseDto;
+import gg.pingpong.data.store.CoinHistory;
+import gg.pingpong.data.user.User;
+import gg.pingpong.repo.coin.CoinHistoryRepository;
+import gg.pingpong.repo.user.UserRepository;
+import gg.pingpong.utils.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

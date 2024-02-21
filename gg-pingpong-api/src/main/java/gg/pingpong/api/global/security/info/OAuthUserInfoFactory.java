@@ -2,8 +2,8 @@ package gg.pingpong.api.global.security.info;
 
 import java.util.Map;
 
-import com.gg.server.global.security.info.impl.FortyTwoOAuthUserInfo;
-import com.gg.server.global.security.info.impl.KakaoOAuthUserInfo;
+import gg.pingpong.api.global.security.info.impl.FortyTwoOAuthUserInfo;
+import gg.pingpong.api.global.security.info.impl.KakaoOAuthUserInfo;
 
 public class OAuthUserInfoFactory {
 	public static OAuthUserInfo getOAuth2UserInfo(ProviderType providerType, Map<String, Object> attributes) {

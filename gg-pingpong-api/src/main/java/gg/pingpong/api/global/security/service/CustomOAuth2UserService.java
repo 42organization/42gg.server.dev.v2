@@ -91,7 +91,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 			season -> {
 				Rank userRank = Rank.from(savedUser, season, season.getStartPpp(), tier);
 				rankRepository.save(userRank);
-				RankRedis rankRedis = RankRedis.from(UserDto.from(savedUser), season.getStartPpp(), tier.getImageUri());
+				RankRedis rankRedis = RankRedis.from(savedUser.getId(), savedUser.getIntraId(),
+					savedUser.getTextColor(), season.getStartPpp(), tier.getImageUri());
 				String hashKey = RedisKeyManager.getHashKey(season.getId());
 				rankRedisRepository.addRankData(hashKey, savedUser.getId(), rankRedis);
 			}

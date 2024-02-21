@@ -3,13 +3,12 @@ package gg.pingpong.api.user.feedback.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gg.server.data.manage.Feedback;
-import com.gg.server.data.user.User;
-import com.gg.server.domain.feedback.data.FeedbackRepository;
-import com.gg.server.domain.feedback.dto.FeedbackRequestDto;
-import com.gg.server.domain.user.data.UserRepository;
-import com.gg.server.domain.user.exception.UserNotFoundException;
-
+import gg.pingpong.api.user.feedback.dto.FeedbackRequestDto;
+import gg.pingpong.data.manage.Feedback;
+import gg.pingpong.data.user.User;
+import gg.pingpong.repo.feedback.FeedbackRepository;
+import gg.pingpong.repo.user.UserRepository;
+import gg.pingpong.utils.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service

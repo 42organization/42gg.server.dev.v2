@@ -6,8 +6,7 @@ import java.util.List;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.gg.server.data.store.redis.MegaphoneRedis;
-
+import gg.pingpong.data.store.redis.MegaphoneRedis;
 import lombok.RequiredArgsConstructor;
 
 @Repository

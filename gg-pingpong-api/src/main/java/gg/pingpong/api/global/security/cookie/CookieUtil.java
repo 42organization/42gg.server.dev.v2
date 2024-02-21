@@ -12,8 +12,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 import org.springframework.util.SerializationUtils;
 
-import com.gg.server.global.utils.ApplicationYmlRead;
-
+import gg.pingpong.api.global.utils.ApplicationYmlRead;
 import lombok.RequiredArgsConstructor;
 
 @Component

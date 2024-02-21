@@ -2,10 +2,9 @@ package gg.pingpong.api.user.rank.service;
 
 import org.springframework.stereotype.Service;
 
-import com.gg.server.data.game.Rank;
-import com.gg.server.domain.rank.data.RankRepository;
-import com.gg.server.domain.rank.exception.RankNotFoundException;
-
+import gg.pingpong.data.game.Rank;
+import gg.pingpong.repo.rank.RankRepository;
+import gg.pingpong.utils.exception.rank.RankNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -14,6 +13,6 @@ public class RankFindService {
 	private final RankRepository rankRepository;
 
 	public Rank findByUserIdAndSeasonId(Long userId, Long seasonId) {
-		return rankRepository.findByUserIdAndSeasonId(userId, seasonId).orElseThrow(() -> new RankNotFoundException());
+		return rankRepository.findByUserIdAndSeasonId(userId, seasonId).orElseThrow(RankNotFoundException::new);
 	}
 }

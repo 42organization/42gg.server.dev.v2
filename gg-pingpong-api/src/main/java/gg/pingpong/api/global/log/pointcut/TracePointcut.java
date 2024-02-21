@@ -3,7 +3,7 @@ package gg.pingpong.api.global.log.pointcut;
 import org.aspectj.lang.annotation.Pointcut;
 
 public class TracePointcut {
-	@Pointcut("execution(* com.gg.server.domain..*(..))")
+	@Pointcut("execution(* gg.pingpong.api.user..*(..))")
 	public void allDomain() {
 	}
 

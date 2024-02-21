@@ -11,25 +11,24 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gg.server.data.game.Season;
-import com.gg.server.data.game.redis.RankRedis;
-import com.gg.server.data.user.User;
-import com.gg.server.domain.rank.data.RankRepository;
-import com.gg.server.domain.rank.dto.ExpRankDto;
-import com.gg.server.domain.rank.dto.ExpRankPageResponseDto;
-import com.gg.server.domain.rank.dto.ExpRankV2Dto;
-import com.gg.server.domain.rank.dto.RankDto;
-import com.gg.server.domain.rank.dto.RankPageResponseDto;
-import com.gg.server.domain.rank.exception.RedisDataNotFoundException;
-import com.gg.server.domain.rank.redis.RankRedisRepository;
-import com.gg.server.domain.rank.redis.RedisKeyManager;
-import com.gg.server.domain.season.service.SeasonFindService;
-import com.gg.server.domain.user.data.UserRepository;
-import com.gg.server.domain.user.dto.UserDto;
-import com.gg.server.domain.user.exception.UserNotFoundException;
-import com.gg.server.global.exception.ErrorCode;
-import com.gg.server.global.exception.custom.PageNotFoundException;
-
+import gg.pingpong.api.user.rank.dto.ExpRankDto;
+import gg.pingpong.api.user.rank.dto.ExpRankPageResponseDto;
+import gg.pingpong.api.user.rank.dto.RankDto;
+import gg.pingpong.api.user.rank.dto.RankPageResponseDto;
+import gg.pingpong.api.user.season.service.SeasonFindService;
+import gg.pingpong.api.user.user.dto.UserDto;
+import gg.pingpong.data.game.Season;
+import gg.pingpong.data.game.redis.RankRedis;
+import gg.pingpong.data.user.User;
+import gg.pingpong.repo.rank.RankRepository;
+import gg.pingpong.repo.rank.redis.RankRedisRepository;
+import gg.pingpong.repo.user.ExpRankV2Dto;
+import gg.pingpong.repo.user.UserRepository;
+import gg.pingpong.utils.RedisKeyManager;
+import gg.pingpong.utils.exception.ErrorCode;
+import gg.pingpong.utils.exception.custom.PageNotFoundException;
+import gg.pingpong.utils.exception.rank.RedisDataNotFoundException;
+import gg.pingpong.utils.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -201,10 +200,6 @@ public class RankService {
 			User user = userRepository.findById(userIds.get(i)).orElseThrow(UserNotFoundException::new);
 			rankList.add(RankDto.from(user, userRanks.get(i), ++startRank));
 		}
-		//        for (RankRedis userRank : userRanks) {
-		//            rankList.add(RankDto.from())
-		//            rankList.add(RankDto.from(userRank, ++startRank));
-		//        }
 		return rankList;
 	}
 }

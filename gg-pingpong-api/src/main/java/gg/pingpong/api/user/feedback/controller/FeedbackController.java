@@ -9,12 +9,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gg.server.domain.feedback.dto.FeedbackRequestDto;
-import com.gg.server.domain.feedback.service.FeedbackService;
-import com.gg.server.domain.user.data.UserRepository;
-import com.gg.server.domain.user.dto.UserDto;
-import com.gg.server.global.utils.argumentresolver.Login;
-
+import gg.pingpong.api.global.utils.argumentresolver.Login;
+import gg.pingpong.api.user.feedback.dto.FeedbackRequestDto;
+import gg.pingpong.api.user.feedback.service.FeedbackService;
+import gg.pingpong.api.user.user.dto.UserDto;
+import gg.pingpong.repo.user.UserRepository;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 

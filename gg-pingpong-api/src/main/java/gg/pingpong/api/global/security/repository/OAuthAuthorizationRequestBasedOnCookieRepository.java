@@ -7,9 +7,9 @@ import org.springframework.security.oauth2.client.web.AuthorizationRequestReposi
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.stereotype.Repository;
 
-import com.gg.server.global.security.cookie.CookieUtil;
 import com.nimbusds.oauth2.sdk.util.StringUtils;
 
+import gg.pingpong.api.global.security.cookie.CookieUtil;
 import lombok.RequiredArgsConstructor;
 
 @Repository

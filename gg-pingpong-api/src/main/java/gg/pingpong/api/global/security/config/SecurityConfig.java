@@ -14,12 +14,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.gg.server.global.security.config.properties.CorsProperties;
-import com.gg.server.global.security.handler.OAuthAuthenticationSuccessHandler;
-import com.gg.server.global.security.jwt.utils.TokenAuthenticationFilter;
-import com.gg.server.global.security.repository.OAuthAuthorizationRequestBasedOnCookieRepository;
-import com.gg.server.global.security.service.CustomUserDetailsService;
-
+import gg.pingpong.api.global.security.config.properties.CorsProperties;
+import gg.pingpong.api.global.security.handler.OAuthAuthenticationSuccessHandler;
+import gg.pingpong.api.global.security.jwt.utils.TokenAuthenticationFilter;
+import gg.pingpong.api.global.security.repository.OAuthAuthorizationRequestBasedOnCookieRepository;
+import gg.pingpong.api.global.security.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

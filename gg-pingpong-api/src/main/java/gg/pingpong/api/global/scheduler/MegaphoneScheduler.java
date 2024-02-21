@@ -4,8 +4,7 @@ import java.time.LocalDate;
 
 import org.springframework.stereotype.Component;
 
-import com.gg.server.domain.megaphone.service.MegaphoneService;
-
+import gg.pingpong.api.user.megaphone.service.MegaphoneService;
 import lombok.extern.slf4j.Slf4j;
 
 @Component

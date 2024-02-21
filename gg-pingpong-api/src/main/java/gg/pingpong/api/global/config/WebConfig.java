@@ -7,11 +7,10 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.gg.server.domain.user.data.UserRepository;
-import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
-import com.gg.server.global.utils.argumentresolver.LoginMemberArgumentResolver;
-import com.gg.server.global.utils.querytracker.LoggingInterceptor;
-
+import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
+import gg.pingpong.api.global.utils.argumentresolver.LoginMemberArgumentResolver;
+import gg.pingpong.api.global.utils.querytracker.LoggingInterceptor;
+import gg.pingpong.repo.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 @Configuration

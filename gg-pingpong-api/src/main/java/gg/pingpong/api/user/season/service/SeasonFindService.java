@@ -22,17 +22,17 @@ public class SeasonFindService {
 
 	@Transactional(readOnly = true)
 	public Season findCurrentSeason(LocalDateTime now) {
-		return seasonRepository.findCurrentSeason(now).orElseThrow(() -> new SeasonNotFoundException());
+		return seasonRepository.findCurrentSeason(now).orElseThrow(SeasonNotFoundException::new);
 	}
 
 	@Transactional(readOnly = true)
 	public Season findSeasonById(Long seasonId) {
-		return seasonRepository.findById(seasonId).orElseThrow(() -> new SeasonNotFoundException());
+		return seasonRepository.findById(seasonId).orElseThrow(SeasonNotFoundException::new);
 	}
 
 	@Transactional(readOnly = true)
 	public Season findSeasonByGameId(Long gameId) {
-		Game game = gameRepository.findById(gameId).orElseThrow(() -> new GameNotExistException());
+		Game game = gameRepository.findById(gameId).orElseThrow(GameNotExistException::new);
 		return game.getSeason();
 	}
 }

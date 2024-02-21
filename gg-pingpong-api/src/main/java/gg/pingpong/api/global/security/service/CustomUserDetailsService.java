@@ -5,11 +5,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gg.server.data.user.User;
-import com.gg.server.domain.user.exception.UserNotFoundException;
-import com.gg.server.domain.user.service.UserFindService;
-import com.gg.server.global.security.UserPrincipal;
-
+import gg.pingpong.api.global.security.UserPrincipal;
+import gg.pingpong.api.user.user.service.UserFindService;
+import gg.pingpong.data.user.User;
+import gg.pingpong.utils.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service

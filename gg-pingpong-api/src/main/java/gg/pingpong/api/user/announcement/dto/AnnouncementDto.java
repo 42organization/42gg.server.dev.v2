@@ -1,7 +1,6 @@
 package gg.pingpong.api.user.announcement.dto;
 
-import com.gg.server.data.manage.Announcement;
-
+import gg.pingpong.data.manage.Announcement;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

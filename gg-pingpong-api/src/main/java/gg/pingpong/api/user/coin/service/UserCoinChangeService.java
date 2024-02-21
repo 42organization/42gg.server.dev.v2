@@ -5,18 +5,17 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gg.server.data.game.Team;
-import com.gg.server.data.game.TeamUser;
-import com.gg.server.data.store.Item;
-import com.gg.server.data.user.User;
-import com.gg.server.domain.coin.data.CoinPolicyRepository;
-import com.gg.server.domain.coin.dto.UserGameCoinResultDto;
-import com.gg.server.domain.coin.exception.CoinPolicyNotFoundException;
-import com.gg.server.domain.game.service.GameFindService;
-import com.gg.server.domain.user.data.UserRepository;
-import com.gg.server.domain.user.exception.UserAlreadyAttendanceException;
-import com.gg.server.domain.user.exception.UserNotFoundException;
-
+import gg.pingpong.api.user.coin.dto.UserGameCoinResultDto;
+import gg.pingpong.api.user.game.service.GameFindService;
+import gg.pingpong.data.game.Team;
+import gg.pingpong.data.game.TeamUser;
+import gg.pingpong.data.store.Item;
+import gg.pingpong.data.user.User;
+import gg.pingpong.repo.coin.CoinPolicyRepository;
+import gg.pingpong.repo.user.UserRepository;
+import gg.pingpong.utils.exception.coin.CoinPolicyNotFoundException;
+import gg.pingpong.utils.exception.user.UserAlreadyAttendanceException;
+import gg.pingpong.utils.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service

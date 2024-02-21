@@ -2,9 +2,8 @@ package gg.pingpong.api.global.log.service;
 
 import org.springframework.stereotype.Component;
 
-import com.gg.server.global.log.domain.TraceId;
-import com.gg.server.global.log.domain.TraceStatus;
-
+import gg.pingpong.api.global.log.domain.TraceId;
+import gg.pingpong.api.global.log.domain.TraceStatus;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -30,6 +29,7 @@ public class ThreadLocalLogTrace implements LogTrace {
 		complete(status, null);
 	}
 
+	@Override
 	public void exception(TraceStatus status, Exception exception) {
 		if (status != null) {
 			complete(status, exception);

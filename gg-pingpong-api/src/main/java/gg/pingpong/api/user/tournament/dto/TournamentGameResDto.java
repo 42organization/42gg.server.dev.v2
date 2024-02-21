@@ -1,10 +1,9 @@
 package gg.pingpong.api.user.tournament.dto;
 
-import com.gg.server.data.game.TournamentGame;
-import com.gg.server.data.game.type.TournamentRound;
-import com.gg.server.domain.game.dto.GameResultResDto;
-import com.gg.server.domain.game.dto.GameTeamUser;
-
+import gg.pingpong.api.user.game.dto.GameResultResDto;
+import gg.pingpong.data.game.TournamentGame;
+import gg.pingpong.data.game.type.TournamentRound;
+import gg.pingpong.repo.game.GameTeamUser;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

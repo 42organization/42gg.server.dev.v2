@@ -10,9 +10,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import com.gg.server.data.user.User;
-import com.gg.server.data.user.type.RoleType;
-
+import gg.pingpong.data.user.User;
+import gg.pingpong.data.user.type.RoleType;
 import lombok.Getter;
 
 @Getter

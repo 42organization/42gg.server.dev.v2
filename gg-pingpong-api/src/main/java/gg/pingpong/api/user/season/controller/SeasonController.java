@@ -4,9 +4,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gg.server.domain.season.dto.SeasonListResDto;
-import com.gg.server.domain.season.service.SeasonService;
-
+import gg.pingpong.api.user.season.dto.SeasonListResDto;
+import gg.pingpong.api.user.season.service.SeasonService;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

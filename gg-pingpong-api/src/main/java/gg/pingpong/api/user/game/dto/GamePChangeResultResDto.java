@@ -2,9 +2,9 @@ package gg.pingpong.api.user.game.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.gg.server.domain.coin.dto.UserGameCoinResultDto;
-import com.gg.server.global.utils.ExpLevelCalculator;
 
+import gg.pingpong.api.global.utils.ExpLevelCalculator;
+import gg.pingpong.api.user.coin.dto.UserGameCoinResultDto;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

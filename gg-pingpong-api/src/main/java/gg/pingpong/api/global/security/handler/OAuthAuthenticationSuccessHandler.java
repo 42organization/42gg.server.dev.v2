@@ -12,18 +12,17 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.gg.server.data.user.User;
-import com.gg.server.data.user.type.RoleType;
-import com.gg.server.domain.user.data.UserRepository;
-import com.gg.server.domain.user.exception.UserNotFoundException;
-import com.gg.server.global.security.UserPrincipal;
-import com.gg.server.global.security.config.properties.AppProperties;
-import com.gg.server.global.security.cookie.CookieUtil;
-import com.gg.server.global.security.jwt.repository.JwtRedisRepository;
-import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
-import com.gg.server.global.security.jwt.utils.TokenHeaders;
-import com.gg.server.global.utils.ApplicationYmlRead;
-
+import gg.pingpong.api.global.security.UserPrincipal;
+import gg.pingpong.api.global.security.config.properties.AppProperties;
+import gg.pingpong.api.global.security.cookie.CookieUtil;
+import gg.pingpong.api.global.security.jwt.repository.JwtRedisRepository;
+import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
+import gg.pingpong.api.global.security.jwt.utils.TokenHeaders;
+import gg.pingpong.api.global.utils.ApplicationYmlRead;
+import gg.pingpong.data.user.User;
+import gg.pingpong.data.user.type.RoleType;
+import gg.pingpong.repo.user.UserRepository;
+import gg.pingpong.utils.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Component

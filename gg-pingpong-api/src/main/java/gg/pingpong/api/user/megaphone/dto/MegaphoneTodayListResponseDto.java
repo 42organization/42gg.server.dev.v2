@@ -1,7 +1,6 @@
 package gg.pingpong.api.user.megaphone.dto;
 
-import com.gg.server.data.store.redis.MegaphoneRedis;
-
+import gg.pingpong.data.store.redis.MegaphoneRedis;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

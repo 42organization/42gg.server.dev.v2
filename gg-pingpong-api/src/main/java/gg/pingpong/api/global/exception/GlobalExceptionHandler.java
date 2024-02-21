@@ -12,16 +12,16 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.SdkClientException;
-import com.gg.server.global.exception.custom.AuthenticationException;
-import com.gg.server.global.exception.custom.CustomRuntimeException;
-import com.gg.server.global.exception.custom.DBConsistencyException;
-import com.gg.server.global.exception.custom.DuplicationException;
-import com.gg.server.global.exception.custom.ForbiddenException;
-import com.gg.server.global.exception.custom.NotExistException;
-import com.gg.server.global.exception.custom.PageNotFoundException;
 
 import gg.pingpong.utils.exception.ErrorCode;
 import gg.pingpong.utils.exception.ErrorResponse;
+import gg.pingpong.utils.exception.custom.AuthenticationException;
+import gg.pingpong.utils.exception.custom.CustomRuntimeException;
+import gg.pingpong.utils.exception.custom.DBConsistencyException;
+import gg.pingpong.utils.exception.custom.DuplicationException;
+import gg.pingpong.utils.exception.custom.ForbiddenException;
+import gg.pingpong.utils.exception.custom.NotExistException;
+import gg.pingpong.utils.exception.custom.PageNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

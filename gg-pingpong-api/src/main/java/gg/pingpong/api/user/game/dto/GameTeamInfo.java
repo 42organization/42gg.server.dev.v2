@@ -3,12 +3,11 @@ package gg.pingpong.api.user.game.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.gg.server.data.game.type.Mode;
-import com.gg.server.data.game.type.StatusType;
-import com.gg.server.domain.game.exception.GameDataConsistencyException;
-import com.gg.server.domain.team.dto.MatchTeamsInfoDto;
-
+import gg.pingpong.api.user.team.dto.MatchTeamsInfoDto;
+import gg.pingpong.data.game.type.Mode;
+import gg.pingpong.data.game.type.StatusType;
 import gg.pingpong.repo.game.GameTeamUserInfo;
+import gg.pingpong.utils.exception.game.GameDataConsistencyException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;

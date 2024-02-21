@@ -4,11 +4,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.gg.server.data.game.Game;
-import com.gg.server.data.game.type.Mode;
-import com.gg.server.data.match.RedisMatchTime;
-import com.gg.server.domain.slotmanagement.SlotManagement;
 
+import gg.pingpong.data.game.Game;
+import gg.pingpong.data.game.type.Mode;
+import gg.pingpong.data.manage.SlotManagement;
+import gg.pingpong.data.match.RedisMatchTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

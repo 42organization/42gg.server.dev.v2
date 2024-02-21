@@ -1,12 +1,11 @@
 package gg.pingpong.api.user.user.dto;
 
-import com.gg.server.data.game.Tier;
-import com.gg.server.data.user.User;
-import com.gg.server.data.user.type.BackgroundType;
-import com.gg.server.data.user.type.EdgeType;
-import com.gg.server.data.user.type.SnsType;
-import com.gg.server.global.utils.ExpLevelCalculator;
-
+import gg.pingpong.api.global.utils.ExpLevelCalculator;
+import gg.pingpong.data.game.Tier;
+import gg.pingpong.data.user.User;
+import gg.pingpong.data.user.type.BackgroundType;
+import gg.pingpong.data.user.type.EdgeType;
+import gg.pingpong.data.user.type.SnsType;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

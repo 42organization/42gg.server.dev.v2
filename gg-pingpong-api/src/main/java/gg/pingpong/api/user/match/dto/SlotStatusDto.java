@@ -3,8 +3,8 @@ package gg.pingpong.api.user.match.dto;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.gg.server.data.match.type.SlotStatus;
 
+import gg.pingpong.data.match.type.SlotStatus;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

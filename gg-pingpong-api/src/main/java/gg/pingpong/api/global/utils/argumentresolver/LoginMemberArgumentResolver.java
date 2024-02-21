@@ -8,12 +8,11 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import com.gg.server.data.user.User;
-import com.gg.server.domain.user.data.UserRepository;
-import com.gg.server.domain.user.dto.UserDto;
-import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
-import com.gg.server.global.utils.HeaderUtil;
-
+import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
+import gg.pingpong.api.global.utils.HeaderUtil;
+import gg.pingpong.api.user.user.dto.UserDto;
+import gg.pingpong.data.user.User;
+import gg.pingpong.repo.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

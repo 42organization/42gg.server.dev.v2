@@ -3,8 +3,7 @@ package gg.pingpong.api.user.noti.dto;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import com.gg.server.domain.user.dto.UserDto;
-
+import gg.pingpong.api.user.user.dto.UserDto;
 import gg.pingpong.data.noti.Noti;
 import gg.pingpong.data.noti.type.NotiType;
 import lombok.Builder;

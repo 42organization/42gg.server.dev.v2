@@ -2,8 +2,7 @@ package gg.pingpong.api.user.user.dto;
 
 import java.time.LocalDateTime;
 
-import com.gg.server.data.game.PChange;
-
+import gg.pingpong.data.game.PChange;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
