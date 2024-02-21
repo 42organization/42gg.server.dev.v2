@@ -19,12 +19,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
-import com.gg.server.admin.announcement.data.AnnouncementAdminRepository;
-import com.gg.server.admin.announcement.dto.AnnouncementAdminAddDto;
-import com.gg.server.data.manage.Announcement;
-import com.gg.server.domain.announcement.exception.AnnounceDupException;
-import com.gg.server.domain.announcement.exception.AnnounceNotFoundException;
-import com.gg.server.utils.annotation.UnitTest;
+import gg.pingpong.admin.repo.announcement.AnnouncementAdminRepository;
+import gg.pingpong.api.admin.announcement.dto.AnnouncementAdminAddDto;
+import gg.pingpong.api.utils.annotation.UnitTest;
+import gg.pingpong.data.manage.Announcement;
+import gg.pingpong.utils.exception.announcement.AnnounceDupException;
+import gg.pingpong.utils.exception.announcement.AnnounceNotFoundException;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)

@@ -13,12 +13,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gg.server.admin.coin.data.CoinPolicyAdminRepository;
-import com.gg.server.admin.coin.dto.CoinPolicyAdminAddDto;
-import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
-import com.gg.server.utils.TestDataUtils;
-import com.gg.server.utils.annotation.IntegrationTest;
 
+import gg.pingpong.admin.repo.coin.CoinPolicyAdminRepository;
+import gg.pingpong.api.admin.coin.dto.CoinPolicyAdminAddDto;
+import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
+import gg.pingpong.api.utils.TestDataUtils;
+import gg.pingpong.api.utils.annotation.IntegrationTest;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

@@ -2,7 +2,6 @@ package gg.pingpong.api.admin.megaphone.service;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
-import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 
@@ -16,8 +15,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
-import com.gg.server.admin.megaphone.data.MegaphoneAdminRepository;
-import com.gg.server.utils.annotation.UnitTest;
+import gg.pingpong.admin.repo.megaphone.MegaphoneAdminRepository;
+import gg.pingpong.api.utils.annotation.UnitTest;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)

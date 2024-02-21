@@ -12,10 +12,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
 
-import com.gg.server.admin.feedback.dto.FeedbackAdminPageRequestDto;
-import com.gg.server.admin.feedback.dto.FeedbackListAdminResponseDto;
-import com.gg.server.admin.feedback.service.FeedbackAdminService;
-import com.gg.server.utils.annotation.UnitTest;
+import gg.pingpong.api.admin.feedback.dto.FeedbackAdminPageRequestDto;
+import gg.pingpong.api.admin.feedback.dto.FeedbackListAdminResponseDto;
+import gg.pingpong.api.admin.feedback.service.FeedbackAdminService;
+import gg.pingpong.api.utils.annotation.UnitTest;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)

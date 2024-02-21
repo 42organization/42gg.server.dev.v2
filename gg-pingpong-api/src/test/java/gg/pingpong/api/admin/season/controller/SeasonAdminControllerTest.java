@@ -1,4 +1,4 @@
-package gg.pingpong.api.admin.season;
+package gg.pingpong.api.admin.season.controller;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -17,27 +17,27 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gg.server.admin.rank.service.RankAdminService;
-import com.gg.server.admin.rank.service.RankRedisAdminService;
-import com.gg.server.admin.season.data.SeasonAdminRepository;
-import com.gg.server.admin.season.dto.SeasonAdminDto;
-import com.gg.server.admin.season.dto.SeasonCreateRequestDto;
-import com.gg.server.admin.season.dto.SeasonListAdminResponseDto;
-import com.gg.server.admin.season.dto.SeasonUpdateRequestDto;
-import com.gg.server.admin.season.service.SeasonAdminService;
-import com.gg.server.data.game.Season;
-import com.gg.server.data.game.Tier;
-import com.gg.server.domain.rank.data.RankRepository;
-import com.gg.server.domain.rank.exception.RedisDataNotFoundException;
-import com.gg.server.domain.rank.redis.RankRedisRepository;
-import com.gg.server.domain.rank.redis.RedisKeyManager;
-import com.gg.server.domain.season.exception.SeasonForbiddenException;
-import com.gg.server.domain.season.exception.SeasonNotFoundException;
-import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
-import com.gg.server.utils.TestDataUtils;
-import com.gg.server.utils.annotation.IntegrationTest;
 import com.google.common.net.HttpHeaders;
 
+import gg.pingpong.admin.repo.season.SeasonAdminRepository;
+import gg.pingpong.api.admin.rank.service.RankAdminService;
+import gg.pingpong.api.admin.rank.service.RankRedisAdminService;
+import gg.pingpong.api.admin.season.dto.SeasonAdminDto;
+import gg.pingpong.api.admin.season.dto.SeasonCreateRequestDto;
+import gg.pingpong.api.admin.season.dto.SeasonListAdminResponseDto;
+import gg.pingpong.api.admin.season.dto.SeasonUpdateRequestDto;
+import gg.pingpong.api.admin.season.service.SeasonAdminService;
+import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
+import gg.pingpong.api.utils.TestDataUtils;
+import gg.pingpong.api.utils.annotation.IntegrationTest;
+import gg.pingpong.data.game.Season;
+import gg.pingpong.data.game.Tier;
+import gg.pingpong.repo.rank.RankRepository;
+import gg.pingpong.repo.rank.redis.RankRedisRepository;
+import gg.pingpong.utils.RedisKeyManager;
+import gg.pingpong.utils.exception.rank.RedisDataNotFoundException;
+import gg.pingpong.utils.exception.season.SeasonForbiddenException;
+import gg.pingpong.utils.exception.season.SeasonNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

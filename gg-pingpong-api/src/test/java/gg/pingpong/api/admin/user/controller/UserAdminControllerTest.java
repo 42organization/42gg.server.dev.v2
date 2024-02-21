@@ -21,22 +21,22 @@ import org.springframework.data.domain.Sort;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gg.server.admin.user.data.UserAdminRepository;
-import com.gg.server.admin.user.data.UserImageAdminRepository;
-import com.gg.server.admin.user.dto.UserDetailAdminResponseDto;
-import com.gg.server.admin.user.dto.UserImageAdminDto;
-import com.gg.server.admin.user.dto.UserImageListAdminResponseDto;
-import com.gg.server.admin.user.dto.UserSearchAdminDto;
-import com.gg.server.admin.user.dto.UserSearchAdminResponseDto;
-import com.gg.server.admin.user.service.UserAdminService;
-import com.gg.server.data.user.User;
-import com.gg.server.data.user.UserImage;
-import com.gg.server.domain.user.data.UserRepository;
-import com.gg.server.domain.user.exception.UserNotFoundException;
-import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
-import com.gg.server.utils.TestDataUtils;
-import com.gg.server.utils.annotation.IntegrationTest;
 
+import gg.pingpong.admin.repo.user.UserAdminRepository;
+import gg.pingpong.admin.repo.user.UserImageAdminRepository;
+import gg.pingpong.api.admin.user.dto.UserDetailAdminResponseDto;
+import gg.pingpong.api.admin.user.dto.UserImageAdminDto;
+import gg.pingpong.api.admin.user.dto.UserImageListAdminResponseDto;
+import gg.pingpong.api.admin.user.dto.UserSearchAdminDto;
+import gg.pingpong.api.admin.user.dto.UserSearchAdminResponseDto;
+import gg.pingpong.api.admin.user.service.UserAdminService;
+import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
+import gg.pingpong.api.utils.TestDataUtils;
+import gg.pingpong.api.utils.annotation.IntegrationTest;
+import gg.pingpong.data.user.User;
+import gg.pingpong.data.user.UserImage;
+import gg.pingpong.repo.user.UserRepository;
+import gg.pingpong.utils.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

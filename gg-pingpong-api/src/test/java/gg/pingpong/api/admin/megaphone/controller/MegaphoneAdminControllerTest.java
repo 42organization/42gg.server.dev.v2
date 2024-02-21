@@ -12,10 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
-import com.gg.server.utils.TestDataUtils;
-import com.gg.server.utils.annotation.IntegrationTest;
-
+import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
+import gg.pingpong.api.utils.TestDataUtils;
+import gg.pingpong.api.utils.annotation.IntegrationTest;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

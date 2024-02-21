@@ -17,16 +17,16 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gg.server.admin.slotmanagement.data.AdminSlotManagementsRepository;
-import com.gg.server.admin.slotmanagement.dto.SlotAdminDto;
-import com.gg.server.admin.slotmanagement.dto.SlotCreateRequestDto;
-import com.gg.server.admin.slotmanagement.dto.SlotListAdminResponseDto;
-import com.gg.server.domain.slotmanagement.SlotManagement;
-import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;
-import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
-import com.gg.server.utils.TestDataUtils;
-import com.gg.server.utils.annotation.IntegrationTest;
 
+import gg.pingpong.admin.repo.slotmanagement.AdminSlotManagementsRepository;
+import gg.pingpong.api.admin.slotmanagement.dto.SlotAdminDto;
+import gg.pingpong.api.admin.slotmanagement.dto.SlotCreateRequestDto;
+import gg.pingpong.api.admin.slotmanagement.dto.SlotListAdminResponseDto;
+import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
+import gg.pingpong.api.utils.TestDataUtils;
+import gg.pingpong.api.utils.annotation.IntegrationTest;
+import gg.pingpong.data.manage.SlotManagement;
+import gg.pingpong.repo.slotmanagement.SlotManagementRepository;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

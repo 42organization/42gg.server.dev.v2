@@ -15,16 +15,16 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gg.server.data.game.Tournament;
-import com.gg.server.data.user.User;
-import com.gg.server.data.user.type.RacketType;
-import com.gg.server.data.user.type.RoleType;
-import com.gg.server.data.user.type.SnsType;
-import com.gg.server.domain.tournament.dto.TournamentUserListResponseDto;
-import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
-import com.gg.server.utils.TestDataUtils;
-import com.gg.server.utils.annotation.IntegrationTest;
 
+import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
+import gg.pingpong.api.user.tournament.dto.TournamentUserListResponseDto;
+import gg.pingpong.api.utils.TestDataUtils;
+import gg.pingpong.api.utils.annotation.IntegrationTest;
+import gg.pingpong.data.game.Tournament;
+import gg.pingpong.data.user.User;
+import gg.pingpong.data.user.type.RacketType;
+import gg.pingpong.data.user.type.RoleType;
+import gg.pingpong.data.user.type.SnsType;
 import lombok.extern.slf4j.Slf4j;
 
 @IntegrationTest
