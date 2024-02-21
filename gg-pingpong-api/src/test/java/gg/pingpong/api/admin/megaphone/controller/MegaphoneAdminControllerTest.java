@@ -13,7 +13,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.test.web.servlet.MockMvc;
 
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
-import gg.pingpong.api.utils.TestDataUtils;
+import gg.pingpong.utils.TestDataUtils;
 import gg.pingpong.utils.annotation.IntegrationTest;
 import lombok.RequiredArgsConstructor;
 

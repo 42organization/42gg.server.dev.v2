@@ -29,12 +29,12 @@ import gg.pingpong.api.admin.noti.dto.NotiListAdminResponseDto;
 import gg.pingpong.api.admin.noti.dto.SendNotiAdminRequestDto;
 import gg.pingpong.api.admin.noti.service.NotiAdminService;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
-import gg.pingpong.api.utils.TestDataUtils;
 import gg.pingpong.data.noti.Noti;
 import gg.pingpong.data.noti.type.NotiType;
 import gg.pingpong.data.user.User;
 import gg.pingpong.repo.noti.NotiRepository;
 import gg.pingpong.repo.user.UserRepository;
+import gg.pingpong.utils.TestDataUtils;
 import gg.pingpong.utils.annotation.IntegrationTest;
 import lombok.RequiredArgsConstructor;
 

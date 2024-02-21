@@ -27,12 +27,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.pingpong.api.admin.game.dto.GameLogListAdminResponseDto;
 import gg.pingpong.api.admin.game.dto.RankGamePPPModifyReqDto;
-import gg.pingpong.api.domain.user.controller.dto.GameInfoDto;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.user.game.dto.request.RankResultReqDto;
 import gg.pingpong.api.user.game.service.GameService;
 import gg.pingpong.api.user.match.service.GameUpdateService;
-import gg.pingpong.api.utils.TestDataUtils;
 import gg.pingpong.data.game.Rank;
 import gg.pingpong.data.game.Season;
 import gg.pingpong.data.game.Tier;
@@ -43,7 +41,9 @@ import gg.pingpong.repo.game.GameTeamUser;
 import gg.pingpong.repo.rank.RankRepository;
 import gg.pingpong.repo.rank.redis.RankRedisRepository;
 import gg.pingpong.repo.user.UserRepository;
+import gg.pingpong.utils.TestDataUtils;
 import gg.pingpong.utils.annotation.IntegrationTest;
+import gg.pingpong.utils.dto.GameInfoDto;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

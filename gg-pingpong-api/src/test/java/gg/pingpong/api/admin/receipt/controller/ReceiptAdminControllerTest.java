@@ -23,11 +23,11 @@ import gg.pingpong.api.admin.item.dto.ItemUpdateRequestDto;
 import gg.pingpong.api.admin.receipt.dto.ReceiptListResponseDto;
 import gg.pingpong.api.admin.receipt.service.ReceiptAdminService;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
-import gg.pingpong.api.utils.ItemTestUtils;
-import gg.pingpong.api.utils.TestDataUtils;
 import gg.pingpong.data.store.Item;
 import gg.pingpong.data.store.type.ItemType;
 import gg.pingpong.data.user.User;
+import gg.pingpong.utils.ItemTestUtils;
+import gg.pingpong.utils.TestDataUtils;
 import gg.pingpong.utils.annotation.IntegrationTest;
 
 @IntegrationTest
