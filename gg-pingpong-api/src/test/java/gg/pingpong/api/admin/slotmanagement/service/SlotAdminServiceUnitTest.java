@@ -1,6 +1,6 @@
 package gg.pingpong.api.admin.slotmanagement.service;
 
-import static com.gg.server.utils.ReflectionUtilsForUnitTest.*;
+import static gg.pingpong.api.utils.ReflectionUtilsForUnitTest.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
@@ -18,11 +18,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
-import com.gg.server.admin.slotmanagement.data.AdminSlotManagementsRepository;
-import com.gg.server.admin.slotmanagement.dto.SlotCreateRequestDto;
-import com.gg.server.domain.slotmanagement.SlotManagement;
-import com.gg.server.domain.slotmanagement.exception.SlotManagementForbiddenException;
-import com.gg.server.utils.annotation.UnitTest;
+import gg.pingpong.admin.repo.slotmanagement.AdminSlotManagementsRepository;
+import gg.pingpong.api.admin.slotmanagement.dto.SlotCreateRequestDto;
+import gg.pingpong.api.utils.annotation.UnitTest;
+import gg.pingpong.data.manage.SlotManagement;
+import gg.pingpong.utils.exception.slotmanagement.SlotManagementForbiddenException;
 
 @UnitTest
 class SlotAdminServiceUnitTest {

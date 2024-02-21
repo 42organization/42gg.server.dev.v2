@@ -27,22 +27,23 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gg.server.admin.penalty.data.PenaltyAdminRepository;
-import com.gg.server.admin.penalty.data.PenaltyUserAdminRedisRepository;
-import com.gg.server.admin.penalty.dto.PenaltyListResponseDto;
-import com.gg.server.admin.penalty.dto.PenaltyRequestDto;
-import com.gg.server.admin.penalty.service.PenaltyAdminService;
-import com.gg.server.data.manage.Penalty;
-import com.gg.server.data.manage.redis.RedisPenaltyUser;
-import com.gg.server.data.user.User;
-import com.gg.server.data.user.type.RacketType;
-import com.gg.server.data.user.type.RoleType;
-import com.gg.server.data.user.type.SnsType;
-import com.gg.server.domain.penalty.type.PenaltyType;
-import com.gg.server.domain.user.data.UserRepository;
-import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
-import com.gg.server.utils.TestDataUtils;
-import com.gg.server.utils.annotation.IntegrationTest;
+
+import gg.pingpong.admin.repo.penalty.PenaltyAdminRepository;
+import gg.pingpong.admin.repo.penalty.PenaltyUserAdminRedisRepository;
+import gg.pingpong.api.admin.penalty.dto.PenaltyListResponseDto;
+import gg.pingpong.api.admin.penalty.dto.PenaltyRequestDto;
+import gg.pingpong.api.admin.penalty.service.PenaltyAdminService;
+import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
+import gg.pingpong.api.utils.TestDataUtils;
+import gg.pingpong.api.utils.annotation.IntegrationTest;
+import gg.pingpong.data.manage.Penalty;
+import gg.pingpong.data.manage.redis.RedisPenaltyUser;
+import gg.pingpong.data.manage.type.PenaltyType;
+import gg.pingpong.data.user.User;
+import gg.pingpong.data.user.type.RacketType;
+import gg.pingpong.data.user.type.RoleType;
+import gg.pingpong.data.user.type.SnsType;
+import gg.pingpong.repo.user.UserRepository;
 
 @IntegrationTest
 @AutoConfigureMockMvc

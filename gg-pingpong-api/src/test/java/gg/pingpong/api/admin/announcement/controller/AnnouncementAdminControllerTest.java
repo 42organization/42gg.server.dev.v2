@@ -14,15 +14,15 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gg.server.admin.announcement.data.AnnouncementAdminRepository;
-import com.gg.server.admin.announcement.dto.AnnouncementAdminAddDto;
-import com.gg.server.admin.announcement.dto.AnnouncementAdminListResponseDto;
-import com.gg.server.data.manage.Announcement;
-import com.gg.server.domain.announcement.exception.AnnounceNotFoundException;
-import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
-import com.gg.server.utils.TestDataUtils;
-import com.gg.server.utils.annotation.IntegrationTest;
 
+import gg.pingpong.admin.repo.announcement.AnnouncementAdminRepository;
+import gg.pingpong.api.admin.announcement.dto.AnnouncementAdminAddDto;
+import gg.pingpong.api.admin.announcement.dto.AnnouncementAdminListResponseDto;
+import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
+import gg.pingpong.api.utils.TestDataUtils;
+import gg.pingpong.api.utils.annotation.IntegrationTest;
+import gg.pingpong.data.manage.Announcement;
+import gg.pingpong.utils.exception.announcement.AnnounceNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

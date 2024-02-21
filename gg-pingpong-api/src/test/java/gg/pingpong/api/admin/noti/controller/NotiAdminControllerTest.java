@@ -22,20 +22,20 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gg.server.admin.noti.data.NotiAdminRepository;
-import com.gg.server.admin.noti.dto.NotiAdminDto;
-import com.gg.server.admin.noti.dto.NotiListAdminResponseDto;
-import com.gg.server.admin.noti.dto.SendNotiAdminRequestDto;
-import com.gg.server.admin.noti.service.NotiAdminService;
-import com.gg.server.data.noti.Noti;
-import com.gg.server.data.noti.type.NotiType;
-import com.gg.server.data.user.User;
-import com.gg.server.domain.noti.data.NotiRepository;
-import com.gg.server.domain.user.data.UserRepository;
-import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
-import com.gg.server.utils.TestDataUtils;
-import com.gg.server.utils.annotation.IntegrationTest;
 
+import gg.pingpong.admin.repo.noti.NotiAdminRepository;
+import gg.pingpong.api.admin.noti.dto.NotiAdminDto;
+import gg.pingpong.api.admin.noti.dto.NotiListAdminResponseDto;
+import gg.pingpong.api.admin.noti.dto.SendNotiAdminRequestDto;
+import gg.pingpong.api.admin.noti.service.NotiAdminService;
+import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
+import gg.pingpong.api.utils.TestDataUtils;
+import gg.pingpong.api.utils.annotation.IntegrationTest;
+import gg.pingpong.data.noti.Noti;
+import gg.pingpong.data.noti.type.NotiType;
+import gg.pingpong.data.user.User;
+import gg.pingpong.repo.noti.NotiRepository;
+import gg.pingpong.repo.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

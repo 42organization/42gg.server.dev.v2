@@ -1,6 +1,6 @@
 package gg.pingpong.api.admin.item.service;
 
-import static com.gg.server.utils.ReflectionUtilsForUnitTest.*;
+import static gg.pingpong.api.utils.ReflectionUtilsForUnitTest.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
@@ -20,18 +20,18 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.gg.server.admin.item.data.ItemAdminRepository;
-import com.gg.server.admin.item.dto.ItemUpdateRequestDto;
-import com.gg.server.admin.item.exception.ItemNotFoundException;
-import com.gg.server.data.store.Item;
-import com.gg.server.data.user.User;
-import com.gg.server.data.user.type.RacketType;
-import com.gg.server.data.user.type.RoleType;
-import com.gg.server.data.user.type.SnsType;
-import com.gg.server.domain.item.exception.ItemNotAvailableException;
-import com.gg.server.domain.user.dto.UserDto;
-import com.gg.server.global.utils.aws.AsyncNewItemImageUploader;
-import com.gg.server.utils.annotation.UnitTest;
+import gg.pingpong.admin.repo.item.ItemAdminRepository;
+import gg.pingpong.api.admin.item.dto.ItemUpdateRequestDto;
+import gg.pingpong.api.global.utils.aws.AsyncNewItemImageUploader;
+import gg.pingpong.api.user.user.dto.UserDto;
+import gg.pingpong.api.utils.annotation.UnitTest;
+import gg.pingpong.data.store.Item;
+import gg.pingpong.data.user.User;
+import gg.pingpong.data.user.type.RacketType;
+import gg.pingpong.data.user.type.RoleType;
+import gg.pingpong.data.user.type.SnsType;
+import gg.pingpong.utils.exception.item.ItemNotAvailableException;
+import gg.pingpong.utils.exception.item.ItemNotFoundException;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)

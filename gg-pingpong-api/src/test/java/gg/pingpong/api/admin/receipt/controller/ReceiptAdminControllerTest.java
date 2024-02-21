@@ -17,17 +17,18 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gg.server.admin.item.dto.ItemUpdateRequestDto;
-import com.gg.server.admin.receipt.data.ReceiptAdminRepository;
-import com.gg.server.admin.receipt.dto.ReceiptListResponseDto;
-import com.gg.server.admin.receipt.service.ReceiptAdminService;
-import com.gg.server.data.store.Item;
-import com.gg.server.data.store.type.ItemType;
-import com.gg.server.data.user.User;
-import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
-import com.gg.server.utils.ItemTestUtils;
-import com.gg.server.utils.TestDataUtils;
-import com.gg.server.utils.annotation.IntegrationTest;
+
+import gg.pingpong.admin.repo.receipt.ReceiptAdminRepository;
+import gg.pingpong.api.admin.item.dto.ItemUpdateRequestDto;
+import gg.pingpong.api.admin.receipt.dto.ReceiptListResponseDto;
+import gg.pingpong.api.admin.receipt.service.ReceiptAdminService;
+import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
+import gg.pingpong.api.utils.ItemTestUtils;
+import gg.pingpong.api.utils.TestDataUtils;
+import gg.pingpong.api.utils.annotation.IntegrationTest;
+import gg.pingpong.data.store.Item;
+import gg.pingpong.data.store.type.ItemType;
+import gg.pingpong.data.user.User;
 
 @IntegrationTest
 @AutoConfigureMockMvc

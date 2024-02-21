@@ -13,16 +13,16 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gg.server.admin.feedback.data.FeedbackAdminRepository;
-import com.gg.server.admin.feedback.dto.FeedbackListAdminResponseDto;
-import com.gg.server.data.manage.Feedback;
-import com.gg.server.data.manage.type.FeedbackType;
-import com.gg.server.data.user.User;
-import com.gg.server.domain.user.data.UserRepository;
-import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
-import com.gg.server.utils.TestDataUtils;
-import com.gg.server.utils.annotation.IntegrationTest;
 
+import gg.pingpong.admin.repo.feedback.FeedbackAdminRepository;
+import gg.pingpong.api.admin.feedback.dto.FeedbackListAdminResponseDto;
+import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
+import gg.pingpong.api.utils.TestDataUtils;
+import gg.pingpong.api.utils.annotation.IntegrationTest;
+import gg.pingpong.data.manage.Feedback;
+import gg.pingpong.data.manage.type.FeedbackType;
+import gg.pingpong.data.user.User;
+import gg.pingpong.repo.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

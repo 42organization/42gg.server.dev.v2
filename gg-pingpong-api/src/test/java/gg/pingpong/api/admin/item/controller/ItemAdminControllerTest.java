@@ -23,18 +23,19 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gg.server.admin.item.data.ItemAdminRepository;
-import com.gg.server.admin.item.dto.ItemListResponseDto;
-import com.gg.server.admin.item.dto.ItemUpdateRequestDto;
-import com.gg.server.admin.item.service.ItemAdminService;
-import com.gg.server.data.store.Item;
-import com.gg.server.data.store.type.ItemType;
-import com.gg.server.domain.user.data.UserRepository;
-import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
-import com.gg.server.global.utils.ItemImageHandler;
-import com.gg.server.utils.ItemTestUtils;
-import com.gg.server.utils.TestDataUtils;
-import com.gg.server.utils.annotation.IntegrationTest;
+
+import gg.pingpong.admin.repo.item.ItemAdminRepository;
+import gg.pingpong.api.admin.item.dto.ItemListResponseDto;
+import gg.pingpong.api.admin.item.dto.ItemUpdateRequestDto;
+import gg.pingpong.api.admin.item.service.ItemAdminService;
+import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
+import gg.pingpong.api.global.utils.ItemImageHandler;
+import gg.pingpong.api.utils.ItemTestUtils;
+import gg.pingpong.api.utils.TestDataUtils;
+import gg.pingpong.api.utils.annotation.IntegrationTest;
+import gg.pingpong.data.store.Item;
+import gg.pingpong.data.store.type.ItemType;
+import gg.pingpong.repo.user.UserRepository;
 
 @IntegrationTest
 @AutoConfigureMockMvc

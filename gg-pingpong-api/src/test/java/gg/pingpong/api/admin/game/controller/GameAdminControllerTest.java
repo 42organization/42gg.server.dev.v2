@@ -24,26 +24,26 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gg.server.admin.game.dto.GameLogListAdminResponseDto;
-import com.gg.server.admin.game.dto.RankGamePPPModifyReqDto;
-import com.gg.server.data.game.Rank;
-import com.gg.server.data.game.Season;
-import com.gg.server.data.game.Tier;
-import com.gg.server.data.game.type.Mode;
-import com.gg.server.data.user.User;
-import com.gg.server.domain.game.data.GameRepository;
-import com.gg.server.domain.game.dto.GameTeamUser;
-import com.gg.server.domain.game.dto.request.RankResultReqDto;
-import com.gg.server.domain.game.service.GameService;
-import com.gg.server.domain.match.service.GameUpdateService;
-import com.gg.server.domain.rank.data.RankRepository;
-import com.gg.server.domain.rank.redis.RankRedisRepository;
-import com.gg.server.domain.user.controller.dto.GameInfoDto;
-import com.gg.server.domain.user.data.UserRepository;
-import com.gg.server.global.security.jwt.utils.AuthTokenProvider;
-import com.gg.server.utils.TestDataUtils;
-import com.gg.server.utils.annotation.IntegrationTest;
 
+import gg.pingpong.api.admin.game.dto.GameLogListAdminResponseDto;
+import gg.pingpong.api.admin.game.dto.RankGamePPPModifyReqDto;
+import gg.pingpong.api.domain.user.controller.dto.GameInfoDto;
+import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
+import gg.pingpong.api.user.game.dto.request.RankResultReqDto;
+import gg.pingpong.api.user.game.service.GameService;
+import gg.pingpong.api.user.match.service.GameUpdateService;
+import gg.pingpong.api.utils.TestDataUtils;
+import gg.pingpong.api.utils.annotation.IntegrationTest;
+import gg.pingpong.data.game.Rank;
+import gg.pingpong.data.game.Season;
+import gg.pingpong.data.game.Tier;
+import gg.pingpong.data.game.type.Mode;
+import gg.pingpong.data.user.User;
+import gg.pingpong.repo.game.GameRepository;
+import gg.pingpong.repo.game.GameTeamUser;
+import gg.pingpong.repo.rank.RankRepository;
+import gg.pingpong.repo.rank.redis.RankRedisRepository;
+import gg.pingpong.repo.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
