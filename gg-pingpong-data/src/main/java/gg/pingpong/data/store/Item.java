@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
 import gg.pingpong.data.store.type.ItemType;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -62,6 +63,7 @@ public class Item {
 	@Column(name = "deleter_intra_id", length = 10)
 	private String deleterIntraId;
 
+	@Builder
 	public Item(String name, String mainContent, String subContent, String imageUri, Integer price,
 		Boolean isVisible, Integer discount, ItemType type, LocalDateTime createdAt, String creatorIntraId) {
 		this.name = name;

@@ -1,7 +1,6 @@
 package gg.pingpong.api.admin.item.service;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -58,10 +57,7 @@ public class ItemAdminService {
 			throw new ItemNotAvailableException();
 		}
 		item.setVisibility(user.getIntraId());
-		Item newItem = new Item(itemUpdateRequestDto.getName(), itemUpdateRequestDto.getMainContent(),
-			itemUpdateRequestDto.getSubContent(), null, itemUpdateRequestDto.getPrice(), true,
-			itemUpdateRequestDto.getDiscount(), itemUpdateRequestDto.getItemType(), LocalDateTime.now(),
-			user.getIntraId());
+		Item newItem = itemUpdateRequestDto.createItem(null, user.getIntraId());
 		if (itemImageFile != null) {
 			asyncNewItemImageUploader.upload(newItem, itemImageFile);
 		}
@@ -84,10 +80,7 @@ public class ItemAdminService {
 			throw new ItemNotAvailableException();
 		}
 		item.setVisibility(user.getIntraId());
-		Item newItem = new Item(itemUpdateRequestDto.getName(), itemUpdateRequestDto.getMainContent(),
-			itemUpdateRequestDto.getSubContent(), item.getImageUri(), itemUpdateRequestDto.getPrice(), true,
-			itemUpdateRequestDto.getDiscount(), itemUpdateRequestDto.getItemType(), LocalDateTime.now(),
-			user.getIntraId());
+		Item newItem = itemUpdateRequestDto.createItem(item.getImageUri(), user.getIntraId());
 		itemAdminRepository.save(newItem);
 	}
 
