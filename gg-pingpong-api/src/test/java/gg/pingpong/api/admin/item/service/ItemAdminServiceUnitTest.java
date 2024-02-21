@@ -76,6 +76,7 @@ class ItemAdminServiceUnitTest {
 			// given
 			given(itemAdminRepository.findById(any(Long.class))).willReturn(Optional.of(item));
 			given(itemAdminRepository.save(any(Item.class))).willReturn(mock(Item.class));
+
 			// when, then
 			itemAdminService.updateItem(1L, mock(ItemUpdateRequestDto.class),
 				mock(MultipartFile.class), UserDto.from(user));

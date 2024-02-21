@@ -10,9 +10,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 
-import com.gg.server.utils.config.MySQLInitializer;
-import com.gg.server.utils.config.RedisInitializer;
-import com.gg.server.utils.config.TestRedisConfig;
+import gg.pingpong.utils.config.MySQLInitializer;
+import gg.pingpong.utils.config.RedisInitializer;
+import gg.pingpong.utils.config.TestRedisConfig;
 
 /**
  * 통합테스트 환경의 의존성 관리를 위한 어노테이션.

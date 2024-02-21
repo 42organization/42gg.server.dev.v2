@@ -87,12 +87,12 @@ class SeasonAdminServiceUnitTest {
 		void beforeEach() {
 			requestDto = new SeasonCreateRequestDto("season", LocalDateTime.now().plusDays(1).plusSeconds(1),
 				1000, 200);
-			season = Season.builder().
-				seasonName(requestDto.getSeasonName()).
-				startTime(requestDto.getStartTime()).
-				startPpp(requestDto.getStartPpp()).
-				pppGap(requestDto.getPppGap()).
-				build();
+			season = Season.builder()
+				.seasonName(requestDto.getSeasonName())
+				.startTime(requestDto.getStartTime())
+				.startPpp(requestDto.getStartPpp())
+				.pppGap(requestDto.getPppGap())
+				.build();
 
 			setFieldWithReflection(beforeSeasons.get(0), "id", 2L);
 			beforeSeasonsAsc = new ArrayList<>(beforeSeasons);

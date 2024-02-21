@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.user.tournament.dto.TournamentGameListResponseDto;
 import gg.pingpong.api.user.tournament.dto.TournamentGameResDto;
-import gg.pingpong.api.user.user.controller.dto.GameInfoDto;
 import gg.pingpong.data.game.Season;
 import gg.pingpong.data.game.Tournament;
 import gg.pingpong.data.game.TournamentGame;
@@ -34,6 +33,7 @@ import gg.pingpong.data.user.type.RoleType;
 import gg.pingpong.data.user.type.SnsType;
 import gg.pingpong.utils.TestDataUtils;
 import gg.pingpong.utils.annotation.IntegrationTest;
+import gg.pingpong.utils.dto.GameInfoDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

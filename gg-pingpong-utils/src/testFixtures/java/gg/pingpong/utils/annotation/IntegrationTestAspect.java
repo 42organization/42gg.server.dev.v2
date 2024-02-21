@@ -6,7 +6,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.gg.server.domain.rank.redis.RankRedisRepository;
+import gg.pingpong.repo.rank.redis.RankRedisRepository;
 
 @Aspect
 @Component

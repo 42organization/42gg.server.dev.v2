@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.pingpong.api.utils.annotation.IntegrationTestWithRedisTransaction;
+import gg.pingpong.utils.annotation.IntegrationTestWithRedisTransaction;
 
 @IntegrationTestWithRedisTransaction
 public class RedisTransactionTest {
