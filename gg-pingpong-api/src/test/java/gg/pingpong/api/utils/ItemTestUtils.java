@@ -5,16 +5,15 @@ import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Component;
 
-import com.gg.server.admin.item.dto.ItemUpdateRequestDto;
-import com.gg.server.data.store.Item;
-import com.gg.server.data.store.Megaphone;
-import com.gg.server.data.store.Receipt;
-import com.gg.server.data.store.type.ItemStatus;
-import com.gg.server.data.user.User;
-import com.gg.server.domain.item.data.ItemRepository;
-import com.gg.server.domain.megaphone.data.MegaphoneRepository;
-import com.gg.server.domain.receipt.data.ReceiptRepository;
-
+import gg.pingpong.api.admin.item.dto.ItemUpdateRequestDto;
+import gg.pingpong.data.store.Item;
+import gg.pingpong.data.store.Megaphone;
+import gg.pingpong.data.store.Receipt;
+import gg.pingpong.data.store.type.ItemStatus;
+import gg.pingpong.data.user.User;
+import gg.pingpong.repo.item.ItemRepository;
+import gg.pingpong.repo.megaphone.MegaphoneRepository;
+import gg.pingpong.repo.receipt.ReceiptRepository;
 import lombok.AllArgsConstructor;
 
 /**
@@ -50,11 +49,7 @@ public class ItemTestUtils {
 	 * 아이템을 생성한다.
 	 */
 	public Item createItem(User creator, ItemUpdateRequestDto updateRequestDto) {
-		Item item = Item.builder()
-			.creatorIntraId(creator.getIntraId())
-			.itemImageUri("42gg-s3")
-			.updateRequestDto(updateRequestDto)
-			.build();
+		Item item = updateRequestDto.toItem("42gg-s3", creator.getIntraId());
 		itemRepository.save(item);
 		return item;
 	}
