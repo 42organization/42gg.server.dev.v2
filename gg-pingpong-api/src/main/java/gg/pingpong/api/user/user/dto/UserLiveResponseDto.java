@@ -1,7 +1,6 @@
 package gg.pingpong.api.user.user.dto;
 
-import com.gg.server.data.game.type.Mode;
-
+import gg.pingpong.data.game.type.Mode;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

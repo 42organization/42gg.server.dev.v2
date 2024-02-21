@@ -12,11 +12,28 @@ import org.springframework.transaction.annotation.Transactional;
 import gg.pingpong.api.user.coin.service.UserCoinChangeService;
 import gg.pingpong.api.user.item.dto.ItemStoreListResponseDto;
 import gg.pingpong.api.user.item.dto.ItemStoreResponseDto;
+import gg.pingpong.api.user.item.dto.UserItemListResponseDto;
+import gg.pingpong.api.user.item.dto.UserItemResponseDto;
 import gg.pingpong.api.user.noti.service.NotiService;
+import gg.pingpong.api.user.user.dto.UserDto;
+import gg.pingpong.data.store.Item;
+import gg.pingpong.data.store.Receipt;
+import gg.pingpong.data.store.type.ItemStatus;
+import gg.pingpong.data.store.type.ItemType;
+import gg.pingpong.data.user.User;
+import gg.pingpong.data.user.type.RoleType;
 import gg.pingpong.repo.item.ItemRepository;
 import gg.pingpong.repo.item.UserItemRepository;
 import gg.pingpong.repo.receipt.ReceiptRepository;
 import gg.pingpong.repo.user.UserRepository;
+import gg.pingpong.utils.exception.item.ItemNotFoundException;
+import gg.pingpong.utils.exception.item.ItemNotPurchasableException;
+import gg.pingpong.utils.exception.item.ItemTypeException;
+import gg.pingpong.utils.exception.item.KakaoGiftException;
+import gg.pingpong.utils.exception.item.KakaoPurchaseException;
+import gg.pingpong.utils.exception.receipt.ItemStatusException;
+import gg.pingpong.utils.exception.receipt.ReceiptNotOwnerException;
+import gg.pingpong.utils.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service

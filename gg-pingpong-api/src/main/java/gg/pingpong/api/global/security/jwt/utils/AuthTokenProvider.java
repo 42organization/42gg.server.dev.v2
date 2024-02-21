@@ -5,8 +5,7 @@ import java.util.Date;
 
 import org.springframework.stereotype.Component;
 
-import com.gg.server.global.security.config.properties.AppProperties;
-
+import gg.pingpong.api.global.security.config.properties.AppProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;

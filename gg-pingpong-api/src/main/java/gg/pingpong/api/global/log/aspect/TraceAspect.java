@@ -9,9 +9,8 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
-import com.gg.server.global.log.domain.TraceStatus;
-import com.gg.server.global.log.service.LogTrace;
-
+import gg.pingpong.api.global.log.domain.TraceStatus;
+import gg.pingpong.api.global.log.service.LogTrace;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,19 +21,19 @@ import lombok.extern.slf4j.Slf4j;
 public class TraceAspect {
 	private final LogTrace logTrace;
 
-	@Pointcut("execution(* com.gg.server.admin..*(..))")
+	@Pointcut("execution(* gg.pingpong.api.admin..*(..))")
 	public void allAdmin() {
 	}
 
-	@Pointcut("execution(* com.gg.server.domain..*(..))")
+	@Pointcut("execution(* gg.pingpong.api.user..*(..))")
 	public void allDomain() {
 	}
 
-	@Pointcut("execution(* com.gg.server.global.security..*(..))")
+	@Pointcut("execution(* gg.pingpong.api.global.security..*(..))")
 	public void securityDomain() {
 	}
 
-	@Pointcut("execution(* com.gg.server.global.scheduler..*(..))")
+	@Pointcut("execution(* gg.pingpong.api.global.scheduler..*(..))")
 	public void scheduler() {
 	}
 

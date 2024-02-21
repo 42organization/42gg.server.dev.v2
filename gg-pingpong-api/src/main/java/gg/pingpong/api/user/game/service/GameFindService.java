@@ -121,8 +121,7 @@ public class GameFindService {
 	 * @throws GameNotExistException - intraId로 조회한 게임이 없을 경우
 	 */
 	@Transactional(readOnly = true)
-	@Cacheable(value = "allGameListByUser",
-		cacheManager = "gameCacheManager",
+	@Cacheable(value = "allGameListByUser", cacheManager = "gameCacheManager",
 		key = "#pageable.pageNumber + #pageable.pageSize + #pageable.sort.toString() + #status + #intra")
 	public GameListResDto allGameListUser(Pageable pageable, String intra, String status) {
 		List<String> statusTypes = Arrays.asList(StatusType.END.name());

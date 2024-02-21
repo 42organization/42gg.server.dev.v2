@@ -1,6 +1,7 @@
 package gg.pingpong.api.user.rank.service;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 
@@ -10,12 +11,11 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gg.server.data.game.redis.RankRedis;
-import com.gg.server.domain.rank.data.RankRepository;
-import com.gg.server.domain.rank.redis.RankRedisRepository;
-import com.gg.server.domain.rank.redis.RedisKeyManager;
-import com.gg.server.domain.season.data.SeasonRepository;
-
+import gg.pingpong.data.game.redis.RankRedis;
+import gg.pingpong.repo.rank.RankRepository;
+import gg.pingpong.repo.rank.redis.RankRedisRepository;
+import gg.pingpong.repo.season.SeasonRepository;
+import gg.pingpong.utils.RedisKeyManager;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -45,12 +45,12 @@ public class RedisUploadService {
 				String zSetKey = RedisKeyManager.getZSetKey(season.getId());
 				rankRepository.findAllBySeasonId(season.getId()).forEach(rank -> {
 					RankRedis rankRedis = RankRedis.from(rank);
-					connection.hSet(keySerializer().serialize(hashKey),
-						hashKeySerializer().serialize(rank.getUser().getId().toString()),
-						hashValueSerializer().serialize(rankRedis));
+					connection.hSet(Objects.requireNonNull(keySerializer().serialize(hashKey)),
+						Objects.requireNonNull(hashKeySerializer().serialize(rank.getUser().getId().toString())),
+						Objects.requireNonNull(hashValueSerializer().serialize(rankRedis)));
 					if (rank.getWins() + rankRedis.getLosses() != 0) {
-						connection.zAdd(keySerializer().serialize(zSetKey), rank.getPpp(),
-							valueSerializer().serialize(rank.getUser().getId().toString()));
+						connection.zAdd(Objects.requireNonNull(keySerializer().serialize(zSetKey)), rank.getPpp(),
+							Objects.requireNonNull(valueSerializer().serialize(rank.getUser().getId().toString())));
 					}
 				});
 			});

@@ -15,14 +15,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gg.server.domain.item.dto.ItemGiftRequestDto;
-import com.gg.server.domain.item.dto.ItemStoreListResponseDto;
-import com.gg.server.domain.item.dto.UserItemListResponseDto;
-import com.gg.server.domain.item.service.ItemService;
-import com.gg.server.domain.user.dto.UserDto;
-import com.gg.server.global.dto.PageRequestDto;
-import com.gg.server.global.utils.argumentresolver.Login;
-
+import gg.pingpong.api.global.dto.PageRequestDto;
+import gg.pingpong.api.global.utils.argumentresolver.Login;
+import gg.pingpong.api.user.item.dto.ItemGiftRequestDto;
+import gg.pingpong.api.user.item.dto.ItemStoreListResponseDto;
+import gg.pingpong.api.user.item.dto.UserItemListResponseDto;
+import gg.pingpong.api.user.item.service.ItemService;
+import gg.pingpong.api.user.user.dto.UserDto;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 

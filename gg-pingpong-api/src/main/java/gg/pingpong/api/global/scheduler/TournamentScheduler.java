@@ -2,9 +2,8 @@ package gg.pingpong.api.global.scheduler;
 
 import org.springframework.stereotype.Component;
 
-import com.gg.server.domain.tournament.service.TournamentService;
-import com.gg.server.global.config.ConstantConfig;
-
+import gg.pingpong.api.global.config.ConstantConfig;
+import gg.pingpong.api.user.tournament.service.TournamentService;
 import lombok.extern.slf4j.Slf4j;
 
 @Component

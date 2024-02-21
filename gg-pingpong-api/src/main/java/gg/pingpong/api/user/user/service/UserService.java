@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -15,6 +16,66 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import gg.pingpong.api.global.utils.ExpLevelCalculator;
+import gg.pingpong.api.global.utils.aws.AsyncNewUserImageUploader;
+import gg.pingpong.api.user.coin.service.CoinHistoryService;
+import gg.pingpong.api.user.coin.service.UserCoinChangeService;
+import gg.pingpong.api.user.item.service.ItemService;
+import gg.pingpong.api.user.rank.service.RankFindService;
+import gg.pingpong.api.user.season.service.SeasonFindService;
+import gg.pingpong.api.user.user.dto.UserAttendanceResponseDto;
+import gg.pingpong.api.user.user.dto.UserBackgroundDto;
+import gg.pingpong.api.user.user.dto.UserDetailResponseDto;
+import gg.pingpong.api.user.user.dto.UserDto;
+import gg.pingpong.api.user.user.dto.UserEdgeDto;
+import gg.pingpong.api.user.user.dto.UserHistoryData;
+import gg.pingpong.api.user.user.dto.UserHistoryResponseDto;
+import gg.pingpong.api.user.user.dto.UserImageDto;
+import gg.pingpong.api.user.user.dto.UserImageResponseDto;
+import gg.pingpong.api.user.user.dto.UserLiveResponseDto;
+import gg.pingpong.api.user.user.dto.UserNormalDetailResponseDto;
+import gg.pingpong.api.user.user.dto.UserProfileImageRequestDto;
+import gg.pingpong.api.user.user.dto.UserRankResponseDto;
+import gg.pingpong.api.user.user.dto.UserTextColorDto;
+import gg.pingpong.data.game.Game;
+import gg.pingpong.data.game.PChange;
+import gg.pingpong.data.game.Rank;
+import gg.pingpong.data.game.Season;
+import gg.pingpong.data.game.Tier;
+import gg.pingpong.data.game.redis.RankRedis;
+import gg.pingpong.data.game.type.StatusType;
+import gg.pingpong.data.store.Receipt;
+import gg.pingpong.data.store.type.ItemStatus;
+import gg.pingpong.data.store.type.ItemType;
+import gg.pingpong.data.user.User;
+import gg.pingpong.data.user.UserImage;
+import gg.pingpong.data.user.type.BackgroundType;
+import gg.pingpong.data.user.type.EdgeType;
+import gg.pingpong.data.user.type.RacketType;
+import gg.pingpong.data.user.type.RoleType;
+import gg.pingpong.data.user.type.SnsType;
+import gg.pingpong.repo.game.GameRepository;
+import gg.pingpong.repo.match.RedisMatchUserRepository;
+import gg.pingpong.repo.noti.NotiRepository;
+import gg.pingpong.repo.pchange.PChangeRepository;
+import gg.pingpong.repo.rank.RankRepository;
+import gg.pingpong.repo.rank.RankV2Dto;
+import gg.pingpong.repo.rank.redis.RankRedisRepository;
+import gg.pingpong.repo.receipt.ReceiptRepository;
+import gg.pingpong.repo.tier.TierRepository;
+import gg.pingpong.repo.user.UserImageRepository;
+import gg.pingpong.repo.user.UserRepository;
+import gg.pingpong.utils.RedisKeyManager;
+import gg.pingpong.utils.exception.pchange.PChangeNotExistException;
+import gg.pingpong.utils.exception.rank.RankNotFoundException;
+import gg.pingpong.utils.exception.rank.RedisDataNotFoundException;
+import gg.pingpong.utils.exception.receipt.ReceiptNotFoundException;
+import gg.pingpong.utils.exception.tier.TierNotFoundException;
+import gg.pingpong.utils.exception.user.UserImageLargeException;
+import gg.pingpong.utils.exception.user.UserImageNullException;
+import gg.pingpong.utils.exception.user.UserImageTypeException;
+import gg.pingpong.utils.exception.user.UserNotFoundException;
+import gg.pingpong.utils.exception.user.UserTextColorException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -47,7 +108,7 @@ public class UserService {
 	public List<String> findByPartOfIntraId(String intraId) {
 		Pageable pageable = PageRequest.of(0, 5, Sort.by("intraId").ascending());
 		Page<User> pageUsers = userRepository.findByIntraIdContains(pageable, intraId);
-		return pageUsers.getContent().stream().map(user -> user.getIntraId())
+		return pageUsers.getContent().stream().map(User::getIntraId)
 			.collect(Collectors.toList());
 	}
 

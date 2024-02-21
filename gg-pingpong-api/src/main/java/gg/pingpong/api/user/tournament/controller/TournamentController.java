@@ -17,15 +17,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gg.server.domain.tournament.dto.TournamentFilterRequestDto;
-import com.gg.server.domain.tournament.dto.TournamentGameListResponseDto;
-import com.gg.server.domain.tournament.dto.TournamentListResponseDto;
-import com.gg.server.domain.tournament.dto.TournamentResponseDto;
-import com.gg.server.domain.tournament.dto.TournamentUserRegistrationResponseDto;
-import com.gg.server.domain.tournament.service.TournamentService;
-import com.gg.server.domain.user.dto.UserDto;
-import com.gg.server.global.utils.argumentresolver.Login;
-
+import gg.pingpong.api.global.utils.argumentresolver.Login;
+import gg.pingpong.api.user.tournament.dto.TournamentFilterRequestDto;
+import gg.pingpong.api.user.tournament.dto.TournamentGameListResponseDto;
+import gg.pingpong.api.user.tournament.dto.TournamentListResponseDto;
+import gg.pingpong.api.user.tournament.dto.TournamentResponseDto;
+import gg.pingpong.api.user.tournament.dto.TournamentUserRegistrationResponseDto;
+import gg.pingpong.api.user.tournament.service.TournamentService;
+import gg.pingpong.api.user.user.dto.UserDto;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 

@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.pingpong.api.user.item.service.ItemService;
+import gg.pingpong.api.user.megaphone.dto.MegaphoneDetailResponseDto;
+import gg.pingpong.api.user.megaphone.dto.MegaphoneTodayListResponseDto;
 import gg.pingpong.api.user.megaphone.dto.MegaphoneUseRequestDto;
 import gg.pingpong.api.user.megaphone.redis.MegaphoneRedisRepository;
 import gg.pingpong.api.user.user.dto.UserDto;
@@ -19,13 +21,17 @@ import gg.pingpong.data.store.redis.MegaphoneRedis;
 import gg.pingpong.data.store.type.ItemStatus;
 import gg.pingpong.data.store.type.ItemType;
 import gg.pingpong.data.user.User;
+import gg.pingpong.data.user.type.RoleType;
 import gg.pingpong.repo.megaphone.MegaphoneRepository;
 import gg.pingpong.repo.receipt.ReceiptRepository;
 import gg.pingpong.repo.user.UserRepository;
+import gg.pingpong.utils.exception.item.ItemTypeException;
 import gg.pingpong.utils.exception.megaphone.MegaphoneContentException;
+import gg.pingpong.utils.exception.megaphone.MegaphoneNotFoundException;
 import gg.pingpong.utils.exception.megaphone.MegaphoneTimeException;
 import gg.pingpong.utils.exception.receipt.ItemStatusException;
 import gg.pingpong.utils.exception.receipt.ReceiptNotFoundException;
+import gg.pingpong.utils.exception.receipt.ReceiptNotOwnerException;
 import gg.pingpong.utils.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 

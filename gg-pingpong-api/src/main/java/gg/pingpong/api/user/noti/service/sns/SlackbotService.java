@@ -1,6 +1,6 @@
 package gg.pingpong.api.user.noti.service.sns;
 
-import static com.gg.server.domain.noti.service.sns.SlackbotUtils.*;
+import static gg.pingpong.api.user.noti.service.sns.SlackbotUtils.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,13 +14,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import com.gg.server.data.noti.Noti;
-import com.gg.server.domain.noti.dto.UserNotiDto;
-import com.gg.server.domain.noti.exception.SlackSendException;
-import com.gg.server.domain.noti.service.NotiService;
-import com.gg.server.domain.user.dto.UserDto;
-import com.gg.server.global.utils.external.ApiUtil;
-
+import gg.pingpong.api.global.utils.external.ApiUtil;
+import gg.pingpong.api.user.noti.dto.UserNotiDto;
+import gg.pingpong.api.user.noti.service.NotiService;
+import gg.pingpong.api.user.user.dto.UserDto;
+import gg.pingpong.data.noti.Noti;
+import gg.pingpong.utils.exception.noti.SlackSendException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

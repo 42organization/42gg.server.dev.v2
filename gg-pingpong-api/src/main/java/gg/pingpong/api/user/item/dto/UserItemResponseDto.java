@@ -1,10 +1,9 @@
 package gg.pingpong.api.user.item.dto;
 
-import com.gg.server.data.store.Item;
-import com.gg.server.data.store.Receipt;
-import com.gg.server.data.store.type.ItemStatus;
-import com.gg.server.data.store.type.ItemType;
-
+import gg.pingpong.data.store.Item;
+import gg.pingpong.data.store.Receipt;
+import gg.pingpong.data.store.type.ItemStatus;
+import gg.pingpong.data.store.type.ItemType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
