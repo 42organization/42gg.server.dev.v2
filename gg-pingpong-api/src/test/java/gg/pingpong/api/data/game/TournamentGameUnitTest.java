@@ -8,9 +8,12 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.gg.server.data.game.type.TournamentStatus;
-import com.gg.server.data.game.type.TournamentType;
-import com.gg.server.utils.annotation.UnitTest;
+import gg.pingpong.data.game.Game;
+import gg.pingpong.data.game.Tournament;
+import gg.pingpong.data.game.TournamentGame;
+import gg.pingpong.data.game.type.TournamentStatus;
+import gg.pingpong.data.game.type.TournamentType;
+import gg.pingpong.utils.annotation.UnitTest;
 
 @UnitTest
 @DisplayName("TournamentGameUnitTest")

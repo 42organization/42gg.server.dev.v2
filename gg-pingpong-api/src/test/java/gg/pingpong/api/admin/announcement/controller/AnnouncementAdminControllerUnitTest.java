@@ -16,7 +16,7 @@ import gg.pingpong.api.admin.announcement.dto.AnnouncementAdminAddDto;
 import gg.pingpong.api.admin.announcement.dto.AnnouncementAdminListResponseDto;
 import gg.pingpong.api.admin.announcement.service.AnnouncementAdminService;
 import gg.pingpong.api.global.dto.PageRequestDto;
-import gg.pingpong.api.utils.annotation.UnitTest;
+import gg.pingpong.utils.annotation.UnitTest;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)

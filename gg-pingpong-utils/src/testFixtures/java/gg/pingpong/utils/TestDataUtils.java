@@ -1,4 +1,4 @@
-package gg.pingpong.api.utils;
+package gg.pingpong.utils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -44,7 +44,6 @@ import com.gg.server.domain.noti.data.NotiRepository;
 import com.gg.server.domain.pchange.data.PChangeRepository;
 import com.gg.server.domain.rank.data.RankRepository;
 import com.gg.server.domain.rank.redis.RankRedisRepository;
-import com.gg.server.domain.rank.redis.RedisKeyManager;
 import com.gg.server.domain.season.data.SeasonRepository;
 import com.gg.server.domain.slotmanagement.SlotManagement;
 import com.gg.server.domain.slotmanagement.data.SlotManagementRepository;

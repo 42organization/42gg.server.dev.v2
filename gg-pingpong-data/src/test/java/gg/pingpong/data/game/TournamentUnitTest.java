@@ -1,4 +1,4 @@
-package gg.pingpong.api.data.game;
+package gg.pingpong.data.game;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -16,12 +16,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import com.gg.server.data.game.type.TournamentStatus;
-import com.gg.server.data.game.type.TournamentType;
-import com.gg.server.data.user.User;
-import com.gg.server.global.exception.ErrorCode;
-import com.gg.server.global.exception.custom.BusinessException;
-import com.gg.server.utils.annotation.UnitTest;
+import gg.pingpong.data.game.type.TournamentStatus;
+import gg.pingpong.data.game.type.TournamentType;
+import gg.pingpong.data.user.User;
+import gg.pingpong.utils.annotation.UnitTest;
+import gg.pingpong.utils.exception.ErrorCode;
+import gg.pingpong.utils.exception.custom.BusinessException;
 
 @UnitTest
 @DisplayName("TournamentUnitTest")

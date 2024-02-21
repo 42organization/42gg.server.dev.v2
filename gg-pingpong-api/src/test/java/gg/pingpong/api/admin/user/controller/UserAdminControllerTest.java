@@ -32,10 +32,10 @@ import gg.pingpong.api.admin.user.dto.UserSearchAdminResponseDto;
 import gg.pingpong.api.admin.user.service.UserAdminService;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.utils.TestDataUtils;
-import gg.pingpong.api.utils.annotation.IntegrationTest;
 import gg.pingpong.data.user.User;
 import gg.pingpong.data.user.UserImage;
 import gg.pingpong.repo.user.UserRepository;
+import gg.pingpong.utils.annotation.IntegrationTest;
 import gg.pingpong.utils.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 

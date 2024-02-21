@@ -16,10 +16,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import gg.pingpong.api.admin.coin.dto.CoinUpdateRequestDto;
 import gg.pingpong.api.user.coin.service.CoinHistoryService;
-import gg.pingpong.api.utils.annotation.UnitTest;
 import gg.pingpong.data.store.CoinHistory;
 import gg.pingpong.data.user.User;
 import gg.pingpong.repo.user.UserRepository;
+import gg.pingpong.utils.annotation.UnitTest;
 import gg.pingpong.utils.exception.user.UserNotFoundException;
 
 @UnitTest

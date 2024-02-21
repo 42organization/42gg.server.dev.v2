@@ -33,7 +33,6 @@ import gg.pingpong.api.user.game.dto.request.RankResultReqDto;
 import gg.pingpong.api.user.game.service.GameService;
 import gg.pingpong.api.user.match.service.GameUpdateService;
 import gg.pingpong.api.utils.TestDataUtils;
-import gg.pingpong.api.utils.annotation.IntegrationTest;
 import gg.pingpong.data.game.Rank;
 import gg.pingpong.data.game.Season;
 import gg.pingpong.data.game.Tier;
@@ -44,6 +43,7 @@ import gg.pingpong.repo.game.GameTeamUser;
 import gg.pingpong.repo.rank.RankRepository;
 import gg.pingpong.repo.rank.redis.RankRedisRepository;
 import gg.pingpong.repo.user.UserRepository;
+import gg.pingpong.utils.annotation.IntegrationTest;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

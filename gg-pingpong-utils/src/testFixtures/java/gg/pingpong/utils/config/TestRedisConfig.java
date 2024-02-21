@@ -1,4 +1,4 @@
-package gg.pingpong.api.utils.config;
+package gg.pingpong.utils.config;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;

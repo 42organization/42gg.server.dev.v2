@@ -15,8 +15,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import gg.pingpong.admin.repo.receipt.ReceiptAdminRepository;
-import gg.pingpong.api.utils.annotation.UnitTest;
 import gg.pingpong.data.store.Receipt;
+import gg.pingpong.utils.annotation.UnitTest;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)

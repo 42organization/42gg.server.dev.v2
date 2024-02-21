@@ -25,10 +25,10 @@ import gg.pingpong.api.admin.receipt.service.ReceiptAdminService;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.utils.ItemTestUtils;
 import gg.pingpong.api.utils.TestDataUtils;
-import gg.pingpong.api.utils.annotation.IntegrationTest;
 import gg.pingpong.data.store.Item;
 import gg.pingpong.data.store.type.ItemType;
 import gg.pingpong.data.user.User;
+import gg.pingpong.utils.annotation.IntegrationTest;
 
 @IntegrationTest
 @AutoConfigureMockMvc

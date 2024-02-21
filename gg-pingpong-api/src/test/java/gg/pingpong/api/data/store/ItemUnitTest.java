@@ -1,6 +1,6 @@
 package gg.pingpong.api.data.store;
 
-import static com.gg.server.utils.ReflectionUtilsForUnitTest.*;
+import static gg.pingpong.api.utils.ReflectionUtilsForUnitTest.*;
 import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.DisplayName;
@@ -9,7 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.gg.server.utils.annotation.UnitTest;
+import gg.pingpong.data.store.Item;
+import gg.pingpong.utils.annotation.UnitTest;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)
