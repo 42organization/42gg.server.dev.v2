@@ -10,7 +10,6 @@ import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -49,11 +48,17 @@ public class Season {
 	@Column(name = "ppp_gap")
 	private Integer pppGap;
 
-	@Builder
 	public Season(String seasonName, LocalDateTime startTime, LocalDateTime endTime, Integer startPpp, Integer pppGap) {
 		this.seasonName = seasonName;
 		this.startTime = startTime;
 		this.endTime = endTime;
+		this.startPpp = startPpp;
+		this.pppGap = pppGap;
+	}
+
+	public Season(String seasonName, LocalDateTime startTime, Integer startPpp, Integer pppGap) {
+		this.seasonName = seasonName;
+		this.startTime = startTime;
 		this.startPpp = startPpp;
 		this.pppGap = pppGap;
 	}

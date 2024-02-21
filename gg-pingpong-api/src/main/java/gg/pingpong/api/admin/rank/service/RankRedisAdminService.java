@@ -36,7 +36,8 @@ public class RankRedisAdminService {
 		users.forEach(user -> {
 			if (user.getRoleType() != GUEST) {
 				UserDto userDto = UserDto.from(user);
-				RankRedis userRank = RankRedis.from(userDto, seasonAdminDto.getStartPpp(), tier.getImageUri());
+				RankRedis userRank = RankRedis.from(userDto.getId(), userDto.getIntraId(), userDto.getTextColor(),
+					seasonAdminDto.getStartPpp(), tier.getImageUri());
 
 				rankRedisRepository.addRankData(redisHashKey, user.getId(), userRank);
 			}

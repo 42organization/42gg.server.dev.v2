@@ -47,7 +47,8 @@ public class SeasonAdminService {
 	 */
 	@Transactional
 	public void createSeason(SeasonCreateRequestDto createDto) {
-		Season newSeason = new Season(createDto);
+		Season newSeason = new Season(createDto.getSeasonName(), createDto.getStartTime(),
+			createDto.getStartPpp(), createDto.getPppGap());
 
 		insert(newSeason);
 		seasonAdminRepository.save(newSeason);
