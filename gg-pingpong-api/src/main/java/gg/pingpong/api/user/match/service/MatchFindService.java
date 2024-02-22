@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.pingpong.api.user.match.dto.MatchStatusDto;
-import gg.pingpong.api.user.match.dto.MatchStatusResponseListDto;
-import gg.pingpong.api.user.match.dto.SlotStatusResponseListDto;
+import gg.pingpong.api.user.match.controller.response.MatchStatusResponseListDto;
+import gg.pingpong.api.user.match.controller.response.SlotStatusResponseListDto;
 import gg.pingpong.api.user.match.utils.SlotGenerator;
 import gg.pingpong.api.user.season.service.SeasonFindService;
 import gg.pingpong.api.user.user.dto.UserDto;

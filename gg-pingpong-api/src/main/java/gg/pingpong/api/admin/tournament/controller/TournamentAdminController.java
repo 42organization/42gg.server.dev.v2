@@ -22,7 +22,7 @@ import gg.pingpong.api.admin.tournament.controller.request.TournamentAdminUpdate
 import gg.pingpong.api.admin.tournament.controller.request.TournamentGameUpdateRequestDto;
 import gg.pingpong.api.admin.tournament.controller.response.TournamentAdminAddUserResponseDto;
 import gg.pingpong.api.admin.tournament.service.TournamentAdminService;
-import gg.pingpong.api.user.tournament.dto.TournamentUserListResponseDto;
+import gg.pingpong.api.user.tournament.controller.response.TournamentUserListResponseDto;
 import lombok.AllArgsConstructor;
 
 @RestController

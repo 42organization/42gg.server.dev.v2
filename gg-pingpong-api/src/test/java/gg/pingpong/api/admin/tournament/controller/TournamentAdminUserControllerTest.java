@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
-import gg.pingpong.api.user.tournament.dto.TournamentUserListResponseDto;
+import gg.pingpong.api.user.tournament.controller.response.TournamentUserListResponseDto;
 import gg.pingpong.data.game.Tournament;
 import gg.pingpong.data.user.User;
 import gg.pingpong.data.user.type.RacketType;

@@ -23,7 +23,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import gg.pingpong.api.user.item.service.ItemService;
-import gg.pingpong.api.user.megaphone.dto.MegaphoneUseRequestDto;
+import gg.pingpong.api.user.megaphone.controller.request.MegaphoneUseRequestDto;
 import gg.pingpong.api.user.megaphone.redis.MegaphoneRedisRepository;
 import gg.pingpong.api.user.user.dto.UserDto;
 import gg.pingpong.data.store.Item;

@@ -22,8 +22,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
-import gg.pingpong.api.user.item.dto.ItemStoreListResponseDto;
-import gg.pingpong.api.user.item.dto.ItemStoreResponseDto;
+import gg.pingpong.api.user.item.controller.response.ItemStoreListResponseDto;
+import gg.pingpong.api.user.item.controller.response.ItemStoreResponseDto;
 import gg.pingpong.api.user.item.service.ItemService;
 import gg.pingpong.repo.item.ItemRepository;
 import gg.pingpong.utils.TestDataUtils;

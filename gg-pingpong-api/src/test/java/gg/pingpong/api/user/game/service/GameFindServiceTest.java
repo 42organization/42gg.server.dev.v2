@@ -17,8 +17,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
-import gg.pingpong.api.user.game.dto.GameListResDto;
-import gg.pingpong.api.user.game.dto.GameResultResDto;
+import gg.pingpong.api.user.game.controller.response.GameListResDto;
+import gg.pingpong.api.user.game.controller.response.GameResultResDto;
 import gg.pingpong.data.game.Game;
 import gg.pingpong.data.game.Season;
 import gg.pingpong.data.game.Tier;

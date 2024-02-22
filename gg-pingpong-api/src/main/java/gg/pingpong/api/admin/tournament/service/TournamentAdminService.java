@@ -18,7 +18,7 @@ import gg.pingpong.api.admin.tournament.controller.response.TournamentAdminAddUs
 import gg.pingpong.api.global.config.ConstantConfig;
 import gg.pingpong.api.user.game.service.GameService;
 import gg.pingpong.api.user.match.service.MatchTournamentService;
-import gg.pingpong.api.user.tournament.dto.TournamentUserListResponseDto;
+import gg.pingpong.api.user.tournament.controller.response.TournamentUserListResponseDto;
 import gg.pingpong.data.game.Game;
 import gg.pingpong.data.game.Team;
 import gg.pingpong.data.game.TeamUser;

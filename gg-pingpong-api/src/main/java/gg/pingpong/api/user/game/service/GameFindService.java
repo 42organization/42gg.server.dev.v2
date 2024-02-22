@@ -10,8 +10,8 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.pingpong.api.user.game.dto.GameListResDto;
-import gg.pingpong.api.user.game.dto.GameResultResDto;
+import gg.pingpong.api.user.game.controller.response.GameListResDto;
+import gg.pingpong.api.user.game.controller.response.GameResultResDto;
 import gg.pingpong.data.game.Game;
 import gg.pingpong.data.game.type.Mode;
 import gg.pingpong.data.game.type.StatusType;

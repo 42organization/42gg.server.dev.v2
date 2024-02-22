@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import gg.pingpong.api.admin.tournament.controller.request.TournamentAdminCreateRequestDto;
 import gg.pingpong.api.admin.tournament.controller.request.TournamentAdminUpdateRequestDto;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
-import gg.pingpong.api.user.tournament.dto.TournamentResponseDto;
+import gg.pingpong.api.user.tournament.controller.response.TournamentResponseDto;
 import gg.pingpong.api.user.user.dto.UserImageDto;
 import gg.pingpong.data.game.Game;
 import gg.pingpong.data.game.PChange;

@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import gg.pingpong.api.user.announcement.dto.AnnouncementResponseDto;
+import gg.pingpong.api.user.announcement.controller.response.AnnouncementResponseDto;
 import gg.pingpong.api.user.announcement.service.AnnouncementService;
 import lombok.RequiredArgsConstructor;
 

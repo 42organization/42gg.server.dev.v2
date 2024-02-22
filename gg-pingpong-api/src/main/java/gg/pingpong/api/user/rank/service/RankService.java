@@ -12,9 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.pingpong.api.user.rank.dto.ExpRankDto;
-import gg.pingpong.api.user.rank.dto.ExpRankPageResponseDto;
+import gg.pingpong.api.user.rank.controller.response.ExpRankPageResponseDto;
 import gg.pingpong.api.user.rank.dto.RankDto;
-import gg.pingpong.api.user.rank.dto.RankPageResponseDto;
+import gg.pingpong.api.user.rank.controller.response.RankPageResponseDto;
 import gg.pingpong.api.user.season.service.SeasonFindService;
 import gg.pingpong.api.user.user.dto.UserDto;
 import gg.pingpong.data.game.Season;

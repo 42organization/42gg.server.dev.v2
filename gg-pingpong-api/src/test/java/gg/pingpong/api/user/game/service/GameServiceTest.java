@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
-import gg.pingpong.api.user.game.dto.request.RankResultReqDto;
+import gg.pingpong.api.user.game.controller.request.RankResultReqDto;
 import gg.pingpong.data.game.Game;
 import gg.pingpong.data.game.Rank;
 import gg.pingpong.data.game.Season;
