@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'java-test-fixtures'
+    id 'jacoco-report-aggregation'
 }
 
 group 'gg.pingpong.utils'
@@ -9,6 +10,62 @@ version '42gg'
 repositories {
     mavenCentral()
 }
+
+reporting {
+    reports {
+        unitTestCoverageReport(JacocoCoverageReport) {
+            testType = TestSuiteType.UNIT_TEST
+        }
+    }
+    reports {
+        integrationTestCoverageReport(JacocoCoverageReport) {
+            testType = TestSuiteType.INTEGRATION_TEST
+        }
+    }
+}
+
+def jacocoExcludes = [
+        '*Application*',
+        "**/config/*",
+        "**/security/*",
+        "**/dto/*",
+        "**/aws/*",
+        "*NotiMailSender*",
+        '*SlackbotService*',
+]
+
+
+integrationTestCoverageReport {
+    reports {
+        html.required = true
+        csv.required = false
+        xml.required = true
+    }
+
+    getClassDirectories().setFrom(files(
+            [project(':gg-pingpong-data'), project(':gg-pingpong-admin-repo'),
+             project(':gg-pingpong-repo'), project(':gg-pingpong-api')].collect {
+                it.fileTree(dir: "${it.buildDir}/classes/java/main", exclude: jacocoExcludes)
+            }
+    ))
+}
+
+
+unitTestCoverageReport {
+    reports {
+        html.required = true
+        csv.required = false
+        xml.required = true
+    }
+
+    getClassDirectories().setFrom(files(
+            [project(':gg-pingpong-data'), project(':gg-pingpong-admin-repo'),
+             project(':gg-pingpong-repo'), project(':gg-pingpong-api')].collect {
+                it.fileTree(dir: "${it.buildDir}/classes/java/main", exclude: jacocoExcludes)
+            }
+    ))
+}
+
 
 dependencies {
     implementation 'org.projectlombok:lombok:1.18.22'
@@ -32,6 +89,11 @@ dependencies {
     testFixturesImplementation project(":gg-pingpong-repo")
     testFixturesImplementation project(":gg-pingpong-admin-repo")
     testFixturesImplementation project(":gg-pingpong-api")
+
+    jacocoAggregation(project(':gg-pingpong-data'))
+    jacocoAggregation(project(':gg-pingpong-repo'))
+    jacocoAggregation(project(':gg-pingpong-admin-repo'))
+    jacocoAggregation(project(':gg-pingpong-api'))
 }
 
 test {
