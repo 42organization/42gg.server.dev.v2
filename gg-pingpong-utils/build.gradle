@@ -17,9 +17,12 @@ reporting {
             testType = TestSuiteType.UNIT_TEST
         }
     }
+}
+
+reporting {
     reports {
         integrationTestCoverageReport(JacocoCoverageReport) {
-            testType = TestSuiteType.INTEGRATION_TEST
+            testType = TestSuiteType.UNIT_TEST
         }
     }
 }
