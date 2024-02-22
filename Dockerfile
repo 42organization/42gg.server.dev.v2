@@ -2,7 +2,7 @@ FROM openjdk:11-jdk
 
 WORKDIR /app
 
-ARG JAR_FILE=build/libs/server-42gg.jar
+ARG JAR_FILE=gg-pingpong-api/build/libs/gg-pingpong-api-42gg.jar
 
 COPY ${JAR_FILE} .
 

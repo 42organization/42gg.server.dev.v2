@@ -40,6 +40,7 @@ class ItemAdminServiceUnitTest {
 	ItemAdminRepository itemAdminRepository;
 	@Mock
 	AsyncNewItemImageUploader asyncNewItemImageUploader;
+
 	@InjectMocks
 	ItemAdminService itemAdminService;
 
@@ -76,12 +77,15 @@ class ItemAdminServiceUnitTest {
 			// given
 			given(itemAdminRepository.findById(any(Long.class))).willReturn(Optional.of(item));
 			given(itemAdminRepository.save(any(Item.class))).willReturn(mock(Item.class));
+			ItemUpdateRequestDto mockRequest = mock(ItemUpdateRequestDto.class);
+			when(mockRequest.toItem(any(), any())).thenReturn(mock(Item.class));
 
 			// when, then
-			itemAdminService.updateItem(1L, mock(ItemUpdateRequestDto.class),
+			itemAdminService.updateItem(1L, mockRequest,
 				mock(MultipartFile.class), UserDto.from(user));
 			setFieldWithReflection(item, "isVisible", true);
-			itemAdminService.updateItem(1L, mock(ItemUpdateRequestDto.class),
+
+			itemAdminService.updateItem(1L, mockRequest,
 				null, UserDto.from(user));
 			verify(itemAdminRepository, times(2)).findById(any(Long.class));
 			verify(asyncNewItemImageUploader, times(1)).upload(any(), any());
@@ -125,8 +129,11 @@ class ItemAdminServiceUnitTest {
 			// given
 			given(itemAdminRepository.findById(any(Long.class))).willReturn(Optional.of(item));
 			given(itemAdminRepository.save(any(Item.class))).willReturn(mock(Item.class));
+			ItemUpdateRequestDto mockRequest = mock(ItemUpdateRequestDto.class);
+			when(mockRequest.toItem(any(), any())).thenReturn(mock(Item.class));
+
 			// when, then
-			itemAdminService.updateItem(1L, mock(ItemUpdateRequestDto.class), UserDto.from(user));
+			itemAdminService.updateItem(1L, mockRequest, UserDto.from(user));
 			assertThat(item.getDeleterIntraId()).isEqualTo(user.getIntraId());
 			verify(itemAdminRepository, times(1)).findById(any(Long.class));
 			verify(itemAdminRepository, times(1)).save(any(Item.class));

@@ -236,9 +236,9 @@ subprojects {
         group 'verification'
         description 'Runs the total tests with coverage'
 
-        dependsOn(':test',
-                ':jacocoTestReport',
-                ':jacocoTestCoverageVerification')
+        dependsOn(project.tasks.findByName('test'),
+                project.tasks.findByName('jacocoTestReport'),
+                project.tasks.findByName('jacocoTestCoverageVerification'))
 
         tasks['jacocoTestReport'].mustRunAfter(tasks['test'])
         tasks['jacocoTestCoverageVerification'].mustRunAfter(tasks['jacocoTestReport'])
@@ -249,9 +249,9 @@ subprojects {
         group 'verification'
         description 'Runs the unit tests with coverage'
 
-        dependsOn(':unitTest',
-                ':jacocoTestReport',
-                ':jacocoTestCoverageVerification')
+        dependsOn(project.tasks.findByName('unitTest'),
+                project.tasks.findByName('jacocoTestReport'),
+                project.tasks.findByName('jacocoTestCoverageVerification'))
 
         tasks['jacocoTestReport'].mustRunAfter(tasks['unitTest'])
         tasks['jacocoTestCoverageVerification'].mustRunAfter(tasks['jacocoTestReport'])
@@ -262,9 +262,9 @@ subprojects {
         group 'verification'
         description 'Runs the integration tests with coverage'
 
-        dependsOn(':integrationTest',
-                ':jacocoTestReport',
-                ':jacocoTestCoverageVerification')
+        dependsOn(project.tasks.findByName('integrationTest'),
+                project.tasks.findByName('jacocoTestReport'),
+                project.tasks.findByName('jacocoTestCoverageVerification'))
 
         tasks['jacocoTestReport'].mustRunAfter(tasks['integrationTest'])
         tasks['jacocoTestCoverageVerification'].mustRunAfter(tasks['jacocoTestReport'])
@@ -273,7 +273,7 @@ subprojects {
 }
 
 project(':gg-pingpong-api') {
-    bootJar { enabled = false }
+    bootJar { enabled = true }
     jar { enabled = true }
     dependencies {
         implementation project(':gg-pingpong-data')
@@ -308,3 +308,11 @@ project(':gg-pingpong-data') {
         implementation project(':gg-pingpong-utils')
     }
 }
+
+project(':gg-pingpong-utils') {
+    bootJar { enabled = false }
+    jar { enabled = true }
+    dependencies {
+    }
+}
+
