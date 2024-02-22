@@ -17,9 +17,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import gg.pingpong.api.admin.tournament.dto.TournamentAdminAddUserRequestDto;
-import gg.pingpong.api.admin.tournament.dto.TournamentAdminCreateRequestDto;
-import gg.pingpong.api.admin.tournament.dto.TournamentAdminUpdateRequestDto;
+import gg.pingpong.api.admin.tournament.controller.request.TournamentAdminAddUserRequestDto;
+import gg.pingpong.api.admin.tournament.controller.request.TournamentAdminCreateRequestDto;
+import gg.pingpong.api.admin.tournament.controller.request.TournamentAdminUpdateRequestDto;
 import gg.pingpong.api.global.config.ConstantConfig;
 import gg.pingpong.api.utils.ReflectionUtilsForUnitTest;
 import gg.pingpong.data.game.Game;

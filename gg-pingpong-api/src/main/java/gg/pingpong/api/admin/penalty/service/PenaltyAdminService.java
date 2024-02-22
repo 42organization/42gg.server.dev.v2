@@ -11,8 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import gg.pingpong.admin.repo.penalty.PenaltyAdminRepository;
 import gg.pingpong.admin.repo.penalty.PenaltyUserAdminRedisRepository;
-import gg.pingpong.api.admin.penalty.dto.PenaltyListResponseDto;
-import gg.pingpong.api.admin.penalty.dto.PenaltyUserResponseDto;
+import gg.pingpong.api.admin.penalty.controller.response.PenaltyListResponseDto;
+import gg.pingpong.api.admin.penalty.controller.response.PenaltyUserResponseDto;
 import gg.pingpong.api.user.user.service.UserFindService;
 import gg.pingpong.data.manage.Penalty;
 import gg.pingpong.data.manage.redis.RedisPenaltyUser;

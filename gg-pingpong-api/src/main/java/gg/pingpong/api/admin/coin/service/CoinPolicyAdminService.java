@@ -7,9 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import gg.pingpong.admin.repo.coin.CoinPolicyAdminRepository;
 import gg.pingpong.admin.repo.user.UserAdminRepository;
+import gg.pingpong.api.admin.coin.controller.response.CoinPolicyAdminListResponseDto;
+import gg.pingpong.api.admin.coin.controller.response.CoinPolicyAdminResponseDto;
 import gg.pingpong.api.admin.coin.dto.CoinPolicyAdminAddDto;
-import gg.pingpong.api.admin.coin.dto.CoinPolicyAdminListResponseDto;
-import gg.pingpong.api.admin.coin.dto.CoinPolicyAdminResponseDto;
 import gg.pingpong.api.user.user.dto.UserDto;
 import gg.pingpong.data.manage.CoinPolicy;
 import gg.pingpong.data.user.User;

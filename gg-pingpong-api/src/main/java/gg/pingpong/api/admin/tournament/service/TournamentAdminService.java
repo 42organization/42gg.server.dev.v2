@@ -10,11 +10,11 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.pingpong.api.admin.tournament.dto.TournamentAdminAddUserRequestDto;
-import gg.pingpong.api.admin.tournament.dto.TournamentAdminAddUserResponseDto;
-import gg.pingpong.api.admin.tournament.dto.TournamentAdminCreateRequestDto;
-import gg.pingpong.api.admin.tournament.dto.TournamentAdminUpdateRequestDto;
-import gg.pingpong.api.admin.tournament.dto.TournamentGameUpdateRequestDto;
+import gg.pingpong.api.admin.tournament.controller.request.TournamentAdminAddUserRequestDto;
+import gg.pingpong.api.admin.tournament.controller.request.TournamentAdminCreateRequestDto;
+import gg.pingpong.api.admin.tournament.controller.request.TournamentAdminUpdateRequestDto;
+import gg.pingpong.api.admin.tournament.controller.request.TournamentGameUpdateRequestDto;
+import gg.pingpong.api.admin.tournament.controller.response.TournamentAdminAddUserResponseDto;
 import gg.pingpong.api.global.config.ConstantConfig;
 import gg.pingpong.api.user.game.service.GameService;
 import gg.pingpong.api.user.match.service.MatchTournamentService;

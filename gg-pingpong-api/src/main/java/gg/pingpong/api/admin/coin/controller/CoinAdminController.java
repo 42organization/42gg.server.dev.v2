@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import gg.pingpong.api.admin.coin.dto.CoinUpdateRequestDto;
+import gg.pingpong.api.admin.coin.controller.request.CoinUpdateRequestDto;
 import gg.pingpong.api.admin.coin.service.CoinAdminService;
 import lombok.RequiredArgsConstructor;
 

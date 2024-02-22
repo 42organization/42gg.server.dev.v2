@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import gg.pingpong.api.admin.penalty.dto.PenaltyListResponseDto;
-import gg.pingpong.api.admin.penalty.dto.PenaltyRequestDto;
+import gg.pingpong.api.admin.penalty.controller.request.PenaltyRequestDto;
+import gg.pingpong.api.admin.penalty.controller.response.PenaltyListResponseDto;
 import gg.pingpong.api.admin.penalty.service.PenaltyAdminService;
 import gg.pingpong.api.global.dto.PageRequestDto;
 import lombok.RequiredArgsConstructor;

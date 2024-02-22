@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import gg.pingpong.api.admin.feedback.dto.FeedbackAdminPageRequestDto;
-import gg.pingpong.api.admin.feedback.dto.FeedbackListAdminResponseDto;
+import gg.pingpong.api.admin.feedback.controller.request.FeedbackAdminPageRequestDto;
+import gg.pingpong.api.admin.feedback.controller.response.FeedbackListAdminResponseDto;
 import gg.pingpong.api.admin.feedback.service.FeedbackAdminService;
 import lombok.RequiredArgsConstructor;
 

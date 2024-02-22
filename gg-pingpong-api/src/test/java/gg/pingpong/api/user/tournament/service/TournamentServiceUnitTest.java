@@ -24,7 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import gg.pingpong.api.admin.noti.dto.SendNotiAdminRequestDto;
+import gg.pingpong.api.admin.noti.controller.request.SendNotiAdminRequestDto;
 import gg.pingpong.api.admin.noti.service.NotiAdminService;
 import gg.pingpong.api.user.match.service.MatchTournamentService;
 import gg.pingpong.api.user.tournament.dto.TournamentGameListResponseDto;

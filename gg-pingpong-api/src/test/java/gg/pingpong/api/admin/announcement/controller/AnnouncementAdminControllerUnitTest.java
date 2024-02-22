@@ -12,8 +12,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
 
+import gg.pingpong.api.admin.announcement.controller.response.AnnouncementAdminListResponseDto;
 import gg.pingpong.api.admin.announcement.dto.AnnouncementAdminAddDto;
-import gg.pingpong.api.admin.announcement.dto.AnnouncementAdminListResponseDto;
 import gg.pingpong.api.admin.announcement.service.AnnouncementAdminService;
 import gg.pingpong.api.global.dto.PageRequestDto;
 import gg.pingpong.utils.annotation.UnitTest;

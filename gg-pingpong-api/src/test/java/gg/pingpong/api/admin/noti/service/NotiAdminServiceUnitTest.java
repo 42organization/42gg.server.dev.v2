@@ -20,7 +20,7 @@ import org.springframework.data.domain.Pageable;
 
 import gg.pingpong.admin.repo.noti.NotiAdminRepository;
 import gg.pingpong.admin.repo.user.UserAdminRepository;
-import gg.pingpong.api.admin.noti.dto.SendNotiAdminRequestDto;
+import gg.pingpong.api.admin.noti.controller.request.SendNotiAdminRequestDto;
 import gg.pingpong.api.user.noti.service.SnsNotiService;
 import gg.pingpong.api.user.user.dto.UserDto;
 import gg.pingpong.data.noti.Noti;

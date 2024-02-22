@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import gg.pingpong.api.admin.game.dto.GameLogListAdminResponseDto;
+import gg.pingpong.api.admin.game.controller.response.GameLogListAdminResponseDto;
 import gg.pingpong.api.admin.game.dto.GameUserLogAdminReqDto;
 import gg.pingpong.api.admin.game.dto.RankGamePPPModifyReqDto;
 import gg.pingpong.api.admin.game.service.GameAdminService;

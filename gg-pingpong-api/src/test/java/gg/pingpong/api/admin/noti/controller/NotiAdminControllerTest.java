@@ -24,9 +24,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.pingpong.admin.repo.noti.NotiAdminRepository;
+import gg.pingpong.api.admin.noti.controller.request.SendNotiAdminRequestDto;
+import gg.pingpong.api.admin.noti.controller.response.NotiListAdminResponseDto;
 import gg.pingpong.api.admin.noti.dto.NotiAdminDto;
-import gg.pingpong.api.admin.noti.dto.NotiListAdminResponseDto;
-import gg.pingpong.api.admin.noti.dto.SendNotiAdminRequestDto;
 import gg.pingpong.api.admin.noti.service.NotiAdminService;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.data.noti.Noti;

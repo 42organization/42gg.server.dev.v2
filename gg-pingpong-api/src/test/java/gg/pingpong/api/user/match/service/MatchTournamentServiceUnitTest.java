@@ -23,7 +23,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import gg.pingpong.api.admin.noti.dto.SendNotiAdminRequestDto;
+import gg.pingpong.api.admin.noti.controller.request.SendNotiAdminRequestDto;
 import gg.pingpong.api.admin.noti.service.NotiAdminService;
 import gg.pingpong.api.user.match.utils.GameTestUtils;
 import gg.pingpong.api.user.match.utils.TournamentTestUtils;

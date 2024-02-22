@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import gg.pingpong.api.admin.noti.dto.NotiListAdminRequestDto;
-import gg.pingpong.api.admin.noti.dto.NotiListAdminResponseDto;
-import gg.pingpong.api.admin.noti.dto.SendNotiAdminRequestDto;
+import gg.pingpong.api.admin.noti.controller.request.NotiListAdminRequestDto;
+import gg.pingpong.api.admin.noti.controller.request.SendNotiAdminRequestDto;
+import gg.pingpong.api.admin.noti.controller.response.NotiListAdminResponseDto;
 import gg.pingpong.api.admin.noti.service.NotiAdminService;
 import lombok.AllArgsConstructor;
 

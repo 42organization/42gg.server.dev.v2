@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import gg.pingpong.api.admin.item.dto.ItemListResponseDto;
-import gg.pingpong.api.admin.item.dto.ItemUpdateRequestDto;
+import gg.pingpong.api.admin.item.controller.request.ItemUpdateRequestDto;
+import gg.pingpong.api.admin.item.controller.response.ItemListResponseDto;
 import gg.pingpong.api.admin.item.service.ItemAdminService;
 import gg.pingpong.api.global.dto.PageRequestDto;
 import gg.pingpong.api.global.utils.argumentresolver.Login;

@@ -19,7 +19,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 import gg.pingpong.admin.repo.slotmanagement.AdminSlotManagementsRepository;
-import gg.pingpong.api.admin.slotmanagement.dto.SlotCreateRequestDto;
+import gg.pingpong.api.admin.slotmanagement.controller.request.SlotCreateRequestDto;
 import gg.pingpong.data.manage.SlotManagement;
 import gg.pingpong.utils.annotation.UnitTest;
 import gg.pingpong.utils.exception.slotmanagement.SlotManagementForbiddenException;

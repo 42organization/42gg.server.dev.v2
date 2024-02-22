@@ -3,7 +3,7 @@ package gg.pingpong.api.admin.coin.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.pingpong.api.admin.coin.dto.CoinUpdateRequestDto;
+import gg.pingpong.api.admin.coin.controller.request.CoinUpdateRequestDto;
 import gg.pingpong.api.user.coin.service.CoinHistoryService;
 import gg.pingpong.data.store.CoinHistory;
 import gg.pingpong.data.user.User;
