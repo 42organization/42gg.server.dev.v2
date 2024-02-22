@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import gg.pingpong.api.admin.announcement.controller.response.AnnouncementAdminListResponseDto;
 import gg.pingpong.api.admin.announcement.dto.AnnouncementAdminAddDto;
-import gg.pingpong.api.admin.announcement.dto.AnnouncementAdminListResponseDto;
 import gg.pingpong.api.admin.announcement.service.AnnouncementAdminService;
 import gg.pingpong.api.global.dto.PageRequestDto;
 import lombok.AllArgsConstructor;

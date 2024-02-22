@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import gg.pingpong.api.admin.receipt.dto.ReceiptAdminPageRequestDto;
-import gg.pingpong.api.admin.receipt.dto.ReceiptListResponseDto;
+import gg.pingpong.api.admin.receipt.controller.request.ReceiptAdminPageRequestDto;
+import gg.pingpong.api.admin.receipt.controller.response.ReceiptListResponseDto;
 import gg.pingpong.api.admin.receipt.service.ReceiptAdminService;
 import lombok.RequiredArgsConstructor;
 

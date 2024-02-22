@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import gg.pingpong.api.user.match.dto.SlotStatusDto;
-import gg.pingpong.api.user.match.dto.SlotStatusResponseListDto;
+import gg.pingpong.api.user.match.controller.response.SlotStatusResponseListDto;
 import gg.pingpong.data.game.Game;
 import gg.pingpong.data.game.Season;
 import gg.pingpong.data.game.redis.RankRedis;

@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import gg.pingpong.api.global.dto.PageRequestDto;
 import gg.pingpong.api.global.utils.argumentresolver.Login;
-import gg.pingpong.api.user.item.dto.ItemGiftRequestDto;
-import gg.pingpong.api.user.item.dto.ItemStoreListResponseDto;
-import gg.pingpong.api.user.item.dto.UserItemListResponseDto;
+import gg.pingpong.api.user.item.controller.request.ItemGiftRequestDto;
+import gg.pingpong.api.user.item.controller.response.ItemStoreListResponseDto;
+import gg.pingpong.api.user.item.controller.response.UserItemListResponseDto;
 import gg.pingpong.api.user.item.service.ItemService;
 import gg.pingpong.api.user.user.dto.UserDto;
 import io.swagger.v3.oas.annotations.Parameter;

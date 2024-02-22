@@ -24,12 +24,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import gg.pingpong.api.admin.noti.dto.SendNotiAdminRequestDto;
+import gg.pingpong.api.admin.noti.controller.request.SendNotiAdminRequestDto;
 import gg.pingpong.api.admin.noti.service.NotiAdminService;
 import gg.pingpong.api.user.match.service.MatchTournamentService;
-import gg.pingpong.api.user.tournament.dto.TournamentGameListResponseDto;
-import gg.pingpong.api.user.tournament.dto.TournamentResponseDto;
-import gg.pingpong.api.user.tournament.dto.TournamentUserRegistrationResponseDto;
+import gg.pingpong.api.user.tournament.controller.response.TournamentGameListResponseDto;
+import gg.pingpong.api.user.tournament.controller.response.TournamentResponseDto;
+import gg.pingpong.api.user.tournament.controller.response.TournamentUserRegistrationResponseDto;
 import gg.pingpong.api.user.user.dto.UserDto;
 import gg.pingpong.api.utils.ReflectionUtilsForUnitTest;
 import gg.pingpong.data.game.Game;

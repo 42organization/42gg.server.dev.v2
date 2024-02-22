@@ -5,8 +5,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import gg.pingpong.admin.repo.megaphone.MegaphoneAdminRepository;
-import gg.pingpong.api.admin.megaphone.dto.MegaphoneAdminResponseDto;
-import gg.pingpong.api.admin.megaphone.dto.MegaphoneHistoryResponseDto;
+import gg.pingpong.api.admin.megaphone.controller.response.MegaphoneAdminResponseDto;
+import gg.pingpong.api.admin.megaphone.controller.response.MegaphoneHistoryResponseDto;
 import lombok.RequiredArgsConstructor;
 
 @Service

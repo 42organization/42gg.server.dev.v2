@@ -19,9 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.pingpong.admin.repo.slotmanagement.AdminSlotManagementsRepository;
+import gg.pingpong.api.admin.slotmanagement.controller.request.SlotCreateRequestDto;
+import gg.pingpong.api.admin.slotmanagement.controller.response.SlotListAdminResponseDto;
 import gg.pingpong.api.admin.slotmanagement.dto.SlotAdminDto;
-import gg.pingpong.api.admin.slotmanagement.dto.SlotCreateRequestDto;
-import gg.pingpong.api.admin.slotmanagement.dto.SlotListAdminResponseDto;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.data.manage.SlotManagement;
 import gg.pingpong.repo.slotmanagement.SlotManagementRepository;

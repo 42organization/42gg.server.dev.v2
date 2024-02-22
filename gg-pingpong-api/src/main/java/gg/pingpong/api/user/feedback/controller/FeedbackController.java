@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import gg.pingpong.api.global.utils.argumentresolver.Login;
-import gg.pingpong.api.user.feedback.dto.FeedbackRequestDto;
+import gg.pingpong.api.user.feedback.controller.request.FeedbackRequestDto;
 import gg.pingpong.api.user.feedback.service.FeedbackService;
 import gg.pingpong.api.user.user.dto.UserDto;
 import gg.pingpong.repo.user.UserRepository;

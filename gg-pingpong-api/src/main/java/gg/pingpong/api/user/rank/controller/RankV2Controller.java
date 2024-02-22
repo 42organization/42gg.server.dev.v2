@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import gg.pingpong.api.global.dto.PageRequestDto;
 import gg.pingpong.api.global.utils.argumentresolver.Login;
-import gg.pingpong.api.user.rank.dto.ExpRankPageResponseDto;
-import gg.pingpong.api.user.rank.dto.RankPageResponseDto;
+import gg.pingpong.api.user.rank.controller.response.ExpRankPageResponseDto;
+import gg.pingpong.api.user.rank.controller.response.RankPageResponseDto;
 import gg.pingpong.api.user.rank.service.RankService;
 import gg.pingpong.api.user.user.dto.UserDto;
 import io.swagger.v3.oas.annotations.Parameter;

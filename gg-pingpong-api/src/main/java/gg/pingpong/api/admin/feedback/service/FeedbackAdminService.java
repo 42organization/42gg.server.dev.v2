@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.pingpong.admin.repo.feedback.FeedbackAdminRepository;
-import gg.pingpong.api.admin.feedback.dto.FeedbackAdminResponseDto;
-import gg.pingpong.api.admin.feedback.dto.FeedbackListAdminResponseDto;
+import gg.pingpong.api.admin.feedback.controller.response.FeedbackAdminResponseDto;
+import gg.pingpong.api.admin.feedback.controller.response.FeedbackListAdminResponseDto;
 import gg.pingpong.data.manage.Feedback;
 import gg.pingpong.utils.exception.feedback.FeedbackNotFoundException;
 import lombok.RequiredArgsConstructor;

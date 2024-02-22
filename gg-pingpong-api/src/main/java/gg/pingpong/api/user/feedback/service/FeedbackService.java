@@ -3,7 +3,7 @@ package gg.pingpong.api.user.feedback.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.pingpong.api.user.feedback.dto.FeedbackRequestDto;
+import gg.pingpong.api.user.feedback.controller.request.FeedbackRequestDto;
 import gg.pingpong.data.manage.Feedback;
 import gg.pingpong.data.user.User;
 import gg.pingpong.repo.feedback.FeedbackRepository;

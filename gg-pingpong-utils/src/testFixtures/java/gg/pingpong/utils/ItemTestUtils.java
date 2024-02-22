@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Component;
 
-import gg.pingpong.api.admin.item.dto.ItemUpdateRequestDto;
+import gg.pingpong.api.admin.item.controller.request.ItemUpdateRequestDto;
 import gg.pingpong.data.store.Item;
 import gg.pingpong.data.store.Megaphone;
 import gg.pingpong.data.store.Receipt;

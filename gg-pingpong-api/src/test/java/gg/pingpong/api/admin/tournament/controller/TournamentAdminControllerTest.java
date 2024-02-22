@@ -21,10 +21,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gg.pingpong.api.admin.tournament.dto.TournamentAdminAddUserRequestDto;
-import gg.pingpong.api.admin.tournament.dto.TournamentAdminCreateRequestDto;
-import gg.pingpong.api.admin.tournament.dto.TournamentAdminUpdateRequestDto;
-import gg.pingpong.api.admin.tournament.dto.TournamentGameUpdateRequestDto;
+import gg.pingpong.api.admin.tournament.controller.request.TournamentAdminAddUserRequestDto;
+import gg.pingpong.api.admin.tournament.controller.request.TournamentAdminCreateRequestDto;
+import gg.pingpong.api.admin.tournament.controller.request.TournamentAdminUpdateRequestDto;
+import gg.pingpong.api.admin.tournament.controller.request.TournamentGameUpdateRequestDto;
 import gg.pingpong.api.admin.tournament.service.TournamentAdminService;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.user.match.utils.MatchIntegrationTestUtils;

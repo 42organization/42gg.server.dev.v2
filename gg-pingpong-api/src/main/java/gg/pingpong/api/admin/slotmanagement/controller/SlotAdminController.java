@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import gg.pingpong.api.admin.slotmanagement.dto.SlotCreateRequestDto;
-import gg.pingpong.api.admin.slotmanagement.dto.SlotListAdminResponseDto;
+import gg.pingpong.api.admin.slotmanagement.controller.request.SlotCreateRequestDto;
+import gg.pingpong.api.admin.slotmanagement.controller.response.SlotListAdminResponseDto;
 import gg.pingpong.api.admin.slotmanagement.service.SlotAdminService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

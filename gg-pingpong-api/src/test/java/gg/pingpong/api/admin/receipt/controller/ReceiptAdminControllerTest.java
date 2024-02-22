@@ -19,8 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.pingpong.admin.repo.receipt.ReceiptAdminRepository;
-import gg.pingpong.api.admin.item.dto.ItemUpdateRequestDto;
-import gg.pingpong.api.admin.receipt.dto.ReceiptListResponseDto;
+import gg.pingpong.api.admin.item.controller.request.ItemUpdateRequestDto;
+import gg.pingpong.api.admin.receipt.controller.response.ReceiptListResponseDto;
 import gg.pingpong.api.admin.receipt.service.ReceiptAdminService;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.data.store.Item;

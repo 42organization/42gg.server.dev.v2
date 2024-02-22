@@ -21,7 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import gg.pingpong.admin.repo.item.ItemAdminRepository;
-import gg.pingpong.api.admin.item.dto.ItemUpdateRequestDto;
+import gg.pingpong.api.admin.item.controller.request.ItemUpdateRequestDto;
 import gg.pingpong.api.global.utils.aws.AsyncNewItemImageUploader;
 import gg.pingpong.api.user.user.dto.UserDto;
 import gg.pingpong.data.store.Item;

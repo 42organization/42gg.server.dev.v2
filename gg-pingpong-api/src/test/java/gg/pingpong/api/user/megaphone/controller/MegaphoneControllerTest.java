@@ -17,9 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gg.pingpong.api.admin.item.dto.ItemUpdateRequestDto;
+import gg.pingpong.api.admin.item.controller.request.ItemUpdateRequestDto;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
-import gg.pingpong.api.user.megaphone.dto.MegaphoneUseRequestDto;
+import gg.pingpong.api.user.megaphone.controller.request.MegaphoneUseRequestDto;
 import gg.pingpong.data.store.Item;
 import gg.pingpong.data.store.Megaphone;
 import gg.pingpong.data.store.Receipt;

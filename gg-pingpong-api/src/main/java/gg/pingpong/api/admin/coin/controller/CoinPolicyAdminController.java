@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import gg.pingpong.api.admin.coin.controller.response.CoinPolicyAdminListResponseDto;
 import gg.pingpong.api.admin.coin.dto.CoinPolicyAdminAddDto;
-import gg.pingpong.api.admin.coin.dto.CoinPolicyAdminListResponseDto;
 import gg.pingpong.api.admin.coin.service.CoinPolicyAdminService;
 import gg.pingpong.api.global.dto.PageRequestDto;
 import gg.pingpong.api.global.utils.argumentresolver.Login;

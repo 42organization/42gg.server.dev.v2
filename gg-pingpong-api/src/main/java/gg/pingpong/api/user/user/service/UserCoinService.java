@@ -5,9 +5,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.pingpong.api.user.user.dto.CoinHistoryResponseDto;
-import gg.pingpong.api.user.user.dto.UserCoinHistoryListResponseDto;
-import gg.pingpong.api.user.user.dto.UserCoinResponseDto;
+import gg.pingpong.api.user.user.controller.response.CoinHistoryResponseDto;
+import gg.pingpong.api.user.user.controller.response.UserCoinHistoryListResponseDto;
+import gg.pingpong.api.user.user.controller.response.UserCoinResponseDto;
 import gg.pingpong.data.store.CoinHistory;
 import gg.pingpong.data.user.User;
 import gg.pingpong.repo.coin.CoinHistoryRepository;

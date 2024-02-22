@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.pingpong.api.user.coin.service.UserCoinChangeService;
-import gg.pingpong.api.user.item.dto.ItemStoreListResponseDto;
-import gg.pingpong.api.user.item.dto.ItemStoreResponseDto;
-import gg.pingpong.api.user.item.dto.UserItemListResponseDto;
-import gg.pingpong.api.user.item.dto.UserItemResponseDto;
+import gg.pingpong.api.user.item.controller.response.ItemStoreListResponseDto;
+import gg.pingpong.api.user.item.controller.response.ItemStoreResponseDto;
+import gg.pingpong.api.user.item.controller.response.UserItemListResponseDto;
+import gg.pingpong.api.user.item.controller.response.UserItemResponseDto;
 import gg.pingpong.api.user.noti.service.NotiService;
 import gg.pingpong.api.user.user.dto.UserDto;
 import gg.pingpong.data.store.Item;

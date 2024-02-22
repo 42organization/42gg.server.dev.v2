@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.pingpong.admin.repo.announcement.AnnouncementAdminRepository;
+import gg.pingpong.api.admin.announcement.controller.response.AnnouncementAdminListResponseDto;
+import gg.pingpong.api.admin.announcement.controller.response.AnnouncementAdminResponseDto;
 import gg.pingpong.api.admin.announcement.dto.AnnouncementAdminAddDto;
-import gg.pingpong.api.admin.announcement.dto.AnnouncementAdminListResponseDto;
-import gg.pingpong.api.admin.announcement.dto.AnnouncementAdminResponseDto;
 import gg.pingpong.data.manage.Announcement;
 import gg.pingpong.utils.exception.announcement.AnnounceDupException;
 import gg.pingpong.utils.exception.announcement.AnnounceNotFoundException;

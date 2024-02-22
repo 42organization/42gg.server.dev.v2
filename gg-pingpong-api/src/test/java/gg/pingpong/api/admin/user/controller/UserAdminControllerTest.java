@@ -24,11 +24,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.pingpong.admin.repo.user.UserAdminRepository;
 import gg.pingpong.admin.repo.user.UserImageAdminRepository;
-import gg.pingpong.api.admin.user.dto.UserDetailAdminResponseDto;
+import gg.pingpong.api.admin.user.controller.response.UserDetailAdminResponseDto;
+import gg.pingpong.api.admin.user.controller.response.UserImageListAdminResponseDto;
+import gg.pingpong.api.admin.user.controller.response.UserSearchAdminResponseDto;
 import gg.pingpong.api.admin.user.dto.UserImageAdminDto;
-import gg.pingpong.api.admin.user.dto.UserImageListAdminResponseDto;
 import gg.pingpong.api.admin.user.dto.UserSearchAdminDto;
-import gg.pingpong.api.admin.user.dto.UserSearchAdminResponseDto;
 import gg.pingpong.api.admin.user.service.UserAdminService;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.data.user.User;

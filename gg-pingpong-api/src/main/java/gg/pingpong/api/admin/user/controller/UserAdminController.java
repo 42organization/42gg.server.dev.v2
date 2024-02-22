@@ -18,11 +18,11 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import gg.pingpong.api.admin.user.dto.UserDetailAdminResponseDto;
-import gg.pingpong.api.admin.user.dto.UserImageListAdminResponseDto;
-import gg.pingpong.api.admin.user.dto.UserSearchAdminRequestDto;
-import gg.pingpong.api.admin.user.dto.UserSearchAdminResponseDto;
-import gg.pingpong.api.admin.user.dto.UserUpdateAdminRequestDto;
+import gg.pingpong.api.admin.user.controller.request.UserSearchAdminRequestDto;
+import gg.pingpong.api.admin.user.controller.request.UserUpdateAdminRequestDto;
+import gg.pingpong.api.admin.user.controller.response.UserDetailAdminResponseDto;
+import gg.pingpong.api.admin.user.controller.response.UserImageListAdminResponseDto;
+import gg.pingpong.api.admin.user.controller.response.UserSearchAdminResponseDto;
 import gg.pingpong.api.admin.user.service.UserAdminService;
 import gg.pingpong.api.global.dto.PageRequestDto;
 import gg.pingpong.utils.exception.user.UserImageLargeException;

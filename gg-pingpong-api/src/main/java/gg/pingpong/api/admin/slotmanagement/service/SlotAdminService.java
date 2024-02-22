@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.pingpong.admin.repo.slotmanagement.AdminSlotManagementsRepository;
+import gg.pingpong.api.admin.slotmanagement.controller.request.SlotCreateRequestDto;
+import gg.pingpong.api.admin.slotmanagement.controller.response.SlotListAdminResponseDto;
 import gg.pingpong.api.admin.slotmanagement.dto.SlotAdminDto;
-import gg.pingpong.api.admin.slotmanagement.dto.SlotCreateRequestDto;
-import gg.pingpong.api.admin.slotmanagement.dto.SlotListAdminResponseDto;
 import gg.pingpong.data.manage.SlotManagement;
 import gg.pingpong.utils.exception.slotmanagement.SlotManagementForbiddenException;
 import gg.pingpong.utils.exception.slotmanagement.SlotManagementNotFoundException;

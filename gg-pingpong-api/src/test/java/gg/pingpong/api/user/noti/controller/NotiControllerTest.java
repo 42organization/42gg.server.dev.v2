@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
-import gg.pingpong.api.user.noti.dto.NotiListResponseDto;
+import gg.pingpong.api.user.noti.controller.response.NotiListResponseDto;
 import gg.pingpong.api.user.noti.service.NotiService;
 import gg.pingpong.api.user.user.dto.UserDto;
 import gg.pingpong.data.noti.Noti;

@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import gg.pingpong.api.user.season.dto.SeasonListResDto;
+import gg.pingpong.api.user.season.controller.response.SeasonListResDto;
 import gg.pingpong.api.user.season.service.SeasonService;
 import lombok.RequiredArgsConstructor;
 

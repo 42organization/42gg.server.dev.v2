@@ -16,7 +16,7 @@ import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
-import gg.pingpong.api.admin.noti.dto.SendNotiAdminRequestDto;
+import gg.pingpong.api.admin.noti.controller.request.SendNotiAdminRequestDto;
 import gg.pingpong.api.admin.noti.service.NotiAdminService;
 import gg.pingpong.api.user.season.service.SeasonFindService;
 import gg.pingpong.data.game.Game;
