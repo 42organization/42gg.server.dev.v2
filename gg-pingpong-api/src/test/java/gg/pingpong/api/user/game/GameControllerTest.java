@@ -26,10 +26,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
-import gg.pingpong.api.user.game.controller.response.GameListResDto;
-import gg.pingpong.api.user.game.dto.GameTeamInfo;
 import gg.pingpong.api.user.game.controller.request.RankResultReqDto;
 import gg.pingpong.api.user.game.controller.request.TournamentResultReqDto;
+import gg.pingpong.api.user.game.controller.response.GameListResDto;
+import gg.pingpong.api.user.game.dto.GameTeamInfo;
 import gg.pingpong.api.user.game.service.GameFindService;
 import gg.pingpong.api.user.game.service.GameService;
 import gg.pingpong.api.user.rank.redis.RankRedisService;

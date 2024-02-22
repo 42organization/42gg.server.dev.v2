@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import gg.pingpong.api.global.utils.argumentresolver.Login;
+import gg.pingpong.api.user.megaphone.controller.request.MegaphoneUseRequestDto;
 import gg.pingpong.api.user.megaphone.controller.response.MegaphoneDetailResponseDto;
 import gg.pingpong.api.user.megaphone.controller.response.MegaphoneTodayListResponseDto;
-import gg.pingpong.api.user.megaphone.controller.request.MegaphoneUseRequestDto;
 import gg.pingpong.api.user.megaphone.service.MegaphoneService;
 import gg.pingpong.api.user.user.dto.UserDto;
 import io.swagger.v3.oas.annotations.Parameter;

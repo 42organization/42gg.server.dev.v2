@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.pingpong.api.user.noti.dto.NotiDto;
 import gg.pingpong.api.user.noti.controller.response.NotiResponseDto;
+import gg.pingpong.api.user.noti.dto.NotiDto;
 import gg.pingpong.api.user.user.dto.UserDto;
 import gg.pingpong.data.noti.Noti;
 import gg.pingpong.data.noti.type.NotiType;

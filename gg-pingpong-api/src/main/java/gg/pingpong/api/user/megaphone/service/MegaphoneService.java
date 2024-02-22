@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.pingpong.api.user.item.service.ItemService;
+import gg.pingpong.api.user.megaphone.controller.request.MegaphoneUseRequestDto;
 import gg.pingpong.api.user.megaphone.controller.response.MegaphoneDetailResponseDto;
 import gg.pingpong.api.user.megaphone.controller.response.MegaphoneTodayListResponseDto;
-import gg.pingpong.api.user.megaphone.controller.request.MegaphoneUseRequestDto;
 import gg.pingpong.api.user.megaphone.redis.MegaphoneRedisRepository;
 import gg.pingpong.api.user.user.dto.UserDto;
 import gg.pingpong.data.store.Megaphone;
