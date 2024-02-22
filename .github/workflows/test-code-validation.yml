@@ -17,7 +17,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: ️👶 Unit Test with Gradle
-        run: ./gradlew --console verbose clean unitTestCoverage unitTestCoverageReport
+        run: ./gradlew --console verbose clean unitTestCoverage unitTestCoverageReport -x test
 
       #      - name: mv for separate report folder
       #        run: mv ./gg-pingpong-utils/build/reports/jacoco/unitTestCoverageReport ./build/reports/jacoco/unitTest
@@ -36,7 +36,7 @@ jobs:
           verbose: true
 
       - name: 👨‍👨‍👧‍👦 Integration Test with Gradle
-        run: ./gradlew --console verbose clean integrationTestCoverage integrationTestCoverageReport
+        run: ./gradlew --console verbose clean integrationTestCoverage integrationTestCoverageReport -x test
 
       - name: 📲 Upload integrationTest coverage to Codecov
         uses: codecov/codecov-action@v3
