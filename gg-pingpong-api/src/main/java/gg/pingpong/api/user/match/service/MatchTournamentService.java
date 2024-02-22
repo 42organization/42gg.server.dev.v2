@@ -142,10 +142,10 @@ public class MatchTournamentService {
 		User loser = getLosingTeam(modifiedGame).getTeamUsers().get(0).getUser();
 		List<User> players = modifiedGame.getTeams().stream()
 			.map(team -> team.getTeamUsers().get(0).getUser())
-			.toList();
+			.collect(Collectors.toList());
 		List<TeamUser> nextMatchedGameTeamUsers = nextMatchedGame.getTeams().stream()
 			.map(team -> team.getTeamUsers().get(0))
-			.toList();
+			.collect(Collectors.toList());
 		for (TeamUser nextGameTeamUser : nextMatchedGameTeamUsers) {
 			if (players.contains(nextGameTeamUser.getUser())) {
 				nextGameTeamUser.updateUser(winner);
