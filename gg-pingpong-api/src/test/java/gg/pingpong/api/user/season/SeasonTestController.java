@@ -50,10 +50,14 @@ public class SeasonTestController {
 	@BeforeEach
 	public void init() {
 		System.out.println("before each");
-		Season s1 = new Season("test1 시즌", LocalDateTime.now(), LocalDateTime.now().plusMinutes(15), 1000, 100);
+		Season s1 = new Season("test1 시즌", LocalDateTime.now().withNano(0).minusMinutes(5),
+			LocalDateTime.now().plusMinutes(15), 1000,
+			100);
 		seasonRepository.save(s1);
 		seasonRepository.save(
-			new Season("test2 season", LocalDateTime.now(), LocalDateTime.now().plusMinutes(15), 1000, 100));
+			new Season("test2 season", LocalDateTime.now().withNano(0).minusMinutes(5),
+				LocalDateTime.now().plusMinutes(15), 1000,
+				100));
 		seasonRepository.flush();
 		System.out.println(seasonRepository.findAll());
 	}
