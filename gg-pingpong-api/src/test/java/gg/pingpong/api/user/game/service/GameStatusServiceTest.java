@@ -11,12 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.pingpong.data.game.Game;
-import gg.pingpong.data.game.Season;
 import gg.pingpong.data.game.Team;
 import gg.pingpong.data.game.TeamUser;
 import gg.pingpong.data.game.type.Mode;
 import gg.pingpong.data.game.type.StatusType;
 import gg.pingpong.data.manage.SlotManagement;
+import gg.pingpong.data.season.Season;
 import gg.pingpong.data.user.User;
 import gg.pingpong.data.user.type.RacketType;
 import gg.pingpong.data.user.type.RoleType;

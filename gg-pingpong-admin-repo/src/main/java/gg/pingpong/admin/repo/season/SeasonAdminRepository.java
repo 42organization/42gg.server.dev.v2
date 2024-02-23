@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import gg.pingpong.data.game.Season;
+import gg.pingpong.data.season.Season;
 
 public interface SeasonAdminRepository extends JpaRepository<Season, Long> {
 	/* 입력시간과 모드로 입력시간 이후 가장 가까운 시즌 가져오기 */

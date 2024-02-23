@@ -1,4 +1,4 @@
-package gg.pingpong.data.game;
+package gg.pingpong.data.tournament;
 
 import java.time.LocalDateTime;
 

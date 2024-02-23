@@ -1,7 +1,7 @@
 package gg.pingpong.api.user.match.service;
 
-import static gg.pingpong.data.game.type.RoundNumber.*;
 import static gg.pingpong.data.match.type.TournamentMatchStatus.*;
+import static gg.pingpong.data.tournament.type.RoundNumber.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -20,20 +20,20 @@ import gg.pingpong.api.admin.noti.controller.request.SendNotiAdminRequestDto;
 import gg.pingpong.api.admin.noti.service.NotiAdminService;
 import gg.pingpong.api.user.season.service.SeasonFindService;
 import gg.pingpong.data.game.Game;
-import gg.pingpong.data.game.Season;
 import gg.pingpong.data.game.Team;
 import gg.pingpong.data.game.TeamUser;
-import gg.pingpong.data.game.Tournament;
-import gg.pingpong.data.game.TournamentGame;
-import gg.pingpong.data.game.TournamentUser;
 import gg.pingpong.data.game.type.Mode;
-import gg.pingpong.data.game.type.RoundNumber;
 import gg.pingpong.data.game.type.StatusType;
-import gg.pingpong.data.game.type.TournamentRound;
-import gg.pingpong.data.game.type.TournamentStatus;
 import gg.pingpong.data.manage.SlotManagement;
 import gg.pingpong.data.match.type.TournamentMatchStatus;
 import gg.pingpong.data.noti.type.NotiType;
+import gg.pingpong.data.season.Season;
+import gg.pingpong.data.tournament.Tournament;
+import gg.pingpong.data.tournament.TournamentGame;
+import gg.pingpong.data.tournament.TournamentUser;
+import gg.pingpong.data.tournament.type.RoundNumber;
+import gg.pingpong.data.tournament.type.TournamentRound;
+import gg.pingpong.data.tournament.type.TournamentStatus;
 import gg.pingpong.data.user.User;
 import gg.pingpong.repo.game.GameRepository;
 import gg.pingpong.repo.manage.SlotManagementRepository;

@@ -1,10 +1,10 @@
-package gg.pingpong.data.game.redis;
+package gg.pingpong.data.rank.redis;
 
 import java.io.Serializable;
 
 import org.springframework.data.redis.core.RedisHash;
 
-import gg.pingpong.data.game.Rank;
+import gg.pingpong.data.rank.Rank;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

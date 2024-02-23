@@ -11,7 +11,7 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.pingpong.data.game.redis.RankRedis;
+import gg.pingpong.data.rank.redis.RankRedis;
 import gg.pingpong.repo.rank.RankRepository;
 import gg.pingpong.repo.rank.redis.RankRedisRepository;
 import gg.pingpong.repo.season.SeasonRepository;

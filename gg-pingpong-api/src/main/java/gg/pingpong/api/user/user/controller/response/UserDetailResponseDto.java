@@ -1,7 +1,7 @@
 package gg.pingpong.api.user.user.controller.response;
 
 import gg.pingpong.api.global.utils.ExpLevelCalculator;
-import gg.pingpong.data.game.Tier;
+import gg.pingpong.data.rank.Tier;
 import gg.pingpong.data.user.User;
 import gg.pingpong.data.user.type.BackgroundType;
 import gg.pingpong.data.user.type.EdgeType;

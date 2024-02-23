@@ -1,4 +1,4 @@
-package gg.pingpong.data.game.type;
+package gg.pingpong.data.tournament.type;
 
 import java.util.Locale;
 
@@ -9,20 +9,20 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum TournamentType {
-	ROOKIE("rookie", "초보"),
-	MASTER("master", "고수"),
-	CUSTOM("custom", "커스텀");
+public enum TournamentStatus {
+	BEFORE("before", "토너먼트 시작 전"),
+	LIVE("live", "토너먼트 진행 중"),
+	END("end", "토너먼트 종료");
 
 	private final String code;
 	private final String desc;
 
 	@JsonCreator
-	public static TournamentType getEnumFromValue(String value) {
+	public static TournamentStatus getEnumFromValue(String value) {
 		if (value == null) {
 			return null;
 		}
-		for (TournamentType e : values()) {
+		for (TournamentStatus e : values()) {
 			if (e.name().equals(value)) {
 				return e;
 			} else if (e.code.toUpperCase(Locale.ROOT).equals(value.toUpperCase(Locale.ROOT))) {

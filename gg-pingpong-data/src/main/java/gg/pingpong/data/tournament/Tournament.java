@@ -1,4 +1,4 @@
-package gg.pingpong.data.game;
+package gg.pingpong.data.tournament;
 
 import static gg.pingpong.utils.exception.BusinessChecker.*;
 import static gg.pingpong.utils.exception.ErrorCode.*;
@@ -23,8 +23,8 @@ import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
 import gg.pingpong.data.BaseTimeEntity;
-import gg.pingpong.data.game.type.TournamentStatus;
-import gg.pingpong.data.game.type.TournamentType;
+import gg.pingpong.data.tournament.type.TournamentStatus;
+import gg.pingpong.data.tournament.type.TournamentType;
 import gg.pingpong.data.user.User;
 import lombok.AccessLevel;
 import lombok.Builder;

@@ -1,4 +1,4 @@
-package gg.pingpong.data.game;
+package gg.pingpong.data.rank;
 
 import java.io.Serializable;
 

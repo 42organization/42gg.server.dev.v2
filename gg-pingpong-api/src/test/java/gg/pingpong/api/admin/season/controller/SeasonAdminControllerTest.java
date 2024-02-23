@@ -28,8 +28,8 @@ import gg.pingpong.api.admin.season.controller.response.SeasonListAdminResponseD
 import gg.pingpong.api.admin.season.dto.SeasonAdminDto;
 import gg.pingpong.api.admin.season.service.SeasonAdminService;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
-import gg.pingpong.data.game.Season;
-import gg.pingpong.data.game.Tier;
+import gg.pingpong.data.rank.Tier;
+import gg.pingpong.data.season.Season;
 import gg.pingpong.repo.rank.RankRepository;
 import gg.pingpong.repo.rank.redis.RankRedisRepository;
 import gg.pingpong.utils.RedisKeyManager;

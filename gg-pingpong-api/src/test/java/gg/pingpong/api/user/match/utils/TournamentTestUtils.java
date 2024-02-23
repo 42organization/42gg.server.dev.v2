@@ -2,12 +2,12 @@ package gg.pingpong.api.user.match.utils;
 
 import java.time.LocalDateTime;
 
-import gg.pingpong.data.game.Tournament;
-import gg.pingpong.data.game.TournamentGame;
-import gg.pingpong.data.game.TournamentUser;
-import gg.pingpong.data.game.type.TournamentRound;
-import gg.pingpong.data.game.type.TournamentStatus;
-import gg.pingpong.data.game.type.TournamentType;
+import gg.pingpong.data.tournament.Tournament;
+import gg.pingpong.data.tournament.TournamentGame;
+import gg.pingpong.data.tournament.TournamentUser;
+import gg.pingpong.data.tournament.type.TournamentRound;
+import gg.pingpong.data.tournament.type.TournamentStatus;
+import gg.pingpong.data.tournament.type.TournamentType;
 
 public class TournamentTestUtils {
 	/**

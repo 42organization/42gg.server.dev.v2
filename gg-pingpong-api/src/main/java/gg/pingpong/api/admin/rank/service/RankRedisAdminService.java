@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.pingpong.api.admin.season.dto.SeasonAdminDto;
-import gg.pingpong.data.game.Tier;
-import gg.pingpong.data.game.redis.RankRedis;
+import gg.pingpong.data.rank.Tier;
+import gg.pingpong.data.rank.redis.RankRedis;
 import gg.pingpong.data.user.User;
 import gg.pingpong.repo.rank.TierRepository;
 import gg.pingpong.repo.rank.redis.RankRedisRepository;

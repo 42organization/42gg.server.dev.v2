@@ -1,4 +1,4 @@
-package gg.pingpong.data.game;
+package gg.pingpong.data.rank;
 
 import java.io.Serializable;
 
@@ -16,6 +16,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.DynamicUpdate;
 
 import gg.pingpong.data.BaseTimeEntity;
+import gg.pingpong.data.season.Season;
 import gg.pingpong.data.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

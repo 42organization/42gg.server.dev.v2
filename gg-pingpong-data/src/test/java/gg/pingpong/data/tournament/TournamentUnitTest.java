@@ -1,4 +1,4 @@
-package gg.pingpong.data.game;
+package gg.pingpong.data.tournament;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -16,8 +16,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import gg.pingpong.data.game.type.TournamentStatus;
-import gg.pingpong.data.game.type.TournamentType;
+import gg.pingpong.data.tournament.type.TournamentStatus;
+import gg.pingpong.data.tournament.type.TournamentType;
 import gg.pingpong.data.user.User;
 import gg.pingpong.utils.annotation.UnitTest;
 import gg.pingpong.utils.exception.ErrorCode;

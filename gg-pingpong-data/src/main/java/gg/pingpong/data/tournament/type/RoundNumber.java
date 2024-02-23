@@ -1,4 +1,4 @@
-package gg.pingpong.data.game.type;
+package gg.pingpong.data.tournament.type;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

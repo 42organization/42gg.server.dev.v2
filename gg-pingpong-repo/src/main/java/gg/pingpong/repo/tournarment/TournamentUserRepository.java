@@ -5,8 +5,8 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import gg.pingpong.data.game.Tournament;
-import gg.pingpong.data.game.TournamentUser;
+import gg.pingpong.data.tournament.Tournament;
+import gg.pingpong.data.tournament.TournamentUser;
 import gg.pingpong.data.user.User;
 
 public interface TournamentUserRepository extends JpaRepository<TournamentUser, Long> {

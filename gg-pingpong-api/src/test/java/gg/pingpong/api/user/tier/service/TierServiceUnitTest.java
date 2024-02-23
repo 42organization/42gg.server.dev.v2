@@ -23,9 +23,9 @@ import org.mockito.quality.Strictness;
 import org.springframework.data.domain.Sort;
 
 import gg.pingpong.api.user.rank.service.TierService;
-import gg.pingpong.data.game.Rank;
-import gg.pingpong.data.game.Season;
-import gg.pingpong.data.game.Tier;
+import gg.pingpong.data.rank.Rank;
+import gg.pingpong.data.rank.Tier;
+import gg.pingpong.data.season.Season;
 import gg.pingpong.data.user.User;
 import gg.pingpong.repo.rank.RankRepository;
 import gg.pingpong.repo.rank.TierRepository;

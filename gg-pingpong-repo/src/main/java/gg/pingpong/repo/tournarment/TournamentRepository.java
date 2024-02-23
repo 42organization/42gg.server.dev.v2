@@ -12,9 +12,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import gg.pingpong.data.game.Tournament;
-import gg.pingpong.data.game.type.TournamentStatus;
-import gg.pingpong.data.game.type.TournamentType;
+import gg.pingpong.data.tournament.Tournament;
+import gg.pingpong.data.tournament.type.TournamentStatus;
+import gg.pingpong.data.tournament.type.TournamentType;
 
 public interface TournamentRepository extends JpaRepository<Tournament, Long> {
 	List<Tournament> findAllByStatusIsNot(TournamentStatus status);

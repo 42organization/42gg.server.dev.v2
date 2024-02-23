@@ -2,7 +2,7 @@ package gg.pingpong.api.user.rank.service;
 
 import org.springframework.stereotype.Service;
 
-import gg.pingpong.data.game.Rank;
+import gg.pingpong.data.rank.Rank;
 import gg.pingpong.repo.rank.RankRepository;
 import gg.pingpong.utils.exception.rank.RankNotFoundException;
 import lombok.RequiredArgsConstructor;

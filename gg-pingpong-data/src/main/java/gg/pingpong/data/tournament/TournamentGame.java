@@ -1,4 +1,4 @@
-package gg.pingpong.data.game;
+package gg.pingpong.data.tournament;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,7 +14,8 @@ import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
 import gg.pingpong.data.BaseTimeEntity;
-import gg.pingpong.data.game.type.TournamentRound;
+import gg.pingpong.data.game.Game;
+import gg.pingpong.data.tournament.type.TournamentRound;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

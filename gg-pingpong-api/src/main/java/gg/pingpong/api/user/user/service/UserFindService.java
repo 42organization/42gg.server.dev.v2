@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.pingpong.api.user.season.service.SeasonFindService;
-import gg.pingpong.data.game.Season;
-import gg.pingpong.data.game.redis.RankRedis;
+import gg.pingpong.data.rank.redis.RankRedis;
+import gg.pingpong.data.season.Season;
 import gg.pingpong.data.user.User;
 import gg.pingpong.repo.rank.redis.RankRedisRepository;
 import gg.pingpong.repo.user.UserRepository;

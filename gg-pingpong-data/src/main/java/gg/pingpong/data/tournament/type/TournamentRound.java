@@ -1,6 +1,6 @@
-package gg.pingpong.data.game.type;
+package gg.pingpong.data.tournament.type;
 
-import static gg.pingpong.data.game.type.RoundNumber.*;
+import static gg.pingpong.data.tournament.type.RoundNumber.*;
 
 import java.util.ArrayList;
 import java.util.List;
