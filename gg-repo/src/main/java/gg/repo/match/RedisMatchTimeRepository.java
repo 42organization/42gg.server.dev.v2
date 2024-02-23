@@ -51,12 +51,12 @@ public class RedisMatchTimeRepository {
 			.collect(Collectors.toSet());
 	}
 
-    public Map<LocalDateTime, List<RedisMatchUser>> getAllEnrolledSlots() {
-        Set<String> keys = redisTemplate.keys(MatchKey.getAllTime() + "*");
-        int prefixIdx = MatchKey.getAllTime().length();
+	public Map<LocalDateTime, List<RedisMatchUser>> getAllEnrolledSlots() {
+		Set<String> keys = redisTemplate.keys(MatchKey.getAllTime() + "*");
+		int prefixIdx = MatchKey.getAllTime().length();
 
-        return keys.stream().collect(Collectors.toMap(
-                key -> LocalDateTime.parse(key.substring(prefixIdx)),
-                key -> redisTemplate.opsForList().range(key, 0, -1)));
-    }
+		return keys.stream().collect(Collectors.toMap(
+			key -> LocalDateTime.parse(key.substring(prefixIdx)),
+			key -> redisTemplate.opsForList().range(key, 0, -1)));
+	}
 }
