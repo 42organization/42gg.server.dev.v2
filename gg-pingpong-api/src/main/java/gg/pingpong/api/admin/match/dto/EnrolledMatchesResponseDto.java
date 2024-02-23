@@ -1,15 +1,15 @@
-package com.gg.server.admin.match.dto;
+package gg.pingpong.api.admin.match.dto;
+
+import java.util.List;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 /**
  * {
  * 	matches: [
- * 		  {
+ *          {
  * 			startTime: 'yyyy-mm-ddThh:mm',
  * 			endTime: 'yyyy-mm-ddThh:mm',
  * 			isMatched : boolean,
@@ -26,9 +26,9 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class EnrolledMatchesResponseDto {
-    private List<EnrolledMatch> matches;
+	private List<EnrolledMatch> matches;
 
-    public EnrolledMatchesResponseDto(List<EnrolledMatch> matches) {
-        this.matches = matches;
-    }
+	public EnrolledMatchesResponseDto(List<EnrolledMatch> matches) {
+		this.matches = matches;
+	}
 }
