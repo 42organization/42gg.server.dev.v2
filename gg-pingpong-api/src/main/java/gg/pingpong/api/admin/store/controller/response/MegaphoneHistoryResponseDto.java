@@ -1,4 +1,4 @@
-package gg.pingpong.api.admin.megaphone.controller.response;
+package gg.pingpong.api.admin.store.controller.response;
 
 import java.util.List;
 

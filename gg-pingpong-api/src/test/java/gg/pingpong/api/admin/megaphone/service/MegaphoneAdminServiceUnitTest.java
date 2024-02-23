@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import gg.pingpong.admin.repo.megaphone.MegaphoneAdminRepository;
+import gg.pingpong.api.admin.store.service.MegaphoneAdminService;
 import gg.pingpong.utils.annotation.UnitTest;
 
 @UnitTest

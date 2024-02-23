@@ -1,4 +1,4 @@
-package gg.pingpong.api.admin.megaphone.controller;
+package gg.pingpong.api.admin.store.controller;
 
 import javax.validation.Valid;
 
@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import gg.pingpong.api.admin.megaphone.controller.response.MegaphoneHistoryResponseDto;
-import gg.pingpong.api.admin.megaphone.service.MegaphoneAdminService;
+import gg.pingpong.api.admin.store.controller.response.MegaphoneHistoryResponseDto;
+import gg.pingpong.api.admin.store.service.MegaphoneAdminService;
 import gg.pingpong.api.global.dto.PageRequestDto;
 import lombok.RequiredArgsConstructor;
 
