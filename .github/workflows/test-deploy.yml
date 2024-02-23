@@ -37,7 +37,7 @@ jobs:
 
       - name: Make application ymls
         run: |
-          cd ./src/main/resources
+          cd ./gg-pingpong-api/src/main/resources
           echo "${{ secrets.MIGRATE_APPLICATION_YML }}" | base64 -d > application.yml
         shell: bash
 
