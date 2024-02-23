@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.pingpong.admin.repo.feedback.FeedbackAdminRepository;
-import gg.pingpong.api.admin.feedback.controller.response.FeedbackListAdminResponseDto;
+import gg.pingpong.api.admin.manage.controller.response.FeedbackListAdminResponseDto;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.data.manage.Feedback;
 import gg.pingpong.data.manage.type.FeedbackType;

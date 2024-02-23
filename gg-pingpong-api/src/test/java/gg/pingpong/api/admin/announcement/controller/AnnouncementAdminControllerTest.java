@@ -16,8 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.pingpong.admin.repo.announcement.AnnouncementAdminRepository;
-import gg.pingpong.api.admin.announcement.controller.response.AnnouncementAdminListResponseDto;
-import gg.pingpong.api.admin.announcement.dto.AnnouncementAdminAddDto;
+import gg.pingpong.api.admin.manage.controller.response.AnnouncementAdminListResponseDto;
+import gg.pingpong.api.admin.manage.dto.AnnouncementAdminAddDto;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.data.manage.Announcement;
 import gg.pingpong.utils.TestDataUtils;

@@ -25,9 +25,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.pingpong.admin.repo.item.ItemAdminRepository;
-import gg.pingpong.api.admin.item.controller.request.ItemUpdateRequestDto;
-import gg.pingpong.api.admin.item.controller.response.ItemListResponseDto;
-import gg.pingpong.api.admin.item.service.ItemAdminService;
+import gg.pingpong.api.admin.store.controller.request.ItemUpdateRequestDto;
+import gg.pingpong.api.admin.store.controller.response.ItemListResponseDto;
+import gg.pingpong.api.admin.store.service.ItemAdminService;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.global.utils.ItemImageHandler;
 import gg.pingpong.data.store.Item;
