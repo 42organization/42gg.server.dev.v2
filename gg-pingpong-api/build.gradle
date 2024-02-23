@@ -10,6 +10,32 @@ repositories {
 }
 
 dependencies {
+    /* spring */
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+    /* oauth */
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    /* JSON Web Token */
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.11.2'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+
+    /* REST template */
+    implementation 'org.apache.httpcomponents:httpcore:4.4.15'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.13'
+
+    /* S3 Image Bucket */
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+    implementation 'org.springframework:spring-test:5.3.20'
+    implementation "com.amazonaws:aws-java-sdk-s3:1.12.281"
+
+    testImplementation 'org.springframework.security:spring-security-test'
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
     testImplementation testFixtures(project(':gg-pingpong-utils'))
