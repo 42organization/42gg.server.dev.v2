@@ -28,7 +28,7 @@ import gg.pingpong.data.game.Season;
 import gg.pingpong.data.game.Tier;
 import gg.pingpong.data.user.User;
 import gg.pingpong.repo.rank.RankRepository;
-import gg.pingpong.repo.tier.TierRepository;
+import gg.pingpong.repo.rank.TierRepository;
 import gg.pingpong.utils.annotation.UnitTest;
 
 @UnitTest

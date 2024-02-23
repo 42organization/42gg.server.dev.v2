@@ -3,7 +3,7 @@ package gg.pingpong.api.user.tournament.controller.response;
 import gg.pingpong.api.user.game.controller.response.GameResultResDto;
 import gg.pingpong.data.game.TournamentGame;
 import gg.pingpong.data.game.type.TournamentRound;
-import gg.pingpong.repo.game.GameTeamUser;
+import gg.pingpong.repo.game.out.GameTeamUser;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

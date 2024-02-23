@@ -1,4 +1,4 @@
-package gg.pingpong.repo.megaphone;
+package gg.pingpong.repo.store;
 
 import java.time.LocalDate;
 import java.util.List;

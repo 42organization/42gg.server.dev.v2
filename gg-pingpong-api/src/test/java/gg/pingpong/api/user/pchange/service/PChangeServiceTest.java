@@ -22,7 +22,7 @@ import gg.pingpong.data.user.User;
 import gg.pingpong.data.user.type.RacketType;
 import gg.pingpong.data.user.type.RoleType;
 import gg.pingpong.data.user.type.SnsType;
-import gg.pingpong.repo.pchange.PChangeRepository;
+import gg.pingpong.repo.game.PChangeRepository;
 import gg.pingpong.utils.annotation.UnitTest;
 import gg.pingpong.utils.exception.pchange.PChangeNotExistException;
 

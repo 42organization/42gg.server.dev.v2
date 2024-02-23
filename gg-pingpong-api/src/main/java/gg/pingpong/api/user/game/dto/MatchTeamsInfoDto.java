@@ -2,7 +2,7 @@ package gg.pingpong.api.user.game.dto;
 
 import java.util.List;
 
-import gg.pingpong.repo.game.GameTeamUserInfo;
+import gg.pingpong.repo.game.out.GameTeamUserInfo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;

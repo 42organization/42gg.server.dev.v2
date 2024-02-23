@@ -1,4 +1,4 @@
-package gg.pingpong.repo.item;
+package gg.pingpong.repo.store;
 
 import java.util.List;
 

@@ -11,9 +11,9 @@ import gg.pingpong.data.store.Megaphone;
 import gg.pingpong.data.store.Receipt;
 import gg.pingpong.data.store.type.ItemStatus;
 import gg.pingpong.data.user.User;
-import gg.pingpong.repo.item.ItemRepository;
-import gg.pingpong.repo.megaphone.MegaphoneRepository;
-import gg.pingpong.repo.receipt.ReceiptRepository;
+import gg.pingpong.repo.store.ItemRepository;
+import gg.pingpong.repo.store.MegaphoneRepository;
+import gg.pingpong.repo.store.ReceiptRepository;
 import lombok.AllArgsConstructor;
 
 /**

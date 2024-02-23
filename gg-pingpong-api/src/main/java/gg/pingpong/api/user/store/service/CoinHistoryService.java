@@ -9,8 +9,8 @@ import gg.pingpong.data.store.CoinHistory;
 import gg.pingpong.data.store.Item;
 import gg.pingpong.data.store.type.HistoryType;
 import gg.pingpong.data.user.User;
-import gg.pingpong.repo.coin.CoinHistoryRepository;
-import gg.pingpong.repo.coin.CoinPolicyRepository;
+import gg.pingpong.repo.store.CoinHistoryRepository;
+import gg.pingpong.repo.store.CoinPolicyRepository;
 import gg.pingpong.utils.exception.coin.CoinPolicyNotFoundException;
 import lombok.RequiredArgsConstructor;
 

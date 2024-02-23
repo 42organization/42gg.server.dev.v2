@@ -10,7 +10,7 @@ import gg.pingpong.data.game.Rank;
 import gg.pingpong.data.game.Season;
 import gg.pingpong.data.game.Tier;
 import gg.pingpong.repo.rank.RankRepository;
-import gg.pingpong.repo.tier.TierRepository;
+import gg.pingpong.repo.rank.TierRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service

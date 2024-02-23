@@ -5,7 +5,7 @@ import java.util.List;
 
 import gg.pingpong.data.game.type.Mode;
 import gg.pingpong.data.game.type.StatusType;
-import gg.pingpong.repo.game.GameTeamUserInfo;
+import gg.pingpong.repo.game.out.GameTeamUserInfo;
 import gg.pingpong.utils.exception.game.GameDataConsistencyException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -10,7 +10,7 @@ import gg.pingpong.api.user.user.controller.response.UserCoinHistoryListResponse
 import gg.pingpong.api.user.user.controller.response.UserCoinResponseDto;
 import gg.pingpong.data.store.CoinHistory;
 import gg.pingpong.data.user.User;
-import gg.pingpong.repo.coin.CoinHistoryRepository;
+import gg.pingpong.repo.store.CoinHistoryRepository;
 import gg.pingpong.repo.user.UserRepository;
 import gg.pingpong.utils.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;

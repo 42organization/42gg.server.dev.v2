@@ -36,7 +36,7 @@ import gg.pingpong.data.match.type.TournamentMatchStatus;
 import gg.pingpong.data.noti.type.NotiType;
 import gg.pingpong.data.user.User;
 import gg.pingpong.repo.game.GameRepository;
-import gg.pingpong.repo.slotmanagement.SlotManagementRepository;
+import gg.pingpong.repo.manage.SlotManagementRepository;
 import gg.pingpong.repo.tournarment.TournamentGameRepository;
 import gg.pingpong.utils.exception.match.EnrolledSlotException;
 import gg.pingpong.utils.exception.match.LosingTeamNotFoundException;

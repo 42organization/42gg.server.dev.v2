@@ -21,7 +21,7 @@ import gg.pingpong.admin.repo.slotmanagement.AdminSlotManagementsRepository;
 import gg.pingpong.api.admin.manage.controller.request.SlotCreateRequestDto;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.data.manage.SlotManagement;
-import gg.pingpong.repo.slotmanagement.SlotManagementRepository;
+import gg.pingpong.repo.manage.SlotManagementRepository;
 import gg.pingpong.utils.TestDataUtils;
 import gg.pingpong.utils.annotation.IntegrationTest;
 import lombok.RequiredArgsConstructor;

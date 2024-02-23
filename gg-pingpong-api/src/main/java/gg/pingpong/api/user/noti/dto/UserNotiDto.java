@@ -1,7 +1,7 @@
 package gg.pingpong.api.user.noti.dto;
 
 import gg.pingpong.data.user.type.SnsType;
-import gg.pingpong.repo.game.GameUser;
+import gg.pingpong.repo.game.out.GameUser;
 import lombok.Getter;
 
 @Getter

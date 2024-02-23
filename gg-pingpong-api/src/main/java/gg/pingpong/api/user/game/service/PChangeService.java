@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import gg.pingpong.data.game.Game;
 import gg.pingpong.data.game.PChange;
 import gg.pingpong.data.user.User;
-import gg.pingpong.repo.pchange.PChangeRepository;
+import gg.pingpong.repo.game.PChangeRepository;
 import gg.pingpong.utils.exception.pchange.PChangeNotExistException;
 import lombok.RequiredArgsConstructor;
 

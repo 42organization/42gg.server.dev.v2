@@ -11,7 +11,7 @@ import gg.pingpong.data.game.Team;
 import gg.pingpong.data.game.TeamUser;
 import gg.pingpong.data.store.Item;
 import gg.pingpong.data.user.User;
-import gg.pingpong.repo.coin.CoinPolicyRepository;
+import gg.pingpong.repo.store.CoinPolicyRepository;
 import gg.pingpong.repo.user.UserRepository;
 import gg.pingpong.utils.exception.coin.CoinPolicyNotFoundException;
 import gg.pingpong.utils.exception.user.UserAlreadyAttendanceException;

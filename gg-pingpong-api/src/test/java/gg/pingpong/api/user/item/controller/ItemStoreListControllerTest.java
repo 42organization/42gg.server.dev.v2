@@ -25,7 +25,7 @@ import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.user.store.controller.response.ItemStoreListResponseDto;
 import gg.pingpong.api.user.store.controller.response.ItemStoreResponseDto;
 import gg.pingpong.api.user.store.service.ItemService;
-import gg.pingpong.repo.item.ItemRepository;
+import gg.pingpong.repo.store.ItemRepository;
 import gg.pingpong.utils.TestDataUtils;
 import gg.pingpong.utils.annotation.IntegrationTest;
 import lombok.RequiredArgsConstructor;

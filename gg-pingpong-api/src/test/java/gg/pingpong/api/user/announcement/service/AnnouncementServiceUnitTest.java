@@ -16,7 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import gg.pingpong.api.user.manage.service.AnnouncementService;
 import gg.pingpong.data.manage.Announcement;
-import gg.pingpong.repo.announcement.AnnouncementRepository;
+import gg.pingpong.repo.manage.AnnouncementRepository;
 import gg.pingpong.utils.annotation.UnitTest;
 import gg.pingpong.utils.exception.announcement.AnnounceNotFoundException;
 

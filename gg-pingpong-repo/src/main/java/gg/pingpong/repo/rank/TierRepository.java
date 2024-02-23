@@ -1,4 +1,4 @@
-package gg.pingpong.repo.tier;
+package gg.pingpong.repo.rank;
 
 import java.util.Optional;
 

@@ -1,4 +1,4 @@
-package gg.pingpong.repo.penalty;
+package gg.pingpong.repo.manage;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

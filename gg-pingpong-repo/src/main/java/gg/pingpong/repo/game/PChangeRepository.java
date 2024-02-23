@@ -1,4 +1,4 @@
-package gg.pingpong.repo.pchange;
+package gg.pingpong.repo.game;
 
 import java.util.List;
 import java.util.Optional;

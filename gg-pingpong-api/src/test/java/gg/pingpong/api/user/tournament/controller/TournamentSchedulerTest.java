@@ -22,7 +22,7 @@ import gg.pingpong.data.game.Tournament;
 import gg.pingpong.data.game.TournamentGame;
 import gg.pingpong.data.game.type.TournamentStatus;
 import gg.pingpong.data.manage.SlotManagement;
-import gg.pingpong.repo.slotmanagement.SlotManagementRepository;
+import gg.pingpong.repo.manage.SlotManagementRepository;
 import gg.pingpong.repo.tournarment.TournamentGameRepository;
 import gg.pingpong.utils.TestDataUtils;
 import gg.pingpong.utils.annotation.IntegrationTest;
