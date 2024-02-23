@@ -15,29 +15,35 @@ jobs:
           java-version: 11
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+
       - name: ️👶 Unit Test with Gradle
-        run: ./gradlew --console verbose clean unitTestCoverage
-      - name: mv for separate report folder
-        run: mv ./build/reports/jacoco/test ./build/reports/jacoco/unitTest
-      - name: mv for separate report name
-        run: mv ./build/reports/jacoco/unitTest/jacocoTestReport.xml ./build/reports/jacoco/unitTest/unitTestReport.xml
+        run: ./gradlew --console verbose clean unitTestCoverage unitTestCoverageReport -x test
+
+      #      - name: mv for separate report folder
+      #        run: mv ./gg-pingpong-utils/build/reports/jacoco/unitTestCoverageReport ./build/reports/jacoco/unitTest
+
+      #      - name: mv for separate report name
+      #        run: mv ./build/reports/jacoco/unitTest/jacocoTestReport.xml ./build/reports/jacoco/unitTest/unitTestReport.xml
+
       - name: 📲 Upload unitTest coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
-          files: ./build/reports/jacoco/unitTest/unitTestReport.xml
+          files: ./gg-pingpong-utils/build/reports/jacoco/unitTestCoverageReport/unitTestCoverageReport.xml
           flags: unitTest
           name: codecov-unit
           verbose: true
+
       - name: 👨‍👨‍👧‍👦 Integration Test with Gradle
-        run: ./gradlew --console verbose clean integrationTestCoverage
+        run: ./gradlew --console verbose clean integrationTestCoverage integrationTestCoverageReport -x test
+
       - name: 📲 Upload integrationTest coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
-          files: ./build/reports/jacoco/test/jacocoTestReport.xml
+          files: ./gg-pingpong-utils/build/reports/jacoco/integrationTestCoverageReport/integrationTestCoverageReport.xml
           flags: integrationTest
           name: codecov-integration
           verbose: true
