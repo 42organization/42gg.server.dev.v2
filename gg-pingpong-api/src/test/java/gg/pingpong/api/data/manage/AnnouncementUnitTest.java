@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import gg.pingpong.api.admin.announcement.dto.AnnouncementAdminAddDto;
+import gg.pingpong.api.admin.manage.dto.AnnouncementAdminAddDto;
 import gg.pingpong.data.manage.Announcement;
 import gg.pingpong.utils.annotation.UnitTest;
 

@@ -30,9 +30,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.pingpong.admin.repo.penalty.PenaltyAdminRepository;
 import gg.pingpong.admin.repo.penalty.PenaltyUserAdminRedisRepository;
-import gg.pingpong.api.admin.penalty.controller.request.PenaltyRequestDto;
-import gg.pingpong.api.admin.penalty.controller.response.PenaltyListResponseDto;
-import gg.pingpong.api.admin.penalty.service.PenaltyAdminService;
+import gg.pingpong.api.admin.manage.controller.request.PenaltyRequestDto;
+import gg.pingpong.api.admin.manage.controller.response.PenaltyListResponseDto;
+import gg.pingpong.api.admin.manage.service.PenaltyAdminService;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.data.manage.Penalty;
 import gg.pingpong.data.manage.redis.RedisPenaltyUser;

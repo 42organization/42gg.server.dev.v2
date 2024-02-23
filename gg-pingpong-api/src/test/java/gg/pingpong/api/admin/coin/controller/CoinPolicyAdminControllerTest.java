@@ -18,8 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.pingpong.admin.repo.coin.CoinPolicyAdminRepository;
-import gg.pingpong.api.admin.coin.controller.response.CoinPolicyAdminListResponseDto;
-import gg.pingpong.api.admin.coin.dto.CoinPolicyAdminAddDto;
+import gg.pingpong.api.admin.store.controller.response.CoinPolicyAdminListResponseDto;
+import gg.pingpong.api.admin.store.dto.CoinPolicyAdminAddDto;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.data.manage.CoinPolicy;
 import gg.pingpong.data.user.User;
