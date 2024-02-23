@@ -1,6 +1,6 @@
 package gg.pingpong.api.user.game.controller.response;
 
-import gg.pingpong.api.user.coin.dto.UserGameCoinResultDto;
+import gg.pingpong.api.user.store.dto.UserGameCoinResultDto;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

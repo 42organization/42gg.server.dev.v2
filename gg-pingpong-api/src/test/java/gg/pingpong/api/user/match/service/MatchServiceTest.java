@@ -23,13 +23,13 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.pingpong.admin.repo.penalty.PenaltyAdminRepository;
+import gg.pingpong.api.user.manage.redis.PenaltyUserRedisRepository;
 import gg.pingpong.api.user.match.controller.response.MatchStatusResponseListDto;
 import gg.pingpong.api.user.match.controller.response.SlotStatusResponseListDto;
 import gg.pingpong.api.user.match.dto.MatchStatusDto;
 import gg.pingpong.api.user.match.dto.SlotStatusDto;
 import gg.pingpong.api.user.match.utils.MatchIntegrationTestUtils;
-import gg.pingpong.api.user.penalty.redis.PenaltyUserRedisRepository;
-import gg.pingpong.api.user.rank.service.RedisUploadService;
+import gg.pingpong.api.user.rank.redis.RedisUploadService;
 import gg.pingpong.api.user.user.dto.UserDto;
 import gg.pingpong.data.game.Game;
 import gg.pingpong.data.game.Season;

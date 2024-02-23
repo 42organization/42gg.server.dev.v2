@@ -27,8 +27,8 @@ import gg.pingpong.api.admin.tournament.controller.request.TournamentAdminUpdate
 import gg.pingpong.api.admin.tournament.controller.request.TournamentGameUpdateRequestDto;
 import gg.pingpong.api.admin.tournament.service.TournamentAdminService;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
+import gg.pingpong.api.user.game.dto.TeamReqDto;
 import gg.pingpong.api.user.match.utils.MatchIntegrationTestUtils;
-import gg.pingpong.api.user.team.dto.TeamReqDto;
 import gg.pingpong.data.game.Season;
 import gg.pingpong.data.game.Tournament;
 import gg.pingpong.data.game.TournamentGame;

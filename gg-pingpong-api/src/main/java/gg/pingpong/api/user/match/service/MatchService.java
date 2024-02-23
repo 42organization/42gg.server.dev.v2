@@ -9,9 +9,9 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import gg.pingpong.api.user.manage.service.PenaltyService;
 import gg.pingpong.api.user.match.dto.GameAddDto;
 import gg.pingpong.api.user.match.utils.MatchCalculator;
-import gg.pingpong.api.user.penalty.service.PenaltyService;
 import gg.pingpong.api.user.season.service.SeasonFindService;
 import gg.pingpong.api.user.user.dto.UserDto;
 import gg.pingpong.data.game.Game;

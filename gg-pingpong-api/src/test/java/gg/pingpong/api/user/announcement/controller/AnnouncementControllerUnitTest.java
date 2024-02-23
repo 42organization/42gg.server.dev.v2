@@ -11,9 +11,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import gg.pingpong.api.user.announcement.controller.response.AnnouncementResponseDto;
-import gg.pingpong.api.user.announcement.dto.AnnouncementDto;
-import gg.pingpong.api.user.announcement.service.AnnouncementService;
+import gg.pingpong.api.user.manage.controller.AnnouncementController;
+import gg.pingpong.api.user.manage.controller.response.AnnouncementResponseDto;
+import gg.pingpong.api.user.manage.dto.AnnouncementDto;
+import gg.pingpong.api.user.manage.service.AnnouncementService;
 import gg.pingpong.utils.annotation.UnitTest;
 
 @UnitTest

@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
-import gg.pingpong.api.user.coin.dto.UserGameCoinResultDto;
+import gg.pingpong.api.user.store.dto.UserGameCoinResultDto;
+import gg.pingpong.api.user.store.service.CoinHistoryService;
+import gg.pingpong.api.user.store.service.UserCoinChangeService;
 import gg.pingpong.data.game.Game;
 import gg.pingpong.data.game.Season;
 import gg.pingpong.data.game.type.Mode;

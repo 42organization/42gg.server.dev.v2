@@ -20,8 +20,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
-import gg.pingpong.api.user.coin.service.UserCoinChangeService;
 import gg.pingpong.api.user.noti.service.NotiService;
+import gg.pingpong.api.user.store.service.ItemService;
+import gg.pingpong.api.user.store.service.UserCoinChangeService;
 import gg.pingpong.api.user.user.dto.UserDto;
 import gg.pingpong.data.store.Item;
 import gg.pingpong.data.store.Receipt;

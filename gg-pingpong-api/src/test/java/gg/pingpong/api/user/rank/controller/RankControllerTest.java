@@ -23,7 +23,7 @@ import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.user.rank.controller.response.ExpRankPageResponseDto;
 import gg.pingpong.api.user.rank.controller.response.RankPageResponseDto;
 import gg.pingpong.api.user.rank.dto.RankDto;
-import gg.pingpong.api.user.rank.service.RedisUploadService;
+import gg.pingpong.api.user.rank.redis.RedisUploadService;
 import gg.pingpong.data.game.Season;
 import gg.pingpong.data.user.User;
 import gg.pingpong.repo.rank.redis.RankRedisRepository;

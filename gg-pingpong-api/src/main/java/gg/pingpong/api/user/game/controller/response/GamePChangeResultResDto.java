@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import gg.pingpong.api.global.utils.ExpLevelCalculator;
-import gg.pingpong.api.user.coin.dto.UserGameCoinResultDto;
+import gg.pingpong.api.user.store.dto.UserGameCoinResultDto;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

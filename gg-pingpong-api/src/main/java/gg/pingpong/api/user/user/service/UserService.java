@@ -18,11 +18,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import gg.pingpong.api.global.utils.ExpLevelCalculator;
 import gg.pingpong.api.global.utils.aws.AsyncNewUserImageUploader;
-import gg.pingpong.api.user.coin.service.CoinHistoryService;
-import gg.pingpong.api.user.coin.service.UserCoinChangeService;
-import gg.pingpong.api.user.item.service.ItemService;
 import gg.pingpong.api.user.rank.service.RankFindService;
 import gg.pingpong.api.user.season.service.SeasonFindService;
+import gg.pingpong.api.user.store.service.CoinHistoryService;
+import gg.pingpong.api.user.store.service.ItemService;
+import gg.pingpong.api.user.store.service.UserCoinChangeService;
 import gg.pingpong.api.user.user.controller.request.UserProfileImageRequestDto;
 import gg.pingpong.api.user.user.controller.response.UserAttendanceResponseDto;
 import gg.pingpong.api.user.user.controller.response.UserDetailResponseDto;

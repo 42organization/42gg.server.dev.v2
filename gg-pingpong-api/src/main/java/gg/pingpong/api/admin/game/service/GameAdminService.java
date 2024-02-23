@@ -24,9 +24,9 @@ import gg.pingpong.api.admin.game.controller.response.GameLogListAdminResponseDt
 import gg.pingpong.api.admin.game.dto.GameLogAdminDto;
 import gg.pingpong.api.admin.game.dto.RankGamePPPModifyReqDto;
 import gg.pingpong.api.user.rank.redis.RankRedisService;
+import gg.pingpong.api.user.rank.service.TierService;
 import gg.pingpong.api.user.season.dto.CurSeason;
 import gg.pingpong.api.user.season.service.SeasonService;
-import gg.pingpong.api.user.tier.service.TierService;
 import gg.pingpong.data.game.Game;
 import gg.pingpong.data.game.PChange;
 import gg.pingpong.data.game.Season;

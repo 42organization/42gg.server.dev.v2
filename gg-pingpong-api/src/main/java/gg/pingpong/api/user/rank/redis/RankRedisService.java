@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.pingpong.api.global.utils.EloRating;
-import gg.pingpong.api.user.pchange.service.PChangeService;
+import gg.pingpong.api.user.game.service.PChangeService;
 import gg.pingpong.api.user.season.service.SeasonFindService;
 import gg.pingpong.data.game.Game;
 import gg.pingpong.data.game.Rank;

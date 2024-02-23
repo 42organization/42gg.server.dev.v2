@@ -10,8 +10,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import gg.pingpong.api.user.feedback.controller.request.FeedbackRequestDto;
-import gg.pingpong.api.user.feedback.service.FeedbackService;
+import gg.pingpong.api.user.manage.controller.FeedbackController;
+import gg.pingpong.api.user.manage.controller.request.FeedbackRequestDto;
+import gg.pingpong.api.user.manage.service.FeedbackService;
 import gg.pingpong.api.user.user.dto.UserDto;
 import gg.pingpong.utils.annotation.UnitTest;
 
