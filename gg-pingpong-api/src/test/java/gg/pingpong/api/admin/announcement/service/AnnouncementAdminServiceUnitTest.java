@@ -19,7 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
-import gg.pingpong.admin.repo.announcement.AnnouncementAdminRepository;
+import gg.pingpong.admin.repo.manage.AnnouncementAdminRepository;
 import gg.pingpong.api.admin.manage.dto.AnnouncementAdminAddDto;
 import gg.pingpong.api.admin.manage.service.AnnouncementAdminService;
 import gg.pingpong.data.manage.Announcement;

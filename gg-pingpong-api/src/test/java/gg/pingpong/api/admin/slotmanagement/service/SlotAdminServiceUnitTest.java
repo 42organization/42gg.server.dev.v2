@@ -18,7 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
-import gg.pingpong.admin.repo.slotmanagement.AdminSlotManagementsRepository;
+import gg.pingpong.admin.repo.manage.AdminSlotManagementsRepository;
 import gg.pingpong.api.admin.manage.controller.request.SlotCreateRequestDto;
 import gg.pingpong.api.admin.manage.service.SlotAdminService;
 import gg.pingpong.data.manage.SlotManagement;

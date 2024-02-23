@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.pingpong.admin.repo.announcement.AnnouncementAdminRepository;
+import gg.pingpong.admin.repo.manage.AnnouncementAdminRepository;
 import gg.pingpong.api.admin.manage.controller.response.AnnouncementAdminListResponseDto;
 import gg.pingpong.api.admin.manage.controller.response.AnnouncementAdminResponseDto;
 import gg.pingpong.api.admin.manage.dto.AnnouncementAdminAddDto;

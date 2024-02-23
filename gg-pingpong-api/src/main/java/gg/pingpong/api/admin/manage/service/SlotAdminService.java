@@ -7,7 +7,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.pingpong.admin.repo.slotmanagement.AdminSlotManagementsRepository;
+import gg.pingpong.admin.repo.manage.AdminSlotManagementsRepository;
 import gg.pingpong.api.admin.manage.controller.request.SlotCreateRequestDto;
 import gg.pingpong.api.admin.manage.controller.response.SlotListAdminResponseDto;
 import gg.pingpong.api.admin.manage.dto.SlotAdminDto;

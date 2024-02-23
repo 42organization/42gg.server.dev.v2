@@ -1,4 +1,4 @@
-package gg.pingpong.admin.repo.announcement;
+package gg.pingpong.admin.repo.manage;
 
 import java.util.Optional;
 

@@ -5,7 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.pingpong.admin.repo.coin.CoinPolicyAdminRepository;
+import gg.pingpong.admin.repo.store.CoinPolicyAdminRepository;
 import gg.pingpong.admin.repo.user.UserAdminRepository;
 import gg.pingpong.api.admin.store.controller.response.CoinPolicyAdminListResponseDto;
 import gg.pingpong.api.admin.store.controller.response.CoinPolicyAdminResponseDto;

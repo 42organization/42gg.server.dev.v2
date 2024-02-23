@@ -1,4 +1,4 @@
-package gg.pingpong.admin.repo.game;
+package gg.pingpong.admin.repo.game.out;
 
 import java.time.LocalDateTime;
 

@@ -18,7 +18,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import gg.pingpong.admin.repo.feedback.FeedbackAdminRepository;
+import gg.pingpong.admin.repo.manage.FeedbackAdminRepository;
 import gg.pingpong.api.admin.manage.service.FeedbackAdminService;
 import gg.pingpong.data.manage.Feedback;
 import gg.pingpong.utils.annotation.UnitTest;

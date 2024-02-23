@@ -5,7 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.pingpong.admin.repo.receipt.ReceiptAdminRepository;
+import gg.pingpong.admin.repo.store.ReceiptAdminRepository;
 import gg.pingpong.api.admin.store.controller.response.ReceiptListResponseDto;
 import gg.pingpong.api.admin.store.controller.response.ReceiptResponseDto;
 import gg.pingpong.data.store.Receipt;

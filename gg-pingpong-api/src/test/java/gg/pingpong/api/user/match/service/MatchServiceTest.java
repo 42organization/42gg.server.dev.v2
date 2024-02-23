@@ -22,7 +22,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.pingpong.admin.repo.penalty.PenaltyAdminRepository;
+import gg.pingpong.admin.repo.manage.PenaltyAdminRepository;
 import gg.pingpong.api.user.manage.redis.PenaltyUserRedisRepository;
 import gg.pingpong.api.user.match.controller.response.MatchStatusResponseListDto;
 import gg.pingpong.api.user.match.controller.response.SlotStatusResponseListDto;

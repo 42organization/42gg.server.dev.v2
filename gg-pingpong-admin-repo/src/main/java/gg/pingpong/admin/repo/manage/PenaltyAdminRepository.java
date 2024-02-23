@@ -1,4 +1,4 @@
-package gg.pingpong.admin.repo.penalty;
+package gg.pingpong.admin.repo.manage;
 
 import java.time.LocalDateTime;
 import java.util.List;
