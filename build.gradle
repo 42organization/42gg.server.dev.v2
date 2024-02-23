@@ -54,8 +54,10 @@ subprojects {
 
         /* redis */
         implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-        implementation 'org.springframework.session:spring-session-data-redis'
         implementation 'org.redisson:redisson:3.17.3'
+
+        /* spring doc */
+        implementation 'org.springdoc:springdoc-openapi-ui:1.6.6'
 
         /* lombok */
         implementation 'org.projectlombok:lombok:1.18.26'
@@ -66,22 +68,10 @@ subprojects {
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
         testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 
-        /* SHA256 */
-        implementation 'com.google.guava:guava:31.0.1-jre'
-
-        /* When..? Error */
-        implementation 'org.apache.commons:commons-lang3:3.12.0'
-
         //test에서 lombok 사용
         testImplementation 'org.projectlombok:lombok'
         testCompileOnly 'org.projectlombok:lombok'
         testAnnotationProcessor 'org.projectlombok:lombok'
-
-        /* spring doc */
-        implementation 'org.springdoc:springdoc-openapi-ui:1.6.6'
-
-        /* flyway */
-        implementation 'org.flywaydb:flyway-core'
 
         /* elk-logstash */
         implementation 'net.logstash.logback:logstash-logback-encoder:6.3'

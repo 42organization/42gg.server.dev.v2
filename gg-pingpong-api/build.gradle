@@ -16,6 +16,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
+    implementation 'org.springframework.session:spring-session-data-redis'
+
     /* oauth */
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
@@ -25,9 +27,14 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-impl:0.11.2'
     implementation 'io.jsonwebtoken:jjwt-jackson:0.11.2'
 
+    /* StringUtils */
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+
     /* REST template */
     implementation 'org.apache.httpcomponents:httpcore:4.4.15'
     implementation 'org.apache.httpcomponents:httpclient:4.5.13'
+    /* HttpHeaders */
+    implementation 'com.google.guava:guava:31.0.1-jre'
 
     /* S3 Image Bucket */
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
