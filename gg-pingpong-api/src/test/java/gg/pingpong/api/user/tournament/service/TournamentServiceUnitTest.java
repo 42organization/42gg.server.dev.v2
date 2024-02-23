@@ -33,10 +33,10 @@ import gg.pingpong.api.user.tournament.controller.response.TournamentUserRegistr
 import gg.pingpong.api.user.user.dto.UserDto;
 import gg.pingpong.api.utils.ReflectionUtilsForUnitTest;
 import gg.pingpong.data.game.Game;
+import gg.pingpong.data.game.type.StatusType;
 import gg.pingpong.data.tournament.Tournament;
 import gg.pingpong.data.tournament.TournamentGame;
 import gg.pingpong.data.tournament.TournamentUser;
-import gg.pingpong.data.game.type.StatusType;
 import gg.pingpong.data.tournament.type.TournamentRound;
 import gg.pingpong.data.tournament.type.TournamentStatus;
 import gg.pingpong.data.tournament.type.TournamentType;

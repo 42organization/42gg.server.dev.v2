@@ -16,11 +16,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import gg.pingpong.data.tournament.type.TournamentStatus;
-import gg.pingpong.data.tournament.type.TournamentType;
 import gg.pingpong.data.tournament.Tournament;
 import gg.pingpong.data.tournament.TournamentGame;
 import gg.pingpong.data.tournament.TournamentUser;
+import gg.pingpong.data.tournament.type.TournamentStatus;
+import gg.pingpong.data.tournament.type.TournamentType;
 import gg.pingpong.data.user.User;
 import gg.pingpong.utils.annotation.UnitTest;
 import gg.pingpong.utils.exception.ErrorCode;

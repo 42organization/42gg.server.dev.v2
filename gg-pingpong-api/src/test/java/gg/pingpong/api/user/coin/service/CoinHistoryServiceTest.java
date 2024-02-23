@@ -12,8 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.user.store.service.CoinHistoryService;
-import gg.pingpong.data.store.CoinPolicy;
 import gg.pingpong.data.store.CoinHistory;
+import gg.pingpong.data.store.CoinPolicy;
 import gg.pingpong.data.user.User;
 import gg.pingpong.repo.store.CoinHistoryRepository;
 import gg.pingpong.repo.store.CoinPolicyRepository;

@@ -23,6 +23,7 @@ import gg.pingpong.api.user.tournament.controller.response.TournamentListRespons
 import gg.pingpong.api.user.tournament.controller.response.TournamentResponseDto;
 import gg.pingpong.api.user.tournament.controller.response.TournamentUserRegistrationResponseDto;
 import gg.pingpong.api.user.user.dto.UserDto;
+import gg.pingpong.data.noti.type.NotiType;
 import gg.pingpong.data.tournament.Tournament;
 import gg.pingpong.data.tournament.TournamentGame;
 import gg.pingpong.data.tournament.TournamentUser;
@@ -31,7 +32,6 @@ import gg.pingpong.data.tournament.type.TournamentRound;
 import gg.pingpong.data.tournament.type.TournamentStatus;
 import gg.pingpong.data.tournament.type.TournamentType;
 import gg.pingpong.data.tournament.type.TournamentUserStatus;
-import gg.pingpong.data.noti.type.NotiType;
 import gg.pingpong.data.user.User;
 import gg.pingpong.repo.game.GameRepository;
 import gg.pingpong.repo.game.out.GameTeamUser;

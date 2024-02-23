@@ -23,13 +23,13 @@ import gg.pingpong.api.admin.tournament.controller.request.TournamentAdminUpdate
 import gg.pingpong.api.global.config.ConstantConfig;
 import gg.pingpong.api.utils.ReflectionUtilsForUnitTest;
 import gg.pingpong.data.game.Game;
+import gg.pingpong.data.manage.SlotManagement;
 import gg.pingpong.data.tournament.Tournament;
 import gg.pingpong.data.tournament.TournamentGame;
 import gg.pingpong.data.tournament.TournamentUser;
 import gg.pingpong.data.tournament.type.TournamentRound;
 import gg.pingpong.data.tournament.type.TournamentStatus;
 import gg.pingpong.data.tournament.type.TournamentType;
-import gg.pingpong.data.manage.SlotManagement;
 import gg.pingpong.data.user.User;
 import gg.pingpong.data.user.type.RacketType;
 import gg.pingpong.data.user.type.RoleType;

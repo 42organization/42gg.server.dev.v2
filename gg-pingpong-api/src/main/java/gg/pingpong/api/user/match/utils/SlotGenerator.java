@@ -9,14 +9,14 @@ import java.util.Set;
 import gg.pingpong.api.user.match.controller.response.SlotStatusResponseListDto;
 import gg.pingpong.api.user.match.dto.SlotStatusDto;
 import gg.pingpong.data.game.Game;
-import gg.pingpong.data.season.Season;
-import gg.pingpong.data.rank.redis.RankRedis;
 import gg.pingpong.data.game.type.Mode;
 import gg.pingpong.data.manage.SlotManagement;
 import gg.pingpong.data.match.RedisMatchTime;
 import gg.pingpong.data.match.RedisMatchUser;
 import gg.pingpong.data.match.type.Option;
 import gg.pingpong.data.match.type.SlotStatus;
+import gg.pingpong.data.rank.redis.RankRedis;
+import gg.pingpong.data.season.Season;
 import lombok.Getter;
 
 @Getter

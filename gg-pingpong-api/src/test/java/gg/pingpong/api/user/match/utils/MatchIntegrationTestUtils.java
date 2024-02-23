@@ -10,13 +10,13 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 import gg.pingpong.data.game.Game;
-import gg.pingpong.data.season.Season;
 import gg.pingpong.data.game.Team;
+import gg.pingpong.data.manage.SlotManagement;
+import gg.pingpong.data.rank.redis.RankRedis;
+import gg.pingpong.data.season.Season;
 import gg.pingpong.data.tournament.Tournament;
 import gg.pingpong.data.tournament.TournamentGame;
-import gg.pingpong.data.rank.redis.RankRedis;
 import gg.pingpong.data.tournament.type.TournamentRound;
-import gg.pingpong.data.manage.SlotManagement;
 import gg.pingpong.data.user.User;
 import gg.pingpong.repo.game.GameRepository;
 import gg.pingpong.repo.manage.SlotManagementRepository;

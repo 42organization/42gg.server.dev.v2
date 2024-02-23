@@ -22,14 +22,14 @@ import gg.pingpong.api.user.tournament.controller.response.TournamentUserListRes
 import gg.pingpong.data.game.Game;
 import gg.pingpong.data.game.Team;
 import gg.pingpong.data.game.TeamUser;
+import gg.pingpong.data.game.type.StatusType;
+import gg.pingpong.data.manage.SlotManagement;
+import gg.pingpong.data.match.type.TournamentMatchStatus;
 import gg.pingpong.data.tournament.Tournament;
 import gg.pingpong.data.tournament.TournamentGame;
 import gg.pingpong.data.tournament.TournamentUser;
-import gg.pingpong.data.game.type.StatusType;
 import gg.pingpong.data.tournament.type.TournamentRound;
 import gg.pingpong.data.tournament.type.TournamentStatus;
-import gg.pingpong.data.manage.SlotManagement;
-import gg.pingpong.data.match.type.TournamentMatchStatus;
 import gg.pingpong.data.user.User;
 import gg.pingpong.repo.game.GameRepository;
 import gg.pingpong.repo.manage.SlotManagementRepository;
