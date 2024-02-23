@@ -5,8 +5,8 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import gg.pingpong.data.game.TournamentGame;
-import gg.pingpong.data.game.type.TournamentRound;
+import gg.pingpong.data.tournament.TournamentGame;
+import gg.pingpong.data.tournament.type.TournamentRound;
 
 public interface TournamentGameRepository extends JpaRepository<TournamentGame, Long> {
 	List<TournamentGame> findAllByTournamentId(Long tournamentId);

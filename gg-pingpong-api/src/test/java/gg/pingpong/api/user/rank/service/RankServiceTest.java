@@ -21,7 +21,7 @@ import gg.pingpong.api.user.rank.controller.response.ExpRankPageResponseDto;
 import gg.pingpong.api.user.rank.controller.response.RankPageResponseDto;
 import gg.pingpong.api.user.season.service.SeasonFindService;
 import gg.pingpong.api.user.user.dto.UserDto;
-import gg.pingpong.data.game.Season;
+import gg.pingpong.data.season.Season;
 import gg.pingpong.data.user.User;
 import gg.pingpong.repo.rank.RankRepository;
 import gg.pingpong.repo.rank.RankV2Dto;

@@ -22,6 +22,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import gg.pingpong.data.game.type.Mode;
 import gg.pingpong.data.game.type.StatusType;
+import gg.pingpong.data.season.Season;
 import gg.pingpong.utils.exception.BusinessChecker;
 import gg.pingpong.utils.exception.ErrorCode;
 import lombok.AllArgsConstructor;

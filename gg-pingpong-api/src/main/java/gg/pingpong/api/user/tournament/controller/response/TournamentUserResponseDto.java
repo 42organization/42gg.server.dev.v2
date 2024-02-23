@@ -2,7 +2,7 @@ package gg.pingpong.api.user.tournament.controller.response;
 
 import java.time.LocalDateTime;
 
-import gg.pingpong.data.game.TournamentUser;
+import gg.pingpong.data.tournament.TournamentUser;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.pingpong.data.game.Game;
-import gg.pingpong.data.game.Season;
+import gg.pingpong.data.season.Season;
 import gg.pingpong.repo.game.GameRepository;
 import gg.pingpong.repo.season.SeasonRepository;
 import gg.pingpong.utils.exception.game.GameNotExistException;

@@ -24,7 +24,7 @@ import gg.pingpong.api.admin.rank.service.RankAdminService;
 import gg.pingpong.api.admin.rank.service.RankRedisAdminService;
 import gg.pingpong.api.admin.season.controller.request.SeasonCreateRequestDto;
 import gg.pingpong.api.admin.season.controller.request.SeasonUpdateRequestDto;
-import gg.pingpong.data.game.Season;
+import gg.pingpong.data.season.Season;
 import gg.pingpong.utils.annotation.UnitTest;
 import gg.pingpong.utils.exception.season.SeasonForbiddenException;
 import gg.pingpong.utils.exception.season.SeasonNotFoundException;

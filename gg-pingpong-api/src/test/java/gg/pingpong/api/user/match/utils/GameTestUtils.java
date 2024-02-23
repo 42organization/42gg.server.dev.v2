@@ -3,7 +3,7 @@ package gg.pingpong.api.user.match.utils;
 import java.time.LocalDateTime;
 
 import gg.pingpong.data.game.Game;
-import gg.pingpong.data.game.Season;
+import gg.pingpong.data.season.Season;
 import gg.pingpong.data.game.Team;
 import gg.pingpong.data.game.TeamUser;
 import gg.pingpong.data.game.type.Mode;

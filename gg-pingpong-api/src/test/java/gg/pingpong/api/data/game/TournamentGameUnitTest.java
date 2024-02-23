@@ -9,10 +9,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import gg.pingpong.data.game.Game;
-import gg.pingpong.data.game.Tournament;
-import gg.pingpong.data.game.TournamentGame;
-import gg.pingpong.data.game.type.TournamentStatus;
-import gg.pingpong.data.game.type.TournamentType;
+import gg.pingpong.data.tournament.Tournament;
+import gg.pingpong.data.tournament.TournamentGame;
+import gg.pingpong.data.tournament.type.TournamentStatus;
+import gg.pingpong.data.tournament.type.TournamentType;
 import gg.pingpong.utils.annotation.UnitTest;
 
 @UnitTest

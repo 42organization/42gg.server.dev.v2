@@ -23,7 +23,7 @@ import gg.pingpong.api.user.manage.redis.PenaltyUserRedisRepository;
 import gg.pingpong.api.user.match.utils.MatchIntegrationTestUtils;
 import gg.pingpong.api.user.user.dto.UserDto;
 import gg.pingpong.data.game.Game;
-import gg.pingpong.data.game.Season;
+import gg.pingpong.data.season.Season;
 import gg.pingpong.data.manage.SlotManagement;
 import gg.pingpong.data.manage.type.PenaltyKey;
 import gg.pingpong.data.match.type.Option;

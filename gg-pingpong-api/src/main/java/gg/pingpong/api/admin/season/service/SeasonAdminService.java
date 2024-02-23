@@ -13,7 +13,7 @@ import gg.pingpong.api.admin.rank.service.RankRedisAdminService;
 import gg.pingpong.api.admin.season.controller.request.SeasonCreateRequestDto;
 import gg.pingpong.api.admin.season.controller.request.SeasonUpdateRequestDto;
 import gg.pingpong.api.admin.season.dto.SeasonAdminDto;
-import gg.pingpong.data.game.Season;
+import gg.pingpong.data.season.Season;
 import gg.pingpong.utils.exception.season.SeasonForbiddenException;
 import gg.pingpong.utils.exception.season.SeasonNotFoundException;
 import gg.pingpong.utils.exception.season.SeasonTimeBeforeException;

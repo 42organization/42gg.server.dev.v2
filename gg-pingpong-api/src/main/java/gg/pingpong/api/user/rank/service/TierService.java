@@ -6,9 +6,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.pingpong.data.game.Rank;
-import gg.pingpong.data.game.Season;
-import gg.pingpong.data.game.Tier;
+import gg.pingpong.data.rank.Rank;
+import gg.pingpong.data.season.Season;
+import gg.pingpong.data.rank.Tier;
 import gg.pingpong.repo.rank.RankRepository;
 import gg.pingpong.repo.rank.TierRepository;
 import lombok.RequiredArgsConstructor;

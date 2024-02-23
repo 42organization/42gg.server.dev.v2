@@ -1,6 +1,6 @@
 package gg.pingpong.api.user.match.service;
 
-import static gg.pingpong.data.game.type.RoundNumber.*;
+import static gg.pingpong.data.tournament.type.RoundNumber.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -25,12 +25,12 @@ import gg.pingpong.api.user.match.utils.MatchIntegrationTestUtils;
 import gg.pingpong.api.user.match.utils.TournamentGameTestUtils;
 import gg.pingpong.data.game.Game;
 import gg.pingpong.data.game.Team;
-import gg.pingpong.data.game.Tournament;
-import gg.pingpong.data.game.TournamentGame;
-import gg.pingpong.data.game.type.RoundNumber;
+import gg.pingpong.data.tournament.Tournament;
+import gg.pingpong.data.tournament.TournamentGame;
+import gg.pingpong.data.tournament.type.RoundNumber;
 import gg.pingpong.data.game.type.StatusType;
-import gg.pingpong.data.game.type.TournamentRound;
-import gg.pingpong.data.game.type.TournamentStatus;
+import gg.pingpong.data.tournament.type.TournamentRound;
+import gg.pingpong.data.tournament.type.TournamentStatus;
 import gg.pingpong.data.match.type.TournamentMatchStatus;
 import gg.pingpong.data.user.User;
 import gg.pingpong.repo.game.GameRepository;

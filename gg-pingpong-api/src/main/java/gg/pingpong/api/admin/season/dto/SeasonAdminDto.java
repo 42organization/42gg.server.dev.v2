@@ -3,7 +3,7 @@ package gg.pingpong.api.admin.season.dto;
 import java.time.LocalDateTime;
 
 import gg.pingpong.api.admin.season.type.SeasonStatus;
-import gg.pingpong.data.game.Season;
+import gg.pingpong.data.season.Season;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

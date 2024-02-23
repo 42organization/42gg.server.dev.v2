@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import gg.pingpong.data.game.Tier;
+import gg.pingpong.data.rank.Tier;
 
 public interface TierRepository extends JpaRepository<Tier, Long> {
 

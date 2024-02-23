@@ -21,7 +21,7 @@ import gg.pingpong.admin.repo.store.CoinPolicyAdminRepository;
 import gg.pingpong.api.admin.store.controller.response.CoinPolicyAdminListResponseDto;
 import gg.pingpong.api.admin.store.dto.CoinPolicyAdminAddDto;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
-import gg.pingpong.data.manage.CoinPolicy;
+import gg.pingpong.data.store.CoinPolicy;
 import gg.pingpong.data.user.User;
 import gg.pingpong.utils.TestDataUtils;
 import gg.pingpong.utils.annotation.IntegrationTest;

@@ -3,7 +3,7 @@ package gg.pingpong.api.user.match.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import gg.pingpong.data.game.Season;
+import gg.pingpong.data.season.Season;
 import gg.pingpong.data.game.type.Mode;
 import gg.pingpong.data.match.RedisMatchUser;
 import gg.pingpong.data.match.type.Option;

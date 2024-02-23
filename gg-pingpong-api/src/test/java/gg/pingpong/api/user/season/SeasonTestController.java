@@ -22,7 +22,7 @@ import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.user.season.controller.response.SeasonListResDto;
 import gg.pingpong.api.user.season.controller.response.SeasonResDto;
 import gg.pingpong.api.user.season.service.SeasonService;
-import gg.pingpong.data.game.Season;
+import gg.pingpong.data.season.Season;
 import gg.pingpong.repo.season.SeasonRepository;
 import gg.pingpong.utils.TestDataUtils;
 import gg.pingpong.utils.annotation.IntegrationTest;

@@ -11,7 +11,7 @@ import gg.pingpong.api.admin.store.controller.response.CoinPolicyAdminListRespon
 import gg.pingpong.api.admin.store.controller.response.CoinPolicyAdminResponseDto;
 import gg.pingpong.api.admin.store.dto.CoinPolicyAdminAddDto;
 import gg.pingpong.api.user.user.dto.UserDto;
-import gg.pingpong.data.manage.CoinPolicy;
+import gg.pingpong.data.store.CoinPolicy;
 import gg.pingpong.data.user.User;
 import gg.pingpong.utils.exception.user.UserNotFoundException;
 import lombok.AllArgsConstructor;
