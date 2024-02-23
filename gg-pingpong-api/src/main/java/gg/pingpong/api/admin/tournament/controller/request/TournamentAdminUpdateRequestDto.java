@@ -2,8 +2,6 @@ package gg.pingpong.api.admin.tournament.controller.request;
 
 import java.time.LocalDateTime;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
@@ -37,6 +35,5 @@ public class TournamentAdminUpdateRequestDto {
 	private LocalDateTime endTime;
 
 	@NotNull(message = "토너먼트 종류가 필요합니다.")
-	@Enumerated(EnumType.STRING)
 	private TournamentType type;
 }

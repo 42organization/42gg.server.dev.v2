@@ -18,7 +18,7 @@ public class SwaggerConfig {
 		return GroupedOpenApi.builder()
 			.group("pingpong")
 			.pathsToMatch("/pingpong/**")
-			.packagesToScan("com.gg.server.domain")
+			.packagesToScan("gg.pingpong.api.user")
 			.build();
 	}
 
