@@ -1,4 +1,4 @@
-package gg.pingpong.admin.repo.receipt;
+package gg.pingpong.admin.repo.store;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

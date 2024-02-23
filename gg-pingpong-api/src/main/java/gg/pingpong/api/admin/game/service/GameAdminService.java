@@ -15,10 +15,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.pingpong.admin.repo.game.GameAdminRepository;
-import gg.pingpong.admin.repo.game.GameTeamUser;
-import gg.pingpong.admin.repo.pchange.PChangeAdminRepository;
+import gg.pingpong.admin.repo.game.PChangeAdminRepository;
+import gg.pingpong.admin.repo.game.TeamUserAdminRepository;
+import gg.pingpong.admin.repo.game.out.GameTeamUser;
 import gg.pingpong.admin.repo.season.SeasonAdminRepository;
-import gg.pingpong.admin.repo.team.TeamUserAdminRepository;
 import gg.pingpong.admin.repo.user.UserAdminRepository;
 import gg.pingpong.api.admin.game.controller.response.GameLogListAdminResponseDto;
 import gg.pingpong.api.admin.game.dto.GameLogAdminDto;

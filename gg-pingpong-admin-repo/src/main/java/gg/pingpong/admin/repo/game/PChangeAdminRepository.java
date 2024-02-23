@@ -1,4 +1,4 @@
-package gg.pingpong.admin.repo.pchange;
+package gg.pingpong.admin.repo.game;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

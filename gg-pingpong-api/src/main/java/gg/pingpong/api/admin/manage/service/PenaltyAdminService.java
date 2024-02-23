@@ -9,8 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.pingpong.admin.repo.penalty.PenaltyAdminRepository;
-import gg.pingpong.admin.repo.penalty.PenaltyUserAdminRedisRepository;
+import gg.pingpong.admin.repo.manage.PenaltyAdminRepository;
+import gg.pingpong.admin.repo.manage.PenaltyUserAdminRedisRepository;
 import gg.pingpong.api.admin.manage.controller.response.PenaltyListResponseDto;
 import gg.pingpong.api.admin.manage.controller.response.PenaltyUserResponseDto;
 import gg.pingpong.api.user.user.service.UserFindService;

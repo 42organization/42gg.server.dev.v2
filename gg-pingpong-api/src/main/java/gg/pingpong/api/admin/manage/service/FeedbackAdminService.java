@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.pingpong.admin.repo.feedback.FeedbackAdminRepository;
+import gg.pingpong.admin.repo.manage.FeedbackAdminRepository;
 import gg.pingpong.api.admin.manage.controller.response.FeedbackAdminResponseDto;
 import gg.pingpong.api.admin.manage.controller.response.FeedbackListAdminResponseDto;
 import gg.pingpong.data.manage.Feedback;

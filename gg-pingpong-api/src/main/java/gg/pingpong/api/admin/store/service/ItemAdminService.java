@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import gg.pingpong.admin.repo.item.ItemAdminRepository;
+import gg.pingpong.admin.repo.store.ItemAdminRepository;
 import gg.pingpong.api.admin.store.controller.request.ItemUpdateRequestDto;
 import gg.pingpong.api.admin.store.controller.response.ItemHistoryResponseDto;
 import gg.pingpong.api.admin.store.controller.response.ItemListResponseDto;

@@ -14,7 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
-import gg.pingpong.admin.repo.receipt.ReceiptAdminRepository;
+import gg.pingpong.admin.repo.store.ReceiptAdminRepository;
 import gg.pingpong.api.admin.store.service.ReceiptAdminService;
 import gg.pingpong.data.store.Receipt;
 import gg.pingpong.utils.annotation.UnitTest;
