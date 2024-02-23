@@ -34,7 +34,7 @@ import gg.pingpong.data.game.type.TournamentStatus;
 import gg.pingpong.data.match.type.TournamentMatchStatus;
 import gg.pingpong.data.user.User;
 import gg.pingpong.repo.game.GameRepository;
-import gg.pingpong.repo.slotmanagement.SlotManagementRepository;
+import gg.pingpong.repo.manage.SlotManagementRepository;
 import gg.pingpong.utils.TestDataUtils;
 import gg.pingpong.utils.annotation.IntegrationTest;
 import gg.pingpong.utils.exception.match.EnrolledSlotException;

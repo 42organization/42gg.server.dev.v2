@@ -16,7 +16,7 @@ import gg.pingpong.api.user.noti.service.sns.SlackbotService;
 import gg.pingpong.api.user.user.dto.UserDto;
 import gg.pingpong.data.noti.Noti;
 import gg.pingpong.data.user.type.SnsType;
-import gg.pingpong.repo.game.GameUser;
+import gg.pingpong.repo.game.out.GameUser;
 import gg.pingpong.utils.annotation.UnitTest;
 
 @UnitTest

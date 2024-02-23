@@ -1,4 +1,4 @@
-package gg.pingpong.repo.slotmanagement;
+package gg.pingpong.repo.manage;
 
 import java.time.LocalDateTime;
 import java.util.List;

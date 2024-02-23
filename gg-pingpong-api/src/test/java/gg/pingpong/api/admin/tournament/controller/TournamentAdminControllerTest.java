@@ -38,7 +38,7 @@ import gg.pingpong.data.game.type.TournamentRound;
 import gg.pingpong.data.game.type.TournamentStatus;
 import gg.pingpong.data.game.type.TournamentType;
 import gg.pingpong.data.user.User;
-import gg.pingpong.repo.pchange.PChangeRepository;
+import gg.pingpong.repo.game.PChangeRepository;
 import gg.pingpong.repo.tournarment.TournamentGameRepository;
 import gg.pingpong.repo.tournarment.TournamentRepository;
 import gg.pingpong.repo.tournarment.TournamentUserRepository;

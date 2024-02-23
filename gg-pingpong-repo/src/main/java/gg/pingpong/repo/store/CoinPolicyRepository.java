@@ -1,4 +1,4 @@
-package gg.pingpong.repo.coin;
+package gg.pingpong.repo.store;
 
 import java.util.Optional;
 

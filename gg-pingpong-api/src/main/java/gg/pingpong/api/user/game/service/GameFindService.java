@@ -16,7 +16,7 @@ import gg.pingpong.data.game.Game;
 import gg.pingpong.data.game.type.Mode;
 import gg.pingpong.data.game.type.StatusType;
 import gg.pingpong.repo.game.GameRepository;
-import gg.pingpong.repo.game.GameTeamUser;
+import gg.pingpong.repo.game.out.GameTeamUser;
 import gg.pingpong.utils.exception.game.GameNotExistException;
 import lombok.RequiredArgsConstructor;
 

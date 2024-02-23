@@ -1,4 +1,4 @@
-package gg.pingpong.repo.team;
+package gg.pingpong.repo.game;
 
 import java.util.List;
 

@@ -17,6 +17,9 @@ import org.springframework.data.repository.query.Param;
 import gg.pingpong.data.game.Game;
 import gg.pingpong.data.game.type.Mode;
 import gg.pingpong.data.game.type.StatusType;
+import gg.pingpong.repo.game.out.GameTeamUser;
+import gg.pingpong.repo.game.out.GameTeamUserInfo;
+import gg.pingpong.repo.game.out.GameUser;
 
 public interface GameRepository extends JpaRepository<Game, Long>, GameRepositoryCustom {
 	Slice<Game> findAllByModeAndStatus(Mode mode, StatusType status, Pageable pageable);

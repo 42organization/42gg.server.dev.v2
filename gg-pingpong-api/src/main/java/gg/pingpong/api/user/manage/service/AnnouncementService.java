@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import gg.pingpong.api.user.manage.dto.AnnouncementDto;
 import gg.pingpong.data.manage.Announcement;
-import gg.pingpong.repo.announcement.AnnouncementRepository;
+import gg.pingpong.repo.manage.AnnouncementRepository;
 import gg.pingpong.utils.exception.announcement.AnnounceNotFoundException;
 import lombok.RequiredArgsConstructor;
 

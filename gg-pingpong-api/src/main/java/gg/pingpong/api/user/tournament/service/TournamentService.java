@@ -34,7 +34,7 @@ import gg.pingpong.data.game.type.TournamentUserStatus;
 import gg.pingpong.data.noti.type.NotiType;
 import gg.pingpong.data.user.User;
 import gg.pingpong.repo.game.GameRepository;
-import gg.pingpong.repo.game.GameTeamUser;
+import gg.pingpong.repo.game.out.GameTeamUser;
 import gg.pingpong.repo.tournarment.TournamentGameRepository;
 import gg.pingpong.repo.tournarment.TournamentRepository;
 import gg.pingpong.repo.tournarment.TournamentUserRepository;

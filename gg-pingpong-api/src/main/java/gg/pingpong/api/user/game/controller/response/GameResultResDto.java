@@ -11,7 +11,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import gg.pingpong.api.user.game.dto.TeamUserInfoDto;
 import gg.pingpong.api.user.game.dto.TeamUserListDto;
 import gg.pingpong.data.game.type.Mode;
-import gg.pingpong.repo.game.GameTeamUser;
+import gg.pingpong.repo.game.out.GameTeamUser;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

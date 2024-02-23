@@ -35,7 +35,7 @@ import gg.pingpong.data.user.type.RacketType;
 import gg.pingpong.data.user.type.RoleType;
 import gg.pingpong.data.user.type.SnsType;
 import gg.pingpong.repo.game.GameRepository;
-import gg.pingpong.repo.slotmanagement.SlotManagementRepository;
+import gg.pingpong.repo.manage.SlotManagementRepository;
 import gg.pingpong.repo.tournarment.TournamentGameRepository;
 import gg.pingpong.repo.tournarment.TournamentRepository;
 import gg.pingpong.repo.tournarment.TournamentUserRepository;

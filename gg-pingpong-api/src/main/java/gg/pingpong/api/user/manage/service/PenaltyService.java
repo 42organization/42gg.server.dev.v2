@@ -12,7 +12,7 @@ import gg.pingpong.data.manage.Penalty;
 import gg.pingpong.data.manage.redis.RedisPenaltyUser;
 import gg.pingpong.data.manage.type.PenaltyType;
 import gg.pingpong.data.user.User;
-import gg.pingpong.repo.penalty.PenaltyRepository;
+import gg.pingpong.repo.manage.PenaltyRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service

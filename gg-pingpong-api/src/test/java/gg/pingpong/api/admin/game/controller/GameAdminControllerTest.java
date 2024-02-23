@@ -37,7 +37,7 @@ import gg.pingpong.data.game.Tier;
 import gg.pingpong.data.game.type.Mode;
 import gg.pingpong.data.user.User;
 import gg.pingpong.repo.game.GameRepository;
-import gg.pingpong.repo.game.GameTeamUser;
+import gg.pingpong.repo.game.out.GameTeamUser;
 import gg.pingpong.repo.rank.RankRepository;
 import gg.pingpong.repo.rank.redis.RankRedisRepository;
 import gg.pingpong.repo.user.UserRepository;

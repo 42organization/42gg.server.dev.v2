@@ -1,4 +1,4 @@
-package gg.pingpong.repo.receipt;
+package gg.pingpong.repo.store;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,4 +1,4 @@
-package gg.pingpong.repo.item;
+package gg.pingpong.repo.store;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
