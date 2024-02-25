@@ -39,7 +39,7 @@ public class UserFindService {
 	 * intraId를 통해 유저를 조회, 반환
 	 *
 	 * @throw UserNotFoundException
-	 * @param userId
+	 * @param intraId
 	 * @return User
 	 */
 	@Transactional(readOnly = true)
@@ -47,6 +47,12 @@ public class UserFindService {
 		return userRepository.findByIntraId(intraId).orElseThrow(UserNotFoundException::new);
 	}
 
+	/**
+	 * 유저 정보가 랭크 데이터에 존재할 경우 상태메시지 반환, 없을 경우 빈 문자열 반환
+	 *
+	 * @param targetUser
+	 * @return statusMessage
+	 */
 	@Transactional(readOnly = true)
 	public String getUserStatusMessage(User targetUser) {
 		Season currentSeason = seasonFindService.findCurrentSeason(LocalDateTime.now());
