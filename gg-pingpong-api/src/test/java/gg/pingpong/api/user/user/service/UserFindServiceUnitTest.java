@@ -60,4 +60,35 @@ class UserFindServiceUnitTest {
 				.isInstanceOf(UserNotFoundException.class);
 		}
 	}
+
+	@Nested
+	@DisplayName("FindByIntraId")
+	class FindByIntraId {
+		@Test
+		@DisplayName("유저 조회 성공")
+		void userExist() {
+			//Arrange
+			User user = Mockito.mock(User.class);
+			String intraId = "dummy";
+			Mockito.when(userRepository.findByIntraId(intraId)).thenReturn(Optional.of(user));
+
+			//Act
+			User findUser = userFindService.findByIntraId(intraId);
+
+			//Assert
+			Assertions.assertThat(user).isEqualTo(findUser);
+		}
+
+		@Test
+		@DisplayName("유저 조회 실패 후 UserNotFoundException 반환")
+		void userNotFound() {
+			//Arrange
+			String intraId = "dummy";
+			Mockito.when(userRepository.findByIntraId(Mockito.any(String.class))).thenReturn(Optional.empty());
+
+			//Act, Assert
+			assertThatThrownBy(() -> userFindService.findByIntraId(intraId))
+				.isInstanceOf(UserNotFoundException.class);
+		}
+	}
 }
