@@ -35,6 +35,13 @@ public class UserFindService {
 		return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 	}
 
+	/**
+	 * intraId를 통해 유저를 조회, 반환
+	 *
+	 * @throw UserNotFoundException
+	 * @param userId
+	 * @return User
+	 */
 	@Transactional(readOnly = true)
 	public User findByIntraId(String intraId) {
 		return userRepository.findByIntraId(intraId).orElseThrow(UserNotFoundException::new);
