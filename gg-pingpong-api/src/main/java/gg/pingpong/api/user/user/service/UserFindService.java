@@ -23,6 +23,13 @@ public class UserFindService {
 	private final SeasonFindService seasonFindService;
 	private final RankRedisRepository rankRedisRepository;
 
+	/**
+	 * userId를 통해 유저를 조회, 반환
+	 *
+	 * @throw UserNotFoundException
+	 * @param userId
+	 * @return User
+	 */
 	@Transactional(readOnly = true)
 	public User findUserById(Long userId) {
 		return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
