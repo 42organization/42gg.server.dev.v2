@@ -15,13 +15,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gg.data.manage.Feedback;
+import gg.data.manage.type.FeedbackType;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.user.manage.controller.request.FeedbackRequestDto;
-import gg.pingpong.data.manage.Feedback;
-import gg.pingpong.data.manage.type.FeedbackType;
-import gg.pingpong.repo.manage.FeedbackRepository;
-import gg.pingpong.utils.TestDataUtils;
-import gg.pingpong.utils.annotation.IntegrationTest;
+import gg.repo.manage.FeedbackRepository;
+import gg.utils.TestDataUtils;
+import gg.utils.annotation.IntegrationTest;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

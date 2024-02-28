@@ -17,17 +17,17 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
+import gg.data.season.Season;
+import gg.data.user.User;
 import gg.pingpong.api.user.rank.controller.response.ExpRankPageResponseDto;
 import gg.pingpong.api.user.rank.controller.response.RankPageResponseDto;
 import gg.pingpong.api.user.season.service.SeasonFindService;
 import gg.pingpong.api.user.user.dto.UserDto;
-import gg.pingpong.data.season.Season;
-import gg.pingpong.data.user.User;
-import gg.pingpong.repo.rank.RankRepository;
-import gg.pingpong.repo.rank.RankV2Dto;
-import gg.pingpong.repo.rank.redis.RankRedisRepository;
-import gg.pingpong.repo.user.ExpRankV2Dto;
-import gg.pingpong.repo.user.UserRepository;
+import gg.repo.rank.RankRepository;
+import gg.repo.rank.RankV2Dto;
+import gg.repo.rank.redis.RankRedisRepository;
+import gg.repo.user.ExpRankV2Dto;
+import gg.repo.user.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
 class RankServiceTest {

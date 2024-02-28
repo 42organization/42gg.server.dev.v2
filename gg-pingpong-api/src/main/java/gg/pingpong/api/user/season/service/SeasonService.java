@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 
 import gg.pingpong.api.user.season.controller.response.SeasonResDto;
 import gg.pingpong.api.user.season.dto.CurSeason;
-import gg.pingpong.repo.season.SeasonRepository;
-import gg.pingpong.utils.exception.season.SeasonNotFoundException;
+import gg.repo.season.SeasonRepository;
+import gg.utils.exception.season.SeasonNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service

@@ -1,7 +1,7 @@
 rootProject.name = 'server'
-include 'gg-pingpong-data'
-include 'gg-pingpong-admin-repo'
-include 'gg-pingpong-repo'
+include 'gg-data'
+include 'gg-admin-repo'
+include 'gg-repo'
 include 'gg-pingpong-api'
-include 'gg-pingpong-utils'
+include 'gg-utils'
 

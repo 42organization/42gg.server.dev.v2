@@ -1,11 +1,11 @@
 package gg.pingpong.api.user.user.controller.response;
 
+import gg.data.rank.Tier;
+import gg.data.user.User;
+import gg.data.user.type.BackgroundType;
+import gg.data.user.type.EdgeType;
+import gg.data.user.type.SnsType;
 import gg.pingpong.api.global.utils.ExpLevelCalculator;
-import gg.pingpong.data.rank.Tier;
-import gg.pingpong.data.user.User;
-import gg.pingpong.data.user.type.BackgroundType;
-import gg.pingpong.data.user.type.EdgeType;
-import gg.pingpong.data.user.type.SnsType;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

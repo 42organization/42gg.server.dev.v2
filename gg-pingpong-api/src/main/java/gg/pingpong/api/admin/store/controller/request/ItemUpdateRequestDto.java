@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotNull;
 
-import gg.pingpong.data.store.Item;
-import gg.pingpong.data.store.type.ItemType;
+import gg.data.store.Item;
+import gg.data.store.type.ItemType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

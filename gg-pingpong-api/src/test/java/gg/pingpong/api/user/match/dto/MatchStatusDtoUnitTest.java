@@ -11,10 +11,10 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import gg.pingpong.data.game.Game;
-import gg.pingpong.data.game.type.Mode;
-import gg.pingpong.data.manage.SlotManagement;
-import gg.pingpong.utils.annotation.UnitTest;
+import gg.data.game.Game;
+import gg.data.game.type.Mode;
+import gg.data.manage.SlotManagement;
+import gg.utils.annotation.UnitTest;
 
 @UnitTest
 class MatchStatusDtoUnitTest {

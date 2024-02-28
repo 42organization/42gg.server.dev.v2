@@ -20,22 +20,22 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gg.data.tournament.Tournament;
+import gg.data.tournament.TournamentUser;
+import gg.data.tournament.type.TournamentStatus;
+import gg.data.tournament.type.TournamentType;
+import gg.data.user.User;
+import gg.data.user.type.RacketType;
+import gg.data.user.type.RoleType;
+import gg.data.user.type.SnsType;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.user.tournament.controller.response.TournamentListResponseDto;
 import gg.pingpong.api.user.tournament.controller.response.TournamentResponseDto;
-import gg.pingpong.data.tournament.Tournament;
-import gg.pingpong.data.tournament.TournamentUser;
-import gg.pingpong.data.tournament.type.TournamentStatus;
-import gg.pingpong.data.tournament.type.TournamentType;
-import gg.pingpong.data.user.User;
-import gg.pingpong.data.user.type.RacketType;
-import gg.pingpong.data.user.type.RoleType;
-import gg.pingpong.data.user.type.SnsType;
-import gg.pingpong.repo.tournarment.TournamentUserRepository;
-import gg.pingpong.utils.TestDataUtils;
-import gg.pingpong.utils.annotation.IntegrationTest;
-import gg.pingpong.utils.exception.ErrorCode;
-import gg.pingpong.utils.exception.custom.CustomRuntimeException;
+import gg.repo.tournarment.TournamentUserRepository;
+import gg.utils.TestDataUtils;
+import gg.utils.annotation.IntegrationTest;
+import gg.utils.exception.ErrorCode;
+import gg.utils.exception.custom.CustomRuntimeException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

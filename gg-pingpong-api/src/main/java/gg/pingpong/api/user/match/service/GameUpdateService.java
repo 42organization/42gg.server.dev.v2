@@ -5,23 +5,23 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import gg.data.game.Game;
+import gg.data.game.Team;
+import gg.data.game.TeamUser;
+import gg.data.manage.SlotManagement;
+import gg.data.noti.Noti;
+import gg.data.user.User;
 import gg.pingpong.api.user.match.dto.GameAddDto;
 import gg.pingpong.api.user.noti.service.NotiService;
 import gg.pingpong.api.user.noti.service.SnsNotiService;
 import gg.pingpong.api.user.user.dto.UserDto;
-import gg.pingpong.data.game.Game;
-import gg.pingpong.data.game.Team;
-import gg.pingpong.data.game.TeamUser;
-import gg.pingpong.data.manage.SlotManagement;
-import gg.pingpong.data.noti.Noti;
-import gg.pingpong.data.user.User;
-import gg.pingpong.repo.game.GameRepository;
-import gg.pingpong.repo.game.TeamRepository;
-import gg.pingpong.repo.game.TeamUserRepository;
-import gg.pingpong.repo.manage.SlotManagementRepository;
-import gg.pingpong.repo.user.UserRepository;
-import gg.pingpong.utils.exception.match.SlotNotFoundException;
-import gg.pingpong.utils.exception.user.UserNotFoundException;
+import gg.repo.game.GameRepository;
+import gg.repo.game.TeamRepository;
+import gg.repo.game.TeamUserRepository;
+import gg.repo.manage.SlotManagementRepository;
+import gg.repo.user.UserRepository;
+import gg.utils.exception.match.SlotNotFoundException;
+import gg.utils.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service

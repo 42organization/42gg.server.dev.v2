@@ -15,17 +15,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
+import gg.data.manage.SlotManagement;
+import gg.data.tournament.Tournament;
+import gg.data.tournament.TournamentGame;
+import gg.data.tournament.type.TournamentStatus;
 import gg.pingpong.api.admin.noti.controller.request.SendNotiAdminRequestDto;
 import gg.pingpong.api.admin.noti.service.NotiAdminService;
 import gg.pingpong.api.user.tournament.service.TournamentService;
-import gg.pingpong.data.manage.SlotManagement;
-import gg.pingpong.data.tournament.Tournament;
-import gg.pingpong.data.tournament.TournamentGame;
-import gg.pingpong.data.tournament.type.TournamentStatus;
-import gg.pingpong.repo.manage.SlotManagementRepository;
-import gg.pingpong.repo.tournarment.TournamentGameRepository;
-import gg.pingpong.utils.TestDataUtils;
-import gg.pingpong.utils.annotation.IntegrationTest;
+import gg.repo.manage.SlotManagementRepository;
+import gg.repo.tournarment.TournamentGameRepository;
+import gg.utils.TestDataUtils;
+import gg.utils.annotation.IntegrationTest;
 
 @IntegrationTest
 @Transactional

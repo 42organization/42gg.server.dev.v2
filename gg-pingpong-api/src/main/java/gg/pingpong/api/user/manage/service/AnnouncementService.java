@@ -3,10 +3,10 @@ package gg.pingpong.api.user.manage.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import gg.data.manage.Announcement;
 import gg.pingpong.api.user.manage.dto.AnnouncementDto;
-import gg.pingpong.data.manage.Announcement;
-import gg.pingpong.repo.manage.AnnouncementRepository;
-import gg.pingpong.utils.exception.announcement.AnnounceNotFoundException;
+import gg.repo.manage.AnnouncementRepository;
+import gg.utils.exception.announcement.AnnounceNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service

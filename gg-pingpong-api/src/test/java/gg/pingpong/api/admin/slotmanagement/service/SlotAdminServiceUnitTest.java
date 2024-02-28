@@ -18,12 +18,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
-import gg.pingpong.admin.repo.manage.AdminSlotManagementsRepository;
+import gg.admin.repo.manage.AdminSlotManagementsRepository;
+import gg.data.manage.SlotManagement;
 import gg.pingpong.api.admin.manage.controller.request.SlotCreateRequestDto;
 import gg.pingpong.api.admin.manage.service.SlotAdminService;
-import gg.pingpong.data.manage.SlotManagement;
-import gg.pingpong.utils.annotation.UnitTest;
-import gg.pingpong.utils.exception.slotmanagement.SlotManagementForbiddenException;
+import gg.utils.annotation.UnitTest;
+import gg.utils.exception.slotmanagement.SlotManagementForbiddenException;
 
 @UnitTest
 class SlotAdminServiceUnitTest {

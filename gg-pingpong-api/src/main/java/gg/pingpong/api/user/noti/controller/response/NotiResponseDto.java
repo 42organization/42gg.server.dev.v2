@@ -3,8 +3,8 @@ package gg.pingpong.api.user.noti.controller.response;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import gg.pingpong.data.noti.Noti;
-import gg.pingpong.data.noti.type.NotiType;
+import gg.data.noti.Noti;
+import gg.data.noti.type.NotiType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

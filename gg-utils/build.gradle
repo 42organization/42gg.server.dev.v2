@@ -1,0 +1,103 @@
+plugins {
+    id 'java'
+    id 'java-test-fixtures'
+    id 'jacoco-report-aggregation'
+}
+
+group 'gg.pingpong.utils'
+version '42gg'
+
+repositories {
+    mavenCentral()
+}
+
+reporting {
+    reports {
+        unitTestCoverageReport(JacocoCoverageReport) {
+            testType = TestSuiteType.UNIT_TEST
+        }
+    }
+}
+
+reporting {
+    reports {
+        integrationTestCoverageReport(JacocoCoverageReport) {
+            testType = TestSuiteType.UNIT_TEST
+        }
+    }
+}
+
+def jacocoExcludes = [
+        '*Application*',
+        "**/config/*",
+        "**/security/*",
+        "**/dto/*",
+        "**/aws/*",
+        "*NotiMailSender*",
+        '*SlackbotService*',
+]
+
+
+integrationTestCoverageReport {
+    reports {
+        html.required = true
+        csv.required = false
+        xml.required = true
+    }
+
+    getClassDirectories().setFrom(files(
+            [project(':gg-data'), project(':gg-admin-repo'),
+             project(':gg-repo'), project(':gg-pingpong-api')].collect {
+                it.fileTree(dir: "${it.buildDir}/classes/java/main", exclude: jacocoExcludes)
+            }
+    ))
+}
+
+
+unitTestCoverageReport {
+    reports {
+        html.required = true
+        csv.required = false
+        xml.required = true
+    }
+
+    getClassDirectories().setFrom(files(
+            [project(':gg-data'), project(':gg-admin-repo'),
+             project(':gg-repo'), project(':gg-pingpong-api')].collect {
+                it.fileTree(dir: "${it.buildDir}/classes/java/main", exclude: jacocoExcludes)
+            }
+    ))
+}
+
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+
+    testFixturesImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testFixturesImplementation('org.springframework.boot:spring-boot-starter-data-redis')
+    testFixturesImplementation('org.springframework.boot:spring-boot-starter-data-jpa')
+    testFixturesImplementation("org.springframework.boot:spring-boot-starter-test:2.5.5")
+    testFixturesImplementation("org.testcontainers:testcontainers:1.19.3")
+    testFixturesImplementation("org.testcontainers:junit-jupiter:1.19.3")
+    testFixturesImplementation("org.testcontainers:mysql:1.19.3")
+    testFixturesImplementation("com.redis:testcontainers-redis:2.0.1")
+
+    testFixturesImplementation("org.projectlombok:lombok:1.18.26")
+    testFixturesCompileOnly("org.projectlombok:lombok")
+    testFixturesAnnotationProcessor("org.projectlombok:lombok")
+
+    testFixturesImplementation project(":gg-data")
+    testFixturesImplementation project(":gg-repo")
+    testFixturesImplementation project(":gg-admin-repo")
+    testFixturesImplementation project(":gg-pingpong-api")
+
+    jacocoAggregation(project(':gg-data'))
+    jacocoAggregation(project(':gg-repo'))
+    jacocoAggregation(project(':gg-admin-repo'))
+    jacocoAggregation(project(':gg-pingpong-api'))
+}
+
+test {
+    useJUnitPlatform()
+}

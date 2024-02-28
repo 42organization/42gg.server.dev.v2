@@ -24,18 +24,18 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gg.pingpong.admin.repo.store.ItemAdminRepository;
+import gg.admin.repo.store.ItemAdminRepository;
+import gg.data.store.Item;
+import gg.data.store.type.ItemType;
 import gg.pingpong.api.admin.store.controller.request.ItemUpdateRequestDto;
 import gg.pingpong.api.admin.store.controller.response.ItemListResponseDto;
 import gg.pingpong.api.admin.store.service.ItemAdminService;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.global.utils.ItemImageHandler;
-import gg.pingpong.data.store.Item;
-import gg.pingpong.data.store.type.ItemType;
-import gg.pingpong.repo.user.UserRepository;
-import gg.pingpong.utils.ItemTestUtils;
-import gg.pingpong.utils.TestDataUtils;
-import gg.pingpong.utils.annotation.IntegrationTest;
+import gg.repo.user.UserRepository;
+import gg.utils.ItemTestUtils;
+import gg.utils.TestDataUtils;
+import gg.utils.annotation.IntegrationTest;
 
 @IntegrationTest
 @AutoConfigureMockMvc

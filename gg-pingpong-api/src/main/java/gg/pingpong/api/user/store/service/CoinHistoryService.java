@@ -5,13 +5,13 @@ import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.pingpong.data.store.CoinHistory;
-import gg.pingpong.data.store.Item;
-import gg.pingpong.data.store.type.HistoryType;
-import gg.pingpong.data.user.User;
-import gg.pingpong.repo.store.CoinHistoryRepository;
-import gg.pingpong.repo.store.CoinPolicyRepository;
-import gg.pingpong.utils.exception.coin.CoinPolicyNotFoundException;
+import gg.data.store.CoinHistory;
+import gg.data.store.Item;
+import gg.data.store.type.HistoryType;
+import gg.data.user.User;
+import gg.repo.store.CoinHistoryRepository;
+import gg.repo.store.CoinPolicyRepository;
+import gg.utils.exception.coin.CoinPolicyNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service

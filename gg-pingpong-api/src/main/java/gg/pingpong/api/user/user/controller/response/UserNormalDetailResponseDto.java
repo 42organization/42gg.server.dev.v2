@@ -1,6 +1,6 @@
 package gg.pingpong.api.user.user.controller.response;
 
-import gg.pingpong.data.user.type.EdgeType;
+import gg.data.user.type.EdgeType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

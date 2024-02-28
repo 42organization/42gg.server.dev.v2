@@ -1,6 +1,6 @@
 package gg.pingpong.api.user.item.controller;
 
-import static gg.pingpong.data.store.type.ItemType.*;
+import static gg.data.store.type.ItemType.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
@@ -25,9 +25,9 @@ import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.user.store.controller.response.ItemStoreListResponseDto;
 import gg.pingpong.api.user.store.controller.response.ItemStoreResponseDto;
 import gg.pingpong.api.user.store.service.ItemService;
-import gg.pingpong.repo.store.ItemRepository;
-import gg.pingpong.utils.TestDataUtils;
-import gg.pingpong.utils.annotation.IntegrationTest;
+import gg.repo.store.ItemRepository;
+import gg.utils.TestDataUtils;
+import gg.utils.annotation.IntegrationTest;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

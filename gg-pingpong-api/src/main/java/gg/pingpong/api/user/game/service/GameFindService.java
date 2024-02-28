@@ -10,14 +10,14 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import gg.data.game.Game;
+import gg.data.game.type.Mode;
+import gg.data.game.type.StatusType;
 import gg.pingpong.api.user.game.controller.response.GameListResDto;
 import gg.pingpong.api.user.game.controller.response.GameResultResDto;
-import gg.pingpong.data.game.Game;
-import gg.pingpong.data.game.type.Mode;
-import gg.pingpong.data.game.type.StatusType;
-import gg.pingpong.repo.game.GameRepository;
-import gg.pingpong.repo.game.out.GameTeamUser;
-import gg.pingpong.utils.exception.game.GameNotExistException;
+import gg.repo.game.GameRepository;
+import gg.repo.game.out.GameTeamUser;
+import gg.utils.exception.game.GameNotExistException;
 import lombok.RequiredArgsConstructor;
 
 @Service

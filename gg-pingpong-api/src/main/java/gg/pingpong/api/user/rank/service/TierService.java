@@ -6,11 +6,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.pingpong.data.rank.Rank;
-import gg.pingpong.data.rank.Tier;
-import gg.pingpong.data.season.Season;
-import gg.pingpong.repo.rank.RankRepository;
-import gg.pingpong.repo.rank.TierRepository;
+import gg.data.rank.Rank;
+import gg.data.rank.Tier;
+import gg.data.season.Season;
+import gg.repo.rank.RankRepository;
+import gg.repo.rank.TierRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service

@@ -14,7 +14,7 @@ import gg.pingpong.api.user.manage.controller.FeedbackController;
 import gg.pingpong.api.user.manage.controller.request.FeedbackRequestDto;
 import gg.pingpong.api.user.manage.service.FeedbackService;
 import gg.pingpong.api.user.user.dto.UserDto;
-import gg.pingpong.utils.annotation.UnitTest;
+import gg.utils.annotation.UnitTest;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)

@@ -8,10 +8,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import gg.pingpong.data.rank.redis.RankRedis;
-import gg.pingpong.repo.rank.redis.RankRedisRepository;
-import gg.pingpong.utils.annotation.IntegrationTest;
-import gg.pingpong.utils.exception.rank.RedisDataNotFoundException;
+import gg.data.rank.redis.RankRedis;
+import gg.repo.rank.redis.RankRedisRepository;
+import gg.utils.annotation.IntegrationTest;
+import gg.utils.exception.rank.RedisDataNotFoundException;
 
 @IntegrationTest
 class RankRedisRepositoryTest {

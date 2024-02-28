@@ -5,14 +5,14 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import gg.data.manage.Penalty;
+import gg.data.manage.redis.RedisPenaltyUser;
+import gg.data.manage.type.PenaltyType;
+import gg.data.user.User;
 import gg.pingpong.api.user.manage.redis.PenaltyUserRedisRepository;
 import gg.pingpong.api.user.user.dto.UserDto;
 import gg.pingpong.api.user.user.service.UserFindService;
-import gg.pingpong.data.manage.Penalty;
-import gg.pingpong.data.manage.redis.RedisPenaltyUser;
-import gg.pingpong.data.manage.type.PenaltyType;
-import gg.pingpong.data.user.User;
-import gg.pingpong.repo.manage.PenaltyRepository;
+import gg.repo.manage.PenaltyRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service

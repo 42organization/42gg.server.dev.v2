@@ -2,7 +2,7 @@ package gg.pingpong.api.admin.manage.dto;
 
 import java.time.LocalDateTime;
 
-import gg.pingpong.data.manage.SlotManagement;
+import gg.data.manage.SlotManagement;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -8,10 +8,10 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
+import gg.data.game.type.Mode;
 import gg.pingpong.api.user.game.dto.TeamUserInfoDto;
 import gg.pingpong.api.user.game.dto.TeamUserListDto;
-import gg.pingpong.data.game.type.Mode;
-import gg.pingpong.repo.game.out.GameTeamUser;
+import gg.repo.game.out.GameTeamUser;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

@@ -26,6 +26,9 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import gg.data.game.type.Mode;
+import gg.data.user.type.OauthType;
+import gg.data.user.type.RoleType;
 import gg.pingpong.api.global.dto.PageRequestDto;
 import gg.pingpong.api.global.security.cookie.CookieUtil;
 import gg.pingpong.api.global.security.jwt.utils.TokenHeaders;
@@ -51,10 +54,7 @@ import gg.pingpong.api.user.user.dto.UserTextColorDto;
 import gg.pingpong.api.user.user.service.UserAuthenticationService;
 import gg.pingpong.api.user.user.service.UserCoinService;
 import gg.pingpong.api.user.user.service.UserService;
-import gg.pingpong.data.game.type.Mode;
-import gg.pingpong.data.user.type.OauthType;
-import gg.pingpong.data.user.type.RoleType;
-import gg.pingpong.utils.exception.user.KakaoOauth2AlreadyExistException;
+import gg.utils.exception.user.KakaoOauth2AlreadyExistException;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 

@@ -1,8 +1,8 @@
 package gg.pingpong.api.user.rank.dto;
 
+import gg.data.user.User;
 import gg.pingpong.api.global.utils.ExpLevelCalculator;
-import gg.pingpong.data.user.User;
-import gg.pingpong.repo.user.ExpRankV2Dto;
+import gg.repo.user.ExpRankV2Dto;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
