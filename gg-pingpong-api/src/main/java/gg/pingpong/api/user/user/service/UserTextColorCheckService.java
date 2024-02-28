@@ -7,23 +7,13 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class UserTextColorCheckService {
+
+	/**
+	 * textColor 의 유효성 검사
+	 * @param textColor
+	 * @return boolean
+	 */
 	public static boolean check(String textColor) {
-		if (textColor == null) {
-			return false;
-		}
-		if (textColor.length() != 7) {
-			return false;
-		}
-		if (textColor.charAt(0) != '#') {
-			return false;
-		}
-		for (int i = 1; i < 7; i++) {
-			char charTestColor = textColor.charAt(i);
-			if (!((charTestColor >= '0' && charTestColor <= '9') || (charTestColor >= 'a' && charTestColor <= 'f') || (
-				charTestColor >= 'A' && charTestColor <= 'F'))) {
-				return false;
-			}
-		}
-		return true;
+		return textColor != null && textColor.matches("#[0-9a-fA-F]{6}");
 	}
 }
