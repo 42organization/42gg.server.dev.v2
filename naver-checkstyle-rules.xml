@@ -116,6 +116,7 @@ The following rules in the Naver coding convention cannot be checked by this con
 
         <!-- [avoid-star-import] -->
         <module name="AvoidStarImport">
+            <property name="excludes" value="java.awt"/>
             <property name="allowStaticMemberImports" value="true"/>
             <message key="import.avoidStar"
                      value="[avoid-star-import] Using the ''.*'' form of import should be avoided - {0}."/>

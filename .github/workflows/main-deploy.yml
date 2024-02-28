@@ -14,7 +14,7 @@ env:
   DOCKER_USER: ${{ secrets.DOCKER_USER }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
   IMAGE_NAME: wken5577/42gg-server
-  VERSION_TAG : ${{ secrets.VERSION_TAG }}
+  VERSION_TAG: ${{ secrets.VERSION_TAG }}
 
 permissions:
   contents: read
@@ -36,7 +36,7 @@ jobs:
 
       - name: Make application ymls
         run: |
-          cd ./src/main/resources
+          cd ./gg-pingpong-api/src/main/resources
           echo "${{ secrets.APPLICATION_YML }}" | base64 -d > application.yml
         shell: bash
 

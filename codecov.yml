@@ -12,7 +12,13 @@ coverage:
 flags:
   unitTest:
     paths:
-      - src/main/java/com/gg/server/
+      - gg-pingpong-api/src/main/java/gg/pingpong/api
+      - gg-pingpong-repo/src/main/java/gg/pingpong/repo
+      - gg-pingpong-admin-repo/src/main/java/gg/pingpong/admin/repo
+      - gg-pingpong-data/src/main/java/gg/pingpong/data
   integrationTest:
     paths:
-      - src/main/java/com/gg/server/
+      - gg-pingpong-api/src/main/java/gg/pingpong/api
+      - gg-pingpong-repo/src/main/java/gg/pingpong/repo
+      - gg-pingpong-admin-repo/src/main/java/gg/pingpong/admin/repo
+      - gg-pingpong-data/src/main/java/gg/pingpong/data
