@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import gg.data.user.User;
+import gg.data.user.type.RoleType;
 import gg.pingpong.api.global.security.UserPrincipal;
 import gg.pingpong.api.global.security.config.properties.AppProperties;
 import gg.pingpong.api.global.security.cookie.CookieUtil;
@@ -19,10 +21,8 @@ import gg.pingpong.api.global.security.jwt.repository.JwtRedisRepository;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.global.security.jwt.utils.TokenHeaders;
 import gg.pingpong.api.global.utils.ApplicationYmlRead;
-import gg.pingpong.data.user.User;
-import gg.pingpong.data.user.type.RoleType;
-import gg.pingpong.repo.user.UserRepository;
-import gg.pingpong.utils.exception.user.UserNotFoundException;
+import gg.repo.user.UserRepository;
+import gg.utils.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Component

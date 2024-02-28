@@ -7,11 +7,11 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
+import gg.data.noti.Noti;
 import gg.pingpong.api.global.utils.AsyncMailSender;
 import gg.pingpong.api.user.noti.dto.UserNotiDto;
 import gg.pingpong.api.user.noti.service.NotiService;
 import gg.pingpong.api.user.user.dto.UserDto;
-import gg.pingpong.data.noti.Noti;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

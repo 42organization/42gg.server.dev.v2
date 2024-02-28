@@ -9,21 +9,21 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
-import gg.pingpong.data.game.Game;
-import gg.pingpong.data.game.Team;
-import gg.pingpong.data.manage.SlotManagement;
-import gg.pingpong.data.rank.redis.RankRedis;
-import gg.pingpong.data.season.Season;
-import gg.pingpong.data.tournament.Tournament;
-import gg.pingpong.data.tournament.TournamentGame;
-import gg.pingpong.data.tournament.type.TournamentRound;
-import gg.pingpong.data.user.User;
-import gg.pingpong.repo.game.GameRepository;
-import gg.pingpong.repo.manage.SlotManagementRepository;
-import gg.pingpong.repo.rank.redis.RankRedisRepository;
-import gg.pingpong.repo.season.SeasonRepository;
-import gg.pingpong.repo.user.UserRepository;
-import gg.pingpong.utils.RedisKeyManager;
+import gg.data.game.Game;
+import gg.data.game.Team;
+import gg.data.manage.SlotManagement;
+import gg.data.rank.redis.RankRedis;
+import gg.data.season.Season;
+import gg.data.tournament.Tournament;
+import gg.data.tournament.TournamentGame;
+import gg.data.tournament.type.TournamentRound;
+import gg.data.user.User;
+import gg.repo.game.GameRepository;
+import gg.repo.manage.SlotManagementRepository;
+import gg.repo.rank.redis.RankRedisRepository;
+import gg.repo.season.SeasonRepository;
+import gg.repo.user.UserRepository;
+import gg.utils.RedisKeyManager;
 import lombok.RequiredArgsConstructor;
 
 @Component

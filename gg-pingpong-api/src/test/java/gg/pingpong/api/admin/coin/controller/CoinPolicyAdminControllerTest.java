@@ -17,15 +17,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gg.pingpong.admin.repo.store.CoinPolicyAdminRepository;
+import gg.admin.repo.store.CoinPolicyAdminRepository;
+import gg.data.store.CoinPolicy;
+import gg.data.user.User;
 import gg.pingpong.api.admin.store.controller.response.CoinPolicyAdminListResponseDto;
 import gg.pingpong.api.admin.store.dto.CoinPolicyAdminAddDto;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
-import gg.pingpong.data.store.CoinPolicy;
-import gg.pingpong.data.user.User;
-import gg.pingpong.utils.TestDataUtils;
-import gg.pingpong.utils.annotation.IntegrationTest;
-import gg.pingpong.utils.exception.coin.CoinPolicyNotFoundException;
+import gg.utils.TestDataUtils;
+import gg.utils.annotation.IntegrationTest;
+import gg.utils.exception.coin.CoinPolicyNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

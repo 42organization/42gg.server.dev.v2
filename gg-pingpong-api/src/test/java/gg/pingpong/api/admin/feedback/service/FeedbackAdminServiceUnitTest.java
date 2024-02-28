@@ -18,13 +18,14 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import gg.pingpong.admin.repo.manage.FeedbackAdminRepository;
+import gg.admin.repo.manage.FeedbackAdminRepository;
+import gg.data.manage.Feedback;
 import gg.pingpong.api.admin.manage.service.FeedbackAdminService;
-import gg.pingpong.data.manage.Feedback;
-import gg.pingpong.utils.annotation.UnitTest;
-import gg.pingpong.utils.exception.feedback.FeedbackNotFoundException;
+import gg.utils.annotation.UnitTest;
+import gg.utils.exception.feedback.FeedbackNotFoundException;
 
 @UnitTest
+
 @ExtendWith(MockitoExtension.class)
 @DisplayName("FeedbackAdminServiceUnitTest")
 class FeedbackAdminServiceUnitTest {

@@ -5,10 +5,10 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import gg.pingpong.data.game.Game;
-import gg.pingpong.data.game.type.Mode;
-import gg.pingpong.data.manage.SlotManagement;
-import gg.pingpong.data.match.RedisMatchTime;
+import gg.data.game.Game;
+import gg.data.game.type.Mode;
+import gg.data.manage.SlotManagement;
+import gg.data.match.RedisMatchTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

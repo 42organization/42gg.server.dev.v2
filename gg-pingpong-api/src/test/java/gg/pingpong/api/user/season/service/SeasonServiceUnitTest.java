@@ -14,10 +14,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import gg.pingpong.data.season.Season;
-import gg.pingpong.repo.season.SeasonRepository;
-import gg.pingpong.utils.annotation.UnitTest;
-import gg.pingpong.utils.exception.season.SeasonNotFoundException;
+import gg.data.season.Season;
+import gg.repo.season.SeasonRepository;
+import gg.utils.annotation.UnitTest;
+import gg.utils.exception.season.SeasonNotFoundException;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)

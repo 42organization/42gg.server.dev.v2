@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import gg.data.game.type.Mode;
 import gg.pingpong.api.global.utils.argumentresolver.Login;
 import gg.pingpong.api.user.game.controller.request.GameListReqDto;
 import gg.pingpong.api.user.game.controller.request.NormalGameListReqDto;
@@ -30,11 +31,10 @@ import gg.pingpong.api.user.game.service.GameFindService;
 import gg.pingpong.api.user.game.service.GameService;
 import gg.pingpong.api.user.rank.redis.RankRedisService;
 import gg.pingpong.api.user.user.dto.UserDto;
-import gg.pingpong.data.game.type.Mode;
-import gg.pingpong.utils.exception.ErrorCode;
-import gg.pingpong.utils.exception.custom.BusinessException;
-import gg.pingpong.utils.exception.custom.InvalidParameterException;
-import gg.pingpong.utils.exception.game.ScoreNotMatchedException;
+import gg.utils.exception.ErrorCode;
+import gg.utils.exception.custom.BusinessException;
+import gg.utils.exception.custom.InvalidParameterException;
+import gg.utils.exception.game.ScoreNotMatchedException;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 

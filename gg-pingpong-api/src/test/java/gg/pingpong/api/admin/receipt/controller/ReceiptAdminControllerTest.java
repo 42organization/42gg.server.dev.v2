@@ -18,17 +18,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gg.pingpong.admin.repo.store.ReceiptAdminRepository;
+import gg.admin.repo.store.ReceiptAdminRepository;
+import gg.data.store.Item;
+import gg.data.store.type.ItemType;
+import gg.data.user.User;
 import gg.pingpong.api.admin.store.controller.request.ItemUpdateRequestDto;
 import gg.pingpong.api.admin.store.controller.response.ReceiptListResponseDto;
 import gg.pingpong.api.admin.store.service.ReceiptAdminService;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
-import gg.pingpong.data.store.Item;
-import gg.pingpong.data.store.type.ItemType;
-import gg.pingpong.data.user.User;
-import gg.pingpong.utils.ItemTestUtils;
-import gg.pingpong.utils.TestDataUtils;
-import gg.pingpong.utils.annotation.IntegrationTest;
+import gg.utils.ItemTestUtils;
+import gg.utils.TestDataUtils;
+import gg.utils.annotation.IntegrationTest;
 
 @IntegrationTest
 @AutoConfigureMockMvc

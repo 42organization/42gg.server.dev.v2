@@ -10,16 +10,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import gg.data.store.CoinHistory;
+import gg.data.store.CoinPolicy;
+import gg.data.user.User;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.user.store.service.CoinHistoryService;
-import gg.pingpong.data.store.CoinHistory;
-import gg.pingpong.data.store.CoinPolicy;
-import gg.pingpong.data.user.User;
-import gg.pingpong.repo.store.CoinHistoryRepository;
-import gg.pingpong.repo.store.CoinPolicyRepository;
-import gg.pingpong.repo.user.UserRepository;
-import gg.pingpong.utils.TestDataUtils;
-import gg.pingpong.utils.annotation.IntegrationTest;
+import gg.repo.store.CoinHistoryRepository;
+import gg.repo.store.CoinPolicyRepository;
+import gg.repo.user.UserRepository;
+import gg.utils.TestDataUtils;
+import gg.utils.annotation.IntegrationTest;
 import lombok.RequiredArgsConstructor;
 
 @IntegrationTest

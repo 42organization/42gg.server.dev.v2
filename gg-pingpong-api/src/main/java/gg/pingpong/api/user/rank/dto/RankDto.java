@@ -1,8 +1,8 @@
 package gg.pingpong.api.user.rank.dto;
 
-import gg.pingpong.data.rank.redis.RankRedis;
-import gg.pingpong.data.user.User;
-import gg.pingpong.repo.rank.RankV2Dto;
+import gg.data.rank.redis.RankRedis;
+import gg.data.user.User;
+import gg.repo.rank.RankV2Dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

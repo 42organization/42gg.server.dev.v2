@@ -1,7 +1,7 @@
 package gg.pingpong.api.user.user.controller.request;
 
-import gg.pingpong.data.user.type.RacketType;
-import gg.pingpong.data.user.type.SnsType;
+import gg.data.user.type.RacketType;
+import gg.data.user.type.SnsType;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

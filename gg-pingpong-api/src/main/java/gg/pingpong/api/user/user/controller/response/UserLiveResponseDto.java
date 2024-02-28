@@ -1,6 +1,6 @@
 package gg.pingpong.api.user.user.controller.response;
 
-import gg.pingpong.data.game.type.Mode;
+import gg.data.game.type.Mode;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

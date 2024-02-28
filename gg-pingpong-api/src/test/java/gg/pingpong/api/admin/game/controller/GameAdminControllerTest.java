@@ -25,25 +25,25 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gg.data.game.type.Mode;
+import gg.data.rank.Rank;
+import gg.data.rank.Tier;
+import gg.data.season.Season;
+import gg.data.user.User;
 import gg.pingpong.api.admin.game.controller.response.GameLogListAdminResponseDto;
 import gg.pingpong.api.admin.game.dto.RankGamePPPModifyReqDto;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.user.game.controller.request.RankResultReqDto;
 import gg.pingpong.api.user.game.service.GameService;
 import gg.pingpong.api.user.match.service.GameUpdateService;
-import gg.pingpong.data.game.type.Mode;
-import gg.pingpong.data.rank.Rank;
-import gg.pingpong.data.rank.Tier;
-import gg.pingpong.data.season.Season;
-import gg.pingpong.data.user.User;
-import gg.pingpong.repo.game.GameRepository;
-import gg.pingpong.repo.game.out.GameTeamUser;
-import gg.pingpong.repo.rank.RankRepository;
-import gg.pingpong.repo.rank.redis.RankRedisRepository;
-import gg.pingpong.repo.user.UserRepository;
-import gg.pingpong.utils.TestDataUtils;
-import gg.pingpong.utils.annotation.IntegrationTest;
-import gg.pingpong.utils.dto.GameInfoDto;
+import gg.repo.game.GameRepository;
+import gg.repo.game.out.GameTeamUser;
+import gg.repo.rank.RankRepository;
+import gg.repo.rank.redis.RankRedisRepository;
+import gg.repo.user.UserRepository;
+import gg.utils.TestDataUtils;
+import gg.utils.annotation.IntegrationTest;
+import gg.utils.dto.GameInfoDto;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

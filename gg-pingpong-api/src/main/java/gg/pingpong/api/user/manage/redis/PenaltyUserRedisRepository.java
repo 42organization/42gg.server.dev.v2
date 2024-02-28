@@ -8,8 +8,8 @@ import java.util.concurrent.TimeUnit;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
-import gg.pingpong.data.manage.redis.RedisPenaltyUser;
-import gg.pingpong.data.manage.type.PenaltyKey;
+import gg.data.manage.redis.RedisPenaltyUser;
+import gg.data.manage.type.PenaltyKey;
 import lombok.RequiredArgsConstructor;
 
 @Repository

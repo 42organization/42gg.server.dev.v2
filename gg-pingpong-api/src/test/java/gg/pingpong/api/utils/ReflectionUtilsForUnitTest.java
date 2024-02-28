@@ -2,8 +2,8 @@ package gg.pingpong.api.utils;
 
 import java.lang.reflect.Field;
 
-import gg.pingpong.utils.exception.ErrorCode;
-import gg.pingpong.utils.exception.custom.BusinessException;
+import gg.utils.exception.ErrorCode;
+import gg.utils.exception.custom.BusinessException;
 
 /**
  * ReflectionUtilsForUnitTest.

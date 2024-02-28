@@ -3,9 +3,9 @@ package gg.pingpong.api.user.match.utils;
 import java.util.List;
 import java.util.Optional;
 
-import gg.pingpong.data.match.RedisMatchUser;
-import gg.pingpong.data.match.type.Option;
-import gg.pingpong.data.match.type.SlotStatus;
+import gg.data.match.RedisMatchUser;
+import gg.data.match.type.Option;
+import gg.data.match.type.SlotStatus;
 
 public class MatchCalculator {
 	private final Integer pppGap;

@@ -13,8 +13,8 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 
-import gg.pingpong.data.user.User;
-import gg.pingpong.repo.user.UserImageRepository;
+import gg.data.user.User;
+import gg.repo.user.UserImageRepository;
 
 @Component
 public class UserImageHandler {

@@ -15,9 +15,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
-import gg.pingpong.admin.repo.store.MegaphoneAdminRepository;
+import gg.admin.repo.store.MegaphoneAdminRepository;
 import gg.pingpong.api.admin.store.service.MegaphoneAdminService;
-import gg.pingpong.utils.annotation.UnitTest;
+import gg.utils.annotation.UnitTest;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)

@@ -22,14 +22,14 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.data.domain.Sort;
 
+import gg.data.rank.Rank;
+import gg.data.rank.Tier;
+import gg.data.season.Season;
+import gg.data.user.User;
 import gg.pingpong.api.user.rank.service.TierService;
-import gg.pingpong.data.rank.Rank;
-import gg.pingpong.data.rank.Tier;
-import gg.pingpong.data.season.Season;
-import gg.pingpong.data.user.User;
-import gg.pingpong.repo.rank.RankRepository;
-import gg.pingpong.repo.rank.TierRepository;
-import gg.pingpong.utils.annotation.UnitTest;
+import gg.repo.rank.RankRepository;
+import gg.repo.rank.TierRepository;
+import gg.utils.annotation.UnitTest;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)

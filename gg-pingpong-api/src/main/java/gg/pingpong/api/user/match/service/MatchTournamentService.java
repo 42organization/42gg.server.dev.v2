@@ -1,7 +1,7 @@
 package gg.pingpong.api.user.match.service;
 
-import static gg.pingpong.data.match.type.TournamentMatchStatus.*;
-import static gg.pingpong.data.tournament.type.RoundNumber.*;
+import static gg.data.match.type.TournamentMatchStatus.*;
+import static gg.data.tournament.type.RoundNumber.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -16,33 +16,33 @@ import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
+import gg.data.game.Game;
+import gg.data.game.Team;
+import gg.data.game.TeamUser;
+import gg.data.game.type.Mode;
+import gg.data.game.type.StatusType;
+import gg.data.manage.SlotManagement;
+import gg.data.match.type.TournamentMatchStatus;
+import gg.data.noti.type.NotiType;
+import gg.data.season.Season;
+import gg.data.tournament.Tournament;
+import gg.data.tournament.TournamentGame;
+import gg.data.tournament.TournamentUser;
+import gg.data.tournament.type.RoundNumber;
+import gg.data.tournament.type.TournamentRound;
+import gg.data.tournament.type.TournamentStatus;
+import gg.data.user.User;
 import gg.pingpong.api.admin.noti.controller.request.SendNotiAdminRequestDto;
 import gg.pingpong.api.admin.noti.service.NotiAdminService;
 import gg.pingpong.api.user.season.service.SeasonFindService;
-import gg.pingpong.data.game.Game;
-import gg.pingpong.data.game.Team;
-import gg.pingpong.data.game.TeamUser;
-import gg.pingpong.data.game.type.Mode;
-import gg.pingpong.data.game.type.StatusType;
-import gg.pingpong.data.manage.SlotManagement;
-import gg.pingpong.data.match.type.TournamentMatchStatus;
-import gg.pingpong.data.noti.type.NotiType;
-import gg.pingpong.data.season.Season;
-import gg.pingpong.data.tournament.Tournament;
-import gg.pingpong.data.tournament.TournamentGame;
-import gg.pingpong.data.tournament.TournamentUser;
-import gg.pingpong.data.tournament.type.RoundNumber;
-import gg.pingpong.data.tournament.type.TournamentRound;
-import gg.pingpong.data.tournament.type.TournamentStatus;
-import gg.pingpong.data.user.User;
-import gg.pingpong.repo.game.GameRepository;
-import gg.pingpong.repo.manage.SlotManagementRepository;
-import gg.pingpong.repo.tournarment.TournamentGameRepository;
-import gg.pingpong.utils.exception.match.EnrolledSlotException;
-import gg.pingpong.utils.exception.match.LosingTeamNotFoundException;
-import gg.pingpong.utils.exception.match.SlotNotFoundException;
-import gg.pingpong.utils.exception.match.WinningTeamNotFoundException;
-import gg.pingpong.utils.exception.tournament.TournamentGameNotFoundException;
+import gg.repo.game.GameRepository;
+import gg.repo.manage.SlotManagementRepository;
+import gg.repo.tournarment.TournamentGameRepository;
+import gg.utils.exception.match.EnrolledSlotException;
+import gg.utils.exception.match.LosingTeamNotFoundException;
+import gg.utils.exception.match.SlotNotFoundException;
+import gg.utils.exception.match.WinningTeamNotFoundException;
+import gg.utils.exception.tournament.TournamentGameNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service

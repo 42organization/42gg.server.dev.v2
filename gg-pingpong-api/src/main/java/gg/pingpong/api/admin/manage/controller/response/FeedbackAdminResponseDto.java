@@ -2,8 +2,8 @@ package gg.pingpong.api.admin.manage.controller.response;
 
 import java.time.LocalDateTime;
 
-import gg.pingpong.data.manage.Feedback;
-import gg.pingpong.data.manage.type.FeedbackType;
+import gg.data.manage.Feedback;
+import gg.data.manage.type.FeedbackType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

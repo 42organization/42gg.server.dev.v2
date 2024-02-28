@@ -2,11 +2,11 @@ package gg.pingpong.api.user.tournament.controller.response;
 
 import java.time.LocalDateTime;
 
+import gg.data.tournament.Tournament;
+import gg.data.tournament.TournamentUser;
+import gg.data.tournament.type.TournamentStatus;
+import gg.data.tournament.type.TournamentType;
 import gg.pingpong.api.user.user.dto.UserImageDto;
-import gg.pingpong.data.tournament.Tournament;
-import gg.pingpong.data.tournament.TournamentUser;
-import gg.pingpong.data.tournament.type.TournamentStatus;
-import gg.pingpong.data.tournament.type.TournamentType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

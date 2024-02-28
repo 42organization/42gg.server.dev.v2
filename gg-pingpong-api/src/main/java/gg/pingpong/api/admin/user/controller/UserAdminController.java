@@ -25,8 +25,8 @@ import gg.pingpong.api.admin.user.controller.response.UserImageListAdminResponse
 import gg.pingpong.api.admin.user.controller.response.UserSearchAdminResponseDto;
 import gg.pingpong.api.admin.user.service.UserAdminService;
 import gg.pingpong.api.global.dto.PageRequestDto;
-import gg.pingpong.utils.exception.user.UserImageLargeException;
-import gg.pingpong.utils.exception.user.UserImageTypeException;
+import gg.utils.exception.user.UserImageLargeException;
+import gg.utils.exception.user.UserImageTypeException;
 import lombok.AllArgsConstructor;
 
 @RestController

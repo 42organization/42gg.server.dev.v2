@@ -2,7 +2,7 @@ package gg.pingpong.api.admin.store.controller.response;
 
 import java.time.LocalDateTime;
 
-import gg.pingpong.data.store.CoinPolicy;
+import gg.data.store.CoinPolicy;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

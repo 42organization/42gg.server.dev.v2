@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import gg.pingpong.data.tournament.TournamentUser;
+import gg.data.tournament.TournamentUser;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

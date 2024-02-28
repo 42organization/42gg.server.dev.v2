@@ -239,40 +239,40 @@ project(':gg-pingpong-api') {
     bootJar { enabled = true }
     jar { enabled = true }
     dependencies {
-        implementation project(':gg-pingpong-data')
-        implementation project(':gg-pingpong-repo')
-        implementation project(':gg-pingpong-admin-repo')
-        implementation project(':gg-pingpong-utils')
+        implementation project(':gg-data')
+        implementation project(':gg-repo')
+        implementation project(':gg-admin-repo')
+        implementation project(':gg-utils')
     }
 }
 
-project(':gg-pingpong-repo') {
+project(':gg-repo') {
     bootJar { enabled = false }
     jar { enabled = true }
     dependencies {
-        implementation project(':gg-pingpong-data')
-        implementation project(':gg-pingpong-utils')
+        implementation project(':gg-data')
+        implementation project(':gg-utils')
     }
 }
 
-project(':gg-pingpong-admin-repo') {
+project(':gg-admin-repo') {
     bootJar { enabled = false }
     jar { enabled = true }
     dependencies {
-        implementation project(':gg-pingpong-data')
-        implementation project(':gg-pingpong-utils')
+        implementation project(':gg-data')
+        implementation project(':gg-utils')
     }
 }
 
-project(':gg-pingpong-data') {
+project(':gg-data') {
     bootJar { enabled = false }
     jar { enabled = true }
     dependencies {
-        implementation project(':gg-pingpong-utils')
+        implementation project(':gg-utils')
     }
 }
 
-project(':gg-pingpong-utils') {
+project(':gg-utils') {
     bootJar { enabled = false }
     jar { enabled = true }
     dependencies {

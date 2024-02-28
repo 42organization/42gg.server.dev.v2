@@ -12,24 +12,24 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import gg.data.rank.Rank;
+import gg.data.rank.Tier;
+import gg.data.rank.redis.RankRedis;
+import gg.data.user.User;
+import gg.data.user.type.RacketType;
+import gg.data.user.type.SnsType;
 import gg.pingpong.api.global.security.UserPrincipal;
 import gg.pingpong.api.global.security.info.OAuthUserInfo;
 import gg.pingpong.api.global.security.info.OAuthUserInfoFactory;
 import gg.pingpong.api.global.security.info.ProviderType;
 import gg.pingpong.api.global.utils.aws.AsyncNewUserImageUploader;
-import gg.pingpong.data.rank.Rank;
-import gg.pingpong.data.rank.Tier;
-import gg.pingpong.data.rank.redis.RankRedis;
-import gg.pingpong.data.user.User;
-import gg.pingpong.data.user.type.RacketType;
-import gg.pingpong.data.user.type.SnsType;
-import gg.pingpong.repo.rank.RankRepository;
-import gg.pingpong.repo.rank.TierRepository;
-import gg.pingpong.repo.rank.redis.RankRedisRepository;
-import gg.pingpong.repo.season.SeasonRepository;
-import gg.pingpong.repo.user.UserRepository;
-import gg.pingpong.utils.RedisKeyManager;
-import gg.pingpong.utils.exception.tier.TierNotFoundException;
+import gg.repo.rank.RankRepository;
+import gg.repo.rank.TierRepository;
+import gg.repo.rank.redis.RankRedisRepository;
+import gg.repo.season.SeasonRepository;
+import gg.repo.user.UserRepository;
+import gg.utils.RedisKeyManager;
+import gg.utils.exception.tier.TierNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service

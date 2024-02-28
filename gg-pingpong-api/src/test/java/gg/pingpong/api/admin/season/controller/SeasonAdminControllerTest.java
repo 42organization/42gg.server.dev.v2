@@ -19,7 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.net.HttpHeaders;
 
-import gg.pingpong.admin.repo.season.SeasonAdminRepository;
+import gg.admin.repo.season.SeasonAdminRepository;
+import gg.data.rank.Tier;
+import gg.data.season.Season;
 import gg.pingpong.api.admin.rank.service.RankAdminService;
 import gg.pingpong.api.admin.rank.service.RankRedisAdminService;
 import gg.pingpong.api.admin.season.controller.request.SeasonCreateRequestDto;
@@ -28,16 +30,14 @@ import gg.pingpong.api.admin.season.controller.response.SeasonListAdminResponseD
 import gg.pingpong.api.admin.season.dto.SeasonAdminDto;
 import gg.pingpong.api.admin.season.service.SeasonAdminService;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
-import gg.pingpong.data.rank.Tier;
-import gg.pingpong.data.season.Season;
-import gg.pingpong.repo.rank.RankRepository;
-import gg.pingpong.repo.rank.redis.RankRedisRepository;
-import gg.pingpong.utils.RedisKeyManager;
-import gg.pingpong.utils.TestDataUtils;
-import gg.pingpong.utils.annotation.IntegrationTest;
-import gg.pingpong.utils.exception.rank.RedisDataNotFoundException;
-import gg.pingpong.utils.exception.season.SeasonForbiddenException;
-import gg.pingpong.utils.exception.season.SeasonNotFoundException;
+import gg.repo.rank.RankRepository;
+import gg.repo.rank.redis.RankRedisRepository;
+import gg.utils.RedisKeyManager;
+import gg.utils.TestDataUtils;
+import gg.utils.annotation.IntegrationTest;
+import gg.utils.exception.rank.RedisDataNotFoundException;
+import gg.utils.exception.season.SeasonForbiddenException;
+import gg.utils.exception.season.SeasonNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

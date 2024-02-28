@@ -1,7 +1,7 @@
 package gg.pingpong.api.admin.user.controller.response;
 
-import gg.pingpong.data.rank.redis.RankRedis;
-import gg.pingpong.data.user.User;
+import gg.data.rank.redis.RankRedis;
+import gg.data.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -22,8 +22,8 @@ import gg.pingpong.api.admin.game.dto.RankGamePPPModifyReqDto;
 import gg.pingpong.api.admin.game.service.GameAdminService;
 import gg.pingpong.api.global.dto.PageRequestDto;
 import gg.pingpong.api.user.rank.redis.RankRedisService;
-import gg.pingpong.utils.exception.ErrorCode;
-import gg.pingpong.utils.exception.custom.InvalidParameterException;
+import gg.utils.exception.ErrorCode;
+import gg.utils.exception.custom.InvalidParameterException;
 import lombok.RequiredArgsConstructor;
 
 @RestController

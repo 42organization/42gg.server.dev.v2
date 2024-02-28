@@ -18,15 +18,15 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import gg.pingpong.admin.repo.noti.NotiAdminRepository;
-import gg.pingpong.admin.repo.user.UserAdminRepository;
+import gg.admin.repo.noti.NotiAdminRepository;
+import gg.admin.repo.user.UserAdminRepository;
+import gg.data.noti.Noti;
+import gg.data.user.User;
 import gg.pingpong.api.admin.noti.controller.request.SendNotiAdminRequestDto;
 import gg.pingpong.api.user.noti.service.SnsNotiService;
 import gg.pingpong.api.user.user.dto.UserDto;
-import gg.pingpong.data.noti.Noti;
-import gg.pingpong.data.user.User;
-import gg.pingpong.utils.annotation.UnitTest;
-import gg.pingpong.utils.exception.user.UserNotFoundException;
+import gg.utils.annotation.UnitTest;
+import gg.utils.exception.user.UserNotFoundException;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)

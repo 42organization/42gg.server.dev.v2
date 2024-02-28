@@ -7,18 +7,18 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import gg.pingpong.data.game.Game;
-import gg.pingpong.data.game.Team;
-import gg.pingpong.data.game.TeamUser;
-import gg.pingpong.data.game.type.Mode;
-import gg.pingpong.data.game.type.StatusType;
-import gg.pingpong.data.season.Season;
-import gg.pingpong.data.tournament.Tournament;
-import gg.pingpong.data.tournament.TournamentGame;
-import gg.pingpong.data.tournament.type.RoundNumber;
-import gg.pingpong.data.tournament.type.TournamentRound;
-import gg.pingpong.data.user.User;
-import gg.pingpong.utils.exception.match.WinningTeamNotFoundException;
+import gg.data.game.Game;
+import gg.data.game.Team;
+import gg.data.game.TeamUser;
+import gg.data.game.type.Mode;
+import gg.data.game.type.StatusType;
+import gg.data.season.Season;
+import gg.data.tournament.Tournament;
+import gg.data.tournament.TournamentGame;
+import gg.data.tournament.type.RoundNumber;
+import gg.data.tournament.type.TournamentRound;
+import gg.data.user.User;
+import gg.utils.exception.match.WinningTeamNotFoundException;
 
 public class TournamentGameTestUtils {
 

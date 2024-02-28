@@ -17,23 +17,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gg.data.store.Item;
+import gg.data.store.Megaphone;
+import gg.data.store.Receipt;
+import gg.data.store.type.ItemStatus;
+import gg.data.store.type.ItemType;
+import gg.data.user.User;
+import gg.data.user.type.RacketType;
+import gg.data.user.type.RoleType;
+import gg.data.user.type.SnsType;
 import gg.pingpong.api.admin.store.controller.request.ItemUpdateRequestDto;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.user.store.controller.request.MegaphoneUseRequestDto;
-import gg.pingpong.data.store.Item;
-import gg.pingpong.data.store.Megaphone;
-import gg.pingpong.data.store.Receipt;
-import gg.pingpong.data.store.type.ItemStatus;
-import gg.pingpong.data.store.type.ItemType;
-import gg.pingpong.data.user.User;
-import gg.pingpong.data.user.type.RacketType;
-import gg.pingpong.data.user.type.RoleType;
-import gg.pingpong.data.user.type.SnsType;
-import gg.pingpong.repo.store.MegaphoneRepository;
-import gg.pingpong.repo.store.ReceiptRepository;
-import gg.pingpong.utils.ItemTestUtils;
-import gg.pingpong.utils.TestDataUtils;
-import gg.pingpong.utils.annotation.IntegrationTest;
+import gg.repo.store.MegaphoneRepository;
+import gg.repo.store.ReceiptRepository;
+import gg.utils.ItemTestUtils;
+import gg.utils.TestDataUtils;
+import gg.utils.annotation.IntegrationTest;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

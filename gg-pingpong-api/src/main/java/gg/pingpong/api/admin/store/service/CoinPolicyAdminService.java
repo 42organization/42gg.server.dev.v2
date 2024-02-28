@@ -5,15 +5,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.pingpong.admin.repo.store.CoinPolicyAdminRepository;
-import gg.pingpong.admin.repo.user.UserAdminRepository;
+import gg.admin.repo.store.CoinPolicyAdminRepository;
+import gg.admin.repo.user.UserAdminRepository;
+import gg.data.store.CoinPolicy;
+import gg.data.user.User;
 import gg.pingpong.api.admin.store.controller.response.CoinPolicyAdminListResponseDto;
 import gg.pingpong.api.admin.store.controller.response.CoinPolicyAdminResponseDto;
 import gg.pingpong.api.admin.store.dto.CoinPolicyAdminAddDto;
 import gg.pingpong.api.user.user.dto.UserDto;
-import gg.pingpong.data.store.CoinPolicy;
-import gg.pingpong.data.user.User;
-import gg.pingpong.utils.exception.user.UserNotFoundException;
+import gg.utils.exception.user.UserNotFoundException;
 import lombok.AllArgsConstructor;
 
 @Service

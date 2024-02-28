@@ -7,13 +7,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.pingpong.admin.repo.manage.AnnouncementAdminRepository;
+import gg.admin.repo.manage.AnnouncementAdminRepository;
+import gg.data.manage.Announcement;
 import gg.pingpong.api.admin.manage.controller.response.AnnouncementAdminListResponseDto;
 import gg.pingpong.api.admin.manage.controller.response.AnnouncementAdminResponseDto;
 import gg.pingpong.api.admin.manage.dto.AnnouncementAdminAddDto;
-import gg.pingpong.data.manage.Announcement;
-import gg.pingpong.utils.exception.announcement.AnnounceDupException;
-import gg.pingpong.utils.exception.announcement.AnnounceNotFoundException;
+import gg.utils.exception.announcement.AnnounceDupException;
+import gg.utils.exception.announcement.AnnounceNotFoundException;
 import lombok.AllArgsConstructor;
 
 @Service

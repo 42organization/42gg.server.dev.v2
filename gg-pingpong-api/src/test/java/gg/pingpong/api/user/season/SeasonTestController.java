@@ -18,14 +18,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gg.data.season.Season;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.user.season.controller.response.SeasonListResDto;
 import gg.pingpong.api.user.season.controller.response.SeasonResDto;
 import gg.pingpong.api.user.season.service.SeasonService;
-import gg.pingpong.data.season.Season;
-import gg.pingpong.repo.season.SeasonRepository;
-import gg.pingpong.utils.TestDataUtils;
-import gg.pingpong.utils.annotation.IntegrationTest;
+import gg.repo.season.SeasonRepository;
+import gg.utils.TestDataUtils;
+import gg.utils.annotation.IntegrationTest;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
