@@ -1,4 +1,4 @@
-package gg.data.recruit.manage.type;
+package gg.data.recruit.manage.enums;
 
 import lombok.RequiredArgsConstructor;
 

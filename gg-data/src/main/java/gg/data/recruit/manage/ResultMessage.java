@@ -9,7 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import gg.data.BaseTimeEntity;
-import gg.data.recruit.manage.type.MessageType;
+import gg.data.recruit.manage.enums.MessageType;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
