@@ -15,10 +15,10 @@ import lombok.Setter;
 public class Category {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer category_id;
+	private Long categoryId;
 
 	@Column(name = "category_name", length = 10)
-	private String category_name;
+	private String categoryName;
 
 	// Add Getters and setters...
 }
