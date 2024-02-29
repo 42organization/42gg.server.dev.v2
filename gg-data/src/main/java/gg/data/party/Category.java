@@ -6,11 +6,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Category {
 	@Id
@@ -19,6 +20,4 @@ public class Category {
 
 	@Column(name = "category_name", length = 10)
 	private String categoryName;
-
-	// Add Getters and setters...
 }

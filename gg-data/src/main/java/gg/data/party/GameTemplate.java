@@ -2,13 +2,19 @@ package gg.data.party;
 
 import javax.persistence.*;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class GameTemplate {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long game_template_id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "category_id")
 	private Category category;
 
@@ -35,6 +41,4 @@ public class GameTemplate {
 
 	@Column(length = 100)
 	private String summary;
-
-	// Getters and setters...
 }

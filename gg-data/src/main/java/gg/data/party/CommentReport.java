@@ -4,22 +4,27 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 import gg.data.user.User;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class CommentReport {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long reportId;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "reporter_id")
 	private User reporter;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "comment_id")
 	private Comment comment;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "room_id")
 	private Room room;
 
@@ -28,6 +33,4 @@ public class CommentReport {
 
 	@Column(name = "created_at")
 	private LocalDateTime createdAt;
-
-	// Getters and setters...
 }
