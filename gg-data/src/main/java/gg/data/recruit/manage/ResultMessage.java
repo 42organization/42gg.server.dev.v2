@@ -1,39 +1,32 @@
-package gg.data.recruit.recruitment;
+package gg.data.recruit.manage;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 import gg.data.BaseTimeEntity;
-import gg.data.recruit.recruitment.type.InputType;
+import gg.data.recruit.manage.type.MessageType;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Question extends BaseTimeEntity {
+public class ResultMessage extends BaseTimeEntity {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "recruit_id")
-	private Recruitments recruitId;
+	@Column(length = 100)
+	private String content;
 
+	@Column(length = 15)
 	@Enumerated(EnumType.STRING)
-	@Column(length = 20)
-	private InputType inputType;
+	private MessageType messageType;
 
-	@Column(length = 300)
-	private String question;
-
-	private int sortNum;
-
+	private Boolean isUse;
 }
