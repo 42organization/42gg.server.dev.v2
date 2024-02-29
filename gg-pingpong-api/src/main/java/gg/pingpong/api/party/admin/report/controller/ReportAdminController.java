@@ -1,4 +1,4 @@
-package gg.pingpong.api.party.admin.report;
+package gg.pingpong.api.party.admin.report.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 

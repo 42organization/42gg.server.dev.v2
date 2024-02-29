@@ -1,4 +1,4 @@
-package gg.pingpong.api.party.admin.category;
+package gg.pingpong.api.party.admin.category.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 

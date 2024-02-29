@@ -1,4 +1,4 @@
-package gg.pingpong.api.party.user.room;
+package gg.pingpong.api.party.user.room.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
