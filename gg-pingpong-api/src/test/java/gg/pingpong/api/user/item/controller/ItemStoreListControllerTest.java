@@ -1,6 +1,5 @@
 package gg.pingpong.api.user.item.controller;
 
-import static gg.data.store.type.ItemType.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;

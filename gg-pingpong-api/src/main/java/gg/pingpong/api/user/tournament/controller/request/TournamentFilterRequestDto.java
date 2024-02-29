@@ -1,7 +1,7 @@
 package gg.pingpong.api.user.tournament.controller.request;
 
-import gg.data.tournament.type.TournamentStatus;
-import gg.data.tournament.type.TournamentType;
+import gg.data.pingpong.tournament.type.TournamentStatus;
+import gg.data.pingpong.tournament.type.TournamentType;
 import gg.pingpong.api.global.dto.PageRequestDto;
 import lombok.Getter;
 

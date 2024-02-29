@@ -1,6 +1,5 @@
 package gg.pingpong.api.user.match.service;
 
-import static gg.data.tournament.type.RoundNumber.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -19,14 +18,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.data.game.Game;
-import gg.data.game.Team;
-import gg.data.game.type.StatusType;
-import gg.data.match.type.TournamentMatchStatus;
-import gg.data.tournament.Tournament;
-import gg.data.tournament.TournamentGame;
-import gg.data.tournament.type.TournamentRound;
-import gg.data.tournament.type.TournamentStatus;
+import gg.data.pingpong.game.Game;
+import gg.data.pingpong.game.Team;
+import gg.data.pingpong.game.type.StatusType;
+import gg.data.pingpong.match.type.TournamentMatchStatus;
+import gg.data.pingpong.tournament.Tournament;
+import gg.data.pingpong.tournament.TournamentGame;
+import gg.data.pingpong.tournament.type.TournamentRound;
+import gg.data.pingpong.tournament.type.TournamentStatus;
 import gg.data.user.User;
 import gg.pingpong.api.admin.noti.controller.request.SendNotiAdminRequestDto;
 import gg.pingpong.api.admin.noti.service.NotiAdminService;

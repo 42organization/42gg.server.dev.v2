@@ -1,6 +1,6 @@
 package gg.pingpong.api.user.user.controller.response;
 
-import gg.data.rank.Tier;
+import gg.data.pingpong.rank.Tier;
 import gg.data.user.User;
 import gg.data.user.type.BackgroundType;
 import gg.data.user.type.EdgeType;

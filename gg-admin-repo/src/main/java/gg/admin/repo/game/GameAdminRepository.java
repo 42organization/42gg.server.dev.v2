@@ -10,10 +10,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import gg.admin.repo.game.out.GameTeamUser;
-import gg.data.game.Game;
-import gg.data.game.type.Mode;
-import gg.data.game.type.StatusType;
-import gg.data.season.Season;
+import gg.data.pingpong.game.Game;
+import gg.data.pingpong.game.type.Mode;
+import gg.data.pingpong.game.type.StatusType;
+import gg.data.pingpong.season.Season;
 
 public interface GameAdminRepository extends JpaRepository<Game, Long> {
 

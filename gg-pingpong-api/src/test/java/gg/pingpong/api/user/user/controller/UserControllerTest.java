@@ -27,17 +27,17 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gg.data.game.Game;
-import gg.data.game.type.Mode;
-import gg.data.game.type.StatusType;
-import gg.data.rank.Rank;
-import gg.data.rank.Tier;
-import gg.data.rank.redis.RankRedis;
-import gg.data.season.Season;
-import gg.data.store.Item;
-import gg.data.store.Receipt;
-import gg.data.store.type.ItemStatus;
-import gg.data.store.type.ItemType;
+import gg.data.pingpong.game.Game;
+import gg.data.pingpong.game.type.Mode;
+import gg.data.pingpong.game.type.StatusType;
+import gg.data.pingpong.rank.Rank;
+import gg.data.pingpong.rank.Tier;
+import gg.data.pingpong.rank.redis.RankRedis;
+import gg.data.pingpong.season.Season;
+import gg.data.pingpong.store.Item;
+import gg.data.pingpong.store.Receipt;
+import gg.data.pingpong.store.type.ItemStatus;
+import gg.data.pingpong.store.type.ItemType;
 import gg.data.user.User;
 import gg.data.user.type.BackgroundType;
 import gg.data.user.type.EdgeType;

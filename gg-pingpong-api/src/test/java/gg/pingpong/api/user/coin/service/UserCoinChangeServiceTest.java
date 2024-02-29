@@ -10,12 +10,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.data.game.Game;
-import gg.data.game.type.Mode;
-import gg.data.season.Season;
-import gg.data.store.CoinPolicy;
-import gg.data.store.Item;
-import gg.data.store.type.ItemType;
+import gg.data.pingpong.game.Game;
+import gg.data.pingpong.game.type.Mode;
+import gg.data.pingpong.season.Season;
+import gg.data.pingpong.store.CoinPolicy;
+import gg.data.pingpong.store.Item;
+import gg.data.pingpong.store.type.ItemType;
 import gg.data.user.User;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.user.store.dto.UserGameCoinResultDto;

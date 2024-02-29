@@ -5,10 +5,10 @@ import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Component;
 
-import gg.data.store.Item;
-import gg.data.store.Megaphone;
-import gg.data.store.Receipt;
-import gg.data.store.type.ItemStatus;
+import gg.data.pingpong.store.Item;
+import gg.data.pingpong.store.Megaphone;
+import gg.data.pingpong.store.Receipt;
+import gg.data.pingpong.store.type.ItemStatus;
 import gg.data.user.User;
 import gg.pingpong.api.admin.store.controller.request.ItemUpdateRequestDto;
 import gg.repo.store.ItemRepository;

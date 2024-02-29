@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.data.game.Game;
-import gg.data.game.PChange;
+import gg.data.pingpong.game.Game;
+import gg.data.pingpong.game.PChange;
 import gg.data.user.User;
 import gg.repo.game.PChangeRepository;
 import gg.utils.exception.pchange.PChangeNotExistException;

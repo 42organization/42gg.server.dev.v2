@@ -20,8 +20,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.net.HttpHeaders;
 
 import gg.admin.repo.season.SeasonAdminRepository;
-import gg.data.rank.Tier;
-import gg.data.season.Season;
+import gg.data.pingpong.rank.Tier;
+import gg.data.pingpong.season.Season;
 import gg.pingpong.api.admin.rank.service.RankAdminService;
 import gg.pingpong.api.admin.rank.service.RankRedisAdminService;
 import gg.pingpong.api.admin.season.controller.request.SeasonCreateRequestDto;

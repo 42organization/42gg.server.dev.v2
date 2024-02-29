@@ -11,8 +11,8 @@ import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
-import gg.data.match.RedisMatchUser;
-import gg.data.match.type.MatchKey;
+import gg.data.pingpong.match.RedisMatchUser;
+import gg.data.pingpong.match.type.MatchKey;
 import lombok.RequiredArgsConstructor;
 
 @Repository

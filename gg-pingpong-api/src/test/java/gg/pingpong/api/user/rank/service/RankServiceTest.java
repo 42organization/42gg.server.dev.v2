@@ -17,7 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
-import gg.data.season.Season;
+import gg.data.pingpong.season.Season;
 import gg.data.user.User;
 import gg.pingpong.api.user.rank.controller.response.ExpRankPageResponseDto;
 import gg.pingpong.api.user.rank.controller.response.RankPageResponseDto;

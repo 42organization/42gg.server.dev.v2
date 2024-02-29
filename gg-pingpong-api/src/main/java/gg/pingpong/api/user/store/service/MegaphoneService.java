@@ -9,11 +9,11 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.data.store.Megaphone;
-import gg.data.store.Receipt;
-import gg.data.store.redis.MegaphoneRedis;
-import gg.data.store.type.ItemStatus;
-import gg.data.store.type.ItemType;
+import gg.data.pingpong.store.Megaphone;
+import gg.data.pingpong.store.Receipt;
+import gg.data.pingpong.store.redis.MegaphoneRedis;
+import gg.data.pingpong.store.type.ItemStatus;
+import gg.data.pingpong.store.type.ItemType;
 import gg.data.user.User;
 import gg.data.user.type.RoleType;
 import gg.pingpong.api.user.store.controller.request.MegaphoneUseRequestDto;

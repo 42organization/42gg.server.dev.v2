@@ -20,10 +20,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gg.data.tournament.Tournament;
-import gg.data.tournament.TournamentUser;
-import gg.data.tournament.type.TournamentStatus;
-import gg.data.tournament.type.TournamentType;
+import gg.data.pingpong.tournament.Tournament;
+import gg.data.pingpong.tournament.TournamentUser;
+import gg.data.pingpong.tournament.type.TournamentStatus;
+import gg.data.pingpong.tournament.type.TournamentType;
 import gg.data.user.User;
 import gg.data.user.type.RacketType;
 import gg.data.user.type.RoleType;

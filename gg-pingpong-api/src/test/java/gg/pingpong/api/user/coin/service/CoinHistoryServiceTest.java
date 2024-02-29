@@ -10,8 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.data.store.CoinHistory;
-import gg.data.store.CoinPolicy;
+import gg.data.pingpong.store.CoinHistory;
+import gg.data.pingpong.store.CoinPolicy;
 import gg.data.user.User;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.user.store.service.CoinHistoryService;
