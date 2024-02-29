@@ -1,4 +1,4 @@
-package gg.pingpong.api;
+package gg;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
