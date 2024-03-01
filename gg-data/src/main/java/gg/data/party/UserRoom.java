@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import gg.data.BaseTimeEntity;
 import gg.data.user.User;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -17,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class UserRoom {
+public class UserRoom extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
