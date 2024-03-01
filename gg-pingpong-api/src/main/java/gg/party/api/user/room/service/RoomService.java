@@ -26,8 +26,8 @@ public class RoomService {
 		Sort sortForNotStarted = Sort.by("createdAt").descending();
 		Sort sortForStarted = Sort.by("dueDate").ascending();
 
-		List<Room> notStartedRooms = roomRepository.findByRoomStatus(RoomType.OPEN, sortForNotStarted);
-		List<Room> startedRooms = roomRepository.findByRoomStatus(RoomType.START, sortForStarted);
+		List<Room> notStartedRooms = roomRepository.findByStatus(RoomType.OPEN, sortForNotStarted);
+		List<Room> startedRooms = roomRepository.findByStatus(RoomType.START, sortForStarted);
 
 		notStartedRooms.addAll(startedRooms);
 		List<RoomResDto> roomResDtoList = notStartedRooms.stream()

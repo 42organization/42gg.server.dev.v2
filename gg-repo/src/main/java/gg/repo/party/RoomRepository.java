@@ -9,5 +9,5 @@ import gg.data.party.Room;
 import gg.data.party.type.RoomType;
 
 public interface RoomRepository extends JpaRepository<Room, Long> {
-	List<Room> findByRoomStatus(RoomType status, Sort sort);
+	List<Room> findByStatus(RoomType status, Sort sort);
 }
