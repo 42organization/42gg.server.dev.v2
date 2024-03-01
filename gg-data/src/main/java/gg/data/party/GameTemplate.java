@@ -1,6 +1,14 @@
 package gg.data.party;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import org.springframework.data.annotation.Id;
 
 import gg.data.BaseTimeEntity;
 import lombok.AccessLevel;
