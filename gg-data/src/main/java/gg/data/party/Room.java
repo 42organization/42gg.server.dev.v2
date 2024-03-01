@@ -21,6 +21,7 @@ import gg.data.BaseTimeEntity;
 import gg.data.party.type.RoomType;
 import gg.data.user.User;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -65,4 +66,18 @@ public class Room extends BaseTimeEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status")
 	private RoomType status;
+
+	@Builder
+	public Room(User host, User creator, Category category, String title, String content, Integer maxPeople,
+		Integer minPeople, LocalDateTime dueDate, RoomType status) {
+		this.host = host;
+		this.creator = creator;
+		this.category = category;
+		this.title = title;
+		this.content = content;
+		this.maxPeople = maxPeople;
+		this.minPeople = minPeople;
+		this.dueDate = dueDate;
+		this.status = status;
+	}
 }
