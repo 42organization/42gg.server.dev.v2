@@ -54,7 +54,7 @@ public class RoomService {
 	public RoomListResDto findOrderHistoryRoomList() {
 		Sort sortForPlayed = Sort.by("dueDate").ascending();
 
-		List<Room> playedRooms = roomRepository.findByStatus(RoomType.OPEN, sortForPlayed);
+		List<Room> playedRooms = roomRepository.findByStatus(RoomType.FINISH, sortForPlayed);
 
 		List<RoomResDto> roomListResDto = playedRooms.stream()
 			.map(room -> new RoomResDto(room))
