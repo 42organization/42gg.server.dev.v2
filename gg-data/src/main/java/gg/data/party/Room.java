@@ -50,18 +50,19 @@ public class Room extends BaseTimeEntity {
 	@Column(name = "content", length = 100)
 	private String content;
 
-	@Column
+	@Column(name = "max_people")
 	private Integer maxPeople;
 
-	@Column
+	@Column(name = "min_people")
 	private Integer minPeople;
 
-	@Column
+	@Column(name = "due_date")
 	private LocalDateTime dueDate;
 
 	@OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
 	private List<Comment> comments = new ArrayList<>();
 
 	@Enumerated(EnumType.STRING)
-	private RoomType roomStatus;
+	@Column(name = "status")
+	private RoomType status;
 }

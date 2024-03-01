@@ -19,7 +19,7 @@ public class Category extends BaseTimeEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "category_name", length = 10)
-	private String categoryName;
+	@Column(name = "name", length = 10)
+	private String name;
 
 }

@@ -26,7 +26,7 @@ public class GameTemplate extends BaseTimeEntity {
 	@JoinColumn(name = "category_id")
 	private Category category;
 
-	@Column(length = 10)
+	@Column(length = 20)
 	private String gameName;
 
 	@Column
