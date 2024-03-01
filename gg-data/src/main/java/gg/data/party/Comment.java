@@ -28,8 +28,8 @@ public class Comment extends BaseTimeEntity {
 	private User user;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "userroom_id")
-	private UserRoom userroom;
+	@JoinColumn(name = "user_room_id")
+	private UserRoom userRoom;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "room_id")

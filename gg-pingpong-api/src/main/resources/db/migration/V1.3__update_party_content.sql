@@ -38,22 +38,22 @@ CREATE TABLE user_room (
 CREATE TABLE comment (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     user_id BIGINT,
-    userroom_id BIGINT,
+    user_room_id BIGINT,
     room_id BIGINT,
     content VARCHAR(100),
     is_hidden BOOLEAN,
     created_at DATETIME,
     modified_at DATETIME,
     FOREIGN KEY (user_id) REFERENCES user(id),
-    FOREIGN KEY (userroom_id) REFERENCES userroom(id),
+    FOREIGN KEY (user_room_id) REFERENCES user_room(id),
     FOREIGN KEY (room_id) REFERENCES room(id)
 );
 
 CREATE TABLE comment_report (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    room_id BIGINT,
     reporter_id BIGINT,
     comment_id BIGINT,
-    room_id BIGINT,
     message VARCHAR(100),
     created_at DATETIME,
     modified_at DATETIME,
