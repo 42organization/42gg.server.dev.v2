@@ -20,4 +20,5 @@ public class Category {
 
 	@Column(name = "category_name", length = 10)
 	private String categoryName;
+
 }
