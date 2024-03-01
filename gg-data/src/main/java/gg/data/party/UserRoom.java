@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class UserRoom {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long userroomId;
+	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
@@ -23,7 +23,7 @@ public class UserRoom {
 	@JoinColumn(name = "room_id")
 	private Room room;
 
-	@Column(length = 40)
+	@Column(name = "nickname", length = 20)
 	private String nickname;
 
 	@Column(name = "is_exist")

@@ -2,6 +2,7 @@ package gg.data.party;
 
 import javax.persistence.*;
 
+import gg.data.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,29 +10,29 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class GameTemplate {
+public class GameTemplate extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long game_template_id;
+	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "category_id")
 	private Category category;
 
 	@Column(length = 10)
-	private String game_name;
+	private String gameName;
 
 	@Column
-	private Integer max_game_people;
+	private Integer maxGamePeople;
 
 	@Column
-	private Integer min_game_people;
+	private Integer minGamePeople;
 
 	@Column
-	private Integer max_game_time;
+	private Integer maxGameTime;
 
 	@Column
-	private Integer min_game_time;
+	private Integer minGameTime;
 
 	@Column(length = 10)
 	private String genre;
