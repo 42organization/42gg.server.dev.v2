@@ -20,5 +20,11 @@ public class RoomController {
 		RoomListResDto roomListResDto = roomService.findOrderRoomList();
 		return ResponseEntity.ok(roomListResDto);
 	}
+
+	@GetMapping("/history")
+	public ResponseEntity<RoomListResDto> allHistoryRoomList() {
+		RoomListResDto roomListResDto = roomService.findOrderHistoryRoomList();
+		return ResponseEntity.ok(roomListResDto);
+	}
 }
 

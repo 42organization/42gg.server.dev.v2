@@ -30,10 +30,26 @@ public class RoomService {
 		List<Room> startedRooms = roomRepository.findByStatus(RoomType.START, sortForStarted);
 
 		notStartedRooms.addAll(startedRooms);
-		List<RoomResDto> roomResDtoList = notStartedRooms.stream()
+		List<RoomResDto> roomListResDto = notStartedRooms.stream()
 			.map(room -> new RoomResDto(room))
 			.collect(Collectors.toList());
 
-		return new RoomListResDto(roomResDtoList);
+		return new RoomListResDto(roomListResDto);
+	}
+
+	/**
+	 * 시간이 지나 보이지 않게 된 방을 모두 조회한다
+	 * @return 끝난 방 전체 List
+	 */
+	public RoomListResDto findOrderHistoryRoomList() {
+		Sort sortForPlayed = Sort.by("dueDate").ascending();
+
+		List<Room> playedRooms = roomRepository.findByStatus(RoomType.OPEN, sortForPlayed);
+
+		List<RoomResDto> roomListResDto = playedRooms.stream()
+			.map(room -> new RoomResDto(room))
+			.collect(Collectors.toList());
+
+		return new RoomListResDto(roomListResDto);
 	}
 }
