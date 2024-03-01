@@ -18,12 +18,12 @@ CREATE TABLE room (
     created_at DATETIME,
     modified_at DATETIME,
     room_status VARCHAR(10),
-    FOREIGN KEY (host_id) REFERENCES User(id),
-    FOREIGN KEY (creator_id) REFERENCES User(id),
-    FOREIGN KEY (category_id) REFERENCES Category(id)
+    FOREIGN KEY (host_id) REFERENCES user(id),
+    FOREIGN KEY (creator_id) REFERENCES user(id),
+    FOREIGN KEY (category_id) REFERENCES category(id)
 );
 
-CREATE TABLE userroom (
+CREATE TABLE user_room (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     user_id BIGINT,
     room_id BIGINT,
@@ -44,12 +44,12 @@ CREATE TABLE comment (
     is_hidden BOOLEAN,
     created_at DATETIME,
     modified_at DATETIME,
-    FOREIGN KEY (user_id) REFERENCES User(id),
-    FOREIGN KEY (userroom_id) REFERENCES UserRoom(id),
-    FOREIGN KEY (room_id) REFERENCES Room(id)
+    FOREIGN KEY (user_id) REFERENCES user(id),
+    FOREIGN KEY (userroom_id) REFERENCES userroom(id),
+    FOREIGN KEY (room_id) REFERENCES room(id)
 );
 
-CREATE TABLE commentreport (
+CREATE TABLE comment_report (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     reporter_id BIGINT,
     comment_id BIGINT,
@@ -57,12 +57,12 @@ CREATE TABLE commentreport (
     message VARCHAR(100),
     created_at DATETIME,
     modified_at DATETIME,
-    FOREIGN KEY (reporter_id) REFERENCES User(id),
-    FOREIGN KEY (comment_id) REFERENCES Comment(id),
-    FOREIGN KEY (room_id) REFERENCES Room(id)
+    FOREIGN KEY (reporter_id) REFERENCES user(id),
+    FOREIGN KEY (comment_id) REFERENCES comment(id),
+    FOREIGN KEY (room_id) REFERENCES room(id)
 );
 
-CREATE TABLE gametemplate (
+CREATE TABLE game_template (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     category_id BIGINT,
     game_name VARCHAR(10),
@@ -78,7 +78,7 @@ CREATE TABLE gametemplate (
     FOREIGN KEY (category_id) REFERENCES category(id)
 );
 
-CREATE TABLE roomreport (
+CREATE TABLE room_report (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     reporter_id BIGINT,
     reportee_id BIGINT,
@@ -91,15 +91,15 @@ CREATE TABLE roomreport (
     FOREIGN KEY (room_id) REFERENCES room(id)
 );
 
-CREATE TABLE userreport (
+CREATE TABLE user_report (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     reporter_id BIGINT,
     reportee_id BIGINT,
     room_id BIGINT,
+    created_at DATETIME,
+    modified_at DATETIME,
     message VARCHAR(100),
     FOREIGN KEY (reporter_id) REFERENCES user(id),
     FOREIGN KEY (reportee_id) REFERENCES user(id),
     FOREIGN KEY (room_id) REFERENCES room(id)
 );
-
-
