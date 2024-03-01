@@ -1,4 +1,4 @@
-package gg.pingpong.api.admin.match.dto;
+package gg.pingpong.api.admin.match.controller.response;
 
 import java.time.LocalDateTime;
 import java.util.List;
