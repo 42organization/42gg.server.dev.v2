@@ -48,23 +48,11 @@ public class RoomService {
 	}
 
 	/**
-	 * 시간이 지나 보이지 않게 된 방을 모두 조회한다
-	 * @return 끝난 방 전체 List
-	 */
-	public RoomListResDto findOrderHistoryRoomList() {
-		Sort sortForPlayed = Sort.by("dueDate").ascending();
-
-		List<Room> playedRooms = roomRepository.findByStatus(RoomType.OPEN, sortForPlayed);
-
-		List<RoomResDto> roomListResDto = playedRooms.stream()
-			.map(room -> new RoomResDto(room))
-			.collect(Collectors.toList());
-
-		return new RoomListResDto(roomListResDto);
-	}
-
-	/**
 	 * 방 생성하기
+	 * @param roomCreateReqDto 요청 DTO
+	 * @param userDto user객체를 보내기 위한 DTO객체
+   	 * @exception UserNotFoundException 유효하지 않은 유저 입력
+	 * @exception CategoryNotFoundException 유효하지 카테고리 입력
 	 * @return 만들어진 방 ID값
 	 */
 	public Long addOrderCreateRoom(RoomCreateReqDto roomCreateReqDto, UserDto userDto) {
@@ -74,4 +62,22 @@ public class RoomService {
 		Room room = roomRepository.save(RoomCreateReqDto.toEntity(roomCreateReqDto, user, category));
 		return room.getId();
 	}
+
+	/**
+	 * 시간이 지나 보이지 않게 된 방을 모두 조회한다
+	 * @return 끝난 방 전체 List
+	 */
+	public RoomListResDto findOrderHistoryRoomList() {
+		Sort sortForPlayed = Sort.by("dueDate").ascending();
+
+		List<Room> playedRooms = roomRepository.findByStatus(RoomType.FINISH, sortForPlayed);
+
+		List<RoomResDto> roomListResDto = playedRooms.stream()
+			.map(room -> new RoomResDto(room))
+			.collect(Collectors.toList());
+
+		return new RoomListResDto(roomListResDto);
+	}
+
+
 }
