@@ -1,5 +1,12 @@
+CREATE TABLE category (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    category_name VARCHAR(10) NOT NULL,
+    created_at DATETIME,
+    modified_at DATETIME
+);
+
 CREATE TABLE room (
-    room_id BIGINT AUTO_INCREMENT,
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
     host_id BIGINT,
     creator_id BIGINT,
     category_id BIGINT,
@@ -7,16 +14,92 @@ CREATE TABLE room (
     content VARCHAR(100),
     max_people INT,
     min_people INT,
-    due_date TIMESTAMP,
-    created_at TIMESTAMP,
-    modified_at TIMESTAMP,
+    due_date DATETIME,
+    created_at DATETIME,
+    modified_at DATETIME,
     room_status VARCHAR(10),
-    PRIMARY KEY(room_id)
+    FOREIGN KEY (host_id) REFERENCES User(id),
+    FOREIGN KEY (creator_id) REFERENCES User(id),
+    FOREIGN KEY (category_id) REFERENCES Category(id)
 );
 
-CREATE TABLE Category (
-    category_id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    category_name VARCHAR(10) NOT NULL,
-    created_at TIMESTAMP,
-    modified_at TIMESTAMP
+CREATE TABLE userroom (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    user_id BIGINT,
+    room_id BIGINT,
+    nickname VARCHAR(20),
+    is_exist BOOLEAN,
+    created_at DATETIME,
+    modified_at DATETIME,
+    FOREIGN KEY (user_id) REFERENCES user(id),
+    FOREIGN KEY (room_id) REFERENCES room(id)
 );
+
+CREATE TABLE comment (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    user_id BIGINT,
+    userroom_id BIGINT,
+    room_id BIGINT,
+    content VARCHAR(100),
+    is_hidden BOOLEAN,
+    created_at DATETIME,
+    modified_at DATETIME,
+    FOREIGN KEY (user_id) REFERENCES User(id),
+    FOREIGN KEY (userroom_id) REFERENCES UserRoom(id),
+    FOREIGN KEY (room_id) REFERENCES Room(id)
+);
+
+CREATE TABLE commentreport (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    reporter_id BIGINT,
+    comment_id BIGINT,
+    room_id BIGINT,
+    message VARCHAR(100),
+    created_at DATETIME,
+    modified_at DATETIME,
+    FOREIGN KEY (reporter_id) REFERENCES User(id),
+    FOREIGN KEY (comment_id) REFERENCES Comment(id),
+    FOREIGN KEY (room_id) REFERENCES Room(id)
+);
+
+CREATE TABLE gametemplate (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    category_id BIGINT,
+    game_name VARCHAR(10),
+    max_game_people INT,
+    min_game_people INT,
+    max_game_time INT,
+    min_game_time INT,
+    genre VARCHAR(10),
+    difficulty VARCHAR(10),
+    summary VARCHAR(100),
+    created_at DATETIME,
+    modified_at DATETIME,
+    FOREIGN KEY (category_id) REFERENCES category(id)
+);
+
+CREATE TABLE roomreport (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    reporter_id BIGINT,
+    reportee_id BIGINT,
+    room_id BIGINT,
+    message VARCHAR(100),
+    created_at DATETIME,
+    modified_at DATETIME,
+    FOREIGN KEY (reporter_id) REFERENCES user(id),
+    FOREIGN KEY (reportee_id) REFERENCES user(id),
+    FOREIGN KEY (room_id) REFERENCES room(id)
+);
+
+CREATE TABLE userreport (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    reporter_id BIGINT,
+    reportee_id BIGINT,
+    room_id BIGINT,
+    message VARCHAR(100),
+    FOREIGN KEY (reporter_id) REFERENCES user(id),
+    FOREIGN KEY (reportee_id) REFERENCES user(id),
+    FOREIGN KEY (room_id) REFERENCES room(id)
+);
+
+

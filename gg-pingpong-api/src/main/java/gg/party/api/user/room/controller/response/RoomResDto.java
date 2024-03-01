@@ -22,10 +22,10 @@ public class RoomResDto {
 	private String roomStatus;
 
 	public RoomResDto(Room room) {
-		this.roomId = room.getRoomId();
+		this.roomId = room.getId();
 		this.hostId = room.getHost().getId();
 		this.creatorId = room.getCreator().getId();
-		this.categoryId = room.getCategory().getCategoryId();
+		this.categoryId = room.getCategory().getId();
 		this.title = room.getTitle();
 		this.content = room.getContent();
 		this.maxPeople = room.getMaxPeople();

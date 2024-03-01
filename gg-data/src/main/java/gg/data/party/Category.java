@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 public class Category extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long categoryId;
+	private Long id;
 
 	@Column(name = "category_name", length = 10)
 	private String categoryName;

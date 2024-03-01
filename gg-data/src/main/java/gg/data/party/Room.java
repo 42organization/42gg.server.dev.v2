@@ -1,7 +1,10 @@
 package gg.data.party;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -12,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import gg.data.BaseTimeEntity;
 import gg.data.party.type.RoomType;
@@ -26,7 +30,7 @@ import lombok.NoArgsConstructor;
 public class Room extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long roomId;
+	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "host_id")
@@ -54,6 +58,9 @@ public class Room extends BaseTimeEntity {
 
 	@Column
 	private LocalDateTime dueDate;
+
+	@OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
+	private List<Comment> comments = new ArrayList<>();
 
 	@Enumerated(EnumType.STRING)
 	private RoomType roomStatus;
