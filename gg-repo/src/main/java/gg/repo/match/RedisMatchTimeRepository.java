@@ -3,7 +3,6 @@ package gg.repo.match;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -49,14 +48,5 @@ public class RedisMatchTimeRepository {
 		Integer prefixIdx = MatchKey.getAllTime().length();
 		return keys.stream().map(str -> LocalDateTime.parse(str.substring(prefixIdx)))
 			.collect(Collectors.toSet());
-	}
-
-	public Map<LocalDateTime, List<RedisMatchUser>> getAllEnrolledSlots() {
-		Set<String> keys = redisTemplate.keys(MatchKey.getAllTime() + "*");
-		int prefixIdx = MatchKey.getAllTime().length();
-
-		return keys.stream().collect(Collectors.toMap(
-			key -> LocalDateTime.parse(key.substring(prefixIdx)),
-			key -> redisTemplate.opsForList().range(key, 0, -1)));
 	}
 }

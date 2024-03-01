@@ -1,8 +1,10 @@
 package gg.pingpong.api.admin.match.controller.response;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
+import gg.pingpong.api.admin.match.service.dto.MatchUser;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,13 +14,13 @@ import lombok.NoArgsConstructor;
 public class EnrolledMatch {
 	private LocalDateTime startTime;
 	private LocalDateTime endTime;
-	private Boolean isMatched;
-	private List<MatchUser> players;
+	private List<MatchUser> waitList = new ArrayList<>();
 
-	public EnrolledMatch(LocalDateTime startTime, LocalDateTime endTime, Boolean isMatched, List<MatchUser> players) {
-		this.startTime = startTime;
-		this.endTime = endTime;
-		this.isMatched = isMatched;
-		this.players = players;
+	public static EnrolledMatch of(LocalDateTime startTime, List<MatchUser> waitList, int interval) {
+		EnrolledMatch enrolledMatch = new EnrolledMatch();
+		enrolledMatch.startTime = startTime;
+		enrolledMatch.endTime = startTime.plusMinutes(interval);
+		enrolledMatch.waitList.addAll(waitList);
+		return enrolledMatch;
 	}
 }

@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import gg.data.match.RedisMatchUser;
 import gg.data.match.type.Option;
 import gg.pingpong.api.admin.match.controller.response.EnrolledMatchesResponseDto;
 import gg.pingpong.api.admin.match.service.MatchAdminService;
+import gg.pingpong.api.admin.match.service.dto.MatchUser;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -33,8 +33,9 @@ public class MatchAdminController {
 	@GetMapping
 	public ResponseEntity<EnrolledMatchesResponseDto> getMatch(
 		@RequestParam(name = "mode", required = false) Option mode) {
-		Map<LocalDateTime, List<RedisMatchUser>> matches = matchAdminService.getMatches(mode);
-
-		return ResponseEntity.status(HttpStatus.OK).build();
+		Map<LocalDateTime, List<MatchUser>> matches = matchAdminService.getMatches(mode);
+		int gameInterval = matchAdminService.getGameInterval();
+		EnrolledMatchesResponseDto response = EnrolledMatchesResponseDto.of(matches, gameInterval);
+		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 }
