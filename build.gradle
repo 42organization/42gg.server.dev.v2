@@ -1,13 +1,19 @@
 plugins {
-	id 'org.springframework.boot' version '2.6.8'
-	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-	id 'org.asciidoctor.jvm.convert' version '3.3.2'
-	id 'java'
-	id 'jacoco'
+    id 'org.springframework.boot' version '2.6.8'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'org.asciidoctor.jvm.convert' version '3.3.2'
+    id 'java'
+    id 'jacoco'
+    id 'org.ec4j.editorconfig' version '0.0.3'
+    id 'checkstyle'
+}
+
+editorconfig {
+    excludes = ['build']
 }
 
 springBoot {
-	mainClass = "com.gg.server.Application"
+    mainClass = "gg.pingpong.api.PingPongApiApplication"
 }
 
 group = 'io.42pp'
@@ -15,236 +21,261 @@ version = '42gg'
 sourceCompatibility = '11'
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 ext {
-	set('snippetsDir', file("build/generated-snippets"))
+    set('snippetsDir', file("build/generated-snippets"))
 }
 
-dependencies {
-	/* spring */
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-mail'
-	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'jacoco'
+    apply plugin: 'checkstyle'
 
-	/* database */
-	runtimeOnly 'mysql:mysql-connector-java'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    checkstyle {
+        maxWarnings = 0
+        configFile = file("${rootDir}/naver-checkstyle-rules.xml")
+        configProperties = ["suppressionFile": "${rootDir}/naver-checkstyle-suppressions.xml"]
+        toolVersion = "8.24"
+    }
 
-	/* redis */
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-	implementation 'org.springframework.session:spring-session-data-redis'
-	implementation 'org.redisson:redisson:3.17.3'
+    dependencies {
+        /* database */
+        implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
-	/* oauth */
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+        /* redis */
+        implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+        implementation 'org.redisson:redisson:3.17.3'
 
-	/* JSON Web Token */
-	implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
-	implementation 'io.jsonwebtoken:jjwt-impl:0.11.2'
-	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+        /* spring doc */
+        implementation 'org.springdoc:springdoc-openapi-ui:1.6.6'
 
-	/* test */
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+        /* lombok */
+        implementation 'org.projectlombok:lombok:1.18.26'
+        annotationProcessor 'org.projectlombok:lombok'
+        compileOnly 'org.projectlombok:lombok'
 
-	/* lombok */
-	implementation 'org.projectlombok:lombok:1.18.26'
-	annotationProcessor 'org.projectlombok:lombok'
-	compileOnly 'org.projectlombok:lombok'
+        /* test */
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 
-	/* SHA256 */
-	implementation 'com.google.guava:guava:31.0.1-jre'
+        //test에서 lombok 사용
+        testImplementation 'org.projectlombok:lombok'
+        testCompileOnly 'org.projectlombok:lombok'
+        testAnnotationProcessor 'org.projectlombok:lombok'
 
-	/* When..? Error */
-	implementation 'org.apache.commons:commons-lang3:3.12.0'
+        /* elk-logstash */
+        implementation 'net.logstash.logback:logstash-logback-encoder:6.3'
 
-	/* REST template */
-	implementation 'org.apache.httpcomponents:httpcore:4.4.15'
-	implementation 'org.apache.httpcomponents:httpclient:4.5.13'
+        //actuator 추가
+        implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
-	/* S3 Image Bucket */
-	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
-	implementation 'org.springframework:spring-test:5.3.20'
-	implementation "com.amazonaws:aws-java-sdk-s3:1.12.281"
+        //prometheus 추가
+        implementation 'io.micrometer:micrometer-registry-prometheus'
 
-	testImplementation 'org.springframework.security:spring-security-test'
-
-	//test에서 lombok 사용
-	testImplementation 'org.projectlombok:lombok'
-	testCompileOnly 'org.projectlombok:lombok'
-	testAnnotationProcessor 'org.projectlombok:lombok'
-
-	/* spring doc */
-	implementation 'org.springdoc:springdoc-openapi-ui:1.6.6'
-
-	/* flyway */
-	implementation 'org.flywaydb:flyway-core'
-
-	/* elk-logstash */
-	implementation 'net.logstash.logback:logstash-logback-encoder:6.3'
-
-	//actuator 추가
-	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-
-	//prometheus 추가
-	implementation 'io.micrometer:micrometer-registry-prometheus'
-
-	//testcontainers 추가
-	testImplementation "org.testcontainers:mysql:1.19.3"
-	testImplementation "com.redis:testcontainers-redis:2.0.1"
-	testImplementation "org.junit.jupiter:junit-jupiter:5.8.1"
-	testImplementation "org.testcontainers:testcontainers:1.19.3"
-	testImplementation "org.testcontainers:junit-jupiter:1.19.3"
-}
+        //testcontainers 추가
+        testImplementation "org.testcontainers:mysql:1.19.3"
+        testImplementation "com.redis:testcontainers-redis:2.0.1"
+        testImplementation "org.junit.jupiter:junit-jupiter:5.8.1"
+        testImplementation "org.testcontainers:testcontainers:1.19.3"
+        testImplementation "org.testcontainers:junit-jupiter:1.19.3"
+    }
 
 //테스트 커버리지 측정도구
-jacoco {
-	toolVersion = "0.8.8"
-}
+    jacoco {
+        toolVersion = "0.8.8"
+    }
 
 // dto, 외부 연동 서비스는 테스트에서 제외
-def	jacocoExcludes = [
-	'*Application*',
-	"**/config/*",
-	"**/security/*",
-	"**/dto/*",
-	"**/aws/*",
-	"*NotiMailSender*",
-	'*SlackbotService*',
-]
+    def jacocoExcludes = [
+            '*Application*',
+            "**/config/*",
+            "**/security/*",
+            "**/dto/*",
+            "**/aws/*",
+            "*NotiMailSender*",
+            '*SlackbotService*',
+    ]
 
 //커버리지 리포트 생성
-jacocoTestReport {
+    jacocoTestReport {
 
-	reports {
-		xml.enabled true
-		html.enabled true
-		csv.enabled false
-	}
+        reports {
+            xml.enabled true
+            html.enabled true
+            csv.enabled false
+        }
 
-	afterEvaluate {
-		//dto 및 외부 연동 서비스는 테스트에서 제외
-		classDirectories.setFrom(files(classDirectories.files.collect {
-			fileTree(dir: it, exclude: jacocoExcludes)})
-		)
-	}
-}
+        afterEvaluate {
+            //dto 및 외부 연동 서비스는 테스트에서 제외
+            classDirectories.setFrom(files(classDirectories.files.collect {
+                fileTree(dir: it, exclude: jacocoExcludes)
+            })
+            )
+        }
+    }
 
 // 커버리지 검증 설정
-jacocoTestCoverageVerification {
+    jacocoTestCoverageVerification {
 
-	violationRules {
-		rule {
-			enabled = true
-			element = 'CLASS'
+        violationRules {
+            rule {
+                enabled = true
+                element = 'CLASS'
 
-			//브랜치 커버리지
-			limit {
-				counter = 'BRANCH'
-				value = 'COVEREDRATIO'
-				minimum = 0.00
-			}
+                //브랜치 커버리지
+                limit {
+                    counter = 'BRANCH'
+                    value = 'COVEREDRATIO'
+                    minimum = 0.00
+                }
 
-			//메소드 커버리지
-			limit {
-				counter = 'METHOD'
-				value = 'COVEREDRATIO'
-				minimum = 0.00
-			}
+                //메소드 커버리지
+                limit {
+                    counter = 'METHOD'
+                    value = 'COVEREDRATIO'
+                    minimum = 0.00
+                }
 
-			//라인 커버리지
-			limit {
-				counter = 'LINE'
-				value = 'COVEREDRATIO'
-				minimum = 0.00
-			}
+                //라인 커버리지
+                limit {
+                    counter = 'LINE'
+                    value = 'COVEREDRATIO'
+                    minimum = 0.00
+                }
 
-			//검증에서 제외할 패키지, 클래스
-			excludes = jacocoExcludes
-		}
-	}
-}
+                //검증에서 제외할 패키지, 클래스
+                excludes = jacocoExcludes
+            }
+        }
+    }
 
 //전체 테스트
-test {
-	description = 'Runs the total tests.'
-	useJUnitPlatform()
-}
+    test {
+        description = 'Runs the total tests.'
+        useJUnitPlatform()
+    }
 
 //유닛 테스트
-task unitTest(type: Test) {
-	group = 'verification'
-	description = 'Runs the unit tests.'
-	useJUnitPlatform{
-		includeTags 'UnitTest'
-		excludeTags 'IntegrationTest'
-	}
+    task unitTest(type: Test) {
+        group = 'verification'
+        description = 'Runs the unit tests.'
+        useJUnitPlatform {
+            includeTags 'UnitTest'
+            excludeTags 'IntegrationTest'
+        }
 
-	jacoco {
-		destinationFile = file("$buildDir/jacoco/test.exec")
-	}
+        jacoco {
+            destinationFile = file("$buildDir/jacoco/test.exec")
+        }
 
-}
+    }
 
 //통합 테스트
-task integrationTest(type: Test) {
-	group = 'verification'
-	description = 'Runs the integration tests.'
-	useJUnitPlatform{
-		includeTags 'IntegrationTest'
-		excludeTags 'UnitTest'
-	}
+    task integrationTest(type: Test) {
+        group = 'verification'
+        description = 'Runs the integration tests.'
+        useJUnitPlatform {
+            includeTags 'IntegrationTest'
+            excludeTags 'UnitTest'
+        }
 
-	jacoco {
-		destinationFile = file("$buildDir/jacoco/test.exec")
-	}
-}
+        jacoco {
+            destinationFile = file("$buildDir/jacoco/test.exec")
+        }
+    }
 
 //전체 테스트, 리포트 생성, 검증
-task totalTestCoverage(type: Test) {
-	group 'verification'
-	description 'Runs the total tests with coverage'
+    task totalTestCoverage(type: Test) {
+        group 'verification'
+        description 'Runs the total tests with coverage'
 
-	dependsOn(':test',
-			':jacocoTestReport',
-			':jacocoTestCoverageVerification')
+        dependsOn(project.tasks.findByName('test'),
+                project.tasks.findByName('jacocoTestReport'),
+                project.tasks.findByName('jacocoTestCoverageVerification'))
 
-	tasks['jacocoTestReport'].mustRunAfter(tasks['test'])
-	tasks['jacocoTestCoverageVerification'].mustRunAfter(tasks['jacocoTestReport'])
-}
+        tasks['jacocoTestReport'].mustRunAfter(tasks['test'])
+        tasks['jacocoTestCoverageVerification'].mustRunAfter(tasks['jacocoTestReport'])
+    }
 
 //유닛 테스트, 리포트 생성, 검증
-task unitTestCoverage(type: Test) {
-	group 'verification'
-	description 'Runs the unit tests with coverage'
+    task unitTestCoverage(type: Test) {
+        group 'verification'
+        description 'Runs the unit tests with coverage'
 
-	dependsOn(':unitTest',
-			':jacocoTestReport',
-			':jacocoTestCoverageVerification')
+        dependsOn(project.tasks.findByName('unitTest'),
+                project.tasks.findByName('jacocoTestReport'),
+                project.tasks.findByName('jacocoTestCoverageVerification'))
 
-	tasks['jacocoTestReport'].mustRunAfter(tasks['unitTest'])
-	tasks['jacocoTestCoverageVerification'].mustRunAfter(tasks['jacocoTestReport'])
-}
+        tasks['jacocoTestReport'].mustRunAfter(tasks['unitTest'])
+        tasks['jacocoTestCoverageVerification'].mustRunAfter(tasks['jacocoTestReport'])
+    }
 
 //통합 테스트, 리포트 생성, 검증
-task integrationTestCoverage(type: Test) {
-	group 'verification'
-	description 'Runs the integration tests with coverage'
+    task integrationTestCoverage(type: Test) {
+        group 'verification'
+        description 'Runs the integration tests with coverage'
 
-	dependsOn(':integrationTest',
-			':jacocoTestReport',
-			':jacocoTestCoverageVerification')
+        dependsOn(project.tasks.findByName('integrationTest'),
+                project.tasks.findByName('jacocoTestReport'),
+                project.tasks.findByName('jacocoTestCoverageVerification'))
 
-	tasks['jacocoTestReport'].mustRunAfter(tasks['integrationTest'])
-	tasks['jacocoTestCoverageVerification'].mustRunAfter(tasks['jacocoTestReport'])
+        tasks['jacocoTestReport'].mustRunAfter(tasks['integrationTest'])
+        tasks['jacocoTestCoverageVerification'].mustRunAfter(tasks['jacocoTestReport'])
+    }
+
 }
+
+project(':gg-pingpong-api') {
+    bootJar { enabled = true }
+    jar { enabled = true }
+    dependencies {
+        implementation project(':gg-data')
+        implementation project(':gg-repo')
+        implementation project(':gg-admin-repo')
+        implementation project(':gg-utils')
+    }
+}
+
+project(':gg-repo') {
+    bootJar { enabled = false }
+    jar { enabled = true }
+    dependencies {
+        implementation project(':gg-data')
+        implementation project(':gg-utils')
+    }
+}
+
+project(':gg-admin-repo') {
+    bootJar { enabled = false }
+    jar { enabled = true }
+    dependencies {
+        implementation project(':gg-data')
+        implementation project(':gg-utils')
+    }
+}
+
+project(':gg-data') {
+    bootJar { enabled = false }
+    jar { enabled = true }
+    dependencies {
+        implementation project(':gg-utils')
+    }
+}
+
+project(':gg-utils') {
+    bootJar { enabled = false }
+    jar { enabled = true }
+    dependencies {
+    }
+}
+
