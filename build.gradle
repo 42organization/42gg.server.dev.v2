@@ -13,7 +13,7 @@ editorconfig {
 }
 
 springBoot {
-    mainClass = "gg.pingpong.api.PingPongApiApplication"
+    mainClass = "gg.PingPongApiApplication"
 }
 
 group = 'io.42pp'

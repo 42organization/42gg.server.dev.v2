@@ -1,4 +1,4 @@
-package gg.pingpong.api;
+package gg;
 
 import java.util.TimeZone;
 
