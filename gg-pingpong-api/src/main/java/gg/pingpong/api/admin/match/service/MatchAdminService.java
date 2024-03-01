@@ -7,9 +7,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import gg.pingpong.data.match.RedisMatchUser;
-import gg.pingpong.data.match.type.Option;
-import gg.pingpong.repo.match.RedisMatchTimeRepository;
+import gg.data.match.RedisMatchUser;
+import gg.data.match.type.Option;
+import gg.repo.match.RedisMatchTimeRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service

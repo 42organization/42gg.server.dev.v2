@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import gg.pingpong.api.admin.match.dto.EnrolledMatchesResponseDto;
+import gg.data.match.RedisMatchUser;
+import gg.data.match.type.Option;
+import gg.pingpong.api.admin.match.controller.response.EnrolledMatchesResponseDto;
 import gg.pingpong.api.admin.match.service.MatchAdminService;
-import gg.pingpong.data.match.RedisMatchUser;
-import gg.pingpong.data.match.type.Option;
 import lombok.RequiredArgsConstructor;
 
 @RestController
