@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import gg.party.api.user.room.controller.response.RoomListResDto;
-import gg.party.api.user.room.controller.service.RoomService;
+import gg.party.api.user.room.service.RoomService;
 import lombok.RequiredArgsConstructor;
 
 @RestController

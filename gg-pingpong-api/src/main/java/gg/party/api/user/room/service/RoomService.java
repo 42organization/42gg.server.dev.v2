@@ -1,4 +1,4 @@
-package gg.party.api.user.room.controller.service;
+package gg.party.api.user.room.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
