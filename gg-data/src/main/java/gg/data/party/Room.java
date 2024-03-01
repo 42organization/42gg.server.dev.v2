@@ -1,5 +1,4 @@
 package gg.data.party;
-import gg.data.party.type.RoomType;
 
 import java.time.LocalDateTime;
 
@@ -14,6 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import gg.data.BaseTimeEntity;
+import gg.data.party.type.RoomType;
 import gg.data.user.User;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -22,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Room {
+public class Room extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long roomId;
@@ -53,9 +54,6 @@ public class Room {
 
 	@Column
 	private LocalDateTime dueDate;
-
-	@Column
-	private LocalDateTime createDate;
 
 	@Enumerated(EnumType.STRING)
 	private RoomType roomStatus;

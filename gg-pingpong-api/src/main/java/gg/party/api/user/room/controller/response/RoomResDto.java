@@ -31,7 +31,7 @@ public class RoomResDto {
 		this.maxPeople = room.getMaxPeople();
 		this.minPeople = room.getMinPeople();
 		this.dueDate = room.getDueDate();
-		this.createDate = room.getCreateDate();
+		this.createDate = room.getCreatedAt();
 		this.roomStatus = room.getRoomStatus().toString();
 	}
 }

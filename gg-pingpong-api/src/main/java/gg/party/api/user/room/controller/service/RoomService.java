@@ -23,7 +23,7 @@ public class RoomService {
 	 * @return 시작하지 않은 방 (최신순) + 시작한 방(끝나는 시간이 빠른 순) 전체 List
 	 */
 	public RoomListResDto findOrderRoomList() {
-		Sort sortForNotStarted = Sort.by("createDate").descending();
+		Sort sortForNotStarted = Sort.by("createdAt").descending();
 		Sort sortForStarted = Sort.by("dueDate").ascending();
 
 		List<Room> notStartedRooms = roomRepository.findByRoomStatus(RoomType.OPEN, sortForNotStarted);

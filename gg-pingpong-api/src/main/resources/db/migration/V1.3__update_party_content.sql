@@ -8,12 +8,15 @@ CREATE TABLE room (
     max_people INT,
     min_people INT,
     due_date TIMESTAMP,
-    create_date TIMESTAMP,
+    created_at TIMESTAMP,
+    modified_at TIMESTAMP,
     room_status VARCHAR(10),
     PRIMARY KEY(room_id)
 );
 
 CREATE TABLE Category (
     category_id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    category_name VARCHAR(10) NOT NULL
+    category_name VARCHAR(10) NOT NULL,
+    created_at TIMESTAMP,
+    modified_at TIMESTAMP
 );
