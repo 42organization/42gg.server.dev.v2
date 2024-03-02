@@ -67,7 +67,7 @@ public class RoomService {
 	 */
 	@Transactional
 	public Long addOrderCreateRoom(RoomCreateReqDto roomCreateReqDto, UserDto userDto) {
-		User user = userRepository.findById(userDto.getId()).orElseThrow(UserNotFoundException::new);
+		User user = userRepository.findById(userDto.getId()).get();
 		Category category = categoryRepository.findById(roomCreateReqDto.getCategoryId())
 			.orElseThrow(CategoryNotFoundException::new);
 		Room room = roomRepository.save(RoomCreateReqDto.toEntity(roomCreateReqDto, user, category));
