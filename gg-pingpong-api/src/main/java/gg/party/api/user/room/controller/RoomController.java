@@ -43,7 +43,7 @@ public class RoomController {
 	@PostMapping
 	public ResponseEntity<Long> createRoom(@RequestBody RoomCreateReqDto roomCreateReqDto,
 		@Parameter(hidden = true) @Login UserDto user) {
-		Long longRoomId = roomService.addOrderCreateRoom(roomCreateReqDto, user);
-		return ResponseEntity.ok(longRoomId);
+		Long RoomId = roomService.addOrderCreateRoom(roomCreateReqDto, user);
+		return ResponseEntity.ok(RoomId);
 	}
 }
