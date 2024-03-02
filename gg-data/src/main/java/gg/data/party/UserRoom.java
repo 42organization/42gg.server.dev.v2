@@ -45,6 +45,6 @@ public class UserRoom extends BaseTimeEntity {
 		this.user = user;
 		this.room = room;
 		this.nickname = randomNickname;
-		this.isExist = false;
+		this.isExist = true;
 	}
 }

@@ -1,7 +1,9 @@
 package gg.party.api.user.room.service;
 
 import static gg.party.api.user.room.utils.GenerateRandomNickname.*;
+import static java.lang.Boolean.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -102,16 +104,17 @@ public class RoomService {
 	}
 
 	/**
-	 * 시간이 지나 보이지 않게 된 방을 모두 조회한다
+	 * 시간이 지나 보이지 않게 된 내가 플레이한(시작한) 방을 모두 조회한다
+	 * @param userId 자신의 id
+	 * user_room db에서 자신의 id와 isExist이 true(나가지 않았음)
+	 * 이면서 room.status가 FINISH인 경우를 마감기한 최신순으로 정렬
 	 * @return 끝난 방 전체 List
 	 */
-	public RoomListResDto findOrderHistoryRoomList() {
-		Sort sortForPlayed = Sort.by("dueDate").ascending();
+	public RoomListResDto findOrderMyHistoryRoomList(Long userId) {
+		List<Room> finishRooms = userRoomRepository.findFinishRoomsByUserId(userId, RoomType.FINISH);
 
-		List<Room> playedRooms = roomRepository.findByStatus(RoomType.FINISH, sortForPlayed);
-
-		List<RoomResDto> roomListResDto = playedRooms.stream()
-			.map(room -> new RoomResDto(room))
+		List<RoomResDto> roomListResDto = finishRooms.stream()
+			.map(RoomResDto::new)
 			.collect(Collectors.toList());
 
 		return new RoomListResDto(roomListResDto);

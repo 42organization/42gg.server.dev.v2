@@ -65,14 +65,13 @@ public class RoomController {
 	}
 
 	/**
-	 * 시간이 지나 보이지 않게 된 방을 모두 조회한다
+	 * 시간이 지나 보이지 않게 된 내가 플레이한(시작한) 방을 모두 조회한다
 	 * @return 끝난 방 전체 List
 	 */
 	@Transactional
 	@GetMapping("/history")
-	public ResponseEntity<RoomListResDto> allHistoryRoomList() {
-		RoomListResDto roomListResDto = roomService.findOrderHistoryRoomList();
+	public ResponseEntity<RoomListResDto> myHistoryRoomList(@Parameter(hidden = true) @Login UserDto user) {
+		RoomListResDto roomListResDto = roomService.findOrderMyHistoryRoomList(user.getId());
 		return ResponseEntity.status(HttpStatus.OK).body(roomListResDto);
 	}
-
 }
