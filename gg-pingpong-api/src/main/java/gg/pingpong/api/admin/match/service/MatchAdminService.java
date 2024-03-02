@@ -15,6 +15,7 @@ import gg.data.manage.SlotManagement;
 import gg.data.match.RedisMatchUser;
 import gg.data.match.type.Option;
 import gg.pingpong.api.admin.match.service.dto.MatchUser;
+import gg.utils.exception.match.SlotNotFoundException;
 import gg.utils.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 
@@ -42,16 +43,19 @@ public class MatchAdminService {
 		if (option == null || Option.BOTH.equals(option)) {
 			return response;
 		}
-		return response.entrySet().stream()
-			.filter(entry -> entry.getValue().stream().anyMatch(user -> option.equals(user.getOption())))
-			.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+		for (Map.Entry<LocalDateTime, List<MatchUser>> entry : response.entrySet()) {
+			entry.getValue().removeIf(
+				matchUser -> !Option.BOTH.equals(matchUser.getOption()) && !matchUser.getOption().equals(option));
+		}
+		return response;
 	}
 
 	/**
 	 * @return gameInterval (분)
 	 */
 	public int getGameInterval() {
-		SlotManagement slotManagement = adminSlotManagementsRepository.findCurrent(LocalDateTime.now()).get();
+		SlotManagement slotManagement = adminSlotManagementsRepository.findCurrent(LocalDateTime.now())
+			.orElseThrow(SlotNotFoundException::new);
 		return slotManagement.getGameInterval();
 	}
 
