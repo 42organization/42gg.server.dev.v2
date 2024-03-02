@@ -1,5 +1,7 @@
 package gg.party.api.user.room.service;
 
+import static gg.party.api.user.room.utils.GenerateRandomNickname.*;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -53,7 +55,7 @@ public class RoomService {
 	}
 
 	/**
-	 * 방 생성하기
+	 * 방 생성하고 닉네임 부여
 	 * @param roomCreateReqDto 요청 DTO
 	 * @param userDto user객체를 보내기 위한 DTO객체
    	 * @exception UserNotFoundException 유효하지 않은 유저 입력
@@ -65,6 +67,11 @@ public class RoomService {
 		Category category = categoryRepository.findById(roomCreateReqDto.getCategoryId())
 			.orElseThrow(CategoryNotFoundException::new);
 		Room room = roomRepository.save(RoomCreateReqDto.toEntity(roomCreateReqDto, user, category));
+
+		String randomNickname = generateRandomNickname();
+
+		UserRoom userRoom = new UserRoom(user, room, randomNickname);
+		userRoomRepository.save(userRoom);
 		return room.getId();
 	}
 
