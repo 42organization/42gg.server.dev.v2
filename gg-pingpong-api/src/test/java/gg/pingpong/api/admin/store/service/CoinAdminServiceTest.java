@@ -1,4 +1,4 @@
-package gg.pingpong.api.admin.coin.service;
+package gg.pingpong.api.admin.store.service;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
@@ -17,7 +17,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import gg.data.pingpong.store.CoinHistory;
 import gg.data.user.User;
 import gg.pingpong.api.admin.store.controller.request.CoinUpdateRequestDto;
-import gg.pingpong.api.admin.store.service.CoinAdminService;
 import gg.pingpong.api.user.store.service.CoinHistoryService;
 import gg.repo.user.UserRepository;
 import gg.utils.annotation.UnitTest;
