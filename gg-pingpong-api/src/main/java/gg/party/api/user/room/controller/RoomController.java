@@ -1,7 +1,5 @@
 package gg.party.api.user.room.controller;
 
-import javax.transaction.Transactional;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,8 +13,6 @@ import gg.party.api.user.room.controller.response.RoomListResDto;
 import gg.party.api.user.room.service.RoomService;
 import gg.pingpong.api.global.utils.argumentresolver.Login;
 import gg.pingpong.api.user.user.dto.UserDto;
-import gg.repo.party.RoomRepository;
-import gg.utils.exception.custom.InvalidParameterException;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 
@@ -25,8 +21,6 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/party/rooms")
 public class RoomController {
 	private final RoomService roomService;
-	private final RoomRepository roomRepository;
-
 
 	/**
 	 * 시작하지 않은 방과 시작한 방을 모두 조회한다

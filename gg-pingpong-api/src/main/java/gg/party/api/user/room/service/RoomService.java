@@ -1,9 +1,7 @@
 package gg.party.api.user.room.service;
 
 import static gg.party.api.user.room.utils.GenerateRandomNickname.*;
-import static java.lang.Boolean.*;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -63,7 +61,7 @@ public class RoomService {
 	 * 방 생성하고 닉네임 부여
 	 * @param roomCreateReqDto 요청 DTO
 	 * @param userDto user객체를 보내기 위한 DTO객체
-   	 * @exception UserNotFoundException 유효하지 않은 유저 입력
+	 * @exception UserNotFoundException 유효하지 않은 유저 입력
 	 * @exception CategoryNotFoundException 유효하지 카테고리 입력
 	 * @return 만들어진 방 ID값
 	 */
