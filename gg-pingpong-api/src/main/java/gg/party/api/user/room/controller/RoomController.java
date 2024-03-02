@@ -25,21 +25,18 @@ public class RoomController {
 	private final RoomService roomService;
 	private final RoomRepository roomRepository;
 
-	@Transactional
 	@GetMapping
 	public ResponseEntity<RoomListResDto> allActiveRoomList() {
 		RoomListResDto roomListResDto = roomService.findOrderRoomList();
 		return ResponseEntity.ok(roomListResDto);
 	}
 
-	@Transactional
 	@GetMapping("/history")
 	public ResponseEntity<RoomListResDto> allHistoryRoomList() {
 		RoomListResDto roomListResDto = roomService.findOrderHistoryRoomList();
 		return ResponseEntity.ok(roomListResDto);
 	}
 
-	@Transactional
 	@PostMapping
 	public ResponseEntity<Long> createRoom(@RequestBody RoomCreateReqDto roomCreateReqDto,
 		@Parameter(hidden = true) @Login UserDto user) {

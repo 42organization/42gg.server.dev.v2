@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import gg.data.party.Category;
 import gg.data.party.Room;
@@ -32,6 +33,7 @@ public class RoomService {
 	 * 시작하지 않은 방과 시작한 방을 모두 조회한다
 	 * @return 시작하지 않은 방 (최신순) + 시작한 방(끝나는 시간이 빠른 순) 전체 List
 	 */
+	@Transactional
 	public RoomListResDto findOrderRoomList() {
 		Sort sortForNotStarted = Sort.by("createdAt").descending();
 		Sort sortForStarted = Sort.by("dueDate").ascending();
@@ -51,6 +53,7 @@ public class RoomService {
 	 * 시간이 지나 보이지 않게 된 방을 모두 조회한다
 	 * @return 끝난 방 전체 List
 	 */
+	@Transactional
 	public RoomListResDto findOrderHistoryRoomList() {
 		Sort sortForPlayed = Sort.by("dueDate").ascending();
 
@@ -67,6 +70,7 @@ public class RoomService {
 	 * 방 생성하기
 	 * @return 만들어진 방 ID값
 	 */
+	@Transactional
 	public Long addOrderCreateRoom(RoomCreateReqDto roomCreateReqDto, UserDto userDto) {
 		User user = userRepository.findById(userDto.getId()).orElseThrow(UserNotFoundException::new);
 		Category category = categoryRepository.findById(roomCreateReqDto.getCategoryId())
