@@ -49,8 +49,19 @@ public class RoomController {
 	@PostMapping
 	public ResponseEntity<Long> createRoom(@RequestBody RoomCreateReqDto roomCreateReqDto,
 		@Parameter(hidden = true) @Login UserDto user) {
-		Long longRoomId = roomService.addOrderCreateRoom(roomCreateReqDto, user);
-		return ResponseEntity.status(HttpStatus.CREATED).body(longRoomId);
+		Long roomId = roomService.addOrderCreateRoom(roomCreateReqDto, user);
+		return ResponseEntity.status(HttpStatus.CREATED).body(roomId);
+	}
+
+	/**
+	 * 참여중인 방을 모두 조회한다(만든 방 포함)
+	 * @return 참여중인 방 전체 List
+	 */
+	@Transactional
+	@GetMapping("/joined")
+	public ResponseEntity<RoomListResDto> allJoinedRoomList(@Parameter(hidden = true) @Login UserDto user) {
+		RoomListResDto roomListResDto = roomService.findOrderJoinedRoomList(user.getId());
+		return ResponseEntity.status(HttpStatus.OK).body(roomListResDto);
 	}
 
 	/**
