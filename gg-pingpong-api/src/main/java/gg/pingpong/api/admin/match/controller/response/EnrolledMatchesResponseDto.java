@@ -10,23 +10,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-/**
- * {
- * 	matches: [
- *          {
- * 			startTime: 'yyyy-mm-ddThh:mm',
- * 			endTime: 'yyyy-mm-ddThh:mm',
- * 			waitList: [{
- * 						userId: number,
- * 						intraId: string,
- * 						ppp: number,
- * 						option: string,   // BOTH || NORMAL || RANK
- *                   }, ...]
- *        },
- * 	      ...
- * 	]
- * }
- */
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class EnrolledMatchesResponseDto {
