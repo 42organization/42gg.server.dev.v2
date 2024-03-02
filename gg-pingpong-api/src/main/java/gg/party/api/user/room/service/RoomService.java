@@ -9,6 +9,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +43,7 @@ public class RoomService {
 	 * 시작하지 않은 방과 시작한 방을 모두 조회한다
 	 * @return 시작하지 않은 방 (최신순) + 시작한 방(끝나는 시간이 빠른 순) 전체 List
 	 */
+	@Transactional
 	public RoomListResDto findOrderRoomList() {
 		Sort sortForNotStarted = Sort.by("createdAt").descending();
 		Sort sortForStarted = Sort.by("dueDate").ascending();
@@ -64,6 +67,7 @@ public class RoomService {
 	 * @exception CategoryNotFoundException 유효하지 카테고리 입력
 	 * @return 만들어진 방 ID값
 	 */
+	@Transactional
 	public Long addOrderCreateRoom(RoomCreateReqDto roomCreateReqDto, UserDto userDto) {
 		User user = userRepository.findById(userDto.getId()).orElseThrow(UserNotFoundException::new);
 		Category category = categoryRepository.findById(roomCreateReqDto.getCategoryId())
@@ -82,6 +86,7 @@ public class RoomService {
 	 * @param userId 자신의 id
 	 * @return 참여한 방 전체 List
 	 */
+	@Transactional
 	public RoomListResDto findOrderJoinedRoomList(Long userId) {
 		List<UserRoom> userRooms = userRoomRepository.findByUserId(userId);
 		List<Room> joinedRooms = userRooms.stream()
@@ -110,6 +115,7 @@ public class RoomService {
 	 * 이면서 room.status가 FINISH인 경우를 마감기한 최신순으로 정렬
 	 * @return 끝난 방 전체 List
 	 */
+	@Transactional
 	public RoomListResDto findOrderMyHistoryRoomList(Long userId) {
 		List<Room> finishRooms = userRoomRepository.findFinishRoomsByUserId(userId, RoomType.FINISH);
 

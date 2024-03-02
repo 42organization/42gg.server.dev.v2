@@ -32,7 +32,6 @@ public class RoomController {
 	 * 시작하지 않은 방과 시작한 방을 모두 조회한다
 	 * @return 시작하지 않은 방 (최신순) + 시작한 방(끝나는 시간이 빠른 순) 전체 List
 	 */
-	@Transactional
 	@GetMapping
 	public ResponseEntity<RoomListResDto> allActiveRoomList() {
 		RoomListResDto roomListResDto = roomService.findOrderRoomList();
@@ -45,7 +44,6 @@ public class RoomController {
 	 * @param user 사용자
 	 * @return 201 created
 	 */
-	@Transactional
 	@PostMapping
 	public ResponseEntity<Long> createRoom(@RequestBody RoomCreateReqDto roomCreateReqDto,
 		@Parameter(hidden = true) @Login UserDto user) {
@@ -57,7 +55,6 @@ public class RoomController {
 	 * 참여중인 방을 모두 조회한다(만든 방 포함)
 	 * @return 참여중인 방 전체 List
 	 */
-	@Transactional
 	@GetMapping("/joined")
 	public ResponseEntity<RoomListResDto> allJoinedRoomList(@Parameter(hidden = true) @Login UserDto user) {
 		RoomListResDto roomListResDto = roomService.findOrderJoinedRoomList(user.getId());
@@ -68,7 +65,6 @@ public class RoomController {
 	 * 시간이 지나 보이지 않게 된 내가 플레이한(시작한) 방을 모두 조회한다
 	 * @return 끝난 방 전체 List
 	 */
-	@Transactional
 	@GetMapping("/history")
 	public ResponseEntity<RoomListResDto> myHistoryRoomList(@Parameter(hidden = true) @Login UserDto user) {
 		RoomListResDto roomListResDto = roomService.findOrderMyHistoryRoomList(user.getId());
