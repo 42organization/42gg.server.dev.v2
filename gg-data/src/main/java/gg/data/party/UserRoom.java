@@ -36,4 +36,11 @@ public class UserRoom extends BaseTimeEntity {
 
 	@Column(name = "is_exist")
 	private Boolean isExist;
+
+	public UserRoom(User user, Room room, String nickname) {
+		this.user = user;
+		this.room = room;
+		this.nickname = nickname;
+		this.isExist = true;
+	}
 }

@@ -151,7 +151,14 @@ public enum ErrorCode {
 	TOURNAMENT_GAME_DUPLICATION(409, "TN014", "중복된 토너먼트 게임입니다!"),
 	TOURNAMENT_USER_DUPLICATION(409, "TN015", "중복된 토너먼트 유저입니다!"),
 	TOURNAMENT_GAME_EXCEED(500, "TN016", "토너먼트 게임 최대 사이즈를 초과하였습니다!"),
-	TOURNAMENT_IS_BEFORE(403, "TN017", "before인 토너먼트에서 점수 수정할 수 없습니다.");
+	TOURNAMENT_IS_BEFORE(403, "TN017", "before인 토너먼트에서 점수 수정할 수 없습니다."),
+
+	// Party
+	COMMENT_TOO_LONG(400, "PT201", "댓글은 100자 이하로 작성해주세요."),
+	ROOM_FINISHED(403, "PT501", "마감된 방입니다."),
+	ROOM_NOT_FOUND(404, "PT102", "존재하지 않는 방입니다."),
+	USER_NOT_IN_ROOM(404, "PT103", "방에 존재하지 않는 유저입니다.");
+
 	private final int status;
 	private final String errCode;
 	private String message;
