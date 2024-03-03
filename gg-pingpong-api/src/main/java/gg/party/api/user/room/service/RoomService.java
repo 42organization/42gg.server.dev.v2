@@ -1,10 +1,12 @@
 package gg.party.api.user.room.service;
 
 import static gg.party.api.user.room.utils.GenerateRandomNickname.*;
+import static java.lang.Boolean.*;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -18,14 +20,19 @@ import gg.data.party.UserRoom;
 import gg.data.party.type.RoomType;
 import gg.data.user.User;
 import gg.party.api.user.room.controller.request.RoomCreateReqDto;
+import gg.party.api.user.room.controller.response.CommentResDto;
+import gg.party.api.user.room.controller.response.RoomDetailResDto;
 import gg.party.api.user.room.controller.response.RoomListResDto;
 import gg.party.api.user.room.controller.response.RoomResDto;
+import gg.party.api.user.room.controller.response.UserRoomResDto;
 import gg.pingpong.api.user.user.dto.UserDto;
 import gg.repo.party.CategoryRepository;
+import gg.repo.party.CommentRepository;
 import gg.repo.party.RoomRepository;
 import gg.repo.party.UserRoomRepository;
 import gg.repo.user.UserRepository;
 import gg.utils.exception.party.CategoryNotFoundException;
+import gg.utils.exception.party.RoomNotFoundException;
 import gg.utils.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 
@@ -36,6 +43,7 @@ public class RoomService {
 	private final UserRepository userRepository;
 	private final CategoryRepository categoryRepository;
 	private final UserRoomRepository userRoomRepository;
+	private final CommentRepository commentRepository;
 
 	/**
 	 * 시작하지 않은 방과 시작한 방을 모두 조회한다
@@ -122,5 +130,39 @@ public class RoomService {
 			.collect(Collectors.toList());
 
 		return new RoomListResDto(roomListResDto);
+	}
+
+	/**
+	 * 방의 상세정보를 조회한다
+	 * @param userId 자신의 id
+	 * @param roomId 방 id
+	 * 익명성을 지키기 위해 nickname을 리턴
+	 * @return 방 상세정보 dto
+	 */
+	@Transactional
+	public RoomDetailResDto findOrderRoomDetail(Long userId, Long roomId) {
+		Room room = roomRepository.findById(roomId)
+			.orElseThrow(() -> new RoomNotFoundException(roomId + "번 방을 찾을 수 없습니다."));
+
+		List<UserRoomResDto> roomUsers = userRoomRepository.findByRoomId(roomId).stream()
+			.filter(userRoom -> userRoom.getIsExist())
+			.map(userRoom -> new UserRoomResDto(userRoom.getUser().getId(), userRoom.getNickname()))
+			.collect(Collectors.toList());
+
+		List<CommentResDto> comments = commentRepository.findByRoomId(roomId).stream()
+			.map(comment -> new CommentResDto(comment.getId(), comment.getUserRoom().getNickname(), comment.getContent(), comment.isHidden(), comment.getCreatedAt()))
+			.collect(Collectors.toList());
+
+		Optional<UserRoom> userRoomOptional = userRoomRepository.findByUserIdAndRoomIdAndIsExistTrue(userId, roomId);
+		String myNickname = null;
+		if (userRoomOptional.isPresent()) {
+			UserRoom userRoom = userRoomOptional.get();
+			myNickname = userRoom.getNickname();
+		}
+
+		Optional<UserRoom> hostUserRoomOptional = userRoomRepository.findByUserIdAndRoomIdAndIsExistTrue(room.getHost().getId(), roomId);
+		String hostNickname = hostUserRoomOptional.get().getNickname();
+
+		return new RoomDetailResDto(room, myNickname, hostNickname,	roomUsers, comments);
 	}
 }

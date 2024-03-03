@@ -51,6 +51,9 @@ public class Room extends BaseTimeEntity {
 	@Column(name = "content", length = 100)
 	private String content;
 
+	@Column(name = "current_people")
+	private Integer currentPeople;
+
 	@Column(name = "max_people")
 	private Integer maxPeople;
 
@@ -68,13 +71,14 @@ public class Room extends BaseTimeEntity {
 	private RoomType status;
 
 	@Builder
-	public Room(User host, User creator, Category category, String title, String content, Integer maxPeople,
+	public Room(User host, User creator, Category category, String title, String content, Integer currentPeople, Integer maxPeople,
 		Integer minPeople, LocalDateTime dueDate, RoomType status) {
 		this.host = host;
 		this.creator = creator;
 		this.category = category;
 		this.title = title;
 		this.content = content;
+		this.currentPeople = currentPeople;
 		this.maxPeople = maxPeople;
 		this.minPeople = minPeople;
 		this.dueDate = dueDate;
