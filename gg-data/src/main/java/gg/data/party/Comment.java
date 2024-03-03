@@ -24,20 +24,28 @@ public class Comment extends BaseTimeEntity {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_room_id")
+	@JoinColumn(name = "user_room_id", nullable = false)
 	private UserRoom userRoom;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "room_id")
+	@JoinColumn(name = "room_id", nullable = false)
 	private Room room;
 
-	@Column(name = "content", length = 100)
+	@Column(name = "content", length = 100, nullable = false)
 	private String content;
 
-	@Column(name = "is_hidden")
+	@Column(name = "is_hidden", nullable = false)
 	private Boolean isHidden;
+
+	public Comment(User user, UserRoom userRoom, Room room, String content) {
+		this.user = user;
+		this.userRoom = userRoom;
+		this.room = room;
+		this.content = content;
+		this.isHidden = false;
+	}
 }
