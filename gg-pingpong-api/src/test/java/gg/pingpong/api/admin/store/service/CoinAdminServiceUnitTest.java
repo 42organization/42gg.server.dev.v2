@@ -1,6 +1,5 @@
 package gg.pingpong.api.admin.store.service;
 
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 
 import java.util.Optional;
@@ -24,8 +23,8 @@ import gg.utils.exception.user.UserNotFoundException;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)
-@DisplayName("CoinAdminServiceTest")
-class CoinAdminServiceTest {
+@DisplayName("CoinAdminServiceUnitTest")
+class CoinAdminServiceUnitTest {
 	@Mock
 	UserRepository userRepository;
 	@Mock
