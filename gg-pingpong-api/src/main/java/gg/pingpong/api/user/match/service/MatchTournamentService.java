@@ -1,5 +1,8 @@
 package gg.pingpong.api.user.match.service;
 
+import static gg.data.pingpong.match.type.TournamentMatchStatus.*;
+import static gg.data.pingpong.tournament.type.RoundNumber.*;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;

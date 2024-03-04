@@ -31,7 +31,9 @@ public class Recruitments extends BaseTimeEntity {
 
 	private Boolean isDeleted;
 
+	@Column(nullable = false)
 	private LocalDateTime startTime;
+	@Column(nullable = false)
 
 	private LocalDateTime endTime;
 }

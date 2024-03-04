@@ -24,11 +24,11 @@ public class Question extends BaseTimeEntity {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "recruit_id")
+	@JoinColumn(name = "recruit_id", nullable = false)
 	private Recruitments recruitId;
 
 	@Enumerated(EnumType.STRING)
-	@Column(length = 20)
+	@Column(length = 20, nullable = false)
 	private InputType inputType;
 
 	@Column(length = 300)

@@ -22,10 +22,10 @@ public class ApplicationAnswer extends BaseTimeEntity {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "question_id")
+	@JoinColumn(name = "question_id", nullable = false)
 	private Question questionId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "application_id")
+	@JoinColumn(name = "application_id", nullable = false)
 	private Application applicationId;
 }

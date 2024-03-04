@@ -20,10 +20,10 @@ public class ApplicationAnswerCheckList extends BaseTimeEntity {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "application_answer_id")
+	@JoinColumn(name = "application_answer_id", nullable = false)
 	private ApplicationAnswer applicationAnswerId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "check_list_id")
+	@JoinColumn(name = "check_list_id", nullable = false)
 	private CheckList checkListId;
 }

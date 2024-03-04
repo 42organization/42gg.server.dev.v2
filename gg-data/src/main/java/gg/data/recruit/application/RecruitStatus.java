@@ -23,7 +23,7 @@ public class RecruitStatus extends BaseTimeEntity {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "application_id")
+	@JoinColumn(name = "application_id", nullable = false)
 	private Application applicationId;
 
 	private LocalDateTime interviewDate;

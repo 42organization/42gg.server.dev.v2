@@ -27,16 +27,16 @@ public class Application extends BaseTimeEntity {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "recruit_id")
+	@JoinColumn(name = "recruit_id", nullable = false)
 	private Recruitments recruitId;
 
 	private Boolean isDeleted;
 
 	@Enumerated(EnumType.STRING)
-	@Column(length = 15)
+	@Column(length = 15, nullable = false)
 	private ApplicationStatus status;
 }

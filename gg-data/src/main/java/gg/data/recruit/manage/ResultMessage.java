@@ -24,7 +24,7 @@ public class ResultMessage extends BaseTimeEntity {
 	@Column(length = 100)
 	private String content;
 
-	@Column(length = 15)
+	@Column(length = 15, nullable = false)
 	@Enumerated(EnumType.STRING)
 	private MessageType messageType;
 

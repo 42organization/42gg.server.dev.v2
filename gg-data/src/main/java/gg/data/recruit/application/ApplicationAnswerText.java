@@ -20,7 +20,7 @@ public class ApplicationAnswerText extends BaseTimeEntity {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "application_answer_id")
+	@JoinColumn(name = "application_answer_id", nullable = false)
 	private ApplicationAnswer applicationAnswerId;
 
 	@Column(length = 1000)
