@@ -22,5 +22,4 @@ public interface UserRoomRepository extends JpaRepository<UserRoom, Long> {
 		+ "AND ur.room.status = :status ORDER BY ur.room.dueDate ASC")
 	List<Room> findFinishRoomsByUserId(@Param("userId") Long userId, @Param("status") RoomType status);
 	Optional<UserRoom> findByUserIdAndRoomIdAndIsExistTrue(Long userId, Long roomId);
-
 }

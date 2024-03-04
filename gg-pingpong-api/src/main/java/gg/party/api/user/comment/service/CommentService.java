@@ -37,7 +37,7 @@ public class CommentService {
 	@Transactional
 	public void createComment(Long roomId, CommentCreateReqDto reqDto, Long userId) {
 		Room room = roomRepository.findById(roomId)
-			.orElseThrow(() -> new RoomNotFoundException("유효하지 않은 방 입니다"));
+			.orElseThrow(() -> new RoomNotFoundException(ErrorCode.ROOM_NOT_FOUND));
 		if (LocalDateTime.now().isAfter(room.getDueDate())) {
 			throw new RoomUpdateException(ErrorCode.ROOM_FINISHED);
 		}
