@@ -248,7 +248,7 @@ project(':gg-pingpong-api') {
 }
 
 project(':gg-auth') {
-    bootJar { enabled = true }
+    bootJar { enabled = false }
     jar { enabled = true }
     dependencies {
         implementation project(':gg-data')
