@@ -1,5 +1,6 @@
 package gg.utils.exception;
 
+import gg.utils.exception.party.UserAlreadyInRoom;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -161,7 +162,8 @@ public enum ErrorCode {
 	COMMENT_TOO_LONG(400, "PT201", "댓글은 100자 이하로 작성해주세요."),
 	ROOM_FINISHED(403, "PT501", "마감된 방입니다."),
 	ROOM_NOT_PARTICIPANT(400, "PT002", "해당 방의 참여자가 아닙니다."),
-	ROOM_NOT_OPEN(400, "PT003", "해당 방의 참여자가 아닙니다.");
+	ROOM_NOT_OPEN(400, "PT003", "해당 방의 참여자가 아닙니다."),
+	USER_ALREADY_IN_ROOM(409, "PT105", "이미 참여한 방 입니다.");
 
 	private final int status;
 	private final String errCode;
