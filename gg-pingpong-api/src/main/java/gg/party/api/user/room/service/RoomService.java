@@ -32,6 +32,7 @@ import gg.repo.party.UserRoomRepository;
 import gg.repo.user.UserRepository;
 import gg.utils.exception.party.CategoryNotFoundException;
 import gg.utils.exception.party.RoomNotFoundException;
+import gg.utils.exception.party.RoomReportedException;
 import gg.utils.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 
@@ -142,6 +143,9 @@ public class RoomService {
 	public RoomDetailResDto findOrderRoomDetail(Long userId, Long roomId) {
 		Room room = roomRepository.findById(roomId)
 			.orElseThrow(() -> new RoomNotFoundException(roomId + "번 방을 찾을 수 없습니다."));
+		if (room.getStatus() == RoomType.HIDDEN) {
+			throw new RoomReportedException(roomId + "번방은 신고 상태로 접근이 불가능합니다.");
+		}
 
 		List<UserRoomResDto> roomUsers = userRoomRepository.findByRoomId(roomId).stream()
 			.filter(userRoom -> userRoom.getIsExist())
