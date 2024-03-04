@@ -70,7 +70,7 @@ public class RoomService {
 	 * @param roomCreateReqDto 요청 DTO
 	 * @param userDto user객체를 보내기 위한 DTO객체
 	 * @exception UserNotFoundException 유효하지 않은 유저 입력
-	 * @exception CategoryNotFoundException 유효하지 카테고리 입력
+	 * @exception CategoryNotFoundException 유효하지 않은 카테고리 입력
 	 * @return 만들어진 방 ID값
 	 */
 	@Transactional
