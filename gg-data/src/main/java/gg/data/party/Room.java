@@ -80,4 +80,8 @@ public class Room extends BaseTimeEntity {
 		this.dueDate = dueDate;
 		this.status = status;
 	}
+
+	public void UpdateRoomStatus(RoomType status) {
+		this.status = status;
+	}
 }
