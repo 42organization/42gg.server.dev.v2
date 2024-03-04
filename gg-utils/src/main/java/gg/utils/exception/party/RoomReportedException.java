@@ -4,7 +4,7 @@ import gg.utils.exception.ErrorCode;
 import gg.utils.exception.custom.NotExistException;
 
 public class RoomReportedException extends NotExistException {
-	public RoomReportedException(String message) {
-		super(message, ErrorCode.ROOM_REPORTED_ERROR);
+	public RoomReportedException() {
+		super(ErrorCode.ROOM_REPORTED_ERROR.getMessage(), ErrorCode.ROOM_REPORTED_ERROR);
 	}
 }

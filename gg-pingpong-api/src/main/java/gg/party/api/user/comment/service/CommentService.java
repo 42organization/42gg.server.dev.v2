@@ -15,8 +15,6 @@ import gg.repo.party.CommentRepository;
 import gg.repo.party.RoomRepository;
 import gg.repo.party.UserRoomRepository;
 import gg.repo.user.UserRepository;
-import gg.utils.exception.ErrorCode;
-import gg.utils.exception.party.CommentNotValidException;
 import gg.utils.exception.party.RoomNotFoundException;
 import gg.utils.exception.party.RoomUpdateException;
 import lombok.RequiredArgsConstructor;
@@ -37,21 +35,14 @@ public class CommentService {
 	@Transactional
 	public void createComment(Long roomId, CommentCreateReqDto reqDto, Long userId) {
 		Room room = roomRepository.findById(roomId)
-			.orElseThrow(() -> new RoomNotFoundException("방을 찾을 수 없습니다."));
+			.orElseThrow(RoomNotFoundException::new);
 		if (LocalDateTime.now().isAfter(room.getDueDate())) {
-			throw new RoomUpdateException(ErrorCode.ROOM_FINISHED);
-		}
-		if (reqDto.getContent().length() > 100) {
-			throw new CommentNotValidException(ErrorCode.COMMENT_TOO_LONG);
+			throw new RoomUpdateException();
 		}
 		User user = userRepository.findById(userId).get();
 		UserRoom userRoom = userRoomRepository.findByUserAndRoom(user, room)
-			.orElseThrow(() -> new RoomUpdateException(ErrorCode.USER_NOT_IN_ROOM));
-		if (!userRoom.getIsExist()) {
-			throw new RoomUpdateException(ErrorCode.USER_NOT_IN_ROOM);
-		}
+			.orElseThrow(RoomUpdateException::new);
 		Comment comment = new Comment(user, userRoom, room, reqDto.getContent());
 		commentRepository.save(comment);
 	}
-
 }

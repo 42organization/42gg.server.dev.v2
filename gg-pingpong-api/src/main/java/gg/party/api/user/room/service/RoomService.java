@@ -144,9 +144,9 @@ public class RoomService {
 	@Transactional
 	public RoomDetailResDto findOrderRoomDetail(Long userId, Long roomId) {
 		Room room = roomRepository.findById(roomId)
-			.orElseThrow(() -> new RoomNotFoundException(roomId + "번 방을 찾을 수 없습니다."));
+			.orElseThrow(RoomNotFoundException::new);
 		if (room.getStatus() == RoomType.HIDDEN) {
-			throw new RoomReportedException(roomId + "번방은 신고 상태로 접근이 불가능합니다.");
+			throw new RoomReportedException();
 		}
 
 		List<UserRoomResDto> roomUsers = userRoomRepository.findByRoomId(roomId).stream()

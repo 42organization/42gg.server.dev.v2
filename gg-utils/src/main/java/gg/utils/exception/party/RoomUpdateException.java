@@ -4,7 +4,7 @@ import gg.utils.exception.ErrorCode;
 import gg.utils.exception.custom.ForbiddenException;
 
 public class RoomUpdateException extends ForbiddenException {
-	public RoomUpdateException(ErrorCode errorCode) {
-		super(errorCode.getMessage(), errorCode);
+	public RoomUpdateException() {
+		super(ErrorCode.ROOM_FINISHED.getMessage(), ErrorCode.ROOM_FINISHED);
 	}
 }
