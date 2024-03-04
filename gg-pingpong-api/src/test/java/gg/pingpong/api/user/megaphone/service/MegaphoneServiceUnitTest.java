@@ -22,6 +22,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import gg.auth.UserDto;
 import gg.data.store.Item;
 import gg.data.store.Megaphone;
 import gg.data.store.Receipt;
@@ -35,7 +36,6 @@ import gg.pingpong.api.user.store.controller.request.MegaphoneUseRequestDto;
 import gg.pingpong.api.user.store.redis.MegaphoneRedisRepository;
 import gg.pingpong.api.user.store.service.ItemService;
 import gg.pingpong.api.user.store.service.MegaphoneService;
-import gg.auth.UserDto;
 import gg.repo.store.MegaphoneRepository;
 import gg.repo.store.ReceiptRepository;
 import gg.repo.user.UserRepository;

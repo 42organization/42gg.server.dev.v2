@@ -11,11 +11,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import gg.auth.UserDto;
+import gg.auth.utils.AuthTokenProvider;
 import gg.data.noti.Noti;
 import gg.data.noti.type.NotiType;
 import gg.data.user.User;
-import gg.auth.utils.AuthTokenProvider;
-import gg.auth.UserDto;
 import gg.repo.noti.NotiRepository;
 import gg.repo.user.UserRepository;
 import gg.utils.TestDataUtils;

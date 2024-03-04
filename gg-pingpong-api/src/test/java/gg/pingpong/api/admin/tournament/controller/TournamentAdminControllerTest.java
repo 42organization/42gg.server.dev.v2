@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gg.auth.utils.AuthTokenProvider;
 import gg.data.game.type.Mode;
 import gg.data.season.Season;
 import gg.data.tournament.Tournament;
@@ -35,7 +36,6 @@ import gg.pingpong.api.admin.tournament.controller.request.TournamentAdminCreate
 import gg.pingpong.api.admin.tournament.controller.request.TournamentAdminUpdateRequestDto;
 import gg.pingpong.api.admin.tournament.controller.request.TournamentGameUpdateRequestDto;
 import gg.pingpong.api.admin.tournament.service.TournamentAdminService;
-import gg.auth.utils.AuthTokenProvider;
 import gg.pingpong.api.user.game.dto.TeamReqDto;
 import gg.pingpong.api.user.match.utils.MatchIntegrationTestUtils;
 import gg.repo.game.PChangeRepository;

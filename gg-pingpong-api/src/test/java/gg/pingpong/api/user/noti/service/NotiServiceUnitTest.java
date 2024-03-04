@@ -16,13 +16,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import gg.auth.UserDto;
 import gg.data.noti.Noti;
 import gg.data.noti.type.NotiType;
 import gg.data.user.User;
 import gg.data.user.type.RacketType;
 import gg.data.user.type.RoleType;
 import gg.data.user.type.SnsType;
-import gg.auth.UserDto;
 import gg.repo.noti.NotiRepository;
 import gg.repo.user.UserRepository;
 import gg.utils.annotation.UnitTest;

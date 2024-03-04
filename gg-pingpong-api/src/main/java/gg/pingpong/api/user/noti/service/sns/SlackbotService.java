@@ -14,11 +14,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import gg.auth.UserDto;
 import gg.data.noti.Noti;
 import gg.pingpong.api.global.utils.external.ApiUtil;
 import gg.pingpong.api.user.noti.dto.UserNotiDto;
 import gg.pingpong.api.user.noti.service.NotiService;
-import gg.auth.UserDto;
 import gg.utils.exception.noti.SlackSendException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

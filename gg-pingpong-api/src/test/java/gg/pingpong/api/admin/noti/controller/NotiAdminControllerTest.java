@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.admin.repo.noti.NotiAdminRepository;
+import gg.auth.utils.AuthTokenProvider;
 import gg.data.noti.Noti;
 import gg.data.noti.type.NotiType;
 import gg.data.user.User;
@@ -31,7 +32,6 @@ import gg.pingpong.api.admin.noti.controller.request.SendNotiAdminRequestDto;
 import gg.pingpong.api.admin.noti.controller.response.NotiListAdminResponseDto;
 import gg.pingpong.api.admin.noti.dto.NotiAdminDto;
 import gg.pingpong.api.admin.noti.service.NotiAdminService;
-import gg.auth.utils.AuthTokenProvider;
 import gg.repo.noti.NotiRepository;
 import gg.repo.user.UserRepository;
 import gg.utils.TestDataUtils;

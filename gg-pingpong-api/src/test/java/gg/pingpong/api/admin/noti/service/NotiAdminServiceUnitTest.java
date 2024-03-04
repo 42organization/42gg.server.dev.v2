@@ -20,11 +20,11 @@ import org.springframework.data.domain.Pageable;
 
 import gg.admin.repo.noti.NotiAdminRepository;
 import gg.admin.repo.user.UserAdminRepository;
+import gg.auth.UserDto;
 import gg.data.noti.Noti;
 import gg.data.user.User;
 import gg.pingpong.api.admin.noti.controller.request.SendNotiAdminRequestDto;
 import gg.pingpong.api.user.noti.service.SnsNotiService;
-import gg.auth.UserDto;
 import gg.utils.annotation.UnitTest;
 import gg.utils.exception.user.UserNotFoundException;
 

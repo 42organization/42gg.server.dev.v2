@@ -19,13 +19,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.admin.repo.store.ReceiptAdminRepository;
+import gg.auth.utils.AuthTokenProvider;
 import gg.data.store.Item;
 import gg.data.store.type.ItemType;
 import gg.data.user.User;
 import gg.pingpong.api.admin.store.controller.request.ItemUpdateRequestDto;
 import gg.pingpong.api.admin.store.controller.response.ReceiptListResponseDto;
 import gg.pingpong.api.admin.store.service.ReceiptAdminService;
-import gg.auth.utils.AuthTokenProvider;
 import gg.utils.ItemTestUtils;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;

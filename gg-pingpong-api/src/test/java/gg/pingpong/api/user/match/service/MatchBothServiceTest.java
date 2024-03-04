@@ -19,6 +19,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.admin.repo.manage.PenaltyAdminRepository;
+import gg.auth.UserDto;
 import gg.data.game.Game;
 import gg.data.manage.SlotManagement;
 import gg.data.manage.type.PenaltyKey;
@@ -27,7 +28,6 @@ import gg.data.season.Season;
 import gg.data.user.User;
 import gg.pingpong.api.user.manage.redis.PenaltyUserRedisRepository;
 import gg.pingpong.api.user.match.utils.MatchIntegrationTestUtils;
-import gg.auth.UserDto;
 import gg.repo.game.GameRepository;
 import gg.repo.manage.SlotManagementRepository;
 import gg.repo.match.RedisMatchTimeRepository;

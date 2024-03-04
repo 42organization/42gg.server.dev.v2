@@ -16,9 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gg.auth.utils.AuthTokenProvider;
 import gg.data.game.type.Mode;
 import gg.data.season.Season;
-import gg.auth.utils.AuthTokenProvider;
 import gg.repo.season.SeasonRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;

@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 
+import gg.auth.UserDto;
 import gg.pingpong.api.global.config.WebConfig;
 import gg.pingpong.api.global.security.config.SecurityConfig;
 import gg.pingpong.api.global.security.jwt.utils.TokenAuthenticationFilter;
@@ -30,7 +31,6 @@ import gg.pingpong.api.user.tournament.controller.response.TournamentListRespons
 import gg.pingpong.api.user.tournament.controller.response.TournamentResponseDto;
 import gg.pingpong.api.user.tournament.controller.response.TournamentUserRegistrationResponseDto;
 import gg.pingpong.api.user.tournament.service.TournamentService;
-import gg.auth.UserDto;
 import gg.utils.annotation.UnitTest;
 
 @UnitTest

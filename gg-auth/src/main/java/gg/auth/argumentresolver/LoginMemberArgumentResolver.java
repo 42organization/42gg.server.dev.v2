@@ -8,10 +8,10 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import gg.data.user.User;
+import gg.auth.UserDto;
 import gg.auth.utils.AuthTokenProvider;
 import gg.auth.utils.HeaderUtil;
-import gg.auth.UserDto;
+import gg.data.user.User;
 import gg.repo.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 

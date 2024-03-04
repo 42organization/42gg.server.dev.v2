@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
 import gg.pingpong.api.user.tournament.controller.request.TournamentFilterRequestDto;
 import gg.pingpong.api.user.tournament.controller.response.TournamentGameListResponseDto;
@@ -24,7 +25,6 @@ import gg.pingpong.api.user.tournament.controller.response.TournamentListRespons
 import gg.pingpong.api.user.tournament.controller.response.TournamentResponseDto;
 import gg.pingpong.api.user.tournament.controller.response.TournamentUserRegistrationResponseDto;
 import gg.pingpong.api.user.tournament.service.TournamentService;
-import gg.auth.UserDto;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 

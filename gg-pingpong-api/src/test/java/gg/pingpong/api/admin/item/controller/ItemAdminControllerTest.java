@@ -25,12 +25,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.admin.repo.store.ItemAdminRepository;
+import gg.auth.utils.AuthTokenProvider;
 import gg.data.store.Item;
 import gg.data.store.type.ItemType;
 import gg.pingpong.api.admin.store.controller.request.ItemUpdateRequestDto;
 import gg.pingpong.api.admin.store.controller.response.ItemListResponseDto;
 import gg.pingpong.api.admin.store.service.ItemAdminService;
-import gg.auth.utils.AuthTokenProvider;
 import gg.pingpong.api.global.utils.ItemImageHandler;
 import gg.repo.user.UserRepository;
 import gg.utils.ItemTestUtils;

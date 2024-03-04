@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import gg.auth.UserDto;
+import gg.auth.argumentresolver.Login;
 import gg.party.api.user.comment.controller.request.CommentCreateReqDto;
 import gg.party.api.user.comment.service.CommentService;
-import gg.auth.argumentresolver.Login;
-import gg.auth.UserDto;
 import lombok.RequiredArgsConstructor;
 
 @RestController

@@ -19,16 +19,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import gg.auth.UserDto;
+import gg.auth.utils.AuthTokenProvider;
 import gg.data.user.User;
 import gg.pingpong.api.global.config.WebConfig;
 import gg.pingpong.api.global.security.config.SecurityConfig;
-import gg.auth.utils.AuthTokenProvider;
 import gg.pingpong.api.global.security.jwt.utils.TokenAuthenticationFilter;
 import gg.pingpong.api.global.utils.querytracker.LoggingInterceptor;
 import gg.pingpong.api.user.rank.controller.response.ExpRankPageResponseDto;
 import gg.pingpong.api.user.rank.controller.response.RankPageResponseDto;
 import gg.pingpong.api.user.rank.service.RankService;
-import gg.auth.UserDto;
 import gg.repo.user.UserRepository;
 
 @WebMvcTest(value = RankV2Controller.class,

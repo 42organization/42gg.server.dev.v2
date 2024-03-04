@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gg.auth.utils.AuthTokenProvider;
 import gg.data.game.Game;
 import gg.data.game.type.Mode;
 import gg.data.game.type.StatusType;
@@ -45,7 +46,6 @@ import gg.data.user.type.RacketType;
 import gg.data.user.type.RoleType;
 import gg.data.user.type.SnsType;
 import gg.pingpong.api.admin.store.controller.request.ItemUpdateRequestDto;
-import gg.auth.utils.AuthTokenProvider;
 import gg.pingpong.api.global.utils.UserImageHandler;
 import gg.pingpong.api.user.game.controller.request.RankResultReqDto;
 import gg.pingpong.api.user.game.service.GameService;

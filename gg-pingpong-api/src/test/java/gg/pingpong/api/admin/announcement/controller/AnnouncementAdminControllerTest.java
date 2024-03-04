@@ -16,10 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.admin.repo.manage.AnnouncementAdminRepository;
+import gg.auth.utils.AuthTokenProvider;
 import gg.data.manage.Announcement;
 import gg.pingpong.api.admin.manage.controller.response.AnnouncementAdminListResponseDto;
 import gg.pingpong.api.admin.manage.dto.AnnouncementAdminAddDto;
-import gg.auth.utils.AuthTokenProvider;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import gg.utils.exception.announcement.AnnounceNotFoundException;

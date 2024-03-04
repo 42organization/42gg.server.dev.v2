@@ -16,9 +16,9 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gg.auth.UserDto;
 import gg.auth.utils.AuthTokenProvider;
 import gg.pingpong.api.user.store.service.ItemService;
-import gg.auth.UserDto;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import lombok.RequiredArgsConstructor;

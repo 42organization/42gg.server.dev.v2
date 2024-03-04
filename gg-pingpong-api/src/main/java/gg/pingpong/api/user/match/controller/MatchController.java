@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import gg.data.match.type.Option;
+import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
+import gg.data.match.type.Option;
 import gg.pingpong.api.user.match.controller.request.MatchRequestDto;
 import gg.pingpong.api.user.match.controller.response.MatchStatusResponseListDto;
 import gg.pingpong.api.user.match.controller.response.SlotStatusResponseListDto;
 import gg.pingpong.api.user.match.service.MatchFindService;
 import gg.pingpong.api.user.match.service.MatchService;
-import gg.auth.UserDto;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 

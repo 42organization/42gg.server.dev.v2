@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.admin.repo.user.UserAdminRepository;
 import gg.admin.repo.user.UserImageAdminRepository;
+import gg.auth.utils.AuthTokenProvider;
 import gg.data.user.User;
 import gg.data.user.UserImage;
 import gg.pingpong.api.admin.user.controller.response.UserDetailAdminResponseDto;
@@ -32,7 +33,6 @@ import gg.pingpong.api.admin.user.controller.response.UserSearchAdminResponseDto
 import gg.pingpong.api.admin.user.dto.UserImageAdminDto;
 import gg.pingpong.api.admin.user.dto.UserSearchAdminDto;
 import gg.pingpong.api.admin.user.service.UserAdminService;
-import gg.auth.utils.AuthTokenProvider;
 import gg.repo.user.UserRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;

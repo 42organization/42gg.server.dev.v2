@@ -10,12 +10,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import gg.auth.UserDto;
 import gg.data.noti.Noti;
 import gg.data.user.type.SnsType;
 import gg.pingpong.api.user.noti.dto.UserNotiDto;
 import gg.pingpong.api.user.noti.service.sns.NotiMailSender;
 import gg.pingpong.api.user.noti.service.sns.SlackbotService;
-import gg.auth.UserDto;
 import gg.repo.game.out.GameUser;
 import gg.utils.annotation.UnitTest;
 

@@ -24,6 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import gg.auth.UserDto;
 import gg.data.game.Game;
 import gg.data.game.type.StatusType;
 import gg.data.tournament.Tournament;
@@ -43,7 +44,6 @@ import gg.pingpong.api.user.match.service.MatchTournamentService;
 import gg.pingpong.api.user.tournament.controller.response.TournamentGameListResponseDto;
 import gg.pingpong.api.user.tournament.controller.response.TournamentResponseDto;
 import gg.pingpong.api.user.tournament.controller.response.TournamentUserRegistrationResponseDto;
-import gg.auth.UserDto;
 import gg.pingpong.api.utils.ReflectionUtilsForUnitTest;
 import gg.repo.game.GameRepository;
 import gg.repo.game.out.GameTeamUser;

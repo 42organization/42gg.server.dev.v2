@@ -2,8 +2,8 @@ package gg.pingpong.api.user.user.service;
 
 import org.springframework.stereotype.Service;
 
-import gg.pingpong.api.global.security.jwt.repository.JwtRedisRepository;
 import gg.auth.utils.AuthTokenProvider;
+import gg.pingpong.api.global.security.jwt.repository.JwtRedisRepository;
 import gg.utils.exception.user.TokenNotValidException;
 import lombok.RequiredArgsConstructor;
 
