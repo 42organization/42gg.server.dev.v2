@@ -31,7 +31,7 @@ import gg.data.user.type.SnsType;
 import gg.pingpong.api.user.noti.service.NotiService;
 import gg.pingpong.api.user.store.service.ItemService;
 import gg.pingpong.api.user.store.service.UserCoinChangeService;
-import gg.pingpong.api.user.user.dto.UserDto;
+import gg.auth.UserDto;
 import gg.repo.store.ItemRepository;
 import gg.repo.store.ReceiptRepository;
 import gg.repo.store.UserItemRepository;

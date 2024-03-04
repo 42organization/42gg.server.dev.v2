@@ -24,7 +24,7 @@ import gg.pingpong.api.user.manage.service.PenaltyService;
 import gg.pingpong.api.user.match.dto.GameAddDto;
 import gg.pingpong.api.user.match.utils.MatchCalculator;
 import gg.pingpong.api.user.season.service.SeasonFindService;
-import gg.pingpong.api.user.user.dto.UserDto;
+import gg.auth.UserDto;
 import gg.repo.game.GameRepository;
 import gg.repo.manage.SlotManagementRepository;
 import gg.repo.match.RedisMatchTimeRepository;

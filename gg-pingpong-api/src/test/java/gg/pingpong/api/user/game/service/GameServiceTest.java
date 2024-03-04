@@ -20,7 +20,7 @@ import gg.data.rank.Tier;
 import gg.data.rank.redis.RankRedis;
 import gg.data.season.Season;
 import gg.data.user.User;
-import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
+import gg.auth.utils.AuthTokenProvider;
 import gg.pingpong.api.user.game.controller.request.RankResultReqDto;
 import gg.repo.game.GameRepository;
 import gg.repo.game.TeamRepository;

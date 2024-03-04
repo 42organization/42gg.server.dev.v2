@@ -22,7 +22,7 @@ import gg.data.user.User;
 import gg.data.user.type.RacketType;
 import gg.data.user.type.RoleType;
 import gg.data.user.type.SnsType;
-import gg.pingpong.api.user.user.dto.UserDto;
+import gg.auth.UserDto;
 import gg.repo.noti.NotiRepository;
 import gg.repo.user.UserRepository;
 import gg.utils.annotation.UnitTest;

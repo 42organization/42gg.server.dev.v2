@@ -32,7 +32,7 @@ import gg.pingpong.api.user.tournament.controller.response.TournamentGameResDto;
 import gg.pingpong.api.user.tournament.controller.response.TournamentListResponseDto;
 import gg.pingpong.api.user.tournament.controller.response.TournamentResponseDto;
 import gg.pingpong.api.user.tournament.controller.response.TournamentUserRegistrationResponseDto;
-import gg.pingpong.api.user.user.dto.UserDto;
+import gg.auth.UserDto;
 import gg.repo.game.GameRepository;
 import gg.repo.game.out.GameTeamUser;
 import gg.repo.tournarment.TournamentGameRepository;

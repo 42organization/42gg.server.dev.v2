@@ -14,7 +14,7 @@ import gg.data.user.User;
 import gg.pingpong.api.user.match.dto.GameAddDto;
 import gg.pingpong.api.user.noti.service.NotiService;
 import gg.pingpong.api.user.noti.service.SnsNotiService;
-import gg.pingpong.api.user.user.dto.UserDto;
+import gg.auth.UserDto;
 import gg.repo.game.GameRepository;
 import gg.repo.game.TeamRepository;
 import gg.repo.game.TeamUserRepository;

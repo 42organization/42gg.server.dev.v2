@@ -25,7 +25,7 @@ import gg.data.user.User;
 import gg.pingpong.api.admin.store.controller.request.ItemUpdateRequestDto;
 import gg.pingpong.api.admin.store.controller.response.ReceiptListResponseDto;
 import gg.pingpong.api.admin.store.service.ReceiptAdminService;
-import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
+import gg.auth.utils.AuthTokenProvider;
 import gg.utils.ItemTestUtils;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;

@@ -28,7 +28,7 @@ import gg.data.user.User;
 import gg.data.user.type.RacketType;
 import gg.data.user.type.RoleType;
 import gg.data.user.type.SnsType;
-import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
+import gg.auth.utils.AuthTokenProvider;
 import gg.pingpong.api.user.tournament.controller.response.TournamentGameListResponseDto;
 import gg.pingpong.api.user.tournament.controller.response.TournamentGameResDto;
 import gg.utils.TestDataUtils;

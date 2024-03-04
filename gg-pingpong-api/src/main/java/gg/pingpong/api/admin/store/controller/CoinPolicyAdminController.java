@@ -19,8 +19,8 @@ import gg.pingpong.api.admin.store.controller.response.CoinPolicyAdminListRespon
 import gg.pingpong.api.admin.store.dto.CoinPolicyAdminAddDto;
 import gg.pingpong.api.admin.store.service.CoinPolicyAdminService;
 import gg.pingpong.api.global.dto.PageRequestDto;
-import gg.pingpong.api.global.utils.argumentresolver.Login;
-import gg.pingpong.api.user.user.dto.UserDto;
+import gg.auth.argumentresolver.Login;
+import gg.auth.UserDto;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 

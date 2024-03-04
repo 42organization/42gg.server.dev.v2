@@ -47,7 +47,7 @@ import gg.pingpong.api.user.match.dto.MatchStatusDto;
 import gg.pingpong.api.user.match.dto.SlotStatusDto;
 import gg.pingpong.api.user.match.utils.MatchIntegrationTestUtils;
 import gg.pingpong.api.user.rank.redis.RedisUploadService;
-import gg.pingpong.api.user.user.dto.UserDto;
+import gg.auth.UserDto;
 import gg.repo.game.GameRepository;
 import gg.repo.manage.SlotManagementRepository;
 import gg.repo.match.RedisMatchTimeRepository;

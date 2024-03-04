@@ -29,7 +29,7 @@ import gg.data.user.type.SnsType;
 import gg.pingpong.api.admin.store.controller.request.ItemUpdateRequestDto;
 import gg.pingpong.api.admin.store.service.ItemAdminService;
 import gg.pingpong.api.global.utils.aws.AsyncNewItemImageUploader;
-import gg.pingpong.api.user.user.dto.UserDto;
+import gg.auth.UserDto;
 import gg.utils.annotation.UnitTest;
 import gg.utils.exception.item.ItemNotAvailableException;
 import gg.utils.exception.item.ItemNotFoundException;

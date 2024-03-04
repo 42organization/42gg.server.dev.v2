@@ -22,7 +22,7 @@ import gg.data.user.User;
 import gg.pingpong.api.user.rank.controller.response.ExpRankPageResponseDto;
 import gg.pingpong.api.user.rank.controller.response.RankPageResponseDto;
 import gg.pingpong.api.user.season.service.SeasonFindService;
-import gg.pingpong.api.user.user.dto.UserDto;
+import gg.auth.UserDto;
 import gg.repo.rank.RankRepository;
 import gg.repo.rank.RankV2Dto;
 import gg.repo.rank.redis.RankRedisRepository;

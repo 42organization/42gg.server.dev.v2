@@ -29,7 +29,7 @@ import gg.pingpong.api.admin.season.controller.request.SeasonUpdateRequestDto;
 import gg.pingpong.api.admin.season.controller.response.SeasonListAdminResponseDto;
 import gg.pingpong.api.admin.season.dto.SeasonAdminDto;
 import gg.pingpong.api.admin.season.service.SeasonAdminService;
-import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
+import gg.auth.utils.AuthTokenProvider;
 import gg.repo.rank.RankRepository;
 import gg.repo.rank.redis.RankRedisRepository;
 import gg.utils.RedisKeyManager;

@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import gg.party.api.user.room.controller.request.RoomCreateReqDto;
 import gg.party.api.user.room.controller.response.RoomListResDto;
 import gg.party.api.user.room.service.RoomService;
-import gg.pingpong.api.global.utils.argumentresolver.Login;
-import gg.pingpong.api.user.user.dto.UserDto;
+import gg.auth.argumentresolver.Login;
+import gg.auth.UserDto;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 

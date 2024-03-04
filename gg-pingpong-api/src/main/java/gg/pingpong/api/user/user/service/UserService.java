@@ -49,7 +49,7 @@ import gg.pingpong.api.user.user.controller.response.UserLiveResponseDto;
 import gg.pingpong.api.user.user.controller.response.UserNormalDetailResponseDto;
 import gg.pingpong.api.user.user.controller.response.UserRankResponseDto;
 import gg.pingpong.api.user.user.dto.UserBackgroundDto;
-import gg.pingpong.api.user.user.dto.UserDto;
+import gg.auth.UserDto;
 import gg.pingpong.api.user.user.dto.UserEdgeDto;
 import gg.pingpong.api.user.user.dto.UserHistoryData;
 import gg.pingpong.api.user.user.dto.UserImageDto;

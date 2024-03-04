@@ -5,7 +5,7 @@ import java.util.Objects;
 
 import gg.data.noti.Noti;
 import gg.data.noti.type.NotiType;
-import gg.pingpong.api.user.user.dto.UserDto;
+import gg.auth.UserDto;
 import lombok.Builder;
 import lombok.Getter;
 

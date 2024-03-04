@@ -12,7 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import gg.pingpong.api.global.security.jwt.repository.JwtRedisRepository;
-import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
+import gg.auth.utils.AuthTokenProvider;
 import gg.utils.annotation.UnitTest;
 import gg.utils.exception.user.TokenNotValidException;
 

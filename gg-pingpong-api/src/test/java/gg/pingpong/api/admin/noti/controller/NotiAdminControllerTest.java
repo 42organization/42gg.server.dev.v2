@@ -31,7 +31,7 @@ import gg.pingpong.api.admin.noti.controller.request.SendNotiAdminRequestDto;
 import gg.pingpong.api.admin.noti.controller.response.NotiListAdminResponseDto;
 import gg.pingpong.api.admin.noti.dto.NotiAdminDto;
 import gg.pingpong.api.admin.noti.service.NotiAdminService;
-import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
+import gg.auth.utils.AuthTokenProvider;
 import gg.repo.noti.NotiRepository;
 import gg.repo.user.UserRepository;
 import gg.utils.TestDataUtils;

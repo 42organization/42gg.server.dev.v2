@@ -27,7 +27,7 @@ import gg.data.season.Season;
 import gg.data.user.User;
 import gg.pingpong.api.user.manage.redis.PenaltyUserRedisRepository;
 import gg.pingpong.api.user.match.utils.MatchIntegrationTestUtils;
-import gg.pingpong.api.user.user.dto.UserDto;
+import gg.auth.UserDto;
 import gg.repo.game.GameRepository;
 import gg.repo.manage.SlotManagementRepository;
 import gg.repo.match.RedisMatchTimeRepository;

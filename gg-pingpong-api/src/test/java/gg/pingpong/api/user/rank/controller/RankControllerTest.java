@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.data.season.Season;
 import gg.data.user.User;
-import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
+import gg.auth.utils.AuthTokenProvider;
 import gg.pingpong.api.user.rank.controller.response.ExpRankPageResponseDto;
 import gg.pingpong.api.user.rank.controller.response.RankPageResponseDto;
 import gg.pingpong.api.user.rank.dto.RankDto;

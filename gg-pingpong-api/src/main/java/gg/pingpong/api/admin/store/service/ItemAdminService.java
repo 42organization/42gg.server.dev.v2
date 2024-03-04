@@ -14,7 +14,7 @@ import gg.pingpong.api.admin.store.controller.request.ItemUpdateRequestDto;
 import gg.pingpong.api.admin.store.controller.response.ItemHistoryResponseDto;
 import gg.pingpong.api.admin.store.controller.response.ItemListResponseDto;
 import gg.pingpong.api.global.utils.aws.AsyncNewItemImageUploader;
-import gg.pingpong.api.user.user.dto.UserDto;
+import gg.auth.UserDto;
 import gg.utils.exception.item.ItemNotAvailableException;
 import gg.utils.exception.item.ItemNotFoundException;
 import lombok.RequiredArgsConstructor;

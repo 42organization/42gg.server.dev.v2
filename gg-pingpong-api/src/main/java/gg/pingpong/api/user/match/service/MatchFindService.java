@@ -26,7 +26,7 @@ import gg.pingpong.api.user.match.controller.response.SlotStatusResponseListDto;
 import gg.pingpong.api.user.match.dto.MatchStatusDto;
 import gg.pingpong.api.user.match.utils.SlotGenerator;
 import gg.pingpong.api.user.season.service.SeasonFindService;
-import gg.pingpong.api.user.user.dto.UserDto;
+import gg.auth.UserDto;
 import gg.repo.game.GameRepository;
 import gg.repo.manage.SlotManagementRepository;
 import gg.repo.match.RedisMatchTimeRepository;

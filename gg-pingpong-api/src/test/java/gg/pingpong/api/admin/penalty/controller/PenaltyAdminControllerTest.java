@@ -40,7 +40,7 @@ import gg.data.user.type.SnsType;
 import gg.pingpong.api.admin.manage.controller.request.PenaltyRequestDto;
 import gg.pingpong.api.admin.manage.controller.response.PenaltyListResponseDto;
 import gg.pingpong.api.admin.manage.service.PenaltyAdminService;
-import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
+import gg.auth.utils.AuthTokenProvider;
 import gg.repo.user.UserRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;

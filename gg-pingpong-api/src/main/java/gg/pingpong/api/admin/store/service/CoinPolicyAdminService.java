@@ -12,7 +12,7 @@ import gg.data.user.User;
 import gg.pingpong.api.admin.store.controller.response.CoinPolicyAdminListResponseDto;
 import gg.pingpong.api.admin.store.controller.response.CoinPolicyAdminResponseDto;
 import gg.pingpong.api.admin.store.dto.CoinPolicyAdminAddDto;
-import gg.pingpong.api.user.user.dto.UserDto;
+import gg.auth.UserDto;
 import gg.utils.exception.user.UserNotFoundException;
 import lombok.AllArgsConstructor;
 

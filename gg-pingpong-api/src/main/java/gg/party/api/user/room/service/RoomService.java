@@ -20,7 +20,7 @@ import gg.data.user.User;
 import gg.party.api.user.room.controller.request.RoomCreateReqDto;
 import gg.party.api.user.room.controller.response.RoomListResDto;
 import gg.party.api.user.room.controller.response.RoomResDto;
-import gg.pingpong.api.user.user.dto.UserDto;
+import gg.auth.UserDto;
 import gg.repo.party.CategoryRepository;
 import gg.repo.party.RoomRepository;
 import gg.repo.party.UserRoomRepository;

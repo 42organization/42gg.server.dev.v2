@@ -32,7 +32,7 @@ import gg.pingpong.api.admin.user.controller.response.UserSearchAdminResponseDto
 import gg.pingpong.api.admin.user.dto.UserImageAdminDto;
 import gg.pingpong.api.admin.user.dto.UserSearchAdminDto;
 import gg.pingpong.api.admin.user.service.UserAdminService;
-import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
+import gg.auth.utils.AuthTokenProvider;
 import gg.repo.user.UserRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;

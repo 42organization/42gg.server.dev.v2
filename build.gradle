@@ -243,6 +243,17 @@ project(':gg-pingpong-api') {
         implementation project(':gg-repo')
         implementation project(':gg-admin-repo')
         implementation project(':gg-utils')
+        implementation project(':gg-auth')
+    }
+}
+
+project(':gg-auth') {
+    bootJar { enabled = true }
+    jar { enabled = true }
+    dependencies {
+        implementation project(':gg-data')
+        implementation project(':gg-repo')
+        implementation project(':gg-utils')
     }
 }
 

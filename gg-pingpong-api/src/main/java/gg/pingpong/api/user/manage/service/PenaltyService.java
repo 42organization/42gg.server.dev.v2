@@ -10,7 +10,7 @@ import gg.data.manage.redis.RedisPenaltyUser;
 import gg.data.manage.type.PenaltyType;
 import gg.data.user.User;
 import gg.pingpong.api.user.manage.redis.PenaltyUserRedisRepository;
-import gg.pingpong.api.user.user.dto.UserDto;
+import gg.auth.UserDto;
 import gg.pingpong.api.user.user.service.UserFindService;
 import gg.repo.manage.PenaltyRepository;
 import lombok.RequiredArgsConstructor;

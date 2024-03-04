@@ -19,7 +19,7 @@ import gg.admin.repo.manage.AnnouncementAdminRepository;
 import gg.data.manage.Announcement;
 import gg.pingpong.api.admin.manage.controller.response.AnnouncementAdminListResponseDto;
 import gg.pingpong.api.admin.manage.dto.AnnouncementAdminAddDto;
-import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
+import gg.auth.utils.AuthTokenProvider;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import gg.utils.exception.announcement.AnnounceNotFoundException;

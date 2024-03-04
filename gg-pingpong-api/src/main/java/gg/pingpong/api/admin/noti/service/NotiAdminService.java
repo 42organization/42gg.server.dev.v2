@@ -14,7 +14,7 @@ import gg.pingpong.api.admin.noti.controller.request.SendNotiAdminRequestDto;
 import gg.pingpong.api.admin.noti.controller.response.NotiListAdminResponseDto;
 import gg.pingpong.api.admin.noti.dto.NotiAdminDto;
 import gg.pingpong.api.user.noti.service.SnsNotiService;
-import gg.pingpong.api.user.user.dto.UserDto;
+import gg.auth.UserDto;
 import gg.utils.exception.user.UserNotFoundException;
 import lombok.AllArgsConstructor;
 

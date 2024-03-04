@@ -15,7 +15,7 @@ import gg.data.user.type.SnsType;
 import gg.pingpong.api.user.noti.dto.UserNotiDto;
 import gg.pingpong.api.user.noti.service.sns.NotiMailSender;
 import gg.pingpong.api.user.noti.service.sns.SlackbotService;
-import gg.pingpong.api.user.user.dto.UserDto;
+import gg.auth.UserDto;
 import gg.repo.game.out.GameUser;
 import gg.utils.annotation.UnitTest;
 

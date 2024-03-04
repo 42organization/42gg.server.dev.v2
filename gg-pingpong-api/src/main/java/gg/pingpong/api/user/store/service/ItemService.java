@@ -20,7 +20,7 @@ import gg.pingpong.api.user.store.controller.response.ItemStoreListResponseDto;
 import gg.pingpong.api.user.store.controller.response.ItemStoreResponseDto;
 import gg.pingpong.api.user.store.controller.response.UserItemListResponseDto;
 import gg.pingpong.api.user.store.controller.response.UserItemResponseDto;
-import gg.pingpong.api.user.user.dto.UserDto;
+import gg.auth.UserDto;
 import gg.repo.store.ItemRepository;
 import gg.repo.store.ReceiptRepository;
 import gg.repo.store.UserItemRepository;

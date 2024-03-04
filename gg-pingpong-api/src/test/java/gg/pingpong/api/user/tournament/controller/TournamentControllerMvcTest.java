@@ -30,7 +30,7 @@ import gg.pingpong.api.user.tournament.controller.response.TournamentListRespons
 import gg.pingpong.api.user.tournament.controller.response.TournamentResponseDto;
 import gg.pingpong.api.user.tournament.controller.response.TournamentUserRegistrationResponseDto;
 import gg.pingpong.api.user.tournament.service.TournamentService;
-import gg.pingpong.api.user.user.dto.UserDto;
+import gg.auth.UserDto;
 import gg.utils.annotation.UnitTest;
 
 @UnitTest

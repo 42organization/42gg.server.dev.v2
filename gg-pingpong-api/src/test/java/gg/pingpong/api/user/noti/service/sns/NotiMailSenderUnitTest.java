@@ -16,7 +16,7 @@ import gg.data.noti.Noti;
 import gg.pingpong.api.global.utils.AsyncMailSender;
 import gg.pingpong.api.user.noti.dto.UserNotiDto;
 import gg.pingpong.api.user.noti.service.NotiService;
-import gg.pingpong.api.user.user.dto.UserDto;
+import gg.auth.UserDto;
 import gg.repo.game.out.GameUser;
 import gg.utils.annotation.UnitTest;
 

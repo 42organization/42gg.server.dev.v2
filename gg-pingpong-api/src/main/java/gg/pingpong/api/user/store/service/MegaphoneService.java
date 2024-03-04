@@ -20,7 +20,7 @@ import gg.pingpong.api.user.store.controller.request.MegaphoneUseRequestDto;
 import gg.pingpong.api.user.store.controller.response.MegaphoneDetailResponseDto;
 import gg.pingpong.api.user.store.controller.response.MegaphoneTodayListResponseDto;
 import gg.pingpong.api.user.store.redis.MegaphoneRedisRepository;
-import gg.pingpong.api.user.user.dto.UserDto;
+import gg.auth.UserDto;
 import gg.repo.store.MegaphoneRepository;
 import gg.repo.store.ReceiptRepository;
 import gg.repo.user.UserRepository;

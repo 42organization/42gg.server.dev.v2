@@ -18,8 +18,9 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import gg.auth.utils.AuthTokenProvider;
 import gg.pingpong.api.global.security.service.CustomUserDetailsService;
-import gg.pingpong.api.global.utils.HeaderUtil;
+import gg.auth.utils.HeaderUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

@@ -13,7 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import gg.pingpong.api.user.manage.controller.FeedbackController;
 import gg.pingpong.api.user.manage.controller.request.FeedbackRequestDto;
 import gg.pingpong.api.user.manage.service.FeedbackService;
-import gg.pingpong.api.user.user.dto.UserDto;
+import gg.auth.UserDto;
 import gg.utils.annotation.UnitTest;
 
 @UnitTest

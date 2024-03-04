@@ -22,7 +22,7 @@ import gg.data.store.CoinPolicy;
 import gg.data.user.User;
 import gg.pingpong.api.admin.store.controller.response.CoinPolicyAdminListResponseDto;
 import gg.pingpong.api.admin.store.dto.CoinPolicyAdminAddDto;
-import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
+import gg.auth.utils.AuthTokenProvider;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import gg.utils.exception.coin.CoinPolicyNotFoundException;
