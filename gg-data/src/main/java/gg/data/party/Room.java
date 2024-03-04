@@ -85,15 +85,15 @@ public class Room extends BaseTimeEntity {
 		this.status = status;
 	}
 
-	public void updateCurrentPeople(int currentPeople){
+	public void updateCurrentPeople(int currentPeople) {
 		this.currentPeople = currentPeople;
 	}
 
-	public void updateStatus(RoomType status){
+	public void updateStatus(RoomType status) {
 		this.status = status;
 	}
 
-	public void updateHost(User host){
+	public void updateHost(User host) {
 		this.host = host;
 	}
 }
