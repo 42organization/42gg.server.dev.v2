@@ -94,7 +94,7 @@ public class RoomController {
 	}
 
 	/**
-	 * 방의 상세정보를 조회한다
+	 * 방에 참여한다
 	 * @param roomId 방 id
 	 * @param user 유저 정보
 	 * @return roomId
