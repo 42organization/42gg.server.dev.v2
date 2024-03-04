@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import gg.data.manage.SlotManagement;
+import gg.data.pingpong.manage.SlotManagement;
 
 public interface AdminSlotManagementsRepository extends JpaRepository<SlotManagement, Long> {
 	@Query("select slot from SlotManagement slot "

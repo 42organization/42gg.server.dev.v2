@@ -5,8 +5,8 @@ import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.data.rank.redis.RankRedis;
-import gg.data.season.Season;
+import gg.data.pingpong.rank.redis.RankRedis;
+import gg.data.pingpong.season.Season;
 import gg.data.user.User;
 import gg.pingpong.api.user.season.service.SeasonFindService;
 import gg.repo.rank.redis.RankRedisRepository;

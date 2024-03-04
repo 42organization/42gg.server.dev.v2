@@ -13,8 +13,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import gg.data.game.Game;
-import gg.data.game.Team;
+import gg.data.pingpong.game.Game;
+import gg.data.pingpong.game.Team;
 import gg.utils.annotation.UnitTest;
 import gg.utils.exception.ErrorCode;
 import gg.utils.exception.custom.BusinessException;

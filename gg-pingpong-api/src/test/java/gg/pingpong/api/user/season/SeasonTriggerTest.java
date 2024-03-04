@@ -16,8 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gg.data.game.type.Mode;
-import gg.data.season.Season;
+import gg.data.pingpong.game.type.Mode;
+import gg.data.pingpong.season.Season;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.repo.season.SeasonRepository;
 import gg.utils.TestDataUtils;

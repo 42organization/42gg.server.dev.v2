@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import gg.data.game.type.Mode;
+import gg.data.pingpong.game.type.Mode;
 import gg.data.user.type.OauthType;
 import gg.data.user.type.RoleType;
 import gg.pingpong.api.global.dto.PageRequestDto;

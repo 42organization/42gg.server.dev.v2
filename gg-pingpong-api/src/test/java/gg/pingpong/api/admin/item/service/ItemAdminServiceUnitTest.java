@@ -21,7 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import gg.admin.repo.store.ItemAdminRepository;
-import gg.data.store.Item;
+import gg.data.pingpong.store.Item;
 import gg.data.user.User;
 import gg.data.user.type.RacketType;
 import gg.data.user.type.RoleType;

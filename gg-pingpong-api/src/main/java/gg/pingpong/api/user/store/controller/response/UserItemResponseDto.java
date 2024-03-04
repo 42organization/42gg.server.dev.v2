@@ -1,9 +1,9 @@
 package gg.pingpong.api.user.store.controller.response;
 
-import gg.data.store.Item;
-import gg.data.store.Receipt;
-import gg.data.store.type.ItemStatus;
-import gg.data.store.type.ItemType;
+import gg.data.pingpong.store.Item;
+import gg.data.pingpong.store.Receipt;
+import gg.data.pingpong.store.type.ItemStatus;
+import gg.data.pingpong.store.type.ItemType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

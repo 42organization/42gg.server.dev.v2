@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.admin.repo.store.CoinPolicyAdminRepository;
-import gg.data.store.CoinPolicy;
+import gg.data.pingpong.store.CoinPolicy;
 import gg.data.user.User;
 import gg.pingpong.api.admin.store.controller.response.CoinPolicyAdminListResponseDto;
 import gg.pingpong.api.admin.store.dto.CoinPolicyAdminAddDto;

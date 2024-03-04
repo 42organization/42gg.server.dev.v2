@@ -25,10 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gg.data.game.type.Mode;
-import gg.data.rank.Rank;
-import gg.data.rank.Tier;
-import gg.data.season.Season;
+import gg.data.pingpong.game.type.Mode;
+import gg.data.pingpong.rank.Rank;
+import gg.data.pingpong.rank.Tier;
+import gg.data.pingpong.season.Season;
 import gg.data.user.User;
 import gg.pingpong.api.admin.game.controller.response.GameLogListAdminResponseDto;
 import gg.pingpong.api.admin.game.dto.RankGamePPPModifyReqDto;

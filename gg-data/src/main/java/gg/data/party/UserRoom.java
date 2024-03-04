@@ -12,7 +12,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import gg.data.BaseTimeEntity;
-import gg.data.tournament.Tournament;
 import gg.data.user.User;
 import lombok.AccessLevel;
 import lombok.Builder;
