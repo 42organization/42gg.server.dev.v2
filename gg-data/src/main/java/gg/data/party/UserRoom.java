@@ -27,7 +27,6 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@SuperBuilder
 public class UserRoom extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,7 +44,7 @@ public class UserRoom extends BaseTimeEntity {
 	private String nickname;
 
 	@Column(name = "is_exist")
-	private Boolean isExist;
+	private boolean isExist;
 
 	public UserRoom(User user, Room room, String randomNickname) {
 		this.user = user;
@@ -54,8 +53,12 @@ public class UserRoom extends BaseTimeEntity {
 		this.isExist = true;
 	}
 
-	public void updateIsExist(Boolean isExist) {
+	public void updateIsExist(boolean isExist) {
 		mustNotNull(isExist, NULL_POINT);
 		this.isExist = isExist;
+	}
+
+	public boolean getIsExist() {
+		return this.isExist;
 	}
 }

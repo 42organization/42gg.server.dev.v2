@@ -13,7 +13,8 @@ public enum RoomType {
 	OPEN("open", "방 시작 전"),
 	START("live", "방 진행 중"),
 	FINISH("end", "방 종료"),
-	HIDDEN("end", "방 종료 후 가림");
+	HIDDEN("end", "방 종료 후 가림"),
+	FAIL("end", "매칭 실패한 방");
 
 	private final String code;
 	private final String desc;

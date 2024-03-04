@@ -5,6 +5,7 @@ import static gg.party.api.user.room.utils.GenerateRandomNickname.*;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -18,17 +19,22 @@ import gg.data.party.UserRoom;
 import gg.data.party.type.RoomType;
 import gg.data.user.User;
 import gg.party.api.user.room.controller.request.RoomCreateReqDto;
+import gg.party.api.user.room.controller.response.CommentResDto;
+import gg.party.api.user.room.controller.response.RoomDetailResDto;
 import gg.party.api.user.room.controller.response.RoomListResDto;
 import gg.party.api.user.room.controller.response.RoomResDto;
+import gg.party.api.user.room.controller.response.UserRoomResDto;
 import gg.party.api.user.room.controller.response.LeaveRoomResponseDto;
 import gg.pingpong.api.user.user.dto.UserDto;
 import gg.repo.party.CategoryRepository;
+import gg.repo.party.CommentRepository;
 import gg.repo.party.RoomRepository;
 import gg.repo.party.UserRoomRepository;
 import gg.repo.user.UserRepository;
 import gg.utils.exception.ErrorCode;
 import gg.utils.exception.party.CategoryNotFoundException;
 import gg.utils.exception.party.RoomNotFoundException;
+import gg.utils.exception.party.RoomReportedException;
 import gg.utils.exception.party.RoomNotOpenException;
 import gg.utils.exception.party.RoomNotParticipantException;
 import gg.utils.exception.user.UserNotFoundException;
@@ -41,6 +47,7 @@ public class RoomService {
 	private final UserRepository userRepository;
 	private final CategoryRepository categoryRepository;
 	private final UserRoomRepository userRoomRepository;
+	private final CommentRepository commentRepository;
 
 	/**
 	 * 시작하지 않은 방과 시작한 방을 모두 조회한다
@@ -130,8 +137,8 @@ public class RoomService {
 	}
 
 	/**
-	 * <p>유저가 방을 나간다</p>
-	 * <p>참가자가 방에 참가한 상태일때만 취소해 준다.</p>
+	 * 유저가 방을 나간다
+	 * 참가자가 방에 참가한 상태일때만 취소해 준다.
 	 * @param roomId
 	 * @param user 참여 유저(사용자 본인)
 	 * @throws RoomNotFoundException 방 없음 || 방 입장자가 아님
@@ -147,16 +154,69 @@ public class RoomService {
 
 		List<UserRoom> userRoomList = userRoomRepository.findByUserId(user.getId());
 		UserRoom targetUserRoom = userRoomList.stream()
-			.filter(tu -> (tu.getUser().getId().equals(roomId)))
+			.filter(tu -> (tu.getUser().getId().equals(user.getId())))
 			.findAny()
 			.orElseThrow(() -> new RoomNotParticipantException(ErrorCode.ROOM_NOT_PARTICIPANT));
 
-		//룸에서 인원 수정
-		targetRoom
-		//중간 테이블의 불리언 값 수정
-		targetUserRoom.updateIsExist(Boolean.FALSE);
+		// 모두 나갈 때 방 fail처리
+		if (targetRoom.getCurrentPeople() == 1) {
+			targetRoom.updateCurrentPeople(0);
+			targetRoom.updateStatus(RoomType.FAIL);
+			return new LeaveRoomResponseDto(targetUserRoom.getNickname());
+		}
+
+		// 방장 이권
+		if (user.getId().equals(targetRoom.getHost().getId())) {
+			List<UserRoom> existUserRooms = userRoomRepository.findByIsExist(roomId);
+			targetRoom.updateHost(existUserRooms.get(0).getUser());
+		}
+
+		targetRoom.updateCurrentPeople(targetRoom.getCurrentPeople() - 1);
+		targetUserRoom.updateIsExist(false);
 		userRoomRepository.save(targetUserRoom);
 
 		return new LeaveRoomResponseDto(targetUserRoom.getNickname());
+	}
+
+	/**
+	 * 방의 상세정보를 조회한다
+	 * @param userId 자신의 id
+	 * @param roomId 방 id
+	 * @exception RoomNotFoundException 유효하지 않은 방 입력
+	 * @exception RoomReportedException 신고 받은 방 처리
+	 * 익명성을 지키기 위해 nickname을 리턴
+	 * @return 방 상세정보 dto
+	 */
+	@Transactional
+	public RoomDetailResDto findOrderRoomDetail(Long userId, Long roomId) {
+		Room room = roomRepository.findById(roomId)
+			.orElseThrow(() -> new RoomNotFoundException(ErrorCode.ROOM_NOT_FOUND));
+		if (room.getStatus() == RoomType.HIDDEN) {
+			throw new RoomReportedException(roomId + "번방은 신고 상태로 접근이 불가능합니다.");
+		}
+
+		List<UserRoomResDto> roomUsers = userRoomRepository.findByRoomId(roomId).stream()
+			.filter(userRoom -> userRoom.getIsExist())
+			.map(userRoom -> new UserRoomResDto(userRoom.getId(), userRoom.getNickname()))
+			.collect(Collectors.toList());
+
+		List<CommentResDto> comments = commentRepository.findByRoomId(roomId).stream()
+			.map(
+				comment -> new CommentResDto(comment.getId(), comment.getUserRoom().getNickname(), comment.getContent(),
+					comment.isHidden(), comment.getCreatedAt()))
+			.collect(Collectors.toList());
+
+		Optional<UserRoom> userRoomOptional = userRoomRepository.findByUserIdAndRoomIdAndIsExistTrue(userId, roomId);
+		String myNickname = null;
+		if (userRoomOptional.isPresent()) {
+			UserRoom userRoom = userRoomOptional.get();
+			myNickname = userRoom.getNickname();
+		}
+
+		Optional<UserRoom> hostUserRoomOptional = userRoomRepository.findByUserIdAndRoomIdAndIsExistTrue(
+			room.getHost().getId(), roomId);
+		String hostNickname = hostUserRoomOptional.get().getNickname();
+
+		return new RoomDetailResDto(room, myNickname, hostNickname, roomUsers, comments);
 	}
 }
