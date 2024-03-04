@@ -15,6 +15,7 @@ public class RoomResDto {
 	private Long categoryId;
 	private String title;
 	private String content;
+	private Integer currentPeople;
 	private Integer maxPeople;
 	private Integer minPeople;
 	private LocalDateTime dueDate;
@@ -28,6 +29,7 @@ public class RoomResDto {
 		this.categoryId = room.getCategory().getId();
 		this.title = room.getTitle();
 		this.content = room.getContent();
+		this.currentPeople = room.getCurrentPeople();
 		this.maxPeople = room.getMaxPeople();
 		this.minPeople = room.getMinPeople();
 		this.dueDate = room.getDueDate();
