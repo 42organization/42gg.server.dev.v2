@@ -39,7 +39,7 @@ public class Comment extends BaseTimeEntity {
 	private String content;
 
 	@Column(name = "is_hidden", nullable = false)
-	private Boolean isHidden;
+	private boolean isHidden;
 
 	public Comment(User user, UserRoom userRoom, Room room, String content) {
 		this.user = user;
