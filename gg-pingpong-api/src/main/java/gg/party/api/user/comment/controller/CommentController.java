@@ -31,6 +31,6 @@ public class CommentController {
 	public ResponseEntity<Void> createComment(@PathVariable Long roomId, @RequestBody CommentCreateReqDto reqDto,
 		@Login UserDto user) {
 		commentService.createComment(roomId, reqDto, user.getId());
-		return new ResponseEntity<>(HttpStatus.CREATED);
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 }
