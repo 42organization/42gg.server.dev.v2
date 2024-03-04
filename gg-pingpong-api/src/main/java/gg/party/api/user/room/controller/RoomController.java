@@ -3,8 +3,8 @@ package gg.party.api.user.room.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -87,8 +87,8 @@ public class RoomController {
 	 * @return 나간 사람의 닉네임
 	 */
 	@PatchMapping("/party/rooms/{room_id}")
-	public ResponseEntity<LeaveRoomResponseDto> leaveRoom(@PathVariable Long room_id,
+	public ResponseEntity<LeaveRoomResponseDto> leaveRoom(@PathVariable("room_id") Long roomId,
 		@Parameter(hidden = true) @Login UserDto user) {
-		return ResponseEntity.status(HttpStatus.OK).body(roomService.leaveRoom(room_id, user));
+		return ResponseEntity.status(HttpStatus.OK).body(roomService.leaveRoom(roomId, user));
 	}
 }
