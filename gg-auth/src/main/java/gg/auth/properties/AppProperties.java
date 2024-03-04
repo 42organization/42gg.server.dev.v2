@@ -1,4 +1,4 @@
-package gg.pingpong.api.global.security.config.properties;
+package gg.auth.properties;
 
 import java.util.ArrayList;
 import java.util.List;

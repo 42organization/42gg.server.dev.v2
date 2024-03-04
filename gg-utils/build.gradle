@@ -88,11 +88,13 @@ dependencies {
     testFixturesAnnotationProcessor("org.projectlombok:lombok")
 
     testFixturesImplementation project(":gg-data")
+    testFixturesImplementation project(":gg-auth")
     testFixturesImplementation project(":gg-repo")
     testFixturesImplementation project(":gg-admin-repo")
     testFixturesImplementation project(":gg-pingpong-api")
 
     jacocoAggregation(project(':gg-data'))
+    jacocoAggregation(project(':gg-auth'))
     jacocoAggregation(project(':gg-repo'))
     jacocoAggregation(project(':gg-admin-repo'))
     jacocoAggregation(project(':gg-pingpong-api'))

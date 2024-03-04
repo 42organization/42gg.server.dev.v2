@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.net.HttpHeaders;
 
 import gg.admin.repo.season.SeasonAdminRepository;
+import gg.auth.utils.AuthTokenProvider;
 import gg.data.rank.Tier;
 import gg.data.season.Season;
 import gg.pingpong.api.admin.rank.service.RankAdminService;
@@ -29,7 +30,6 @@ import gg.pingpong.api.admin.season.controller.request.SeasonUpdateRequestDto;
 import gg.pingpong.api.admin.season.controller.response.SeasonListAdminResponseDto;
 import gg.pingpong.api.admin.season.dto.SeasonAdminDto;
 import gg.pingpong.api.admin.season.service.SeasonAdminService;
-import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.repo.rank.RankRepository;
 import gg.repo.rank.redis.RankRedisRepository;
 import gg.utils.RedisKeyManager;
