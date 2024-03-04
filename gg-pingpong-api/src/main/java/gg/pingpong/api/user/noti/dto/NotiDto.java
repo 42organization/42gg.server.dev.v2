@@ -53,9 +53,10 @@ public class NotiDto {
 		if (obj == this) {
 			return true;
 		}
-		if (!(obj instanceof NotiDto other)) {
+		if (!(obj instanceof NotiDto)) {
 			return false;
 		}
+		NotiDto other = (NotiDto) obj;
 		return Objects.equals(id, other.id)
 			&& Objects.equals(user, other.user)
 			&& Objects.equals(type, other.type)
