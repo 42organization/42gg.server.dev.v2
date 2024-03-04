@@ -26,7 +26,6 @@ import gg.party.api.user.room.controller.response.RoomListResDto;
 import gg.party.api.user.room.controller.response.RoomResDto;
 import gg.party.api.user.room.controller.response.UserRoomResDto;
 import gg.party.api.user.room.controller.response.LeaveRoomResponseDto;
-import gg.pingpong.api.user.user.dto.UserDto;
 import gg.repo.party.CategoryRepository;
 import gg.repo.party.CommentRepository;
 import gg.repo.party.RoomRepository;
