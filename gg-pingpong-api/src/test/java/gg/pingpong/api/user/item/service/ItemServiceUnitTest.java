@@ -20,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import gg.auth.UserDto;
 import gg.data.store.Item;
 import gg.data.store.Receipt;
 import gg.data.store.type.ItemStatus;
@@ -31,7 +32,6 @@ import gg.data.user.type.SnsType;
 import gg.pingpong.api.user.noti.service.NotiService;
 import gg.pingpong.api.user.store.service.ItemService;
 import gg.pingpong.api.user.store.service.UserCoinChangeService;
-import gg.pingpong.api.user.user.dto.UserDto;
 import gg.repo.store.ItemRepository;
 import gg.repo.store.ReceiptRepository;
 import gg.repo.store.UserItemRepository;

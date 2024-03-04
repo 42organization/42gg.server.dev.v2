@@ -13,6 +13,7 @@ import javax.transaction.Transactional;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import gg.auth.UserDto;
 import gg.data.party.Category;
 import gg.data.party.Room;
 import gg.data.party.UserRoom;
@@ -24,7 +25,6 @@ import gg.party.api.user.room.controller.response.RoomDetailResDto;
 import gg.party.api.user.room.controller.response.RoomListResDto;
 import gg.party.api.user.room.controller.response.RoomResDto;
 import gg.party.api.user.room.controller.response.UserRoomResDto;
-import gg.pingpong.api.user.user.dto.UserDto;
 import gg.repo.party.CategoryRepository;
 import gg.repo.party.CommentRepository;
 import gg.repo.party.RoomRepository;
