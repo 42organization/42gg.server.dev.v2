@@ -1,7 +1,6 @@
 package gg.party.api.user.room.service;
 
 import static gg.party.api.user.room.utils.GenerateRandomNickname.*;
-import static java.lang.Boolean.*;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -146,11 +145,13 @@ public class RoomService {
 
 		List<UserRoomResDto> roomUsers = userRoomRepository.findByRoomId(roomId).stream()
 			.filter(userRoom -> userRoom.getIsExist())
-			.map(userRoom -> new UserRoomResDto(userRoom.getUser().getId(), userRoom.getNickname()))
+			.map(userRoom -> new UserRoomResDto(userRoom.getId(), userRoom.getNickname()))
 			.collect(Collectors.toList());
 
 		List<CommentResDto> comments = commentRepository.findByRoomId(roomId).stream()
-			.map(comment -> new CommentResDto(comment.getId(), comment.getUserRoom().getNickname(), comment.getContent(), comment.isHidden(), comment.getCreatedAt()))
+			.map(
+				comment -> new CommentResDto(comment.getId(), comment.getUserRoom().getNickname(), comment.getContent(),
+					comment.isHidden(), comment.getCreatedAt()))
 			.collect(Collectors.toList());
 
 		Optional<UserRoom> userRoomOptional = userRoomRepository.findByUserIdAndRoomIdAndIsExistTrue(userId, roomId);
@@ -160,9 +161,10 @@ public class RoomService {
 			myNickname = userRoom.getNickname();
 		}
 
-		Optional<UserRoom> hostUserRoomOptional = userRoomRepository.findByUserIdAndRoomIdAndIsExistTrue(room.getHost().getId(), roomId);
+		Optional<UserRoom> hostUserRoomOptional = userRoomRepository.findByUserIdAndRoomIdAndIsExistTrue(
+			room.getHost().getId(), roomId);
 		String hostNickname = hostUserRoomOptional.get().getNickname();
 
-		return new RoomDetailResDto(room, myNickname, hostNickname,	roomUsers, comments);
+		return new RoomDetailResDto(room, myNickname, hostNickname, roomUsers, comments);
 	}
 }

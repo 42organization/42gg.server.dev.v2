@@ -67,8 +67,15 @@ public class RoomController {
 		return ResponseEntity.status(HttpStatus.OK).body(roomListResDto);
 	}
 
+	/**
+	 * 방의 상세정보를 조회한다
+	 * @param roomId 방 id
+	 * 익명성을 지키기 위해 nickname을 리턴
+	 * @return 방 상세정보 dto
+	 */
 	@GetMapping("/{room_id}")
-	public ResponseEntity<RoomDetailResDto> roomDetailInfo(@Parameter(hidden = true) @Login UserDto user, @PathVariable("room_id") Long roomId) {
+	public ResponseEntity<RoomDetailResDto> roomDetailInfo(@Parameter(hidden = true) @Login UserDto user,
+		@PathVariable("room_id") Long roomId) {
 		RoomDetailResDto roomDetailResDto = roomService.findOrderRoomDetail(user.getId(), roomId);
 		return ResponseEntity.status(HttpStatus.OK).body(roomDetailResDto);
 	}
