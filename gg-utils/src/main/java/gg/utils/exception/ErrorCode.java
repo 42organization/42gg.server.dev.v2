@@ -154,11 +154,12 @@ public enum ErrorCode {
 	TOURNAMENT_IS_BEFORE(403, "TN017", "before인 토너먼트에서 점수 수정할 수 없습니다."),
 
 	// Party
-	COMMENT_TOO_LONG(400, "PT201", "댓글은 100자 이하로 작성해 주세요."),
-	ROOM_FINISHED(403, "PT501", "마감된 방입니다."),
-	CATEGORY_NOT_FOUND(404, "PT101", "유효하지 않은 카테고리입니다."),
+	CATEGORY_NOT_FOUND(404, "PT101", "유효하지 않은 카테고리 입니다."),
 	ROOM_NOT_FOUND(404, "PT102", "존재하지 않는 방입니다."),
-	USER_NOT_IN_ROOM(404, "PT103", "방에 존재하지 않는 유저입니다.");
+	USER_NOT_IN_ROOM(404, "PT103", "방에 존재하지 않는 유저입니다."),
+	ROOM_REPORTED_ERROR(404, "PT104", "신고 상태로 접근이 불가능합니다."),
+	COMMENT_TOO_LONG(400, "PT201", "댓글은 100자 이하로 작성해주세요."),
+	ROOM_FINISHED(403, "PT501", "마감된 방입니다.");
 
 	private final int status;
 	private final String errCode;
