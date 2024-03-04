@@ -154,7 +154,10 @@ public enum ErrorCode {
 	TOURNAMENT_IS_BEFORE(403, "TN017", "before인 토너먼트에서 점수 수정할 수 없습니다."),
 
 	// PARTY
-	CATEGORY_NOT_FOUND(404, "PT101", "유효하지 않은 카테고리 입니다.");
+	CATEGORY_NOT_FOUND(404, "PT101", "유효하지 않은 카테고리 입니다."),
+	ROOM_NOT_FOUND(404, "PT001", "해당 방이 존재하지 않습니다."),
+	ROOM_NOT_PARTICIPANT(400, "PT002", "해당 방의 참여자가 아닙니다."),
+	ROOM_NOT_OPEN(400, "PT003", "해당 방의 참여자가 아닙니다.");
 
 	private final int status;
 	private final String errCode;

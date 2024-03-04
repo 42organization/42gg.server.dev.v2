@@ -1,5 +1,8 @@
 package gg.data.party;
 
+import static gg.utils.exception.BusinessChecker.*;
+import static gg.utils.exception.ErrorCode.*;
+
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
@@ -18,10 +21,13 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@SuperBuilder
 public class UserRoom extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,5 +52,10 @@ public class UserRoom extends BaseTimeEntity {
 		this.room = room;
 		this.nickname = randomNickname;
 		this.isExist = true;
+	}
+
+	public void updateIsExist(Boolean isExist) {
+		mustNotNull(isExist, NULL_POINT);
+		this.isExist = isExist;
 	}
 }

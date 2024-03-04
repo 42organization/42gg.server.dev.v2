@@ -20,12 +20,17 @@ import gg.data.user.User;
 import gg.party.api.user.room.controller.request.RoomCreateReqDto;
 import gg.party.api.user.room.controller.response.RoomListResDto;
 import gg.party.api.user.room.controller.response.RoomResDto;
+import gg.party.api.user.room.controller.response.LeaveRoomResponseDto;
 import gg.pingpong.api.user.user.dto.UserDto;
 import gg.repo.party.CategoryRepository;
 import gg.repo.party.RoomRepository;
 import gg.repo.party.UserRoomRepository;
 import gg.repo.user.UserRepository;
+import gg.utils.exception.ErrorCode;
 import gg.utils.exception.party.CategoryNotFoundException;
+import gg.utils.exception.party.RoomNotFoundException;
+import gg.utils.exception.party.RoomNotOpenException;
+import gg.utils.exception.party.RoomNotParticipantException;
 import gg.utils.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 
@@ -122,5 +127,36 @@ public class RoomService {
 			.collect(Collectors.toList());
 
 		return new RoomListResDto(roomListResDto);
+	}
+
+	/**
+	 * <p>유저가 방을 나간다</p>
+	 * <p>참가자가 방에 참가한 상태일때만 취소해 준다.</p>
+	 * @param roomId
+	 * @param user 참여 유저(사용자 본인)
+	 * @throws RoomNotFoundException 방 없음 || 방 입장자가 아님
+	 * @return
+	 */
+	@Transactional
+	public LeaveRoomResponseDto leaveRoom(Long roomId, UserDto user) {
+		Room targetRoom = roomRepository.findById(roomId)
+			.orElseThrow(RoomNotFoundException::new);
+		if (!targetRoom.getStatus().equals(RoomType.OPEN)) {
+			throw new RoomNotOpenException();
+		}
+
+		List<UserRoom> userRoomList = userRoomRepository.findByUserId(user.getId());
+		UserRoom targetUserRoom = userRoomList.stream()
+			.filter(tu -> (tu.getUser().getId().equals(roomId)))
+			.findAny()
+			.orElseThrow(() -> new RoomNotParticipantException(ErrorCode.ROOM_NOT_PARTICIPANT));
+
+		//룸에서 인원 수정
+		targetRoom
+		//중간 테이블의 불리언 값 수정
+		targetUserRoom.updateIsExist(Boolean.FALSE);
+		userRoomRepository.save(targetUserRoom);
+
+		return new LeaveRoomResponseDto(targetUserRoom.getNickname());
 	}
 }

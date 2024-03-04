@@ -3,12 +3,15 @@ package gg.party.api.user.room.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import gg.party.api.user.room.controller.request.RoomCreateReqDto;
+import gg.party.api.user.room.controller.response.LeaveRoomResponseDto;
 import gg.party.api.user.room.controller.response.RoomListResDto;
 import gg.party.api.user.room.service.RoomService;
 import gg.pingpong.api.global.utils.argumentresolver.Login;
@@ -63,5 +66,15 @@ public class RoomController {
 	public ResponseEntity<RoomListResDto> myHistoryRoomList(@Parameter(hidden = true) @Login UserDto user) {
 		RoomListResDto roomListResDto = roomService.findOrderMyHistoryRoomList(user.getId());
 		return ResponseEntity.status(HttpStatus.OK).body(roomListResDto);
+	}
+
+	/**
+	 * 참여한 방을 나가기 한다
+	 * @return 나간 사람의 닉네임
+	 */
+	@PatchMapping("/party/rooms/{room_id}")
+	public ResponseEntity<LeaveRoomResponseDto> leaveRoom(@PathVariable Long room_id,
+		@Parameter(hidden = true) @Login UserDto user) {
+		return ResponseEntity.status(HttpStatus.OK).body(roomService.leaveRoom(room_id, user));
 	}
 }
