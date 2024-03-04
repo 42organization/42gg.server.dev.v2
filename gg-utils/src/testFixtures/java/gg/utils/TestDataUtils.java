@@ -9,6 +9,7 @@ import java.util.stream.IntStream;
 
 import org.springframework.stereotype.Component;
 
+import gg.auth.utils.AuthTokenProvider;
 import gg.data.game.Game;
 import gg.data.game.PChange;
 import gg.data.game.Team;
@@ -37,7 +38,6 @@ import gg.data.user.type.RoleType;
 import gg.data.user.type.SnsType;
 import gg.pingpong.api.admin.tournament.controller.request.TournamentAdminCreateRequestDto;
 import gg.pingpong.api.admin.tournament.controller.request.TournamentAdminUpdateRequestDto;
-import gg.auth.utils.AuthTokenProvider;
 import gg.pingpong.api.user.tournament.controller.response.TournamentResponseDto;
 import gg.pingpong.api.user.user.dto.UserImageDto;
 import gg.repo.game.GameRepository;
