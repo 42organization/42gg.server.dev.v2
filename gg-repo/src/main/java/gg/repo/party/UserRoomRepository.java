@@ -15,7 +15,7 @@ import io.lettuce.core.dynamic.annotation.Param;
 public interface UserRoomRepository extends JpaRepository<UserRoom, Long> {
 	List<UserRoom> findByUserId(Long userId);
 
-	List<UserRoom> findByRoomId(Long userId);
+	List<UserRoom> findByRoomId(Long roomId);
 
 	Optional<UserRoom> findByUserAndRoom(User user, Room room);
 
