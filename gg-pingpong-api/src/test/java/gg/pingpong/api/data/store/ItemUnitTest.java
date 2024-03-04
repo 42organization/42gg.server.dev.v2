@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import gg.pingpong.data.store.Item;
-import gg.pingpong.utils.annotation.UnitTest;
+import gg.data.store.Item;
+import gg.utils.annotation.UnitTest;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)

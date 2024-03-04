@@ -12,11 +12,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import gg.data.user.User;
+import gg.data.user.UserImage;
 import gg.pingpong.api.global.utils.UserImageHandler;
-import gg.pingpong.data.user.User;
-import gg.pingpong.data.user.UserImage;
-import gg.pingpong.repo.user.UserImageRepository;
-import gg.pingpong.repo.user.UserRepository;
+import gg.repo.user.UserImageRepository;
+import gg.repo.user.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

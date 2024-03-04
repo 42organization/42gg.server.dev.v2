@@ -5,12 +5,12 @@ import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.pingpong.data.game.Game;
-import gg.pingpong.data.season.Season;
-import gg.pingpong.repo.game.GameRepository;
-import gg.pingpong.repo.season.SeasonRepository;
-import gg.pingpong.utils.exception.game.GameNotExistException;
-import gg.pingpong.utils.exception.season.SeasonNotFoundException;
+import gg.data.game.Game;
+import gg.data.season.Season;
+import gg.repo.game.GameRepository;
+import gg.repo.season.SeasonRepository;
+import gg.utils.exception.game.GameNotExistException;
+import gg.utils.exception.season.SeasonNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service

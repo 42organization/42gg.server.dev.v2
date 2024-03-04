@@ -1,7 +1,7 @@
 package gg.pingpong.api.admin.user.dto;
 
-import gg.pingpong.data.user.User;
-import gg.pingpong.data.user.type.RoleType;
+import gg.data.user.User;
+import gg.data.user.type.RoleType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

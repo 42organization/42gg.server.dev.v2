@@ -8,15 +8,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import gg.pingpong.admin.repo.store.ItemAdminRepository;
+import gg.admin.repo.store.ItemAdminRepository;
+import gg.data.store.Item;
 import gg.pingpong.api.admin.store.controller.request.ItemUpdateRequestDto;
 import gg.pingpong.api.admin.store.controller.response.ItemHistoryResponseDto;
 import gg.pingpong.api.admin.store.controller.response.ItemListResponseDto;
 import gg.pingpong.api.global.utils.aws.AsyncNewItemImageUploader;
 import gg.pingpong.api.user.user.dto.UserDto;
-import gg.pingpong.data.store.Item;
-import gg.pingpong.utils.exception.item.ItemNotAvailableException;
-import gg.pingpong.utils.exception.item.ItemNotFoundException;
+import gg.utils.exception.item.ItemNotAvailableException;
+import gg.utils.exception.item.ItemNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service

@@ -13,11 +13,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import gg.pingpong.data.game.Game;
-import gg.pingpong.data.game.Team;
-import gg.pingpong.utils.annotation.UnitTest;
-import gg.pingpong.utils.exception.ErrorCode;
-import gg.pingpong.utils.exception.custom.BusinessException;
+import gg.data.game.Game;
+import gg.data.game.Team;
+import gg.utils.annotation.UnitTest;
+import gg.utils.exception.ErrorCode;
+import gg.utils.exception.custom.BusinessException;
 
 @UnitTest
 @DisplayName("GameUnitTest")

@@ -8,12 +8,12 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import gg.pingpong.data.game.Game;
-import gg.pingpong.data.tournament.Tournament;
-import gg.pingpong.data.tournament.TournamentGame;
-import gg.pingpong.data.tournament.type.TournamentStatus;
-import gg.pingpong.data.tournament.type.TournamentType;
-import gg.pingpong.utils.annotation.UnitTest;
+import gg.data.game.Game;
+import gg.data.tournament.Tournament;
+import gg.data.tournament.TournamentGame;
+import gg.data.tournament.type.TournamentStatus;
+import gg.data.tournament.type.TournamentType;
+import gg.utils.annotation.UnitTest;
 
 @UnitTest
 @DisplayName("TournamentGameUnitTest")

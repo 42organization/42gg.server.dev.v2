@@ -13,14 +13,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import gg.data.manage.Feedback;
+import gg.data.user.User;
 import gg.pingpong.api.user.manage.controller.request.FeedbackRequestDto;
 import gg.pingpong.api.user.manage.service.FeedbackService;
-import gg.pingpong.data.manage.Feedback;
-import gg.pingpong.data.user.User;
-import gg.pingpong.repo.manage.FeedbackRepository;
-import gg.pingpong.repo.user.UserRepository;
-import gg.pingpong.utils.annotation.UnitTest;
-import gg.pingpong.utils.exception.user.UserNotFoundException;
+import gg.repo.manage.FeedbackRepository;
+import gg.repo.user.UserRepository;
+import gg.utils.annotation.UnitTest;
+import gg.utils.exception.user.UserNotFoundException;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)

@@ -13,7 +13,7 @@ import gg.pingpong.api.global.utils.argumentresolver.Login;
 import gg.pingpong.api.user.manage.controller.request.FeedbackRequestDto;
 import gg.pingpong.api.user.manage.service.FeedbackService;
 import gg.pingpong.api.user.user.dto.UserDto;
-import gg.pingpong.repo.user.UserRepository;
+import gg.repo.user.UserRepository;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 

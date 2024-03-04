@@ -17,21 +17,21 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import gg.data.game.Game;
+import gg.data.game.Team;
+import gg.data.game.TeamUser;
+import gg.data.game.type.Mode;
+import gg.data.season.Season;
+import gg.data.user.User;
 import gg.pingpong.api.admin.game.service.GameAdminService;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
-import gg.pingpong.data.game.Game;
-import gg.pingpong.data.game.Team;
-import gg.pingpong.data.game.TeamUser;
-import gg.pingpong.data.game.type.Mode;
-import gg.pingpong.data.season.Season;
-import gg.pingpong.data.user.User;
-import gg.pingpong.repo.game.GameRepository;
-import gg.pingpong.repo.game.PChangeRepository;
-import gg.pingpong.repo.game.TeamRepository;
-import gg.pingpong.repo.game.TeamUserRepository;
-import gg.pingpong.repo.rank.redis.RankRedisRepository;
-import gg.pingpong.utils.TestDataUtils;
-import gg.pingpong.utils.annotation.IntegrationTest;
+import gg.repo.game.GameRepository;
+import gg.repo.game.PChangeRepository;
+import gg.repo.game.TeamRepository;
+import gg.repo.game.TeamUserRepository;
+import gg.repo.rank.redis.RankRedisRepository;
+import gg.utils.TestDataUtils;
+import gg.utils.annotation.IntegrationTest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

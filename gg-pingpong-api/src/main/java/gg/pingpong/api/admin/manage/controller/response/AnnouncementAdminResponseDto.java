@@ -2,7 +2,7 @@ package gg.pingpong.api.admin.manage.controller.response;
 
 import java.time.LocalDateTime;
 
-import gg.pingpong.data.manage.Announcement;
+import gg.data.manage.Announcement;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

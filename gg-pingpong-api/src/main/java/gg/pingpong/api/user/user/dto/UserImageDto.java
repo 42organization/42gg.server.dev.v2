@@ -1,7 +1,7 @@
 package gg.pingpong.api.user.user.dto;
 
-import gg.pingpong.data.user.User;
-import gg.pingpong.data.user.type.EdgeType;
+import gg.data.user.User;
+import gg.data.user.type.EdgeType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

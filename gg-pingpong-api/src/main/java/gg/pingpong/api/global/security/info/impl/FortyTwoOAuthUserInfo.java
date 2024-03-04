@@ -4,8 +4,8 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 
+import gg.data.user.type.RoleType;
 import gg.pingpong.api.global.security.info.OAuthUserInfo;
-import gg.pingpong.data.user.type.RoleType;
 
 public class FortyTwoOAuthUserInfo extends OAuthUserInfo {
 

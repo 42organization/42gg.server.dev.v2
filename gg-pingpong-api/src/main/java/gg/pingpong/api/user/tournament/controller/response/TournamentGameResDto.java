@@ -1,9 +1,9 @@
 package gg.pingpong.api.user.tournament.controller.response;
 
+import gg.data.tournament.TournamentGame;
+import gg.data.tournament.type.TournamentRound;
 import gg.pingpong.api.user.game.controller.response.GameResultResDto;
-import gg.pingpong.data.tournament.TournamentGame;
-import gg.pingpong.data.tournament.type.TournamentRound;
-import gg.pingpong.repo.game.out.GameTeamUser;
+import gg.repo.game.out.GameTeamUser;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

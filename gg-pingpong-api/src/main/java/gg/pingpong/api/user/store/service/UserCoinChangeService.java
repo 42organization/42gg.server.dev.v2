@@ -5,17 +5,17 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import gg.data.game.Team;
+import gg.data.game.TeamUser;
+import gg.data.store.Item;
+import gg.data.user.User;
 import gg.pingpong.api.user.game.service.GameFindService;
 import gg.pingpong.api.user.store.dto.UserGameCoinResultDto;
-import gg.pingpong.data.game.Team;
-import gg.pingpong.data.game.TeamUser;
-import gg.pingpong.data.store.Item;
-import gg.pingpong.data.user.User;
-import gg.pingpong.repo.store.CoinPolicyRepository;
-import gg.pingpong.repo.user.UserRepository;
-import gg.pingpong.utils.exception.coin.CoinPolicyNotFoundException;
-import gg.pingpong.utils.exception.user.UserAlreadyAttendanceException;
-import gg.pingpong.utils.exception.user.UserNotFoundException;
+import gg.repo.store.CoinPolicyRepository;
+import gg.repo.user.UserRepository;
+import gg.utils.exception.coin.CoinPolicyNotFoundException;
+import gg.utils.exception.user.UserAlreadyAttendanceException;
+import gg.utils.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service

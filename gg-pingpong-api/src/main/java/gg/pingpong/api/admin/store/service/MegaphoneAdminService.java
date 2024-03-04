@@ -4,7 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import gg.pingpong.admin.repo.store.MegaphoneAdminRepository;
+import gg.admin.repo.store.MegaphoneAdminRepository;
 import gg.pingpong.api.admin.store.controller.response.MegaphoneAdminResponseDto;
 import gg.pingpong.api.admin.store.controller.response.MegaphoneHistoryResponseDto;
 import lombok.RequiredArgsConstructor;

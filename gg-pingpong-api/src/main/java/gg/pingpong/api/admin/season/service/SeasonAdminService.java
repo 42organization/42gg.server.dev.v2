@@ -7,16 +7,16 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.pingpong.admin.repo.season.SeasonAdminRepository;
+import gg.admin.repo.season.SeasonAdminRepository;
+import gg.data.season.Season;
 import gg.pingpong.api.admin.rank.service.RankAdminService;
 import gg.pingpong.api.admin.rank.service.RankRedisAdminService;
 import gg.pingpong.api.admin.season.controller.request.SeasonCreateRequestDto;
 import gg.pingpong.api.admin.season.controller.request.SeasonUpdateRequestDto;
 import gg.pingpong.api.admin.season.dto.SeasonAdminDto;
-import gg.pingpong.data.season.Season;
-import gg.pingpong.utils.exception.season.SeasonForbiddenException;
-import gg.pingpong.utils.exception.season.SeasonNotFoundException;
-import gg.pingpong.utils.exception.season.SeasonTimeBeforeException;
+import gg.utils.exception.season.SeasonForbiddenException;
+import gg.utils.exception.season.SeasonNotFoundException;
+import gg.utils.exception.season.SeasonTimeBeforeException;
 import lombok.AllArgsConstructor;
 
 @Service

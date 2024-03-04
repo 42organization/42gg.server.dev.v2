@@ -28,22 +28,22 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gg.pingpong.admin.repo.manage.PenaltyAdminRepository;
-import gg.pingpong.admin.repo.manage.PenaltyUserAdminRedisRepository;
+import gg.admin.repo.manage.PenaltyAdminRepository;
+import gg.admin.repo.manage.PenaltyUserAdminRedisRepository;
+import gg.data.manage.Penalty;
+import gg.data.manage.redis.RedisPenaltyUser;
+import gg.data.manage.type.PenaltyType;
+import gg.data.user.User;
+import gg.data.user.type.RacketType;
+import gg.data.user.type.RoleType;
+import gg.data.user.type.SnsType;
 import gg.pingpong.api.admin.manage.controller.request.PenaltyRequestDto;
 import gg.pingpong.api.admin.manage.controller.response.PenaltyListResponseDto;
 import gg.pingpong.api.admin.manage.service.PenaltyAdminService;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
-import gg.pingpong.data.manage.Penalty;
-import gg.pingpong.data.manage.redis.RedisPenaltyUser;
-import gg.pingpong.data.manage.type.PenaltyType;
-import gg.pingpong.data.user.User;
-import gg.pingpong.data.user.type.RacketType;
-import gg.pingpong.data.user.type.RoleType;
-import gg.pingpong.data.user.type.SnsType;
-import gg.pingpong.repo.user.UserRepository;
-import gg.pingpong.utils.TestDataUtils;
-import gg.pingpong.utils.annotation.IntegrationTest;
+import gg.repo.user.UserRepository;
+import gg.utils.TestDataUtils;
+import gg.utils.annotation.IntegrationTest;
 
 @IntegrationTest
 @AutoConfigureMockMvc

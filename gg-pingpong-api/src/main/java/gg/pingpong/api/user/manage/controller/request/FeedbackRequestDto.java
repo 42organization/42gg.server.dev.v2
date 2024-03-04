@@ -4,7 +4,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
 
-import gg.pingpong.data.manage.type.FeedbackType;
+import gg.data.manage.type.FeedbackType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

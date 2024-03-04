@@ -12,13 +12,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.javamail.JavaMailSender;
 
+import gg.data.noti.Noti;
 import gg.pingpong.api.global.utils.AsyncMailSender;
 import gg.pingpong.api.user.noti.dto.UserNotiDto;
 import gg.pingpong.api.user.noti.service.NotiService;
 import gg.pingpong.api.user.user.dto.UserDto;
-import gg.pingpong.data.noti.Noti;
-import gg.pingpong.repo.game.out.GameUser;
-import gg.pingpong.utils.annotation.UnitTest;
+import gg.repo.game.out.GameUser;
+import gg.utils.annotation.UnitTest;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)

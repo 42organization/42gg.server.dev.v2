@@ -2,7 +2,7 @@ package gg.pingpong.api.user.user.controller.response;
 
 import java.time.LocalDateTime;
 
-import gg.pingpong.data.store.CoinHistory;
+import gg.data.store.CoinHistory;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

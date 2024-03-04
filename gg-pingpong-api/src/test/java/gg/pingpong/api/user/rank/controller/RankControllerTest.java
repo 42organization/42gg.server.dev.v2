@@ -19,17 +19,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gg.data.season.Season;
+import gg.data.user.User;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.user.rank.controller.response.ExpRankPageResponseDto;
 import gg.pingpong.api.user.rank.controller.response.RankPageResponseDto;
 import gg.pingpong.api.user.rank.dto.RankDto;
 import gg.pingpong.api.user.rank.redis.RedisUploadService;
-import gg.pingpong.data.season.Season;
-import gg.pingpong.data.user.User;
-import gg.pingpong.repo.rank.redis.RankRedisRepository;
-import gg.pingpong.repo.season.SeasonRepository;
-import gg.pingpong.utils.TestDataUtils;
-import gg.pingpong.utils.annotation.IntegrationTest;
+import gg.repo.rank.redis.RankRedisRepository;
+import gg.repo.season.SeasonRepository;
+import gg.utils.TestDataUtils;
+import gg.utils.annotation.IntegrationTest;
 
 @IntegrationTest
 @Transactional

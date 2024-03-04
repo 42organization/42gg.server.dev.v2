@@ -16,7 +16,7 @@ import gg.pingpong.api.admin.manage.controller.FeedbackAdminController;
 import gg.pingpong.api.admin.manage.controller.request.FeedbackAdminPageRequestDto;
 import gg.pingpong.api.admin.manage.controller.response.FeedbackListAdminResponseDto;
 import gg.pingpong.api.admin.manage.service.FeedbackAdminService;
-import gg.pingpong.utils.annotation.UnitTest;
+import gg.utils.annotation.UnitTest;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)

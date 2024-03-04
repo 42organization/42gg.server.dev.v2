@@ -1,6 +1,6 @@
 package gg.pingpong.api.user.store.controller.response;
 
-import gg.pingpong.data.store.redis.MegaphoneRedis;
+import gg.data.store.redis.MegaphoneRedis;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

@@ -22,8 +22,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gg.pingpong.admin.repo.user.UserAdminRepository;
-import gg.pingpong.admin.repo.user.UserImageAdminRepository;
+import gg.admin.repo.user.UserAdminRepository;
+import gg.admin.repo.user.UserImageAdminRepository;
+import gg.data.user.User;
+import gg.data.user.UserImage;
 import gg.pingpong.api.admin.user.controller.response.UserDetailAdminResponseDto;
 import gg.pingpong.api.admin.user.controller.response.UserImageListAdminResponseDto;
 import gg.pingpong.api.admin.user.controller.response.UserSearchAdminResponseDto;
@@ -31,12 +33,10 @@ import gg.pingpong.api.admin.user.dto.UserImageAdminDto;
 import gg.pingpong.api.admin.user.dto.UserSearchAdminDto;
 import gg.pingpong.api.admin.user.service.UserAdminService;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
-import gg.pingpong.data.user.User;
-import gg.pingpong.data.user.UserImage;
-import gg.pingpong.repo.user.UserRepository;
-import gg.pingpong.utils.TestDataUtils;
-import gg.pingpong.utils.annotation.IntegrationTest;
-import gg.pingpong.utils.exception.user.UserNotFoundException;
+import gg.repo.user.UserRepository;
+import gg.utils.TestDataUtils;
+import gg.utils.annotation.IntegrationTest;
+import gg.utils.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

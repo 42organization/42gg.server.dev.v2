@@ -10,14 +10,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import gg.data.noti.Noti;
+import gg.data.user.type.SnsType;
 import gg.pingpong.api.user.noti.dto.UserNotiDto;
 import gg.pingpong.api.user.noti.service.sns.NotiMailSender;
 import gg.pingpong.api.user.noti.service.sns.SlackbotService;
 import gg.pingpong.api.user.user.dto.UserDto;
-import gg.pingpong.data.noti.Noti;
-import gg.pingpong.data.user.type.SnsType;
-import gg.pingpong.repo.game.out.GameUser;
-import gg.pingpong.utils.annotation.UnitTest;
+import gg.repo.game.out.GameUser;
+import gg.utils.annotation.UnitTest;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)

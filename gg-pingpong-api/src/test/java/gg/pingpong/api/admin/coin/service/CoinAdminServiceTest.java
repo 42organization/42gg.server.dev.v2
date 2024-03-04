@@ -14,14 +14,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import gg.data.store.CoinHistory;
+import gg.data.user.User;
 import gg.pingpong.api.admin.store.controller.request.CoinUpdateRequestDto;
 import gg.pingpong.api.admin.store.service.CoinAdminService;
 import gg.pingpong.api.user.store.service.CoinHistoryService;
-import gg.pingpong.data.store.CoinHistory;
-import gg.pingpong.data.user.User;
-import gg.pingpong.repo.user.UserRepository;
-import gg.pingpong.utils.annotation.UnitTest;
-import gg.pingpong.utils.exception.user.UserNotFoundException;
+import gg.repo.user.UserRepository;
+import gg.utils.annotation.UnitTest;
+import gg.utils.exception.user.UserNotFoundException;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)

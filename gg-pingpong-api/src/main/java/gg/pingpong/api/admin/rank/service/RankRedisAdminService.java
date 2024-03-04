@@ -1,21 +1,21 @@
 package gg.pingpong.api.admin.rank.service;
 
-import static gg.pingpong.data.user.type.RoleType.*;
+import static gg.data.user.type.RoleType.*;
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import gg.data.rank.Tier;
+import gg.data.rank.redis.RankRedis;
+import gg.data.user.User;
 import gg.pingpong.api.admin.season.dto.SeasonAdminDto;
-import gg.pingpong.data.rank.Tier;
-import gg.pingpong.data.rank.redis.RankRedis;
-import gg.pingpong.data.user.User;
-import gg.pingpong.repo.rank.TierRepository;
-import gg.pingpong.repo.rank.redis.RankRedisRepository;
-import gg.pingpong.repo.user.UserRepository;
-import gg.pingpong.utils.RedisKeyManager;
-import gg.pingpong.utils.exception.tier.TierNotFoundException;
+import gg.repo.rank.TierRepository;
+import gg.repo.rank.redis.RankRedisRepository;
+import gg.repo.user.UserRepository;
+import gg.utils.RedisKeyManager;
+import gg.utils.exception.tier.TierNotFoundException;
 import lombok.AllArgsConstructor;
 
 @Service

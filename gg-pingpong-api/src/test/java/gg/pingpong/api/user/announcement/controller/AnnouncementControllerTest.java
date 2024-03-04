@@ -16,13 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gg.data.manage.Announcement;
+import gg.data.user.User;
 import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
-import gg.pingpong.data.manage.Announcement;
-import gg.pingpong.data.user.User;
-import gg.pingpong.repo.manage.AnnouncementRepository;
-import gg.pingpong.utils.TestDataUtils;
-import gg.pingpong.utils.annotation.IntegrationTest;
-import gg.pingpong.utils.exception.announcement.AnnounceNotFoundException;
+import gg.repo.manage.AnnouncementRepository;
+import gg.utils.TestDataUtils;
+import gg.utils.annotation.IntegrationTest;
+import gg.utils.exception.announcement.AnnounceNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

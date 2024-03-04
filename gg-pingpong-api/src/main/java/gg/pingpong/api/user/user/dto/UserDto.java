@@ -1,9 +1,9 @@
 package gg.pingpong.api.user.user.dto;
 
-import gg.pingpong.data.user.User;
-import gg.pingpong.data.user.type.RacketType;
-import gg.pingpong.data.user.type.RoleType;
-import gg.pingpong.data.user.type.SnsType;
+import gg.data.user.User;
+import gg.data.user.type.RacketType;
+import gg.data.user.type.RoleType;
+import gg.data.user.type.SnsType;
 import lombok.Builder;
 import lombok.Getter;
 

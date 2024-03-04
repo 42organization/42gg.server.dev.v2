@@ -30,7 +30,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
-          files: ./gg-pingpong-utils/build/reports/jacoco/unitTestCoverageReport/unitTestCoverageReport.xml
+          files: ./gg-utils/build/reports/jacoco/unitTestCoverageReport/unitTestCoverageReport.xml
           flags: unitTest
           name: codecov-unit
           verbose: true
@@ -43,7 +43,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
-          files: ./gg-pingpong-utils/build/reports/jacoco/integrationTestCoverageReport/integrationTestCoverageReport.xml
+          files: ./gg-utils/build/reports/jacoco/integrationTestCoverageReport/integrationTestCoverageReport.xml
           flags: integrationTest
           name: codecov-integration
           verbose: true

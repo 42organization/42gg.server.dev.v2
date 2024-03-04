@@ -14,17 +14,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import gg.data.game.Game;
+import gg.data.game.PChange;
+import gg.data.user.User;
+import gg.data.user.type.RacketType;
+import gg.data.user.type.RoleType;
+import gg.data.user.type.SnsType;
 import gg.pingpong.api.user.game.service.PChangeService;
 import gg.pingpong.api.utils.ReflectionUtilsForUnitTest;
-import gg.pingpong.data.game.Game;
-import gg.pingpong.data.game.PChange;
-import gg.pingpong.data.user.User;
-import gg.pingpong.data.user.type.RacketType;
-import gg.pingpong.data.user.type.RoleType;
-import gg.pingpong.data.user.type.SnsType;
-import gg.pingpong.repo.game.PChangeRepository;
-import gg.pingpong.utils.annotation.UnitTest;
-import gg.pingpong.utils.exception.pchange.PChangeNotExistException;
+import gg.repo.game.PChangeRepository;
+import gg.utils.annotation.UnitTest;
+import gg.utils.exception.pchange.PChangeNotExistException;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)

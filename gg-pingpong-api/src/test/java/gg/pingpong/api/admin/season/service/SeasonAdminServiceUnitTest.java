@@ -19,16 +19,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import gg.pingpong.admin.repo.season.SeasonAdminRepository;
+import gg.admin.repo.season.SeasonAdminRepository;
+import gg.data.season.Season;
 import gg.pingpong.api.admin.rank.service.RankAdminService;
 import gg.pingpong.api.admin.rank.service.RankRedisAdminService;
 import gg.pingpong.api.admin.season.controller.request.SeasonCreateRequestDto;
 import gg.pingpong.api.admin.season.controller.request.SeasonUpdateRequestDto;
-import gg.pingpong.data.season.Season;
-import gg.pingpong.utils.annotation.UnitTest;
-import gg.pingpong.utils.exception.season.SeasonForbiddenException;
-import gg.pingpong.utils.exception.season.SeasonNotFoundException;
-import gg.pingpong.utils.exception.season.SeasonTimeBeforeException;
+import gg.utils.annotation.UnitTest;
+import gg.utils.exception.season.SeasonForbiddenException;
+import gg.utils.exception.season.SeasonNotFoundException;
+import gg.utils.exception.season.SeasonTimeBeforeException;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)

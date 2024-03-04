@@ -1,6 +1,6 @@
 package gg.pingpong.api.admin.user.controller.request;
 
-import gg.pingpong.data.user.type.RacketType;
+import gg.data.user.type.RacketType;
 import lombok.Builder;
 import lombok.Getter;
 

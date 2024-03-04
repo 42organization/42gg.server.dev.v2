@@ -2,7 +2,7 @@ package gg.pingpong.api.admin.user.dto;
 
 import java.time.LocalDateTime;
 
-import gg.pingpong.data.user.UserImage;
+import gg.data.user.UserImage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

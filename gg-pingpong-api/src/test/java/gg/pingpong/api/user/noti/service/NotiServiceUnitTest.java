@@ -16,18 +16,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import gg.data.noti.Noti;
+import gg.data.noti.type.NotiType;
+import gg.data.user.User;
+import gg.data.user.type.RacketType;
+import gg.data.user.type.RoleType;
+import gg.data.user.type.SnsType;
 import gg.pingpong.api.user.user.dto.UserDto;
-import gg.pingpong.data.noti.Noti;
-import gg.pingpong.data.noti.type.NotiType;
-import gg.pingpong.data.user.User;
-import gg.pingpong.data.user.type.RacketType;
-import gg.pingpong.data.user.type.RoleType;
-import gg.pingpong.data.user.type.SnsType;
-import gg.pingpong.repo.noti.NotiRepository;
-import gg.pingpong.repo.user.UserRepository;
-import gg.pingpong.utils.annotation.UnitTest;
-import gg.pingpong.utils.exception.custom.NotExistException;
-import gg.pingpong.utils.exception.user.UserNotFoundException;
+import gg.repo.noti.NotiRepository;
+import gg.repo.user.UserRepository;
+import gg.utils.annotation.UnitTest;
+import gg.utils.exception.custom.NotExistException;
+import gg.utils.exception.user.UserNotFoundException;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)

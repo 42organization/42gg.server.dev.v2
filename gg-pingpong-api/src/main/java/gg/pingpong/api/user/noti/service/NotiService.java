@@ -8,17 +8,17 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import gg.data.noti.Noti;
+import gg.data.noti.type.NotiType;
+import gg.data.user.User;
 import gg.pingpong.api.user.noti.controller.response.NotiResponseDto;
 import gg.pingpong.api.user.noti.dto.NotiDto;
 import gg.pingpong.api.user.user.dto.UserDto;
-import gg.pingpong.data.noti.Noti;
-import gg.pingpong.data.noti.type.NotiType;
-import gg.pingpong.data.user.User;
-import gg.pingpong.repo.noti.NotiRepository;
-import gg.pingpong.repo.user.UserRepository;
-import gg.pingpong.utils.exception.ErrorCode;
-import gg.pingpong.utils.exception.custom.NotExistException;
-import gg.pingpong.utils.exception.user.UserNotFoundException;
+import gg.repo.noti.NotiRepository;
+import gg.repo.user.UserRepository;
+import gg.utils.exception.ErrorCode;
+import gg.utils.exception.custom.NotExistException;
+import gg.utils.exception.user.UserNotFoundException;
 import lombok.AllArgsConstructor;
 
 @Service

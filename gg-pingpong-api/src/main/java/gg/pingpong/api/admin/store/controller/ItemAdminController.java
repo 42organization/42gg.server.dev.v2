@@ -26,8 +26,8 @@ import gg.pingpong.api.admin.store.service.ItemAdminService;
 import gg.pingpong.api.global.dto.PageRequestDto;
 import gg.pingpong.api.global.utils.argumentresolver.Login;
 import gg.pingpong.api.user.user.dto.UserDto;
-import gg.pingpong.utils.exception.item.ItemImageLargeException;
-import gg.pingpong.utils.exception.item.ItemImageTypeException;
+import gg.utils.exception.item.ItemImageLargeException;
+import gg.utils.exception.item.ItemImageTypeException;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 

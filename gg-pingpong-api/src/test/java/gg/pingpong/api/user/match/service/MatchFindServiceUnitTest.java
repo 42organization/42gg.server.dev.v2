@@ -21,27 +21,27 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import gg.data.game.Game;
+import gg.data.game.type.StatusType;
+import gg.data.manage.SlotManagement;
+import gg.data.match.RedisMatchTime;
+import gg.data.match.type.Option;
+import gg.data.rank.Tier;
+import gg.data.rank.redis.RankRedis;
+import gg.data.season.Season;
+import gg.data.user.User;
 import gg.pingpong.api.user.match.utils.SlotGenerator;
 import gg.pingpong.api.user.season.service.SeasonFindService;
 import gg.pingpong.api.user.user.dto.UserDto;
-import gg.pingpong.data.game.Game;
-import gg.pingpong.data.game.type.StatusType;
-import gg.pingpong.data.manage.SlotManagement;
-import gg.pingpong.data.match.RedisMatchTime;
-import gg.pingpong.data.match.type.Option;
-import gg.pingpong.data.rank.Tier;
-import gg.pingpong.data.rank.redis.RankRedis;
-import gg.pingpong.data.season.Season;
-import gg.pingpong.data.user.User;
-import gg.pingpong.repo.game.GameRepository;
-import gg.pingpong.repo.manage.SlotManagementRepository;
-import gg.pingpong.repo.match.RedisMatchTimeRepository;
-import gg.pingpong.repo.match.RedisMatchUserRepository;
-import gg.pingpong.repo.rank.TierRepository;
-import gg.pingpong.repo.rank.redis.RankRedisRepository;
-import gg.pingpong.repo.user.UserRepository;
-import gg.pingpong.utils.RedisKeyManager;
-import gg.pingpong.utils.annotation.UnitTest;
+import gg.repo.game.GameRepository;
+import gg.repo.manage.SlotManagementRepository;
+import gg.repo.match.RedisMatchTimeRepository;
+import gg.repo.match.RedisMatchUserRepository;
+import gg.repo.rank.TierRepository;
+import gg.repo.rank.redis.RankRedisRepository;
+import gg.repo.user.UserRepository;
+import gg.utils.RedisKeyManager;
+import gg.utils.annotation.UnitTest;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)

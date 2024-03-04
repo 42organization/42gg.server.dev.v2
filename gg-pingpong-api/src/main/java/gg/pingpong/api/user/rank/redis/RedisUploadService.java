@@ -11,11 +11,11 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.pingpong.data.rank.redis.RankRedis;
-import gg.pingpong.repo.rank.RankRepository;
-import gg.pingpong.repo.rank.redis.RankRedisRepository;
-import gg.pingpong.repo.season.SeasonRepository;
-import gg.pingpong.utils.RedisKeyManager;
+import gg.data.rank.redis.RankRedis;
+import gg.repo.rank.RankRepository;
+import gg.repo.rank.redis.RankRedisRepository;
+import gg.repo.season.SeasonRepository;
+import gg.utils.RedisKeyManager;
 import lombok.RequiredArgsConstructor;
 
 @Service

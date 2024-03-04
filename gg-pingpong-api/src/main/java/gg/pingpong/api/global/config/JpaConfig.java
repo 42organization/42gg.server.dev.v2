@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
-@EnableJpaRepositories(basePackages = {"gg.pingpong.repo", "gg.pingpong.admin.repo"})
-@EntityScan(basePackages = "gg.pingpong.data")
+@EnableJpaRepositories(basePackages = {"gg.repo", "gg.admin.repo"})
+@EntityScan(basePackages = "gg.data")
 public class JpaConfig {
 }

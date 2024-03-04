@@ -15,7 +15,7 @@ import gg.pingpong.api.user.manage.controller.AnnouncementController;
 import gg.pingpong.api.user.manage.controller.response.AnnouncementResponseDto;
 import gg.pingpong.api.user.manage.dto.AnnouncementDto;
 import gg.pingpong.api.user.manage.service.AnnouncementService;
-import gg.pingpong.utils.annotation.UnitTest;
+import gg.utils.annotation.UnitTest;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)

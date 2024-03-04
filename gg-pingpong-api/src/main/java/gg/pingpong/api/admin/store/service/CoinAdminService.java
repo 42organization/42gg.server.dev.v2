@@ -3,12 +3,12 @@ package gg.pingpong.api.admin.store.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import gg.data.store.CoinHistory;
+import gg.data.user.User;
 import gg.pingpong.api.admin.store.controller.request.CoinUpdateRequestDto;
 import gg.pingpong.api.user.store.service.CoinHistoryService;
-import gg.pingpong.data.store.CoinHistory;
-import gg.pingpong.data.user.User;
-import gg.pingpong.repo.user.UserRepository;
-import gg.pingpong.utils.exception.user.UserNotFoundException;
+import gg.repo.user.UserRepository;
+import gg.utils.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service

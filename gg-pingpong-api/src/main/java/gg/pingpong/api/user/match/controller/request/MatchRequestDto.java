@@ -8,7 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import gg.pingpong.data.match.type.Option;
+import gg.data.match.type.Option;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

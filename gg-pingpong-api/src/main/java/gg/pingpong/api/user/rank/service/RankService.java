@@ -11,24 +11,24 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import gg.data.rank.redis.RankRedis;
+import gg.data.season.Season;
+import gg.data.user.User;
 import gg.pingpong.api.user.rank.controller.response.ExpRankPageResponseDto;
 import gg.pingpong.api.user.rank.controller.response.RankPageResponseDto;
 import gg.pingpong.api.user.rank.dto.ExpRankDto;
 import gg.pingpong.api.user.rank.dto.RankDto;
 import gg.pingpong.api.user.season.service.SeasonFindService;
 import gg.pingpong.api.user.user.dto.UserDto;
-import gg.pingpong.data.rank.redis.RankRedis;
-import gg.pingpong.data.season.Season;
-import gg.pingpong.data.user.User;
-import gg.pingpong.repo.rank.RankRepository;
-import gg.pingpong.repo.rank.redis.RankRedisRepository;
-import gg.pingpong.repo.user.ExpRankV2Dto;
-import gg.pingpong.repo.user.UserRepository;
-import gg.pingpong.utils.RedisKeyManager;
-import gg.pingpong.utils.exception.ErrorCode;
-import gg.pingpong.utils.exception.custom.PageNotFoundException;
-import gg.pingpong.utils.exception.rank.RedisDataNotFoundException;
-import gg.pingpong.utils.exception.user.UserNotFoundException;
+import gg.repo.rank.RankRepository;
+import gg.repo.rank.redis.RankRedisRepository;
+import gg.repo.user.ExpRankV2Dto;
+import gg.repo.user.UserRepository;
+import gg.utils.RedisKeyManager;
+import gg.utils.exception.ErrorCode;
+import gg.utils.exception.custom.PageNotFoundException;
+import gg.utils.exception.rank.RedisDataNotFoundException;
+import gg.utils.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service

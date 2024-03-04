@@ -1,6 +1,6 @@
 package gg.pingpong.api.user.match.service;
 
-import static gg.pingpong.data.tournament.type.RoundNumber.*;
+import static gg.data.tournament.type.RoundNumber.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -19,27 +19,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
+import gg.data.game.Game;
+import gg.data.game.Team;
+import gg.data.game.type.StatusType;
+import gg.data.match.type.TournamentMatchStatus;
+import gg.data.tournament.Tournament;
+import gg.data.tournament.TournamentGame;
+import gg.data.tournament.type.TournamentRound;
+import gg.data.tournament.type.TournamentStatus;
+import gg.data.user.User;
 import gg.pingpong.api.admin.noti.controller.request.SendNotiAdminRequestDto;
 import gg.pingpong.api.admin.noti.service.NotiAdminService;
 import gg.pingpong.api.user.match.utils.MatchIntegrationTestUtils;
 import gg.pingpong.api.user.match.utils.TournamentGameTestUtils;
-import gg.pingpong.data.game.Game;
-import gg.pingpong.data.game.Team;
-import gg.pingpong.data.game.type.StatusType;
-import gg.pingpong.data.match.type.TournamentMatchStatus;
-import gg.pingpong.data.tournament.Tournament;
-import gg.pingpong.data.tournament.TournamentGame;
-import gg.pingpong.data.tournament.type.RoundNumber;
-import gg.pingpong.data.tournament.type.TournamentRound;
-import gg.pingpong.data.tournament.type.TournamentStatus;
-import gg.pingpong.data.user.User;
-import gg.pingpong.repo.game.GameRepository;
-import gg.pingpong.repo.manage.SlotManagementRepository;
-import gg.pingpong.utils.TestDataUtils;
-import gg.pingpong.utils.annotation.IntegrationTest;
-import gg.pingpong.utils.exception.match.EnrolledSlotException;
-import gg.pingpong.utils.exception.match.SlotNotFoundException;
-import gg.pingpong.utils.exception.match.WinningTeamNotFoundException;
+import gg.repo.game.GameRepository;
+import gg.repo.manage.SlotManagementRepository;
+import gg.utils.TestDataUtils;
+import gg.utils.annotation.IntegrationTest;
+import gg.utils.exception.match.EnrolledSlotException;
+import gg.utils.exception.match.SlotNotFoundException;
+import gg.utils.exception.match.WinningTeamNotFoundException;
 
 @IntegrationTest
 @Transactional
@@ -75,10 +74,10 @@ public class MatchTournamentServiceTest {
 		@DisplayName("8강 경기 매칭 성공")
 		public void quarterTest() {
 			// when
-			matchTournamentService.matchGames(tournament, RoundNumber.QUARTER_FINAL);
+			matchTournamentService.matchGames(tournament, QUARTER_FINAL);
 
 			// then
-			List<TournamentRound> quarterRounds = TournamentRound.getSameRounds(RoundNumber.QUARTER_FINAL);
+			List<TournamentRound> quarterRounds = TournamentRound.getSameRounds(QUARTER_FINAL);
 			List<TournamentGame> quarterRoundGames = allTournamentGames.stream()
 				.filter(o -> quarterRounds.contains(o.getTournamentRound()))
 				.sorted(Comparator.comparing(TournamentGame::getTournamentRound))
