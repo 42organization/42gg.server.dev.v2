@@ -21,14 +21,14 @@ public class CommentAdminController {
 	private final CommentAdminService commentAdminService;
 
 	/**
-	 * 댓글 삭제
+	 * 댓글 숨김
 	 * @param commentId 댓글 번호
-	 * @return 삭제 성공 여부
+	 * @return 숨김 성공 여부
 	 */
 	@PatchMapping("/{commentId}")
 	public ResponseEntity<Void> hideComment(@PathVariable Long commentId,
 		@RequestBody CommentUpdateAdminRequestDto reqDto, @Login UserDto user) {
 		commentAdminService.hideComment(commentId, reqDto);
-		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 }
