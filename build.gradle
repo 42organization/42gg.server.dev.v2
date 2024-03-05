@@ -110,7 +110,7 @@ subprojects {
     jacocoTestReport {
 
         reports {
-            xml.required = false
+            xml.required = true
             html.required = true
             csv.required = false
         }
