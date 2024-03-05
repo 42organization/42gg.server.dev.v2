@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
 import gg.party.api.user.room.controller.request.RoomCreateReqDto;
-import gg.party.api.user.room.controller.response.LeaveRoomResponseDto;
+import gg.party.api.user.room.controller.response.LeaveRoomResDto;
 import gg.party.api.user.room.controller.response.RoomDetailResDto;
 import gg.party.api.user.room.controller.response.RoomListResDto;
 import gg.party.api.user.room.service.RoomService;
@@ -87,7 +87,7 @@ public class RoomController {
 	 * @return 나간 사람의 닉네임
 	 */
 	@PatchMapping("/{room_id}")
-	public ResponseEntity<LeaveRoomResponseDto> leaveRoom(@PathVariable("room_id") Long roomId,
+	public ResponseEntity<LeaveRoomResDto> leaveRoom(@PathVariable("room_id") Long roomId,
 		@Parameter(hidden = true) @Login UserDto user) {
 		return ResponseEntity.status(HttpStatus.OK).body(roomService.modifyOrderLeaveRoom(roomId, user));
 	}

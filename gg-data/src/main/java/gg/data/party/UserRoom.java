@@ -3,8 +3,6 @@ package gg.data.party;
 import static gg.utils.exception.BusinessChecker.*;
 import static gg.utils.exception.ErrorCode.*;
 
-import java.time.LocalDateTime;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,14 +13,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import gg.data.BaseTimeEntity;
-import gg.data.tournament.Tournament;
 import gg.data.user.User;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.experimental.SuperBuilder;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

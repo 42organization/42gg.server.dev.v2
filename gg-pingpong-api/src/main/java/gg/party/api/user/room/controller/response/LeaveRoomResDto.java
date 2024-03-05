@@ -5,6 +5,6 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class LeaveRoomResponseDto {
+public class LeaveRoomResDto {
 	private String nickname;
 }
