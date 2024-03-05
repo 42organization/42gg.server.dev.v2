@@ -16,7 +16,7 @@ public class RoomAdminService {
 	private final RoomRepository roomRepository;
 
 	@Transactional
-	public void updateRoomStatus(Long roomId, RoomType newStatus) {
+	public void modifyRoomStatus(Long roomId, RoomType newStatus) {
 		Room room = roomRepository.findById(roomId)
 			.orElseThrow(RoomNotFoundException::new);
 

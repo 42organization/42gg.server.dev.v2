@@ -34,7 +34,7 @@ public class RoomAdminController {
 			return ResponseEntity.badRequest().build();
 		}
 
-		roomAdminService.updateRoomStatus(roomId, roomType);
+		roomAdminService.modifyRoomStatus(roomId, roomType);
 		return ResponseEntity.ok().build();
 	}
 }
