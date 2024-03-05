@@ -7,6 +7,7 @@ import gg.data.party.Room;
 import gg.data.party.type.RoomType;
 import gg.repo.party.RoomRepository;
 import gg.utils.exception.party.RoomAlreadyHiddenException;
+import gg.utils.exception.party.RoomNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -17,7 +18,11 @@ public class RoomAdminService {
 	@Transactional
 	public void updateRoomStatus(Long roomId, RoomType newStatus) {
 		Room room = roomRepository.findById(roomId)
-			.orElseThrow(RoomAlreadyHiddenException::new);
+			.orElseThrow(RoomNotFoundException::new);
+
+		if (room.getStatus() == newStatus) {
+			throw new RoomAlreadyHiddenException();
+		}
 
 		room.updateRoomStatus(newStatus);
 		roomRepository.save(room);
