@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gg.auth.utils.AuthTokenProvider;
 import gg.data.pingpong.game.type.Mode;
 import gg.data.pingpong.season.Season;
 import gg.data.pingpong.tournament.Tournament;
@@ -35,7 +36,6 @@ import gg.pingpong.api.admin.tournament.controller.request.TournamentAdminCreate
 import gg.pingpong.api.admin.tournament.controller.request.TournamentAdminUpdateRequestDto;
 import gg.pingpong.api.admin.tournament.controller.request.TournamentGameUpdateRequestDto;
 import gg.pingpong.api.admin.tournament.service.TournamentAdminService;
-import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.user.game.dto.TeamReqDto;
 import gg.pingpong.api.user.match.utils.MatchIntegrationTestUtils;
 import gg.repo.game.PChangeRepository;
@@ -899,10 +899,10 @@ class TournamentAdminControllerTest {
 	@Nested
 	@DisplayName("[Patch] /pingpong/admin/tournaments/{tournamentId}/games")
 	class AdminUpdateTournamentGameTest {
+		Season season;
 		private String accessToken;
 		private Tournament tournament;
 		private List<TournamentGame> allTournamentGames;
-		Season season;
 
 		@BeforeEach
 		void setUp() {

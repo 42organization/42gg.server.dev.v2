@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gg.auth.utils.AuthTokenProvider;
 import gg.data.pingpong.game.Game;
 import gg.data.pingpong.game.PChange;
 import gg.data.pingpong.game.Team;
@@ -41,7 +42,6 @@ import gg.data.user.User;
 import gg.data.user.type.RacketType;
 import gg.data.user.type.RoleType;
 import gg.data.user.type.SnsType;
-import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.user.game.controller.request.RankResultReqDto;
 import gg.pingpong.api.user.game.controller.request.TournamentResultReqDto;
 import gg.pingpong.api.user.game.controller.response.GameListResDto;
@@ -97,11 +97,12 @@ public class GameControllerTest {
 	@Autowired
 	GameFindService gameFindService;
 	@Autowired
-	private MockMvc mockMvc;
-	@Autowired
 	ObjectMapper objectMapper;
 	@Autowired
 	AuthTokenProvider tokenProvider;
+	ArrayList<Tier> tiers;
+	@Autowired
+	private MockMvc mockMvc;
 	private String accessToken;
 	private Season season;
 	private User user1;
@@ -109,7 +110,6 @@ public class GameControllerTest {
 	private User user3;
 	private Game game1;
 	private Game game2;
-	ArrayList<Tier> tiers;
 
 	@BeforeEach
 	void init() {

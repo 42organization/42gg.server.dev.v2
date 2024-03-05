@@ -15,9 +15,13 @@ import io.lettuce.core.dynamic.annotation.Param;
 public interface UserRoomRepository extends JpaRepository<UserRoom, Long> {
 	List<UserRoom> findByUserId(Long userId);
 
+	List<UserRoom> findByRoomId(Long roomId);
+
 	Optional<UserRoom> findByUserAndRoom(User user, Room room);
 
 	@Query("SELECT ur.room FROM UserRoom ur WHERE ur.user.id = :userId AND ur.isExist = true "
-		+ "AND ur.room.status = :status AND ur.room.dueDate IS NOT NULL ORDER BY ur.room.dueDate ASC")
+		+ "AND ur.room.status = :status ORDER BY ur.room.dueDate ASC")
 	List<Room> findFinishRoomsByUserId(@Param("userId") Long userId, @Param("status") RoomType status);
+
+	Optional<UserRoom> findByUserIdAndRoomIdAndIsExistTrue(Long userId, Long roomId);
 }

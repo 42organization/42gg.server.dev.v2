@@ -28,6 +28,7 @@ public class RoomCreateReqDto {
 			.category(category)
 			.title(dto.getTitle())
 			.content(dto.getContent())
+			.currentPeople(1)
 			.maxPeople(dto.getMaxPeople())
 			.minPeople(dto.getMinPeople())
 			.dueDate(dto.getDueDate())

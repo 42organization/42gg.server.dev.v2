@@ -19,11 +19,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.admin.repo.manage.AdminSlotManagementsRepository;
+import gg.auth.utils.AuthTokenProvider;
 import gg.data.pingpong.manage.SlotManagement;
 import gg.pingpong.api.admin.manage.controller.request.SlotCreateRequestDto;
 import gg.pingpong.api.admin.manage.controller.response.SlotListAdminResponseDto;
 import gg.pingpong.api.admin.manage.dto.SlotAdminDto;
-import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.repo.manage.SlotManagementRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
@@ -36,21 +36,16 @@ import lombok.RequiredArgsConstructor;
 class SlotAdminControllerTest {
 	@Autowired
 	TestDataUtils testDataUtils;
-
-	@Autowired
-	private MockMvc mockMvc;
-
 	@Autowired
 	ObjectMapper objectMapper;
-
 	@Autowired
 	AuthTokenProvider tokenProvider;
-
 	@Autowired
 	AdminSlotManagementsRepository adminSlotManagementRepository;
-
 	@Autowired
 	SlotManagementRepository slotManagementRepository;
+	@Autowired
+	private MockMvc mockMvc;
 
 	@BeforeEach
 	void setUp() {

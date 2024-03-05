@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import gg.auth.UserDto;
 import gg.data.pingpong.rank.redis.RankRedis;
 import gg.data.pingpong.season.Season;
 import gg.data.user.User;
@@ -19,7 +20,6 @@ import gg.pingpong.api.user.rank.controller.response.RankPageResponseDto;
 import gg.pingpong.api.user.rank.dto.ExpRankDto;
 import gg.pingpong.api.user.rank.dto.RankDto;
 import gg.pingpong.api.user.season.service.SeasonFindService;
-import gg.pingpong.api.user.user.dto.UserDto;
 import gg.repo.rank.RankRepository;
 import gg.repo.rank.redis.RankRedisRepository;
 import gg.repo.user.ExpRankV2Dto;

@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gg.auth.utils.AuthTokenProvider;
 import gg.data.pingpong.tournament.Tournament;
 import gg.data.pingpong.tournament.TournamentUser;
 import gg.data.pingpong.tournament.type.TournamentStatus;
@@ -28,7 +29,6 @@ import gg.data.user.User;
 import gg.data.user.type.RacketType;
 import gg.data.user.type.RoleType;
 import gg.data.user.type.SnsType;
-import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.user.tournament.controller.response.TournamentListResponseDto;
 import gg.pingpong.api.user.tournament.controller.response.TournamentResponseDto;
 import gg.repo.tournarment.TournamentUserRepository;

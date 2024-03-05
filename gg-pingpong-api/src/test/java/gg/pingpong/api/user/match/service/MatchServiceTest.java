@@ -23,6 +23,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.admin.repo.manage.PenaltyAdminRepository;
+import gg.auth.UserDto;
 import gg.data.manage.redis.RedisPenaltyUser;
 import gg.data.noti.Noti;
 import gg.data.noti.type.NotiType;
@@ -47,7 +48,6 @@ import gg.pingpong.api.user.match.dto.MatchStatusDto;
 import gg.pingpong.api.user.match.dto.SlotStatusDto;
 import gg.pingpong.api.user.match.utils.MatchIntegrationTestUtils;
 import gg.pingpong.api.user.rank.redis.RedisUploadService;
-import gg.pingpong.api.user.user.dto.UserDto;
 import gg.repo.game.GameRepository;
 import gg.repo.manage.SlotManagementRepository;
 import gg.repo.match.RedisMatchTimeRepository;
@@ -377,7 +377,7 @@ class MatchServiceTest {
 			SlotStatusResponseListDto slotStatusList = matchFindService.getAllMatchStatus(UserDto.from(users.get(0)),
 				Option.NORMAL);
 			for (int i = 0; i < 3; i++) {
-				System.out.println("slotTimes = " + String.valueOf(i) + slotTimes.get(i));
+				System.out.println("slotTimes = " + i + slotTimes.get(i));
 			}
 			for (List<SlotStatusDto> dtos : slotStatusList.getMatchBoards()) {
 				for (SlotStatusDto dto : dtos) {

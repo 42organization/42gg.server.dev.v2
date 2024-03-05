@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gg.auth.utils.AuthTokenProvider;
 import gg.data.pingpong.game.type.Mode;
 import gg.data.pingpong.rank.Rank;
 import gg.data.pingpong.rank.Tier;
@@ -32,7 +33,6 @@ import gg.data.pingpong.season.Season;
 import gg.data.user.User;
 import gg.pingpong.api.admin.game.controller.response.GameLogListAdminResponseDto;
 import gg.pingpong.api.admin.game.dto.RankGamePPPModifyReqDto;
-import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.user.game.controller.request.RankResultReqDto;
 import gg.pingpong.api.user.game.service.GameService;
 import gg.pingpong.api.user.match.service.GameUpdateService;
@@ -54,120 +54,30 @@ import lombok.RequiredArgsConstructor;
 class GameAdminControllerTest {
 	@Autowired
 	TestDataUtils testDataUtils;
-
-	@Autowired
-	private MockMvc mockMvc;
-
 	@Autowired
 	ObjectMapper objectMapper;
-
 	@Autowired
 	AuthTokenProvider tokenProvider;
-
 	@Autowired
 	GameRepository gameRepository;
-
 	@Autowired
 	UserRepository userRepository;
-
 	@Autowired
 	GameUpdateService gameUpdateService;
-
 	@Autowired
 	GameService gameService;
-
 	@Autowired
 	RankRepository rankRepository;
-
 	@Autowired
 	RankRedisRepository rankRedisRepository;
 	@Autowired
 	EntityManager entityManager;
+	@Autowired
+	private MockMvc mockMvc;
 
 	@AfterEach
 	void redisDown() {
 		rankRedisRepository.deleteAll();
-	}
-
-	@Nested
-	@DisplayName("[GET] /pingpong/admin/games/users?intraId=${intraId}&page=${pageNumber}&size={sizeNum}")
-	class GetUserGameList {
-		String accessToken;
-		Long userId;
-		User user;
-		Season season;
-
-		static final int TOTAL_PAGE_SIZE = 18;
-		static final int TOURNAMENT_GAME_SIZE = 4;
-		static final String INTRA_ID = "nheo";
-
-		@BeforeEach
-		void setUp() {
-			accessToken = testDataUtils.getAdminLoginAccessToken();
-			userId = tokenProvider.getUserIdFromAccessToken(accessToken);
-			user = testDataUtils.createNewUser(INTRA_ID);
-			season = testDataUtils.createSeason();
-			testDataUtils.createUserRank(user, "status message", season);
-			for (int i = 0; i < TOTAL_PAGE_SIZE; i++) {
-				testDataUtils.createMockMatchWithMockRank(user, season, LocalDateTime.now().minusMinutes(20 + i * 15),
-					LocalDateTime.now().minusMinutes(5 + i * 15));
-			}
-			for (int i = TOTAL_PAGE_SIZE; i < TOTAL_PAGE_SIZE + TOURNAMENT_GAME_SIZE; i++) {
-				testDataUtils.createMockMatch(testDataUtils.createNewUser("testUser" + i), season,
-					LocalDateTime.now().minusMinutes(20 + i * 15), LocalDateTime.now().minusMinutes(5 + i * 15),
-					Mode.TOURNAMENT);
-			}
-		}
-
-		private GameLogListAdminResponseDto getPageResult(int currentPage, int pageSize)
-			throws Exception {
-			String url = "/pingpong/admin/games/users?intraId="
-				+ INTRA_ID + "&page=" + currentPage + "&size=" + pageSize;
-
-			String contentAsString = mockMvc
-				.perform(get(url)
-					.header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
-				.andExpect(status().isOk())
-				.andReturn().getResponse().getContentAsString();
-
-			return objectMapper.readValue(contentAsString, GameLogListAdminResponseDto.class);
-		}
-
-		@Test
-		@Transactional
-		@DisplayName("First page")
-		void getUserGameListFirstPage() throws Exception {
-			//given
-			int pageSize = 5;
-			//when
-			GameLogListAdminResponseDto result = getPageResult(1, pageSize);
-			//then
-			assertThat(result.getGameLogList().size()).isEqualTo(pageSize);
-		}
-
-		@Test
-		@Transactional
-		@DisplayName("Middle page")
-		void getUserGameListMidPage() throws Exception {
-			//given
-			int pageSize = 5;
-			//when
-			GameLogListAdminResponseDto result = getPageResult(2, pageSize);
-			//then
-			assertThat(result.getGameLogList().size()).isEqualTo(pageSize);
-		}
-
-		@Test
-		@Transactional
-		@DisplayName("End page")
-		void getUserGameListEndPage() throws Exception {
-			//given
-			int pageSize = 5;
-			//when
-			GameLogListAdminResponseDto result = getPageResult(4, pageSize);
-			//then
-			assertThat(result.getGameLogList().size()).isEqualTo(TOTAL_PAGE_SIZE % pageSize);
-		}
 	}
 
 	@Test
@@ -280,5 +190,85 @@ class GameAdminControllerTest {
 		assertThat(enemyUser2Rank.getWins()).isEqualTo(0);
 		assertThat(enemyUser2Rank.getLosses()).isEqualTo(1);
 		//        assertThat(enemyUser2Rank.getPpp()).isEqualTo()
+	}
+
+	@Nested
+	@DisplayName("[GET] /pingpong/admin/games/users?intraId=${intraId}&page=${pageNumber}&size={sizeNum}")
+	class GetUserGameList {
+		static final int TOTAL_PAGE_SIZE = 18;
+		static final int TOURNAMENT_GAME_SIZE = 4;
+		static final String INTRA_ID = "nheo";
+		String accessToken;
+		Long userId;
+		User user;
+		Season season;
+
+		@BeforeEach
+		void setUp() {
+			accessToken = testDataUtils.getAdminLoginAccessToken();
+			userId = tokenProvider.getUserIdFromAccessToken(accessToken);
+			user = testDataUtils.createNewUser(INTRA_ID);
+			season = testDataUtils.createSeason();
+			testDataUtils.createUserRank(user, "status message", season);
+			for (int i = 0; i < TOTAL_PAGE_SIZE; i++) {
+				testDataUtils.createMockMatchWithMockRank(user, season, LocalDateTime.now().minusMinutes(20 + i * 15),
+					LocalDateTime.now().minusMinutes(5 + i * 15));
+			}
+			for (int i = TOTAL_PAGE_SIZE; i < TOTAL_PAGE_SIZE + TOURNAMENT_GAME_SIZE; i++) {
+				testDataUtils.createMockMatch(testDataUtils.createNewUser("testUser" + i), season,
+					LocalDateTime.now().minusMinutes(20 + i * 15), LocalDateTime.now().minusMinutes(5 + i * 15),
+					Mode.TOURNAMENT);
+			}
+		}
+
+		private GameLogListAdminResponseDto getPageResult(int currentPage, int pageSize)
+			throws Exception {
+			String url = "/pingpong/admin/games/users?intraId="
+				+ INTRA_ID + "&page=" + currentPage + "&size=" + pageSize;
+
+			String contentAsString = mockMvc
+				.perform(get(url)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+
+			return objectMapper.readValue(contentAsString, GameLogListAdminResponseDto.class);
+		}
+
+		@Test
+		@Transactional
+		@DisplayName("First page")
+		void getUserGameListFirstPage() throws Exception {
+			//given
+			int pageSize = 5;
+			//when
+			GameLogListAdminResponseDto result = getPageResult(1, pageSize);
+			//then
+			assertThat(result.getGameLogList().size()).isEqualTo(pageSize);
+		}
+
+		@Test
+		@Transactional
+		@DisplayName("Middle page")
+		void getUserGameListMidPage() throws Exception {
+			//given
+			int pageSize = 5;
+			//when
+			GameLogListAdminResponseDto result = getPageResult(2, pageSize);
+			//then
+			assertThat(result.getGameLogList().size()).isEqualTo(pageSize);
+		}
+
+		@Test
+		@Transactional
+		@DisplayName("End page")
+		void getUserGameListEndPage() throws Exception {
+			//given
+			int pageSize = 5;
+			//when
+			GameLogListAdminResponseDto result = getPageResult(4, pageSize);
+			//then
+			assertThat(result.getGameLogList().size()).isEqualTo(TOTAL_PAGE_SIZE % pageSize);
+		}
 	}
 }

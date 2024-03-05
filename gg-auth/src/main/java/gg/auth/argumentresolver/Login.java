@@ -1,4 +1,4 @@
-package gg.pingpong.api.global.utils.argumentresolver;
+package gg.auth.argumentresolver;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

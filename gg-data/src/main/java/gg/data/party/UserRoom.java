@@ -38,12 +38,16 @@ public class UserRoom extends BaseTimeEntity {
 	private String nickname;
 
 	@Column(name = "is_exist")
-	private Boolean isExist;
+	private boolean isExist;
 
 	public UserRoom(User user, Room room, String randomNickname) {
 		this.user = user;
 		this.room = room;
 		this.nickname = randomNickname;
 		this.isExist = true;
+	}
+
+	public boolean getIsExist() {
+		return this.isExist;
 	}
 }

@@ -24,6 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import gg.auth.UserDto;
 import gg.data.pingpong.game.Game;
 import gg.data.pingpong.game.type.StatusType;
 import gg.data.pingpong.tournament.Tournament;
@@ -43,7 +44,6 @@ import gg.pingpong.api.user.match.service.MatchTournamentService;
 import gg.pingpong.api.user.tournament.controller.response.TournamentGameListResponseDto;
 import gg.pingpong.api.user.tournament.controller.response.TournamentResponseDto;
 import gg.pingpong.api.user.tournament.controller.response.TournamentUserRegistrationResponseDto;
-import gg.pingpong.api.user.user.dto.UserDto;
 import gg.pingpong.api.utils.ReflectionUtilsForUnitTest;
 import gg.repo.game.GameRepository;
 import gg.repo.game.out.GameTeamUser;
@@ -75,6 +75,36 @@ class TournamentServiceUnitTest {
 	GameRepository gameRepository;
 	@InjectMocks
 	TournamentService tournamentService;
+
+	private Tournament createTournament(Long id, TournamentStatus status, LocalDateTime startTime,
+		LocalDateTime endTime) {
+		Tournament tournament = Tournament.builder()
+			.title(id + "st tournament")
+			.contents("")
+			.startTime(startTime)
+			.endTime(endTime)
+			.type(TournamentType.ROOKIE)
+			.status(status)
+			.build();
+		ReflectionUtilsForUnitTest.setFieldWithReflection(tournament, "id", id);
+		return tournament;
+	}
+
+	/**
+	 * 유저 생성 매서드 - intraId로만 초기화
+	 * @param intraId
+	 * @return
+	 */
+	private User createUser(String intraId) {
+		return User.builder()
+			.eMail("email")
+			.intraId(intraId)
+			.racketType(RacketType.PENHOLDER)
+			.snsNotiOpt(SnsType.NONE)
+			.roleType(RoleType.USER)
+			.totalExp(1000)
+			.build();
+	}
 
 	@Nested
 	@DisplayName("getAllTournamentList")
@@ -584,35 +614,5 @@ class TournamentServiceUnitTest {
 			verify(tournamentGameRepository, times(1)).findAllByTournamentId(any(Long.class));
 			verify(gameRepository, times(7)).findTeamsByGameId(any(Long.class));
 		}
-	}
-
-	private Tournament createTournament(Long id, TournamentStatus status, LocalDateTime startTime,
-		LocalDateTime endTime) {
-		Tournament tournament = Tournament.builder()
-			.title(id + "st tournament")
-			.contents("")
-			.startTime(startTime)
-			.endTime(endTime)
-			.type(TournamentType.ROOKIE)
-			.status(status)
-			.build();
-		ReflectionUtilsForUnitTest.setFieldWithReflection(tournament, "id", id);
-		return tournament;
-	}
-
-	/**
-	 * 유저 생성 매서드 - intraId로만 초기화
-	 * @param intraId
-	 * @return
-	 */
-	private User createUser(String intraId) {
-		return User.builder()
-			.eMail("email")
-			.intraId(intraId)
-			.racketType(RacketType.PENHOLDER)
-			.snsNotiOpt(SnsType.NONE)
-			.roleType(RoleType.USER)
-			.totalExp(1000)
-			.build();
 	}
 }

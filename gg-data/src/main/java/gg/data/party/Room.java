@@ -45,6 +45,9 @@ public class Room extends BaseTimeEntity {
 	@JoinColumn(name = "category_id")
 	private Category category;
 
+	@Column(name = "current_people")
+	private Integer currentPeople;
+
 	@Column(name = "title", length = 15)
 	private String title;
 
@@ -68,13 +71,14 @@ public class Room extends BaseTimeEntity {
 	private RoomType status;
 
 	@Builder
-	public Room(User host, User creator, Category category, String title, String content, Integer maxPeople,
-		Integer minPeople, LocalDateTime dueDate, RoomType status) {
+	public Room(User host, User creator, Category category, String title, String content, Integer currentPeople,
+		Integer maxPeople, Integer minPeople, LocalDateTime dueDate, RoomType status) {
 		this.host = host;
 		this.creator = creator;
 		this.category = category;
 		this.title = title;
 		this.content = content;
+		this.currentPeople = currentPeople;
 		this.maxPeople = maxPeople;
 		this.minPeople = minPeople;
 		this.dueDate = dueDate;

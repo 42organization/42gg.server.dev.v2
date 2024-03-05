@@ -16,6 +16,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
+import gg.auth.utils.AuthTokenProvider;
 import gg.data.pingpong.game.Game;
 import gg.data.pingpong.game.type.Mode;
 import gg.data.pingpong.game.type.StatusType;
@@ -23,7 +24,6 @@ import gg.data.pingpong.rank.Tier;
 import gg.data.pingpong.rank.redis.RankRedis;
 import gg.data.pingpong.season.Season;
 import gg.data.user.User;
-import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.user.game.controller.response.GameListResDto;
 import gg.pingpong.api.user.game.controller.response.GameResultResDto;
 import gg.repo.game.GameRepository;

@@ -12,6 +12,7 @@ CREATE TABLE room (
     category_id BIGINT NOT NULL,
     title VARCHAR(15) NOT NULL,
     content VARCHAR(100) NOT NULL,
+    current_people INT NOT NULL,
     max_people INT NOT NULL,
     min_people INT NOT NULL DEFAULT 2,
     due_date DATETIME NOT NULL,

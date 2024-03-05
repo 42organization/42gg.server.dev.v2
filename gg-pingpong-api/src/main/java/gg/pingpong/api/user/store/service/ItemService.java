@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import gg.auth.UserDto;
 import gg.data.pingpong.store.Item;
 import gg.data.pingpong.store.Receipt;
 import gg.data.pingpong.store.type.ItemStatus;
@@ -20,7 +21,6 @@ import gg.pingpong.api.user.store.controller.response.ItemStoreListResponseDto;
 import gg.pingpong.api.user.store.controller.response.ItemStoreResponseDto;
 import gg.pingpong.api.user.store.controller.response.UserItemListResponseDto;
 import gg.pingpong.api.user.store.controller.response.UserItemResponseDto;
-import gg.pingpong.api.user.user.dto.UserDto;
 import gg.repo.store.ItemRepository;
 import gg.repo.store.ReceiptRepository;
 import gg.repo.store.UserItemRepository;

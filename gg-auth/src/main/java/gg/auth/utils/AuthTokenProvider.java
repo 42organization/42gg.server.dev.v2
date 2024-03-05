@@ -1,11 +1,11 @@
-package gg.pingpong.api.global.security.jwt.utils;
+package gg.auth.utils;
 
 import java.security.Key;
 import java.util.Date;
 
 import org.springframework.stereotype.Component;
 
-import gg.pingpong.api.global.security.config.properties.AppProperties;
+import gg.auth.properties.AppProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
