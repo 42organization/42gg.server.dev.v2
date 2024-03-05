@@ -145,7 +145,7 @@ public class RoomService {
 	 * @return
 	 */
 	@Transactional
-	public LeaveRoomResponseDto leaveRoom(Long roomId, UserDto user) {
+	public LeaveRoomResponseDto modifyOrderLeaveRoom(Long roomId, UserDto user) {
 		Room targetRoom = roomRepository.findById(roomId)
 			.orElseThrow(RoomNotFoundException::new);
 		if (!targetRoom.getStatus().equals(RoomType.OPEN)) {

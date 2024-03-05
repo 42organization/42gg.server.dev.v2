@@ -86,9 +86,9 @@ public class RoomController {
 	 * 참여한 방을 나가기 한다
 	 * @return 나간 사람의 닉네임
 	 */
-	@PatchMapping("/party/rooms/{room_id}")
+	@PatchMapping("/{room_id}")
 	public ResponseEntity<LeaveRoomResponseDto> leaveRoom(@PathVariable("room_id") Long roomId,
 		@Parameter(hidden = true) @Login UserDto user) {
-		return ResponseEntity.status(HttpStatus.OK).body(roomService.leaveRoom(roomId, user));
+		return ResponseEntity.status(HttpStatus.OK).body(roomService.modifyOrderLeaveRoom(roomId, user));
 	}
 }
