@@ -272,8 +272,9 @@ class RankRedisRepositoryTest {
 
 		//then -> 랭크 순서도 알맞게 반환되는지 확인
 		Assertions.assertThat(ranks)
-			.usingElementComparatorIgnoringFields("userId")
-			.containsExactly(rank4, rank3, rank2, rank1);
+			.usingRecursiveComparison()
+			.ignoringFields("userId")
+			.isEqualTo(List.of(rank4, rank3, rank2, rank1));
 	}
 
 }
