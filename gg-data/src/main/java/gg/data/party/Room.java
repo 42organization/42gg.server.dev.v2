@@ -96,4 +96,8 @@ public class Room extends BaseTimeEntity {
 	public void updateHost(User host) {
 		this.host = host;
 	}
+
+	public void updateRoomStatus(RoomType status) {
+		this.status = status;
+	}
 }
