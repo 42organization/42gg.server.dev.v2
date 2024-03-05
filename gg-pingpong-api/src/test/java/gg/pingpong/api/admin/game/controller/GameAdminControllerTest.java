@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gg.auth.utils.AuthTokenProvider;
 import gg.data.game.type.Mode;
 import gg.data.rank.Rank;
 import gg.data.rank.Tier;
@@ -32,7 +33,6 @@ import gg.data.season.Season;
 import gg.data.user.User;
 import gg.pingpong.api.admin.game.controller.response.GameLogListAdminResponseDto;
 import gg.pingpong.api.admin.game.dto.RankGamePPPModifyReqDto;
-import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.user.game.controller.request.RankResultReqDto;
 import gg.pingpong.api.user.game.service.GameService;
 import gg.pingpong.api.user.match.service.GameUpdateService;

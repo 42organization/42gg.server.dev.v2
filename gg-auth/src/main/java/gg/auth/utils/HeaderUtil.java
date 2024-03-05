@@ -1,4 +1,4 @@
-package gg.pingpong.api.global.utils;
+package gg.auth.utils;
 
 import javax.servlet.http.HttpServletRequest;
 

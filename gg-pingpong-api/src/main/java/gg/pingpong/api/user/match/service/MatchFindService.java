@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import gg.auth.UserDto;
 import gg.data.game.Game;
 import gg.data.game.type.StatusType;
 import gg.data.manage.SlotManagement;
@@ -26,7 +27,6 @@ import gg.pingpong.api.user.match.controller.response.SlotStatusResponseListDto;
 import gg.pingpong.api.user.match.dto.MatchStatusDto;
 import gg.pingpong.api.user.match.utils.SlotGenerator;
 import gg.pingpong.api.user.season.service.SeasonFindService;
-import gg.pingpong.api.user.user.dto.UserDto;
 import gg.repo.game.GameRepository;
 import gg.repo.manage.SlotManagementRepository;
 import gg.repo.match.RedisMatchTimeRepository;

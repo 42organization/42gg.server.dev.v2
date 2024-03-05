@@ -1,5 +1,8 @@
 package gg.data.party;
 
+import static gg.utils.exception.BusinessChecker.*;
+import static gg.utils.exception.ErrorCode.*;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -35,5 +38,21 @@ public class UserRoom extends BaseTimeEntity {
 	private String nickname;
 
 	@Column(name = "is_exist")
-	private Boolean isExist;
+	private boolean isExist;
+
+	public UserRoom(User user, Room room, String randomNickname) {
+		this.user = user;
+		this.room = room;
+		this.nickname = randomNickname;
+		this.isExist = true;
+	}
+
+	public void updateIsExist(boolean isExist) {
+		mustNotNull(isExist, NULL_POINT);
+		this.isExist = isExist;
+	}
+
+	public boolean getIsExist() {
+		return this.isExist;
+	}
 }
