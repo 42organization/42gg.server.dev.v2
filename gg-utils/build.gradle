@@ -39,7 +39,7 @@ def jacocoExcludes = [
 
 
 integrationTestCoverageReport {
-    dependsOn ':gg-admin-repo:unitTest', ':gg-data:unitTest', ':gg-repo:unitTest', ':gg-pingpong-api:unitTest', ':gg-auth:unitTest', ':gg-utils:unitTest'
+    dependsOn(':gg-admin-repo:integrationTest', ':gg-data:integrationTest', ':gg-repo:integrationTest', ':gg-pingpong-api:integrationTest', ':gg-auth:integrationTest', ':gg-utils:integrationTest')
 
     reports {
         html.required = true
