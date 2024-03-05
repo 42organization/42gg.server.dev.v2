@@ -29,6 +29,6 @@ public class CommentAdminController {
 	public ResponseEntity<Void> hideComment(@PathVariable Long commentId,
 		@RequestBody CommentUpdateAdminRequestDto reqDto, @Login UserDto user) {
 		commentAdminService.hideComment(commentId, reqDto);
-		return ResponseEntity.status(HttpStatus.OK).build();
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 }
