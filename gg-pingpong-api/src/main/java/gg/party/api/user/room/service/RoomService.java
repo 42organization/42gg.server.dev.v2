@@ -21,6 +21,7 @@ import gg.data.party.type.RoomType;
 import gg.data.user.User;
 import gg.party.api.user.room.controller.request.RoomCreateReqDto;
 import gg.party.api.user.room.controller.response.CommentResDto;
+import gg.party.api.user.room.controller.response.LeaveRoomResDto;
 import gg.party.api.user.room.controller.response.RoomDetailResDto;
 import gg.party.api.user.room.controller.response.RoomListResDto;
 import gg.party.api.user.room.controller.response.RoomResDto;
@@ -30,8 +31,11 @@ import gg.repo.party.CommentRepository;
 import gg.repo.party.RoomRepository;
 import gg.repo.party.UserRoomRepository;
 import gg.repo.user.UserRepository;
+import gg.utils.exception.ErrorCode;
 import gg.utils.exception.party.CategoryNotFoundException;
 import gg.utils.exception.party.RoomNotFoundException;
+import gg.utils.exception.party.RoomNotOpenException;
+import gg.utils.exception.party.RoomNotParticipantException;
 import gg.utils.exception.party.RoomReportedException;
 import gg.utils.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -133,6 +137,52 @@ public class RoomService {
 	}
 
 	/**
+	 * 유저가 방을 나간다
+	 * 참가자가 방에 참가한 상태일때만 취소해 준다.
+	 * @param roomId
+	 * @param user 참여 유저(사용자 본인)
+	 * @throws RoomNotFoundException 방 없음 || 방 입장자가 아님
+	 * @return
+	 */
+	@Transactional
+	public LeaveRoomResDto modifyOrderLeaveRoom(Long roomId, UserDto user) {
+		Room targetRoom = roomRepository.findById(roomId)
+			.orElseThrow(RoomNotFoundException::new);
+		if (!targetRoom.getStatus().equals(RoomType.OPEN)) {
+			throw new RoomNotOpenException();
+		}
+
+		UserRoom targetUserRoom = userRoomRepository.findByUserAndRoom(userRepository.findById(user.getId()).get(),
+			targetRoom).orElseThrow(RoomNotParticipantException::new);
+
+		// 모두 나갈 때 방 fail처리
+		if (targetRoom.getCurrentPeople() == 1) {
+			targetRoom.updateCurrentPeople(0);
+			targetRoom.updateStatus(RoomType.FAIL);
+			targetUserRoom.updateIsExist(false);
+			roomRepository.save(targetRoom);
+			userRoomRepository.save(targetUserRoom);
+			return new LeaveRoomResDto(targetUserRoom.getNickname());
+		}
+
+		// 방장 이권
+		if (user.getId().equals(targetRoom.getHost().getId())) {
+			List<User> existUser = userRoomRepository.findByIsExist(roomId);
+			if (existUser.isEmpty()) {
+				throw new RoomNotFoundException(ErrorCode.ROOM_NOT_FOUND);
+			}
+			targetRoom.updateHost(existUser.get(0));
+		}
+
+		targetRoom.updateCurrentPeople(targetRoom.getCurrentPeople() - 1);
+		targetUserRoom.updateIsExist(false);
+		userRoomRepository.save(targetUserRoom);
+		roomRepository.save(targetRoom);
+
+		return new LeaveRoomResDto(targetUserRoom.getNickname());
+	}
+
+	/**
 	 * 방의 상세정보를 조회한다
 	 * @param userId 자신의 id
 	 * @param roomId 방 id
@@ -144,7 +194,7 @@ public class RoomService {
 	@Transactional
 	public RoomDetailResDto findOrderRoomDetail(Long userId, Long roomId) {
 		Room room = roomRepository.findById(roomId)
-			.orElseThrow(() -> new RoomNotFoundException(roomId + "번 방을 찾을 수 없습니다."));
+			.orElseThrow(() -> new RoomNotFoundException(ErrorCode.ROOM_NOT_FOUND));
 		if (room.getStatus() == RoomType.HIDDEN) {
 			throw new RoomReportedException(roomId + "번방은 신고 상태로 접근이 불가능합니다.");
 		}

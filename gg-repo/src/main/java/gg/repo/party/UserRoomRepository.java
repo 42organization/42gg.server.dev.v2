@@ -17,6 +17,10 @@ public interface UserRoomRepository extends JpaRepository<UserRoom, Long> {
 
 	List<UserRoom> findByRoomId(Long roomId);
 
+	@Query("SELECT ur.user FROM UserRoom ur WHERE ur.room.id = :roomId AND ur.isExist = true "
+		+ "ORDER BY ur.modifiedAt ASC")
+	List<User> findByIsExist(@Param("roomId") Long roomId);
+
 	Optional<UserRoom> findByUserAndRoom(User user, Room room);
 
 	@Query("SELECT ur.room FROM UserRoom ur WHERE ur.user.id = :userId AND ur.isExist = true "
