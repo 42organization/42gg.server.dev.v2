@@ -22,7 +22,7 @@ reporting {
 reporting {
     reports {
         integrationTestCoverageReport(JacocoCoverageReport) {
-            testType = TestSuiteType.UNIT_TEST
+            testType = TestSuiteType.INTEGRATION_TEST
         }
     }
 }
@@ -55,6 +55,8 @@ integrationTestCoverageReport {
 
 
 unitTestCoverageReport {
+    dependsOn(':gg-pingpong-api:test')
+
     reports {
         html.required = true
         csv.required = false
