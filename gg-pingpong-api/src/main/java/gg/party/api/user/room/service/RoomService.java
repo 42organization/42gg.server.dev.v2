@@ -50,7 +50,7 @@ public class RoomService {
 	 * @return 시작하지 않은 방 (최신순) + 시작한 방(끝나는 시간이 빠른 순) 전체 List
 	 */
 	@Transactional
-	public RoomListResDto findOrderRoomList() {
+	public RoomListResDto findRoomList() {
 		Sort sortForNotStarted = Sort.by("createdAt").descending();
 		Sort sortForStarted = Sort.by("dueDate").ascending();
 
@@ -74,7 +74,7 @@ public class RoomService {
 	 * @return 만들어진 방 ID값
 	 */
 	@Transactional
-	public Long addOrderCreateRoom(RoomCreateReqDto roomCreateReqDto, UserDto userDto) {
+	public Long addCreateRoom(RoomCreateReqDto roomCreateReqDto, UserDto userDto) {
 		User user = userRepository.findById(userDto.getId()).get();
 		Category category = categoryRepository.findById(roomCreateReqDto.getCategoryId())
 			.orElseThrow(CategoryNotFoundException::new);
@@ -93,7 +93,7 @@ public class RoomService {
 	 * @return 참여한 방 전체 List
 	 */
 	@Transactional
-	public RoomListResDto findOrderJoinedRoomList(Long userId) {
+	public RoomListResDto findJoinedRoomList(Long userId) {
 		List<UserRoom> userRooms = userRoomRepository.findByUserId(userId);
 		List<Room> joinedRooms = userRooms.stream()
 			.map(UserRoom::getRoom)
@@ -122,7 +122,7 @@ public class RoomService {
 	 * @return 끝난 방 전체 List
 	 */
 	@Transactional
-	public RoomListResDto findOrderMyHistoryRoomList(Long userId) {
+	public RoomListResDto findMyHistoryRoomList(Long userId) {
 		List<Room> finishRooms = userRoomRepository.findFinishRoomsByUserId(userId, RoomType.FINISH);
 
 		List<RoomResDto> roomListResDto = finishRooms.stream()
@@ -142,7 +142,7 @@ public class RoomService {
 	 * @return 방 상세정보 dto
 	 */
 	@Transactional
-	public RoomDetailResDto findOrderRoomDetail(Long userId, Long roomId) {
+	public RoomDetailResDto findRoomDetail(Long userId, Long roomId) {
 		Room room = roomRepository.findById(roomId)
 			.orElseThrow(RoomNotFoundException::new);
 		if (room.getStatus() == RoomType.HIDDEN) {

@@ -24,4 +24,6 @@ public interface UserRoomRepository extends JpaRepository<UserRoom, Long> {
 	List<Room> findFinishRoomsByUserId(@Param("userId") Long userId, @Param("status") RoomType status);
 
 	Optional<UserRoom> findByUserIdAndRoomIdAndIsExistTrue(Long userId, Long roomId);
+
+	Optional<UserRoom> findByUserAndRoomAndIsExist(User user, Room room, boolean isExist);
 }

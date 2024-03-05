@@ -32,7 +32,7 @@ public class CommentController {
 	@PostMapping
 	public ResponseEntity<Void> createComment(@PathVariable Long roomId, @Valid @RequestBody CommentCreateReqDto reqDto,
 		@Login UserDto user) {
-		commentService.createComment(roomId, reqDto, user.getId());
+		commentService.addCreateComment(roomId, reqDto, user.getId());
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 }

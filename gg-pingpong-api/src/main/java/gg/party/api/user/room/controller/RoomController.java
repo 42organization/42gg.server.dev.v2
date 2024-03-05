@@ -30,7 +30,7 @@ public class RoomController {
 	 */
 	@GetMapping
 	public ResponseEntity<RoomListResDto> allActiveRoomList() {
-		RoomListResDto roomListResDto = roomService.findOrderRoomList();
+		RoomListResDto roomListResDto = roomService.findRoomList();
 		return ResponseEntity.status(HttpStatus.OK).body(roomListResDto);
 	}
 
@@ -43,7 +43,7 @@ public class RoomController {
 	@PostMapping
 	public ResponseEntity<Long> createRoom(@RequestBody RoomCreateReqDto roomCreateReqDto,
 		@Parameter(hidden = true) @Login UserDto user) {
-		Long roomId = roomService.addOrderCreateRoom(roomCreateReqDto, user);
+		Long roomId = roomService.addCreateRoom(roomCreateReqDto, user);
 		return ResponseEntity.status(HttpStatus.CREATED).body(roomId);
 	}
 
@@ -53,7 +53,7 @@ public class RoomController {
 	 */
 	@GetMapping("/joined")
 	public ResponseEntity<RoomListResDto> allJoinedRoomList(@Parameter(hidden = true) @Login UserDto user) {
-		RoomListResDto roomListResDto = roomService.findOrderJoinedRoomList(user.getId());
+		RoomListResDto roomListResDto = roomService.findJoinedRoomList(user.getId());
 		return ResponseEntity.status(HttpStatus.OK).body(roomListResDto);
 	}
 
@@ -63,7 +63,7 @@ public class RoomController {
 	 */
 	@GetMapping("/history")
 	public ResponseEntity<RoomListResDto> myHistoryRoomList(@Parameter(hidden = true) @Login UserDto user) {
-		RoomListResDto roomListResDto = roomService.findOrderMyHistoryRoomList(user.getId());
+		RoomListResDto roomListResDto = roomService.findMyHistoryRoomList(user.getId());
 		return ResponseEntity.status(HttpStatus.OK).body(roomListResDto);
 	}
 
@@ -76,7 +76,7 @@ public class RoomController {
 	@GetMapping("/{room_id}")
 	public ResponseEntity<RoomDetailResDto> roomDetailInfo(@Parameter(hidden = true) @Login UserDto user,
 		@PathVariable("room_id") Long roomId) {
-		RoomDetailResDto roomDetailResDto = roomService.findOrderRoomDetail(user.getId(), roomId);
+		RoomDetailResDto roomDetailResDto = roomService.findRoomDetail(user.getId(), roomId);
 		return ResponseEntity.status(HttpStatus.OK).body(roomDetailResDto);
 	}
 }

@@ -33,14 +33,14 @@ public class CommentService {
 	 * @param reqDto 댓글 정보
 	 */
 	@Transactional
-	public void createComment(Long roomId, CommentCreateReqDto reqDto, Long userId) {
+	public void addCreateComment(Long roomId, CommentCreateReqDto reqDto, Long userId) {
 		Room room = roomRepository.findById(roomId)
 			.orElseThrow(RoomNotFoundException::new);
 		if (LocalDateTime.now().isAfter(room.getDueDate())) {
 			throw new RoomUpdateException();
 		}
 		User user = userRepository.findById(userId).get();
-		UserRoom userRoom = userRoomRepository.findByUserAndRoom(user, room)
+		UserRoom userRoom = userRoomRepository.findByUserAndRoomAndIsExist(user, room, true)
 			.orElseThrow(RoomUpdateException::new);
 		Comment comment = new Comment(user, userRoom, room, reqDto.getContent());
 		commentRepository.save(comment);
