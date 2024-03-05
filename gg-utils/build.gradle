@@ -39,6 +39,8 @@ def jacocoExcludes = [
 
 
 integrationTestCoverageReport {
+    dependsOn ':gg-admin-repo:unitTest', ':gg-data:unitTest', ':gg-repo:unitTest', ':gg-pingpong-api:unitTest', ':gg-auth:unitTest', ':gg-utils:unitTest'
+
     reports {
         html.required = true
         csv.required = false
@@ -48,14 +50,14 @@ integrationTestCoverageReport {
     getClassDirectories().setFrom(files(
             [project(':gg-data'), project(':gg-admin-repo'),
              project(':gg-repo'), project(':gg-pingpong-api')].collect {
-                it.fileTree(dir: "${it.buildDir}/classes/java/main", exclude: jacocoExcludes)
+                it.fileTree(dir: "${it.layout.buildDirectory.get().asFile}/classes/java/main", exclude: jacocoExcludes)
             }
     ))
 }
 
 
 unitTestCoverageReport {
-    dependsOn(':gg-pingpong-api:test')
+    dependsOn ':gg-admin-repo:unitTest', ':gg-data:unitTest', ':gg-repo:unitTest', ':gg-pingpong-api:unitTest', ':gg-auth:unitTest', ':gg-utils:unitTest'
 
     reports {
         html.required = true
@@ -66,7 +68,7 @@ unitTestCoverageReport {
     getClassDirectories().setFrom(files(
             [project(':gg-data'), project(':gg-admin-repo'),
              project(':gg-repo'), project(':gg-pingpong-api')].collect {
-                it.fileTree(dir: "${it.buildDir}/classes/java/main", exclude: jacocoExcludes)
+                it.fileTree(dir: "${it.layout.buildDirectory.get().asFile}/classes/java/main", exclude: jacocoExcludes)
             }
     ))
 }
