@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import gg.auth.UserDto;
 import gg.data.noti.type.NotiType;
 import gg.data.tournament.Tournament;
 import gg.data.tournament.TournamentGame;
@@ -32,7 +33,6 @@ import gg.pingpong.api.user.tournament.controller.response.TournamentGameResDto;
 import gg.pingpong.api.user.tournament.controller.response.TournamentListResponseDto;
 import gg.pingpong.api.user.tournament.controller.response.TournamentResponseDto;
 import gg.pingpong.api.user.tournament.controller.response.TournamentUserRegistrationResponseDto;
-import gg.pingpong.api.user.user.dto.UserDto;
 import gg.repo.game.GameRepository;
 import gg.repo.game.out.GameTeamUser;
 import gg.repo.tournarment.TournamentGameRepository;

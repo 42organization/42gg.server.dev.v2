@@ -1,4 +1,4 @@
-package gg.pingpong.api.user.user.dto;
+package gg.auth;
 
 import gg.data.user.User;
 import gg.data.user.type.RacketType;

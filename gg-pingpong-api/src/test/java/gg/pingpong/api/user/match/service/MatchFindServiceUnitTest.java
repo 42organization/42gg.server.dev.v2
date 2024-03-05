@@ -21,6 +21,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import gg.auth.UserDto;
 import gg.data.game.Game;
 import gg.data.game.type.StatusType;
 import gg.data.manage.SlotManagement;
@@ -32,7 +33,6 @@ import gg.data.season.Season;
 import gg.data.user.User;
 import gg.pingpong.api.user.match.utils.SlotGenerator;
 import gg.pingpong.api.user.season.service.SeasonFindService;
-import gg.pingpong.api.user.user.dto.UserDto;
 import gg.repo.game.GameRepository;
 import gg.repo.manage.SlotManagementRepository;
 import gg.repo.match.RedisMatchTimeRepository;

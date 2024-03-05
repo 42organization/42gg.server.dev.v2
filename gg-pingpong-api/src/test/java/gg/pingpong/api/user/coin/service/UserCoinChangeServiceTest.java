@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import gg.auth.utils.AuthTokenProvider;
 import gg.data.game.Game;
 import gg.data.game.type.Mode;
 import gg.data.season.Season;
@@ -17,7 +18,6 @@ import gg.data.store.CoinPolicy;
 import gg.data.store.Item;
 import gg.data.store.type.ItemType;
 import gg.data.user.User;
-import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.user.store.dto.UserGameCoinResultDto;
 import gg.pingpong.api.user.store.service.CoinHistoryService;
 import gg.pingpong.api.user.store.service.UserCoinChangeService;

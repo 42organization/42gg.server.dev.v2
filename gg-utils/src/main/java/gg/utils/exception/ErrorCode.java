@@ -158,9 +158,12 @@ public enum ErrorCode {
 	ROOM_NOT_FOUND(404, "PT102", "존재하지 않는 방입니다."),
 	USER_NOT_IN_ROOM(404, "PT103", "방에 존재하지 않는 유저입니다."),
 	ROOM_REPORTED_ERROR(404, "PT104", "신고 상태로 접근이 불가능합니다."),
-	COMMENT_NOT_FOUND(404, "PT105", "존재하지 않는 댓글입니다."),
+	USER_NOT_EXIST(404, "PT105", "방에 유저가 존재하지 않습니다."),
+  COMMENT_NOT_FOUND(404, "PT106", "존재하지 않는 댓글입니다."),
 	COMMENT_TOO_LONG(400, "PT201", "댓글은 100자 이하로 작성해주세요."),
-	ROOM_FINISHED(403, "PT501", "마감된 방입니다.");
+	ROOM_FINISHED(403, "PT501", "마감된 방입니다."),
+	ROOM_NOT_PARTICIPANT(400, "PT002", "해당 방의 참여자가 아닙니다."),
+	ROOM_NOT_OPEN(400, "PT003", "해당 방의 참여자가 아닙니다.");
 
 	private final int status;
 	private final String errCode;

@@ -16,8 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import gg.auth.UserDto;
+import gg.auth.argumentresolver.Login;
 import gg.data.game.type.Mode;
-import gg.pingpong.api.global.utils.argumentresolver.Login;
 import gg.pingpong.api.user.game.controller.request.GameListReqDto;
 import gg.pingpong.api.user.game.controller.request.NormalGameListReqDto;
 import gg.pingpong.api.user.game.controller.request.NormalResultReqDto;
@@ -30,7 +31,6 @@ import gg.pingpong.api.user.game.dto.GameTeamInfo;
 import gg.pingpong.api.user.game.service.GameFindService;
 import gg.pingpong.api.user.game.service.GameService;
 import gg.pingpong.api.user.rank.redis.RankRedisService;
-import gg.pingpong.api.user.user.dto.UserDto;
 import gg.utils.exception.ErrorCode;
 import gg.utils.exception.custom.BusinessException;
 import gg.utils.exception.custom.InvalidParameterException;
