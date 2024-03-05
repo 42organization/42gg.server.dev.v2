@@ -1,5 +1,7 @@
 package gg.party.api.admin.room.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,11 +23,7 @@ public class RoomAdminController {
 
 	@PatchMapping("/{roomId}")
 	public ResponseEntity<Void> changeRoomVisibility(@PathVariable Long roomId,
-		@RequestBody RoomShowChangeReqDto reqDto) {
-
-		if (reqDto.getStatus() == null) {
-			return ResponseEntity.badRequest().build();
-		}
+		@Valid @RequestBody RoomShowChangeReqDto reqDto) {
 
 		RoomType roomType;
 		try {
