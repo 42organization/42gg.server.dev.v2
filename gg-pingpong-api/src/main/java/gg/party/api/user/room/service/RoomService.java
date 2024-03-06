@@ -156,11 +156,7 @@ public class RoomService {
 			throw new RoomNotOpenException(ErrorCode.ROOM_NOT_OPEN);
 		}
 
-		Optional<User> userEntity = userRepository.findById(user.getId());
-		if (userEntity.isEmpty()) {
-			throw new UserNotFoundException();
-		}
-		UserRoom targetUserRoom = userRoomRepository.findByUserAndRoom(userEntity.get(),
+		UserRoom targetUserRoom = userRoomRepository.findByUserAndRoom(userRepository.findById(user.getId()).get(),
 			targetRoom).orElseThrow(RoomNotParticipantException::new);
 
 		// 모두 나갈 때 방 fail처리
@@ -209,11 +205,7 @@ public class RoomService {
 			|| targetRoom.getMaxPeople() < targetRoom.getCurrentPeople()) {
 			throw new RoomNotEnoughPeopleException();
 		}
-		Optional<User> userEntity = userRepository.findById(user.getId());
-		if (userEntity.isEmpty()) {
-			throw new UserNotFoundException();
-		}
-		UserRoom targetUserRoom = userRoomRepository.findByUserAndRoom(userEntity.get(),
+		UserRoom targetUserRoom = userRoomRepository.findByUserAndRoom(userRepository.findById(user.getId()).get(),
 			targetRoom).orElseThrow(RoomNotParticipantException::new);
 		if (targetRoom.getHost() != targetUserRoom.getUser()) {
 			throw new NotHostException();
