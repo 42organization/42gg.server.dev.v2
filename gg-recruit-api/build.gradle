@@ -1,0 +1,31 @@
+plugins {
+    id 'java'
+}
+
+group 'gg.api'
+version '42gg'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    /* spring */
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+    /* StringUtils */
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    testImplementation testFixtures(project(':gg-utils'))
+}
+
+test {
+    useJUnitPlatform()
+}

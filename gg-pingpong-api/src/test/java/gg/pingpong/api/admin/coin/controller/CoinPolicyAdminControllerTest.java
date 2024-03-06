@@ -18,11 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.admin.repo.store.CoinPolicyAdminRepository;
-
-import gg.data.pingpong.store.CoinPolicy;
-
 import gg.auth.utils.AuthTokenProvider;
-
+import gg.data.pingpong.store.CoinPolicy;
 import gg.data.user.User;
 import gg.pingpong.api.admin.store.controller.response.CoinPolicyAdminListResponseDto;
 import gg.pingpong.api.admin.store.dto.CoinPolicyAdminAddDto;
@@ -38,18 +35,14 @@ import lombok.RequiredArgsConstructor;
 class CoinPolicyAdminControllerTest {
 	@Autowired
 	TestDataUtils testDataUtils;
-
-	@Autowired
-	private MockMvc mockMvc;
-
 	@Autowired
 	ObjectMapper objectMapper;
-
 	@Autowired
 	AuthTokenProvider tokenProvider;
-
 	@Autowired
 	CoinPolicyAdminRepository coinPolicyAdminRepository;
+	@Autowired
+	private MockMvc mockMvc;
 
 	@Test
 	@DisplayName("[Get]/pingpong/admin/coinpolicy")
