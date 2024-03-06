@@ -56,6 +56,9 @@ subprojects {
         implementation 'org.springframework.boot:spring-boot-starter-data-redis'
         implementation 'org.redisson:redisson:3.17.3'
 
+        //devtools
+        implementation 'org.springframework.boot:spring-boot-devtools'
+
         /* spring doc */
         implementation 'org.springdoc:springdoc-openapi-ui:1.6.6'
 
@@ -237,6 +240,19 @@ subprojects {
 
 project(':gg-pingpong-api') {
     bootJar { enabled = true }
+    jar { enabled = true }
+    dependencies {
+        implementation project(':gg-data')
+        implementation project(':gg-repo')
+        implementation project(':gg-admin-repo')
+        implementation project(':gg-utils')
+        implementation project(':gg-auth')
+        implementation project(':gg-recruit-api')
+    }
+}
+
+project(':gg-pingpong-api') {
+    bootJar { enabled = false }
     jar { enabled = true }
     dependencies {
         implementation project(':gg-data')
