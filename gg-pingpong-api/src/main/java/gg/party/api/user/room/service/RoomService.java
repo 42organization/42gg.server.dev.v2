@@ -153,11 +153,8 @@ public class RoomService {
 		if (!targetRoom.getStatus().equals(RoomType.OPEN)) {
 			throw new RoomNotOpenException();
 		}
-		List<UserRoom> userRoomList = userRoomRepository.findByUserId(user.getId());
-		UserRoom targetUserRoom = userRoomList.stream()
-			.filter(tu -> (tu.getUser().getId().equals(user.getId())))
-			.findAny()
-			.orElseThrow(() -> new RoomNotParticipantException(ErrorCode.ROOM_NOT_PARTICIPANT));
+		UserRoom targetUserRoom = userRoomRepository.findByUserAndRoom(userRepository.findById(user.getId()).get(),
+			targetRoom).orElseThrow(RoomNotParticipantException::new);
 
 		// 모두 나갈 때 방 fail처리
 		if (targetRoom.getCurrentPeople() == 1) {
