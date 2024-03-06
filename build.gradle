@@ -251,7 +251,7 @@ project(':gg-pingpong-api') {
     }
 }
 
-project(':gg-pingpong-api') {
+project(':gg-recruit-api') {
     bootJar { enabled = false }
     jar { enabled = true }
     dependencies {
