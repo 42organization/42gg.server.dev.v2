@@ -48,4 +48,10 @@ public class Comment extends BaseTimeEntity {
 		this.content = content;
 		this.isHidden = false;
 	}
+
+	public void updateHidden(boolean isHidden) {
+		this.isHidden = isHidden;
+	}
+
 }
+
