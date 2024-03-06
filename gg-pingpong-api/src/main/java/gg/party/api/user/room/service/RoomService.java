@@ -98,7 +98,7 @@ public class RoomService {
 	 * @return 참여한 방 전체 List
 	 */
 	@Transactional
-	public RoomListResDto findOrderJoinedRoomList(Long userId) {
+	public RoomListResDto findJoinedRoomList(Long userId) {
 		List<UserRoom> userRooms = userRoomRepository.findByUserId(userId);
 		List<Room> joinedRooms = userRooms.stream()
 			.map(UserRoom::getRoom).sorted(Comparator.comparing(Room::getDueDate)).toList();

@@ -56,7 +56,7 @@ public class RoomController {
 	 */
 	@GetMapping("/joined")
 	public ResponseEntity<RoomListResDto> allJoinedRoomList(@Parameter(hidden = true) @Login UserDto user) {
-		RoomListResDto roomListResDto = roomService.findOrderJoinedRoomList(user.getId());
+		RoomListResDto roomListResDto = roomService.findJoinedRoomList(user.getId());
 		return ResponseEntity.status(HttpStatus.OK).body(roomListResDto);
 	}
 
