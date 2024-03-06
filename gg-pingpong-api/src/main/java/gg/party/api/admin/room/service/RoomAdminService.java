@@ -20,7 +20,7 @@ public class RoomAdminService {
 		Room room = roomRepository.findById(roomId)
 			.orElseThrow(RoomNotFoundException::new);
 
-		if (room.getStatus() == newStatus) {
+		if (RoomType.HIDDEN == room.getStatus() && RoomType.HIDDEN == newStatus) {
 			throw new RoomAlreadyHiddenException();
 		}
 
