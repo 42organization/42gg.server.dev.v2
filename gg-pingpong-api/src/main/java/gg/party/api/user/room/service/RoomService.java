@@ -2,6 +2,7 @@ package gg.party.api.user.room.service;
 
 import static gg.party.api.user.room.utils.GenerateRandomNickname.*;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -101,12 +102,16 @@ public class RoomService {
 	public RoomListResDto findJoinedRoomList(Long userId) {
 		List<UserRoom> userRooms = userRoomRepository.findByUserId(userId);
 		List<Room> joinedRooms = userRooms.stream()
-			.map(UserRoom::getRoom).sorted(Comparator.comparing(Room::getDueDate)).toList();
+			.map(UserRoom::getRoom)
+			.collect(Collectors.toList());
+
+		Collections.sort(joinedRooms, Comparator.comparing(Room::getDueDate));
 
 		List<Room> playingRoom = joinedRooms.stream()
 			.filter(room -> room.getStatus() == RoomType.OPEN || room.getStatus() == RoomType.START)
-			.sorted(Comparator.comparing(Room::getDueDate))
-			.toList();
+			.collect(Collectors.toList());
+
+		Collections.sort(playingRoom, Comparator.comparing(Room::getDueDate));
 
 		List<RoomResDto> roomListResDto = playingRoom.stream()
 			.map(RoomResDto::new)
