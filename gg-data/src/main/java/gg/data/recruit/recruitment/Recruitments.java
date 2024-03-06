@@ -10,9 +10,11 @@ import javax.persistence.Id;
 
 import gg.data.BaseTimeEntity;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Recruitments extends BaseTimeEntity {
 	@Id
@@ -34,6 +36,5 @@ public class Recruitments extends BaseTimeEntity {
 	@Column(nullable = false)
 	private LocalDateTime startTime;
 	@Column(nullable = false)
-
 	private LocalDateTime endTime;
 }

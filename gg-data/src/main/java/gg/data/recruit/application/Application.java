@@ -16,10 +16,12 @@ import gg.data.recruit.application.enums.ApplicationStatus;
 import gg.data.recruit.recruitment.Recruitments;
 import gg.data.user.User;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class Application extends BaseTimeEntity {
 
 	@Id
@@ -32,7 +34,7 @@ public class Application extends BaseTimeEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "recruit_id", nullable = false)
-	private Recruitments recruitId;
+	private Recruitments recruit;
 
 	private Boolean isDeleted;
 
