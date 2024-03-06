@@ -5,12 +5,12 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import gg.data.party.Room;
 import gg.data.party.UserRoom;
 import gg.data.party.type.RoomType;
 import gg.data.user.User;
-import io.lettuce.core.dynamic.annotation.Param;
 
 public interface UserRoomRepository extends JpaRepository<UserRoom, Long> {
 	List<UserRoom> findByUserId(Long userId);
