@@ -5,6 +5,6 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class CommentUpdateAdminRequestDto {
+public class CommentUpdateAdminReqDto {
 	private Boolean isHidden;
 }

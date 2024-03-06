@@ -7,8 +7,4 @@ public class RoomNotOpenException extends NotExistException {
 	public RoomNotOpenException() {
 		super(ErrorCode.ROOM_NOT_OPEN.getMessage(), ErrorCode.ROOM_NOT_OPEN);
 	}
-
-	public RoomNotOpenException(ErrorCode errorCode) {
-		super(errorCode.getMessage(), errorCode);
-	}
 }

@@ -1,5 +1,7 @@
 package gg.party.api.user.comment.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,9 +30,9 @@ public class CommentController {
 	 * @return 생성 성공 여부
 	 */
 	@PostMapping
-	public ResponseEntity<Void> createComment(@PathVariable Long roomId, @RequestBody CommentCreateReqDto reqDto,
+	public ResponseEntity<Void> createComment(@PathVariable Long roomId, @Valid @RequestBody CommentCreateReqDto reqDto,
 		@Login UserDto user) {
-		commentService.createComment(roomId, reqDto, user.getId());
+		commentService.addCreateComment(roomId, reqDto, user.getId());
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 }

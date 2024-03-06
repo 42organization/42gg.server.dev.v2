@@ -7,8 +7,4 @@ public class RoomNotParticipantException extends NotExistException {
 	public RoomNotParticipantException() {
 		super(ErrorCode.ROOM_NOT_PARTICIPANT.getMessage(), ErrorCode.ROOM_NOT_PARTICIPANT);
 	}
-
-	public RoomNotParticipantException(ErrorCode errorCode) {
-		super(errorCode.getMessage(), errorCode);
-	}
 }

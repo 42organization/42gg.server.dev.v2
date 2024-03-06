@@ -2,7 +2,6 @@ package gg.party.api.user.room.service;
 
 import static gg.party.api.user.room.utils.GenerateRandomNickname.*;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -34,14 +33,13 @@ import gg.repo.party.UserRoomRepository;
 import gg.repo.user.UserRepository;
 import gg.utils.exception.ErrorCode;
 import gg.utils.exception.party.CategoryNotFoundException;
-import gg.utils.exception.party.NotHostException;
 import gg.utils.exception.party.RoomNotEnoughPeopleException;
 import gg.utils.exception.party.RoomNotFoundException;
 import gg.utils.exception.party.RoomNotOpenException;
 import gg.utils.exception.party.RoomNotParticipantException;
 import gg.utils.exception.party.RoomReportedException;
 import gg.utils.exception.party.UserAlreadyInRoom;
-import gg.utils.exception.user.UserNotFoundException;
+import gg.utils.exception.party.UserNotHostException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -58,7 +56,7 @@ public class RoomService {
 	 * @return 시작하지 않은 방 (최신순) + 시작한 방(끝나는 시간이 빠른 순) 전체 List
 	 */
 	@Transactional
-	public RoomListResDto findOrderRoomList() {
+	public RoomListResDto findRoomList() {
 		Sort sortForNotStarted = Sort.by("createdAt").descending();
 		Sort sortForStarted = Sort.by("dueDate").ascending();
 
@@ -77,12 +75,11 @@ public class RoomService {
 	 * 방 생성하고 닉네임 부여
 	 * @param roomCreateReqDto 요청 DTO
 	 * @param userDto user객체를 보내기 위한 DTO객체
-	 * @exception UserNotFoundException 유효하지 않은 유저 입력
 	 * @exception CategoryNotFoundException 유효하지 카테고리 입력
 	 * @return 만들어진 방 ID값
 	 */
 	@Transactional
-	public Long addOrderCreateRoom(RoomCreateReqDto roomCreateReqDto, UserDto userDto) {
+	public Long addCreateRoom(RoomCreateReqDto roomCreateReqDto, UserDto userDto) {
 		User user = userRepository.findById(userDto.getId()).get();
 		Category category = categoryRepository.findById(roomCreateReqDto.getCategoryId())
 			.orElseThrow(CategoryNotFoundException::new);
@@ -104,16 +101,12 @@ public class RoomService {
 	public RoomListResDto findOrderJoinedRoomList(Long userId) {
 		List<UserRoom> userRooms = userRoomRepository.findByUserId(userId);
 		List<Room> joinedRooms = userRooms.stream()
-			.map(UserRoom::getRoom)
-			.collect(Collectors.toList());
-
-		Collections.sort(joinedRooms, Comparator.comparing(Room::getDueDate));
+			.map(UserRoom::getRoom).sorted(Comparator.comparing(Room::getDueDate)).toList();
 
 		List<Room> playingRoom = joinedRooms.stream()
 			.filter(room -> room.getStatus() == RoomType.OPEN || room.getStatus() == RoomType.START)
-			.collect(Collectors.toList());
-
-		Collections.sort(playingRoom, Comparator.comparing(Room::getDueDate));
+			.sorted(Comparator.comparing(Room::getDueDate))
+			.toList();
 
 		List<RoomResDto> roomListResDto = playingRoom.stream()
 			.map(RoomResDto::new)
@@ -130,7 +123,7 @@ public class RoomService {
 	 * @return 끝난 방 전체 List
 	 */
 	@Transactional
-	public RoomListResDto findOrderMyHistoryRoomList(Long userId) {
+	public RoomListResDto findMyHistoryRoomList(Long userId) {
 		List<Room> finishRooms = userRoomRepository.findFinishRoomsByUserId(userId, RoomType.FINISH);
 
 		List<RoomResDto> roomListResDto = finishRooms.stream()
@@ -147,7 +140,7 @@ public class RoomService {
 	 * @param user 참여 유저(사용자 본인)
 	 * @throws RoomNotFoundException 방 없음
 	 * @throws RoomNotOpenException 방이 대기 상태가 아님
-	 * @throws RoomNotParticipantException 방 입장자가 아님
+	 * @throws RoomNotParticipantException 방 참여자가 아님
 	 * @return 나간 사람의 닉네임
 	 */
 	@Transactional
@@ -155,7 +148,7 @@ public class RoomService {
 		Room targetRoom = roomRepository.findById(roomId)
 			.orElseThrow(RoomNotFoundException::new);
 		if (!targetRoom.getStatus().equals(RoomType.OPEN)) {
-			throw new RoomNotOpenException(ErrorCode.ROOM_NOT_OPEN);
+			throw new RoomNotOpenException();
 		}
 		UserRoom targetUserRoom = userRoomRepository.findByUserAndRoom(userRepository.findById(user.getId()).get(),
 			targetRoom).orElseThrow(RoomNotParticipantException::new);
@@ -185,14 +178,14 @@ public class RoomService {
 	}
 
 	/**
-	 * <p>방을 시작 상태로 바꾼다</p>
-	 * <p>방의 상태를 시작 상태로 변경.</p>
+	 * 방을 시작 상태로 바꾼다
+	 * 방의 상태를 시작 상태로 변경.
 	 * @param roomId, user
 	 * @throws RoomNotFoundException 방 없음
 	 * @throws RoomNotOpenException 방이 열리지 않은 상태
 	 * @throws RoomNotEnoughPeopleException 방에 충분한 인원이 없음
-	 * @throws RoomNotParticipantException 방에 참가하지 않은 사용자
-	 * @throws NotHostException 방장이 아닌 경우
+	 * @throws RoomNotParticipantException 방에 참가하지 않은 유저
+	 * @throws UserNotHostException 방장이 아닌 경우
 	 * @return 방 id
 	 */
 	@Transactional
@@ -209,7 +202,7 @@ public class RoomService {
 		UserRoom targetUserRoom = userRoomRepository.findByUserAndRoom(userRepository.findById(user.getId()).get(),
 			targetRoom).orElseThrow(RoomNotParticipantException::new);
 		if (targetRoom.getHost() != targetUserRoom.getUser()) {
-			throw new NotHostException();
+			throw new UserNotHostException();
 		}
 		targetRoom.updateStatus(RoomType.START);
 		roomRepository.save(targetRoom);
@@ -222,16 +215,16 @@ public class RoomService {
 	 * @param userId 자신의 id
 	 * @param roomId 방 id
 	 * @exception RoomNotFoundException 유효하지 않은 방 입력
-	 * @exception RoomReportedException 신고 받은 방 처리
+	 * @exception RoomReportedException 신고 받은 방 처리 | 시작한 방도 볼 수 있게 해야하므로 별도처리
 	 * 익명성을 지키기 위해 nickname을 리턴
 	 * @return 방 상세정보 dto
 	 */
 	@Transactional
-	public RoomDetailResDto findOrderRoomDetail(Long userId, Long roomId) {
+	public RoomDetailResDto findRoomDetail(Long userId, Long roomId) {
 		Room room = roomRepository.findById(roomId)
-			.orElseThrow(() -> new RoomNotFoundException(ErrorCode.ROOM_NOT_FOUND));
+			.orElseThrow(RoomNotFoundException::new);
 		if (room.getStatus() == RoomType.HIDDEN) {
-			throw new RoomReportedException(roomId + "번방은 신고 상태로 접근이 불가능합니다.");
+			throw new RoomReportedException();
 		}
 
 		List<UserRoomResDto> roomUsers = userRoomRepository.findByRoomId(roomId).stream()
@@ -264,17 +257,18 @@ public class RoomService {
 	 * @param roomId 방 id
 	 * @param userDto 유저 정보
 	 * @exception RoomNotFoundException 유효하지 않은 방 입력
+	 * @exception RoomNotOpenException 모집중인 방이 아님
 	 * @exception UserAlreadyInRoom 이미 참여한 방 입력
 	 * 과거 참여 이력이 있을 경우 그 아이디로, 없을경우 currentPeople을 증가시킨다
 	 * @return roomId
 	 */
 	@Transactional
-	public RoomJoinResDto addOrderjoinRoom(Long roomId, UserDto userDto) {
+	public RoomJoinResDto addJoinRoom(Long roomId, UserDto userDto) {
 		User user = userRepository.findById(userDto.getId()).get();
 		Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
 
 		if (room.getStatus() != RoomType.OPEN) {
-			throw new RoomNotFoundException(ErrorCode.ROOM_FINISHED);
+			throw new RoomNotOpenException();
 		}
 		UserRoom userRoom = userRoomRepository.findByUserAndRoom(user, room)
 			.orElseGet(() -> {

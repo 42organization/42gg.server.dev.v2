@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
-import gg.party.api.admin.comment.controller.request.CommentUpdateAdminRequestDto;
+import gg.party.api.admin.comment.controller.request.CommentUpdateAdminReqDto;
 import gg.party.api.admin.comment.service.CommentAdminService;
 import lombok.RequiredArgsConstructor;
 
@@ -27,8 +27,8 @@ public class CommentAdminController {
 	 */
 	@PatchMapping("/{commentId}")
 	public ResponseEntity<Void> hideComment(@PathVariable Long commentId,
-		@RequestBody CommentUpdateAdminRequestDto reqDto, @Login UserDto user) {
-		commentAdminService.hideComment(commentId, reqDto);
+		@RequestBody CommentUpdateAdminReqDto reqDto, @Login UserDto user) {
+		commentAdminService.modifyHideComment(commentId, reqDto);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 }
