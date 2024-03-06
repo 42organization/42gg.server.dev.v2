@@ -33,11 +33,13 @@ import gg.repo.party.UserRoomRepository;
 import gg.repo.user.UserRepository;
 import gg.utils.exception.ErrorCode;
 import gg.utils.exception.party.CategoryNotFoundException;
+import gg.utils.exception.party.NotHostException;
+import gg.utils.exception.party.RoomNotEnoughPeopleException;
 import gg.utils.exception.party.RoomNotFoundException;
 import gg.utils.exception.party.RoomNotOpenException;
 import gg.utils.exception.party.RoomNotParticipantException;
 import gg.utils.exception.party.RoomReportedException;
-import gg.utils.exception.user.UserNotFoundException;
+import gg.utils.exception.party.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -139,20 +141,26 @@ public class RoomService {
 	/**
 	 * 유저가 방을 나간다
 	 * 참가자가 방에 참가한 상태일때만 취소해 준다.
-	 * @param roomId
+	 * @param roomId, user
 	 * @param user 참여 유저(사용자 본인)
-	 * @throws RoomNotFoundException 방 없음 || 방 입장자가 아님
-	 * @return
+	 * @throws RoomNotFoundException 방 없음
+	 * @throws RoomNotOpenException 방이 대기 상태가 아님
+	 * @throws RoomNotParticipantException 방 입장자가 아님
+	 * @return 나간 사람의 닉네임
 	 */
 	@Transactional
-	public LeaveRoomResDto modifyOrderLeaveRoom(Long roomId, UserDto user) {
+	public LeaveRoomResDto modifyLeaveRoom(Long roomId, UserDto user) {
 		Room targetRoom = roomRepository.findById(roomId)
 			.orElseThrow(RoomNotFoundException::new);
 		if (!targetRoom.getStatus().equals(RoomType.OPEN)) {
-			throw new RoomNotOpenException();
+			throw new RoomNotOpenException(ErrorCode.ROOM_NOT_OPEN);
 		}
 
-		UserRoom targetUserRoom = userRoomRepository.findByUserAndRoom(userRepository.findById(user.getId()).get(),
+		Optional<User> userEntity = userRepository.findById(user.getId());
+		if (userEntity.isEmpty()) {
+			throw new UserNotFoundException();
+		}
+		UserRoom targetUserRoom = userRoomRepository.findByUserAndRoom(userEntity.get(),
 			targetRoom).orElseThrow(RoomNotParticipantException::new);
 
 		// 모두 나갈 때 방 fail처리
@@ -168,9 +176,6 @@ public class RoomService {
 		// 방장 이권
 		if (user.getId().equals(targetRoom.getHost().getId())) {
 			List<User> existUser = userRoomRepository.findByIsExist(roomId);
-			if (existUser.isEmpty()) {
-				throw new RoomNotFoundException(ErrorCode.ROOM_NOT_FOUND);
-			}
 			targetRoom.updateHost(existUser.get(0));
 		}
 
@@ -180,6 +185,43 @@ public class RoomService {
 		roomRepository.save(targetRoom);
 
 		return new LeaveRoomResDto(targetUserRoom.getNickname());
+	}
+
+	/**
+	 * <p>방을 시작 상태로 바꾼다</p>
+	 * <p>방의 상태를 시작 상태로 변경.</p>
+	 * @param roomId, user
+	 * @throws RoomNotFoundException 방 없음
+	 * @throws RoomNotOpenException 방이 열리지 않은 상태
+	 * @throws RoomNotEnoughPeopleException 방에 충분한 인원이 없음
+	 * @throws RoomNotParticipantException 방에 참가하지 않은 사용자
+	 * @throws NotHostException 방장이 아닌 경우
+	 * @return 방 id
+	 */
+	@Transactional
+	public Long modifyStartRoom(Long roomId, UserDto user) {
+		Room targetRoom = roomRepository.findById(roomId)
+			.orElseThrow(RoomNotFoundException::new);
+		if (!targetRoom.getStatus().equals(RoomType.OPEN)) {
+			throw new RoomNotOpenException();
+		}
+		if (targetRoom.getMinPeople() > targetRoom.getCurrentPeople()
+			|| targetRoom.getMaxPeople() < targetRoom.getCurrentPeople()) {
+			throw new RoomNotEnoughPeopleException();
+		}
+		Optional<User> userEntity = userRepository.findById(user.getId());
+		if (userEntity.isEmpty()) {
+			throw new UserNotFoundException();
+		}
+		UserRoom targetUserRoom = userRoomRepository.findByUserAndRoom(userEntity.get(),
+			targetRoom).orElseThrow(RoomNotParticipantException::new);
+		if (targetRoom.getHost() != targetUserRoom.getUser()) {
+			throw new NotHostException();
+		}
+		targetRoom.updateStatus(RoomType.START);
+		roomRepository.save(targetRoom);
+
+		return roomId;
 	}
 
 	/**

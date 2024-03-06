@@ -89,6 +89,16 @@ public class RoomController {
 	@PatchMapping("/{room_id}")
 	public ResponseEntity<LeaveRoomResDto> leaveRoom(@PathVariable("room_id") Long roomId,
 		@Parameter(hidden = true) @Login UserDto user) {
-		return ResponseEntity.status(HttpStatus.OK).body(roomService.modifyOrderLeaveRoom(roomId, user));
+		return ResponseEntity.status(HttpStatus.OK).body(roomService.modifyLeaveRoom(roomId, user));
+	}
+
+	/**
+	 * 방 시작하기
+	 * @return 방 id
+	 */
+	@PostMapping("/{room_id}/start")
+	public ResponseEntity<Long> startRoom(@PathVariable("room_id") Long roomId,
+		@Parameter(hidden = true) @Login UserDto user) {
+		return ResponseEntity.status(HttpStatus.OK).body(roomService.modifyStartRoom(roomId, user));
 	}
 }
