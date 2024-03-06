@@ -167,6 +167,7 @@ public enum ErrorCode {
 	ROOM_NOT_PARTICIPANT(400, "PT206", "해당 방의 참여자가 아닙니다."),
 	ROOM_NOT_OPEN(400, "PT205", "준비 상태의 방이 아닙니다."),
 	ROOM_ALREADY_HIDDEN(400, "PT204", "이미 숨겨진 방입니다."),
+	USER_ALREADY_IN_ROOM(409, "PT105", "이미 참여한 방 입니다."),
 	ROOMSTAT_NOT_FOUND(404, "PT106", "존재하지 않는 방 status입니다.");
 
 	private final int status;

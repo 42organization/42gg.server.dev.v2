@@ -15,6 +15,7 @@ import gg.auth.argumentresolver.Login;
 import gg.party.api.user.room.controller.request.RoomCreateReqDto;
 import gg.party.api.user.room.controller.response.LeaveRoomResDto;
 import gg.party.api.user.room.controller.response.RoomDetailResDto;
+import gg.party.api.user.room.controller.response.RoomJoinResDto;
 import gg.party.api.user.room.controller.response.RoomListResDto;
 import gg.party.api.user.room.service.RoomService;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -70,6 +71,16 @@ public class RoomController {
 	}
 
 	/**
+	 * 참여한 방을 나가기 한다
+	 * @return 나간 사람의 닉네임
+	 */
+	@PatchMapping("/{room_id}")
+	public ResponseEntity<LeaveRoomResDto> leaveRoom(@PathVariable("room_id") Long roomId,
+		@Parameter(hidden = true) @Login UserDto user) {
+		return ResponseEntity.status(HttpStatus.OK).body(roomService.modifyOrderLeaveRoom(roomId, user));
+	}
+
+	/**
 	 * 방의 상세정보를 조회한다
 	 * @param roomId 방 id
 	 * 익명성을 지키기 위해 nickname을 리턴
@@ -83,8 +94,10 @@ public class RoomController {
 	}
 
 	/**
-	 * 참여한 방을 나가기 한다
-	 * @return 나간 사람의 닉네임
+	 * 방에 참여한다
+	 * @param roomId 방 id
+	 * @param user 유저 정보
+	 * @return roomId
 	 */
 	@PatchMapping("/{room_id}")
 	public ResponseEntity<LeaveRoomResDto> leaveRoom(@PathVariable("room_id") Long roomId,
@@ -100,5 +113,11 @@ public class RoomController {
 	public ResponseEntity<Long> startRoom(@PathVariable("room_id") Long roomId,
 		@Parameter(hidden = true) @Login UserDto user) {
 		return ResponseEntity.status(HttpStatus.OK).body(roomService.modifyStartRoom(roomId, user));
+
+	@PostMapping("/{room_id}")
+	public ResponseEntity<RoomJoinResDto> joinRoom(@Parameter(hidden = true) @Login UserDto user,
+		@PathVariable("room_id") Long roomId) {
+		RoomJoinResDto roomJoinResDto = roomService.addOrderjoinRoom(roomId, user);
+		return ResponseEntity.status(HttpStatus.CREATED).body(roomJoinResDto);
 	}
 }

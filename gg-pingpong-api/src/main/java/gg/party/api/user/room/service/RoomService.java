@@ -23,6 +23,7 @@ import gg.party.api.user.room.controller.request.RoomCreateReqDto;
 import gg.party.api.user.room.controller.response.CommentResDto;
 import gg.party.api.user.room.controller.response.LeaveRoomResDto;
 import gg.party.api.user.room.controller.response.RoomDetailResDto;
+import gg.party.api.user.room.controller.response.RoomJoinResDto;
 import gg.party.api.user.room.controller.response.RoomListResDto;
 import gg.party.api.user.room.controller.response.RoomResDto;
 import gg.party.api.user.room.controller.response.UserRoomResDto;
@@ -39,7 +40,8 @@ import gg.utils.exception.party.RoomNotFoundException;
 import gg.utils.exception.party.RoomNotOpenException;
 import gg.utils.exception.party.RoomNotParticipantException;
 import gg.utils.exception.party.RoomReportedException;
-import gg.utils.exception.party.UserNotFoundException;
+import gg.utils.exception.party.UserAlreadyInRoom;
+import gg.utils.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -155,7 +157,6 @@ public class RoomService {
 		if (!targetRoom.getStatus().equals(RoomType.OPEN)) {
 			throw new RoomNotOpenException(ErrorCode.ROOM_NOT_OPEN);
 		}
-
 		UserRoom targetUserRoom = userRoomRepository.findByUserAndRoom(userRepository.findById(user.getId()).get(),
 			targetRoom).orElseThrow(RoomNotParticipantException::new);
 
@@ -256,5 +257,43 @@ public class RoomService {
 		String hostNickname = hostUserRoomOptional.get().getNickname();
 
 		return new RoomDetailResDto(room, myNickname, hostNickname, roomUsers, comments);
+	}
+
+	/**
+	 * 방에 참여한다
+	 * @param roomId 방 id
+	 * @param userDto 유저 정보
+	 * @exception RoomNotFoundException 유효하지 않은 방 입력
+	 * @exception UserAlreadyInRoom 이미 참여한 방 입력
+	 * 과거 참여 이력이 있을 경우 그 아이디로, 없을경우 currentPeople을 증가시킨다
+	 * @return roomId
+	 */
+	@Transactional
+	public RoomJoinResDto addOrderjoinRoom(Long roomId, UserDto userDto) {
+		User user = userRepository.findById(userDto.getId()).get();
+		Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
+
+		if (room.getStatus() != RoomType.OPEN) {
+			throw new RoomNotFoundException(ErrorCode.ROOM_FINISHED);
+		}
+		UserRoom userRoom = userRoomRepository.findByUserAndRoom(user, room)
+			.orElseGet(() -> {
+				String randomNickname = generateRandomNickname();
+				UserRoom newUserRoom = new UserRoom(user, room, randomNickname);
+				newUserRoom.updateIsExist(false);
+				return newUserRoom;
+			});
+		if (userRoom.getIsExist() == true) {
+			throw new UserAlreadyInRoom(ErrorCode.USER_ALREADY_IN_ROOM);
+		} else {
+			userRoom.updateIsExist(true);
+			userRoomRepository.save(userRoom);
+		}
+
+		room.updateCurrentPeople(room.getCurrentPeople() + 1);
+		// if (room.getCurrentPeople() + 1 == room.getMaxPeople()) 경우 게임 시작하는 로직 추가
+		roomRepository.save(room);
+
+		return new RoomJoinResDto(roomId);
 	}
 }
