@@ -21,7 +21,7 @@ import gg.data.party.type.RoomType;
 import gg.data.user.User;
 import gg.party.api.user.room.controller.request.RoomCreateReqDto;
 import gg.party.api.user.room.controller.response.CommentResDto;
-import gg.party.api.user.room.controller.response.LeaveRoomResponseDto;
+import gg.party.api.user.room.controller.response.LeaveRoomResDto;
 import gg.party.api.user.room.controller.response.RoomDetailResDto;
 import gg.party.api.user.room.controller.response.RoomJoinResDto;
 import gg.party.api.user.room.controller.response.RoomListResDto;
@@ -147,13 +147,12 @@ public class RoomService {
 	 * @return
 	 */
 	@Transactional
-	public LeaveRoomResponseDto leaveRoom(Long roomId, UserDto user) {
+	public LeaveRoomResDto modifyOrderLeaveRoom(Long roomId, UserDto user) {
 		Room targetRoom = roomRepository.findById(roomId)
 			.orElseThrow(RoomNotFoundException::new);
 		if (!targetRoom.getStatus().equals(RoomType.OPEN)) {
 			throw new RoomNotOpenException();
 		}
-
 		List<UserRoom> userRoomList = userRoomRepository.findByUserId(user.getId());
 		UserRoom targetUserRoom = userRoomList.stream()
 			.filter(tu -> (tu.getUser().getId().equals(user.getId())))
@@ -164,20 +163,27 @@ public class RoomService {
 		if (targetRoom.getCurrentPeople() == 1) {
 			targetRoom.updateCurrentPeople(0);
 			targetRoom.updateStatus(RoomType.FAIL);
-			return new LeaveRoomResponseDto(targetUserRoom.getNickname());
+			targetUserRoom.updateIsExist(false);
+			roomRepository.save(targetRoom);
+			userRoomRepository.save(targetUserRoom);
+			return new LeaveRoomResDto(targetUserRoom.getNickname());
 		}
 
 		// 방장 이권
 		if (user.getId().equals(targetRoom.getHost().getId())) {
-			List<UserRoom> existUserRooms = userRoomRepository.findByIsExist(roomId);
-			targetRoom.updateHost(existUserRooms.get(0).getUser());
+			List<User> existUser = userRoomRepository.findByIsExist(roomId);
+			if (existUser.isEmpty()) {
+				throw new RoomNotFoundException(ErrorCode.ROOM_NOT_FOUND);
+			}
+			targetRoom.updateHost(existUser.get(0));
 		}
 
 		targetRoom.updateCurrentPeople(targetRoom.getCurrentPeople() - 1);
 		targetUserRoom.updateIsExist(false);
 		userRoomRepository.save(targetUserRoom);
+		roomRepository.save(targetRoom);
 
-		return new LeaveRoomResponseDto(targetUserRoom.getNickname());
+		return new LeaveRoomResDto(targetUserRoom.getNickname());
 	}
 
 	/**

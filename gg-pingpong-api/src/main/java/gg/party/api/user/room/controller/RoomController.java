@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
 import gg.party.api.user.room.controller.request.RoomCreateReqDto;
-import gg.party.api.user.room.controller.response.LeaveRoomResponseDto;
+import gg.party.api.user.room.controller.response.LeaveRoomResDto;
 import gg.party.api.user.room.controller.response.RoomDetailResDto;
 import gg.party.api.user.room.controller.response.RoomJoinResDto;
 import gg.party.api.user.room.controller.response.RoomListResDto;
