@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import gg.data.party.type.RoomType;
 import gg.party.api.admin.room.controller.request.RoomShowChangeReqDto;
 import gg.party.api.admin.room.service.RoomAdminService;
+import gg.utils.exception.ErrorCode;
+import gg.utils.exception.party.RoomStatNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -23,13 +25,13 @@ public class RoomAdminController {
 
 	@PatchMapping("/{roomId}")
 	public ResponseEntity<Void> changeRoomVisibility(@PathVariable Long roomId,
-		@Valid @RequestBody RoomShowChangeReqDto reqDto) {
+		@Valid @RequestBody RoomShowChangeReqDto reqDto) throws RoomStatNotFoundException {
 
 		RoomType roomType;
 		try {
 			roomType = RoomType.valueOf(reqDto.getStatus().toUpperCase());
 		} catch (IllegalArgumentException e) {
-			return ResponseEntity.badRequest().build();
+			throw new RoomStatNotFoundException();
 		}
 
 		roomAdminService.modifyRoomStatus(roomId, roomType);
