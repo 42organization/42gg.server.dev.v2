@@ -30,7 +30,7 @@ public class ReportController {
 	 * @return 참여중인 방 전체 List
 	 */
 	@PostMapping("/rooms/{room_id}")
-	public ResponseEntity<Long> reportRoom(@PathVariable("room_id") Long roomId,
+	public ResponseEntity<Long> reportRoomAdd(@PathVariable("room_id") Long roomId,
 		@RequestBody @Valid ReportRoomReqDto reportRoomReqDto,
 		@Parameter(hidden = true) @Login UserDto user) {
 		return ResponseEntity.status(HttpStatus.CREATED)
