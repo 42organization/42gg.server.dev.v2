@@ -55,7 +55,6 @@ public class CategoryAdminService {
 		if (categoryAdminRepository.existsByName(categoryName)) {
 			throw new CategoryDuplicateException();
 		}
-		
 		categoryAdminRepository.save(new Category(categoryName));
 	}
 }
