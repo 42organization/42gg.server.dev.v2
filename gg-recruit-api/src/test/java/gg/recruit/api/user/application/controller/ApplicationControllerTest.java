@@ -24,6 +24,7 @@ import gg.utils.annotation.IntegrationTest;
 @IntegrationTest
 @Transactional
 @AutoConfigureMockMvc
+@ComponentScan("gg.pingpong.api")
 class ApplicationControllerTest {
 
 	@Autowired

@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 public class RecruitMockData {
 	private final RecruitmentRepository recruitmentRepository;
 	private final ApplicationRepository applicationRepository;
+
 	public Recruitments createRecruitments() {
 		Recruitments recruitments = new Recruitments("title", "contents", "generation",
 			LocalDateTime.now(), LocalDateTime.now().plusDays(1));
