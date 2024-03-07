@@ -165,6 +165,7 @@ public enum ErrorCode {
 	ROOM_SAME_STATUS(400, "PT204", "이미 처리된 방 입니다."),
 	ROOM_NOT_OPEN(400, "PT205", "모집중인 방이 아닙니다."),
 	ROOM_NOT_PARTICIPANT(400, "PT206", "참여하지 않은 방 입니다."),
+	CATEGORY_DUPLICATE(400, "PT207", "중복된 카테고리 입니다."),
 	USER_ALREADY_IN_ROOM(409, "PT301", "이미 참여한 방 입니다.");
 
 	private final int status;

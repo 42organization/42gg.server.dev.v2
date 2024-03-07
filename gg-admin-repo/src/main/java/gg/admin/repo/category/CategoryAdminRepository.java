@@ -6,4 +6,5 @@ import gg.data.party.Category;
 
 public interface CategoryAdminRepository extends JpaRepository<Category, Long> {
 
+	Boolean existsByName(String categoryName);
 }

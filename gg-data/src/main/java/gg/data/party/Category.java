@@ -22,4 +22,7 @@ public class Category extends BaseTimeEntity {
 	@Column(name = "name", length = 10)
 	private String name;
 
+	public Category(String name) {
+		this.name = name;
+	}
 }
