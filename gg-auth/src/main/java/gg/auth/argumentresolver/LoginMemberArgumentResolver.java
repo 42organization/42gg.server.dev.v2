@@ -1,4 +1,4 @@
-package gg.pingpong.api.global.utils.argumentresolver;
+package gg.auth.argumentresolver;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -8,10 +8,10 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import gg.auth.UserDto;
+import gg.auth.utils.AuthTokenProvider;
+import gg.auth.utils.HeaderUtil;
 import gg.data.user.User;
-import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
-import gg.pingpong.api.global.utils.HeaderUtil;
-import gg.pingpong.api.user.user.dto.UserDto;
 import gg.repo.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 

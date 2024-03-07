@@ -1,5 +1,7 @@
 package gg.party.api.user.comment.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -8,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import gg.auth.UserDto;
+import gg.auth.argumentresolver.Login;
 import gg.party.api.user.comment.controller.request.CommentCreateReqDto;
 import gg.party.api.user.comment.service.CommentService;
-import gg.pingpong.api.global.utils.argumentresolver.Login;
-import gg.pingpong.api.user.user.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -28,9 +30,9 @@ public class CommentController {
 	 * @return 생성 성공 여부
 	 */
 	@PostMapping
-	public ResponseEntity<Void> createComment(@PathVariable Long roomId, @RequestBody CommentCreateReqDto reqDto,
+	public ResponseEntity<Void> createComment(@PathVariable Long roomId, @Valid @RequestBody CommentCreateReqDto reqDto,
 		@Login UserDto user) {
-		commentService.createComment(roomId, reqDto, user.getId());
-		return new ResponseEntity<>(HttpStatus.CREATED);
+		commentService.addCreateComment(roomId, reqDto, user.getId());
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 }

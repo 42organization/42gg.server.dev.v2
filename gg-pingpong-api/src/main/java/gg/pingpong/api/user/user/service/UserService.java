@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import gg.auth.UserDto;
 import gg.data.game.Game;
 import gg.data.game.PChange;
 import gg.data.game.type.StatusType;
@@ -49,7 +50,6 @@ import gg.pingpong.api.user.user.controller.response.UserLiveResponseDto;
 import gg.pingpong.api.user.user.controller.response.UserNormalDetailResponseDto;
 import gg.pingpong.api.user.user.controller.response.UserRankResponseDto;
 import gg.pingpong.api.user.user.dto.UserBackgroundDto;
-import gg.pingpong.api.user.user.dto.UserDto;
 import gg.pingpong.api.user.user.dto.UserEdgeDto;
 import gg.pingpong.api.user.user.dto.UserHistoryData;
 import gg.pingpong.api.user.user.dto.UserImageDto;
