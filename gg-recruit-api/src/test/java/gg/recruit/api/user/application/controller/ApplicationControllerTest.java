@@ -24,7 +24,6 @@ import gg.utils.annotation.IntegrationTest;
 @IntegrationTest
 @Transactional
 @AutoConfigureMockMvc
-@ComponentScan(basePackages = "gg.utils")
 class ApplicationControllerTest {
 
 	@Autowired
