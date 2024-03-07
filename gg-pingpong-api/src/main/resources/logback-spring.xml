@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <!-- log 기록 절대 위치 설정 -->
-    <property name="LOGS_ABSOLUTE_PATH" value="../logs"/>
+    <property name="LOGS_ABSOLUTE_PATH" value="./logs"/>
 
     <property name="CONSOLE_LOG_PATTERN"
               value="[%d{yyyy-MM-dd HH:mm:ss}:%-3relative] %-5level --- [%15.15thread] %-40.40logger{36} : %msg%n"/>
