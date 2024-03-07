@@ -4,6 +4,7 @@ import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import gg.data.party.type.RoomType;
 import gg.party.api.admin.room.controller.request.RoomShowChangeReqDto;
+import gg.party.api.admin.room.controller.response.AdminRoomListResDto;
 import gg.party.api.admin.room.service.RoomAdminService;
-import gg.utils.exception.ErrorCode;
 import gg.utils.exception.party.RoomNotFoundException;
 import gg.utils.exception.party.RoomStatNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -44,5 +45,15 @@ public class RoomAdminController {
 
 		roomAdminService.modifyRoomStatus(roomId, roomType);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	}
+
+	/**
+	 * 방 전체 조회
+	 * @return 방 상세정보 dto
+	 */
+	@GetMapping
+	public ResponseEntity<AdminRoomListResDto> adminAllRoomList() {
+		AdminRoomListResDto adminRoomListResDto = roomAdminService.findAllRoomList();
+		return ResponseEntity.status(HttpStatus.OK).body(adminRoomListResDto);
 	}
 }
