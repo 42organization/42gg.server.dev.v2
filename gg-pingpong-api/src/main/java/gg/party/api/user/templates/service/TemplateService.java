@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class TemplateService {
-	private final TemplateRepository templatesRepository;
+	private final TemplateRepository templateRepository;
 
 	/**
 	 * 템플릿 전체 조회
@@ -22,7 +22,7 @@ public class TemplateService {
 	 */
 	@Transactional(readOnly = true)
 	public List<TemplateResDto> findTemplateList() {
-		return templatesRepository.findAll(Sort.by(Sort.Direction.ASC, "id")).stream()
+		return templateRepository.findAll(Sort.by(Sort.Direction.ASC, "id")).stream()
 			.map(TemplateResDto::new)
 			.collect(Collectors.toList());
 	}
