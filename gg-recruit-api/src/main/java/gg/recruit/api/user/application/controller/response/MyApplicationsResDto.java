@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class MyApplicationsResDto {
 	private List<ApplicationResDto> applications;
 
-	public MyApplicationsResDto(ApplicationListDto applicationListDto){
+	public MyApplicationsResDto(ApplicationListDto applicationListDto) {
 		applications = applicationListDto.getApplications()
 			.stream()
 			.map(ApplicationResDto::new)
