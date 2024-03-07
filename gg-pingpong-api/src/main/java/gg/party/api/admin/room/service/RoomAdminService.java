@@ -1,10 +1,15 @@
 package gg.party.api.admin.room.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.data.party.Room;
 import gg.data.party.type.RoomType;
+import gg.party.api.admin.room.controller.response.AdminRoomListResDto;
+import gg.party.api.admin.room.controller.response.AdminRoomResDto;
 import gg.repo.party.RoomRepository;
 import gg.utils.exception.party.RoomNotFoundException;
 import gg.utils.exception.party.RoomSameStatusException;
@@ -33,5 +38,20 @@ public class RoomAdminService {
 
 		room.updateRoomStatus(newStatus);
 		roomRepository.save(room);
+	}
+
+	/**
+	 * 방 전체 조회
+	 * @return 방 정보 dto
+	 */
+	@Transactional
+	public AdminRoomListResDto findAllRoomList() {
+		List<Room> allRooms = roomRepository.findAll();
+
+		List<AdminRoomResDto> adminRoomListResDto = allRooms.stream()
+			.map(AdminRoomResDto::new)
+			.collect(Collectors.toList());
+
+		return new AdminRoomListResDto(adminRoomListResDto);
 	}
 }
