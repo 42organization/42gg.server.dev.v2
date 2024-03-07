@@ -49,7 +49,7 @@ public class RoomAdminController {
 
 	/**
 	 * 방 전체 조회
-	 * @return 방 상세정보 dto
+	 * @return 방 정보 dto
 	 */
 	@GetMapping
 	public ResponseEntity<AdminRoomListResDto> adminAllRoomList() {
