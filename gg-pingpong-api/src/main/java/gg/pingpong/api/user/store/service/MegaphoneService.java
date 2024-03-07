@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import gg.auth.UserDto;
 import gg.data.store.Megaphone;
 import gg.data.store.Receipt;
 import gg.data.store.redis.MegaphoneRedis;
@@ -20,7 +21,6 @@ import gg.pingpong.api.user.store.controller.request.MegaphoneUseRequestDto;
 import gg.pingpong.api.user.store.controller.response.MegaphoneDetailResponseDto;
 import gg.pingpong.api.user.store.controller.response.MegaphoneTodayListResponseDto;
 import gg.pingpong.api.user.store.redis.MegaphoneRedisRepository;
-import gg.pingpong.api.user.user.dto.UserDto;
 import gg.repo.store.MegaphoneRepository;
 import gg.repo.store.ReceiptRepository;
 import gg.repo.user.UserRepository;

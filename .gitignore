@@ -4,7 +4,7 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-gg-pingpong-api/src/main/resources/application.yml
+**/application.yml
 .DS_Store
 python
 /logs
