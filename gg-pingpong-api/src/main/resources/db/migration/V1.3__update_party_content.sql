@@ -18,7 +18,7 @@ CREATE TABLE room
     max_people     INT          NOT NULL,
     min_people     INT          NOT NULL DEFAULT 2,
     due_date       DATETIME     NOT NULL,
-    start_date     DATETIME     NOT NULL,
+    start_date     DATETIME,
     created_at     DATETIME     NOT NULL,
     modified_at    DATETIME     NOT NULL,
     status         VARCHAR(10)  NOT NULL,
