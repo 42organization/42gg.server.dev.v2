@@ -12,7 +12,6 @@ import javax.persistence.ManyToOne;
 import gg.data.BaseTimeEntity;
 import gg.data.user.User;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -39,7 +38,6 @@ public class RoomReport extends BaseTimeEntity {
 	@Column(length = 100)
 	private String message;
 
-	@Builder
 	public RoomReport(User reporter, User reportee, Room room, String message) {
 		this.reporter = reporter;
 		this.reportee = reportee;
