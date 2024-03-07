@@ -4,8 +4,10 @@ import java.time.LocalDateTime;
 
 import gg.data.recruit.application.Application;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class ApplicationDto {
 	private Long recruitId;
 	private Long applicationId;

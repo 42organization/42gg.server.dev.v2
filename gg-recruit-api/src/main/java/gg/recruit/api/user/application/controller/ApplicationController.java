@@ -20,7 +20,6 @@ public class ApplicationController {
 	@GetMapping("/applications")
 	public MyApplicationsResDto getMyApplications(@Login UserDto userDto) {
 		ApplicationListDto res = applicationService.findMyApplications(userDto.getId());
-
-		return null;
+		return new MyApplicationsResDto(res);
 	}
 }

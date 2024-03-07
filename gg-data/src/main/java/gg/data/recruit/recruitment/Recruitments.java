@@ -37,4 +37,15 @@ public class Recruitments extends BaseTimeEntity {
 	private LocalDateTime startTime;
 	@Column(nullable = false)
 	private LocalDateTime endTime;
+
+	public Recruitments(String title, String contents, String generation, LocalDateTime startTime,
+		LocalDateTime endTime) {
+		this.title = title;
+		this.contents = contents;
+		this.generation = generation;
+		this.startTime = startTime;
+		this.endTime = endTime;
+		this.isFinish = false;
+		this.isDeleted = false;
+	}
 }

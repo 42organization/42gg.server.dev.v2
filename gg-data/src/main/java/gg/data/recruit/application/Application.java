@@ -41,4 +41,11 @@ public class Application extends BaseTimeEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(length = 15, nullable = false)
 	private ApplicationStatus status;
+
+	public Application(User user, Recruitments recruit) {
+		this.user = user;
+		this.recruit = recruit;
+		this.isDeleted = false;
+		this.status = ApplicationStatus.PROGRESS_DOCS;
+	}
 }
