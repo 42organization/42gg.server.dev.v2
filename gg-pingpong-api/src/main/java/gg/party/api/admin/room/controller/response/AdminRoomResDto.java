@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class AdminRoomResDto {
 	private Long roomId;
 	private Long hostId;
-	private Long creatorId;
+	private String creatorIntraId;
 	private Long categoryId;
 	private String title;
 	private String content;
@@ -25,7 +25,7 @@ public class AdminRoomResDto {
 	public AdminRoomResDto(Room room) {
 		this.roomId = room.getId();
 		this.hostId = room.getHost().getId();
-		this.creatorId = room.getCreator().getId();
+		this.creatorIntraId = room.getCreator().getIntraId();
 		this.categoryId = room.getCategory().getId();
 		this.title = room.getTitle();
 		this.content = room.getContent();
