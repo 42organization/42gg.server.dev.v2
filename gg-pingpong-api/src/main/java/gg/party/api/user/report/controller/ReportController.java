@@ -25,8 +25,8 @@ public class ReportController {
 
 	/**
 	 * 방을 신고한다.
-	 * * @param reqDto 신고 내용
-	 * * @param roomId 방 번호
+	 * @param reportRoomReqDto 신고 내용
+	 * @param roomId 방 번호
 	 * @return 참여중인 방 전체 List
 	 */
 	@PostMapping("/rooms/{room_id}")

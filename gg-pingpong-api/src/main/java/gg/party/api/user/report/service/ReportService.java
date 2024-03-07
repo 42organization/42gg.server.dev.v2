@@ -17,7 +17,7 @@ import gg.repo.party.RoomReportRepository;
 import gg.repo.party.RoomRepository;
 import gg.repo.party.UserRoomRepository;
 import gg.repo.user.UserRepository;
-import gg.utils.exception.party.AlredayReportedException;
+import gg.utils.exception.party.AlredayReportedRoomException;
 import gg.utils.exception.party.RoomNotFoundException;
 import lombok.RequiredArgsConstructor;
 
@@ -35,7 +35,7 @@ public class ReportService {
 	 * @param reportRoomReqDto 신고 내용
 	 * @param user 신고자
 	 * @exception RoomNotFoundException 방을 찾을 수 없음
-	 * @exception AlredayReportedException 이미 신고한 방
+	 * @exception AlredayReportedRoomException 이미 신고한 방
 	 * @return 방 번호
 	 */
 	@Transactional
@@ -46,7 +46,7 @@ public class ReportService {
 		Optional<RoomReport> existingReport = roomReportRepository.findByReporterAndRoomId(userEntity,
 			targetRoom.getId());
 		if (existingReport.isPresent()) {
-			throw new AlredayReportedException();
+			throw new AlredayReportedRoomException();
 		}
 		RoomReport roomReport = new RoomReport(userEntity, targetRoom.getCreator(), targetRoom,
 			reportRoomReqDto.getContent());
