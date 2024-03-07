@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import gg.data.party.Category;
 import gg.data.party.GameTemplate;
-import gg.party.api.admin.templates.controller.request.TemplateAdminCreateDto;
+import gg.party.api.admin.templates.controller.request.TemplateAdminCreateReqDto;
 import gg.repo.party.CategoryRepository;
 import gg.repo.party.TemplateRepository;
 import gg.utils.exception.party.CategoryNotFoundException;
@@ -22,21 +22,11 @@ public class TemplateAdminService {
 	 * 템플릿 추가
 	 * @exception CategoryNotFoundException 존재하지 않는 카테고리 입력
 	 */
-	public void addTemplate(TemplateAdminCreateDto request) {
+	public void addTemplate(TemplateAdminCreateReqDto request) {
 		Category category = categoryRepository.findById(request.getCategoryId())
 			.orElseThrow(CategoryNotFoundException::new);
 
-		GameTemplate gameTemplate = GameTemplate.addTemplate(
-			category,
-			request.getGameName(),
-			request.getMaxGamePeople(),
-			request.getMinGamePeople(),
-			request.getMaxGameTime(),
-			request.getMinGameTime(),
-			request.getGenre(),
-			request.getDifficulty(),
-			request.getSummary()
-		);
+		GameTemplate gameTemplate = TemplateAdminCreateReqDto.toEntity(request, category);
 
 		templateRepository.save(gameTemplate);
 	}

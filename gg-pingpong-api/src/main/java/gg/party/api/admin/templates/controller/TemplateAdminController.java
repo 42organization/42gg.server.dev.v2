@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import gg.party.api.admin.templates.controller.request.TemplateAdminCreateDto;
+import gg.party.api.admin.templates.controller.request.TemplateAdminCreateReqDto;
 import gg.party.api.admin.templates.service.TemplateAdminService;
 import lombok.RequiredArgsConstructor;
 
@@ -24,7 +24,7 @@ public class TemplateAdminController {
 	 * return 201 status code(성공적인 추가 status)
 	 */
 	@PostMapping
-	public ResponseEntity<Void> addTemplate(@RequestBody TemplateAdminCreateDto request) {
+	public ResponseEntity<Void> addTemplate(@RequestBody TemplateAdminCreateReqDto request) {
 		templateAdminService.addTemplate(request);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}

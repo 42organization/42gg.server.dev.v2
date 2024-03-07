@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 
 import gg.data.BaseTimeEntity;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -50,19 +51,17 @@ public class GameTemplate extends BaseTimeEntity {
 	@Column(length = 100)
 	private String summary;
 
-	public static GameTemplate addTemplate(Category category, String gameName, Integer maxGamePeople,
-		Integer minGamePeople, Integer maxGameTime, Integer minGameTime, String genre, String difficulty,
-		String summary) {
-		GameTemplate gameTemplate = new GameTemplate();
-		gameTemplate.category = category;
-		gameTemplate.gameName = gameName;
-		gameTemplate.maxGamePeople = maxGamePeople;
-		gameTemplate.minGamePeople = minGamePeople;
-		gameTemplate.maxGameTime = maxGameTime;
-		gameTemplate.minGameTime = minGameTime;
-		gameTemplate.genre = genre;
-		gameTemplate.difficulty = difficulty;
-		gameTemplate.summary = summary;
-		return gameTemplate;
+	@Builder
+	public GameTemplate(Category category, String gameName, Integer maxGamePeople, Integer minGamePeople,
+		Integer maxGameTime, Integer minGameTime, String genre, String difficulty, String summary) {
+		this.category = category;
+		this.gameName = gameName;
+		this.maxGamePeople = maxGamePeople;
+		this.minGamePeople = minGamePeople;
+		this.maxGameTime = maxGameTime;
+		this.minGameTime = minGameTime;
+		this.genre = genre;
+		this.difficulty = difficulty;
+		this.summary = summary;
 	}
 }
