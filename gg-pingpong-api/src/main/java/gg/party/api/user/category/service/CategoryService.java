@@ -1,6 +1,7 @@
 package gg.party.api.user.category.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ public class CategoryService {
 	public List<CategoryResDto> findCategoryList() {
 		return categoryRepository.findAll(Sort.by(Sort.Direction.ASC, "id")).stream()
 			.map(CategoryResDto::new)
-			.toList();
+			.collect(Collectors.toList());
 	}
 
 }
