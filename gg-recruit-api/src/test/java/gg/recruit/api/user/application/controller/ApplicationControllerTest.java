@@ -8,7 +8,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,18 +23,14 @@ import gg.utils.annotation.IntegrationTest;
 @IntegrationTest
 @Transactional
 @AutoConfigureMockMvc
-@ComponentScan("gg.pingpong.api")
 class ApplicationControllerTest {
 
 	@Autowired
 	private RecruitMockData recruitMockData;
-
 	@Autowired
 	private TestDataUtils testDataUtils;
-
 	@Autowired
 	private ObjectMapper objectMapper;
-
 	@Autowired
 	private MockMvc mockMvc;
 
