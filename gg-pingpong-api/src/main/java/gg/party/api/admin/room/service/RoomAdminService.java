@@ -3,11 +3,15 @@ package gg.party.api.admin.room.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.data.party.Room;
 import gg.data.party.type.RoomType;
+import gg.party.api.admin.room.controller.request.PageReqDto;
 import gg.party.api.admin.room.controller.response.AdminRoomListResDto;
 import gg.party.api.admin.room.controller.response.AdminRoomResDto;
 import gg.repo.party.RoomRepository;
@@ -45,13 +49,18 @@ public class RoomAdminService {
 	 * @return 방 정보 dto
 	 */
 	@Transactional
-	public AdminRoomListResDto findAllRoomList() {
-		List<Room> allRooms = roomRepository.findAll();
+	public AdminRoomListResDto findAllRoomList(PageReqDto pageReqDto) {
+		int page = pageReqDto.getPage();
+		int size = pageReqDto.getSize();
 
-		List<AdminRoomResDto> adminRoomListResDto = allRooms.stream()
+		Pageable pageable = PageRequest.of(page - 1, size);  // 특정 정렬 방식이 필요하다면 여기에 추가합니다.
+
+		Page<Room> roomPage = roomRepository.findAll(pageable);
+
+		List<AdminRoomResDto> adminRoomListResDto = roomPage.getContent().stream()
 			.map(AdminRoomResDto::new)
 			.collect(Collectors.toList());
 
-		return new AdminRoomListResDto(adminRoomListResDto);
+		return new AdminRoomListResDto(adminRoomListResDto, roomPage.getTotalPages());
 	}
 }
