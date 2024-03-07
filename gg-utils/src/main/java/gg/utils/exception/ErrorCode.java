@@ -160,12 +160,12 @@ public enum ErrorCode {
 	COMMENT_NOT_FOUND(404, "PT104", "존재하지 않는 댓글입니다."),
 	ROOMSTAT_NOT_FOUND(404, "PT105", "존재하지 않는 방 status입니다."),
 	ROOM_NOT_ENOUGH_PEOPLE(400, "PT201", "시작할 수 있는 인원이 아닙니다."),
+	DEFAULT_CATEGORY_NEED(400, "PT202", "기본 카테고리가 존재해야 합니다."),
 	USER_NOT_HOST(400, "PT203", "방장이 아닙니다"),
 	ROOM_SAME_STATUS(400, "PT204", "이미 처리된 방 입니다."),
 	ROOM_NOT_OPEN(400, "PT205", "모집중인 방이 아닙니다."),
 	ROOM_NOT_PARTICIPANT(400, "PT206", "참여하지 않은 방 입니다."),
 	USER_ALREADY_IN_ROOM(409, "PT301", "이미 참여한 방 입니다.");
-
 
 	private final int status;
 	private final String errCode;
