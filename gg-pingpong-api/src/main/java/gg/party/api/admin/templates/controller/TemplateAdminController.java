@@ -28,6 +28,7 @@ public class TemplateAdminController {
 		templateAdminService.addTemplate(request);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
+
 	/**
 	 * 템플릿 삭제
 	 * return 204 status code(성공적인 삭제 status)

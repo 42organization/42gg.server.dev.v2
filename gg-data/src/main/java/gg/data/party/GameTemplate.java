@@ -50,7 +50,9 @@ public class GameTemplate extends BaseTimeEntity {
 	@Column(length = 100)
 	private String summary;
 
-	public static GameTemplate addTemplate(Category category, String gameName, Integer maxGamePeople, Integer minGamePeople, Integer maxGameTime, Integer minGameTime, String genre, String difficulty, String summary) {
+	public static GameTemplate addTemplate(Category category, String gameName, Integer maxGamePeople,
+		Integer minGamePeople, Integer maxGameTime, Integer minGameTime, String genre, String difficulty,
+		String summary) {
 		GameTemplate gameTemplate = new GameTemplate();
 		gameTemplate.category = category;
 		gameTemplate.gameName = gameName;
