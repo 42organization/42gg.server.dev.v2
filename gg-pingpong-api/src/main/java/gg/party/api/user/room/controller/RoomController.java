@@ -33,7 +33,7 @@ public class RoomController {
 	 */
 	@GetMapping
 	public ResponseEntity<RoomListResDto> allActiveRoomList() {
-		RoomListResDto roomListResDto = roomService.findOrderRoomList();
+		RoomListResDto roomListResDto = roomService.findRoomList();
 		return ResponseEntity.status(HttpStatus.OK).body(roomListResDto);
 	}
 
@@ -46,7 +46,7 @@ public class RoomController {
 	@PostMapping
 	public ResponseEntity<Long> createRoom(@RequestBody RoomCreateReqDto roomCreateReqDto,
 		@Parameter(hidden = true) @Login UserDto user) {
-		Long roomId = roomService.addOrderCreateRoom(roomCreateReqDto, user);
+		Long roomId = roomService.addCreateRoom(roomCreateReqDto, user);
 		return ResponseEntity.status(HttpStatus.CREATED).body(roomId);
 	}
 
@@ -56,7 +56,7 @@ public class RoomController {
 	 */
 	@GetMapping("/joined")
 	public ResponseEntity<RoomListResDto> allJoinedRoomList(@Parameter(hidden = true) @Login UserDto user) {
-		RoomListResDto roomListResDto = roomService.findOrderJoinedRoomList(user.getId());
+		RoomListResDto roomListResDto = roomService.findJoinedRoomList(user.getId());
 		return ResponseEntity.status(HttpStatus.OK).body(roomListResDto);
 	}
 
@@ -66,7 +66,7 @@ public class RoomController {
 	 */
 	@GetMapping("/history")
 	public ResponseEntity<RoomListResDto> myHistoryRoomList(@Parameter(hidden = true) @Login UserDto user) {
-		RoomListResDto roomListResDto = roomService.findOrderMyHistoryRoomList(user.getId());
+		RoomListResDto roomListResDto = roomService.findMyHistoryRoomList(user.getId());
 		return ResponseEntity.status(HttpStatus.OK).body(roomListResDto);
 	}
 
@@ -79,12 +79,12 @@ public class RoomController {
 	@GetMapping("/{room_id}")
 	public ResponseEntity<RoomDetailResDto> roomDetailInfo(@Parameter(hidden = true) @Login UserDto user,
 		@PathVariable("room_id") Long roomId) {
-		RoomDetailResDto roomDetailResDto = roomService.findOrderRoomDetail(user.getId(), roomId);
+		RoomDetailResDto roomDetailResDto = roomService.findRoomDetail(user.getId(), roomId);
 		return ResponseEntity.status(HttpStatus.OK).body(roomDetailResDto);
 	}
 
 	/**
-	 * 방에 참여한다
+	 * 방 나가기
 	 * @param roomId 방 id
 	 * @param user 유저 정보
 	 * @return roomId
@@ -102,7 +102,7 @@ public class RoomController {
 	@PostMapping("/{room_id}/start")
 	public ResponseEntity<Long> startRoom(@PathVariable("room_id") Long roomId,
 		@Parameter(hidden = true) @Login UserDto user) {
-		return ResponseEntity.status(HttpStatus.OK).body(roomService.modifyStartRoom(roomId, user));
+		return ResponseEntity.status(HttpStatus.CREATED).body(roomService.modifyStartRoom(roomId, user));
 	}
 
 	/**
@@ -114,7 +114,7 @@ public class RoomController {
 	@PostMapping("/{room_id}")
 	public ResponseEntity<RoomJoinResDto> joinRoom(@Parameter(hidden = true) @Login UserDto user,
 		@PathVariable("room_id") Long roomId) {
-		RoomJoinResDto roomJoinResDto = roomService.addOrderjoinRoom(roomId, user);
+		RoomJoinResDto roomJoinResDto = roomService.addJoinRoom(roomId, user);
 		return ResponseEntity.status(HttpStatus.CREATED).body(roomJoinResDto);
 	}
 }
