@@ -8,22 +8,22 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import gg.party.api.user.templates.controller.response.TemplatesResDto;
-import gg.party.api.user.templates.service.TemplatesService;
+import gg.party.api.user.templates.controller.response.TemplateResDto;
+import gg.party.api.user.templates.service.TemplateService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/party/templates")
-public class TemplatesController {
-	private final TemplatesService templatesService;
+public class TemplateController {
+	private final TemplateService templateService;
 
 	/**
 	 * 탬플릿 목록을 조회한다
 	 * @return 탬플릿 전체 List
 	 */
 	@GetMapping
-	public ResponseEntity<List<TemplatesResDto>> templateList() {
-		return ResponseEntity.status(HttpStatus.OK).body(templatesService.findTemplatesList());
+	public ResponseEntity<List<TemplateResDto>> templateList() {
+		return ResponseEntity.status(HttpStatus.OK).body(templateService.findTemplateList());
 	}
 }

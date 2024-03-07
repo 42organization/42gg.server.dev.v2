@@ -4,7 +4,7 @@ import gg.data.party.GameTemplate;
 import lombok.Getter;
 
 @Getter
-public class TemplatesResDto {
+public class TemplateResDto {
 	private Long gameTemplateId;
 	private Long categoryId;
 	private String gameName;
@@ -16,7 +16,7 @@ public class TemplatesResDto {
 	private String difficulty;
 	private String summary;
 
-	public TemplatesResDto(GameTemplate template) {
+	public TemplateResDto(GameTemplate template) {
 		this.gameTemplateId = template.getId();
 		this.categoryId = template.getCategory().getId();
 		this.gameName = template.getGameName();
