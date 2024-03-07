@@ -24,7 +24,7 @@ public class TemplateAdminController {
 	 * return 201 status code(성공적인 추가 status)
 	 */
 	@PostMapping
-	public ResponseEntity<Void> createTemplate(@RequestBody TemplateAdminCreateDto request) {
+	public ResponseEntity<Void> addTemplate(@RequestBody TemplateAdminCreateDto request) {
 		templateAdminService.addTemplate(request);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}

@@ -26,7 +26,7 @@ public class TemplateAdminService {
 		Category category = categoryRepository.findById(request.getCategoryId())
 			.orElseThrow(CategoryNotFoundException::new);
 
-		GameTemplate gameTemplate = GameTemplate.createTemplate(
+		GameTemplate gameTemplate = GameTemplate.addTemplate(
 			category,
 			request.getGameName(),
 			request.getMaxGamePeople(),
