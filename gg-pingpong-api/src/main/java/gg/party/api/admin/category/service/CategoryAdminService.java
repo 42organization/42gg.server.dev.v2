@@ -48,13 +48,14 @@ public class CategoryAdminService {
 	 * @param reqDto 추가할 카테고리 이름
 	 * @exception CategoryDuplicateException 중복된 카테고리
 	 */
+	@Transactional
 	public void addCategory(CategoryAddAdminReqDto reqDto) {
 		String categoryName = reqDto.getCategoryName();
 
 		if (categoryAdminRepository.existsByName(categoryName)) {
 			throw new CategoryDuplicateException();
 		}
-
+		
 		categoryAdminRepository.save(new Category(categoryName));
 	}
 }
