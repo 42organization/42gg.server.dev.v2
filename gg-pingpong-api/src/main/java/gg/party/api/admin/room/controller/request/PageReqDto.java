@@ -8,9 +8,4 @@ import lombok.NoArgsConstructor;
 public class PageReqDto {
 	private int page;
 	private int size;
-
-	public PageReqDto(int page, int size) {
-		this.page = page;
-		this.size = size;
-	}
 }
