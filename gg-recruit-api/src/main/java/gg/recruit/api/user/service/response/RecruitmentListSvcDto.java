@@ -1,6 +1,7 @@
 package gg.recruit.api.user.service.response;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import gg.data.recruit.recruitment.Recruitments;
 import lombok.Getter;
@@ -13,7 +14,7 @@ public class RecruitmentListSvcDto {
 	private Integer totalPage;
 
 	public RecruitmentListSvcDto(List<Recruitments> recruitments, Integer totalPage) {
-		this.recruitments = recruitments.stream().map(RecruitmentSvcDto::new).toList();
+		this.recruitments = recruitments.stream().map(RecruitmentSvcDto::new).collect(Collectors.toList());
 		this.totalPage = totalPage;
 	}
 }
