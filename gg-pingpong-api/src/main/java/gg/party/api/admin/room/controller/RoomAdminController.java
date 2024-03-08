@@ -5,6 +5,7 @@ import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import gg.data.party.type.RoomType;
+import gg.party.api.admin.room.controller.request.PageReqDto;
 import gg.party.api.admin.room.controller.request.RoomShowChangeReqDto;
 import gg.party.api.admin.room.controller.response.AdminRoomListResDto;
 import gg.party.api.admin.room.service.RoomAdminService;
@@ -23,7 +25,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/party/admin/rooms")
 public class RoomAdminController {
-
 	private final RoomAdminService roomAdminService;
 
 	/**
@@ -49,11 +50,12 @@ public class RoomAdminController {
 
 	/**
 	 * 방 전체 조회
-	 * @return 방 정보 dto
+	 * @param pageReqDto page번호 및 사이즈(10)
+	 * @return 방 정보 리스트 + totalpages dto
 	 */
 	@GetMapping
-	public ResponseEntity<AdminRoomListResDto> adminAllRoomList() {
-		AdminRoomListResDto adminRoomListResDto = roomAdminService.findAllRoomList();
+	public ResponseEntity<AdminRoomListResDto> adminAllRoomList(@ModelAttribute @Valid PageReqDto pageReqDto) {
+		AdminRoomListResDto adminRoomListResDto = roomAdminService.findAllRoomList(pageReqDto);
 		return ResponseEntity.status(HttpStatus.OK).body(adminRoomListResDto);
 	}
 }
