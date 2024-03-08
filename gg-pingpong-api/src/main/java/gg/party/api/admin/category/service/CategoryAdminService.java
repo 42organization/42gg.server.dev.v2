@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import gg.admin.repo.category.CategoryAdminRepository;
 import gg.admin.repo.room.RoomAdminRepository;
 import gg.data.party.Category;
+import gg.party.api.admin.category.controller.request.CategoryAddAdminReqDto;
+import gg.utils.exception.party.CategoryDuplicateException;
 import gg.utils.exception.party.CategoryNotFoundException;
 import gg.utils.exception.party.DefaultCategoryNeedException;
 import lombok.RequiredArgsConstructor;
@@ -39,5 +41,20 @@ public class CategoryAdminService {
 			.forEach(room -> room.updateCategory(defaultCategory));
 
 		categoryAdminRepository.deleteById(categoryId);
+	}
+
+	/**
+	 * 카테고리 추가
+	 * @param reqDto 추가할 카테고리 이름
+	 * @exception CategoryDuplicateException 중복된 카테고리
+	 */
+	@Transactional
+	public void addCategory(CategoryAddAdminReqDto reqDto) {
+		String categoryName = reqDto.getCategoryName();
+
+		if (categoryAdminRepository.existsByName(categoryName)) {
+			throw new CategoryDuplicateException();
+		}
+		categoryAdminRepository.save(new Category(categoryName));
 	}
 }
