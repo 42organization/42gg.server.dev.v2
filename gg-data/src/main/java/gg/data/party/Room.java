@@ -73,14 +73,6 @@ public class Room extends BaseTimeEntity {
 	@Column(name = "status")
 	private RoomType status;
 
-	public void updateCurrentPeople(int currentPeople) {
-		this.currentPeople = currentPeople;
-	}
-
-	public void updateCategory(Category category) {
-		this.category = category;
-	}
-
 	@Builder
 	public Room(User host, User creator, Category category, String title, String content, Integer currentPeople,
 		Integer maxPeople, Integer minPeople, LocalDateTime dueDate, RoomType status) {
@@ -96,15 +88,19 @@ public class Room extends BaseTimeEntity {
 		this.status = status;
 	}
 
-	public void updateStatus(RoomType status) {
+	public void updateCurrentPeople(int currentPeople) {
+		this.currentPeople = currentPeople;
+	}
+
+	public void updateCategory(Category category) {
+		this.category = category;
+	}
+
+	public void updateRoomStatus(RoomType status) {
 		this.status = status;
 	}
 
 	public void updateHost(User host) {
 		this.host = host;
-	}
-
-	public void updateRoomStatus(RoomType status) {
-		this.status = status;
 	}
 }

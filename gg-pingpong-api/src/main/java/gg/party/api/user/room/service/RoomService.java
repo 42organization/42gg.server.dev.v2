@@ -161,7 +161,7 @@ public class RoomService {
 		// 모두 나갈 때 방 fail처리
 		if (targetRoom.getCurrentPeople() == 1) {
 			targetRoom.updateCurrentPeople(0);
-			targetRoom.updateStatus(RoomType.FAIL);
+			targetRoom.updateRoomStatus(RoomType.FAIL);
 			targetUserRoom.updateIsExist(false);
 			roomRepository.save(targetRoom);
 			userRoomRepository.save(targetUserRoom);
@@ -209,7 +209,7 @@ public class RoomService {
 		if (targetRoom.getHost() != targetUserRoom.getUser()) {
 			throw new UserNotHostException();
 		}
-		targetRoom.updateStatus(RoomType.START);
+		targetRoom.updateRoomStatus(RoomType.START);
 		roomRepository.save(targetRoom);
 
 		return roomId;
@@ -282,7 +282,7 @@ public class RoomService {
 				newUserRoom.updateIsExist(false);
 				return newUserRoom;
 			});
-		if (userRoom.getIsExist() == true) {
+		if (userRoom.getIsExist()) {
 			throw new UserAlreadyInRoom(ErrorCode.USER_ALREADY_IN_ROOM);
 		} else {
 			userRoom.updateIsExist(true);

@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class ReportRoomReqDto {
+public class ReportReqDto {
 	@Size(min = 1, max = 200)
 	private String content;
 }
