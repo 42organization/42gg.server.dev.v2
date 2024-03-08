@@ -1,6 +1,6 @@
-package gg.recruit.api.user.application.controller;
+package gg.recruit.api.user.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.data.recruit.recruitment.Recruitments;
 import gg.data.user.User;
-import gg.recruit.api.user.application.controller.response.MyApplicationsResDto;
+import gg.recruit.api.user.controller.response.ActiveRecruitmentListResDto;
 import gg.utils.RecruitMockData;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
@@ -23,20 +23,19 @@ import gg.utils.annotation.IntegrationTest;
 @IntegrationTest
 @Transactional
 @AutoConfigureMockMvc
-class ApplicationControllerTest {
-
-	@Autowired
-	private RecruitMockData recruitMockData;
-	@Autowired
-	private TestDataUtils testDataUtils;
+class RecruitmentControllerTest {
 	@Autowired
 	private ObjectMapper objectMapper;
 	@Autowired
 	private MockMvc mockMvc;
+	@Autowired
+	private RecruitMockData recruitMockData;
+	@Autowired
+	private TestDataUtils testDataUtils;
 
 	@Test
-	@DisplayName("GET /recruitments/applications -> 200 OK TEST")
-	public void getMyApplicationsTest() throws Exception {
+	@DisplayName("GET /recruitments -> 200 OK TEST")
+	void findActiveRecruitmentList() throws Exception {
 		//given
 		User user = testDataUtils.createNewUser();
 		String accessToken = testDataUtils.getLoginAccessTokenFromUser(user);
@@ -44,18 +43,16 @@ class ApplicationControllerTest {
 		Recruitments recruitments = recruitMockData.createRecruitments();
 		Recruitments recruitments2 = recruitMockData.createRecruitments();
 		Recruitments recruitments3 = recruitMockData.createRecruitments();
-
-		recruitMockData.createApplication(user, recruitments);
-		recruitMockData.createApplication(user, recruitments2);
-		recruitMockData.createApplication(user, recruitments3);
-
 		//when
-		String res = mockMvc.perform(get(("/recruitments/applications"))
+		String res = mockMvc.perform(get("/recruitments")
+				.param("page", "1")
+				.param("size", "10")
 				.header("Authorization", "Bearer " + accessToken))
 			.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
 		//then
-		MyApplicationsResDto myApplicationsResDto = objectMapper.readValue(res, MyApplicationsResDto.class);
-		assertEquals(3, myApplicationsResDto.getApplications().size());
+		ActiveRecruitmentListResDto resDto = objectMapper.readValue(res, ActiveRecruitmentListResDto.class);
+		assertThat(resDto.getRecruitments().size()).isEqualTo(3);
+		assertThat(resDto.getTotalPage()).isEqualTo(1);
 	}
 }
