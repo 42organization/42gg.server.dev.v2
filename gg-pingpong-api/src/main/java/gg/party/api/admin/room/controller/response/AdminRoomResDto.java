@@ -1,4 +1,4 @@
-package gg.party.api.user.room.controller.response;
+package gg.party.api.admin.room.controller.response;
 
 import java.time.LocalDateTime;
 
@@ -8,8 +8,10 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class RoomResDto {
+public class AdminRoomResDto {
 	private Long roomId;
+	private Long hostId;
+	private String creatorIntraId;
 	private Long categoryId;
 	private String title;
 	private String content;
@@ -20,8 +22,10 @@ public class RoomResDto {
 	private LocalDateTime createDate;
 	private String status;
 
-	public RoomResDto(Room room) {
+	public AdminRoomResDto(Room room) {
 		this.roomId = room.getId();
+		this.hostId = room.getHost().getId();
+		this.creatorIntraId = room.getCreator().getIntraId();
 		this.categoryId = room.getCategory().getId();
 		this.title = room.getTitle();
 		this.content = room.getContent();

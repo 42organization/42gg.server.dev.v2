@@ -113,3 +113,15 @@ CREATE TABLE user_report
     FOREIGN KEY (reportee_id) REFERENCES user (id),
     FOREIGN KEY (room_id) REFERENCES room (id)
 );
+
+CREATE TABLE party_penalty (
+    id          BIGINT       PRIMARY KEY AUTO_INCREMENT,
+    user_id     BIGINT       NOT NULL,
+    penalty_type VARCHAR(20) NOT NULL,
+    message     VARCHAR(100) NOT NULL,
+    start_time  DATETIME     NOT NULL,
+    penalty_time INT         NOT NULL,
+    created_at  DATETIME     NOT NULL,
+    modified_at DATETIME     NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES user(id)
+);
