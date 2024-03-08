@@ -7,4 +7,8 @@ import lombok.NoArgsConstructor;
 @Getter
 public class RoomCreateResDto {
 	private Long roomId;
+
+	public RoomCreateResDto(Long roomId) {
+		this.roomId = roomId;
+	}
 }

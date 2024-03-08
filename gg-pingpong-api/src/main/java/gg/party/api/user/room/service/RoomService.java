@@ -22,6 +22,7 @@ import gg.data.user.User;
 import gg.party.api.user.room.controller.request.RoomCreateReqDto;
 import gg.party.api.user.room.controller.response.CommentResDto;
 import gg.party.api.user.room.controller.response.LeaveRoomResDto;
+import gg.party.api.user.room.controller.response.RoomCreateResDto;
 import gg.party.api.user.room.controller.response.RoomDetailResDto;
 import gg.party.api.user.room.controller.response.RoomJoinResDto;
 import gg.party.api.user.room.controller.response.RoomListResDto;
@@ -80,7 +81,7 @@ public class RoomService {
 	 * @return 만들어진 방 ID값
 	 */
 	@Transactional
-	public Long addCreateRoom(RoomCreateReqDto roomCreateReqDto, UserDto userDto) {
+	public RoomCreateResDto addCreateRoom(RoomCreateReqDto roomCreateReqDto, UserDto userDto) {
 		User user = userRepository.findById(userDto.getId()).get();
 		Category category = categoryRepository.findById(roomCreateReqDto.getCategoryId())
 			.orElseThrow(CategoryNotFoundException::new);
@@ -90,7 +91,7 @@ public class RoomService {
 
 		UserRoom userRoom = new UserRoom(user, room, randomNickname);
 		userRoomRepository.save(userRoom);
-		return room.getId();
+		return new RoomCreateResDto(room.getId());
 	}
 
 	/**
