@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,14 +47,15 @@ public class RoomAdminService {
 
 	/**
 	 * 방 전체 조회
-	 * @return 방 정보 dto
+	 * @param pageReqDto page번호 및 사이즈(10)
+	 * @return 방 정보 리스트 + totalpages dto
 	 */
 	@Transactional
 	public AdminRoomListResDto findAllRoomList(PageReqDto pageReqDto) {
 		int page = pageReqDto.getPage();
 		int size = pageReqDto.getSize();
 
-		Pageable pageable = PageRequest.of(page - 1, size);  // 특정 정렬 방식이 필요하다면 여기에 추가합니다.
+		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
 		Page<Room> roomPage = roomRepository.findAll(pageable);
 
