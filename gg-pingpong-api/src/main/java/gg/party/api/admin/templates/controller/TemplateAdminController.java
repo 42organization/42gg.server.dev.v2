@@ -1,11 +1,15 @@
 package gg.party.api.admin.templates.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import gg.party.api.admin.templates.controller.request.TemplateAdminCreateReqDto;
 import gg.party.api.admin.templates.service.TemplateAdminService;
 import lombok.RequiredArgsConstructor;
 
@@ -14,6 +18,16 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/party/admin/templates")
 public class TemplateAdminController {
 	private final TemplateAdminService templateAdminService;
+
+	/**
+	 * 템플릿 추가
+	 * return 201 status code(성공적인 추가 status)
+	 */
+	@PostMapping
+	public ResponseEntity<Void> addTemplate(@RequestBody TemplateAdminCreateReqDto request) {
+		templateAdminService.addTemplate(request);
+		return ResponseEntity.status(HttpStatus.CREATED).build();
+	}
 
 	/**
 	 * 템플릿 삭제
