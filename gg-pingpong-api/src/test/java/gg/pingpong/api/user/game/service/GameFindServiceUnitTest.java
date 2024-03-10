@@ -19,9 +19,9 @@ import org.mockito.quality.Strictness;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.SliceImpl;
 
-import gg.pingpong.data.game.Game;
-import gg.pingpong.repo.game.GameRepository;
-import gg.pingpong.utils.annotation.UnitTest;
+import gg.data.game.Game;
+import gg.repo.game.GameRepository;
+import gg.utils.annotation.UnitTest;
 
 @UnitTest
 class GameFindServiceUnitTest {

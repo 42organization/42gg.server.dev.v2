@@ -13,12 +13,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-import gg.pingpong.data.game.Game;
-import gg.pingpong.data.game.PChange;
-import gg.pingpong.data.user.User;
-import gg.pingpong.repo.game.PChangeRepository;
-import gg.pingpong.utils.annotation.UnitTest;
-import gg.pingpong.utils.exception.pchange.PChangeNotExistException;
+import gg.data.game.Game;
+import gg.data.game.PChange;
+import gg.data.user.User;
+import gg.repo.game.PChangeRepository;
+import gg.utils.annotation.UnitTest;
+import gg.utils.exception.pchange.PChangeNotExistException;
 
 @UnitTest
 class PChangeServiceUnitTest {

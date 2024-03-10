@@ -18,17 +18,17 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+import gg.data.game.Game;
+import gg.data.manage.SlotManagement;
 import gg.pingpong.api.user.noti.service.NotiService;
 import gg.pingpong.api.user.noti.service.SnsNotiService;
 import gg.pingpong.api.user.user.service.UserService;
-import gg.pingpong.data.game.Game;
-import gg.pingpong.data.manage.SlotManagement;
-import gg.pingpong.repo.game.GameRepository;
-import gg.pingpong.repo.game.out.GameUser;
-import gg.pingpong.repo.manage.SlotManagementRepository;
-import gg.pingpong.utils.annotation.UnitTest;
-import gg.pingpong.utils.exception.game.GameDataConsistencyException;
-import gg.pingpong.utils.exception.match.SlotNotFoundException;
+import gg.repo.game.GameRepository;
+import gg.repo.game.out.GameUser;
+import gg.repo.manage.SlotManagementRepository;
+import gg.utils.annotation.UnitTest;
+import gg.utils.exception.game.GameDataConsistencyException;
+import gg.utils.exception.match.SlotNotFoundException;
 
 @UnitTest
 class GameStatusServiceUnitTest {
