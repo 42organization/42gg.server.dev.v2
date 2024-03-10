@@ -10,6 +10,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -104,33 +106,40 @@ class GameFindServiceUnitTest {
 	@DisplayName("allGameList 매서드 유닛 테스트")
 	@MockitoSettings(strictness = Strictness.LENIENT)
 	class AllGameList {
-		@Test
+		@ParameterizedTest
+		@ValueSource(strings = {"LIVE", "END"})
 		@DisplayName("success")
-		void success() {
+		void success(String status) {
 			// given
 			given(gameRepository.findAllByModeInAndStatusIn(anyList(), anyList(), any()))
 				.willReturn(new SliceImpl<>(gameList));
 			given(gameRepository.findAllByModeInAndStatus(anyList(), any(), any()))
 				.willReturn(new SliceImpl<>(gameList));
 			// when, then
-			gameFindService.allGameList(mock(Pageable.class), "LIVE");
-			gameFindService.allGameList(mock(Pageable.class), "END");
+			gameFindService.allGameList(mock(Pageable.class), status);
+			if (status.equals("LIVE")) {
+				verify(gameRepository, times(1)).findAllByModeInAndStatusIn(anyList(), anyList(), any());
+			} else {
+				verify(gameRepository, times(1)).findAllByModeInAndStatus(anyList(), any(), any());
+			}
 		}
 	}
 
 	@Nested
 	@DisplayName("allGameListUser 매서드 유닛 테스트")
 	class AllGameListUser {
-		@Test
+		@ParameterizedTest
+		@ValueSource(strings = {"END", "LIVE"})
 		@DisplayName("success")
-		void success() {
+		void success(String status) {
 			// given
 			given(gameRepository.findGamesByUserAndModeInAndStatusIn(any(), anyList(), anyList(), any()))
 				.willReturn(new SliceImpl<>(gameIdList));
 			// when, then
-			gameFindService.allGameListUser(mock(Pageable.class), "intraId", "END");
-			gameFindService.allGameListUser(mock(Pageable.class), "intraId", "LIVE");
+			gameFindService.allGameListUser(mock(Pageable.class), "intraId", status);
 
+			verify(gameRepository, times(1))
+				.findGamesByUserAndModeInAndStatusIn(any(), anyList(), anyList(), any());
 		}
 	}
 
