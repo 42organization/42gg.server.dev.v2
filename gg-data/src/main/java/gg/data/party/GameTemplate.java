@@ -64,4 +64,37 @@ public class GameTemplate extends BaseTimeEntity {
 		this.difficulty = difficulty;
 		this.summary = summary;
 	}
+
+	public void modifyTemplateDetails(String gameName, Integer maxGamePeople, Integer minGamePeople,
+		Integer maxGameTime, Integer minGameTime, String genre,
+		String difficulty, String summary) {
+		if (gameName != null) {
+			this.gameName = gameName;
+		}
+		if (maxGamePeople != null) {
+			this.maxGamePeople = maxGamePeople;
+		}
+		if (minGamePeople != null) {
+			this.minGamePeople = minGamePeople;
+		}
+		if (maxGameTime != null) {
+			this.maxGameTime = maxGameTime;
+		}
+		if (minGameTime != null) {
+			this.minGameTime = minGameTime;
+		}
+		if (genre != null) {
+			this.genre = genre;
+		}
+		if (difficulty != null) {
+			this.difficulty = difficulty;
+		}
+		if (summary != null) {
+			this.summary = summary;
+		}
+	}
+
+	public void modifyCategory(Category category) {
+		this.category = category;
+	}
 }
