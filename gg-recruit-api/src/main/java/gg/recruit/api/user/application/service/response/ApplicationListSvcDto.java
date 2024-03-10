@@ -7,11 +7,11 @@ import gg.data.recruit.application.Application;
 import lombok.Getter;
 
 @Getter
-public class ApplicationListDto {
-	List<ApplicationDto> applications;
+public class ApplicationListSvcDto {
+	List<ApplicationSvcDto> applications;
 
-	public ApplicationListDto(List<Application> applications) {
-		this.applications = applications.stream().map(ApplicationDto::new)
+	public ApplicationListSvcDto(List<Application> applications) {
+		this.applications = applications.stream().map(ApplicationSvcDto::new)
 			.collect(Collectors.toList());
 	}
 }

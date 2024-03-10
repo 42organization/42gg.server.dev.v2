@@ -2,7 +2,7 @@ package gg.recruit.api.user.application.controller.response;
 
 import java.time.LocalDateTime;
 
-import gg.recruit.api.user.application.service.response.ApplicationDto;
+import gg.recruit.api.user.application.service.response.ApplicationSvcDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -17,7 +17,7 @@ public class ApplicationResDto {
 	private String generation;
 	private String status;
 
-	public ApplicationResDto(ApplicationDto applicationDto) {
+	public ApplicationResDto(ApplicationSvcDto applicationDto) {
 		this.recruitId = applicationDto.getRecruitId();
 		this.applicationId = applicationDto.getApplicationId();
 		this.startDate = applicationDto.getStartDate();

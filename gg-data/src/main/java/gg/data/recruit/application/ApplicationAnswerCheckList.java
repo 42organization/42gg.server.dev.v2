@@ -14,16 +14,19 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
-public class ApplicationAnswerCheckList extends BaseTimeEntity {
+public class ApplicationAnswerCheckList extends ApplicationAnswer {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "application_answer_id", nullable = false)
-	private ApplicationAnswer applicationAnswerId;
-
-	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "check_list_id", nullable = false)
-	private CheckList checkListId;
+	private CheckList checkList;
+
+	@Override
+	public FormEntityDto toForm() {
+		return new FormEntityDto(this.getQuestionId(), this.getInputType(),
+			new CheckListEntityDto(checkList.getId(), checkList.getContent()));
+	}
 }

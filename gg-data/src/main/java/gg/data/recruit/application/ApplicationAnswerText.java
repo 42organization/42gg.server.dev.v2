@@ -14,15 +14,16 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
-public class ApplicationAnswerText extends BaseTimeEntity {
+public class ApplicationAnswerText extends ApplicationAnswer {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "application_answer_id", nullable = false)
-	private ApplicationAnswer applicationAnswerId;
-
 	@Column(length = 1000)
 	private String answer;
+
+	@Override
+	public FormEntityDto toForm() {
+		return new FormEntityDto(this.getQuestionId(), this.getInputType(), answer);
+	}
 }

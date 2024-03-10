@@ -11,10 +11,12 @@ import javax.persistence.ManyToOne;
 
 import gg.data.BaseTimeEntity;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class CheckList extends BaseTimeEntity {
 
 	@Id
@@ -23,7 +25,7 @@ public class CheckList extends BaseTimeEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "question_id", nullable = false)
-	private Question questionId;
+	private Question question;
 
 	@Column(length = 100)
 	private String content;
