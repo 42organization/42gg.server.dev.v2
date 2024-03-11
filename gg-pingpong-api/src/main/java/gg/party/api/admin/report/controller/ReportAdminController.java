@@ -20,7 +20,7 @@ public class ReportAdminController {
 	private final ReportAdminService reportAdminService;
 
 	/**
-	 * 댓글 신고 전체 리스트를 조회한다
+	 * 댓글 신고 전체 리스트 조회
 	 * return 200 status code(성공 status)
 	 */
 	@GetMapping("/comments")
@@ -30,7 +30,7 @@ public class ReportAdminController {
 	}
 
 	/**
-	 * 방 신고 전체 리스트를 조회한다
+	 * 방 신고 전체 리스트 조회
 	 * return 200 status code(성공 status)
 	 */
 	@GetMapping("/rooms")
@@ -40,7 +40,7 @@ public class ReportAdminController {
 	}
 
 	/**
-	 * 노쇼 신고 전체 리스트를 조회한다
+	 * 노쇼 신고 전체 리스트 조회
 	 * return 200 status code(성공 status)
 	 */
 	@GetMapping("/users")
