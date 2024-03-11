@@ -49,5 +49,4 @@ public class RedisMatchTimeRepository {
 		return keys.stream().map(str -> LocalDateTime.parse(str.substring(prefixIdx)))
 			.collect(Collectors.toSet());
 	}
-
 }

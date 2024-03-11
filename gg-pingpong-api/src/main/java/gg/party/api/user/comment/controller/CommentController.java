@@ -30,7 +30,7 @@ public class CommentController {
 	 * @return 생성 성공 여부
 	 */
 	@PostMapping
-	public ResponseEntity<Void> createComment(@PathVariable Long roomId, @Valid @RequestBody CommentCreateReqDto reqDto,
+	public ResponseEntity<Void> createComment(@PathVariable Long roomId, @RequestBody @Valid CommentCreateReqDto reqDto,
 		@Login UserDto user) {
 		commentService.addCreateComment(roomId, reqDto, user.getId());
 		return ResponseEntity.status(HttpStatus.CREATED).build();

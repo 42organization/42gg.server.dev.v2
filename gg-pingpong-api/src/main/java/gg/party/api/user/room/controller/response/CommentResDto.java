@@ -2,6 +2,7 @@ package gg.party.api.user.room.controller.response;
 
 import java.time.LocalDateTime;
 
+import gg.data.party.Comment;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,11 +15,11 @@ public class CommentResDto {
 	private Boolean isHidden;
 	private LocalDateTime createDate;
 
-	public CommentResDto(Long id, String nickname, String content, boolean hidden, LocalDateTime createdAt) {
-		this.commentId = id;
-		this.nickname = nickname;
-		this.content = content;
-		this.isHidden = hidden;
-		this.createDate = createdAt;
+	public CommentResDto(Comment comment) {
+		this.commentId = comment.getId();
+		this.nickname = comment.getUserRoom().getNickname();
+		this.content = comment.getContent();
+		this.isHidden = comment.isHidden();
+		this.createDate = comment.getCreatedAt();
 	}
 }
