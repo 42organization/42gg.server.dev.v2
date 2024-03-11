@@ -1,4 +1,4 @@
-CREATE TABLE `recruitments` (
+CREATE TABLE `recruitment` (
                                 `id` bigint NOT NULL AUTO_INCREMENT,
                                 `created_at` datetime(6) NOT NULL,
                                 `modified_at` datetime(6) DEFAULT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE `application` (
        KEY `FKnmih1vdymw1494hdj04in2e5h` (`recruit_id`),
        KEY `FKldca8xj6lqb3rsqawrowmkqbg` (`user_id`),
        CONSTRAINT `FKldca8xj6lqb3rsqawrowmkqbg` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
-       CONSTRAINT `FKnmih1vdymw1494hdj04in2e5h` FOREIGN KEY (`recruit_id`) REFERENCES `recruitments` (`id`)
+       CONSTRAINT `FKnmih1vdymw1494hdj04in2e5h` FOREIGN KEY (`recruit_id`) REFERENCES `recruitment` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `question` (
@@ -37,7 +37,7 @@ CREATE TABLE `question` (
         `recruit_id` bigint NOT NULL ,
         PRIMARY KEY (`id`),
         KEY `FK44dkmx1sa8ssxjd7u5ne0ti30` (`recruit_id`),
-        CONSTRAINT `FK44dkmx1sa8ssxjd7u5ne0ti30` FOREIGN KEY (`recruit_id`) REFERENCES `recruitments` (`id`)
+        CONSTRAINT `FK44dkmx1sa8ssxjd7u5ne0ti30` FOREIGN KEY (`recruit_id`) REFERENCES `recruitment` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `application_answer` (
