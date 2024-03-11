@@ -13,4 +13,3 @@ public interface CommentReportRepository extends JpaRepository<CommentReport, Lo
 
 	public Optional<CommentReport> findByReporterAndCommentId(User reporter, Long commentId);
 }
-
