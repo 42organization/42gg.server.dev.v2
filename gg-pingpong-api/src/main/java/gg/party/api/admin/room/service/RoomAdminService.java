@@ -15,17 +15,16 @@ import gg.data.party.Room;
 import gg.data.party.UserRoom;
 import gg.data.party.type.RoomType;
 import gg.party.api.admin.room.controller.request.PageReqDto;
+import gg.party.api.admin.room.controller.response.AdminCommentResDto;
 import gg.party.api.admin.room.controller.response.AdminRoomDetailResDto;
 import gg.party.api.admin.room.controller.response.AdminRoomListResDto;
 import gg.party.api.admin.room.controller.response.AdminRoomResDto;
-import gg.party.api.user.room.controller.response.CommentResDto;
 import gg.party.api.user.room.controller.response.UserRoomResDto;
 import gg.repo.party.CommentRepository;
 import gg.repo.party.RoomRepository;
 import gg.repo.party.UserRoomRepository;
 import gg.repo.user.UserRepository;
 import gg.utils.exception.party.RoomNotFoundException;
-import gg.utils.exception.party.RoomReportedException;
 import gg.utils.exception.party.RoomSameStatusException;
 import lombok.RequiredArgsConstructor;
 
@@ -83,16 +82,11 @@ public class RoomAdminService {
 	 * @param userId 자신의 id
 	 * @param roomId 방 id
 	 * @exception RoomNotFoundException 유효하지 않은 방 입력
-	 * @exception RoomReportedException 신고 받은 방 처리 | 시작한 방도 볼 수 있게 해야하므로 별도처리
-	 * 익명성을 지키기 위해 nickname을 리턴
 	 * @return 방 상세정보 dto
 	 */
 	@Transactional
 	public AdminRoomDetailResDto findAdminDetailRoom(Long userId, Long roomId) {
 		Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
-		if (room.getStatus() == RoomType.HIDDEN) {
-			throw new RoomReportedException();
-		}
 
 		Optional<UserRoom> userRoomOptional = userRoomRepository.findByUserIdAndRoomIdAndIsExistTrue(userId, roomId);
 
@@ -102,10 +96,8 @@ public class RoomAdminService {
 			myNickname = userRoom.getNickname();
 		}
 
-		List<CommentResDto> comments = commentRepository.findByRoomId(roomId).stream()
-			.map(
-				comment -> new CommentResDto(comment.getId(), comment.getUserRoom().getNickname(), comment.getContent(),
-					comment.isHidden(), comment.getCreatedAt()))
+		List<AdminCommentResDto> comments = commentRepository.findByRoomId(roomId).stream()
+			.map(AdminCommentResDto::new)
 			.collect(Collectors.toList());
 
 		Optional<UserRoom> hostUserRoomOptional = userRoomRepository.findByUserIdAndRoomIdAndIsExistTrue(

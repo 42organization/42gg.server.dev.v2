@@ -241,9 +241,7 @@ public class RoomService {
 		}
 
 		List<CommentResDto> comments = commentRepository.findByRoomId(roomId).stream()
-			.map(
-				comment -> new CommentResDto(comment.getId(), comment.getUserRoom().getNickname(), comment.getContent(),
-					comment.isHidden(), comment.getCreatedAt()))
+			.map(CommentResDto::new)
 			.collect(Collectors.toList());
 
 		Optional<UserRoom> hostUserRoomOptional = userRoomRepository.findByUserIdAndRoomIdAndIsExistTrue(

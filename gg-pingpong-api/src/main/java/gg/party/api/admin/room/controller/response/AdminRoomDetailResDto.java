@@ -5,7 +5,6 @@ import java.util.List;
 
 import gg.data.party.Room;
 import gg.data.party.type.RoomType;
-import gg.party.api.user.room.controller.response.CommentResDto;
 import gg.party.api.user.room.controller.response.UserRoomResDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,11 +24,11 @@ public class AdminRoomDetailResDto {
 	private String myNickname;
 	private String hostNickname;
 	private List<UserRoomResDto> roomUsers;
-	private List<CommentResDto> comments;
+	private List<AdminCommentResDto> comments;
 
 	public AdminRoomDetailResDto(Room room, String myNickname, String hostNickname,
 		List<UserRoomResDto> roomUsers,
-		List<CommentResDto> comments) {
+		List<AdminCommentResDto> comments) {
 		this.roomId = room.getId();
 		this.title = room.getTitle();
 		this.categoryId = room.getCategory().getId();
