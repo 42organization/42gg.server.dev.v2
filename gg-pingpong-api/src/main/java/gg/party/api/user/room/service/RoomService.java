@@ -28,6 +28,7 @@ import gg.party.api.user.room.controller.response.RoomJoinResDto;
 import gg.party.api.user.room.controller.response.RoomListResDto;
 import gg.party.api.user.room.controller.response.RoomResDto;
 import gg.party.api.user.room.controller.response.UserRoomResDto;
+import gg.pingpong.api.user.noti.service.PartyNotiService;
 import gg.repo.party.CategoryRepository;
 import gg.repo.party.CommentRepository;
 import gg.repo.party.RoomRepository;
@@ -52,6 +53,7 @@ public class RoomService {
 	private final CategoryRepository categoryRepository;
 	private final UserRoomRepository userRoomRepository;
 	private final CommentRepository commentRepository;
+	private final PartyNotiService partyNotiService;
 
 	/**
 	 * 시작하지 않은 방과 시작한 방을 모두 조회한다
@@ -211,6 +213,8 @@ public class RoomService {
 			throw new UserNotHostException();
 		}
 		targetRoom.updateRoomStatus(RoomType.START);
+		List<User> users = userRoomRepository.findByIsExist(roomId);
+		partyNotiService.sendPartyNotifications(users);
 		roomRepository.save(targetRoom);
 
 		return roomId;
