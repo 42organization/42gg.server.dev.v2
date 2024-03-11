@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
-import gg.party.api.user.report.request.ReportRoomReqDto;
+import gg.party.api.user.report.request.ReportReqDto;
 import gg.party.api.user.report.service.ReportService;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
@@ -25,15 +25,29 @@ public class ReportController {
 
 	/**
 	 * 방을 신고한다.
-	 * @param reportRoomReqDto 신고 내용
+	 * @param reportReqDto 신고 내용
 	 * @param roomId 방 번호
-	 * @return 참여중인 방 전체 List
+	 * @return roomId
 	 */
 	@PostMapping("/rooms/{room_id}")
 	public ResponseEntity<Long> reportRoomAdd(@PathVariable("room_id") Long roomId,
-		@RequestBody @Valid ReportRoomReqDto reportRoomReqDto,
+		@RequestBody @Valid ReportReqDto reportReqDto,
 		@Parameter(hidden = true) @Login UserDto user) {
 		return ResponseEntity.status(HttpStatus.CREATED)
-			.body(reportService.addReportRoom(roomId, reportRoomReqDto, user));
+			.body(reportService.addReportRoom(roomId, reportReqDto, user));
+	}
+
+	/**
+	 * 댓글을 신고한다.
+	 * @param reportReqDto 신고 내용
+	 * @param commentId 댓글 번호
+	 * @return commentId
+	 */
+	@PostMapping("/comments/{comment_id}")
+	public ResponseEntity<Long> reportCommentAdd(@PathVariable("comment_id") Long commentId,
+		@RequestBody @Valid ReportReqDto reportReqDto,
+		@Parameter(hidden = true) @Login UserDto user) {
+		return ResponseEntity.status(HttpStatus.CREATED)
+			.body(reportService.addReportComment(commentId, reportReqDto, user));
 	}
 }
