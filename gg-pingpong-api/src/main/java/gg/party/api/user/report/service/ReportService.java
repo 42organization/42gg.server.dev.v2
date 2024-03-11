@@ -15,6 +15,7 @@ import gg.data.party.CommentReport;
 import gg.data.party.PartyPenalty;
 import gg.data.party.Room;
 import gg.data.party.RoomReport;
+import gg.data.party.UserReport;
 import gg.data.party.UserRoom;
 import gg.data.party.type.RoomType;
 import gg.data.user.User;
@@ -24,12 +25,15 @@ import gg.repo.party.CommentRepository;
 import gg.repo.party.PartyPenaltyRepository;
 import gg.repo.party.RoomReportRepository;
 import gg.repo.party.RoomRepository;
+import gg.repo.party.UserReportRepository;
 import gg.repo.party.UserRoomRepository;
 import gg.repo.user.UserRepository;
 import gg.utils.exception.party.AlredayReportedException;
 import gg.utils.exception.party.CommentNotFoundException;
 import gg.utils.exception.party.RoomNotFoundException;
+import gg.utils.exception.party.RoomNotParticipantException;
 import gg.utils.exception.party.SelfReportException;
+import gg.utils.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -42,6 +46,7 @@ public class ReportService {
 	private final CommentReportRepository commentReportRepository;
 	private final PartyPenaltyRepository partyPenaltyRepository;
 	private final UserRoomRepository userRoomRepository;
+	private final UserReportRepository userReportRepository;
 
 	/**
 	 * 방을 신고한다.
@@ -53,7 +58,7 @@ public class ReportService {
 	 * @return 방 번호
 	 */
 	@Transactional
-	public Long addReportRoom(Long roomId, ReportReqDto reportReqDto, UserDto user) {
+	public void addReportRoom(Long roomId, ReportReqDto reportReqDto, UserDto user) {
 		Room targetRoom = roomRepository.findById(roomId)
 			.orElseThrow(RoomNotFoundException::new);
 		User userEntity = userRepository.findById(user.getId()).get();
@@ -76,7 +81,6 @@ public class ReportService {
 			User targetUser = targetRoom.getCreator();
 			partyGivePenalty(targetUser.getIntraId(), 24, "방 패널티");
 		}
-		return roomId;
 	}
 
 	/**
@@ -89,7 +93,7 @@ public class ReportService {
 	 * @return 방 번호
 	 */
 	@Transactional
-	public Long addReportComment(Long commentId, ReportReqDto reportReqDto, UserDto user) {
+	public void addReportComment(Long commentId, ReportReqDto reportReqDto, UserDto user) {
 		Comment targetComment = commentRepository.findById(commentId)
 			.orElseThrow(CommentNotFoundException::new);
 		User userEntity = userRepository.findById(user.getId()).get();
@@ -114,7 +118,46 @@ public class ReportService {
 			User targetUser = targetComment.getUser();
 			partyGivePenalty(targetUser.getIntraId(), 1, "댓글 패널티");
 		}
-		return commentId;
+	}
+
+	/**
+	 * 유저 노쇼 신고한다.
+	 * @param roomId 방 번호
+	 * @param reportReqDto 신고 내용
+	 * @param user 신고자
+	 * @param userIntraId 피신고자
+	 * @exception CommentNotFoundException 방을 찾을 수 없음
+	 * @exception AlredayReportedException 이미 신고한 경우
+	 * @return 방 번호
+	 */
+	@Transactional
+	public void addReportUser(Long roomId, ReportReqDto reportReqDto, String userIntraId, UserDto user) {
+		if (Objects.equals(user.getIntraId(), userIntraId)) {
+			throw new SelfReportException();
+		}
+		Room targetRoom = roomRepository.findById(roomId)
+			.orElseThrow(RoomNotFoundException::new);
+		User reporterEntity = userRepository.findById(user.getId()).orElseThrow(UserNotFoundException::new);
+		User reporteeEntity = userRepository.findByIntraId(userIntraId).orElseThrow(UserNotFoundException::new);
+
+		userRoomRepository.findByUserIdAndRoomIdAndIsExistTrue(reporterEntity.getId(),
+			roomId).orElseThrow(RoomNotParticipantException::new);
+		userRoomRepository.findByUserIdAndRoomIdAndIsExistTrue(reporteeEntity.getId(),
+			roomId).orElseThrow(RoomNotParticipantException::new);
+
+		Optional<UserReport> existingReport = userReportRepository.findByReporterAndReportee(reporterEntity,
+			reporteeEntity);
+		if (existingReport.isPresent()) {
+			throw new AlredayReportedException();
+		}
+
+		UserReport userReport = new UserReport(reporterEntity, reporteeEntity, targetRoom, reportReqDto.getContent());
+		userReportRepository.save(userReport);
+
+		List<UserReport> allReportUser = userReportRepository.findByReporteeAndRoomId(reporteeEntity, roomId);
+		if (allReportUser.size() == targetRoom.getMaxPeople() / 2) {
+			partyGivePenalty(reporteeEntity.getIntraId(), 6, "노쇼 패널티");
+		}
 	}
 
 	/**
