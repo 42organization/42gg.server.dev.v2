@@ -1,5 +1,7 @@
 package gg.party.api.admin.templates.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -37,7 +39,7 @@ public class TemplateAdminController {
 	 */
 	@PatchMapping("/{templateId}")
 	public ResponseEntity<Void> updateTemplate(@PathVariable Long templateId,
-		@RequestBody TemplateAdminUpdateReqDto request) {
+		@Valid @RequestBody TemplateAdminUpdateReqDto request) {
 		templateAdminService.modifyTemplate(templateId, request);
 		return ResponseEntity.noContent().build();
 	}
