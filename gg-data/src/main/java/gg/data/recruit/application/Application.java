@@ -13,7 +13,7 @@ import javax.persistence.ManyToOne;
 
 import gg.data.BaseTimeEntity;
 import gg.data.recruit.application.enums.ApplicationStatus;
-import gg.data.recruit.recruitment.Recruitments;
+import gg.data.recruit.recruitment.Recruitment;
 import gg.data.user.User;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -34,7 +34,7 @@ public class Application extends BaseTimeEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "recruit_id", nullable = false)
-	private Recruitments recruit;
+	private Recruitment recruit;
 
 	private Boolean isDeleted;
 
@@ -42,7 +42,7 @@ public class Application extends BaseTimeEntity {
 	@Column(length = 15, nullable = false)
 	private ApplicationStatus status;
 
-	public Application(User user, Recruitments recruit) {
+	public Application(User user, Recruitment recruit) {
 		this.user = user;
 		this.recruit = recruit;
 		this.isDeleted = false;
