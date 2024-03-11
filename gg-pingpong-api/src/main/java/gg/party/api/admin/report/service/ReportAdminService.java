@@ -24,7 +24,7 @@ public class ReportAdminService {
 
 	/**
 	 * 댓글 신고 전체 리스트를 조회한다
-	 * return 전체 댓글 신고 리스트 (시간순 정렬)
+	 * @return 전체 댓글 신고 리스트 (시간순 정렬)
 	 */
 	@Transactional(readOnly = true)
 	public List<CommentReportListAdminResDto> getCommentReports() {
@@ -36,7 +36,7 @@ public class ReportAdminService {
 
 	/**
 	 * 방 신고 전체 리스트를 조회한다
-	 * return 전체 방 신고 리스트 (시간순 정렬)
+	 * @return 전체 방 신고 리스트 (시간순 정렬)
 	 */
 	@Transactional(readOnly = true)
 	public List<RoomReportListAdminResDto> getRoomReports() {
@@ -48,7 +48,7 @@ public class ReportAdminService {
 
 	/**
 	 * 노쇼 신고 전체 리스트를 조회한다
-	 * return 전체 노쇼 신고 리스트 (시간순 정렬)
+	 * @return 전체 노쇼 신고 리스트 (시간순 정렬)
 	 */
 	@Transactional(readOnly = true)
 	public List<UserReportListAdminResDto> getUserReports() {
