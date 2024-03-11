@@ -2,7 +2,9 @@ package gg;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
+@EnableScheduling
 @SpringBootApplication(scanBasePackages = {"gg.admin.repo", "gg.data", "gg.repo",
 	"gg.pingpong.api", "gg.utils", "gg.party.api", "gg.auth"})
 public class PingpongApiApplication {
