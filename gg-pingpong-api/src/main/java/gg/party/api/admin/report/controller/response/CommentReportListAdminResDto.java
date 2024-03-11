@@ -1,0 +1,28 @@
+package gg.party.api.admin.report.controller.response;
+
+import java.time.LocalDateTime;
+
+import gg.data.party.CommentReport;
+import lombok.Getter;
+
+/**
+ * 댓글 신고 dto
+ */
+@Getter
+public class CommentReportListAdminResDto {
+	private Long id;
+	private String reporterIntraId;
+	private Long commentId;
+	private Long roomId;
+	private String message;
+	private LocalDateTime createdAt;
+
+	public CommentReportListAdminResDto(CommentReport commentReport) {
+		this.id = commentReport.getId();
+		this.reporterIntraId = commentReport.getReporter().getIntraId();
+		this.commentId = commentReport.getComment().getId();
+		this.roomId = commentReport.getRoom().getId();
+		this.message = commentReport.getMessage();
+		this.createdAt = commentReport.getCreatedAt();
+	}
+}
