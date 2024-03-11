@@ -10,6 +10,7 @@ import javax.persistence.Id;
 
 import gg.data.BaseTimeEntity;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -38,6 +39,7 @@ public class Recruitment extends BaseTimeEntity {
 	@Column(nullable = false)
 	private LocalDateTime endTime;
 
+	@Builder
 	public Recruitment(String title, String contents, String generation, LocalDateTime startTime,
 		LocalDateTime endTime) {
 		this.title = title;
