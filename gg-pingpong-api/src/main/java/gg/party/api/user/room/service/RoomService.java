@@ -254,15 +254,14 @@ public class RoomService {
 
 		if (room.getStatus() == RoomType.START && userRoomOptional.isPresent()) {
 			List<UserRoomResDto> roomUsers = userRoomRepository.findByRoomId(roomId).stream()
-				.filter(userRoom -> userRoom.getIsExist())
-				.map(userRoom -> new UserRoomResDto(userRoom.getId(), userRoom.getNickname(),
-					userRoom.getUser().getIntraId()))
+				.filter(UserRoom::getIsExist)
+				.map(userRoom -> new UserRoomResDto(userRoom, userRoom.getUser().getIntraId()))
 				.collect(Collectors.toList());
 			return new RoomDetailResDto(room, myNickname, hostNickname, roomUsers, comments);
 		} else { // if 참여자 && 시작했을경우 intraID || else intraId == null
 			List<UserRoomResDto> roomUsers = userRoomRepository.findByRoomId(roomId).stream()
-				.filter(userRoom -> userRoom.getIsExist())
-				.map(userRoom -> new UserRoomResDto(userRoom.getId(), userRoom.getNickname()))
+				.filter(UserRoom::getIsExist)
+				.map(UserRoomResDto::new)
 				.collect(Collectors.toList());
 			return new RoomDetailResDto(room, myNickname, hostNickname, roomUsers, comments);
 		}

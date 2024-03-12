@@ -105,7 +105,7 @@ public class RoomAdminService {
 		String hostNickname = hostUserRoomOptional.get().getNickname();
 
 		List<UserRoomResDto> roomUsers = userRoomRepository.findByRoomId(roomId).stream()
-			.map(userRoom -> new UserRoomResDto(userRoom.getId(), userRoom.getNickname(),
+			.map(userRoom -> new UserRoomResDto(userRoom,
 				userRoom.getUser().getIntraId()))
 			.collect(Collectors.toList());
 
