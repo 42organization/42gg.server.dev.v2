@@ -24,6 +24,4 @@ public interface RoomReportRepository extends JpaRepository<RoomReport, Long> {
 		+ "JOIN FETCH rr.room",
 		countQuery = "SELECT count(rr) FROM RoomReport rr")
 	Page<RoomReport> findAllWithFetchJoin(Pageable pageable);
-
-
 }
