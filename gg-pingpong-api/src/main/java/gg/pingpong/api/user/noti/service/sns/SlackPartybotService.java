@@ -61,7 +61,7 @@ public class SlackPartybotService {
 	}
 
 	@Async("asyncExecutor")
-	public void send(List<User> users) {
+	public void partySend(List<User> users) {
 		List<String> slackUserIds = users.stream()
 			.map(User::getIntraId)
 			.map(this::getSlackUserId)

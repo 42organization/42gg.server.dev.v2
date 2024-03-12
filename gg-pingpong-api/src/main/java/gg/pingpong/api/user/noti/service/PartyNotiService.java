@@ -20,6 +20,6 @@ public class PartyNotiService {
 
 	@Transactional(readOnly = true)
 	public void sendPartyNotifications(List<User> users) {
-		slackPartybotService.send(users);
+		slackPartybotService.partySend(users);
 	}
 }
