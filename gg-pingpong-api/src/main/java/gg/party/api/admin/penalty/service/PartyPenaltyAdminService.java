@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import gg.admin.repo.penalty.PartyPenaltyAdminRepository;
 import gg.party.api.admin.penalty.controller.request.PageReqDto;
@@ -25,6 +26,7 @@ public class PartyPenaltyAdminService {
 	 * @param reqDto page size
 	 * @return PenaltyListAdminResDto penaltyList totalPage
 	 */
+	@Transactional(readOnly = true)
 	public PartyPenaltyListAdminResDto findAllPenalty(PageReqDto reqDto) {
 		int page = reqDto.getPage();
 		int size = reqDto.getSize();
