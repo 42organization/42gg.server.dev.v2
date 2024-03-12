@@ -68,7 +68,9 @@ public class SlackPartybotService {
 			.collect(Collectors.toList());
 
 		String slackChannelId = createGroupChannelId(slackUserIds);
-		sendGroupMessage(slackChannelId, "서로 상호간의 예의를 지키며 진행해주세요. 노쇼신고는 42gg에서 하면 됩니다.");
+		sendGroupMessage(slackChannelId, "파티요정🧚으로부터 편지가 도착했습니다."
+			+ "\n장소 및 시간을 상호 협의해서 진행해주세요."
+			+ "\n파티원이 연락두절이라면 $$마지 못해 신고$$ ----> https://42gg.kr");
 	}
 
 	private void sendGroupMessage(String channelId, String message) {
