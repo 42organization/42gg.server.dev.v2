@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import gg.pingpong.api.admin.manage.controller.response.AnnouncementAdminListResponseDto;
 import gg.pingpong.api.admin.manage.dto.AnnouncementAdminAddDto;
 import gg.pingpong.api.admin.manage.service.AnnouncementAdminService;
-import gg.pingpong.api.global.dto.PageRequestDto;
+import gg.utils.dto.PageRequestDto;
 import lombok.AllArgsConstructor;
 
 @RestController

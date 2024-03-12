@@ -1,4 +1,4 @@
-package gg.pingpong.api.global.dto;
+package gg.utils.dto;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
