@@ -16,9 +16,9 @@ public interface RoomReportRepository extends JpaRepository<RoomReport, Long> {
 
 	public Optional<RoomReport> findByReporterAndRoomId(User reporter, Long roomId);
 
-	@Query("SELECT rr FROM RoomReport rr " +
-		"JOIN FETCH rr.reporter " +
-		"JOIN FETCH rr.reportee " +
-		"JOIN FETCH rr.room")
+	@Query("SELECT rr FROM RoomReport rr "
+		+ "JOIN FETCH rr.reporter "
+		+ "JOIN FETCH rr.reportee "
+		+ "JOIN FETCH rr.room")
 	Page<RoomReport> findAllWithFetchJoin(Pageable pageable);
 }
