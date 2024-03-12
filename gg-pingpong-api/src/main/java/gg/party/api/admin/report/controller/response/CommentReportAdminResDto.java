@@ -9,7 +9,7 @@ import lombok.Getter;
  * 댓글 신고 dto
  */
 @Getter
-public class CommentReportListAdminResDto {
+public class CommentReportAdminResDto {
 	private Long id;
 	private String reporterIntraId;
 	private Long commentId;
@@ -17,7 +17,7 @@ public class CommentReportListAdminResDto {
 	private String message;
 	private LocalDateTime createdAt;
 
-	public CommentReportListAdminResDto(CommentReport commentReport) {
+	public CommentReportAdminResDto(CommentReport commentReport) {
 		this.id = commentReport.getId();
 		this.reporterIntraId = commentReport.getReporter().getIntraId();
 		this.commentId = commentReport.getComment().getId();

@@ -7,12 +7,12 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @Getter
-public class RoomReportPageResDto {
-	private List<RoomReportListAdminResDto> roomReportPageList;
+public class UserReportListResDto {
+	private List<UserReportAdminResDto> userReportPageList;
 	private int totalPages;
 
-	public RoomReportPageResDto(List<RoomReportListAdminResDto> roomReportPageList, int totalPages) {
-		this.roomReportPageList = roomReportPageList;
+	public UserReportListResDto(List<UserReportAdminResDto> userReportPageList, int totalPages) {
+		this.userReportPageList = userReportPageList;
 		this.totalPages = totalPages;
 	}
 }

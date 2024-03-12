@@ -14,12 +14,12 @@ import gg.data.party.CommentReport;
 import gg.data.party.RoomReport;
 import gg.data.party.UserReport;
 import gg.party.api.admin.report.controller.request.ReportPageReqDto;
-import gg.party.api.admin.report.controller.response.CommentReportListAdminResDto;
-import gg.party.api.admin.report.controller.response.CommentReportPageResDto;
-import gg.party.api.admin.report.controller.response.RoomReportListAdminResDto;
-import gg.party.api.admin.report.controller.response.RoomReportPageResDto;
-import gg.party.api.admin.report.controller.response.UserReportListAdminResDto;
-import gg.party.api.admin.report.controller.response.UserReportPageResDto;
+import gg.party.api.admin.report.controller.response.CommentReportAdminResDto;
+import gg.party.api.admin.report.controller.response.CommentReportListResDto;
+import gg.party.api.admin.report.controller.response.RoomReportAdminResDto;
+import gg.party.api.admin.report.controller.response.RoomReportListResDto;
+import gg.party.api.admin.report.controller.response.UserReportAdminResDto;
+import gg.party.api.admin.report.controller.response.UserReportListResDto;
 import gg.repo.party.CommentReportRepository;
 import gg.repo.party.RoomReportRepository;
 import gg.repo.party.UserReportRepository;
@@ -38,18 +38,18 @@ public class ReportAdminService {
 	 * @return 전체 댓글 신고 리스트 (시간순 정렬)
 	 */
 	@Transactional(readOnly = true)
-	public CommentReportPageResDto getCommentReports(ReportPageReqDto reportPageReqDto) {
+	public CommentReportListResDto getCommentReports(ReportPageReqDto reportPageReqDto) {
 		int page = reportPageReqDto.getPage();
 		int size = reportPageReqDto.getSize();
 
-		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.ASC, "createdAt"));
+		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 		Page<CommentReport> commentReportPage = commentReportRepository.findAllWithFetchJoin(pageable);
 
-		List<CommentReportListAdminResDto> commentReportPageResDto = commentReportPage.getContent().stream()
-			.map(CommentReportListAdminResDto::new)
+		List<CommentReportAdminResDto> commentReportPageResDto = commentReportPage.getContent().stream()
+			.map(CommentReportAdminResDto::new)
 			.collect(Collectors.toList());
 
-		return new CommentReportPageResDto(commentReportPageResDto, commentReportPage.getTotalPages());
+		return new CommentReportListResDto(commentReportPageResDto, commentReportPage.getTotalPages());
 	}
 
 	/**
@@ -57,18 +57,18 @@ public class ReportAdminService {
 	 * @return 전체 방 신고 리스트 (시간순 정렬)
 	 */
 	@Transactional(readOnly = true)
-	public RoomReportPageResDto getRoomReports(ReportPageReqDto reportPageReqDto) {
+	public RoomReportListResDto getRoomReports(ReportPageReqDto reportPageReqDto) {
 		int page = reportPageReqDto.getPage();
 		int size = reportPageReqDto.getSize();
 
-		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.ASC, "createdAt"));
+		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 		Page<RoomReport> roomReportPage = roomReportRepository.findAllWithFetchJoin(pageable);
 
-		List<RoomReportListAdminResDto> roomReportPageResDto = roomReportPage.getContent().stream()
-			.map(RoomReportListAdminResDto::new)
+		List<RoomReportAdminResDto> roomReportPageResDto = roomReportPage.getContent().stream()
+			.map(RoomReportAdminResDto::new)
 			.collect(Collectors.toList());
 
-		return new RoomReportPageResDto(roomReportPageResDto, roomReportPage.getTotalPages());
+		return new RoomReportListResDto(roomReportPageResDto, roomReportPage.getTotalPages());
 	}
 
 	/**
@@ -76,17 +76,17 @@ public class ReportAdminService {
 	 * @return 전체 노쇼 신고 리스트 (시간순 정렬)
 	 */
 	@Transactional(readOnly = true)
-	public UserReportPageResDto getUserReports(ReportPageReqDto reportPageReqDto) {
+	public UserReportListResDto getUserReports(ReportPageReqDto reportPageReqDto) {
 		int page = reportPageReqDto.getPage();
 		int size = reportPageReqDto.getSize();
 
-		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.ASC, "createdAt"));
+		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 		Page<UserReport> userReportPage = userReportRepository.findAllWithFetchJoin(pageable);
 
-		List<UserReportListAdminResDto> userReportPageResDto = userReportPage.getContent().stream()
-			.map(UserReportListAdminResDto::new)
+		List<UserReportAdminResDto> userReportPageResDto = userReportPage.getContent().stream()
+			.map(UserReportAdminResDto::new)
 			.collect(Collectors.toList());
 
-		return new UserReportPageResDto(userReportPageResDto, userReportPage.getTotalPages());
+		return new UserReportListResDto(userReportPageResDto, userReportPage.getTotalPages());
 	}
 }

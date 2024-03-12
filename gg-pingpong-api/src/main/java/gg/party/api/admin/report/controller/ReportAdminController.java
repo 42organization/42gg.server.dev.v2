@@ -1,7 +1,5 @@
 package gg.party.api.admin.report.controller;
 
-import java.util.List;
-
 import javax.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
@@ -11,9 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import gg.party.api.admin.report.controller.request.ReportPageReqDto;
-import gg.party.api.admin.report.controller.response.CommentReportPageResDto;
-import gg.party.api.admin.report.controller.response.RoomReportPageResDto;
-import gg.party.api.admin.report.controller.response.UserReportPageResDto;
+import gg.party.api.admin.report.controller.response.CommentReportListResDto;
+import gg.party.api.admin.report.controller.response.RoomReportListResDto;
+import gg.party.api.admin.report.controller.response.UserReportListResDto;
 import gg.party.api.admin.report.service.ReportAdminService;
 import lombok.RequiredArgsConstructor;
 
@@ -28,10 +26,10 @@ public class ReportAdminController {
 	 * return 200 status code(성공 status)
 	 */
 	@GetMapping("/comments")
-	public ResponseEntity<CommentReportPageResDto> getCommentReports(
+	public ResponseEntity<CommentReportListResDto> getCommentReports(
 		@ModelAttribute @Valid ReportPageReqDto reportPageReqDto) {
-		CommentReportPageResDto commentReportPageResDto = reportAdminService.getCommentReports(reportPageReqDto);
-		return ResponseEntity.ok(commentReportPageResDto);
+		CommentReportListResDto commentReportListResDto = reportAdminService.getCommentReports(reportPageReqDto);
+		return ResponseEntity.ok(commentReportListResDto);
 	}
 
 	/**
@@ -39,10 +37,10 @@ public class ReportAdminController {
 	 * return 200 status code(성공 status)
 	 */
 	@GetMapping("/rooms")
-	public ResponseEntity<RoomReportPageResDto> getRoomReports(
+	public ResponseEntity<RoomReportListResDto> getRoomReports(
 		@ModelAttribute @Valid ReportPageReqDto reportPageReqDto) {
-		RoomReportPageResDto roomReportPageResDto = reportAdminService.getRoomReports(reportPageReqDto);
-		return ResponseEntity.ok(roomReportPageResDto);
+		RoomReportListResDto roomReportListResDto = reportAdminService.getRoomReports(reportPageReqDto);
+		return ResponseEntity.ok(roomReportListResDto);
 	}
 
 	/**
@@ -50,9 +48,9 @@ public class ReportAdminController {
 	 * return 200 status code(성공 status)
 	 */
 	@GetMapping("/users")
-	public ResponseEntity<UserReportPageResDto> getUserReports(
+	public ResponseEntity<UserReportListResDto> getUserReports(
 		@ModelAttribute @Valid ReportPageReqDto reportPageReqDto) {
-		UserReportPageResDto userReportPageResDto = reportAdminService.getUserReports(reportPageReqDto);
-		return ResponseEntity.ok(userReportPageResDto);
+		UserReportListResDto userReportListResDto = reportAdminService.getUserReports(reportPageReqDto);
+		return ResponseEntity.ok(userReportListResDto);
 	}
 }

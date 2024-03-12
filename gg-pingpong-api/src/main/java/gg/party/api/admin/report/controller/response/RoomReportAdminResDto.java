@@ -9,7 +9,7 @@ import lombok.Getter;
  * 방 신고 dto
  */
 @Getter
-public class RoomReportListAdminResDto {
+public class RoomReportAdminResDto {
 	private Long id;
 	private String reporterIntraId;
 	private String reporteeIntraId;
@@ -17,7 +17,7 @@ public class RoomReportListAdminResDto {
 	private String message;
 	private LocalDateTime createdAt;
 
-	public RoomReportListAdminResDto(RoomReport roomReport) {
+	public RoomReportAdminResDto(RoomReport roomReport) {
 		this.id = roomReport.getId();
 		this.reporterIntraId = roomReport.getReporter().getIntraId();
 		this.reporteeIntraId = roomReport.getReportee().getIntraId();
