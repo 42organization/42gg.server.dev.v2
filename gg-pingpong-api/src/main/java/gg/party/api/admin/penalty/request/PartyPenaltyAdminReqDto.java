@@ -1,4 +1,4 @@
-package gg.party.api.admin.penalty.requset;
+package gg.party.api.admin.penalty.request;
 
 import java.time.LocalDateTime;
 
@@ -13,11 +13,13 @@ public class PartyPenaltyAdminReqDto {
 	String penaltyType;
 	String message;
 	int penaltyTime;
+	User reportee;
 
-	public PartyPenaltyAdminReqDto(String penaltyType, String message, int penaltyTime) {
+	public PartyPenaltyAdminReqDto(String penaltyType, String message, int penaltyTime, User reportee) {
 		this.penaltyType = penaltyType;
 		this.message = message;
 		this.penaltyTime = penaltyTime;
+		this.reportee = reportee;
 	}
 
 	public PartyPenalty toEntity(User user, String penaltyType, String message, LocalDateTime startTime,

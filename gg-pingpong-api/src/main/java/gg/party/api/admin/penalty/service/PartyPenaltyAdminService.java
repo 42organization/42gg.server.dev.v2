@@ -7,12 +7,12 @@ import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import gg.admin.repo.penalty.PartyPenaltyAdminRepository;
-import gg.auth.UserDto;
 import gg.data.party.PartyPenalty;
 import gg.data.user.User;
-import gg.party.api.admin.penalty.requset.PartyPenaltyAdminReqDto;
+import gg.party.api.admin.penalty.request.PartyPenaltyAdminReqDto;
 import gg.repo.user.UserRepository;
 import gg.utils.exception.party.PartyPenaltyNotFoundException;
+import gg.utils.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -23,23 +23,23 @@ public class PartyPenaltyAdminService {
 
 	/**
 	 * 패널티 수정
+	 *
 	 * @param penaltyId 패널티 번호
-	 * @exception PartyPenaltyNotFoundException 유효하지 않은 패널티
+	 * @throws PartyPenaltyNotFoundException 유효하지 않은 패널티
 	 */
 	@Transactional
-	public void modifyAdminPenalty(Long penaltyId, PartyPenaltyAdminReqDto reqDto, UserDto user) {
-		User userEntity = userRepository.findById(user.getId()).get();
+	public void modifyAdminPenalty(Long penaltyId, PartyPenaltyAdminReqDto reqDto) {
 		PartyPenalty partyPenalty = partyPenaltyAdminRepository.findById(penaltyId)
 			.orElseThrow(PartyPenaltyNotFoundException::new);
-		partyPenalty.update(reqDto.getPenaltyType(), reqDto.getMessage(), reqDto.getPenaltyTime(), userEntity);
+		partyPenalty.update(reqDto.getPenaltyType(), reqDto.getMessage(), reqDto.getPenaltyTime());
 	}
 
 	/**
 	 * 패널티 부여
 	 */
 	@Transactional
-	public void addAdminPenalty(PartyPenaltyAdminReqDto reqDto, UserDto user) {
-		User userEntity = userRepository.findById(user.getId()).get();
+	public void addAdminPenalty(PartyPenaltyAdminReqDto reqDto) {
+		User userEntity = userRepository.findById(reqDto.getReportee().getId()).orElseThrow(UserNotFoundException::new);
 		LocalDateTime startTime = LocalDateTime.now();
 		partyPenaltyAdminRepository.save(reqDto.toEntity(userEntity, reqDto.getPenaltyType(),
 			reqDto.getMessage(), startTime, reqDto.getPenaltyTime()));

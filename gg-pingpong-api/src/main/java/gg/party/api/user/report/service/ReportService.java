@@ -45,12 +45,13 @@ public class ReportService {
 
 	/**
 	 * 방을 신고한다.
-	 * @param roomId 방 번호
+	 *
+	 * @param roomId       방 번호
 	 * @param reportReqDto 신고 내용
-	 * @param user 신고자
-	 * @exception RoomNotFoundException 방을 찾을 수 없음
-	 * @exception AlredayReportedException 이미 신고한 경우
+	 * @param user         신고자
 	 * @return 방 번호
+	 * @throws RoomNotFoundException    방을 찾을 수 없음
+	 * @throws AlredayReportedException 이미 신고한 경우
 	 */
 	@Transactional
 	public Long addReportRoom(Long roomId, ReportReqDto reportReqDto, UserDto user) {
@@ -81,12 +82,13 @@ public class ReportService {
 
 	/**
 	 * 댓글을 신고한다.
-	 * @param commentId 방 번호
+	 *
+	 * @param commentId    방 번호
 	 * @param reportReqDto 신고 내용
-	 * @param user 신고자
-	 * @exception CommentNotFoundException 방을 찾을 수 없음
-	 * @exception AlredayReportedException 이미 신고한 경우
+	 * @param user         신고자
 	 * @return 방 번호
+	 * @throws CommentNotFoundException 방을 찾을 수 없음
+	 * @throws AlredayReportedException 이미 신고한 경우
 	 */
 	@Transactional
 	public Long addReportComment(Long commentId, ReportReqDto reportReqDto, UserDto user) {
@@ -119,7 +121,8 @@ public class ReportService {
 
 	/**
 	 * 패널티 부여
-	 * @param intraId 신고당한 유저 아이디
+	 *
+	 * @param intraId     신고당한 유저 아이디
 	 * @param penaltyTime 패널티 시간
 	 * @param penaltyType 패널티 타입
 	 */
@@ -129,7 +132,7 @@ public class ReportService {
 		PartyPenalty pPenalty = partyPenaltyRepository.findByUserId(user.getId());
 
 		if (pPenalty != null && LocalDateTime.now().isBefore(pPenalty.getStartTime()
-			.plusMinutes(pPenalty.getPenaltyTime()))) {
+			.plusHours(pPenalty.getPenaltyTime()))) {
 			LocalDateTime dueDate = pPenalty.getStartTime().plusHours(pPenalty.getPenaltyTime());
 			partyPenaltyRepository.save(new PartyPenalty(
 				user, penaltyType, penaltyType, dueDate, penaltyTime * 60));

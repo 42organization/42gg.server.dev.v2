@@ -66,10 +66,9 @@ public class PartyPenalty extends BaseTimeEntity {
 		this.penaltyType = penaltyType;
 	}
 
-	public void update(String penaltyType, String message, Integer penaltyTime, User user) {
+	public void update(String penaltyType, String message, Integer penaltyTime) {
 		this.penaltyType = penaltyType;
 		this.message = message;
 		this.penaltyTime = penaltyTime;
-		this.user = user;
 	}
 }

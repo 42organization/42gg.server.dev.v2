@@ -9,9 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import gg.auth.UserDto;
-import gg.auth.argumentresolver.Login;
-import gg.party.api.admin.penalty.requset.PartyPenaltyAdminReqDto;
+import gg.party.api.admin.penalty.request.PartyPenaltyAdminReqDto;
 import gg.party.api.admin.penalty.service.PartyPenaltyAdminService;
 import lombok.RequiredArgsConstructor;
 
@@ -25,19 +23,20 @@ public class PartyPenaltyAdminController {
 	 * 패널티 부여
 	 */
 	@PostMapping()
-	public ResponseEntity<Void> addAdminPenalty(@RequestBody PartyPenaltyAdminReqDto reqDto, @Login UserDto user) {
-		partyPenaltyAdminService.addAdminPenalty(reqDto, user);
+	public ResponseEntity<Void> addAdminPenalty(@RequestBody PartyPenaltyAdminReqDto reqDto) {
+		partyPenaltyAdminService.addAdminPenalty(reqDto);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
 	/**
 	 * 패널티 수정
+	 *
 	 * @param penaltyId 패널티 id
 	 */
-	@PatchMapping("{penaltyId}")
+	@PatchMapping("/{penaltyId}")
 	public ResponseEntity<Void> modifyAdminPenalty(@PathVariable Long penaltyId,
-		@RequestBody PartyPenaltyAdminReqDto reqDto, @Login UserDto user) {
-		partyPenaltyAdminService.modifyAdminPenalty(penaltyId, reqDto, user);
+		@RequestBody PartyPenaltyAdminReqDto reqDto) {
+		partyPenaltyAdminService.modifyAdminPenalty(penaltyId, reqDto);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 }
