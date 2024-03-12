@@ -69,7 +69,7 @@ public class RoomService {
 
 		notStartedRooms.addAll(startedRooms);
 		List<RoomResDto> roomListResDto = notStartedRooms.stream()
-			.map(room -> new RoomResDto(room))
+			.map(RoomResDto::new)
 			.collect(Collectors.toList());
 
 		return new RoomListResDto(roomListResDto);
@@ -226,7 +226,7 @@ public class RoomService {
 	 * @param roomId 방 id
 	 * @exception RoomNotFoundException 유효하지 않은 방 입력
 	 * @exception RoomReportedException 신고 받은 방 처리 | 시작한 방도 볼 수 있게 해야하므로 별도처리
-	 * 익명성을 지키기 위해 nickname을 리턴
+	 * 익명성을 지키기 위해 Nickname을 리턴
 	 * @return 방 상세정보 dto
 	 */
 	@Transactional
@@ -300,9 +300,12 @@ public class RoomService {
 		}
 
 		room.updateCurrentPeople(room.getCurrentPeople() + 1);
-		// if (room.getCurrentPeople() + 1 == room.getMaxPeople()) 경우 게임 시작하는 로직 추가
+		if (room.getCurrentPeople().equals(room.getMaxPeople())) {
+			room.updateRoomStatus(RoomType.START);
+			List<User> users = userRoomRepository.findByIsExist(roomId);
+			partyNotiService.sendPartyNotifications(users);
+		}
 		roomRepository.save(room);
-
 		return new RoomJoinResDto(roomId);
 	}
 }
