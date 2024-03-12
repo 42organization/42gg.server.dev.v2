@@ -1,7 +1,10 @@
 package gg.pingpong.api.admin.store.controller.response;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
+import gg.data.user.User;
+import gg.utils.exception.user.UserNotFoundException;
 import gg.data.pingpong.store.CoinPolicy;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +22,9 @@ public class CoinPolicyAdminResponseDto {
 
 	public CoinPolicyAdminResponseDto(CoinPolicy coinPolicyAdmin) {
 		this.coinPolicyId = coinPolicyAdmin.getId();
-		this.createUserId = coinPolicyAdmin.getUser().getIntraId();
+		User user = Optional.ofNullable(coinPolicyAdmin.getUser())
+			.orElseThrow(UserNotFoundException::new);
+		this.createUserId = user.getIntraId();
 		this.attendance = coinPolicyAdmin.getAttendance();
 		this.normal = coinPolicyAdmin.getNormal();
 		this.rankWin = coinPolicyAdmin.getRankWin();
