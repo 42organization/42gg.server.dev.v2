@@ -39,6 +39,9 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class ReportService {
+	private static final int COMMENT_PENALTY_TIME = 1; // 댓글 패널티 시간 (분)
+	private static final int NO_SHOW_PENALTY_TIME = 6; // 노쇼 패널티 시간 (시간)
+	private static final int ROOM_PENALTY_TIME = 24; // 방 패널티 시간 (시간)
 	private final RoomRepository roomRepository;
 	private final CommentRepository commentRepository;
 	private final UserRepository userRepository;
@@ -50,12 +53,13 @@ public class ReportService {
 
 	/**
 	 * 방을 신고한다.
-	 * @param roomId 방 번호
+	 *
+	 * @param roomId       방 번호
 	 * @param reportReqDto 신고 내용
-	 * @param user 신고자
-	 * @exception RoomNotFoundException 방을 찾을 수 없음
-	 * @exception AlredayReportedException 이미 신고한 경우
+	 * @param user         신고자
 	 * @return 방 번호
+	 * @throws RoomNotFoundException    방을 찾을 수 없음
+	 * @throws AlredayReportedException 이미 신고한 경우
 	 */
 	@Transactional
 	public void addReportRoom(Long roomId, ReportReqDto reportReqDto, UserDto user) {
@@ -79,18 +83,19 @@ public class ReportService {
 			targetRoom.updateRoomStatus(RoomType.HIDDEN);
 			roomRepository.save(targetRoom);
 			User targetUser = targetRoom.getCreator();
-			partyGivePenalty(targetUser.getIntraId(), 24, "방 패널티");
+			partyGivePenalty(targetUser.getIntraId(), ROOM_PENALTY_TIME, "방 패널티");
 		}
 	}
 
 	/**
 	 * 댓글을 신고한다.
-	 * @param commentId 방 번호
+	 *
+	 * @param commentId    방 번호
 	 * @param reportReqDto 신고 내용
-	 * @param user 신고자
-	 * @exception CommentNotFoundException 방을 찾을 수 없음
-	 * @exception AlredayReportedException 이미 신고한 경우
+	 * @param user         신고자
 	 * @return 방 번호
+	 * @throws CommentNotFoundException 방을 찾을 수 없음
+	 * @throws AlredayReportedException 이미 신고한 경우
 	 */
 	@Transactional
 	public void addReportComment(Long commentId, ReportReqDto reportReqDto, UserDto user) {
@@ -116,53 +121,56 @@ public class ReportService {
 			targetComment.updateHidden(true);
 			commentRepository.save(targetComment);
 			User targetUser = targetComment.getUser();
-			partyGivePenalty(targetUser.getIntraId(), 1, "댓글 패널티");
+			partyGivePenalty(targetUser.getIntraId(), COMMENT_PENALTY_TIME, "댓글 패널티");
 		}
 	}
 
 	/**
 	 * 유저 노쇼 신고한다.
-	 * @param roomId 방 번호
+	 *
+	 * @param roomId       방 번호
 	 * @param reportReqDto 신고 내용
-	 * @param user 신고자
-	 * @param userIntraId 피신고자
-	 * @exception CommentNotFoundException 방을 찾을 수 없음
-	 * @exception AlredayReportedException 이미 신고한 경우
+	 * @param user         신고자
+	 * @param userIntraId  피신고자
 	 * @return 방 번호
+	 * @throws CommentNotFoundException 방을 찾을 수 없음
+	 * @throws AlredayReportedException 이미 신고한 경우
 	 */
 	@Transactional
 	public void addReportUser(Long roomId, ReportReqDto reportReqDto, String userIntraId, UserDto user) {
+		// 신고자와 피신고자가 같은 경우
 		if (Objects.equals(user.getIntraId(), userIntraId)) {
 			throw new SelfReportException();
 		}
-		Room targetRoom = roomRepository.findById(roomId)
-			.orElseThrow(RoomNotFoundException::new);
-		User reporterEntity = userRepository.findById(user.getId()).orElseThrow(UserNotFoundException::new);
-		User reporteeEntity = userRepository.findByIntraId(userIntraId).orElseThrow(UserNotFoundException::new);
-
-		userRoomRepository.findByUserIdAndRoomIdAndIsExistTrue(reporterEntity.getId(),
-			roomId).orElseThrow(RoomNotParticipantException::new);
-		userRoomRepository.findByUserIdAndRoomIdAndIsExistTrue(reporteeEntity.getId(),
-			roomId).orElseThrow(RoomNotParticipantException::new);
-
-		Optional<UserReport> existingReport = userReportRepository.findByReporterAndReportee(reporterEntity,
-			reporteeEntity);
-		if (existingReport.isPresent()) {
-			throw new AlredayReportedException();
+		// 신고자와 피신고자가 같은 방에 있는지 확인
+		User reporteeEntity = userRepository.findByIntraId(userIntraId)
+			.orElseThrow(UserNotFoundException::new);
+		UserRoom reporterUserRoom = userRoomRepository.findByUserIdAndRoomIdAndIsExistTrue(user.getId(), roomId)
+			.orElseThrow(RoomNotParticipantException::new);
+		userRoomRepository.findByUserIdAndRoomIdAndIsExistTrue(reporteeEntity.getId(), roomId)
+			.orElseThrow(RoomNotParticipantException::new);
+		User reporterEntity = reporterUserRoom.getUser();
+		Room targetRoom = reporterUserRoom.getRoom();
+		if (targetRoom == null) {
+			throw new RoomNotFoundException();
 		}
-
+		// 이미 신고한 경우
+		userReportRepository.findByReporterAndReportee(
+			reporterEntity, reporteeEntity).orElseThrow(AlredayReportedException::new);
+		// 신고 저장
 		UserReport userReport = new UserReport(reporterEntity, reporteeEntity, targetRoom, reportReqDto.getContent());
 		userReportRepository.save(userReport);
-
+		// 노쇼 패널티 판단
 		List<UserReport> allReportUser = userReportRepository.findByReporteeAndRoomId(reporteeEntity, roomId);
 		if (allReportUser.size() == targetRoom.getMaxPeople() / 2) {
-			partyGivePenalty(reporteeEntity.getIntraId(), 6, "노쇼 패널티");
+			partyGivePenalty(reporteeEntity.getIntraId(), NO_SHOW_PENALTY_TIME, "노쇼 패널티");
 		}
 	}
 
 	/**
 	 * 패널티 부여
-	 * @param intraId 신고당한 유저 아이디
+	 *
+	 * @param intraId     신고당한 유저 아이디
 	 * @param penaltyTime 패널티 시간
 	 * @param penaltyType 패널티 타입
 	 */
