@@ -2,7 +2,6 @@ package gg.party.api.user.room.service;
 
 import static gg.party.api.user.room.utils.GenerateRandomNickname.*;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -12,7 +11,6 @@ import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
 import org.springframework.data.domain.Sort;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import gg.auth.UserDto;
