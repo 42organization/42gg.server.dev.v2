@@ -304,39 +304,4 @@ public class RoomService {
 
 		return new RoomJoinResDto(roomId);
 	}
-
-	/**
-	 * 방 FINISH 변경 스케쥴러
-	 * 시작한 방(START) 2시간후에 FINISH로 변경
-	 */
-	@Scheduled(fixedRateString = "60000")
-	@Transactional
-	public void finishStartedRooms() {
-		LocalDateTime twoHoursAgo = LocalDateTime.now().minusHours(2);
-		List<Room> startedRooms = roomRepository.findByStatus(RoomType.START, null);
-		startedRooms.stream()
-			.filter(room -> room.getStartDate().isBefore(twoHoursAgo))
-			.forEach(room -> {
-				room.updateRoomStatus(RoomType.FINISH);
-				roomRepository.save(room);
-			});
-	}
-
-	/**
-	 * 방 FAIL 변경 스케쥴러
-	 * due date 지났는데 시작 안했으면 FAIL로 변경
-	 */
-	@Scheduled(fixedRateString = "60000") // Every minute
-	@Transactional
-	public void failUnfilledRooms() {
-		LocalDateTime now = LocalDateTime.now();
-		List<Room> openRooms = roomRepository.findByStatus(RoomType.OPEN, null);
-		openRooms.stream()
-			.filter(room -> room.getDueDate().isBefore(now))
-			.filter(room -> room.getStatus() == RoomType.OPEN)
-			.forEach(room -> {
-				room.updateRoomStatus(RoomType.FAIL);
-				roomRepository.save(room);
-			});
-	}
 }
