@@ -244,21 +244,25 @@ public class RoomService {
 			myNickname = userRoom.getNickname();
 		}
 
-		List<CommentResDto> comments = commentRepository.findByRoomId(roomId).stream()
-			.map(CommentResDto::new)
-			.collect(Collectors.toList());
-
 		Optional<UserRoom> hostUserRoomOptional = userRoomRepository.findByUserIdAndRoomIdAndIsExistTrue(
 			room.getHost().getId(), roomId);
 		String hostNickname = hostUserRoomOptional.get().getNickname();
 
 		if (room.getStatus() == RoomType.START && userRoomOptional.isPresent()) {
+			List<CommentResDto> comments = commentRepository.findByRoomId(roomId).stream()
+				.map(comment -> new CommentResDto(comment, comment.getUser().getIntraId()))
+				.collect(Collectors.toList());
+
 			List<UserRoomResDto> roomUsers = userRoomRepository.findByRoomId(roomId).stream()
 				.filter(UserRoom::getIsExist)
 				.map(userRoom -> new UserRoomResDto(userRoom, userRoom.getUser().getIntraId()))
 				.collect(Collectors.toList());
 			return new RoomDetailResDto(room, myNickname, hostNickname, roomUsers, comments);
 		} else { // if 참여자 && 시작했을경우 intraID || else intraId == null
+			List<CommentResDto> comments = commentRepository.findByRoomId(roomId).stream()
+				.map(CommentResDto::new)
+				.collect(Collectors.toList());
+
 			List<UserRoomResDto> roomUsers = userRoomRepository.findByRoomId(roomId).stream()
 				.filter(UserRoom::getIsExist)
 				.map(UserRoomResDto::new)
