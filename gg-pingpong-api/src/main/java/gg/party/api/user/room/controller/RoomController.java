@@ -14,6 +14,7 @@ import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
 import gg.party.api.user.room.controller.request.RoomCreateReqDto;
 import gg.party.api.user.room.controller.response.LeaveRoomResDto;
+import gg.party.api.user.room.controller.response.RoomCreateResDto;
 import gg.party.api.user.room.controller.response.RoomDetailResDto;
 import gg.party.api.user.room.controller.response.RoomJoinResDto;
 import gg.party.api.user.room.controller.response.RoomListResDto;
@@ -44,10 +45,10 @@ public class RoomController {
 	 * @return 201 created
 	 */
 	@PostMapping
-	public ResponseEntity<Long> createRoom(@RequestBody RoomCreateReqDto roomCreateReqDto,
+	public ResponseEntity<RoomCreateResDto> createRoom(@RequestBody RoomCreateReqDto roomCreateReqDto,
 		@Parameter(hidden = true) @Login UserDto user) {
-		Long roomId = roomService.addCreateRoom(roomCreateReqDto, user);
-		return ResponseEntity.status(HttpStatus.CREATED).body(roomId);
+		RoomCreateResDto roomCreateResDto = roomService.addCreateRoom(roomCreateReqDto, user);
+		return ResponseEntity.status(HttpStatus.CREATED).body(roomCreateResDto);
 	}
 
 	/**

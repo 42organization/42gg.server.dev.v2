@@ -37,4 +37,11 @@ public class CommentReport extends BaseTimeEntity {
 
 	@Column(length = 100)
 	private String message;
+
+	public CommentReport(User reporter, Comment comment, Room room, String message) {
+		this.reporter = reporter;
+		this.comment = comment;
+		this.room = room;
+		this.message = message;
+	}
 }
