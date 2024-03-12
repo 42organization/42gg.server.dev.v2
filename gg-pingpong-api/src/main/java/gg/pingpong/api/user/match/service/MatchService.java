@@ -61,6 +61,9 @@ public class MatchService {
 	/**
 	 * 1) 매칭 가능한 유저 있을 경우 : 게임 생성
 	 * 2) 매칭 가능한 유저 없을 경우 : 유저를 큐에 넣어줌
+	 * @param userDto 매칭 요청한 유저
+	 * @param option 요청한 매칭 경기 옵션 (BOTH, RANK, NORMAL, TOURNAMENT)
+	 * @param startTime 매칭 요청한 경기의 시작 시간
 	 */
 	@Transactional
 	public synchronized void makeMatch(UserDto userDto, Option option, LocalDateTime startTime) {
