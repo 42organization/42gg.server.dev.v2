@@ -38,7 +38,7 @@ public class RoomAdminController {
 	 * @exception RoomNotFoundException 유효하지 않은 방 입력
 	 */
 	@PatchMapping("/{roomId}")
-	public ResponseEntity<Void> changeRoomVisibility(@PathVariable Long roomId,
+	public ResponseEntity<Void> modifyRoomVisibility(@PathVariable Long roomId,
 		@Valid @RequestBody RoomShowChangeReqDto reqDto) throws RoomStatNotFoundException {
 
 		RoomType roomType;

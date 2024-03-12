@@ -18,7 +18,7 @@ import gg.data.party.RoomReport;
 import gg.data.party.UserRoom;
 import gg.data.party.type.RoomType;
 import gg.data.user.User;
-import gg.party.api.user.report.request.ReportReqDto;
+import gg.party.api.user.report.controller.request.ReportReqDto;
 import gg.repo.party.CommentReportRepository;
 import gg.repo.party.CommentRepository;
 import gg.repo.party.PartyPenaltyRepository;
@@ -127,11 +127,12 @@ public class ReportService {
 	public void partyGivePenalty(String intraId, Integer penaltyTime, String penaltyType) {
 		User user = userRepository.findByIntraId(intraId).get();
 		PartyPenalty pPenalty = partyPenaltyRepository.findByUserId(user.getId());
-		if (pPenalty != null) {
-			pPenalty.updatePenaltyTime(pPenalty.getPenaltyTime() + penaltyTime * 60);
-			pPenalty.updateMessage(pPenalty.getMessage() + penaltyType);
-			pPenalty.updatePenaltyType("복합");
-			partyPenaltyRepository.save(pPenalty);
+
+		if (pPenalty != null && LocalDateTime.now().isBefore(pPenalty.getStartTime()
+			.plusMinutes(pPenalty.getPenaltyTime()))) {
+			LocalDateTime dueDate = pPenalty.getStartTime().plusHours(pPenalty.getPenaltyTime());
+			partyPenaltyRepository.save(new PartyPenalty(
+				user, penaltyType, penaltyType, dueDate, penaltyTime * 60));
 		} else {
 			partyPenaltyRepository.save(new PartyPenalty(
 				user, penaltyType, penaltyType, LocalDateTime.now(), penaltyTime * 60));
