@@ -16,9 +16,10 @@ public interface CommentReportRepository extends JpaRepository<CommentReport, Lo
 
 	public Optional<CommentReport> findByReporterAndCommentId(User reporter, Long commentId);
 
-	@Query("SELECT cr FROM CommentReport cr "
+	@Query(value = "SELECT cr FROM CommentReport cr "
 		+ "JOIN FETCH cr.reporter "
 		+ "JOIN FETCH cr.comment "
-		+ "JOIN FETCH cr.room")
+		+ "JOIN FETCH cr.room",
+		countQuery = "SELECT count(cr) FROM CommentReport cr ")
 	Page<CommentReport> findAllWithFetchJoin(Pageable pageable);
 }
