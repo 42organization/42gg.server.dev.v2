@@ -2,14 +2,18 @@ package gg.party.api.admin.report.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import gg.party.api.admin.report.controller.response.CommentReportListAdminResDto;
-import gg.party.api.admin.report.controller.response.RoomReportListAdminResDto;
-import gg.party.api.admin.report.controller.response.UserReportListAdminResDto;
+import gg.party.api.admin.report.controller.request.ReportPageReqDto;
+import gg.party.api.admin.report.controller.response.CommentReportPageResDto;
+import gg.party.api.admin.report.controller.response.RoomReportPageResDto;
+import gg.party.api.admin.report.controller.response.UserReportPageResDto;
 import gg.party.api.admin.report.service.ReportAdminService;
 import lombok.RequiredArgsConstructor;
 
@@ -24,9 +28,10 @@ public class ReportAdminController {
 	 * return 200 status code(성공 status)
 	 */
 	@GetMapping("/comments")
-	public ResponseEntity<List<CommentReportListAdminResDto>> getCommentReports() {
-		List<CommentReportListAdminResDto> reports = reportAdminService.getCommentReports();
-		return ResponseEntity.ok(reports);
+	public ResponseEntity<CommentReportPageResDto> getCommentReports(
+		@ModelAttribute @Valid ReportPageReqDto reportPageReqDto) {
+		CommentReportPageResDto commentReportPageResDto = reportAdminService.getCommentReports(reportPageReqDto);
+		return ResponseEntity.ok(commentReportPageResDto);
 	}
 
 	/**
@@ -34,9 +39,10 @@ public class ReportAdminController {
 	 * return 200 status code(성공 status)
 	 */
 	@GetMapping("/rooms")
-	public ResponseEntity<List<RoomReportListAdminResDto>> getRoomReports() {
-		List<RoomReportListAdminResDto> reports = reportAdminService.getRoomReports();
-		return ResponseEntity.ok(reports);
+	public ResponseEntity<RoomReportPageResDto> getRoomReports(
+		@ModelAttribute @Valid ReportPageReqDto reportPageReqDto) {
+		RoomReportPageResDto roomReportPageResDto = reportAdminService.getRoomReports(reportPageReqDto);
+		return ResponseEntity.ok(roomReportPageResDto);
 	}
 
 	/**
@@ -44,8 +50,9 @@ public class ReportAdminController {
 	 * return 200 status code(성공 status)
 	 */
 	@GetMapping("/users")
-	public ResponseEntity<List<UserReportListAdminResDto>> getUserReports() {
-		List<UserReportListAdminResDto> reports = reportAdminService.getUserReports();
-		return ResponseEntity.ok(reports);
+	public ResponseEntity<UserReportPageResDto> getUserReports(
+		@ModelAttribute @Valid ReportPageReqDto reportPageReqDto) {
+		UserReportPageResDto userReportPageResDto = reportAdminService.getUserReports(reportPageReqDto);
+		return ResponseEntity.ok(userReportPageResDto);
 	}
 }
