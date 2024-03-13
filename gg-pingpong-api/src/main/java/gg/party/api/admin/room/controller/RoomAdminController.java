@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import gg.auth.UserDto;
-import gg.auth.argumentresolver.Login;
 import gg.data.party.type.RoomType;
 import gg.party.api.admin.room.controller.request.PageReqDto;
 import gg.party.api.admin.room.controller.request.RoomShowChangeReqDto;
@@ -22,7 +20,6 @@ import gg.party.api.admin.room.controller.response.AdminRoomListResDto;
 import gg.party.api.admin.room.service.RoomAdminService;
 import gg.utils.exception.party.RoomNotFoundException;
 import gg.utils.exception.party.RoomStatNotFoundException;
-import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -68,9 +65,8 @@ public class RoomAdminController {
 	 * @return 방 상세정보 (들어와 있지 않은 사람의 intraId 포함)
 	 */
 	@GetMapping("/{room_id}")
-	public ResponseEntity<AdminRoomDetailResDto> adminRoomDetailInfo(@Parameter(hidden = true) @Login UserDto user,
-		@PathVariable("room_id") Long roomId) {
-		AdminRoomDetailResDto adminRoomDetailResDto = roomAdminService.findAdminDetailRoom(user.getId(), roomId);
+	public ResponseEntity<AdminRoomDetailResDto> adminRoomDetailInfo(@PathVariable("room_id") Long roomId) {
+		AdminRoomDetailResDto adminRoomDetailResDto = roomAdminService.findAdminDetailRoom(roomId);
 		return ResponseEntity.status(HttpStatus.OK).body(adminRoomDetailResDto);
 	}
 }

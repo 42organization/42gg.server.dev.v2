@@ -30,6 +30,7 @@ import gg.party.api.user.room.controller.response.RoomJoinResDto;
 import gg.party.api.user.room.controller.response.RoomListResDto;
 import gg.party.api.user.room.controller.response.RoomResDto;
 import gg.party.api.user.room.controller.response.UserRoomResDto;
+import gg.pingpong.api.user.noti.service.PartyNotiService;
 import gg.repo.party.CategoryRepository;
 import gg.repo.party.CommentRepository;
 import gg.repo.party.PartyPenaltyRepository;
@@ -57,6 +58,7 @@ public class RoomService {
 	private final UserRoomRepository userRoomRepository;
 	private final CommentRepository commentRepository;
 	private final PartyPenaltyRepository partyPenaltyRepository;
+	private final PartyNotiService partyNotiService;
 
 	/**
 	 * 시작하지 않은 방과 시작한 방을 모두 조회한다
@@ -73,7 +75,7 @@ public class RoomService {
 
 		notStartedRooms.addAll(startedRooms);
 		List<RoomResDto> roomListResDto = notStartedRooms.stream()
-			.map(room -> new RoomResDto(room))
+			.map(RoomResDto::new)
 			.collect(Collectors.toList());
 
 		return new RoomListResDto(roomListResDto);
@@ -227,6 +229,8 @@ public class RoomService {
 			throw new UserNotHostException();
 		}
 		targetRoom.updateRoomStatus(RoomType.START);
+		List<User> users = userRoomRepository.findByIsExist(roomId);
+		partyNotiService.sendPartyNotifications(users);
 		roomRepository.save(targetRoom);
 
 		return roomId;
@@ -257,25 +261,28 @@ public class RoomService {
 			myNickname = userRoom.getNickname();
 		}
 
-		List<CommentResDto> comments = commentRepository.findByRoomId(roomId).stream()
-			.map(CommentResDto::new)
-			.collect(Collectors.toList());
-
 		Optional<UserRoom> hostUserRoomOptional = userRoomRepository.findByUserIdAndRoomIdAndIsExistTrue(
 			room.getHost().getId(), roomId);
 		String hostNickname = hostUserRoomOptional.get().getNickname();
 
 		if (room.getStatus() == RoomType.START && userRoomOptional.isPresent()) {
+			List<CommentResDto> comments = commentRepository.findByRoomId(roomId).stream()
+				.map(comment -> new CommentResDto(comment, comment.getUser().getIntraId()))
+				.collect(Collectors.toList());
+
 			List<UserRoomResDto> roomUsers = userRoomRepository.findByRoomId(roomId).stream()
-				.filter(userRoom -> userRoom.getIsExist())
-				.map(userRoom -> new UserRoomResDto(userRoom.getId(), userRoom.getNickname(),
-					userRoom.getUser().getIntraId()))
+				.filter(UserRoom::getIsExist)
+				.map(userRoom -> new UserRoomResDto(userRoom, userRoom.getUser().getIntraId()))
 				.collect(Collectors.toList());
 			return new RoomDetailResDto(room, myNickname, hostNickname, roomUsers, comments);
 		} else { // if 참여자 && 시작했을경우 intraID || else intraId == null
+			List<CommentResDto> comments = commentRepository.findByRoomId(roomId).stream()
+				.map(CommentResDto::new)
+				.collect(Collectors.toList());
+
 			List<UserRoomResDto> roomUsers = userRoomRepository.findByRoomId(roomId).stream()
-				.filter(userRoom -> userRoom.getIsExist())
-				.map(userRoom -> new UserRoomResDto(userRoom.getId(), userRoom.getNickname()))
+				.filter(UserRoom::getIsExist)
+				.map(UserRoomResDto::new)
 				.collect(Collectors.toList());
 			return new RoomDetailResDto(room, myNickname, hostNickname, roomUsers, comments);
 		}
@@ -319,9 +326,12 @@ public class RoomService {
 		}
 
 		room.updateCurrentPeople(room.getCurrentPeople() + 1);
-		// if (room.getCurrentPeople() + 1 == room.getMaxPeople()) 경우 게임 시작하는 로직 추가
+		if (room.getCurrentPeople().equals(room.getMaxPeople())) {
+			room.updateRoomStatus(RoomType.START);
+			List<User> users = userRoomRepository.findByIsExist(roomId);
+			partyNotiService.sendPartyNotifications(users);
+		}
 		roomRepository.save(room);
-
 		return new RoomJoinResDto(roomId);
 	}
 }
