@@ -1,5 +1,6 @@
 package gg.party.api.user.room.controller.response;
 
+import gg.data.party.UserRoom;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,15 +11,15 @@ public class UserRoomResDto {
 	private String nickname;
 	private String intraId;
 
-	public UserRoomResDto(Long id, String nickname) {
-		this.roomUserId = id;
-		this.nickname = nickname;
+	public UserRoomResDto(UserRoom userRoom) {
+		this.roomUserId = userRoom.getId();
+		this.nickname = userRoom.getNickname();
 		this.intraId = null;
 	}
 
-	public UserRoomResDto(Long id, String nickname, String intraId) {
-		this.roomUserId = id;
-		this.nickname = nickname;
+	public UserRoomResDto(UserRoom userRoom, String intraId) {
+		this.roomUserId = userRoom.getId();
+		this.nickname = userRoom.getNickname();
 		this.intraId = intraId;
 	}
 }
