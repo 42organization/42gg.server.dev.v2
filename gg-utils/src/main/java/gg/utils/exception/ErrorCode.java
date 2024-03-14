@@ -67,12 +67,16 @@ public enum ErrorCode {
 	MEGAPHONE_TIME(400, "ME200", "MEGAPHONE TIME"),
 	MEGAPHONE_CONTENT(400, "ME201", "MEGAPHONE CONTENT IS EMPTY"),
 
-	/** Penalty **/
+	/**
+	 * Penalty
+	 **/
 	PENALTY_NOT_FOUND(404, "PE100", "PENALTY NOT FOUND"),
 	REDIS_PENALTY_USER_NOT_FOUND(404, "PE101", "REDIS PENALTY USER NOT FOUND"),
 	PENALTY_EXPIRED(400, "PE200", "PENALTY EXPIRED"),
 
-	/** team **/
+	/**
+	 * team
+	 **/
 	TEAM_ID_NOT_MATCH(400, "TM201", "TEAM id 가 일치하지 않습니다."),
 	TEAM_DUPLICATION(409, "TM202", "중복된 Team 이 한 Game 에 존재할 수 없습니다."),
 	TEAM_SIZE_EXCEED(500, "TM203", "게임 최대 Team 의 수(2)를 초과하였습니다."),
@@ -87,7 +91,9 @@ public enum ErrorCode {
 	TEAM_USER_EXCEED(500, "TU202", "TeamUser 최대 인원의 수(2)를 초과하였습니다."),
 	TEAM_USER_NOT_FOUND(404, "TU203", "TeamUser가 없습니다."),
 
-	/** game **/
+	/**
+	 * game
+	 **/
 	GAME_DB_NOT_VALID(500, "GM201", "GAME DB NOT CONSISTENCY"),
 	SCORE_NOT_MATCHED(400, "GM202", "score 입력이 기존과 다릅니다."),
 	GAME_NOT_FOUND(404, "GM101", "GAME 이 존재하지 않습니다."),
@@ -98,7 +104,9 @@ public enum ErrorCode {
 	SCORE_NOT_INVALID(400, "GM205", "score 입력이 유효하지 않습니다."),
 	GAME_NOT_TOURNAMENT(400, "GM206", "토너먼트 게임이 아닙니다."),
 
-	/** match **/
+	/**
+	 * match
+	 **/
 	SLOT_ENROLLED(400, "MA300", "SLOT ALREADY ENROLLED"),
 	SLOT_COUNT_EXCEEDED(400, "MA301", "SLOT COUNT MORE THAN THREE"),
 	SLOT_NOT_FOUND(404, "MA100", "SLOT NOT FOUND"),
@@ -106,7 +114,9 @@ public enum ErrorCode {
 	SLOT_PAST(400, "MA303", "PAST SLOT ENROLLED"),
 	MODE_INVALID(400, "MA200", "MODE INVALID"),
 
-	/** Common **/
+	/**
+	 * Common
+	 **/
 	INTERNAL_SERVER_ERR(500, "CM001", "INTERNAL SERVER ERROR"),
 	NOT_FOUND(404, "CM002", "NOT FOUND"),
 	BAD_REQUEST(400, "CM003", "BAD REQUEST"),
@@ -160,6 +170,7 @@ public enum ErrorCode {
 	COMMENT_NOT_FOUND(404, "PT104", "존재하지 않는 댓글입니다."),
 	ROOMSTAT_NOT_FOUND(404, "PT105", "존재하지 않는 방 status입니다."),
 	TEMPLATE_NOT_FOUND(404, "PT106", "존재하지 않는 템플릿 입니다."),
+	PARTY_PENALTY_NOT_FOUND(404, "PT107", "존재하지 않는 Party Penalty 입니다."),
 	ROOM_NOT_ENOUGH_PEOPLE(400, "PT201", "시작할 수 있는 인원이 아닙니다."),
 	DEFAULT_CATEGORY_NEED(400, "PT202", "기본 카테고리가 존재해야 합니다."),
 	USER_NOT_HOST(400, "PT203", "방장이 아닙니다"),
@@ -169,7 +180,8 @@ public enum ErrorCode {
 	CATEGORY_DUPLICATE(400, "PT207", "중복된 카테고리 입니다."),
 	USER_ALREADY_IN_ROOM(409, "PT301", "이미 참여한 방 입니다."),
 	ALREADY_REPORTED(409, "PT302", "이미 신고한 요청입니다."),
-	SELF_REPORT(409, "PT303", "자신을 신고할 수 없습니다.");
+	SELF_REPORT(409, "PT303", "자신을 신고할 수 없습니다."),
+	ON_PENALTY(403, "PT501", "패널티 상태입니다.");
 
 	private final int status;
 	private final String errCode;
