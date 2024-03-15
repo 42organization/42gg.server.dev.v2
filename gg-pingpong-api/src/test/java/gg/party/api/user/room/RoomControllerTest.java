@@ -33,7 +33,7 @@ import gg.party.api.user.room.controller.request.RoomCreateReqDto;
 import gg.party.api.user.room.controller.response.RoomCreateResDto;
 import gg.party.api.user.room.controller.response.RoomListResDto;
 import gg.party.api.user.room.controller.response.RoomResDto;
-import gg.party.api.user.room.service.RoomService;
+import gg.party.api.user.room.service.RoomFindService;
 import gg.repo.party.CategoryRepository;
 import gg.repo.party.PartyPenaltyRepository;
 import gg.repo.party.RoomRepository;
@@ -63,7 +63,7 @@ public class RoomControllerTest {
 	@Autowired
 	PartyPenaltyRepository partyPenaltyRepository;
 	@Autowired
-	RoomService RoomService;
+	RoomFindService RoomFindService;
 	User userTester;
 	User reportedTester;
 	String userAccessToken;
@@ -105,7 +105,7 @@ public class RoomControllerTest {
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
 			//when
-			RoomListResDto resp = RoomService.findRoomList();
+			RoomListResDto resp = RoomFindService.findRoomList();
 			//then
 			List<RoomResDto> roomList = resp.getRoomList();
 			for (RoomResDto responseDto : roomList) {
