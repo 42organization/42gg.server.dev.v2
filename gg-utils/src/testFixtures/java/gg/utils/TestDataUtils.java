@@ -50,6 +50,7 @@ import gg.repo.game.TeamUserRepository;
 import gg.repo.manage.AnnouncementRepository;
 import gg.repo.manage.SlotManagementRepository;
 import gg.repo.noti.NotiRepository;
+import gg.repo.party.CategoryRepository;
 import gg.repo.party.RoomRepository;
 import gg.repo.rank.RankRepository;
 import gg.repo.rank.TierRepository;
@@ -87,6 +88,7 @@ public class TestDataUtils {
 	private final UserImageRepository userImageRepository;
 	private final SlotManagementRepository slotManagementRepository;
 	private final RoomRepository roomRepository;
+	private final CategoryRepository categoryRepository;
 
 	public String getLoginAccessToken() {
 		User user = User.builder()
@@ -790,6 +792,7 @@ public class TestDataUtils {
 	}
 
 	public Category createNewCategory(String name) {
-		return new Category(name);
+		Category newCategory = new Category(name);
+		return categoryRepository.save(newCategory);
 	}
 }

@@ -51,6 +51,13 @@ public class RoomControllerTest {
 	AuthTokenProvider tokenProvider;
 	@Autowired
 	RoomRepository roomRepository;
+	User userTester;
+	Room openRoom;
+	Room startRoom;
+	Room finishRoom;
+	Room hiddenRoom;
+	Room failRoom;
+	Category testCategory;
 	String accessToken;
 
 	@Nested
@@ -58,26 +65,21 @@ public class RoomControllerTest {
 	class FindAllActiveRoomList {
 		@BeforeEach
 		void beforeEach() {
-			User userTester = testDataUtils.createNewUser("findControllerTester2", "findControllerTester",
+			userTester = testDataUtils.createNewUser("findControllerTester", "findControllerTester",
 				RacketType.DUAL,
 				SnsType.SLACK, RoleType.USER);
 			accessToken = tokenProvider.createToken(userTester.getId());
-			Category testCategory = testDataUtils.createNewCategory("testCategory");
-			Room openRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
+			testCategory = testDataUtils.createNewCategory("category");
+			openRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
 				3, 2, LocalDateTime.now().plusHours(3), RoomType.OPEN);
-			Room startRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
+			startRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
 				3, 2, LocalDateTime.now().plusHours(3), RoomType.START);
-			Room finishRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
+			finishRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
 				3, 2, LocalDateTime.now().minusHours(3), RoomType.FINISH);
-			Room hiddenRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
+			hiddenRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
 				3, 2, LocalDateTime.now().plusHours(3), RoomType.OPEN);
-			Room failRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
+			failRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
 				3, 2, LocalDateTime.now().minusHours(3), RoomType.FAIL);
-			roomRepository.save(openRoom);
-			roomRepository.save(startRoom);
-			roomRepository.save(finishRoom);
-			roomRepository.save(hiddenRoom);
-			roomRepository.save(failRoom);
 		}
 
 		@Test
@@ -94,7 +96,7 @@ public class RoomControllerTest {
 
 			List<RoomResDto> roomList = resp.getRoomList();
 			for (RoomResDto responseDto : roomList) {
-				assertThat(responseDto.getStatus()).isIn(RoomType.OPEN, RoomType.START);
+				assertThat(responseDto.getStatus()).isIn(RoomType.OPEN.toString(), RoomType.START.toString());
 			}
 		}
 	}
