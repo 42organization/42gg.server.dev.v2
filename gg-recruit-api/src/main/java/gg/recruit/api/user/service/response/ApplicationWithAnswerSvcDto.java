@@ -5,17 +5,18 @@ import static java.util.stream.Collectors.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+
 import gg.data.recruit.application.ApplicationAnswer;
 import gg.data.recruit.application.ApplicationAnswerEntityDto;
 import lombok.Getter;
 
 @Getter
 public class ApplicationWithAnswerSvcDto {
-	private Long applicationId;
-	private LocalDateTime endTime;
-	private String title;
-	private String content;
-	private List<FormSvcDto> form;
+	private final Long applicationId;
+	private final LocalDateTime endTime;
+	private final String title;
+	private final String content;
+	private final List<FormSvcDto> form;
 
 	public ApplicationWithAnswerSvcDto(List<ApplicationAnswer> answers) {
 		this.applicationId = answers.get(0).getApplication().getId();

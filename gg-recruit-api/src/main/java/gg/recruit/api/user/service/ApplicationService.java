@@ -30,8 +30,9 @@ public class ApplicationService {
 	public ApplicationWithAnswerSvcDto findMyApplicationDetail(FindApplicationDetailParam param) {
 		List<ApplicationAnswer> answers = applicationAnswerRepository
 			.findAllAnswers(param.getUserId(), param.getRecruitId(), param.getApplicationId());
-		if (answers.size() == 0)
+		if (answers.size() == 0) {
 			throw new NotExistException("application not found", ErrorCode.BAD_REQUEST);
+		}
 		return new ApplicationWithAnswerSvcDto(answers);
 	}
 }
