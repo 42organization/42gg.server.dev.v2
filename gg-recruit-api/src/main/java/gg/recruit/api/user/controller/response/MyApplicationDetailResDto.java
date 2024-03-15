@@ -1,11 +1,11 @@
-package gg.recruit.api.user.application.controller.response;
+package gg.recruit.api.user.controller.response;
 
 import static java.util.stream.Collectors.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import gg.recruit.api.user.application.service.response.ApplicationWithAnswerSvcDto;
+import gg.recruit.api.user.service.response.ApplicationWithAnswerSvcDto;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

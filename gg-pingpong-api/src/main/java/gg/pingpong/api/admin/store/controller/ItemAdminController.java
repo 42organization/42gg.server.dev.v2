@@ -25,7 +25,7 @@ import gg.auth.argumentresolver.Login;
 import gg.pingpong.api.admin.store.controller.request.ItemUpdateRequestDto;
 import gg.pingpong.api.admin.store.controller.response.ItemListResponseDto;
 import gg.pingpong.api.admin.store.service.ItemAdminService;
-import gg.pingpong.api.global.dto.PageRequestDto;
+import gg.utils.dto.PageRequestDto;
 import gg.utils.exception.item.ItemImageLargeException;
 import gg.utils.exception.item.ItemImageTypeException;
 import io.swagger.v3.oas.annotations.Parameter;

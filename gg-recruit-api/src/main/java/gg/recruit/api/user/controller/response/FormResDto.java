@@ -1,10 +1,10 @@
-package gg.recruit.api.user.application.controller.response;
+package gg.recruit.api.user.controller.response;
 
 import static java.util.stream.Collectors.*;
 
 import java.util.List;
 
-import gg.recruit.api.user.application.service.response.FormSvcDto;
+import gg.recruit.api.user.service.response.FormSvcDto;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

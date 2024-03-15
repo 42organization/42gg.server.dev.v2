@@ -1,4 +1,4 @@
-package gg.recruit.api.user.application.service.response;
+package gg.recruit.api.user.service.response;
 
 import static java.util.stream.Collectors.*;
 

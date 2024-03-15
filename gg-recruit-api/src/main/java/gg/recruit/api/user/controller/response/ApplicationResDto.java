@@ -1,8 +1,8 @@
-package gg.recruit.api.user.application.controller.response;
+package gg.recruit.api.user.controller.response;
 
 import java.time.LocalDateTime;
 
-import gg.recruit.api.user.application.service.response.ApplicationSvcDto;
+import gg.recruit.api.user.service.response.ApplicationSvcDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

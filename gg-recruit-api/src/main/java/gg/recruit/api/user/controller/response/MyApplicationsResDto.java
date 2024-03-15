@@ -1,9 +1,9 @@
-package gg.recruit.api.user.application.controller.response;
+package gg.recruit.api.user.controller.response;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import gg.recruit.api.user.application.service.response.ApplicationListSvcDto;
+import gg.recruit.api.user.service.response.ApplicationListSvcDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

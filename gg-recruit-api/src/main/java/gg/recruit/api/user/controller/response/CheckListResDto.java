@@ -1,6 +1,6 @@
-package gg.recruit.api.user.application.controller.response;
+package gg.recruit.api.user.controller.response;
 
-import gg.recruit.api.user.application.service.response.CheckListSvcDto;
+import gg.recruit.api.user.service.response.CheckListSvcDto;
 import lombok.Getter;
 
 @Getter

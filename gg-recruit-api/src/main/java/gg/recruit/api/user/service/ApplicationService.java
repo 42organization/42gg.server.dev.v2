@@ -1,4 +1,4 @@
-package gg.recruit.api.user.application.service;
+package gg.recruit.api.user.service;
 
 import java.util.List;
 
@@ -6,9 +6,9 @@ import org.springframework.stereotype.Service;
 
 import gg.data.recruit.application.Application;
 import gg.data.recruit.application.ApplicationAnswer;
-import gg.recruit.api.user.application.service.param.FindApplicationDetailParam;
-import gg.recruit.api.user.application.service.response.ApplicationListSvcDto;
-import gg.recruit.api.user.application.service.response.ApplicationWithAnswerSvcDto;
+import gg.recruit.api.user.service.param.FindApplicationDetailParam;
+import gg.recruit.api.user.service.response.ApplicationListSvcDto;
+import gg.recruit.api.user.service.response.ApplicationWithAnswerSvcDto;
 import gg.repo.recruit.user.application.ApplicationAnswerRepository;
 import gg.repo.recruit.user.application.ApplicationRepository;
 import gg.utils.exception.ErrorCode;
