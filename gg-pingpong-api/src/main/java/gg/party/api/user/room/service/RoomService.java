@@ -318,7 +318,11 @@ public class RoomService {
 		}
 		UserRoom userRoom = userRoomRepository.findByUserAndRoom(user, room)
 			.orElseGet(() -> {
-				String randomNickname = generateRandomNickname();
+				String randomNickname;
+				do {
+					randomNickname = generateRandomNickname();
+				} while (userRoomRepository.existsByRoomAndNickname(room, randomNickname));
+
 				UserRoom newUserRoom = new UserRoom(user, room, randomNickname);
 				newUserRoom.updateIsExist(false);
 				return newUserRoom;
