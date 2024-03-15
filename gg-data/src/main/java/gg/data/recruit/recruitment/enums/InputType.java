@@ -6,7 +6,8 @@ import lombok.RequiredArgsConstructor;
 public enum InputType {
 
 	TEXT("text", "텍스트"),
-	CHECK_LIST("checkList", "체크리스트");
+	SINGLE_CHECK("single_check", "싱글 체크리스트"),
+	MULTI_CHECK("multi_check", "멀티 체크리스트");
 	private final String type;
 	private final String desc;
 }
