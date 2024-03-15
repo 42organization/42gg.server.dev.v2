@@ -40,6 +40,7 @@ import gg.repo.user.UserRepository;
 import gg.utils.exception.ErrorCode;
 import gg.utils.exception.party.CategoryNotFoundException;
 import gg.utils.exception.party.OnPenaltyException;
+import gg.utils.exception.party.RoomMinMaxPeople;
 import gg.utils.exception.party.RoomNotEnoughPeopleException;
 import gg.utils.exception.party.RoomNotFoundException;
 import gg.utils.exception.party.RoomNotOpenException;
@@ -62,7 +63,6 @@ public class RoomService {
 
 	/**
 	 * 시작하지 않은 방과 시작한 방을 모두 조회한다
-	 *
 	 * @return 시작하지 않은 방 (최신순) + 시작한 방(끝나는 시간이 빠른 순) 전체 List
 	 */
 	@Transactional
@@ -83,11 +83,11 @@ public class RoomService {
 
 	/**
 	 * 방 생성하고 닉네임 부여
-	 *
 	 * @param roomCreateReqDto 요청 DTO
-	 * @param userDto          user객체를 보내기 위한 DTO객체
+	 * @param userDto user객체를 보내기 위한 DTO객체
+	 * @throws OnPenaltyException 패널티 상태의 유저 입력 - 403
+	 * @throws CategoryNotFoundException 유효하지 않은 카테고리 입력 - 404
 	 * @return 만들어진 방 ID값
-	 * @throws CategoryNotFoundException 유효하지 카테고리 입력
 	 */
 	@Transactional
 	public RoomCreateResDto addCreateRoom(RoomCreateReqDto roomCreateReqDto, UserDto userDto) {
@@ -96,6 +96,9 @@ public class RoomService {
 		if (partyPenalty != null && LocalDateTime.now().isBefore(
 			partyPenalty.getStartTime().plusHours(partyPenalty.getPenaltyTime()))) {
 			throw new OnPenaltyException();
+		}
+		if (roomCreateReqDto.getMaxPeople() < roomCreateReqDto.getMinPeople()) {
+			throw new RoomMinMaxPeople(ErrorCode.ROOM_MIN_MAX_PEOPLE);
 		}
 		Category category = categoryRepository.findById(roomCreateReqDto.getCategoryId())
 			.orElseThrow(CategoryNotFoundException::new);

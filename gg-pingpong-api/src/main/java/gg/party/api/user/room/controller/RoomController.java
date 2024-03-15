@@ -1,5 +1,7 @@
 package gg.party.api.user.room.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,7 +47,7 @@ public class RoomController {
 	 * @return 201 created
 	 */
 	@PostMapping
-	public ResponseEntity<RoomCreateResDto> createRoom(@RequestBody RoomCreateReqDto roomCreateReqDto,
+	public ResponseEntity<RoomCreateResDto> createRoom(@RequestBody @Valid RoomCreateReqDto roomCreateReqDto,
 		@Parameter(hidden = true) @Login UserDto user) {
 		RoomCreateResDto roomCreateResDto = roomService.addCreateRoom(roomCreateReqDto, user);
 		return ResponseEntity.status(HttpStatus.CREATED).body(roomCreateResDto);

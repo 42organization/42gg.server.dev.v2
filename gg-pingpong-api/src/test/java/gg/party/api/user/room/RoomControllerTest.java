@@ -19,16 +19,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gg.auth.UserDto;
 import gg.auth.utils.AuthTokenProvider;
 import gg.data.party.Category;
+import gg.data.party.PartyPenalty;
 import gg.data.party.Room;
 import gg.data.party.type.RoomType;
 import gg.data.user.User;
 import gg.data.user.type.RacketType;
 import gg.data.user.type.RoleType;
 import gg.data.user.type.SnsType;
+import gg.party.api.user.room.controller.request.RoomCreateReqDto;
+import gg.party.api.user.room.controller.response.RoomCreateResDto;
 import gg.party.api.user.room.controller.response.RoomListResDto;
 import gg.party.api.user.room.controller.response.RoomResDto;
+import gg.party.api.user.room.service.RoomService;
+import gg.repo.party.CategoryRepository;
+import gg.repo.party.PartyPenaltyRepository;
 import gg.repo.party.RoomRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
@@ -51,14 +58,17 @@ public class RoomControllerTest {
 	AuthTokenProvider tokenProvider;
 	@Autowired
 	RoomRepository roomRepository;
+	@Autowired
+	CategoryRepository categoryRepository;
+	@Autowired
+	PartyPenaltyRepository partyPenaltyRepository;
+	@Autowired
+	RoomService RoomService;
 	User userTester;
-	Room openRoom;
-	Room startRoom;
-	Room finishRoom;
-	Room hiddenRoom;
-	Room failRoom;
+	User reportedTester;
+	String userAccessToken;
+	String reportedAccessToken;
 	Category testCategory;
-	String accessToken;
 
 	@Nested
 	@DisplayName("방 전체 조회 테스트")
@@ -66,38 +76,146 @@ public class RoomControllerTest {
 		@BeforeEach
 		void beforeEach() {
 			userTester = testDataUtils.createNewUser("findControllerTester", "findControllerTester",
-				RacketType.DUAL,
-				SnsType.SLACK, RoleType.USER);
-			accessToken = tokenProvider.createToken(userTester.getId());
-			testCategory = testDataUtils.createNewCategory("category");
-			openRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
-				3, 2, LocalDateTime.now().plusHours(3), RoomType.OPEN);
-			startRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
-				3, 2, LocalDateTime.now().plusHours(3), RoomType.START);
-			finishRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
-				3, 2, LocalDateTime.now().minusHours(3), RoomType.FINISH);
-			hiddenRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
-				3, 2, LocalDateTime.now().plusHours(3), RoomType.OPEN);
-			failRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
-				3, 2, LocalDateTime.now().minusHours(3), RoomType.FAIL);
+				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
+			userAccessToken = tokenProvider.createToken(userTester.getId());
+			Category testCategory = testDataUtils.createNewCategory("category");
+			Room openRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
+				3, 2, 180, RoomType.OPEN);
+			Room startRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
+				3, 2, 180, RoomType.START);
+			Room finishRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
+				3, 2, 180, RoomType.FINISH);
+			Room hiddenRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
+				3, 2, 180, RoomType.OPEN);
+			Room failRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
+				3, 2, 180, RoomType.FAIL);
 		}
 
+		/**
+		 * 조회가 실패하는 경우는 조건에 해당하는 게시글이 없을때 빈 리스트를 반환
+		 * Penalty 상태의 사용자도 게시글 목록은 조회할 수 있어야하기에 유저를 나누지 않았음.
+		 */
 		@Test
-		@DisplayName("조회 성공")
+		@DisplayName("조회 성공 201")
 		public void success() throws Exception {
 			String url = "/party/rooms";
-
+			//given
 			String contentAsString = mockMvc.perform(
-					get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+					get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
-
-			RoomListResDto resp = objectMapper.readValue(contentAsString, RoomListResDto.class);
-
+			//when
+			RoomListResDto resp = RoomService.findRoomList();
+			//then
 			List<RoomResDto> roomList = resp.getRoomList();
 			for (RoomResDto responseDto : roomList) {
 				assertThat(responseDto.getStatus()).isIn(RoomType.OPEN.toString(), RoomType.START.toString());
 			}
+		}
+	}
+
+	/**
+	 * 방 생성시 패널티 상태의 사용자는 실패해야함
+	 */
+	@Nested
+	@DisplayName("방 생성 테스트")
+	class CreateRoom {
+		@BeforeEach
+		void beforeEach() {
+			userTester = testDataUtils.createNewUser("findControllerTester", "findControllerTester",
+				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
+			reportedTester = testDataUtils.createNewUser("findControllerTester", "findControllerTester",
+				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
+			PartyPenalty testPenalty = testDataUtils.createNewPenalty(reportedTester, "test", "test",
+				LocalDateTime.now(), 60);
+			userAccessToken = tokenProvider.createToken(userTester.getId());
+			reportedAccessToken = tokenProvider.createToken(reportedTester.getId());
+			testCategory = testDataUtils.createNewCategory("category");
+		}
+
+		@Test
+		@DisplayName("생성 성공 201")
+		public void success() throws Exception {
+			String url = "/party/rooms";
+			//given
+			String contentAsString = mockMvc.perform(
+					get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
+				.andExpect(status().isCreated())
+				.andReturn().getResponse().getContentAsString();
+			//when
+			RoomCreateReqDto roomCreateReqDto = new RoomCreateReqDto("title", "content", testCategory.getId(),
+				4, 2, 180);
+			RoomCreateResDto rcrd = RoomService.addCreateRoom(roomCreateReqDto, UserDto.from(userTester));
+			//then
+			assertThat(rcrd.getRoomId()).isNotNull();
+		}
+
+		@Test
+		@DisplayName("패널티 유저 생성 실패 403")
+		public void penaltyUserFail() throws Exception {
+			String url = "/party/rooms";
+			//given
+			String contentAsString = mockMvc.perform(
+					get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + reportedAccessToken))
+				.andExpect(status().isForbidden())
+				.andReturn().getResponse().getContentAsString();
+			//when
+			RoomCreateReqDto roomCreateReqDto = new RoomCreateReqDto("title", "content", testCategory.getId(),
+				4, 2, 180);
+			RoomCreateResDto rcrd = RoomService.addCreateRoom(roomCreateReqDto, UserDto.from(userTester));
+			//then
+			assertThat(rcrd.getRoomId()).isNull();
+		}
+
+		@Test
+		@DisplayName("없는 카테고리로 인한 생성 실패 404")
+		public void notValidCategoryFail() throws Exception {
+			String url = "/party/rooms";
+			//given
+			String contentAsString = mockMvc.perform(
+					get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + reportedAccessToken))
+				.andExpect(status().isNotFound())
+				.andReturn().getResponse().getContentAsString();
+			//when
+			RoomCreateReqDto roomCreateReqDto = new RoomCreateReqDto("title", "content", 100L,
+				4, 2, 180);
+			RoomCreateResDto rcrd = RoomService.addCreateRoom(roomCreateReqDto, UserDto.from(userTester));
+			//then
+			assertThat(rcrd.getRoomId()).isNull();
+		}
+
+		@Test
+		@DisplayName("최소인원 > 최대인원 생성 실패 400")
+		public void minOverMaxFail() throws Exception {
+			String url = "/party/rooms";
+			//given
+			String contentAsString = mockMvc.perform(
+					get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + reportedAccessToken))
+				.andExpect(status().isBadRequest())
+				.andReturn().getResponse().getContentAsString();
+			//when
+			RoomCreateReqDto roomCreateReqDto = new RoomCreateReqDto("title", "content", testCategory.getId(),
+				2, 4, 180);
+			RoomCreateResDto rcrd = RoomService.addCreateRoom(roomCreateReqDto, UserDto.from(userTester));
+			//then
+			assertThat(rcrd.getRoomId()).isNull();
+		}
+
+		@Test
+		@DisplayName("이상한 시간 생성 실패 400")
+		public void notValidTimeFail() throws Exception {
+			String url = "/party/rooms";
+			//given
+			String contentAsString = mockMvc.perform(
+					get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + reportedAccessToken))
+				.andExpect(status().isBadRequest())
+				.andReturn().getResponse().getContentAsString();
+			//when
+			RoomCreateReqDto roomCreateReqDto = new RoomCreateReqDto("title", "content", testCategory.getId(),
+				4, 2, -180);
+			RoomCreateResDto rcrd = RoomService.addCreateRoom(roomCreateReqDto, UserDto.from(userTester));
+			//then
+			assertThat(rcrd.getRoomId()).isNull();
 		}
 	}
 }

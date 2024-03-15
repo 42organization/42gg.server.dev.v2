@@ -21,6 +21,7 @@ import gg.data.manage.SlotManagement;
 import gg.data.noti.Noti;
 import gg.data.noti.type.NotiType;
 import gg.data.party.Category;
+import gg.data.party.PartyPenalty;
 import gg.data.party.Room;
 import gg.data.party.type.RoomType;
 import gg.data.rank.Rank;
@@ -51,6 +52,7 @@ import gg.repo.manage.AnnouncementRepository;
 import gg.repo.manage.SlotManagementRepository;
 import gg.repo.noti.NotiRepository;
 import gg.repo.party.CategoryRepository;
+import gg.repo.party.PartyPenaltyRepository;
 import gg.repo.party.RoomRepository;
 import gg.repo.rank.RankRepository;
 import gg.repo.rank.TierRepository;
@@ -89,6 +91,7 @@ public class TestDataUtils {
 	private final SlotManagementRepository slotManagementRepository;
 	private final RoomRepository roomRepository;
 	private final CategoryRepository categoryRepository;
+	private final PartyPenaltyRepository partyPenaltyRepository;
 
 	public String getLoginAccessToken() {
 		User user = User.builder()
@@ -775,7 +778,7 @@ public class TestDataUtils {
 	}
 
 	public Room createNewRoom(User host, User creator, Category category, int number, Integer currentPeople,
-		Integer maxPeople, Integer minPeople, LocalDateTime dueDate, RoomType status) {
+		Integer maxPeople, Integer minPeople, Integer dueDate, RoomType status) {
 		Room room = Room.builder()
 			.host(host)
 			.creator(creator)
@@ -785,7 +788,7 @@ public class TestDataUtils {
 			.currentPeople(currentPeople)
 			.maxPeople(maxPeople)
 			.minPeople(minPeople)
-			.dueDate(dueDate)
+			.dueDate(LocalDateTime.now().plusMinutes(dueDate))
 			.status(status)
 			.build();
 		return roomRepository.save(room);
@@ -794,5 +797,12 @@ public class TestDataUtils {
 	public Category createNewCategory(String name) {
 		Category newCategory = new Category(name);
 		return categoryRepository.save(newCategory);
+	}
+
+	public PartyPenalty createNewPenalty(User user, String type, String message, LocalDateTime startTime,
+		Integer penaltyTime) {
+		PartyPenalty penalty = new PartyPenalty(user, type, message, startTime, penaltyTime);
+		partyPenaltyRepository.save(penalty);
+		return penalty;
 	}
 }

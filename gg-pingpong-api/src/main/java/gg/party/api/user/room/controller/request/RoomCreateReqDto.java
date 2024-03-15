@@ -2,6 +2,8 @@ package gg.party.api.user.room.controller.request;
 
 import java.time.LocalDateTime;
 
+import javax.validation.constraints.Size;
+
 import gg.data.party.Category;
 import gg.data.party.Room;
 import gg.data.party.type.RoomType;
@@ -14,12 +16,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class RoomCreateReqDto {
+	@Size(min = 1, max = 15)
 	private String title;
+	@Size(min = 1, max = 100)
 	private String content;
 	private Long categoryId;
+	@Size(min = 2, max = 8)
 	private Integer maxPeople;
+	@Size(min = 1, max = 8)
 	private Integer minPeople;
-	private LocalDateTime dueDate;
+	@Size(min = 1, max = 13 * 60)
+	private Integer dueDate;
 
 	public static Room toEntity(RoomCreateReqDto dto, User user, Category category) {
 		return Room.builder()
@@ -31,7 +38,7 @@ public class RoomCreateReqDto {
 			.currentPeople(1)
 			.maxPeople(dto.getMaxPeople())
 			.minPeople(dto.getMinPeople())
-			.dueDate(dto.getDueDate())
+			.dueDate(LocalDateTime.now().plusMinutes(dto.getDueDate()))
 			.status(RoomType.OPEN)
 			.build();
 	}
