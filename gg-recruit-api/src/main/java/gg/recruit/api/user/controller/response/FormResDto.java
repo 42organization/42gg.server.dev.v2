@@ -6,8 +6,10 @@ import java.util.List;
 
 import gg.recruit.api.user.service.response.FormSvcDto;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @AllArgsConstructor
+@Getter
 public class FormResDto {
 	private Long questionId;
 	private String inputType;

@@ -1,5 +1,6 @@
 package gg.data.recruit.application;
 
+import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -20,8 +21,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "answer_type")
 public abstract class ApplicationAnswer extends BaseTimeEntity {
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -39,10 +40,10 @@ public abstract class ApplicationAnswer extends BaseTimeEntity {
 		return question.getInputType();
 	}
 
-	public Long getQuestionId(){
+	public Long getQuestionId() {
 		return question.getId();
 	}
 
-	public abstract FormEntityDto toForm();
+	public abstract ApplicationAnswerEntityDto toForm();
 
 }

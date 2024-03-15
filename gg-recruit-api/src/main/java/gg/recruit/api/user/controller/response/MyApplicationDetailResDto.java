@@ -7,8 +7,10 @@ import java.util.List;
 
 import gg.recruit.api.user.service.response.ApplicationWithAnswerSvcDto;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @AllArgsConstructor
+@Getter
 public class MyApplicationDetailResDto {
 	private Long applicationId;
 	private LocalDateTime endTime;
