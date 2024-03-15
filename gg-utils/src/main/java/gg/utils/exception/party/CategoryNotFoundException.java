@@ -1,10 +1,11 @@
 package gg.utils.exception.party;
 
-import gg.utils.exception.ErrorCode;
-import gg.utils.exception.custom.NotExistException;
+import org.webjars.NotFoundException;
 
-public class CategoryNotFoundException extends NotExistException {
+import gg.utils.exception.ErrorCode;
+
+public class CategoryNotFoundException extends NotFoundException {
 	public CategoryNotFoundException() {
-		super(ErrorCode.CATEGORY_NOT_FOUND.getMessage(), ErrorCode.CATEGORY_NOT_FOUND);
+		super(ErrorCode.CATEGORY_NOT_FOUND.getMessage());
 	}
 }

@@ -2,6 +2,8 @@ package gg.party.api.user.room.controller.request;
 
 import java.time.LocalDateTime;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
 import gg.data.party.Category;
@@ -21,11 +23,14 @@ public class RoomCreateReqDto {
 	@Size(min = 1, max = 100)
 	private String content;
 	private Long categoryId;
-	@Size(min = 2, max = 8)
+	@Min(2)
+	@Max(8)
 	private Integer maxPeople;
-	@Size(min = 1, max = 8)
+	@Min(1)
+	@Max(8)
 	private Integer minPeople;
-	@Size(min = 1, max = 13 * 60)
+	@Min(1)
+	@Max(13 * 60)
 	private Integer minutesUntilDueDate;
 
 	public static Room toEntity(RoomCreateReqDto dto, User user, Category category) {

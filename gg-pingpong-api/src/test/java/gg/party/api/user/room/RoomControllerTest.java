@@ -122,9 +122,9 @@ public class RoomControllerTest {
 	class CreateRoom {
 		@BeforeEach
 		void beforeEach() {
-			userTester = testDataUtils.createNewUser("findControllerTester", "findControllerTester",
+			userTester = testDataUtils.createNewUser("userTester", "userTester",
 				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
-			reportedTester = testDataUtils.createNewUser("findControllerTester", "findControllerTester",
+			reportedTester = testDataUtils.createNewUser("reportedTester", "reportedTester",
 				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
 			PartyPenalty testPenalty = testDataUtils.createNewPenalty(reportedTester, "test", "test",
 				LocalDateTime.now(), 60);
@@ -181,7 +181,7 @@ public class RoomControllerTest {
 			mockMvc.perform(post(url)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(requestBody)
-					.header(HttpHeaders.AUTHORIZATION, "Bearer " + reportedAccessToken))
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
 				.andExpect(status().isNotFound());
 		}
 
@@ -197,7 +197,7 @@ public class RoomControllerTest {
 			mockMvc.perform(post(url)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(requestBody)
-					.header(HttpHeaders.AUTHORIZATION, "Bearer " + reportedAccessToken))
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
 				.andExpect(status().isBadRequest());
 		}
 
@@ -213,7 +213,7 @@ public class RoomControllerTest {
 			mockMvc.perform(post(url)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(requestBody)
-					.header(HttpHeaders.AUTHORIZATION, "Bearer " + reportedAccessToken))
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
 				.andExpect(status().isBadRequest());
 		}
 	}
