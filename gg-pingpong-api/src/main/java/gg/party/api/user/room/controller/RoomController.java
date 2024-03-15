@@ -32,7 +32,7 @@ public class RoomController {
 
 	/**
 	 * 시작하지 않은 방과 시작한 방을 모두 조회한다
-	 * @return 시작하지 않은 방 (최신순) + 시작한 방(끝나는 시간이 빠른 순) 전체 List
+	 * @return 시작하지 않은 방 (최신순) + 시작한 방(끝나는 시간이 빠른 순) 전체 List - 200
 	 */
 	@GetMapping
 	public ResponseEntity<RoomListResDto> allActiveRoomList() {
@@ -44,7 +44,7 @@ public class RoomController {
 	 * 방 만들기
 	 * @param roomCreateReqDto 요청 Dto
 	 * @param user 사용자
-	 * @return 201 created
+	 * @return 생성된 roomId - 201
 	 */
 	@PostMapping
 	public ResponseEntity<RoomCreateResDto> createRoom(@RequestBody @Valid RoomCreateReqDto roomCreateReqDto,
