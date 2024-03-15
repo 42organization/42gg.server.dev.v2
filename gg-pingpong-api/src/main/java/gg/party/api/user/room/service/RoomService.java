@@ -276,7 +276,8 @@ public class RoomService {
 
 			List<UserRoomResDto> roomUsers = userRoomRepository.findByRoomId(roomId).stream()
 				.filter(UserRoom::getIsExist)
-				.map(userRoom -> new UserRoomResDto(userRoom, userRoom.getUser().getIntraId()))
+				.map(userRoom -> new UserRoomResDto(userRoom, userRoom.getUser().getIntraId(),
+					userRoom.getUser().getImageUri()))
 				.collect(Collectors.toList());
 			return new RoomDetailResDto(room, myNickname, hostNickname, roomUsers, comments);
 		} else { // if 참여자 && 시작했을경우 intraID || else intraId == null
