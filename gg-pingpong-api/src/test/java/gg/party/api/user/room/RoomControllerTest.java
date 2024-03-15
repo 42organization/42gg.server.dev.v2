@@ -14,12 +14,12 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gg.auth.UserDto;
 import gg.auth.utils.AuthTokenProvider;
 import gg.data.party.Category;
 import gg.data.party.PartyPenalty;
@@ -138,14 +138,18 @@ public class RoomControllerTest {
 		public void success() throws Exception {
 			String url = "/party/rooms";
 			//given
-			String contentAsString = mockMvc.perform(
-					get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
-				.andExpect(status().isCreated())
-				.andReturn().getResponse().getContentAsString();
-			//when
 			RoomCreateReqDto roomCreateReqDto = new RoomCreateReqDto("title", "content", testCategory.getId(),
 				4, 2, 180);
-			RoomCreateResDto rcrd = RoomService.addCreateRoom(roomCreateReqDto, UserDto.from(userTester));
+			String jsonRequest = objectMapper.writeValueAsString(roomCreateReqDto);
+			//when
+			String contentAsString = mockMvc.perform(post(url)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(jsonRequest)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
+				.andExpect(status().isCreated())
+				.andReturn().getResponse().getContentAsString();
+			RoomCreateResDto rcrd = objectMapper.readValue(contentAsString,
+				RoomCreateResDto.class);
 			//then
 			assertThat(rcrd.getRoomId()).isNotNull();
 		}
@@ -155,16 +159,15 @@ public class RoomControllerTest {
 		public void penaltyUserFail() throws Exception {
 			String url = "/party/rooms";
 			//given
-			String contentAsString = mockMvc.perform(
-					get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + reportedAccessToken))
-				.andExpect(status().isForbidden())
-				.andReturn().getResponse().getContentAsString();
-			//when
-			RoomCreateReqDto roomCreateReqDto = new RoomCreateReqDto("title", "content", testCategory.getId(),
-				4, 2, 180);
-			RoomCreateResDto rcrd = RoomService.addCreateRoom(roomCreateReqDto, UserDto.from(userTester));
-			//then
-			assertThat(rcrd.getRoomId()).isNull();
+			RoomCreateReqDto roomCreateReqDto = new RoomCreateReqDto("title", "content", testCategory.getId(), 4, 2,
+				180);
+			String requestBody = objectMapper.writeValueAsString(roomCreateReqDto);
+			// when && then
+			mockMvc.perform(post(url)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(requestBody)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + reportedAccessToken))
+				.andExpect(status().isForbidden());
 		}
 
 		@Test
@@ -172,16 +175,14 @@ public class RoomControllerTest {
 		public void notValidCategoryFail() throws Exception {
 			String url = "/party/rooms";
 			//given
-			String contentAsString = mockMvc.perform(
-					get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + reportedAccessToken))
-				.andExpect(status().isNotFound())
-				.andReturn().getResponse().getContentAsString();
-			//when
-			RoomCreateReqDto roomCreateReqDto = new RoomCreateReqDto("title", "content", 100L,
-				4, 2, 180);
-			RoomCreateResDto rcrd = RoomService.addCreateRoom(roomCreateReqDto, UserDto.from(userTester));
-			//then
-			assertThat(rcrd.getRoomId()).isNull();
+			RoomCreateReqDto roomCreateReqDto = new RoomCreateReqDto("title", "content", 100L, 4, 2, 180);
+			String requestBody = objectMapper.writeValueAsString(roomCreateReqDto);
+			// when && then
+			mockMvc.perform(post(url)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(requestBody)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + reportedAccessToken))
+				.andExpect(status().isNotFound());
 		}
 
 		@Test
@@ -189,33 +190,31 @@ public class RoomControllerTest {
 		public void minOverMaxFail() throws Exception {
 			String url = "/party/rooms";
 			//given
-			String contentAsString = mockMvc.perform(
-					get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + reportedAccessToken))
-				.andExpect(status().isBadRequest())
-				.andReturn().getResponse().getContentAsString();
-			//when
-			RoomCreateReqDto roomCreateReqDto = new RoomCreateReqDto("title", "content", testCategory.getId(),
-				2, 4, 180);
-			RoomCreateResDto rcrd = RoomService.addCreateRoom(roomCreateReqDto, UserDto.from(userTester));
-			//then
-			assertThat(rcrd.getRoomId()).isNull();
+			RoomCreateReqDto roomCreateReqDto = new RoomCreateReqDto("title", "content", testCategory.getId(), 2, 4,
+				180);
+			String requestBody = objectMapper.writeValueAsString(roomCreateReqDto);
+			// when && then
+			mockMvc.perform(post(url)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(requestBody)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + reportedAccessToken))
+				.andExpect(status().isBadRequest());
 		}
 
 		@Test
-		@DisplayName("이상한 시간 생성 실패 400")
+		@DisplayName("이상한 시간으로 인한 생성 실패 400")
 		public void notValidTimeFail() throws Exception {
 			String url = "/party/rooms";
 			//given
-			String contentAsString = mockMvc.perform(
-					get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + reportedAccessToken))
-				.andExpect(status().isBadRequest())
-				.andReturn().getResponse().getContentAsString();
-			//when
-			RoomCreateReqDto roomCreateReqDto = new RoomCreateReqDto("title", "content", testCategory.getId(),
-				4, 2, -180);
-			RoomCreateResDto rcrd = RoomService.addCreateRoom(roomCreateReqDto, UserDto.from(userTester));
-			//then
-			assertThat(rcrd.getRoomId()).isNull();
+			RoomCreateReqDto roomCreateReqDto = new RoomCreateReqDto("title", "content", testCategory.getId(), 4, 2,
+				-180);
+			String requestBody = objectMapper.writeValueAsString(roomCreateReqDto);
+			// when && then
+			mockMvc.perform(post(url)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(requestBody)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + reportedAccessToken))
+				.andExpect(status().isBadRequest());
 		}
 	}
 }

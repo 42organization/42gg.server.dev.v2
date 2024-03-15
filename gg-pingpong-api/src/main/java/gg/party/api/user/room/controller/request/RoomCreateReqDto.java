@@ -26,7 +26,7 @@ public class RoomCreateReqDto {
 	@Size(min = 1, max = 8)
 	private Integer minPeople;
 	@Size(min = 1, max = 13 * 60)
-	private Integer dueDate;
+	private Integer minutesUntilDueDate;
 
 	public static Room toEntity(RoomCreateReqDto dto, User user, Category category) {
 		return Room.builder()
@@ -38,7 +38,7 @@ public class RoomCreateReqDto {
 			.currentPeople(1)
 			.maxPeople(dto.getMaxPeople())
 			.minPeople(dto.getMinPeople())
-			.dueDate(LocalDateTime.now().plusMinutes(dto.getDueDate()))
+			.dueDate(LocalDateTime.now().plusMinutes(dto.getMinutesUntilDueDate()))
 			.status(RoomType.OPEN)
 			.build();
 	}
