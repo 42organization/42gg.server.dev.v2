@@ -92,7 +92,7 @@ public class RoomControllerTest {
 		}
 
 		/**
-		 * 조회가 실패하는 경우는 조건에 해당하는 게시글이 없을때 빈 리스트를 반환
+		 * 조건에 해당하는 게시글이 없을때 빈 리스트를 반환
 		 * Penalty 상태의 사용자도 게시글 목록은 조회할 수 있어야하기에 유저를 나누지 않았음.
 		 */
 		@Test
@@ -114,9 +114,6 @@ public class RoomControllerTest {
 		}
 	}
 
-	/**
-	 * 방 생성시 패널티 상태의 사용자는 실패해야함
-	 */
 	@Nested
 	@DisplayName("방 생성 테스트")
 	class CreateRoom {
@@ -155,7 +152,7 @@ public class RoomControllerTest {
 		}
 
 		@Test
-		@DisplayName("패널티 유저 생성 실패 403")
+		@DisplayName("패널티 상태로 인한 생성 실패 403")
 		public void penaltyUserFail() throws Exception {
 			String url = "/party/rooms";
 			//given
