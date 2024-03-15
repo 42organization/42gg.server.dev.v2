@@ -68,7 +68,7 @@ public class RoomService {
 	@Transactional
 	public RoomListResDto findRoomList() {
 		Sort sortForNotStarted = Sort.by("createdAt").descending();
-		Sort sortForStarted = Sort.by("dueDate").ascending();
+		Sort sortForStarted = Sort.by("startDate").descending();
 
 		List<Room> notStartedRooms = roomRepository.findByStatus(RoomType.OPEN, sortForNotStarted);
 		List<Room> startedRooms = roomRepository.findByStatus(RoomType.START, sortForStarted);
@@ -230,6 +230,7 @@ public class RoomService {
 		}
 		targetRoom.updateRoomStatus(RoomType.START);
 		List<User> users = userRoomRepository.findByIsExist(roomId);
+		targetRoom.startRoom(LocalDateTime.now());
 		partyNotiService.sendPartyNotifications(users);
 		roomRepository.save(targetRoom);
 
@@ -329,6 +330,7 @@ public class RoomService {
 		if (room.getCurrentPeople().equals(room.getMaxPeople())) {
 			room.updateRoomStatus(RoomType.START);
 			List<User> users = userRoomRepository.findByIsExist(roomId);
+			room.startRoom(LocalDateTime.now());
 			partyNotiService.sendPartyNotifications(users);
 		}
 		roomRepository.save(room);
