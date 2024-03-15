@@ -20,6 +20,9 @@ import gg.data.manage.Announcement;
 import gg.data.manage.SlotManagement;
 import gg.data.noti.Noti;
 import gg.data.noti.type.NotiType;
+import gg.data.party.Category;
+import gg.data.party.Room;
+import gg.data.party.type.RoomType;
 import gg.data.rank.Rank;
 import gg.data.rank.Tier;
 import gg.data.rank.redis.RankRedis;
@@ -47,6 +50,7 @@ import gg.repo.game.TeamUserRepository;
 import gg.repo.manage.AnnouncementRepository;
 import gg.repo.manage.SlotManagementRepository;
 import gg.repo.noti.NotiRepository;
+import gg.repo.party.RoomRepository;
 import gg.repo.rank.RankRepository;
 import gg.repo.rank.TierRepository;
 import gg.repo.rank.redis.RankRedisRepository;
@@ -82,6 +86,7 @@ public class TestDataUtils {
 	private final CoinPolicyRepository coinPolicyRepository;
 	private final UserImageRepository userImageRepository;
 	private final SlotManagementRepository slotManagementRepository;
+	private final RoomRepository roomRepository;
 
 	public String getLoginAccessToken() {
 		User user = User.builder()
@@ -765,5 +770,26 @@ public class TestDataUtils {
 			.startTime(LocalDateTime.now().minusHours(1))
 			.build();
 		return slotManagementRepository.save(slotManagement);
+	}
+
+	public Room createNewRoom(User host, User creator, Category category, int number, Integer currentPeople,
+		Integer maxPeople, Integer minPeople, LocalDateTime dueDate, RoomType status) {
+		Room room = Room.builder()
+			.host(host)
+			.creator(creator)
+			.category(category)
+			.title("방 제목" + number)
+			.content("방 내용" + number)
+			.currentPeople(currentPeople)
+			.maxPeople(maxPeople)
+			.minPeople(minPeople)
+			.dueDate(dueDate)
+			.status(status)
+			.build();
+		return roomRepository.save(room);
+	}
+
+	public Category createNewCategory(String name) {
+		return new Category(name);
 	}
 }
