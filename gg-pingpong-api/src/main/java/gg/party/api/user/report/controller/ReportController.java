@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
-import gg.party.api.user.report.request.ReportReqDto;
+import gg.party.api.user.report.controller.request.ReportReqDto;
 import gg.party.api.user.report.service.ReportService;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;

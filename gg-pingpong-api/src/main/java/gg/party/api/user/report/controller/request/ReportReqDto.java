@@ -1,4 +1,4 @@
-package gg.party.api.user.report.request;
+package gg.party.api.user.report.controller.request;
 
 import javax.validation.constraints.Size;
 
