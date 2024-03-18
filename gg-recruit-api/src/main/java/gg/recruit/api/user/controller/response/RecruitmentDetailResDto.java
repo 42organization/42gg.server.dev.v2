@@ -17,13 +17,15 @@ public class RecruitmentDetailResDto {
 	private String contents;
 	private String generation;
 	private List<FormDetailResDto> forms;
+	private Long applicationId;
 
-	public RecruitmentDetailResDto(RecruitmentDetailSvcDto dto) {
+	public RecruitmentDetailResDto(RecruitmentDetailSvcDto dto, Long applicationId) {
 		this.startDate = dto.getStartDate();
 		this.endDate = dto.getEndDate();
 		this.title = dto.getTitle();
 		this.contents = dto.getContents();
 		this.generation = dto.getGeneration();
 		this.forms = dto.getForms().stream().map(FormDetailResDto::new).collect(Collectors.toList());
+		this.applicationId = applicationId;
 	}
 }
