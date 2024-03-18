@@ -12,6 +12,7 @@ import gg.data.recruit.recruitment.Recruitments;
 import gg.recruit.api.user.service.response.RecruitmentDetailSvcDto;
 import gg.recruit.api.user.service.response.RecruitmentListSvcDto;
 import gg.repo.recruit.user.recruitment.RecruitmentRepository;
+import gg.utils.exception.custom.NotExistException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -26,7 +27,8 @@ public class RecruitmentService {
 	}
 
 	public RecruitmentDetailSvcDto findRecruitmentDetail(Long recruitmentId) {
-		Recruitments recruit = recruitmentRepository.findById(recruitmentId).orElseThrow();
+		Recruitments recruit = recruitmentRepository.findByActiveRecruit(recruitmentId, LocalDateTime.now())
+			.orElseThrow(() -> new NotExistException("Recruitment id 가 유효하지 않습니다."));
 		List<Question> questions = questionService.findQuestionsByRecruitId(recruitmentId);
 		return new RecruitmentDetailSvcDto(recruit, questions);
 	}

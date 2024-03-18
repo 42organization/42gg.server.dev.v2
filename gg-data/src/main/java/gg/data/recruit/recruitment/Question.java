@@ -31,7 +31,7 @@ public class Question extends BaseTimeEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "recruit_id", nullable = false)
-	private Recruitments recruitId;
+	private Recruitments recruit;
 
 	@Enumerated(EnumType.STRING)
 	@Column(length = 20, nullable = false)
@@ -40,7 +40,7 @@ public class Question extends BaseTimeEntity {
 	@Column(length = 300)
 	private String question;
 
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
 	private List<CheckList> checkLists;
 
 	private int sortNum;

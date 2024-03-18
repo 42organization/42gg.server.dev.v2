@@ -1,6 +1,7 @@
 package gg.repo.recruit.user.recruitment;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,4 +16,8 @@ public interface RecruitmentRepository extends JpaRepository<Recruitments, Long>
 		+ "WHERE r.isDeleted = false AND r.startTime <= :date AND r.isFinish = false "
 		+ "ORDER BY r.startTime DESC")
 	Page<Recruitments> findActiveRecruitmentList(@Param("date") LocalDateTime date, Pageable pageable);
+
+	@Query("SELECT r FROM Recruitments r "
+		+ "WHERE r.id = :recruitId AND r.startTime <= :date AND r.isDeleted = false AND r.isFinish = false")
+	Optional<Recruitments> findByActiveRecruit(@Param("recruitId") Long recruitId, @Param("date") LocalDateTime date);
 }

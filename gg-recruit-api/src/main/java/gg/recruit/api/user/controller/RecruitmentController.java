@@ -14,6 +14,7 @@ import gg.recruit.api.user.controller.response.RecruitmentDetailResDto;
 import gg.recruit.api.user.service.ApplicationService;
 import gg.recruit.api.user.service.RecruitmentService;
 import gg.utils.dto.PageRequestDto;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -30,7 +31,8 @@ public class RecruitmentController {
 	}
 
 	@GetMapping("/{recruitmentId}")
-	public RecruitmentDetailResDto findRecruitmentDetail(@Login UserDto user, @PathVariable Long recruitmentId) {
+	public RecruitmentDetailResDto findRecruitmentDetail(@Parameter(hidden = true) @Login UserDto user,
+		@PathVariable Long recruitmentId) {
 		return new RecruitmentDetailResDto(recruitmentService.findRecruitmentDetail(recruitmentId),
 			applicationService.findApplicationByUserAndRecruit(user.getId(), recruitmentId));
 	}
