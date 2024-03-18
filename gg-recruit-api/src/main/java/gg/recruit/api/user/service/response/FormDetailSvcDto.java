@@ -1,6 +1,7 @@
 package gg.recruit.api.user.service.response;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import gg.data.recruit.recruitment.Question;
 import gg.data.recruit.recruitment.enums.InputType;
@@ -17,6 +18,6 @@ public class FormDetailSvcDto {
 		this.questionId = question.getId();
 		this.question = question.getQuestion();
 		this.inputType = question.getInputType();
-		this.checkList = question.getCheckLists().stream().map(CheckItemSvcDto::new).toList();
+		this.checkList = question.getCheckLists().stream().map(CheckItemSvcDto::new).collect(Collectors.toList());
 	}
 }
