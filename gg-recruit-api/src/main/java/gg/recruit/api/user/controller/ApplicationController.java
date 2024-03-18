@@ -6,9 +6,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
+import gg.recruit.api.user.controller.response.MyApplicationDetailResDto;
 import gg.recruit.api.user.controller.response.MyApplicationsResDto;
 import gg.recruit.api.user.service.ApplicationService;
-import gg.recruit.api.user.service.response.ApplicationListDto;
+import gg.recruit.api.user.service.param.FindApplicationDetailParam;
+import gg.recruit.api.user.service.response.ApplicationListSvcDto;
+import gg.recruit.api.user.service.response.ApplicationWithAnswerSvcDto;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -20,7 +24,16 @@ public class ApplicationController {
 
 	@GetMapping("/applications")
 	public MyApplicationsResDto getMyApplications(@Login UserDto userDto) {
-		ApplicationListDto res = applicationService.findMyApplications(userDto.getId());
+		ApplicationListSvcDto res = applicationService.findMyApplications(userDto.getId());
 		return new MyApplicationsResDto(res);
 	}
+
+	@GetMapping("{recruitmentId}/applications/{applicationId}")
+	public MyApplicationDetailResDto getMyApplication(@Login @Parameter(hidden = true) UserDto userDto,
+		Long recruitmentId, Long applicationId) {
+		ApplicationWithAnswerSvcDto res = applicationService
+			.findMyApplicationDetail(new FindApplicationDetailParam(userDto.getId(), recruitmentId, applicationId));
+		return new MyApplicationDetailResDto(res);
+	}
+
 }

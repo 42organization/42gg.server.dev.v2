@@ -46,6 +46,7 @@ CREATE TABLE `application_answer` (
       `modified_at` datetime(6) DEFAULT NULL,
       `application_id` bigint NOT NULL ,
       `question_id` bigint NOT NULL ,
+      `answer_type` varchar(20) NOT NULL,
       PRIMARY KEY (`id`),
       KEY `FKn2ayp7tptdv0yycdqkp2hcm63` (`application_id`),
       KEY `FK59sj9jdfki14kkp34kc2jdhyj` (`question_id`),
@@ -65,27 +66,19 @@ CREATE TABLE `check_list` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `application_answer_check_list` (
-     `id` bigint NOT NULL AUTO_INCREMENT,
-     `created_at` datetime(6) NOT NULL,
-     `modified_at` datetime(6) DEFAULT NULL,
-     `application_answer_id` bigint NOT NULL,
+     `id` bigint NOT NULL,
      `check_list_id` bigint NOT NULL,
-     PRIMARY KEY (`id`),
-     KEY `FKqdnt92yg8t27q74he0ersyiax` (`application_answer_id`),
+     KEY `FKqdnt92yg8t27q74he0ersyiax` (`id`),
      KEY `FK3mf6hfr08f2ex01aqejikxk9w` (`check_list_id`),
      CONSTRAINT `FK3mf6hfr08f2ex01aqejikxk9w` FOREIGN KEY (`check_list_id`) REFERENCES `check_list` (`id`),
-     CONSTRAINT `FKqdnt92yg8t27q74he0ersyiax` FOREIGN KEY (`application_answer_id`) REFERENCES `application_answer` (`id`)
+     CONSTRAINT `FKqdnt92yg8t27q74he0ersyiax` FOREIGN KEY (`id`) REFERENCES `application_answer` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `application_answer_text` (
-   `id` bigint NOT NULL AUTO_INCREMENT,
-   `created_at` datetime(6) NOT NULL,
-   `modified_at` datetime(6) DEFAULT NULL,
+   `id` bigint NOT NULL ,
    `answer` varchar(1000) DEFAULT NULL,
-   `application_answer_id` bigint NOT NULL ,
-   PRIMARY KEY (`id`),
-   KEY `FKlhk4m3hi4r3v8xqk8lx4bx5g7` (`application_answer_id`),
-   CONSTRAINT `FKlhk4m3hi4r3v8xqk8lx4bx5g7` FOREIGN KEY (`application_answer_id`) REFERENCES `application_answer` (`id`)
+   KEY `FKlhk4m3hi4r3v8xqk8lx4bx5g7` (`id`),
+   CONSTRAINT `FKlhk4m3hi4r3v8xqk8lx4bx5g7` FOREIGN KEY (`id`) REFERENCES `application_answer` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 

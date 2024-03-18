@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class ApplicationDto {
+public class ApplicationSvcDto {
 	private Long recruitId;
 	private Long applicationId;
 	private LocalDateTime startDate;
@@ -17,7 +17,7 @@ public class ApplicationDto {
 	private String generation;
 	private String status;
 
-	public ApplicationDto(Application application) {
+	public ApplicationSvcDto(Application application) {
 		this.recruitId = application.getRecruit().getId();
 		this.applicationId = application.getId();
 		this.startDate = application.getRecruit().getStartTime();
