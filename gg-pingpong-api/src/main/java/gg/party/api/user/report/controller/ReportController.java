@@ -29,7 +29,7 @@ public class ReportController {
 	 * @param roomId 방 번호
 	 */
 	@PostMapping("/rooms/{room_id}")
-	public ResponseEntity<Long> reportRoomAdd(@PathVariable("room_id") Long roomId,
+	public ResponseEntity<Void> reportRoomAdd(@PathVariable("room_id") Long roomId,
 		@RequestBody @Valid ReportReqDto reportReqDto,
 		@Parameter(hidden = true) @Login UserDto user) {
 		reportService.addReportRoom(roomId, reportReqDto, user);

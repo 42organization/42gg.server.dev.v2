@@ -15,7 +15,7 @@ public interface UserReportRepository extends JpaRepository<UserReport, Long> {
 	public Optional<UserReport> findByReporterAndReportee(User reporter, User reportee);
 
 	public List<UserReport> findByReporteeAndRoomId(User reportee, Long roomId);
-	
+
 	@Query(value = "SELECT ur FROM UserReport ur "
 		+ "JOIN FETCH ur.reporter "
 		+ "JOIN FETCH ur.reportee "
