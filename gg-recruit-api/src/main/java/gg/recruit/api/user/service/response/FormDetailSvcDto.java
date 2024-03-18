@@ -2,6 +2,7 @@ package gg.recruit.api.user.service.response;
 
 import java.util.List;
 
+import gg.data.recruit.recruitment.Question;
 import gg.data.recruit.recruitment.enums.InputType;
 import lombok.Getter;
 
@@ -12,7 +13,10 @@ public class FormDetailSvcDto {
 	private InputType inputType;
 	private List<CheckItemSvcDto> checkList;
 
-	public FormDetailSvcDto(Long questionId) {
-		this.questionId = questionId;
+	public FormDetailSvcDto(Question question) {
+		this.questionId = question.getId();
+		this.question = question.getQuestion();
+		this.inputType = question.getInputType();
+		this.checkList = question.getCheckLists().stream().map(CheckItemSvcDto::new).toList();
 	}
 }

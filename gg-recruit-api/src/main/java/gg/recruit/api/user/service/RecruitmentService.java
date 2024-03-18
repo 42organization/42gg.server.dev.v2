@@ -28,6 +28,6 @@ public class RecruitmentService {
 	public RecruitmentDetailSvcDto findRecruitmentDetail(Long recruitmentId) {
 		Recruitments recruit = recruitmentRepository.findById(recruitmentId).orElseThrow();
 		List<Question> questions = questionService.findQuestionsByRecruitId(recruitmentId);
-		return new RecruitmentDetailSvcDto(recruit);
+		return new RecruitmentDetailSvcDto(recruit, questions);
 	}
 }
