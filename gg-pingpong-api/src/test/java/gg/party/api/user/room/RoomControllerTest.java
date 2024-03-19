@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gg.auth.UserDto;
 import gg.auth.utils.AuthTokenProvider;
 import gg.data.party.Category;
 import gg.data.party.PartyPenalty;
@@ -32,8 +33,10 @@ import gg.data.user.type.RacketType;
 import gg.data.user.type.RoleType;
 import gg.data.user.type.SnsType;
 import gg.party.api.user.room.controller.request.RoomCreateReqDto;
+import gg.party.api.user.room.controller.response.LeaveRoomResDto;
 import gg.party.api.user.room.controller.response.RoomCreateResDto;
 import gg.party.api.user.room.controller.response.RoomDetailResDto;
+import gg.party.api.user.room.controller.response.RoomJoinResDto;
 import gg.party.api.user.room.controller.response.RoomListResDto;
 import gg.party.api.user.room.controller.response.RoomResDto;
 import gg.party.api.user.room.controller.response.UserRoomResDto;
@@ -42,6 +45,7 @@ import gg.party.api.user.room.service.RoomManagementService;
 import gg.repo.party.CategoryRepository;
 import gg.repo.party.PartyPenaltyRepository;
 import gg.repo.party.RoomRepository;
+import gg.repo.party.UserRoomRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import lombok.RequiredArgsConstructor;
@@ -63,6 +67,8 @@ public class RoomControllerTest {
 	AuthTokenProvider tokenProvider;
 	@Autowired
 	RoomRepository roomRepository;
+	@Autowired
+	UserRoomRepository userRoomRepository;
 	@Autowired
 	CategoryRepository categoryRepository;
 	@Autowired
@@ -442,7 +448,7 @@ public class RoomControllerTest {
 	}
 
 	@Nested
-	@DisplayName("방 참여 테스트")
+	@DisplayName("방 참여 테스트") // slack api는 테스트 불가함으로 인해 차후 unit테스트로 추가 예정 (방 시작도 동일)
 	class JoinRoom {
 		@BeforeEach
 		void beforeEach() {
@@ -482,6 +488,8 @@ public class RoomControllerTest {
 			Room updatedRoom = roomRepository.findById(openRoom.getId()).orElse(null);
 			assertThat(updatedRoom).isNotNull();
 			assertThat(updatedRoom.getCurrentPeople()).isEqualTo(2);
+			RoomJoinResDto rjrd = objectMapper.readValue(contentAsString, RoomJoinResDto.class);
+			assertThat(rjrd.getRoomId()).isEqualTo(openRoom.getId());
 		}
 
 		@Test
@@ -518,6 +526,66 @@ public class RoomControllerTest {
 			String contentAsString = mockMvc.perform(
 					post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
 				.andExpect(status().isConflict()).toString();
+		}
+	}
+
+	@Nested
+	@DisplayName("방 나가기 테스트")
+	class ExitRoom {
+		@BeforeEach
+		void beforeEach() {
+			userTester = testDataUtils.createNewUser("userTester", "userTester",
+				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
+			anotherTester = testDataUtils.createNewUser("anotherTester", "anotherTester",
+				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
+			userAccessToken = tokenProvider.createToken(userTester.getId());
+			anotherAccessToken = tokenProvider.createToken(anotherTester.getId());
+			testCategory = testDataUtils.createNewCategory("category");
+			openRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
+				7, 2, 180, RoomType.OPEN);
+			UserRoom openUserRoom = testDataUtils.createNewUserRoom(userTester, openRoom, "nickname", true);
+			UserRoom anotherUserRoom = testDataUtils.createNewUserRoom(anotherTester, openRoom, "nickname2", true);
+			startRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
+				7, 2, 180, RoomType.START);
+			UserRoom startUserRoom = testDataUtils.createNewUserRoom(userTester, startRoom, "nickname", true);
+		}
+
+		@Test
+		@DisplayName("나가기 성공 200")
+		public void success() throws Exception {
+			// given
+			String openRoomId = openRoom.getId().toString();
+			String url = "/party/rooms/" + openRoomId;
+			// when
+			String contentAsString = mockMvc.perform(
+					patch(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+			// then
+			Room updatedRoom = roomRepository.findById(openRoom.getId()).orElse(null);
+			UserRoom newHostUserRoom = userRoomRepository.findByUserAndRoom(anotherTester, openRoom).orElse(null);
+			UserRoom exitUserRoom = userRoomRepository.findByUserAndRoom(userTester, openRoom).orElse(null);
+			assertThat(updatedRoom).isNotNull();
+			assertThat(updatedRoom.getCurrentPeople()).isEqualTo(1);
+			assertThat(newHostUserRoom).isNotNull();
+			assertThat(newHostUserRoom.getUser()).isEqualTo(openRoom.getHost());
+			assertThat(exitUserRoom).isNull();
+			assertThat(exitUserRoom.getIsExist()).isFalse();
+			LeaveRoomResDto lrrd = objectMapper.readValue(contentAsString, LeaveRoomResDto.class);
+			assertThat(lrrd.getNickname()).isEqualTo(exitUserRoom.getNickname());
+		}
+
+		@Test
+		@DisplayName("방에 없는 유저로 인한 나가기 실패 404")
+		public void fail() throws Exception {
+			// given
+			String openRoomId = openRoom.getId().toString();
+			String url = "/party/rooms/" + openRoomId;
+			roomManagementService.modifyLeaveRoom(openRoom.getId(), UserDto.from(anotherTester));
+			// when && then
+			String contentAsString = mockMvc.perform(
+					patch(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + anotherAccessToken))
+				.andExpect(status().isNotFound()).toString();
 		}
 	}
 }
