@@ -551,7 +551,7 @@ public class RoomControllerTest {
 			UserRoom anotherUserRoom = testDataUtils.createNewUserRoom(anotherTester, openRoom, "nickname2", true);
 			failRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
 				7, 2, 180, RoomType.OPEN);
-			UserRoom willFailUserRoom = testDataUtils.createNewUserRoom(userTester, openRoom, "nickname", true);
+			UserRoom willFailUserRoom = testDataUtils.createNewUserRoom(userTester, failRoom, "nickname", true);
 			startRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
 				7, 2, 180, RoomType.START);
 			UserRoom startUserRoom = testDataUtils.createNewUserRoom(userTester, startRoom, "nickname", true);
