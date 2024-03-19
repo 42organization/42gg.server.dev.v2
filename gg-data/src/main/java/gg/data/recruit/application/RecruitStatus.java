@@ -29,4 +29,8 @@ public class RecruitStatus extends BaseTimeEntity {
 
 	@Getter
 	private LocalDateTime interviewDate;
+
+	public RecruitStatus(Application application) {
+		this.application = application;
+	}
 }

@@ -52,7 +52,7 @@ public class ApplicationService {
 		Optional<Application> optionalApplication = applicationRepository
 			.findApplication(param.getApplicationId(), param.getUserId(), param.getRecruitmentId());
 		ApplicationResultSvcDto result;
-		if(optionalApplication.isEmpty()){
+		if(optionalApplication.isEmpty()) {
 			result = ApplicationResultSvcDto.nullResult();
 		} else {
 			Application application = optionalApplication.get();

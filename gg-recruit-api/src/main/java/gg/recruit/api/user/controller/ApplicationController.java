@@ -1,6 +1,7 @@
 package gg.recruit.api.user.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,7 +34,7 @@ public class ApplicationController {
 
 	@GetMapping("{recruitmentId}/applications/{applicationId}")
 	public MyApplicationDetailResDto getMyApplication(@Login @Parameter(hidden = true) UserDto userDto,
-		Long recruitmentId, Long applicationId) {
+		@PathVariable Long recruitmentId, @PathVariable Long applicationId) {
 		ApplicationWithAnswerSvcDto res = applicationService
 			.findMyApplicationDetail(new FindApplicationDetailParam(userDto.getId(), recruitmentId, applicationId));
 		return new MyApplicationDetailResDto(res);
@@ -41,7 +42,7 @@ public class ApplicationController {
 
 	@GetMapping("{recruitmentId}/applications/{applicationId}/result")
 	public ApplicationResultResDto getApplicationResult(@Login @Parameter(hidden = true) UserDto userDto,
-		Long recruitmentId, Long applicationId) {
+		@PathVariable Long recruitmentId, @PathVariable Long applicationId) {
 		ApplicationResultSvcDto res = applicationService.findApplicationResult(
 			new FindApplicationResultParam(userDto.getId(),
 				recruitmentId, applicationId));
