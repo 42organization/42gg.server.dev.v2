@@ -26,9 +26,8 @@ public class AdminRoomDetailResDto {
 	private List<UserRoomResDto> roomUsers;
 	private List<AdminCommentResDto> comments;
 
-	public AdminRoomDetailResDto(Room room, String myNickname, String hostNickname,
-		List<UserRoomResDto> roomUsers,
-		List<AdminCommentResDto> comments) {
+	public AdminRoomDetailResDto(Room room, String hostNickname,
+		List<UserRoomResDto> roomUsers, List<AdminCommentResDto> comments) {
 		this.roomId = room.getId();
 		this.title = room.getTitle();
 		this.categoryId = room.getCategory().getId();
@@ -38,7 +37,7 @@ public class AdminRoomDetailResDto {
 		this.status = room.getStatus();
 		this.dueDate = room.getDueDate();
 		this.createDate = room.getCreatedAt();
-		this.myNickname = myNickname;
+		this.myNickname = null;
 		this.hostNickname = hostNickname;
 		this.roomUsers = roomUsers;
 		this.comments = comments;

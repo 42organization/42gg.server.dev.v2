@@ -108,7 +108,6 @@ public class SlackbotService {
 		static class Channel {
 			private String id;
 		}
-
 	}
 
 	@Getter
