@@ -73,7 +73,7 @@ public class RoomControllerTest {
 	@Autowired
 	PartyPenaltyRepository partyPenaltyRepository;
 	@Autowired
-	RoomFindService RoomFindService;
+	RoomFindService roomFindService;
 	@Autowired
 	RoomManagementService roomManagementService;
 	User userTester;
@@ -126,7 +126,7 @@ public class RoomControllerTest {
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
 			//when
-			RoomListResDto resp = RoomFindService.findRoomList();
+			RoomListResDto resp = roomFindService.findRoomList();
 			//then
 			List<RoomResDto> roomList = resp.getRoomList();
 			for (RoomResDto responseDto : roomList) {
@@ -272,7 +272,7 @@ public class RoomControllerTest {
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
 			//when
-			RoomListResDto resp = RoomFindService.findJoinedRoomList(userTester.getId());
+			RoomListResDto resp = roomFindService.findJoinedRoomList(userTester.getId());
 			//then
 			List<RoomResDto> roomList = resp.getRoomList();
 			for (RoomResDto responseDto : roomList) {
@@ -316,7 +316,7 @@ public class RoomControllerTest {
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
 			//when
-			RoomListResDto resp = RoomFindService.findMyHistoryRoomList(userTester.getId());
+			RoomListResDto resp = roomFindService.findMyHistoryRoomList(userTester.getId());
 			//then
 			List<RoomResDto> roomList = resp.getRoomList();
 			for (RoomResDto responseDto : roomList) {
@@ -365,7 +365,7 @@ public class RoomControllerTest {
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
 			//when
-			RoomDetailResDto rdrd = RoomFindService.findRoomDetail(userTester.getId(), openRoom.getId());
+			RoomDetailResDto rdrd = roomFindService.findRoomDetail(userTester.getId(), openRoom.getId());
 			//then
 			assertThat(rdrd.getStatus().toString()).isEqualTo(RoomType.OPEN.toString());
 			for (UserRoomResDto roomUser : rdrd.getRoomUsers()) {
@@ -385,7 +385,7 @@ public class RoomControllerTest {
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
 			//when
-			RoomDetailResDto rdrd = RoomFindService.findRoomDetail(anotherTester.getId(), openRoom.getId());
+			RoomDetailResDto rdrd = roomFindService.findRoomDetail(anotherTester.getId(), openRoom.getId());
 			//then
 			assertThat(rdrd.getStatus().toString()).isEqualTo(RoomType.OPEN.toString());
 			for (UserRoomResDto roomUser : rdrd.getRoomUsers()) {
@@ -405,7 +405,7 @@ public class RoomControllerTest {
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
 			//when
-			RoomDetailResDto rdrd = RoomFindService.findRoomDetail(userTester.getId(), startRoom.getId());
+			RoomDetailResDto rdrd = roomFindService.findRoomDetail(userTester.getId(), startRoom.getId());
 			//then
 			assertThat(rdrd.getStatus().toString()).isEqualTo(RoomType.START.toString());
 			for (UserRoomResDto roomUser : rdrd.getRoomUsers()) {
@@ -425,7 +425,7 @@ public class RoomControllerTest {
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
 			//when
-			RoomDetailResDto rdrd = RoomFindService.findRoomDetail(anotherTester.getId(), startRoom.getId());
+			RoomDetailResDto rdrd = roomFindService.findRoomDetail(anotherTester.getId(), startRoom.getId());
 			//then
 			assertThat(rdrd.getStatus().toString()).isEqualTo(RoomType.START.toString());
 			for (UserRoomResDto roomUser : rdrd.getRoomUsers()) {
