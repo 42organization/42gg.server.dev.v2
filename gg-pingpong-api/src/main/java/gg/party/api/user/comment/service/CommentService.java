@@ -48,7 +48,7 @@ public class CommentService {
 
 		PartyPenalty penalty = partyPenaltyRepository.findByUserId(userId);
 		if (penalty != null
-			&& penalty.getStartTime().plusMinutes(penalty.getPenaltyTime()).isAfter(LocalDateTime.now())) {
+			&& penalty.getStartTime().plusHours(penalty.getPenaltyTime()).isAfter(LocalDateTime.now())) {
 			throw new OnPenaltyException();
 		}
 
