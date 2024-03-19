@@ -178,13 +178,16 @@ https://42gg.kr/
 <details>
 <summary> 5기 진행 사항</summary>
 <div markdown="1">
-  
-### ⚡️⚡ DB table 구조 변경
-![image](https://github.com/42organization/42gg.server.dev.v2/assets/33301153/d4c68d74-590c-41db-9c47-0bdd4f249bc3)
-
 
 ### ⚡️⚡ 토너먼트 개발
 <img width="437" alt="5th-tournament" src="https://github.com/42organization/42gg.server.dev.v2/assets/33301153/edae9ab7-b871-4c33-9d2a-d571615b9a6f">
+
+### ⚡️⚡ 테스트 커버리지 개선 (2024-03-19 기준)
+### 전체 68% -> 74%
+<img width="878" alt="5th-test-coverage-total" src="https://github.com/42organization/42gg.server.dev.v2/assets/33301153/a479b541-c93c-45bb-a75f-ecaa2332ab16">
+
+### 단위 테스트 0% -> 30%
+<img width="1312" alt="5th-test-coverage-unit" src="https://github.com/42organization/42gg.server.dev.v2/assets/33301153/1eeb1495-d500-4345-b1d2-ba1cfe4ec6c4">
 
 
 ### ⚡️⚡ 아키텍처 변경
@@ -192,9 +195,10 @@ https://42gg.kr/
   <img alt="systemArchitecture" src="https://github.com/42organization/42gg.server.dev.v2/assets/67796301/c51e8d73-d8f2-4f5e-935c-325ec263857e" >&nbsp;&nbsp;&nbsp;&nbsp;
 ### AFTER
   ![gg-5th-architecture](https://github.com/42organization/42gg.server.dev.v2/assets/33301153/f801e7b5-d579-467b-9ad0-2bfec506dcaa)
-  
 
-### ⚡️⚡ 테스트 커버리지 개선
+### ⚡️⚡ DB table 구조 변경
+![image](https://github.com/42organization/42gg.server.dev.v2/assets/33301153/d4c68d74-590c-41db-9c47-0bdd4f249bc3)
+
 
 </div>
 </details>
