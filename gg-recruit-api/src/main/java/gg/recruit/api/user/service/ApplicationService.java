@@ -12,6 +12,7 @@ import gg.data.recruit.application.ApplicationAnswerText;
 import gg.data.recruit.recruitment.Recruitments;
 import gg.data.recruit.recruitment.enums.InputType;
 import gg.data.user.User;
+import gg.data.user.type.SnsType;
 import gg.recruit.api.user.service.param.FindApplicationDetailParam;
 import gg.recruit.api.user.service.param.RecruitApplyFormParam;
 import gg.recruit.api.user.service.param.RecruitApplyParam;
@@ -66,7 +67,11 @@ public class ApplicationService {
 			throw new DuplicationException("이미 지원한 공고입니다. applicationId = " + application.get().getId());
 		}
 		// application 생성
-		User user = userRepository.getById(param.getUserId());
+		User user = userRepository.findById(param.getUserId())
+			.orElseThrow(() -> new NotExistException("user not found"));
+		if (user.getSnsNotiOpt().equals(SnsType.NONE) || user.getSnsNotiOpt().equals(SnsType.EMAIL)) {
+			user.updateTypes(user.getRacketType(), SnsType.BOTH);
+		}
 		Recruitments recruitments = recruitmentRepository.getById(param.getRecruitId());
 		Application newApplication = applicationRepository.save(new Application(user, recruitments));
 		for (RecruitApplyFormParam form :
