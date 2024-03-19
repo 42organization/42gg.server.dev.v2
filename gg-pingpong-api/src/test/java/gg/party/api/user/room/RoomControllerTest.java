@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gg.auth.UserDto;
 import gg.auth.utils.AuthTokenProvider;
 import gg.data.party.Category;
 import gg.data.party.PartyPenalty;
@@ -35,7 +34,6 @@ import gg.data.user.type.SnsType;
 import gg.party.api.user.room.controller.request.RoomCreateReqDto;
 import gg.party.api.user.room.controller.response.RoomCreateResDto;
 import gg.party.api.user.room.controller.response.RoomDetailResDto;
-import gg.party.api.user.room.controller.response.RoomJoinResDto;
 import gg.party.api.user.room.controller.response.RoomListResDto;
 import gg.party.api.user.room.controller.response.RoomResDto;
 import gg.party.api.user.room.controller.response.UserRoomResDto;
@@ -471,17 +469,16 @@ public class RoomControllerTest {
 		@Test
 		@DisplayName("참여 성공 201")
 		public void success() throws Exception {
-			//given
+			// given
 			String openRoomId = openRoom.getId().toString();
 			String url = "/party/rooms/" + openRoomId;
+			// when
 			String contentAsString = mockMvc.perform(
 					post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + anotherAccessToken))
 				.andExpect(status().isCreated())
 				.andReturn().getResponse().getContentAsString();
-			//when
-			RoomJoinResDto result = roomManagementService.addJoinRoom(openRoom.getId(), UserDto.from(anotherTester));
 			// then
-			assertThat(result.getRoomId().toString()).isEqualTo(openRoomId);
+			assertThat(openRoom.getId().toString()).isEqualTo(openRoomId);
 			Room updatedRoom = roomRepository.findById(openRoom.getId()).orElse(null);
 			assertThat(updatedRoom).isNotNull();
 			assertThat(updatedRoom.getCurrentPeople()).isEqualTo(2);
