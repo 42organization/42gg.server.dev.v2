@@ -13,8 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gg.data.recruit.application.Application;
+import gg.data.recruit.application.RecruitStatus;
+import gg.data.recruit.application.enums.ApplicationStatus;
 import gg.data.recruit.recruitment.Recruitments;
 import gg.data.user.User;
+import gg.recruit.api.user.controller.response.ApplicationResultResDto;
 import gg.recruit.api.user.controller.response.MyApplicationsResDto;
 import gg.utils.RecruitMockData;
 import gg.utils.TestDataUtils;
@@ -58,4 +62,30 @@ class ApplicationControllerTest {
 		MyApplicationsResDto myApplicationsResDto = objectMapper.readValue(res, MyApplicationsResDto.class);
 		assertEquals(3, myApplicationsResDto.getApplications().size());
 	}
+
+	@Test
+	@DisplayName("GET /recruitments/{recruitmentId}/applications/{applicationId}/result -> 200 OK TEST")
+	public void applicationResApiTest() throws Exception {
+		//given
+		User user = testDataUtils.createNewUser();
+		String accessToken = testDataUtils.getLoginAccessTokenFromUser(user);
+		Recruitments recruitments = recruitMockData.createRecruitments();
+		Application application = recruitMockData.createApplication(user, recruitments);
+		recruitMockData.createRecruitStatus(application);
+
+		//when
+		String url = "/recruitments/" + recruitments.getId()
+			+ "/applications/" + application.getId() + "/result";
+
+		String res = mockMvc.perform(get(url)
+				.header("Authorization", "Bearer " + accessToken))
+			.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+
+		ApplicationResultResDto applicationResultResDto = objectMapper
+			.readValue(res, ApplicationResultResDto.class);
+
+		assertEquals(recruitments.getTitle(), applicationResultResDto.getTitle());
+		assertEquals(ApplicationStatus.PROGRESS_DOCS, applicationResultResDto.getStatus());
+	}
+
 }
