@@ -576,7 +576,7 @@ public class RoomControllerTest {
 			assertThat(updatedRoom.getCurrentPeople()).isEqualTo(1);
 			assertThat(newHostUserRoom).isNotNull();
 			assertThat(newHostUserRoom.getUser()).isEqualTo(updatedRoom.getHost());
-			assertThat(exitUserRoom).isNull();
+			assertThat(exitUserRoom).isNotNull();
 			assertThat(exitUserRoom.getIsExist()).isFalse();
 			LeaveRoomResDto lrrd = objectMapper.readValue(contentAsString, LeaveRoomResDto.class);
 			assertThat(lrrd.getNickname()).isEqualTo(exitUserRoom.getNickname());
@@ -594,12 +594,12 @@ public class RoomControllerTest {
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
 			// then
-			Room updatedRoom = roomRepository.findById(openRoom.getId()).orElse(null);
-			UserRoom exitUserRoom = userRoomRepository.findByUserAndRoom(userTester, openRoom).orElse(null);
+			Room updatedRoom = roomRepository.findById(failRoom.getId()).orElse(null);
+			UserRoom exitUserRoom = userRoomRepository.findByUserAndRoom(userTester, failRoom).orElse(null);
 			assertThat(updatedRoom).isNotNull();
 			assertThat(updatedRoom.getCurrentPeople()).isEqualTo(0);
 			assertThat(updatedRoom.getStatus()).isEqualTo(RoomType.FAIL);
-			assertThat(exitUserRoom).isNull();
+			assertThat(exitUserRoom).isNotNull();
 			assertThat(exitUserRoom.getIsExist()).isFalse();
 			LeaveRoomResDto lrrd = objectMapper.readValue(contentAsString, LeaveRoomResDto.class);
 			assertThat(lrrd.getNickname()).isEqualTo(exitUserRoom.getNickname());

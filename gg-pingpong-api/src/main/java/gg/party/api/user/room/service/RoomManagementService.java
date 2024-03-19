@@ -110,14 +110,14 @@ public class RoomManagementService {
 			return new LeaveRoomResDto(targetUserRoom.getNickname());
 		}
 
+		targetRoom.updateCurrentPeople(targetRoom.getCurrentPeople() - 1);
+		targetUserRoom.updateIsExist(false);
+
 		// 방장 이권
 		if (user.getId().equals(targetRoom.getHost().getId())) {
 			List<User> existUser = userRoomRepository.findByIsExist(roomId);
 			targetRoom.updateHost(existUser.get(0));
 		}
-
-		targetRoom.updateCurrentPeople(targetRoom.getCurrentPeople() - 1);
-		targetUserRoom.updateIsExist(false);
 		userRoomRepository.save(targetUserRoom);
 		roomRepository.save(targetRoom);
 
