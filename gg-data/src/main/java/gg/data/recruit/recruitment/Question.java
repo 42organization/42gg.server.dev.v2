@@ -45,4 +45,10 @@ public class Question extends BaseTimeEntity {
 
 	private int sortNum;
 
+	public Question(Recruitments recruit, InputType inputType, String question, int sortNum) {
+		this.recruit = recruit;
+		this.inputType = inputType;
+		this.question = question;
+		this.sortNum = sortNum;
+	}
 }

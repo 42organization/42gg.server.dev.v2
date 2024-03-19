@@ -8,6 +8,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import gg.data.recruit.recruitment.CheckList;
+import gg.data.recruit.recruitment.Question;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -26,5 +27,11 @@ public class ApplicationAnswerCheckList extends ApplicationAnswer {
 	public ApplicationAnswerEntityDto toForm() {
 		return new ApplicationAnswerEntityDto(this.getQuestionId(), this.getInputType(),
 			new CheckListEntityDto(checkList.getId(), checkList.getContent()));
+	}
+
+	public ApplicationAnswerCheckList(Application application, Question question,
+		CheckList checkList) {
+		super(application, question);
+		this.checkList = checkList;
 	}
 }
