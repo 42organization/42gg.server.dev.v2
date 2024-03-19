@@ -47,6 +47,13 @@ public class UserRoom extends BaseTimeEntity {
 		this.isExist = true;
 	}
 
+	public UserRoom(User user, Room room, String nickname, boolean isExist) {
+		this.user = user;
+		this.room = room;
+		this.nickname = nickname;
+		this.isExist = isExist;
+	}
+
 	public void updateIsExist(boolean isExist) {
 		mustNotNull(isExist, NULL_POINT);
 		this.isExist = isExist;

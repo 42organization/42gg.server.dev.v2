@@ -23,6 +23,7 @@ import gg.data.noti.type.NotiType;
 import gg.data.party.Category;
 import gg.data.party.PartyPenalty;
 import gg.data.party.Room;
+import gg.data.party.UserRoom;
 import gg.data.party.type.RoomType;
 import gg.data.rank.Rank;
 import gg.data.rank.Tier;
@@ -54,6 +55,7 @@ import gg.repo.noti.NotiRepository;
 import gg.repo.party.CategoryRepository;
 import gg.repo.party.PartyPenaltyRepository;
 import gg.repo.party.RoomRepository;
+import gg.repo.party.UserRoomRepository;
 import gg.repo.rank.RankRepository;
 import gg.repo.rank.TierRepository;
 import gg.repo.rank.redis.RankRedisRepository;
@@ -90,6 +92,7 @@ public class TestDataUtils {
 	private final UserImageRepository userImageRepository;
 	private final SlotManagementRepository slotManagementRepository;
 	private final RoomRepository roomRepository;
+	private final UserRoomRepository userRoomRepository;
 	private final CategoryRepository categoryRepository;
 	private final PartyPenaltyRepository partyPenaltyRepository;
 
@@ -804,5 +807,10 @@ public class TestDataUtils {
 		PartyPenalty penalty = new PartyPenalty(user, type, message, startTime, penaltyTime);
 		partyPenaltyRepository.save(penalty);
 		return penalty;
+	}
+
+	public UserRoom createNewUserRoom(User user, Room room, String nickname, boolean isExist) {
+		UserRoom userRoom = new UserRoom(user, room, nickname, isExist);
+		return userRoomRepository.save(userRoom);
 	}
 }

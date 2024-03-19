@@ -25,6 +25,7 @@ import gg.auth.utils.AuthTokenProvider;
 import gg.data.party.Category;
 import gg.data.party.PartyPenalty;
 import gg.data.party.Room;
+import gg.data.party.UserRoom;
 import gg.data.party.type.RoomType;
 import gg.data.user.User;
 import gg.data.user.type.RacketType;
@@ -328,14 +329,19 @@ public class RoomControllerTest {
 			Category testCategory = testDataUtils.createNewCategory("category");
 			openRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
 				3, 2, 180, RoomType.OPEN);
+			UserRoom openUserRoom = new UserRoom(userTester, openRoom, "nickname", true);
 			startRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
 				3, 2, 180, RoomType.START);
+			UserRoom startUserRoom = new UserRoom(userTester, startRoom, "nickname", true);
 			finishRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
 				3, 2, 180, RoomType.FINISH);
+			UserRoom finishUserRoom = new UserRoom(userTester, finishRoom, "nickname", true);
 			hiddenRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
 				3, 2, 180, RoomType.OPEN);
+			UserRoom hiddenUserRoom = new UserRoom(userTester, hiddenRoom, "nickname", true);
 			failRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
 				3, 2, 180, RoomType.FAIL);
+			UserRoom failUserRoom = new UserRoom(userTester, failRoom, "nickname", true);
 		}
 
 		@Test
