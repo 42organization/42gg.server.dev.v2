@@ -329,19 +329,19 @@ public class RoomControllerTest {
 			Category testCategory = testDataUtils.createNewCategory("category");
 			openRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
 				3, 2, 180, RoomType.OPEN);
-			UserRoom openUserRoom = new UserRoom(userTester, openRoom, "nickname", true);
+			UserRoom openUserRoom = testDataUtils.createNewUserRoom(userTester, openRoom, "nickname", true);
 			startRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
 				3, 2, 180, RoomType.START);
-			UserRoom startUserRoom = new UserRoom(userTester, startRoom, "nickname", true);
+			UserRoom startUserRoom = testDataUtils.createNewUserRoom(userTester, startRoom, "nickname", true);
 			finishRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
 				3, 2, 180, RoomType.FINISH);
-			UserRoom finishUserRoom = new UserRoom(userTester, finishRoom, "nickname", true);
+			UserRoom finishUserRoom = testDataUtils.createNewUserRoom(userTester, finishRoom, "nickname", true);
 			hiddenRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
 				3, 2, 180, RoomType.OPEN);
-			UserRoom hiddenUserRoom = new UserRoom(userTester, hiddenRoom, "nickname", true);
+			UserRoom hiddenUserRoom = testDataUtils.createNewUserRoom(userTester, hiddenRoom, "nickname", true);
 			failRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
 				3, 2, 180, RoomType.FAIL);
-			UserRoom failUserRoom = new UserRoom(userTester, failRoom, "nickname", true);
+			UserRoom failUserRoom = testDataUtils.createNewUserRoom(userTester, failRoom, "nickname", true);
 		}
 
 		@Test
