@@ -48,4 +48,8 @@ public class Recruitments extends BaseTimeEntity {
 		this.isFinish = false;
 		this.isDeleted = false;
 	}
+
+	public void del() {
+		this.isDeleted = true;
+	}
 }

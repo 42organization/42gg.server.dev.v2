@@ -1,6 +1,7 @@
 package gg.recruit.api.user.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -34,5 +35,10 @@ public class ApplicationService {
 			throw new NotExistException("application not found", ErrorCode.BAD_REQUEST);
 		}
 		return new ApplicationWithAnswerSvcDto(answers);
+	}
+
+	public Long findApplicationByUserAndRecruit(Long userId, Long recruitId) {
+		Optional<Application> application = applicationRepository.findByUserIdAndRecruitId(userId, recruitId);
+		return application.map(Application::getId).orElse(null);
 	}
 }

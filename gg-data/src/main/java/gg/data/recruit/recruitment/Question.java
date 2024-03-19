@@ -1,5 +1,8 @@
 package gg.data.recruit.recruitment;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -10,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import gg.data.BaseTimeEntity;
 import gg.data.recruit.recruitment.enums.InputType;
@@ -27,7 +31,7 @@ public class Question extends BaseTimeEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "recruit_id", nullable = false)
-	private Recruitments recruitId;
+	private Recruitments recruit;
 
 	@Enumerated(EnumType.STRING)
 	@Column(length = 20, nullable = false)
@@ -35,6 +39,9 @@ public class Question extends BaseTimeEntity {
 
 	@Column(length = 300)
 	private String question;
+
+	@OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
+	private List<CheckList> checkLists;
 
 	private int sortNum;
 
