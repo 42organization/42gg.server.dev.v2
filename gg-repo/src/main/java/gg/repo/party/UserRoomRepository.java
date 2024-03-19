@@ -31,7 +31,8 @@ public interface UserRoomRepository extends JpaRepository<UserRoom, Long> {
 		+ "AND ur.isExist = true AND ur.room.status = 'OPEN'")
 	List<Room> findOpenRoomsByUserId(@Param("userId") Long userId);
 
-	Optional<UserRoom> findByUserIdAndRoomIdAndIsExistTrue(Long userId, Long roomId);
-
 	boolean existsByRoomAndNickname(Room room, String nickname);
+	@Query("SELECT ur FROM UserRoom ur JOIN FETCH ur.user "
+		+ "JOIN FETCH ur.room WHERE ur.user.id = :userId AND ur.room.id = :roomId AND ur.isExist = true")
+	Optional<UserRoom> findByUserIdAndRoomIdAndIsExistTrue(@Param("userId") Long userId, @Param("roomId") Long roomId);
 }
