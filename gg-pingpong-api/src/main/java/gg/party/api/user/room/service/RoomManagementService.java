@@ -163,12 +163,11 @@ public class RoomManagementService {
 
 	/**
 	 * 방에 참여한다
-	 *
 	 * @param roomId 방 id
 	 * @param userDto 유저 정보
 	 * @return roomId
 	 * @throws RoomNotFoundException 유효하지 않은 방 입력
-	 * @throws OnPenaltyException 패널티 상태인 유저
+	 * @throws OnPenaltyException 패널티 상태인 유저 - 403
 	 * @throws RoomNotOpenException 모집중인 방이 아님
 	 * @throws UserAlreadyInRoom 이미 참여한 방 입력
 	 * 과거 참여 이력이 있을 경우 그 아이디로, 없을경우 새로운 아이디를 생성 후 currentPeople을 증가시킨다

@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gg.auth.UserDto;
 import gg.auth.utils.AuthTokenProvider;
 import gg.data.party.Category;
 import gg.data.party.PartyPenalty;
@@ -34,10 +35,12 @@ import gg.data.user.type.SnsType;
 import gg.party.api.user.room.controller.request.RoomCreateReqDto;
 import gg.party.api.user.room.controller.response.RoomCreateResDto;
 import gg.party.api.user.room.controller.response.RoomDetailResDto;
+import gg.party.api.user.room.controller.response.RoomJoinResDto;
 import gg.party.api.user.room.controller.response.RoomListResDto;
 import gg.party.api.user.room.controller.response.RoomResDto;
 import gg.party.api.user.room.controller.response.UserRoomResDto;
 import gg.party.api.user.room.service.RoomFindService;
+import gg.party.api.user.room.service.RoomManagementService;
 import gg.repo.party.CategoryRepository;
 import gg.repo.party.PartyPenaltyRepository;
 import gg.repo.party.RoomRepository;
@@ -68,6 +71,8 @@ public class RoomControllerTest {
 	PartyPenaltyRepository partyPenaltyRepository;
 	@Autowired
 	RoomFindService RoomFindService;
+	@Autowired
+	RoomManagementService roomManagementService;
 	User userTester;
 	User anotherTester;
 	User reportedTester;
@@ -316,7 +321,7 @@ public class RoomControllerTest {
 	}
 
 	@Nested
-	@DisplayName("방 상세 조회 테스트")
+	@DisplayName("방 상세 조회 테스트") // penalty 상태의 유저도 방을 상세 조회할 수는 있다.
 	class FindRoomDetailInfo {
 		@BeforeEach
 		void beforeEach() {
@@ -435,6 +440,87 @@ public class RoomControllerTest {
 			ResultActions resultActions = mockMvc.perform(
 				get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken));
 			resultActions.andExpect(status().isNotFound());
+		}
+	}
+
+	@Nested
+	@DisplayName("방 참여 테스트")
+	class JoinRoom {
+		@BeforeEach
+		void beforeEach() {
+			userTester = testDataUtils.createNewUser("userTester", "userTester",
+				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
+			anotherTester = testDataUtils.createNewUser("anotherTester", "anotherTester",
+				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
+			reportedTester = testDataUtils.createNewUser("reportedTester", "reportedTester",
+				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
+			PartyPenalty testPenalty = testDataUtils.createNewPenalty(reportedTester, "test", "test",
+				LocalDateTime.now(), 60);
+			userAccessToken = tokenProvider.createToken(userTester.getId());
+			anotherAccessToken = tokenProvider.createToken(anotherTester.getId());
+			reportedAccessToken = tokenProvider.createToken(reportedTester.getId());
+			testCategory = testDataUtils.createNewCategory("category");
+			openRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
+				7, 2, 180, RoomType.OPEN);
+			UserRoom openUserRoom = testDataUtils.createNewUserRoom(userTester, openRoom, "nickname", true);
+			startRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
+				7, 2, 180, RoomType.START);
+			UserRoom startUserRoom = testDataUtils.createNewUserRoom(userTester, startRoom, "nickname", true);
+		}
+
+		@Test
+		@DisplayName("참여 성공 201")
+		public void success() throws Exception {
+			//given
+			String openRoomId = openRoom.getId().toString();
+			String url = "/party/rooms/" + openRoomId;
+			String contentAsString = mockMvc.perform(
+					post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + anotherAccessToken))
+				.andExpect(status().isCreated())
+				.andReturn().getResponse().getContentAsString();
+			//when
+			RoomJoinResDto result = roomManagementService.addJoinRoom(openRoom.getId(), UserDto.from(anotherTester));
+			// then
+			assertThat(result.getRoomId().toString()).isEqualTo(openRoomId);
+			Room updatedRoom = roomRepository.findById(openRoom.getId()).orElse(null);
+			assertThat(updatedRoom).isNotNull();
+			assertThat(updatedRoom.getCurrentPeople()).isEqualTo(2);
+		}
+
+		@Test
+		@DisplayName("패널티 상태로 인한 참여 실패 403")
+		public void penaltyUserFail() throws Exception {
+			// given
+			String openRoomId = openRoom.getId().toString();
+			String url = "/party/rooms/" + openRoomId;
+			// when && then
+			String contentAsString = mockMvc.perform(
+					post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + reportedAccessToken))
+				.andExpect(status().isForbidden()).toString();
+		}
+
+		@Test
+		@DisplayName("OPEN이 아닌 상태로 인한 실패 ")
+		public void notOpenRoomFail() throws Exception {
+			// given
+			String startRoomId = startRoom.getId().toString();
+			String url = "/party/rooms/" + startRoomId;
+			// when && then
+			String contentAsString = mockMvc.perform(
+					post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + anotherAccessToken))
+				.andExpect(status().isBadRequest()).toString();
+		}
+
+		@Test
+		@DisplayName("이미 참여 중인 상태로 인한 실패 ")
+		public void alreadyInRoomFail() throws Exception {
+			// given
+			String openRoomId = openRoom.getId().toString();
+			String url = "/party/rooms/" + openRoomId;
+			// when && then
+			String contentAsString = mockMvc.perform(
+					post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + anotherAccessToken))
+				.andExpect(status().isConflict()).toString();
 		}
 	}
 }
