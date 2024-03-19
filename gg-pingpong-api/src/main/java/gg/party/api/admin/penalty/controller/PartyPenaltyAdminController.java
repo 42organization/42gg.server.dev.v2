@@ -1,3 +1,5 @@
+package gg.party.api.admin.penalty.controller;
+
 import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
