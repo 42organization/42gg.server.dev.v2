@@ -357,7 +357,7 @@ public class RoomControllerTest {
 			//when
 			RoomDetailResDto rdrd = RoomFindService.findRoomDetail(userTester.getId(), openRoom.getId());
 			//then
-			assertThat(rdrd.getStatus()).isIn(RoomType.OPEN.toString());
+			assertThat(rdrd.getStatus().toString()).isEqualTo(RoomType.OPEN.toString());
 			for (UserRoomResDto roomUser : rdrd.getRoomUsers()) {
 				assertThat(roomUser.getIntraId()).isNull();
 				assertThat(roomUser.getUserImage()).isNull();
@@ -377,7 +377,7 @@ public class RoomControllerTest {
 			//when
 			RoomDetailResDto rdrd = RoomFindService.findRoomDetail(userTester.getId(), openRoom.getId());
 			//then
-			assertThat(rdrd.getStatus()).isIn(RoomType.OPEN.toString());
+			assertThat(rdrd.getStatus().toString()).isEqualTo(RoomType.OPEN.toString());
 			for (UserRoomResDto roomUser : rdrd.getRoomUsers()) {
 				assertThat(roomUser.getIntraId()).isNull();
 				assertThat(roomUser.getUserImage()).isNull();
@@ -397,7 +397,7 @@ public class RoomControllerTest {
 			//when
 			RoomDetailResDto rdrd = RoomFindService.findRoomDetail(userTester.getId(), openRoom.getId());
 			//then
-			assertThat(rdrd.getStatus()).isIn(RoomType.OPEN.toString());
+			assertThat(rdrd.getStatus().toString()).isEqualTo(RoomType.START.toString());
 			for (UserRoomResDto roomUser : rdrd.getRoomUsers()) {
 				assertThat(roomUser.getIntraId()).isNotNull();
 				assertThat(roomUser.getUserImage()).isNotNull();
@@ -417,7 +417,7 @@ public class RoomControllerTest {
 			//when
 			RoomDetailResDto rdrd = RoomFindService.findRoomDetail(userTester.getId(), openRoom.getId());
 			//then
-			assertThat(rdrd.getStatus()).isIn(RoomType.OPEN.toString());
+			assertThat(rdrd.getStatus().toString()).isEqualTo(RoomType.START.toString());
 			for (UserRoomResDto roomUser : rdrd.getRoomUsers()) {
 				assertThat(roomUser.getIntraId()).isNull();
 				assertThat(roomUser.getUserImage()).isNull();
