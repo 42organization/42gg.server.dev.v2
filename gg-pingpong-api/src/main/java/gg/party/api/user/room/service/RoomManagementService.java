@@ -53,6 +53,7 @@ public class RoomManagementService {
 	 * @param roomCreateReqDto 요청 DTO
 	 * @param userDto user객체를 보내기 위한 DTO객체
 	 * @throws OnPenaltyException 패널티 상태의 유저 입력 - 403
+	 * @throws RoomMinMaxPeople 최소인원이 최대인원보다 큰 경우 - 400
 	 * @throws CategoryNotFoundException 유효하지 않은 카테고리 입력 - 404
 	 * @return 만들어진 방 ID값
 	 */

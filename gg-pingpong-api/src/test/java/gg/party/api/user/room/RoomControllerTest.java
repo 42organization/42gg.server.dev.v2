@@ -96,7 +96,7 @@ public class RoomControllerTest {
 		 * Penalty 상태의 사용자도 게시글 목록은 조회할 수 있어야하기에 유저를 나누지 않았음.
 		 */
 		@Test
-		@DisplayName("조회 성공 201")
+		@DisplayName("조회 성공 200")
 		public void success() throws Exception {
 			String url = "/party/rooms";
 			//given
