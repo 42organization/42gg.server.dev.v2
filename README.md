@@ -40,7 +40,8 @@ https://42gg.kr/
 - 5기 : 2023.11.01 ~ 2024.01.31
 
 ## ⚡️ 프로젝트 아키텍처
-<img alt="systemArchitecture" src="https://github.com/42organization/42gg.server.dev.v2/assets/67796301/c51e8d73-d8f2-4f5e-935c-325ec263857e" >&nbsp;&nbsp;&nbsp;&nbsp;
+![gg-5th-architecture](https://github.com/42organization/42gg.server.dev.v2/assets/33301153/f801e7b5-d579-467b-9ad0-2bfec506dcaa)
+
 
 
 ## ⚡️ 팀소개
@@ -183,6 +184,15 @@ https://42gg.kr/
 
 
 ### ⚡️⚡ 토너먼트 개발
+<img width="437" alt="5th-tournament" src="https://github.com/42organization/42gg.server.dev.v2/assets/33301153/edae9ab7-b871-4c33-9d2a-d571615b9a6f">
+
+
+### ⚡️⚡ 아키텍처 변경
+### BEFORE
+  <img alt="systemArchitecture" src="https://github.com/42organization/42gg.server.dev.v2/assets/67796301/c51e8d73-d8f2-4f5e-935c-325ec263857e" >&nbsp;&nbsp;&nbsp;&nbsp;
+### AFTER
+  ![gg-5th-architecture](https://github.com/42organization/42gg.server.dev.v2/assets/33301153/f801e7b5-d579-467b-9ad0-2bfec506dcaa)
+  
 
 ### ⚡️⚡ 테스트 커버리지 개선
 
