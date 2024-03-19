@@ -90,10 +90,9 @@ public class RoomFindService {
 
 	/**
 	 * 시간이 지나 보이지 않게 된 내가 플레이한(시작한) 방을 모두 조회한다
-	 *
 	 * @param userId 자신의 id
-	 *               user_room db에서 자신의 id와 isExist이 true(나가지 않았음)
-	 *               이면서 room.status가 FINISH인 경우를 마감기한 최신순으로 정렬
+	 * user_room db에서 자신의 id와 isExist이 true(나가지 않았음)
+	 * 이면서 status가 FINISH인 경우를 마감기한 최신순으로 정렬
 	 * @return 끝난 방 전체 List
 	 */
 	@Transactional
