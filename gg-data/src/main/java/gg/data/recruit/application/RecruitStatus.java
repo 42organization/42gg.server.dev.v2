@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 
 import gg.data.BaseTimeEntity;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -24,7 +25,8 @@ public class RecruitStatus extends BaseTimeEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "application_id", nullable = false)
-	private Application applicationId;
+	private Application application;
 
+	@Getter
 	private LocalDateTime interviewDate;
 }
