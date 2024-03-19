@@ -214,4 +214,49 @@ public class RoomControllerTest {
 				.andExpect(status().isBadRequest());
 		}
 	}
+
+	@Nested
+	@DisplayName("참여했던 방 조회 테스트")
+	class FindAllJoinedRoomListRoom {
+		@BeforeEach
+		void beforeEach() {
+			userTester = testDataUtils.createNewUser("findControllerTester", "findControllerTester",
+				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
+			userAccessToken = tokenProvider.createToken(userTester.getId());
+			Category testCategory = testDataUtils.createNewCategory("category");
+			Room openRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
+				3, 2, 180, RoomType.OPEN);
+			Room startRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
+				3, 2, 180, RoomType.START);
+			Room finishRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
+				3, 2, 180, RoomType.FINISH);
+			Room hiddenRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
+				3, 2, 180, RoomType.OPEN);
+			Room failRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
+				3, 2, 180, RoomType.FAIL);
+		}
+
+		/**
+		 * 조건에 해당하는 게시글이 없을때 빈 리스트를 반환
+		 * Penalty 상태의 사용자도 참여중인 게시글 목록은 조회할 수 있어야하기에 유저를 나누지 않았음.
+		 * Penalty 상태의 유저는 시작하기 전인 방에서 나가지게 작성했으므로 이미 시작한 방에 한해서만 조회되어야함
+		 */
+		@Test
+		@DisplayName("조회 성공 200")
+		public void success() throws Exception {
+			String url = "/party/rooms/joined";
+			//given
+			String contentAsString = mockMvc.perform(
+					get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+			//when
+			RoomListResDto resp = RoomFindService.findJoinedRoomList(userTester.getId());
+			//then
+			List<RoomResDto> roomList = resp.getRoomList();
+			for (RoomResDto responseDto : roomList) {
+				assertThat(responseDto.getStatus()).isIn(RoomType.OPEN.toString(), RoomType.START.toString());
+			}
+		}
+	}
 }
