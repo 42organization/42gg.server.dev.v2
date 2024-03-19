@@ -74,8 +74,8 @@ class ApplicationControllerTest {
 		recruitMockData.createRecruitStatus(application);
 
 		//when
-		String url = "/recruitments/" + recruitments.getId() +
-			"/applications/" + application.getId() + "/result";
+		String url = "/recruitments/" + recruitments.getId()
+			+ "/applications/" + application.getId() + "/result";
 
 		String res = mockMvc.perform(get(url)
 				.header("Authorization", "Bearer " + accessToken))
