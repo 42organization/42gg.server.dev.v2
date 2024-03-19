@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,8 +32,10 @@ import gg.data.user.type.RoleType;
 import gg.data.user.type.SnsType;
 import gg.party.api.user.room.controller.request.RoomCreateReqDto;
 import gg.party.api.user.room.controller.response.RoomCreateResDto;
+import gg.party.api.user.room.controller.response.RoomDetailResDto;
 import gg.party.api.user.room.controller.response.RoomListResDto;
 import gg.party.api.user.room.controller.response.RoomResDto;
+import gg.party.api.user.room.controller.response.UserRoomResDto;
 import gg.party.api.user.room.service.RoomFindService;
 import gg.repo.party.CategoryRepository;
 import gg.repo.party.PartyPenaltyRepository;
@@ -65,29 +68,36 @@ public class RoomControllerTest {
 	@Autowired
 	RoomFindService RoomFindService;
 	User userTester;
+	User anotherTester;
 	User reportedTester;
 	String userAccessToken;
+	String anotherAccessToken;
 	String reportedAccessToken;
 	Category testCategory;
+	Room openRoom;
+	Room startRoom;
+	Room finishRoom;
+	Room hiddenRoom;
+	Room failRoom;
 
 	@Nested
 	@DisplayName("방 전체 조회 테스트")
 	class FindAllActiveRoomList {
 		@BeforeEach
 		void beforeEach() {
-			userTester = testDataUtils.createNewUser("findControllerTester", "findControllerTester",
+			userTester = testDataUtils.createNewUser("findTester", "findTester",
 				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
 			userAccessToken = tokenProvider.createToken(userTester.getId());
 			Category testCategory = testDataUtils.createNewCategory("category");
-			Room openRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
+			openRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
 				3, 2, 180, RoomType.OPEN);
-			Room startRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
+			startRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
 				3, 2, 180, RoomType.START);
-			Room finishRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
+			finishRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
 				3, 2, 180, RoomType.FINISH);
-			Room hiddenRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
+			hiddenRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
 				3, 2, 180, RoomType.OPEN);
-			Room failRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
+			failRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
 				3, 2, 180, RoomType.FAIL);
 		}
 
@@ -220,19 +230,19 @@ public class RoomControllerTest {
 	class FindAllJoinedRoomListRoom {
 		@BeforeEach
 		void beforeEach() {
-			userTester = testDataUtils.createNewUser("findControllerTester", "findControllerTester",
+			userTester = testDataUtils.createNewUser("findTester", "findTester",
 				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
 			userAccessToken = tokenProvider.createToken(userTester.getId());
 			Category testCategory = testDataUtils.createNewCategory("category");
-			Room openRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
+			openRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
 				3, 2, 180, RoomType.OPEN);
-			Room startRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
+			startRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
 				3, 2, 180, RoomType.START);
-			Room finishRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
+			finishRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
 				3, 2, 180, RoomType.FINISH);
-			Room hiddenRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
+			hiddenRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
 				3, 2, 180, RoomType.OPEN);
-			Room failRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
+			failRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
 				3, 2, 180, RoomType.FAIL);
 		}
 
@@ -265,19 +275,19 @@ public class RoomControllerTest {
 	class FindMyHistoryRoomList {
 		@BeforeEach
 		void beforeEach() {
-			userTester = testDataUtils.createNewUser("findControllerTester", "findControllerTester",
+			userTester = testDataUtils.createNewUser("findTester", "findTester",
 				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
 			userAccessToken = tokenProvider.createToken(userTester.getId());
 			Category testCategory = testDataUtils.createNewCategory("category");
-			Room openRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
+			openRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
 				3, 2, 180, RoomType.OPEN);
-			Room startRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
+			startRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
 				3, 2, 180, RoomType.START);
-			Room finishRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
+			finishRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
 				3, 2, 180, RoomType.FINISH);
-			Room hiddenRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
+			hiddenRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
 				3, 2, 180, RoomType.OPEN);
-			Room failRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
+			failRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
 				3, 2, 180, RoomType.FAIL);
 		}
 
@@ -301,6 +311,124 @@ public class RoomControllerTest {
 			for (RoomResDto responseDto : roomList) {
 				assertThat(responseDto.getStatus()).isIn(RoomType.FINISH.toString());
 			}
+		}
+	}
+
+	@Nested
+	@DisplayName("참여했던 방 조회 테스트")
+	class FindRoomDetailInfo {
+		@BeforeEach
+		void beforeEach() {
+			userTester = testDataUtils.createNewUser("findTester", "findTester",
+				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
+			anotherTester = testDataUtils.createNewUser("anotherTester", "anotherTester",
+				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
+			userAccessToken = tokenProvider.createToken(userTester.getId());
+			anotherAccessToken = tokenProvider.createToken(anotherTester.getId());
+			Category testCategory = testDataUtils.createNewCategory("category");
+			openRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
+				3, 2, 180, RoomType.OPEN);
+			startRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
+				3, 2, 180, RoomType.START);
+			finishRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
+				3, 2, 180, RoomType.FINISH);
+			hiddenRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
+				3, 2, 180, RoomType.OPEN);
+			failRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
+				3, 2, 180, RoomType.FAIL);
+		}
+
+		@Test
+		@DisplayName("OPEN 및 참여한 방 조회 성공 200")
+		public void inOpenRoomSuccess() throws Exception {
+			String openRoomId = openRoom.getId().toString();
+			String url = "/party/rooms/" + openRoomId;
+			//given
+			String contentAsString = mockMvc.perform(
+					get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+			//when
+			RoomDetailResDto rdrd = RoomFindService.findRoomDetail(userTester.getId(), openRoom.getId());
+			//then
+			assertThat(rdrd.getStatus()).isIn(RoomType.OPEN.toString());
+			for (UserRoomResDto roomUser : rdrd.getRoomUsers()) {
+				assertThat(roomUser.getIntraId()).isNull();
+				assertThat(roomUser.getUserImage()).isNull();
+			}
+		}
+
+		@Test
+		@DisplayName("OPEN 및 참여하지 않은 방 조회 성공 200")
+		public void outOpenRoomSuccess() throws Exception {
+			String openRoomId = openRoom.getId().toString();
+			String url = "/party/rooms/" + openRoomId;
+			//given
+			String contentAsString = mockMvc.perform(
+					get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + anotherAccessToken))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+			//when
+			RoomDetailResDto rdrd = RoomFindService.findRoomDetail(userTester.getId(), openRoom.getId());
+			//then
+			assertThat(rdrd.getStatus()).isIn(RoomType.OPEN.toString());
+			for (UserRoomResDto roomUser : rdrd.getRoomUsers()) {
+				assertThat(roomUser.getIntraId()).isNull();
+				assertThat(roomUser.getUserImage()).isNull();
+			}
+		}
+
+		@Test
+		@DisplayName("START 및 참여한 방 조회 성공 200")
+		public void inStartRoomSuccess() throws Exception {
+			String startRoomId = startRoom.getId().toString();
+			String url = "/party/rooms/" + startRoomId;
+			//given
+			String contentAsString = mockMvc.perform(
+					get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+			//when
+			RoomDetailResDto rdrd = RoomFindService.findRoomDetail(userTester.getId(), openRoom.getId());
+			//then
+			assertThat(rdrd.getStatus()).isIn(RoomType.OPEN.toString());
+			for (UserRoomResDto roomUser : rdrd.getRoomUsers()) {
+				assertThat(roomUser.getIntraId()).isNotNull();
+				assertThat(roomUser.getUserImage()).isNotNull();
+			}
+		}
+
+		@Test
+		@DisplayName("START 및 참여하지 않은 방 조회 성공 200")
+		public void outStartRoomSuccess() throws Exception {
+			String startRoomId = startRoom.getId().toString();
+			String url = "/party/rooms/" + startRoomId;
+			//given
+			String contentAsString = mockMvc.perform(
+					get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + anotherAccessToken))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+			//when
+			RoomDetailResDto rdrd = RoomFindService.findRoomDetail(userTester.getId(), openRoom.getId());
+			//then
+			assertThat(rdrd.getStatus()).isIn(RoomType.OPEN.toString());
+			for (UserRoomResDto roomUser : rdrd.getRoomUsers()) {
+				assertThat(roomUser.getIntraId()).isNull();
+				assertThat(roomUser.getUserImage()).isNull();
+			}
+		}
+
+		@Test
+		@DisplayName("HIDDEN된 방 조회 실패 404")
+		public void hiddenRoomFail() throws Exception {
+			// given
+			String hiddenRoomId = hiddenRoom.getId().toString();
+			String url = "/party/rooms/" + hiddenRoomId;
+
+			// when && then
+			ResultActions resultActions = mockMvc.perform(
+				get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken));
+			resultActions.andExpect(status().isNotFound());
 		}
 	}
 }

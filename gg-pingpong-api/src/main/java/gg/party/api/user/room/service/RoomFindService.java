@@ -108,13 +108,12 @@ public class RoomFindService {
 
 	/**
 	 * 방의 상세정보를 조회한다
-	 *
 	 * @param userId 자신의 id
 	 * @param roomId 방 id
 	 * @return 방 상세정보 dto
 	 * @throws RoomNotFoundException 유효하지 않은 방 입력
 	 * @throws RoomReportedException 신고 받은 방 처리 | 시작한 방도 볼 수 있게 해야하므로 별도처리
-	 *                               익명성을 지키기 위해 nickname을 리턴
+	 * 익명성을 지키기 위해 nickname을 리턴
 	 */
 	@Transactional
 	public RoomDetailResDto findRoomDetail(Long userId, Long roomId) {
