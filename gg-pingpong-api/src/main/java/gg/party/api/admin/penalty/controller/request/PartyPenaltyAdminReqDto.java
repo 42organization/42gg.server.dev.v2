@@ -1,4 +1,4 @@
-package gg.party.api.admin.penalty.request;
+package gg.party.api.admin.penalty.controller.request;
 
 import java.time.LocalDateTime;
 

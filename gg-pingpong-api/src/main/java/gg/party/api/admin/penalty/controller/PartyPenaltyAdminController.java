@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import gg.party.api.admin.penalty.request.PartyPenaltyAdminReqDto;
+import gg.party.api.admin.penalty.controller.request.PartyPenaltyAdminReqDto;
 import gg.party.api.admin.penalty.service.PartyPenaltyAdminService;
 import lombok.RequiredArgsConstructor;
 
