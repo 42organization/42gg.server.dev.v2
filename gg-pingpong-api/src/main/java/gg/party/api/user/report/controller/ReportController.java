@@ -27,27 +27,40 @@ public class ReportController {
 	 * 방을 신고한다.
 	 * @param reportReqDto 신고 내용
 	 * @param roomId 방 번호
-	 * @return roomId
 	 */
 	@PostMapping("/rooms/{room_id}")
-	public ResponseEntity<Long> reportRoomAdd(@PathVariable("room_id") Long roomId,
+	public ResponseEntity<Void> reportRoomAdd(@PathVariable("room_id") Long roomId,
 		@RequestBody @Valid ReportReqDto reportReqDto,
 		@Parameter(hidden = true) @Login UserDto user) {
-		return ResponseEntity.status(HttpStatus.CREATED)
-			.body(reportService.addReportRoom(roomId, reportReqDto, user));
+		reportService.addReportRoom(roomId, reportReqDto, user);
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
 	/**
 	 * 댓글을 신고한다.
 	 * @param reportReqDto 신고 내용
 	 * @param commentId 댓글 번호
-	 * @return commentId
 	 */
 	@PostMapping("/comments/{comment_id}")
-	public ResponseEntity<Long> reportCommentAdd(@PathVariable("comment_id") Long commentId,
+	public ResponseEntity<Void> reportCommentAdd(@PathVariable("comment_id") Long commentId,
 		@RequestBody @Valid ReportReqDto reportReqDto,
 		@Parameter(hidden = true) @Login UserDto user) {
-		return ResponseEntity.status(HttpStatus.CREATED)
-			.body(reportService.addReportComment(commentId, reportReqDto, user));
+		reportService.addReportComment(commentId, reportReqDto, user);
+		return ResponseEntity.status(HttpStatus.CREATED).build();
+	}
+
+	/**
+	 * 유저 노쇼 신고한다.
+	 * @param reportReqDto 신고 내용
+	 * @param roomId 방 번호
+	 * @param userIntraId 유저 인트라 아이디
+	 */
+	@PostMapping("/rooms/{room_id}/users/{user_intra_id}")
+	public ResponseEntity<Void> reportUserAdd(@PathVariable("room_id") Long roomId,
+		@PathVariable("user_intra_id") String userIntraId,
+		@RequestBody @Valid ReportReqDto reportReqDto,
+		@Parameter(hidden = true) @Login UserDto user) {
+		reportService.addReportUser(roomId, reportReqDto, userIntraId, user);
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 }
