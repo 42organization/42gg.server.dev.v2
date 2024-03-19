@@ -82,13 +82,12 @@ public class RoomManagementService {
 	/**
 	 * 유저가 방을 나간다
 	 * 참가자가 방에 참가한 상태일때만 취소해 준다.
-	 *
 	 * @param roomId, user
-	 * @param user    참여 유저(사용자 본인)
+	 * @param user 참여 유저(사용자 본인)
 	 * @return 나간 사람의 닉네임
-	 * @throws RoomNotFoundException       방 없음
-	 * @throws RoomNotOpenException        방이 대기 상태가 아님
-	 * @throws RoomNotParticipantException 방 참여자가 아님
+	 * @throws RoomNotFoundException 방 없음 - 404
+	 * @throws RoomNotOpenException 방이 대기 상태가 아님 - 400
+	 * @throws RoomNotParticipantException 방 참여자가 아님 - 400
 	 */
 	@Transactional
 	public LeaveRoomResDto modifyLeaveRoom(Long roomId, UserDto user) {
@@ -130,11 +129,11 @@ public class RoomManagementService {
 	 *
 	 * @param roomId, user
 	 * @return 방 id
-	 * @throws RoomNotFoundException        방 없음
-	 * @throws RoomNotOpenException         방이 열리지 않은 상태
+	 * @throws RoomNotFoundException 방 없음
+	 * @throws RoomNotOpenException 방이 열리지 않은 상태
 	 * @throws RoomNotEnoughPeopleException 방에 충분한 인원이 없음
-	 * @throws RoomNotParticipantException  방에 참가하지 않은 유저
-	 * @throws UserNotHostException         방장이 아닌 경우
+	 * @throws RoomNotParticipantException 방에 참가하지 않은 유저
+	 * @throws UserNotHostException 방장이 아닌 경우
 	 */
 	@Transactional
 	public Long modifyStartRoom(Long roomId, UserDto user) {
@@ -168,8 +167,8 @@ public class RoomManagementService {
 	 * @return roomId
 	 * @throws RoomNotFoundException 유효하지 않은 방 입력
 	 * @throws OnPenaltyException 패널티 상태인 유저 - 403
-	 * @throws RoomNotOpenException 모집중인 방이 아님
-	 * @throws UserAlreadyInRoom 이미 참여한 방 입력
+	 * @throws RoomNotOpenException 모집중인 방이 아님 - 400
+	 * @throws UserAlreadyInRoom 이미 참여한 방 입력 - 409
 	 * 과거 참여 이력이 있을 경우 그 아이디로, 없을경우 새로운 아이디를 생성 후 currentPeople을 증가시킨다
 	 */
 	@Transactional
