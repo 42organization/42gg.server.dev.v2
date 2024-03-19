@@ -12,10 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import gg.data.party.PartyPenalty;
 import gg.data.user.User;
+import gg.party.api.admin.penalty.controller.request.PageReqDto;
 import gg.party.api.admin.penalty.controller.request.PartyPenaltyAdminReqDto;
 import gg.party.api.admin.penalty.controller.response.PartyPenaltyAdminResDto;
 import gg.party.api.admin.penalty.controller.response.PartyPenaltyListAdminResDto;
-import gg.party.api.admin.room.controller.request.PageReqDto;
 import gg.repo.party.PartyPenaltyRepository;
 import gg.repo.user.UserRepository;
 import gg.utils.exception.party.PartyPenaltyNotFoundException;
