@@ -97,7 +97,7 @@ public class RoomControllerTest {
 			finishRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
 				3, 2, 180, RoomType.FINISH);
 			hiddenRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
-				3, 2, 180, RoomType.OPEN);
+				3, 2, 180, RoomType.HIDDEN);
 			failRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
 				3, 2, 180, RoomType.FAIL);
 		}
@@ -242,7 +242,7 @@ public class RoomControllerTest {
 			finishRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
 				3, 2, 180, RoomType.FINISH);
 			hiddenRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
-				3, 2, 180, RoomType.OPEN);
+				3, 2, 180, RoomType.HIDDEN);
 			failRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
 				3, 2, 180, RoomType.FAIL);
 		}
@@ -287,7 +287,7 @@ public class RoomControllerTest {
 			finishRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
 				3, 2, 180, RoomType.FINISH);
 			hiddenRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
-				3, 2, 180, RoomType.OPEN);
+				3, 2, 180, RoomType.HIDDEN);
 			failRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
 				3, 2, 180, RoomType.FAIL);
 		}
@@ -316,14 +316,14 @@ public class RoomControllerTest {
 	}
 
 	@Nested
-	@DisplayName("참여했던 방 조회 테스트")
+	@DisplayName("방 상세 조회 테스트")
 	class FindRoomDetailInfo {
 		@BeforeEach
 		void beforeEach() {
-			userTester = testDataUtils.createNewUser("findTester", "findTester",
-				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
-			anotherTester = testDataUtils.createNewUser("anotherTester", "anotherTester",
-				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
+			userTester = testDataUtils.createNewImageUser("findTester", "findTester",
+				RacketType.DUAL, SnsType.SLACK, RoleType.USER, "image");
+			anotherTester = testDataUtils.createNewImageUser("anotherTester", "anotherTester",
+				RacketType.DUAL, SnsType.SLACK, RoleType.USER, "image");
 			userAccessToken = tokenProvider.createToken(userTester.getId());
 			anotherAccessToken = tokenProvider.createToken(anotherTester.getId());
 			Category testCategory = testDataUtils.createNewCategory("category");
@@ -337,7 +337,7 @@ public class RoomControllerTest {
 				3, 2, 180, RoomType.FINISH);
 			UserRoom finishUserRoom = testDataUtils.createNewUserRoom(userTester, finishRoom, "nickname", true);
 			hiddenRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
-				3, 2, 180, RoomType.OPEN);
+				3, 2, 180, RoomType.HIDDEN);
 			UserRoom hiddenUserRoom = testDataUtils.createNewUserRoom(userTester, hiddenRoom, "nickname", true);
 			failRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
 				3, 2, 180, RoomType.FAIL);
@@ -375,7 +375,7 @@ public class RoomControllerTest {
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
 			//when
-			RoomDetailResDto rdrd = RoomFindService.findRoomDetail(userTester.getId(), openRoom.getId());
+			RoomDetailResDto rdrd = RoomFindService.findRoomDetail(anotherTester.getId(), openRoom.getId());
 			//then
 			assertThat(rdrd.getStatus().toString()).isEqualTo(RoomType.OPEN.toString());
 			for (UserRoomResDto roomUser : rdrd.getRoomUsers()) {
@@ -395,7 +395,7 @@ public class RoomControllerTest {
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
 			//when
-			RoomDetailResDto rdrd = RoomFindService.findRoomDetail(userTester.getId(), openRoom.getId());
+			RoomDetailResDto rdrd = RoomFindService.findRoomDetail(userTester.getId(), startRoom.getId());
 			//then
 			assertThat(rdrd.getStatus().toString()).isEqualTo(RoomType.START.toString());
 			for (UserRoomResDto roomUser : rdrd.getRoomUsers()) {
@@ -415,7 +415,7 @@ public class RoomControllerTest {
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
 			//when
-			RoomDetailResDto rdrd = RoomFindService.findRoomDetail(userTester.getId(), openRoom.getId());
+			RoomDetailResDto rdrd = RoomFindService.findRoomDetail(anotherTester.getId(), startRoom.getId());
 			//then
 			assertThat(rdrd.getStatus().toString()).isEqualTo(RoomType.START.toString());
 			for (UserRoomResDto roomUser : rdrd.getRoomUsers()) {
