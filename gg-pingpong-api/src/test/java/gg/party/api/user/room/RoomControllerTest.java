@@ -519,7 +519,7 @@ public class RoomControllerTest {
 			String url = "/party/rooms/" + openRoomId;
 			// when && then
 			String contentAsString = mockMvc.perform(
-					post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + anotherAccessToken))
+					post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
 				.andExpect(status().isConflict()).toString();
 		}
 	}
