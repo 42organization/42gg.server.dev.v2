@@ -20,7 +20,7 @@ import gg.data.recruit.recruitment.Recruitments;
 import gg.data.recruit.recruitment.enums.InputType;
 import gg.data.user.User;
 import gg.data.user.type.SnsType;
-import gg.recruit.api.user.controller.request.FormRequest;
+import gg.recruit.api.user.service.param.DelApplicationParam;
 import gg.recruit.api.user.service.param.FindApplicationDetailParam;
 import gg.recruit.api.user.service.param.FindApplicationResultParam;
 import gg.recruit.api.user.service.param.FormParam;
@@ -39,6 +39,7 @@ import gg.repo.recruit.user.recruitment.RecruitmentRepository;
 import gg.repo.user.UserRepository;
 import gg.utils.exception.ErrorCode;
 import gg.utils.exception.custom.DuplicationException;
+import gg.utils.exception.custom.ForbiddenException;
 import gg.utils.exception.custom.NotExistException;
 import lombok.RequiredArgsConstructor;
 
@@ -129,14 +130,13 @@ public class ApplicationService {
 	@Transactional
 	public void updateApplication(FormPatchParam param) {
 		Application application = applicationRepository.findByUserIdAndRecruitId(param.getUserId(),
-				param.getRecruitmentId()).orElseThrow(() ->
+			param.getRecruitmentId()).orElseThrow(() ->
 			new NotExistException("application not found"));
 
 		//delete all existing answers
 		List<Long> questionIds = param.getQuestionIds();
 		applicationAnswerRepository.deleteAllByQuestionIds(param.getUserId(), param.getApplicationId(),
 			param.getRecruitmentId(), questionIds);
-
 
 		Map<Long, Question> questionMap = questionRepository.findAllById(questionIds)
 			.stream()
@@ -156,5 +156,19 @@ public class ApplicationService {
 			newAnswers.addAll(form.toApplicationAnswer(application, questionMap, checkListMap));
 		});
 		return newAnswers;
+	}
+
+	public void deleteApplication(DelApplicationParam param) {
+		Application application = applicationRepository
+			.findByUserIdAndRecruitId(param.getUserId(), param.getRecruitmentId())
+			.orElseThrow(() -> new NotExistException("application not found"));
+		if (!application.isUpdateAvailable()) {
+			throw new ForbiddenException("지원서 수정 기간이 지났습니다.");
+		}
+		if (application.getId().equals(param.getApplicationId())) {
+			application.delete();
+		} else {
+			throw new NotExistException("application not found");
+		}
 	}
 }
