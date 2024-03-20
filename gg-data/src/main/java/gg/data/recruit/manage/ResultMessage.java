@@ -16,15 +16,17 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ResultMessage extends BaseTimeEntity {
+	public static final int contentLimit = 100;
+	public static final int messageTypeLimit = 15;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(length = 100)
+	@Column(length = contentLimit)
 	private String content;
 
-	@Column(length = 15, nullable = false)
+	@Column(length = messageTypeLimit, nullable = false)
 	@Enumerated(EnumType.STRING)
 	private MessageType messageType;
 
