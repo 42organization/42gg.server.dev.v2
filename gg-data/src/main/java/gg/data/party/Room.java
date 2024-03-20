@@ -85,6 +85,7 @@ public class Room extends BaseTimeEntity {
 		this.maxPeople = maxPeople;
 		this.minPeople = minPeople;
 		this.dueDate = dueDate;
+		this.startDate = null;
 		this.status = status;
 	}
 
@@ -102,5 +103,9 @@ public class Room extends BaseTimeEntity {
 
 	public void updateHost(User host) {
 		this.host = host;
+	}
+
+	public void startRoom(LocalDateTime startDate) {
+		this.startDate = startDate;
 	}
 }
