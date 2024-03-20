@@ -1,10 +1,9 @@
-package gg.pingpong.api.admin.coin.controller;
+package gg.pingpong.api.admin.store.controller;
 
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import org.apache.http.HttpHeaders;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gg.admin.repo.store.CoinPolicyAdminRepository;
 import gg.auth.utils.AuthTokenProvider;
-import gg.pingpong.api.admin.store.controller.request.CoinUpdateRequestDto;
-import gg.repo.user.UserRepository;
+import gg.pingpong.api.admin.store.dto.CoinPolicyAdminAddDto;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 @IntegrationTest
 @AutoConfigureMockMvc
 @Transactional
-class CoinAdminControllerTest {
+public class CoinPolicyAdminControllerFailTest {
 	@Autowired
 	TestDataUtils testDataUtils;
 
@@ -40,21 +39,24 @@ class CoinAdminControllerTest {
 	AuthTokenProvider tokenProvider;
 
 	@Autowired
-	UserRepository userRepository;
+	CoinPolicyAdminRepository coinPolicyAdminRepository;
 
 	@Test
-	@DisplayName("PUT /pingpong/admin/coin")
-	public void updateCoinTest() throws Exception {
+	@DisplayName("[Post FAIL]/pingpong/admin/coinpolicy")
+	void addAnnouncement() throws Exception {
 		String accessToken = testDataUtils.getAdminLoginAccessToken();
 		Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
-		String creatorId = userRepository.getById(userId).getIntraId();
-		int beforeCoin = userRepository.getById(userId).getGgCoin();
-		int changeCoin = 10;
-		CoinUpdateRequestDto coinUpdateRequestDto = new CoinUpdateRequestDto(creatorId, changeCoin, "관리자 코인 지급 테스트");
-		mockMvc.perform(put("/pingpong/admin/coin").header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+
+		CoinPolicyAdminAddDto addDto = new CoinPolicyAdminAddDto(1, 2, 5, -1);
+
+		String content = objectMapper.writeValueAsString(addDto);
+		String url = "/pingpong/admin/coinpolicy";
+
+		String contentAsString = mockMvc.perform(post(url)
+				.content(content)
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(coinUpdateRequestDto)))
-			.andExpect(status().isNoContent());
-		Assertions.assertThat(userRepository.getById(userId).getGgCoin()).isEqualTo(beforeCoin + changeCoin);
+				.header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+			.andExpect(status().isBadRequest())
+			.andReturn().getResponse().getContentAsString();
 	}
 }

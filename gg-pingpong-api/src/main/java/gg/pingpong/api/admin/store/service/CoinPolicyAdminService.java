@@ -22,6 +22,11 @@ public class CoinPolicyAdminService {
 	private final CoinPolicyAdminRepository coinPolicyAdminRepository;
 	private final UserAdminRepository userAdminRepository;
 
+	/**
+	 * 코인 정책을 페이지별로 조회합니다.
+	 * @param pageable
+	 * @return 코인 정책 리스트 응답 Dto
+	 */
 	@Transactional(readOnly = true)
 	public CoinPolicyAdminListResponseDto findAllCoinPolicy(Pageable pageable) {
 		Page<CoinPolicy> allCoinPolicy = coinPolicyAdminRepository.findAll(pageable);
@@ -31,6 +36,12 @@ public class CoinPolicyAdminService {
 			responseDtos.getTotalPages());
 	}
 
+	/**
+	 * 새로운 코인 정책을 추가합니다.
+	 * @param userDto 유저 Dto
+	 * @param addDto 새로 추가 할 코인 정책 Dto
+	 * @exception UserNotFoundException 유저가 존재하지 않을 경우
+	 */
 	@Transactional
 	public void addCoinPolicy(UserDto userDto, CoinPolicyAdminAddDto addDto) {
 		User user = userAdminRepository.findByIntraId(userDto.getIntraId()).orElseThrow(UserNotFoundException::new);
