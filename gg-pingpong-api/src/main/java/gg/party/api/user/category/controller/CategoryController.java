@@ -26,5 +26,4 @@ public class CategoryController {
 	public ResponseEntity<List<CategoryResDto>> categoryList() {
 		return ResponseEntity.status(HttpStatus.OK).body(categoryService.findCategoryList());
 	}
-
 }

@@ -20,6 +20,7 @@ import gg.party.api.user.room.controller.response.RoomCreateResDto;
 import gg.party.api.user.room.controller.response.RoomDetailResDto;
 import gg.party.api.user.room.controller.response.RoomJoinResDto;
 import gg.party.api.user.room.controller.response.RoomListResDto;
+import gg.party.api.user.room.controller.response.RoomStartResDto;
 import gg.party.api.user.room.service.RoomFindService;
 import gg.party.api.user.room.service.RoomManagementService;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -105,7 +106,7 @@ public class RoomController {
 	 * @return 방 id
 	 */
 	@PostMapping("/{room_id}/start")
-	public ResponseEntity<Long> startRoom(@PathVariable("room_id") Long roomId,
+	public ResponseEntity<RoomStartResDto> startRoom(@PathVariable("room_id") Long roomId,
 		@Parameter(hidden = true) @Login UserDto user) {
 		return ResponseEntity.status(HttpStatus.CREATED).body(roomManagementService.modifyStartRoom(roomId, user));
 	}

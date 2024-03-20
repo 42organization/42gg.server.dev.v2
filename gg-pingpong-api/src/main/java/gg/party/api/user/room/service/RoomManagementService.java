@@ -20,6 +20,7 @@ import gg.party.api.user.room.controller.request.RoomCreateReqDto;
 import gg.party.api.user.room.controller.response.LeaveRoomResDto;
 import gg.party.api.user.room.controller.response.RoomCreateResDto;
 import gg.party.api.user.room.controller.response.RoomJoinResDto;
+import gg.party.api.user.room.controller.response.RoomStartResDto;
 import gg.pingpong.api.user.noti.service.PartyNotiService;
 import gg.repo.party.CategoryRepository;
 import gg.repo.party.PartyPenaltyRepository;
@@ -136,7 +137,7 @@ public class RoomManagementService {
 	 * @throws UserNotHostException 방장이 아닌 경우
 	 */
 	@Transactional
-	public Long modifyStartRoom(Long roomId, UserDto user) {
+	public RoomStartResDto modifyStartRoom(Long roomId, UserDto user) {
 		Room targetRoom = roomRepository.findById(roomId)
 			.orElseThrow(RoomNotFoundException::new);
 		if (!targetRoom.getStatus().equals(RoomType.OPEN)) {
@@ -157,7 +158,7 @@ public class RoomManagementService {
 		partyNotiService.sendPartyNotifications(users);
 		roomRepository.save(targetRoom);
 
-		return roomId;
+		return new RoomStartResDto(targetRoom.getId());
 	}
 
 	/**
@@ -165,7 +166,7 @@ public class RoomManagementService {
 	 * @param roomId 방 id
 	 * @param userDto 유저 정보
 	 * @return roomId
-	 * @throws RoomNotFoundException 유효하지 않은 방 입력
+	 * @throws RoomNotFoundException 유효하지 않은 방 입력 - 404
 	 * @throws OnPenaltyException 패널티 상태인 유저 - 403
 	 * @throws RoomNotOpenException 모집중인 방이 아님 - 400
 	 * @throws UserAlreadyInRoom 이미 참여한 방 입력 - 409

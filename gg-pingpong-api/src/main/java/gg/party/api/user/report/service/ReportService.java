@@ -53,12 +53,11 @@ public class ReportService {
 
 	/**
 	 * 방을 신고한다.
-	 *
-	 * @param roomId       방 번호
+	 * @param roomId 방 번호
 	 * @param reportReqDto 신고 내용
-	 * @param user         신고자
+	 * @param user 신고자
 	 * @return 방 번호
-	 * @throws RoomNotFoundException    방을 찾을 수 없음
+	 * @throws RoomNotFoundException 방을 찾을 수 없음
 	 * @throws AlredayReportedException 이미 신고한 경우
 	 */
 	@Transactional
