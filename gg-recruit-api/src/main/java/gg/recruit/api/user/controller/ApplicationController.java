@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
+import gg.recruit.api.user.controller.request.FormPatchRequestDto;
 import gg.recruit.api.user.controller.request.RecruitApplyFormListReqDto;
 import gg.recruit.api.user.controller.response.ApplicationResultResDto;
 import gg.recruit.api.user.controller.response.MyApplicationDetailResDto;
@@ -21,6 +23,7 @@ import gg.recruit.api.user.controller.response.MyApplicationsResDto;
 import gg.recruit.api.user.service.ApplicationService;
 import gg.recruit.api.user.service.param.FindApplicationDetailParam;
 import gg.recruit.api.user.service.param.FindApplicationResultParam;
+import gg.recruit.api.user.service.param.FormPatchParam;
 import gg.recruit.api.user.service.param.RecruitApplyFormParam;
 import gg.recruit.api.user.service.param.RecruitApplyParam;
 import gg.recruit.api.user.service.response.ApplicationListSvcDto;
@@ -70,4 +73,13 @@ public class ApplicationController {
 				recruitmentId, applicationId));
 		return new ApplicationResultResDto(res);
 	}
+
+	@PatchMapping("{recruitmentId}/applications/{applicationId}")
+	public ResponseEntity<Void> updateApplication(@Login @Parameter(hidden = true) UserDto userDto,
+		@PathVariable Long recruitmentId, @PathVariable Long applicationId, @RequestBody FormPatchRequestDto reqDto) {
+		applicationService.updateApplication(new FormPatchParam(applicationId, recruitmentId,
+			userDto.getId(), reqDto.toFormParamList()));
+		return ResponseEntity.noContent().build();
+	}
+
 }
