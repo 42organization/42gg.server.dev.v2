@@ -14,7 +14,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
 
 	@EntityGraph(attributePaths = {"recruit"})
 	@Query("SELECT a FROM Application a WHERE a.user.id = :userId and a.isDeleted = false")
-	List<Application> findAllByUserId(Long userId);
+	List<Application> findAllByUserId(@Param("userId") Long userId);
 
 	@Query("SELECT a FROM Application a "
 		+ "JOIN FETCH a.recruit r "
@@ -25,6 +25,6 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
 		+ "JOIN FETCH a.recruit r "
 		+ "WHERE a.id = :applicationId and a.user.id = :userId "
 		+ "and r.id = :recruitmentId and a.isDeleted = false and r.isDeleted = false")
-	Optional<Application> findApplication(@Param("applicationId") Long applicationId, @Param("userId")Long userId,
-		@Param("recruitmentId")Long recruitmentId);
+	Optional<Application> findApplication(@Param("applicationId") Long applicationId, @Param("userId") Long userId,
+		@Param("recruitmentId") Long recruitmentId);
 }
