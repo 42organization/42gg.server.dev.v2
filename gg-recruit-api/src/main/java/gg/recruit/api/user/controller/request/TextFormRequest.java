@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Setter
 @NoArgsConstructor
-public class TextFormRequest extends FormRequest{
+public class TextFormRequest extends FormRequest {
 	private String answer;
 
 	@Override

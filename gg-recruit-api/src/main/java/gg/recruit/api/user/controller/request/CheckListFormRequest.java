@@ -7,7 +7,7 @@ import gg.recruit.api.user.service.param.FormParam;
 import lombok.Setter;
 
 @Setter
-public class CheckListFormRequest extends FormRequest{
+public class CheckListFormRequest extends FormRequest {
 	private List<Long> checkedList;
 
 	@Override
