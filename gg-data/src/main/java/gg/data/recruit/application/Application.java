@@ -48,7 +48,16 @@ public class Application extends BaseTimeEntity {
 		this.isDeleted = false;
 		this.status = ApplicationStatus.PROGRESS_DOCS;
 	}
+
 	public String getRecruitTitle() {
 		return this.recruit.getTitle();
+	}
+
+	public void delete() {
+		this.isDeleted = Boolean.TRUE;
+	}
+
+	public Boolean isUpdateAvailable() {
+		return !recruit.isEnd();
 	}
 }

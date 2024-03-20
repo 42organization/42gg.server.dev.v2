@@ -52,4 +52,8 @@ public class Recruitments extends BaseTimeEntity {
 	public void del() {
 		this.isDeleted = true;
 	}
+
+	public Boolean isEnd() {
+		return LocalDateTime.now().isAfter(this.endTime);
+	}
 }
