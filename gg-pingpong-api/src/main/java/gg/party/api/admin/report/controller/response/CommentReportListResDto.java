@@ -8,11 +8,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @Getter
 public class CommentReportListResDto {
-	private List<CommentReportAdminResDto> commentReportPageList;
+	private List<CommentReportAdminResDto> commentReportList;
 	private int totalPages;
 
-	public CommentReportListResDto(List<CommentReportAdminResDto> commentReportPageList, int totalPages) {
-		this.commentReportPageList = commentReportPageList;
+	public CommentReportListResDto(List<CommentReportAdminResDto> commentReportList, int totalPages) {
+		this.commentReportList = commentReportList;
 		this.totalPages = totalPages;
 	}
 }

@@ -43,7 +43,7 @@ public class PartyPenaltyAdminController {
 	public ResponseEntity<Void> modifyAdminPenalty(@PathVariable Long penaltyId,
 		@RequestBody PartyPenaltyAdminReqDto reqDto) {
 		partyPenaltyAdminService.modifyAdminPenalty(penaltyId, reqDto);
-		return ResponseEntity.status(HttpStatus.OK).build();
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
 	/**
@@ -55,5 +55,4 @@ public class PartyPenaltyAdminController {
 		partyPenaltyAdminService.addAdminPenalty(reqDto);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
-
 }

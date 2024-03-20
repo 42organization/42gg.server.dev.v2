@@ -52,6 +52,5 @@ public class Comment extends BaseTimeEntity {
 	public void updateHidden(boolean isHidden) {
 		this.isHidden = isHidden;
 	}
-
 }
 
