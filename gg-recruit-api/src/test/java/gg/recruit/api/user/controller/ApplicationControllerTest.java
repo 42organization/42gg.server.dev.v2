@@ -120,4 +120,57 @@ class ApplicationControllerTest {
 		assertEquals(ApplicationStatus.PROGRESS_DOCS, applicationResultResDto.getStatus());
 	}
 
+	@Test
+	@DisplayName("DELETE /recruitments/{recruitmentId}/applications/{applicationId} -> 204 NO_CONTENT TEST")
+	void deleteApplicationTest() throws Exception {
+		//given
+		User user = testDataUtils.createNewUser();
+		String accessToken = testDataUtils.getLoginAccessTokenFromUser(user);
+		Recruitments recruitments = recruitMockData.createRecruitments();
+		Application application = recruitMockData.createApplication(user, recruitments);
+
+		//when
+		String url = "/recruitments/" + recruitments.getId()
+			+ "/applications/" + application.getId();
+
+		mockMvc.perform(delete(url)
+				.header("Authorization", "Bearer " + accessToken))
+			.andExpect(status().isNoContent());
+	}
+
+	@Test
+	@DisplayName("DELETE /recruitments/{recruitmentId}/applications/{applicationId} -> 403 FORBIDDEN TEST")
+	void deleteApplicationForbiddenTest() throws Exception {
+		//given
+		User user = testDataUtils.createNewUser();
+		String accessToken = testDataUtils.getLoginAccessTokenFromUser(user);
+		Recruitments recruitments = recruitMockData.createRecruitmentsEnd();
+		Application application = recruitMockData.createApplication(user, recruitments);
+
+		//when, then
+		String url = "/recruitments/" + recruitments.getId()
+			+ "/applications/" + application.getId();
+
+		mockMvc.perform(delete(url)
+				.header("Authorization", "Bearer " + accessToken))
+			.andExpect(status().isForbidden());
+	}
+
+	@Test
+	@DisplayName("DELETE /recruitments/{recruitmentId}/applications/{applicationId} -> 404 NOT_FOUND TEST")
+	void deleteApplicationNotFoundTest() throws Exception {
+		//given
+		User user = testDataUtils.createNewUser();
+		String accessToken = testDataUtils.getLoginAccessTokenFromUser(user);
+		Recruitments recruitments = recruitMockData.createRecruitmentsDel();
+		Application application = recruitMockData.createApplication(user, recruitments);
+
+		//when, then
+		String url = "/recruitments/" + recruitments.getId()
+			+ "/applications/" + application.getId() + 1;
+
+		mockMvc.perform(delete(url)
+				.header("Authorization", "Bearer " + accessToken))
+			.andExpect(status().isNotFound());
+	}
 }
