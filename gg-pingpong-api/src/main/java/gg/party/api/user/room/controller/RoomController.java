@@ -1,5 +1,7 @@
 package gg.party.api.user.room.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +20,8 @@ import gg.party.api.user.room.controller.response.RoomCreateResDto;
 import gg.party.api.user.room.controller.response.RoomDetailResDto;
 import gg.party.api.user.room.controller.response.RoomJoinResDto;
 import gg.party.api.user.room.controller.response.RoomListResDto;
-import gg.party.api.user.room.service.RoomService;
+import gg.party.api.user.room.service.RoomFindService;
+import gg.party.api.user.room.service.RoomManagementService;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 
@@ -26,29 +29,17 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/party/rooms")
 public class RoomController {
-	private final RoomService roomService;
+	private final RoomFindService roomFindService;
+	private final RoomManagementService roomManagementService;
 
 	/**
 	 * 시작하지 않은 방과 시작한 방을 모두 조회한다
-	 * @return 시작하지 않은 방 (최신순) + 시작한 방(끝나는 시간이 빠른 순) 전체 List
+	 * @return 시작하지 않은 방 (최신순) + 시작한 방(끝나는 시간이 빠른 순) 전체 List - 200
 	 */
 	@GetMapping
 	public ResponseEntity<RoomListResDto> allActiveRoomList() {
-		RoomListResDto roomListResDto = roomService.findRoomList();
+		RoomListResDto roomListResDto = roomFindService.findRoomList();
 		return ResponseEntity.status(HttpStatus.OK).body(roomListResDto);
-	}
-
-	/**
-	 * 방 만들기
-	 * @param roomCreateReqDto 요청 Dto
-	 * @param user 사용자
-	 * @return 201 created
-	 */
-	@PostMapping
-	public ResponseEntity<RoomCreateResDto> createRoom(@RequestBody RoomCreateReqDto roomCreateReqDto,
-		@Parameter(hidden = true) @Login UserDto user) {
-		RoomCreateResDto roomCreateResDto = roomService.addCreateRoom(roomCreateReqDto, user);
-		return ResponseEntity.status(HttpStatus.CREATED).body(roomCreateResDto);
 	}
 
 	/**
@@ -57,7 +48,7 @@ public class RoomController {
 	 */
 	@GetMapping("/joined")
 	public ResponseEntity<RoomListResDto> allJoinedRoomList(@Parameter(hidden = true) @Login UserDto user) {
-		RoomListResDto roomListResDto = roomService.findJoinedRoomList(user.getId());
+		RoomListResDto roomListResDto = roomFindService.findJoinedRoomList(user.getId());
 		return ResponseEntity.status(HttpStatus.OK).body(roomListResDto);
 	}
 
@@ -67,7 +58,7 @@ public class RoomController {
 	 */
 	@GetMapping("/history")
 	public ResponseEntity<RoomListResDto> myHistoryRoomList(@Parameter(hidden = true) @Login UserDto user) {
-		RoomListResDto roomListResDto = roomService.findMyHistoryRoomList(user.getId());
+		RoomListResDto roomListResDto = roomFindService.findMyHistoryRoomList(user.getId());
 		return ResponseEntity.status(HttpStatus.OK).body(roomListResDto);
 	}
 
@@ -80,8 +71,21 @@ public class RoomController {
 	@GetMapping("/{room_id}")
 	public ResponseEntity<RoomDetailResDto> roomDetailInfo(@Parameter(hidden = true) @Login UserDto user,
 		@PathVariable("room_id") Long roomId) {
-		RoomDetailResDto roomDetailResDto = roomService.findRoomDetail(user.getId(), roomId);
+		RoomDetailResDto roomDetailResDto = roomFindService.findRoomDetail(user.getId(), roomId);
 		return ResponseEntity.status(HttpStatus.OK).body(roomDetailResDto);
+	}
+
+	/**
+	 * 방 만들기
+	 * @param roomCreateReqDto 요청 Dto
+	 * @param user 사용자
+	 * @return 생성된 roomId - 201
+	 */
+	@PostMapping
+	public ResponseEntity<RoomCreateResDto> createRoom(@RequestBody @Valid RoomCreateReqDto roomCreateReqDto,
+		@Parameter(hidden = true) @Login UserDto user) {
+		RoomCreateResDto roomCreateResDto = roomManagementService.addCreateRoom(roomCreateReqDto, user);
+		return ResponseEntity.status(HttpStatus.CREATED).body(roomCreateResDto);
 	}
 
 	/**
@@ -93,7 +97,7 @@ public class RoomController {
 	@PatchMapping("/{room_id}")
 	public ResponseEntity<LeaveRoomResDto> leaveRoom(@PathVariable("room_id") Long roomId,
 		@Parameter(hidden = true) @Login UserDto user) {
-		return ResponseEntity.status(HttpStatus.OK).body(roomService.modifyLeaveRoom(roomId, user));
+		return ResponseEntity.status(HttpStatus.OK).body(roomManagementService.modifyLeaveRoom(roomId, user));
 	}
 
 	/**
@@ -103,7 +107,7 @@ public class RoomController {
 	@PostMapping("/{room_id}/start")
 	public ResponseEntity<Long> startRoom(@PathVariable("room_id") Long roomId,
 		@Parameter(hidden = true) @Login UserDto user) {
-		return ResponseEntity.status(HttpStatus.CREATED).body(roomService.modifyStartRoom(roomId, user));
+		return ResponseEntity.status(HttpStatus.CREATED).body(roomManagementService.modifyStartRoom(roomId, user));
 	}
 
 	/**
@@ -115,7 +119,7 @@ public class RoomController {
 	@PostMapping("/{room_id}")
 	public ResponseEntity<RoomJoinResDto> joinRoom(@Parameter(hidden = true) @Login UserDto user,
 		@PathVariable("room_id") Long roomId) {
-		RoomJoinResDto roomJoinResDto = roomService.addJoinRoom(roomId, user);
+		RoomJoinResDto roomJoinResDto = roomManagementService.addJoinRoom(roomId, user);
 		return ResponseEntity.status(HttpStatus.CREATED).body(roomJoinResDto);
 	}
 }

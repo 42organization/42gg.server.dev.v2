@@ -164,11 +164,9 @@ public class GameAdminService {
 		}
 		RankRedis rankRedis2 = rollbackGameResult(game.getSeason(), teamUsers.get(1), pChanges);
 		pChangeAdminRepository.deleteById(pChanges.get(0).getId());
-		entityManager.flush();
 		for (int i = 0; i < teamUsers.size(); i++) {
 			updateScore(reqDto, teamUsers.get(i));
 		}
-		teamUserAdminRepository.flush();
 		rankRedisService.updateAdminRankData(teamUsers.get(0), teamUsers.get(1), game, rankRedis1, rankRedis2);
 		tierService.updateAllTier(game.getSeason());
 	}

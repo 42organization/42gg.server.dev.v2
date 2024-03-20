@@ -95,7 +95,8 @@ public class RoomAdminService {
 
 		List<UserRoomResDto> roomUsers = userRoomRepository.findByRoomId(roomId).stream()
 			.filter(UserRoom::getIsExist)
-			.map(userRoom -> new UserRoomResDto(userRoom, userRoom.getUser().getIntraId()))
+			.map(userRoom -> new UserRoomResDto(userRoom, userRoom.getUser().getIntraId(),
+				userRoom.getUser().getImageUri()))
 			.collect(Collectors.toList());
 
 		return new AdminRoomDetailResDto(room, hostNickname, roomUsers, comments);

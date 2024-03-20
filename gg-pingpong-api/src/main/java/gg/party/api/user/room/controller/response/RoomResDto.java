@@ -18,6 +18,7 @@ public class RoomResDto {
 	private Integer minPeople;
 	private LocalDateTime dueDate;
 	private LocalDateTime createDate;
+	private LocalDateTime startDate;
 	private String status;
 
 	public RoomResDto(Room room) {
@@ -30,6 +31,7 @@ public class RoomResDto {
 		this.minPeople = room.getMinPeople();
 		this.dueDate = room.getDueDate();
 		this.createDate = room.getCreatedAt();
+		this.startDate = room.getStartDate();
 		this.status = room.getStatus().toString();
 	}
 }

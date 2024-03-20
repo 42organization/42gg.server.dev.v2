@@ -813,4 +813,19 @@ public class TestDataUtils {
 		UserRoom userRoom = new UserRoom(user, room, nickname, isExist);
 		return userRoomRepository.save(userRoom);
 	}
+
+	public User createNewImageUser(String intraId, String email, RacketType racketType,
+		SnsType snsType, RoleType roleType, String userImage) {
+		User user = User.builder()
+			.eMail(email)
+			.intraId(intraId)
+			.racketType(racketType)
+			.snsNotiOpt(snsType)
+			.roleType(roleType)
+			.totalExp(0)
+			.imageUri(userImage)
+			.build();
+		userRepository.save(user);
+		return user;
+	}
 }
