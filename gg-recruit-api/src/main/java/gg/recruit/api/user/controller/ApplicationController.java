@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +20,7 @@ import gg.recruit.api.user.controller.response.ApplicationResultResDto;
 import gg.recruit.api.user.controller.response.MyApplicationDetailResDto;
 import gg.recruit.api.user.controller.response.MyApplicationsResDto;
 import gg.recruit.api.user.service.ApplicationService;
+import gg.recruit.api.user.service.param.DelApplicationParam;
 import gg.recruit.api.user.service.param.FindApplicationDetailParam;
 import gg.recruit.api.user.service.param.FindApplicationResultParam;
 import gg.recruit.api.user.service.param.RecruitApplyFormParam;
@@ -69,5 +71,12 @@ public class ApplicationController {
 			new FindApplicationResultParam(userDto.getId(),
 				recruitmentId, applicationId));
 		return new ApplicationResultResDto(res);
+	}
+
+	@DeleteMapping("/{recruitmentId}/applications/{applicationId}")
+	public ResponseEntity<Void> cancelApplication(@Login @Parameter(hidden = true) UserDto userDto,
+		@PathVariable Long recruitmentId, @PathVariable Long applicationId) {
+		applicationService.deleteApplication(new DelApplicationParam(userDto.getId(), recruitmentId, applicationId));
+		return ResponseEntity.noContent().build();
 	}
 }

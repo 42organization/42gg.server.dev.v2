@@ -37,6 +37,12 @@ public class RecruitMockData {
 		return recruitmentRepository.save(recruitments);
 	}
 
+	public Recruitments createRecruitmentsEnd() {
+		Recruitments recruitments = new Recruitments("title", "contents", "generation",
+			LocalDateTime.now().minusDays(2), LocalDateTime.now().minusDays(1));
+		return recruitmentRepository.save(recruitments);
+	}
+
 	public Application createApplication(User user, Recruitments recruitments) {
 		Application application = new Application(user, recruitments);
 		return applicationRepository.save(application);
