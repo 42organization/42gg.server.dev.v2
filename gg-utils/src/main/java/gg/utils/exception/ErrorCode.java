@@ -116,6 +116,7 @@ public enum ErrorCode {
 	VALID_FAILED(400, "CM007", "Valid Test Failed."),
 	BAD_ARGU(400, "ARGUMENT-ERR-400", "잘못된 argument 입니다."),
 	UNREADABLE_HTTP_MESSAGE(400, "CM008", "유효하지 않은 HTTP 메시지입니다."),
+	CONFLICT(409, "CM009", "CONFLICT"),
 
 	//Feedback
 	FEEDBACK_NOT_FOUND(404, "FB100", "FB NOT FOUND"),

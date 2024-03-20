@@ -5,6 +5,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import gg.data.recruit.recruitment.Question;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -21,5 +22,10 @@ public class ApplicationAnswerText extends ApplicationAnswer {
 	@Override
 	public ApplicationAnswerEntityDto toForm() {
 		return new ApplicationAnswerEntityDto(this.getQuestionId(), this.getInputType(), answer);
+	}
+
+	public ApplicationAnswerText(Application application, Question question, String answer) {
+		super(application, question);
+		this.answer = answer;
 	}
 }
