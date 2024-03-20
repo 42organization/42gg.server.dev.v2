@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public class PartyPenaltyAdminResDto {
 	private Long id;
-	private Long userId;
+	private String userIntraId;
 	private String penaltyType;
 	private String message;
 	private LocalDateTime startTime;
@@ -18,7 +18,7 @@ public class PartyPenaltyAdminResDto {
 
 	public PartyPenaltyAdminResDto(PartyPenalty partyPenalty) {
 		this.id = partyPenalty.getId();
-		this.userId = partyPenalty.getUser().getId();
+		this.userIntraId = partyPenalty.getUser().getIntraId();
 		this.penaltyType = partyPenalty.getPenaltyType();
 		this.message = partyPenalty.getMessage();
 		this.startTime = partyPenalty.getStartTime();

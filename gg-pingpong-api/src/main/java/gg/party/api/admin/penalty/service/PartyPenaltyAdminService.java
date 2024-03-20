@@ -65,7 +65,8 @@ public class PartyPenaltyAdminService {
 	 */
 	@Transactional
 	public void addAdminPenalty(PartyPenaltyAdminReqDto reqDto) {
-		User userEntity = userRepository.findById(reqDto.getReportee().getId()).orElseThrow(UserNotFoundException::new);
+		User userEntity = userRepository.findByIntraId(reqDto.getUserIntraId())
+			.orElseThrow(UserNotFoundException::new);
 		partyPenaltyRepository.save(reqDto.toEntity(userEntity, reqDto.getPenaltyType(),
 			reqDto.getMessage(), LocalDateTime.now(), reqDto.getPenaltyTime()));
 	}
