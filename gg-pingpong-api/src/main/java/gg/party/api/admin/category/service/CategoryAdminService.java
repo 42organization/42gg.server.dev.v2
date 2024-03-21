@@ -19,6 +19,21 @@ public class CategoryAdminService {
 	private final RoomAdminRepository roomAdminRepository;
 
 	/**
+	 * 카테고리 추가
+	 * @param reqDto 추가할 카테고리 이름
+	 * @exception CategoryDuplicateException 중복된 카테고리
+	 */
+	@Transactional
+	public void addCategory(CategoryAddAdminReqDto reqDto) {
+		String categoryName = reqDto.getCategoryName();
+
+		if (categoryAdminRepository.existsByName(categoryName)) {
+			throw new CategoryDuplicateException();
+		}
+		categoryAdminRepository.save(new Category(categoryName));
+	}
+
+	/**
 	 * 카테고리 삭제
 	 * 삭제 시 기존에 room에 연결되어 있던 카테고리는 default(1) 로 변경
 	 * @param categoryId 삭제할 카테고리 id
@@ -41,20 +56,5 @@ public class CategoryAdminService {
 			.forEach(room -> room.updateCategory(defaultCategory));
 
 		categoryAdminRepository.deleteById(categoryId);
-	}
-
-	/**
-	 * 카테고리 추가
-	 * @param reqDto 추가할 카테고리 이름
-	 * @exception CategoryDuplicateException 중복된 카테고리
-	 */
-	@Transactional
-	public void addCategory(CategoryAddAdminReqDto reqDto) {
-		String categoryName = reqDto.getCategoryName();
-
-		if (categoryAdminRepository.existsByName(categoryName)) {
-			throw new CategoryDuplicateException();
-		}
-		categoryAdminRepository.save(new Category(categoryName));
 	}
 }

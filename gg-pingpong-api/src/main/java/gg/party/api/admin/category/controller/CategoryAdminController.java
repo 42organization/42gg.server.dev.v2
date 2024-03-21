@@ -20,16 +20,6 @@ public class CategoryAdminController {
 	private final CategoryAdminService categoryAdminService;
 
 	/**
-	 * 카테고리 삭제
-	 * @return 삭제 성공 여부
-	 */
-	@DeleteMapping("{category_id}")
-	public ResponseEntity<Void> categoryRemove(@PathVariable("category_id") Long categoryId) {
-		categoryAdminService.removeCategory(categoryId);
-		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-	}
-
-	/**
 	 * 카테고리 추가
 	 * @param reqDto 추가할 카테고리 이름
 	 * @return 추가 성공 여부
@@ -38,5 +28,15 @@ public class CategoryAdminController {
 	public ResponseEntity<Void> categoryAdd(@RequestBody CategoryAddAdminReqDto reqDto) {
 		categoryAdminService.addCategory(reqDto);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
+	}
+
+	/**
+	 * 카테고리 삭제
+	 * @return 삭제 성공 여부
+	 */
+	@DeleteMapping("{category_id}")
+	public ResponseEntity<Void> categoryRemove(@PathVariable("category_id") Long categoryId) {
+		categoryAdminService.removeCategory(categoryId);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 }

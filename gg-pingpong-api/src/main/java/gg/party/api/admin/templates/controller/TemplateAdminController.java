@@ -41,7 +41,7 @@ public class TemplateAdminController {
 	public ResponseEntity<Void> updateTemplate(@PathVariable Long templateId,
 		@Valid @RequestBody TemplateAdminUpdateReqDto request) {
 		templateAdminService.modifyTemplate(templateId, request);
-		return ResponseEntity.noContent().build();
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
 	/**
@@ -51,6 +51,6 @@ public class TemplateAdminController {
 	@DeleteMapping("/{templateId}")
 	public ResponseEntity<Void> removeTemplate(@PathVariable Long templateId) {
 		templateAdminService.removeTemplate(templateId);
-		return ResponseEntity.noContent().build();
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 }

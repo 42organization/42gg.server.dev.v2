@@ -23,7 +23,6 @@ import gg.party.api.user.room.controller.response.UserRoomResDto;
 import gg.repo.party.CommentRepository;
 import gg.repo.party.RoomRepository;
 import gg.repo.party.UserRoomRepository;
-import gg.repo.user.UserRepository;
 import gg.utils.exception.party.RoomNotFoundException;
 import gg.utils.exception.party.RoomSameStatusException;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +31,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RoomAdminService {
 	private final RoomRepository roomRepository;
-	private final UserRepository userRepository;
 	private final UserRoomRepository userRoomRepository;
 	private final CommentRepository commentRepository;
 
@@ -79,22 +77,13 @@ public class RoomAdminService {
 
 	/**
 	 * 방의 상세정보를 조회한다
-	 * @param userId 자신의 id
 	 * @param roomId 방 id
 	 * @exception RoomNotFoundException 유효하지 않은 방 입력
 	 * @return 방 상세정보 dto
 	 */
 	@Transactional
-	public AdminRoomDetailResDto findAdminDetailRoom(Long userId, Long roomId) {
+	public AdminRoomDetailResDto findAdminDetailRoom(Long roomId) {
 		Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
-
-		Optional<UserRoom> userRoomOptional = userRoomRepository.findByUserIdAndRoomIdAndIsExistTrue(userId, roomId);
-
-		String myNickname = null;
-		if (userRoomOptional.isPresent()) {
-			UserRoom userRoom = userRoomOptional.get();
-			myNickname = userRoom.getNickname();
-		}
 
 		List<AdminCommentResDto> comments = commentRepository.findByRoomId(roomId).stream()
 			.map(AdminCommentResDto::new)
@@ -105,11 +94,11 @@ public class RoomAdminService {
 		String hostNickname = hostUserRoomOptional.get().getNickname();
 
 		List<UserRoomResDto> roomUsers = userRoomRepository.findByRoomId(roomId).stream()
-			.map(userRoom -> new UserRoomResDto(userRoom.getId(), userRoom.getNickname(),
-				userRoom.getUser().getIntraId()))
+			.filter(UserRoom::getIsExist)
+			.map(userRoom -> new UserRoomResDto(userRoom, userRoom.getUser().getIntraId(),
+				userRoom.getUser().getImageUri()))
 			.collect(Collectors.toList());
 
-		return new AdminRoomDetailResDto(room, myNickname, hostNickname, roomUsers, comments);
+		return new AdminRoomDetailResDto(room, hostNickname, roomUsers, comments);
 	}
-
 }

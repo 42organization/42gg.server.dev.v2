@@ -37,4 +37,11 @@ public class UserReport extends BaseTimeEntity {
 
 	@Column(length = 100)
 	private String message;
+
+	public UserReport(User reporter, User reportee, Room room, String message) {
+		this.reporter = reporter;
+		this.reportee = reportee;
+		this.room = room;
+		this.message = message;
+	}
 }

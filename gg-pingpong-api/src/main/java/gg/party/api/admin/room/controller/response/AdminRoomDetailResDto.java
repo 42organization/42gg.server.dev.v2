@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 public class AdminRoomDetailResDto {
 	private Long roomId;
 	private String title;
+	private String content;
 	private Long categoryId;
 	private Integer currentPeople;
 	private Integer minPeople;
@@ -21,16 +22,17 @@ public class AdminRoomDetailResDto {
 	private RoomType status;
 	private LocalDateTime dueDate;
 	private LocalDateTime createDate;
+	private LocalDateTime startDate;
 	private String myNickname;
 	private String hostNickname;
 	private List<UserRoomResDto> roomUsers;
 	private List<AdminCommentResDto> comments;
 
-	public AdminRoomDetailResDto(Room room, String myNickname, String hostNickname,
-		List<UserRoomResDto> roomUsers,
-		List<AdminCommentResDto> comments) {
+	public AdminRoomDetailResDto(Room room, String hostNickname,
+		List<UserRoomResDto> roomUsers, List<AdminCommentResDto> comments) {
 		this.roomId = room.getId();
 		this.title = room.getTitle();
+		this.content = room.getContent();
 		this.categoryId = room.getCategory().getId();
 		this.currentPeople = room.getCurrentPeople();
 		this.minPeople = room.getMinPeople();
@@ -38,7 +40,8 @@ public class AdminRoomDetailResDto {
 		this.status = room.getStatus();
 		this.dueDate = room.getDueDate();
 		this.createDate = room.getCreatedAt();
-		this.myNickname = myNickname;
+		this.startDate = room.getStartDate();
+		this.myNickname = null;
 		this.hostNickname = hostNickname;
 		this.roomUsers = roomUsers;
 		this.comments = comments;
