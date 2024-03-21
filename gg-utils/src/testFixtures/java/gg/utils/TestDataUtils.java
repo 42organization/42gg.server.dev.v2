@@ -21,6 +21,7 @@ import gg.data.manage.SlotManagement;
 import gg.data.noti.Noti;
 import gg.data.noti.type.NotiType;
 import gg.data.party.Category;
+import gg.data.party.GameTemplate;
 import gg.data.party.PartyPenalty;
 import gg.data.party.Room;
 import gg.data.party.UserRoom;
@@ -55,6 +56,7 @@ import gg.repo.noti.NotiRepository;
 import gg.repo.party.CategoryRepository;
 import gg.repo.party.PartyPenaltyRepository;
 import gg.repo.party.RoomRepository;
+import gg.repo.party.TemplateRepository;
 import gg.repo.party.UserRoomRepository;
 import gg.repo.rank.RankRepository;
 import gg.repo.rank.TierRepository;
@@ -95,6 +97,7 @@ public class TestDataUtils {
 	private final UserRoomRepository userRoomRepository;
 	private final CategoryRepository categoryRepository;
 	private final PartyPenaltyRepository partyPenaltyRepository;
+	private final TemplateRepository templateRepository;
 
 	public String getLoginAccessToken() {
 		User user = User.builder()
@@ -827,5 +830,12 @@ public class TestDataUtils {
 			.build();
 		userRepository.save(user);
 		return user;
+	}
+
+	public GameTemplate createNewTemplate(Category category, String gameName, Integer maxGamePeople, Integer minGamePeople,
+		Integer maxGameTime, Integer minGameTime, String genre, String difficulty, String summary) {
+		GameTemplate newTemplate = new GameTemplate(category, gameName, maxGamePeople, minGamePeople,
+			maxGameTime, minGameTime, genre, difficulty, summary);
+		return templateRepository.save(newTemplate);
 	}
 }
