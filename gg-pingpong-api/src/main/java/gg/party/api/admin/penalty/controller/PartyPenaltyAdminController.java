@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/party/admin/penalties")
 public class PartyPenaltyAdminController {
-	private final PartyPenaltyAdminService penaltyAdminService;
+	private final PartyPenaltyAdminService partyPenaltyAdminService;
 
 	/**
 	 * 패널티 조회
@@ -32,10 +32,19 @@ public class PartyPenaltyAdminController {
 	 */
 	@GetMapping
 	public ResponseEntity<PartyPenaltyListAdminResDto> penaltyList(@ModelAttribute @Valid PageReqDto reqDto) {
-		return ResponseEntity.status(HttpStatus.OK).body(penaltyAdminService.findAllPenalty(reqDto));
+		return ResponseEntity.status(HttpStatus.OK).body(partyPenaltyAdminService.findAllPenalty(reqDto));
 	}
 
-	private final PartyPenaltyAdminService partyPenaltyAdminService;
+	/**
+	 * 패널티 수정
+	 * @param penaltyId 패널티 id
+	 */
+	@PatchMapping("/{penaltyId}")
+	public ResponseEntity<Void> modifyAdminPenalty(@PathVariable Long penaltyId,
+		@RequestBody PartyPenaltyAdminReqDto reqDto) {
+		partyPenaltyAdminService.modifyAdminPenalty(penaltyId, reqDto);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	}
 
 	/**
 	 * 패널티 부여
@@ -45,17 +54,5 @@ public class PartyPenaltyAdminController {
 		@RequestBody PartyPenaltyAdminReqDto reqDto) {
 		partyPenaltyAdminService.addAdminPenalty(reqDto);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
-	}
-
-	/**
-	 * 패널티 수정
-	 *
-	 * @param penaltyId 패널티 id
-	 */
-	@PatchMapping("/{penaltyId}")
-	public ResponseEntity<Void> modifyAdminPenalty(@PathVariable Long penaltyId,
-		@RequestBody PartyPenaltyAdminReqDto reqDto) {
-		partyPenaltyAdminService.modifyAdminPenalty(penaltyId, reqDto);
-		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 }

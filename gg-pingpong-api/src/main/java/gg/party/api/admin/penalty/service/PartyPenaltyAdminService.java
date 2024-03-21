@@ -50,7 +50,6 @@ public class PartyPenaltyAdminService {
 
 	/**
 	 * 패널티 수정
-	 *
 	 * @param penaltyId 패널티 번호
 	 * @throws PartyPenaltyNotFoundException 유효하지 않은 패널티
 	 */
@@ -66,9 +65,9 @@ public class PartyPenaltyAdminService {
 	 */
 	@Transactional
 	public void addAdminPenalty(PartyPenaltyAdminReqDto reqDto) {
-		User userEntity = userRepository.findById(reqDto.getReportee().getId()).orElseThrow(UserNotFoundException::new);
-		LocalDateTime startTime = LocalDateTime.now();
+		User userEntity = userRepository.findByIntraId(reqDto.getUserIntraId())
+			.orElseThrow(UserNotFoundException::new);
 		partyPenaltyRepository.save(reqDto.toEntity(userEntity, reqDto.getPenaltyType(),
-			reqDto.getMessage(), startTime, reqDto.getPenaltyTime()));
+			reqDto.getMessage(), LocalDateTime.now(), reqDto.getPenaltyTime()));
 	}
 }

@@ -61,7 +61,7 @@ public class RoomAdminController {
 	}
 
 	/**
-	 * 방 전체 조회
+	 * 방 상세 조회
 	 * @return 방 상세정보 (들어와 있지 않은 사람의 intraId 포함)
 	 */
 	@GetMapping("/{room_id}")

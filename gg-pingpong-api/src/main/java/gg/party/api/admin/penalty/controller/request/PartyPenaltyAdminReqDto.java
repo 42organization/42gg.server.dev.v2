@@ -13,14 +13,7 @@ public class PartyPenaltyAdminReqDto {
 	String penaltyType;
 	String message;
 	int penaltyTime;
-	User reportee;
-
-	public PartyPenaltyAdminReqDto(String penaltyType, String message, int penaltyTime, User reportee) {
-		this.penaltyType = penaltyType;
-		this.message = message;
-		this.penaltyTime = penaltyTime;
-		this.reportee = reportee;
-	}
+	String userIntraId;
 
 	public PartyPenalty toEntity(User user, String penaltyType, String message, LocalDateTime startTime,
 		Integer penaltyTime) {

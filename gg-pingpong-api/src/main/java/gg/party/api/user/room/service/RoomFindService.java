@@ -19,13 +19,9 @@ import gg.party.api.user.room.controller.response.RoomDetailResDto;
 import gg.party.api.user.room.controller.response.RoomListResDto;
 import gg.party.api.user.room.controller.response.RoomResDto;
 import gg.party.api.user.room.controller.response.UserRoomResDto;
-import gg.pingpong.api.user.noti.service.PartyNotiService;
-import gg.repo.party.CategoryRepository;
 import gg.repo.party.CommentRepository;
-import gg.repo.party.PartyPenaltyRepository;
 import gg.repo.party.RoomRepository;
 import gg.repo.party.UserRoomRepository;
-import gg.repo.user.UserRepository;
 import gg.utils.exception.party.RoomNotFoundException;
 import gg.utils.exception.party.RoomReportedException;
 import lombok.RequiredArgsConstructor;
@@ -34,12 +30,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RoomFindService {
 	private final RoomRepository roomRepository;
-	private final UserRepository userRepository;
-	private final CategoryRepository categoryRepository;
 	private final UserRoomRepository userRoomRepository;
 	private final CommentRepository commentRepository;
-	private final PartyPenaltyRepository partyPenaltyRepository;
-	private final PartyNotiService partyNotiService;
 
 	/**
 	 * 시작하지 않은 방과 시작한 방을 모두 조회한다

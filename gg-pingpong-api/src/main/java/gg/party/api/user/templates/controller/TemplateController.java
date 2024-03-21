@@ -1,14 +1,12 @@
 package gg.party.api.user.templates.controller;
 
-import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import gg.party.api.user.templates.controller.response.TemplateResDto;
+import gg.party.api.user.templates.controller.response.TemplateListResDto;
 import gg.party.api.user.templates.service.TemplateService;
 import lombok.RequiredArgsConstructor;
 
@@ -23,7 +21,7 @@ public class TemplateController {
 	 * @return 탬플릿 전체 List
 	 */
 	@GetMapping
-	public ResponseEntity<List<TemplateResDto>> templateList() {
+	public ResponseEntity<TemplateListResDto> templateList() {
 		return ResponseEntity.status(HttpStatus.OK).body(templateService.findTemplateList());
 	}
 }
