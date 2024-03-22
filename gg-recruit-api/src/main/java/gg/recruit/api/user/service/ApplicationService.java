@@ -135,8 +135,9 @@ public class ApplicationService {
 
 		//delete all existing answers
 		List<Long> questionIds = param.getQuestionIds();
-		applicationAnswerRepository.deleteAllByQuestionIds(param.getUserId(), param.getApplicationId(),
-			param.getRecruitmentId(), questionIds);
+		List<ApplicationAnswer> res = applicationAnswerRepository.findAllByQuestionIds(param.getUserId(),
+			param.getApplicationId(), param.getRecruitmentId(), questionIds);
+		applicationAnswerRepository.deleteAll(res);
 
 		Map<Long, Question> questionMap = questionRepository.findAllById(questionIds)
 			.stream()

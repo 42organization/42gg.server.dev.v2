@@ -1,5 +1,6 @@
 package gg.data.recruit.recruitment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -41,7 +42,7 @@ public class Question extends BaseTimeEntity {
 	private String question;
 
 	@OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
-	private List<CheckList> checkLists;
+	private List<CheckList> checkLists = new ArrayList<>();
 
 	private int sortNum;
 
@@ -50,5 +51,9 @@ public class Question extends BaseTimeEntity {
 		this.inputType = inputType;
 		this.question = question;
 		this.sortNum = sortNum;
+	}
+
+	protected void addCheckList(CheckList checkList) {
+		this.checkLists.add(checkList);
 	}
 }

@@ -16,11 +16,18 @@ public interface ApplicationAnswerRepository extends JpaRepository<ApplicationAn
 	List<ApplicationAnswer> findAllAnswers(@Param("userId") Long userId,
 		@Param("recruitId") Long recruitId, @Param("applicationId") Long applicationId);
 
-	@Modifying
-	@Query("DELETE FROM ApplicationAnswer a WHERE a.application.user.id = :userId "
-		+ "AND a.application.recruit.id = :applicationId "
-		+ "AND a.application.id = :recruitmentId "
+	// @Modifying
+	// @Query("DELETE FROM ApplicationAnswer a WHERE a.application.user.id = :userId "
+	// 	+ "AND a.application.recruit.id = :recruitmentId "
+	// 	+ "AND a.application.id = :applicationId "
+	// 	+ "AND a.question.id IN :questionIds")
+	// void deleteAllByQuestionIds(@Param("userId") Long userId, @Param("applicationId") Long applicationId,
+	// 	@Param("recruitmentId") Long recruitmentId, @Param("questionIds") List<Long> questionIds);
+
+	@Query("SELECT a FROM ApplicationAnswer a WHERE a.application.user.id = :userId "
+		+ "AND a.application.recruit.id = :recruitmentId "
+		+ "AND a.application.id = :applicationId "
 		+ "AND a.question.id IN :questionIds")
-	void deleteAllByQuestionIds(@Param("userId") Long userId, @Param("applicationId") Long applicationId,
+	List<ApplicationAnswer> findAllByQuestionIds(@Param("userId") Long userId, @Param("applicationId") Long applicationId,
 		@Param("recruitmentId") Long recruitmentId, @Param("questionIds") List<Long> questionIds);
 }

@@ -29,4 +29,10 @@ public class CheckList extends BaseTimeEntity {
 
 	@Column(length = 100)
 	private String content;
+
+	public CheckList(Question question, String content) {
+		this.question = question;
+		this.content = content;
+		question.addCheckList(this);
+	}
 }

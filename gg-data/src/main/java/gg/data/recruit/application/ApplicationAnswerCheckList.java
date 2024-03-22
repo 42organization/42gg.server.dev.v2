@@ -24,6 +24,11 @@ public class ApplicationAnswerCheckList extends ApplicationAnswer {
 	private CheckList checkList;
 
 	@Override
+	public String getAnswer() {
+		return checkList.getContent();
+	}
+
+	@Override
 	public ApplicationAnswerEntityDto toForm() {
 		return new ApplicationAnswerEntityDto(this.getQuestionId(), this.getInputType(),
 			new CheckListEntityDto(checkList.getId(), checkList.getContent()));
