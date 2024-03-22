@@ -45,6 +45,7 @@ public abstract class ApplicationAnswer extends BaseTimeEntity {
 	}
 
 	public abstract String getAnswer();
+
 	public abstract ApplicationAnswerEntityDto toForm();
 
 	public ApplicationAnswer(Application application, Question question) {

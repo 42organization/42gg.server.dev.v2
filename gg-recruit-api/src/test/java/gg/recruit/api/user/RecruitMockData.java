@@ -62,7 +62,8 @@ public class RecruitMockData {
 		return questionRepository.save(question);
 	}
 
-	public Question createQuestion(Recruitments recruitments, String question, InputType inputType, String... checkList){
+	public Question createQuestion(Recruitments recruitments, String question,
+			InputType inputType, String... checkList) {
 		Question questionEntity = new Question(recruitments, inputType, question, 1);
 		questionRepository.save(questionEntity);
 		for (String check : checkList) {
