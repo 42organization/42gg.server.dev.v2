@@ -334,15 +334,20 @@ public class RoomControllerTest {
 				RacketType.DUAL, SnsType.SLACK, RoleType.USER, "image");
 			anotherTester = testDataUtils.createNewImageUser("anotherTester", "anotherTester",
 				RacketType.DUAL, SnsType.SLACK, RoleType.USER, "image");
+			otherTester = testDataUtils.createNewImageUser("otherTester", "otherTester",
+				RacketType.DUAL, SnsType.SLACK, RoleType.USER, "image");
 			userAccessToken = tokenProvider.createToken(userTester.getId());
 			anotherAccessToken = tokenProvider.createToken(anotherTester.getId());
+			otherAccessToken = tokenProvider.createToken(otherTester.getId());
 			Category testCategory = testDataUtils.createNewCategory("category");
 			openRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
 				3, 2, 180, RoomType.OPEN);
 			UserRoom openUserRoom = testDataUtils.createNewUserRoom(userTester, openRoom, "nickname", true);
+			UserRoom otherOpenUserRoom = testDataUtils.createNewUserRoom(otherTester, openRoom, "nickname", true);
 			startRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
 				3, 2, 180, RoomType.START);
 			UserRoom startUserRoom = testDataUtils.createNewUserRoom(userTester, startRoom, "nickname", true);
+			UserRoom otherStartUserRoom = testDataUtils.createNewUserRoom(otherTester, openRoom, "nickname", true);
 			finishRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
 				3, 2, 180, RoomType.FINISH);
 			UserRoom finishUserRoom = testDataUtils.createNewUserRoom(userTester, finishRoom, "nickname", true);
@@ -431,6 +436,26 @@ public class RoomControllerTest {
 			for (UserRoomResDto roomUser : rdrd.getRoomUsers()) {
 				assertThat(roomUser.getIntraId()).isNull();
 				assertThat(roomUser.getUserImage()).isNull();
+			}
+		}
+
+		@Test
+		@DisplayName("START 및 참여한 방장이 아닌 방 조회 성공 200")
+		public void otherStartRoomSuccess() throws Exception {
+			String startRoomId = startRoom.getId().toString();
+			String url = "/party/rooms/" + startRoomId;
+			//given
+			String contentAsString = mockMvc.perform(
+					get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + otherAccessToken))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+			//when
+			RoomDetailResDto rdrd = roomFindService.findRoomDetail(otherTester.getId(), startRoom.getId());
+			//then
+			assertThat(rdrd.getStatus().toString()).isEqualTo(RoomType.START.toString());
+			for (UserRoomResDto roomUser : rdrd.getRoomUsers()) {
+				assertThat(roomUser.getIntraId()).isNotNull();
+				assertThat(roomUser.getUserImage()).isNotNull();
 			}
 		}
 
