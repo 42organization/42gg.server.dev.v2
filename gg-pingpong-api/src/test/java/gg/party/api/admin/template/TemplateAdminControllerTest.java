@@ -81,7 +81,7 @@ public class TemplateAdminControllerTest {
 			//given
 			TemplateAdminCreateReqDto templateAdminCreateReqDto = new TemplateAdminCreateReqDto(
 				testCategory.getId(), "gameName", 4, 2,
-				180, 180, "genre", "difficulty", "summary");
+				180, 180, "genre", "hard", "summary");
 			String jsonRequest = objectMapper.writeValueAsString(templateAdminCreateReqDto);
 			//when
 			String contentAsString = mockMvc.perform(post(url)
@@ -101,7 +101,7 @@ public class TemplateAdminControllerTest {
 			//given
 			TemplateAdminCreateReqDto templateAdminCreateReqDto = new TemplateAdminCreateReqDto(
 				10L, "gameName", 4, 2,
-				180, 180, "genre", "difficulty", "summary");
+				180, 180, "genre", "hard", "summary");
 			String jsonRequest = objectMapper.writeValueAsString(templateAdminCreateReqDto);
 			//when && then
 			String contentAsString = mockMvc.perform(post(url)
@@ -122,7 +122,7 @@ public class TemplateAdminControllerTest {
 			userAccessToken = tokenProvider.createToken(userTester.getId());
 			testCategory = testDataUtils.createNewCategory("category");
 			testTemplate = testDataUtils.createTemplate(testCategory, "gameName", 4,
-				2, 180, 180, "genre", "difficulty", "summary");
+				2, 180, 180, "genre", "hard", "summary");
 		}
 
 		/**
@@ -138,7 +138,7 @@ public class TemplateAdminControllerTest {
 			Category newTestCategory = testDataUtils.createNewCategory("newCate");
 			TemplateAdminUpdateReqDto templateAdminUpdateReqDto = new TemplateAdminUpdateReqDto(
 				newTestCategory.getId(), "newGameName", 8, 4,
-				90, 90, "newGenre", "newDifficulty", "newSummary");
+				90, 90, "newGenre", "easy", "newSummary");
 			String jsonRequest = objectMapper.writeValueAsString(templateAdminUpdateReqDto);
 			//when
 			String contentAsString = mockMvc.perform(patch(url)
@@ -155,7 +155,7 @@ public class TemplateAdminControllerTest {
 			assertThat(testTemplate.getMaxGameTime()).isEqualTo(90);
 			assertThat(testTemplate.getMinGameTime()).isEqualTo(90);
 			assertThat(testTemplate.getGenre()).isEqualTo("newGenre");
-			assertThat(testTemplate.getDifficulty()).isEqualTo("newDifficulty");
+			assertThat(testTemplate.getDifficulty()).isEqualTo("easy");
 			assertThat(testTemplate.getSummary()).isEqualTo("newSummary");
 		}
 
@@ -167,7 +167,7 @@ public class TemplateAdminControllerTest {
 			//given
 			TemplateAdminUpdateReqDto templateAdminUpdateReqDto = new TemplateAdminUpdateReqDto(
 				10L, "newGameName", 8, 4,
-				90, 90, "newGenre", "newDifficulty", "newSummary");
+				90, 90, "newGenre", "easy", "newSummary");
 			String jsonRequest = objectMapper.writeValueAsString(templateAdminUpdateReqDto);
 			//when && then
 			String contentAsString = mockMvc.perform(patch(url)
@@ -186,7 +186,7 @@ public class TemplateAdminControllerTest {
 			Category newTestCategory = testDataUtils.createNewCategory("newCate");
 			TemplateAdminUpdateReqDto templateAdminUpdateReqDto = new TemplateAdminUpdateReqDto(
 				newTestCategory.getId(), "newGameName", 8, 4,
-				90, 90, "newGenre", "newDifficulty", "newSummary");
+				90, 90, "newGenre", "easy", "newSummary");
 			String jsonRequest = objectMapper.writeValueAsString(templateAdminUpdateReqDto);
 			//when && then
 			String contentAsString = mockMvc.perform(patch(url)
@@ -207,7 +207,7 @@ public class TemplateAdminControllerTest {
 			userAccessToken = tokenProvider.createToken(userTester.getId());
 			testCategory = testDataUtils.createNewCategory("category");
 			testTemplate = testDataUtils.createTemplate(testCategory, "gameName", 4,
-				2, 180, 180, "genre", "difficulty", "summary");
+				2, 180, 180, "genre", "hard", "summary");
 		}
 
 		/**
