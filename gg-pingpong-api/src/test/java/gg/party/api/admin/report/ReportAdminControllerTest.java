@@ -80,6 +80,7 @@ public class ReportAdminControllerTest {
 			User user3 = testDataUtils.createNewUser("user3", "user3",
 				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
 			userAccessToken = tokenProvider.createToken(userTester.getId());
+			testCategory = testDataUtils.createNewCategory("testCategory");
 			Room Room1 = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
 				3, 2, 180, RoomType.OPEN);
 			Room Room2 = testDataUtils.createNewRoom(userTester, userTester, testCategory, 2, 1,
@@ -103,7 +104,7 @@ public class ReportAdminControllerTest {
 		 * 댓글 신고 리스트 조회
 		 */
 		@Test
-		@DisplayName("첫 페이지 조회 성공 201")
+		@DisplayName("첫 페이지 조회 성공 200")
 		public void startPageSuccess() throws Exception {
 			//given
 			String currentPage = "1";
@@ -121,7 +122,7 @@ public class ReportAdminControllerTest {
 		}
 
 		@Test
-		@DisplayName("마지막 페이지 조회 성공 201")
+		@DisplayName("마지막 페이지 조회 성공 200")
 		public void middlePageSuccess() throws Exception {
 			//given
 			String currentPage = "2";
