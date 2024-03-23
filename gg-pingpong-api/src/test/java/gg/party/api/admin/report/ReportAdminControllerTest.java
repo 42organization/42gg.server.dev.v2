@@ -80,7 +80,7 @@ public class ReportAdminControllerTest {
 			User user3 = testDataUtils.createNewUser("user3", "user3",
 				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
 			userAccessToken = tokenProvider.createToken(userTester.getId());
-			testCategory = testDataUtils.createNewCategory("testCategory");
+			testCategory = testDataUtils.createNewCategory("test");
 			Room Room1 = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
 				3, 2, 180, RoomType.OPEN);
 			Room Room2 = testDataUtils.createNewRoom(userTester, userTester, testCategory, 2, 1,
