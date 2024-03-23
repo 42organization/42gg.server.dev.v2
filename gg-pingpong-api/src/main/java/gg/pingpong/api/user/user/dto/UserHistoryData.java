@@ -14,6 +14,6 @@ public class UserHistoryData {
 
 	public UserHistoryData(PChange pChange) {
 		this.ppp = pChange.getPppResult();
-		this.date = pChange.getCreatedAt();
+		this.date = pChange.getGame().getStartTime();
 	}
 }
