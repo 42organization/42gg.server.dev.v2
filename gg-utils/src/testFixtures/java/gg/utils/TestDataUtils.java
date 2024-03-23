@@ -21,8 +21,13 @@ import gg.data.manage.SlotManagement;
 import gg.data.noti.Noti;
 import gg.data.noti.type.NotiType;
 import gg.data.party.Category;
+import gg.data.party.Comment;
+import gg.data.party.CommentReport;
+import gg.data.party.GameTemplate;
 import gg.data.party.PartyPenalty;
 import gg.data.party.Room;
+import gg.data.party.RoomReport;
+import gg.data.party.UserReport;
 import gg.data.party.UserRoom;
 import gg.data.party.type.RoomType;
 import gg.data.rank.Rank;
@@ -53,8 +58,13 @@ import gg.repo.manage.AnnouncementRepository;
 import gg.repo.manage.SlotManagementRepository;
 import gg.repo.noti.NotiRepository;
 import gg.repo.party.CategoryRepository;
+import gg.repo.party.CommentReportRepository;
+import gg.repo.party.CommentRepository;
 import gg.repo.party.PartyPenaltyRepository;
+import gg.repo.party.RoomReportRepository;
 import gg.repo.party.RoomRepository;
+import gg.repo.party.TemplateRepository;
+import gg.repo.party.UserReportRepository;
 import gg.repo.party.UserRoomRepository;
 import gg.repo.rank.RankRepository;
 import gg.repo.rank.TierRepository;
@@ -95,6 +105,11 @@ public class TestDataUtils {
 	private final UserRoomRepository userRoomRepository;
 	private final CategoryRepository categoryRepository;
 	private final PartyPenaltyRepository partyPenaltyRepository;
+	private final TemplateRepository templateRepository;
+	private final CommentRepository commentRepository;
+	private final CommentReportRepository commentReportRepository;
+	private final RoomReportRepository roomReportRepository;
+	private final UserReportRepository userReportRepository;
 
 	public String getLoginAccessToken() {
 		User user = User.builder()
@@ -827,5 +842,45 @@ public class TestDataUtils {
 			.build();
 		userRepository.save(user);
 		return user;
+	}
+
+	public GameTemplate createTemplate(Category category, String gameName, Integer maxGamePeople, Integer minGamePeople,
+		Integer maxGameTime, Integer minGameTime, String genre, String difficulty, String summary) {
+		GameTemplate gameTemplate = GameTemplate.builder()
+			.category(category)
+			.gameName(gameName)
+			.maxGamePeople(maxGamePeople)
+			.minGamePeople(minGamePeople)
+			.maxGameTime(maxGameTime)
+			.minGameTime(minGameTime)
+			.genre(genre)
+			.difficulty(difficulty)
+			.summary(summary)
+			.build();
+		return templateRepository.save(gameTemplate);
+	}
+
+	public Comment createComment(User user, UserRoom userRoom, Room room, String content) {
+		Comment comment = new Comment(user, userRoom, room, content);
+		commentRepository.save(comment);
+		return comment;
+	}
+
+	public CommentReport createCommentReport(User user, Room room, Comment comment) {
+		CommentReport commentReport = new CommentReport(user, comment, room, "test");
+		commentReportRepository.save(commentReport);
+		return commentReport;
+	}
+
+	public RoomReport createRoomReport(User user, User targetUser, Room room) {
+		RoomReport roomReport = new RoomReport(user, targetUser, room, "test");
+		roomReportRepository.save(roomReport);
+		return roomReport;
+	}
+
+	public UserReport createUserReport(User user, User targetUser, Room room) {
+		UserReport userReport = new UserReport(user, targetUser, room, "test");
+		userReportRepository.save(userReport);
+		return userReport;
 	}
 }

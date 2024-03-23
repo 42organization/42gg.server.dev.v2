@@ -34,7 +34,6 @@ public class ReportAdminService {
 
 	/**
 	 * 댓글 신고 전체 리스트를 조회한다
-	 *
 	 * @return 전체 댓글 신고 리스트 (시간순 정렬)
 	 */
 	@Transactional(readOnly = true)
