@@ -10,8 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RoomResDto {
 	private Long roomId;
-	private Long hostId;
-	private Long creatorId;
 	private Long categoryId;
 	private String title;
 	private String content;
@@ -20,12 +18,11 @@ public class RoomResDto {
 	private Integer minPeople;
 	private LocalDateTime dueDate;
 	private LocalDateTime createDate;
+	private LocalDateTime startDate;
 	private String status;
 
 	public RoomResDto(Room room) {
 		this.roomId = room.getId();
-		this.hostId = room.getHost().getId();
-		this.creatorId = room.getCreator().getId();
 		this.categoryId = room.getCategory().getId();
 		this.title = room.getTitle();
 		this.content = room.getContent();
@@ -34,6 +31,7 @@ public class RoomResDto {
 		this.minPeople = room.getMinPeople();
 		this.dueDate = room.getDueDate();
 		this.createDate = room.getCreatedAt();
+		this.startDate = room.getStartDate();
 		this.status = room.getStatus().toString();
 	}
 }

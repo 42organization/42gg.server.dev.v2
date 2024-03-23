@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 public class RoomDetailResDto {
 	private Long roomId;
 	private String title;
+	private String content;
 	private Long categoryId;
 	private Integer currentPeople;
 	private Integer minPeople;
@@ -30,6 +31,7 @@ public class RoomDetailResDto {
 		List<CommentResDto> comments) {
 		this.roomId = room.getId();
 		this.title = room.getTitle();
+		this.content = room.getContent();
 		this.categoryId = room.getCategory().getId();
 		this.currentPeople = room.getCurrentPeople();
 		this.minPeople = room.getMinPeople();

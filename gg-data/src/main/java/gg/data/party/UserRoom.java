@@ -1,6 +1,7 @@
 package gg.data.party;
 
-import java.time.LocalDateTime;
+import static gg.utils.exception.BusinessChecker.*;
+import static gg.utils.exception.ErrorCode.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,7 +15,6 @@ import javax.persistence.ManyToOne;
 import gg.data.BaseTimeEntity;
 import gg.data.user.User;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -45,6 +45,18 @@ public class UserRoom extends BaseTimeEntity {
 		this.room = room;
 		this.nickname = randomNickname;
 		this.isExist = true;
+	}
+
+	public UserRoom(User user, Room room, String nickname, boolean isExist) {
+		this.user = user;
+		this.room = room;
+		this.nickname = nickname;
+		this.isExist = isExist;
+	}
+
+	public void updateIsExist(boolean isExist) {
+		mustNotNull(isExist, NULL_POINT);
+		this.isExist = isExist;
 	}
 
 	public boolean getIsExist() {

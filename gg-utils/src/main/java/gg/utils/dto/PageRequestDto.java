@@ -10,7 +10,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PageRequestDto {
-
 	@Min(value = 1, message = "page must be greater than 0")
 	@NotNull(message = "page 는 필수 값입니다.")
 	private Integer page;

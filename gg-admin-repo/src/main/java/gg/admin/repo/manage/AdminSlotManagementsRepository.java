@@ -20,4 +20,8 @@ public interface AdminSlotManagementsRepository extends JpaRepository<SlotManage
 
 	Optional<SlotManagement> findFirstByOrderByIdDesc();
 
+	@Query("select sm from SlotManagement sm where (sm.endTime is null"
+		+ " or sm.endTime > :now) and sm.startTime <=:now")
+	Optional<SlotManagement> findCurrent(@Param("now") LocalDateTime now);
+
 }

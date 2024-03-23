@@ -33,8 +33,10 @@ public interface GameAdminRepository extends JpaRepository<Game, Long> {
 		+ "order by t1.startTime desc;", nativeQuery = true)
 	List<GameTeamUser> findTeamsByGameIsIn(@Param("games") List<Long> games);
 
-	@Query(value = "SELECT g FROM Game g, Team t, TeamUser tu WHERE g.status = :status AND g.id = t.game.id"
-		+ " AND t.id = tu.team.id AND tu.user.id = :userId")
+	@Query(value = "SELECT g FROM Game g "
+		+ "INNER JOIN Team t ON g.id = t.game.id "
+		+ "INNER JOIN TeamUser tu ON tu.team.id = t.id "
+		+ "WHERE g.status = :status AND tu.user.id = :userId")
 	Optional<Game> findByStatusTypeAndUserId(@Param("status") StatusType status, @Param("userId") Long userId);
 
 	@Query(value = "SELECT g FROM Game g JOIN FETCH g.season WHERE g.id = :gameId")

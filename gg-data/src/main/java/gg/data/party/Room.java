@@ -63,6 +63,9 @@ public class Room extends BaseTimeEntity {
 	@Column(name = "due_date")
 	private LocalDateTime dueDate;
 
+	@Column(name = "start_date")
+	private LocalDateTime startDate;
+
 	@OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
 	private List<Comment> comments = new ArrayList<>();
 
@@ -82,6 +85,27 @@ public class Room extends BaseTimeEntity {
 		this.maxPeople = maxPeople;
 		this.minPeople = minPeople;
 		this.dueDate = dueDate;
+		this.startDate = null;
 		this.status = status;
+	}
+
+	public void updateCurrentPeople(int currentPeople) {
+		this.currentPeople = currentPeople;
+	}
+
+	public void updateCategory(Category category) {
+		this.category = category;
+	}
+
+	public void updateRoomStatus(RoomType status) {
+		this.status = status;
+	}
+
+	public void updateHost(User host) {
+		this.host = host;
+	}
+
+	public void startRoom(LocalDateTime startDate) {
+		this.startDate = startDate;
 	}
 }

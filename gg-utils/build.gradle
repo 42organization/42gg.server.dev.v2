@@ -47,7 +47,8 @@ integrationTestCoverageReport {
 
     getClassDirectories().setFrom(files(
             [project(':gg-data'), project(':gg-admin-repo'),
-             project(':gg-repo'), project(':gg-pingpong-api')].collect {
+             project(':gg-repo'), project(':gg-pingpong-api'),
+             project(':gg-auth'), project(':gg-utils')].collect {
                 it.fileTree(dir: "${it.buildDir}/classes/java/main", exclude: jacocoExcludes)
             }
     ))
@@ -63,7 +64,8 @@ unitTestCoverageReport {
 
     getClassDirectories().setFrom(files(
             [project(':gg-data'), project(':gg-admin-repo'),
-             project(':gg-repo'), project(':gg-pingpong-api')].collect {
+             project(':gg-repo'), project(':gg-pingpong-api'),
+             project(':gg-auth'), project(':gg-utils')].collect {
                 it.fileTree(dir: "${it.buildDir}/classes/java/main", exclude: jacocoExcludes)
             }
     ))
