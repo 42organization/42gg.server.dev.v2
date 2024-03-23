@@ -1,15 +1,21 @@
 package gg.recruit.api.user.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import gg.data.recruit.application.Application;
 import gg.data.recruit.application.ApplicationAnswer;
 import gg.data.recruit.application.ApplicationAnswerCheckList;
 import gg.data.recruit.application.ApplicationAnswerText;
 import gg.data.recruit.application.RecruitStatus;
+import gg.data.recruit.recruitment.CheckList;
+import gg.data.recruit.recruitment.Question;
 import gg.data.recruit.recruitment.Recruitments;
 import gg.data.recruit.recruitment.enums.InputType;
 import gg.data.user.User;
@@ -17,6 +23,8 @@ import gg.data.user.type.SnsType;
 import gg.recruit.api.user.service.param.DelApplicationParam;
 import gg.recruit.api.user.service.param.FindApplicationDetailParam;
 import gg.recruit.api.user.service.param.FindApplicationResultParam;
+import gg.recruit.api.user.service.param.FormParam;
+import gg.recruit.api.user.service.param.FormPatchParam;
 import gg.recruit.api.user.service.param.RecruitApplyFormParam;
 import gg.recruit.api.user.service.param.RecruitApplyParam;
 import gg.recruit.api.user.service.response.ApplicationListSvcDto;
@@ -117,6 +125,38 @@ public class ApplicationService {
 				application.getStatus(), recruitStatus.getInterviewDate());
 		}
 		return result;
+	}
+
+	@Transactional
+	public void updateApplication(FormPatchParam param) {
+		Application application = applicationRepository.findByUserIdAndRecruitId(param.getUserId(),
+			param.getRecruitmentId()).orElseThrow(() ->
+			new NotExistException("application not found"));
+
+		//delete all existing answers
+		List<Long> questionIds = param.getQuestionIds();
+		List<ApplicationAnswer> res = applicationAnswerRepository.findAllByQuestionIds(param.getUserId(),
+			param.getApplicationId(), param.getRecruitmentId(), questionIds);
+		applicationAnswerRepository.deleteAll(res);
+
+		Map<Long, Question> questionMap = questionRepository.findAllById(questionIds)
+			.stream()
+			.collect(Collectors.toMap(Question::getId, q -> q));
+
+		Map<Long, CheckList> checkListMap = checkListRepository.findAllByQuestionIds(questionIds)
+			.stream()
+			.collect(Collectors.toMap(CheckList::getId, q -> q));
+		applicationAnswerRepository.saveAll(
+			toApplicationAnswer(application, questionMap, checkListMap, param.getForms()));
+	}
+
+	private List<ApplicationAnswer> toApplicationAnswer(Application application, Map<Long, Question> questionMap,
+		Map<Long, CheckList> checkListMap, List<FormParam> forms) {
+		List<ApplicationAnswer> newAnswers = new ArrayList<>();
+		forms.stream().forEach(form -> {
+			newAnswers.addAll(form.toApplicationAnswer(application, questionMap, checkListMap));
+		});
+		return newAnswers;
 	}
 
 	public void deleteApplication(DelApplicationParam param) {

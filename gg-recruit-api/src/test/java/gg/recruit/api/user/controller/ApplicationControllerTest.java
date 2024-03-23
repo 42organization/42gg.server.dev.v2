@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -16,13 +18,19 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.data.recruit.application.Application;
+import gg.data.recruit.application.ApplicationAnswer;
 import gg.data.recruit.application.enums.ApplicationStatus;
 import gg.data.recruit.recruitment.Question;
 import gg.data.recruit.recruitment.Recruitments;
+import gg.data.recruit.recruitment.enums.InputType;
 import gg.data.user.User;
 import gg.recruit.api.user.RecruitMockData;
+import gg.recruit.api.user.controller.request.CheckListFormRequest;
+import gg.recruit.api.user.controller.request.FormPatchRequestDto;
+import gg.recruit.api.user.controller.request.FormRequest;
 import gg.recruit.api.user.controller.request.RecruitApplyFormListReqDto;
 import gg.recruit.api.user.controller.request.RecruitApplyFormReqDto;
+import gg.recruit.api.user.controller.request.TextFormRequest;
 import gg.recruit.api.user.controller.response.ApplicationResultResDto;
 import gg.recruit.api.user.controller.response.MyApplicationsResDto;
 import gg.utils.TestDataUtils;
@@ -172,5 +180,52 @@ class ApplicationControllerTest {
 		mockMvc.perform(delete(url)
 				.header("Authorization", "Bearer " + accessToken))
 			.andExpect(status().isNotFound());
+	}
+
+	@Test
+	@DisplayName("PATCH /recruitments/{recruitmentId}/applications/{applicationId} -> 204 NO_CONTENT TEST")
+	void patchApplicationTest() throws Exception {
+		//given
+		User user = testDataUtils.createNewUser();
+		String accessToken = testDataUtils.getLoginAccessTokenFromUser(user);
+		Recruitments recruitments = recruitMockData.createRecruitments();
+		Question question1 = recruitMockData.createQuestion(recruitments, "질문 1", InputType.TEXT);
+		Question question2 = recruitMockData.createQuestion(recruitments, "질문 2", InputType.SINGLE_CHECK,
+			"선택지 1", "선택지 2");
+
+		Application application = recruitMockData.createApplication(user, recruitments);
+		recruitMockData.makeAnswer(application, question1, "답변 1");
+		recruitMockData.makeAnswer(application, question2, question2.getCheckLists().get(0).getId());
+
+		//when
+		List<FormRequest> forms = new ArrayList<>();
+		String newAnswerText = "새로운 답변";
+		FormRequest newTextForm = new TextFormRequest(question1.getId(), InputType.TEXT, newAnswerText);
+		forms.add(newTextForm);
+		FormRequest newCheckListForm = new CheckListFormRequest(question2.getId(), InputType.SINGLE_CHECK,
+			Collections.singletonList(question2.getCheckLists().get(1).getId()));
+		forms.add(newCheckListForm);
+		FormPatchRequestDto requestDto = new FormPatchRequestDto(forms);
+		String content = objectMapper.writeValueAsString(requestDto);
+
+		String url = "/recruitments/" + recruitments.getId()
+			+ "/applications/" + application.getId();
+		mockMvc.perform(patch(url)
+				.header("Authorization", "Bearer " + accessToken)
+				.contentType("application/json")
+				.content(content))
+			.andExpect(status().isNoContent());
+
+		//then
+		List<ApplicationAnswer> allAnswers = recruitMockData.getAllAnswers(user.getId(),
+			recruitments.getId(), application.getId());
+		assertEquals(2, allAnswers.size());
+		allAnswers.stream().forEach(answer -> {
+			if (answer.getQuestionId().equals(question1.getId())) {
+				assertEquals(newAnswerText, answer.getAnswer());
+			} else if (answer.getQuestionId().equals(question2.getId())) {
+				assertEquals(question2.getCheckLists().get(1).getContent(), answer.getAnswer());
+			}
+		});
 	}
 }

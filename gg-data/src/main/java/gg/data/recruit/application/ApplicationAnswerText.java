@@ -20,6 +20,11 @@ public class ApplicationAnswerText extends ApplicationAnswer {
 	private String answer;
 
 	@Override
+	public String getAnswer() {
+		return answer;
+	}
+
+	@Override
 	public ApplicationAnswerEntityDto toForm() {
 		return new ApplicationAnswerEntityDto(this.getQuestionId(), this.getInputType(), answer);
 	}
