@@ -20,7 +20,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gg.auth.utils.AuthTokenProvider;
 import gg.data.party.Category;
 import gg.data.party.GameTemplate;
-import gg.data.party.Room;
 import gg.data.user.User;
 import gg.data.user.type.RacketType;
 import gg.data.user.type.RoleType;
@@ -28,12 +27,8 @@ import gg.data.user.type.SnsType;
 import gg.party.api.admin.templates.controller.request.TemplateAdminCreateReqDto;
 import gg.party.api.admin.templates.controller.request.TemplateAdminUpdateReqDto;
 import gg.party.api.admin.templates.service.TemplateAdminService;
-import gg.party.api.user.room.service.RoomFindService;
 import gg.repo.party.CategoryRepository;
-import gg.repo.party.PartyPenaltyRepository;
-import gg.repo.party.RoomRepository;
 import gg.repo.party.TemplateRepository;
-import gg.repo.party.UserRoomRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import lombok.RequiredArgsConstructor;
@@ -54,34 +49,15 @@ public class TemplateAdminControllerTest {
 	@Autowired
 	AuthTokenProvider tokenProvider;
 	@Autowired
-	RoomRepository roomRepository;
-	@Autowired
-	UserRoomRepository userRoomRepository;
-	@Autowired
 	CategoryRepository categoryRepository;
-	@Autowired
-	PartyPenaltyRepository partyPenaltyRepository;
-	@Autowired
-	RoomFindService roomFindService;
 	@Autowired
 	TemplateAdminService templateAdminService;
 	@Autowired
 	TemplateRepository templateRepository;
 	User userTester;
-	User anotherTester;
-	User otherTester;
-	User reportedTester;
 	String userAccessToken;
-	String anotherAccessToken;
-	String otherAccessToken;
-	String reportedAccessToken;
 	Category testCategory;
 	GameTemplate testTemplate;
-	Room openRoom;
-	Room startRoom;
-	Room finishRoom;
-	Room hiddenRoom;
-	Room failRoom;
 
 	@Nested
 	@DisplayName("템플릿 추가 테스트")
@@ -154,7 +130,7 @@ public class TemplateAdminControllerTest {
 		 * 어드민만 할 수 있음.
 		 */
 		@Test
-		@DisplayName("추가 성공 201")
+		@DisplayName("수정 성공 204")
 		public void success() throws Exception {
 			String templateId = testTemplate.getId().toString();
 			String url = "/party/admin/templates/" + templateId;
@@ -184,7 +160,7 @@ public class TemplateAdminControllerTest {
 		}
 
 		@Test
-		@DisplayName("카테고리 없음으로 인한 추가 실패 404")
+		@DisplayName("카테고리 없음으로 인한 수정 실패 404")
 		public void noCategoryFail() throws Exception {
 			String templateId = testTemplate.getId().toString();
 			String url = "/party/admin/templates/" + templateId;
@@ -202,7 +178,7 @@ public class TemplateAdminControllerTest {
 		}
 
 		@Test
-		@DisplayName("템플릿 없음으로 인한 추가 실패 404")
+		@DisplayName("템플릿 없음으로 인한 수정 실패 404")
 		public void noTemplateFail() throws Exception {
 			String templateId = "10";
 			String url = "/party/admin/templates/" + templateId;
@@ -218,6 +194,52 @@ public class TemplateAdminControllerTest {
 					.content(jsonRequest)
 					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
 				.andExpect(status().isNotFound()).toString();
+		}
+	}
+
+	@Nested
+	@DisplayName("템플릿 삭제 테스트")
+	class RemoveTemplate {
+		@BeforeEach
+		void beforeEach() {
+			userTester = testDataUtils.createNewUser("adminTester", "adminTester",
+				RacketType.DUAL, SnsType.SLACK, RoleType.ADMIN);
+			userAccessToken = tokenProvider.createToken(userTester.getId());
+			testCategory = testDataUtils.createNewCategory("category");
+			testTemplate = testDataUtils.createTemplate(testCategory, "gameName", 4,
+				2, 180, 180, "genre", "difficulty", "summary");
+		}
+
+		/**
+		 * 템플릿 삭제
+		 * 어드민만 할 수 있음.
+		 */
+		@Test
+		@DisplayName("삭제 성공 204")
+		public void success() throws Exception {
+			String templateId = testTemplate.getId().toString();
+			String url = "/party/admin/templates/" + templateId;
+			//given && when
+			mockMvc.perform(delete(url)
+					.contentType(MediaType.APPLICATION_JSON)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
+				.andExpect(status().isNoContent());
+			//then
+			assertThat(templateRepository.findAll()).isEmpty();
+		}
+
+		@Test
+		@DisplayName("템플릿 없음으로 인한 삭제 실패 204")
+		public void fail() throws Exception {
+			String templateId = "10";
+			String url = "/party/admin/templates/" + templateId;
+			//given && when
+			mockMvc.perform(delete(url)
+					.contentType(MediaType.APPLICATION_JSON)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
+				.andExpect(status().isNoContent());
+			//then
+			assertThat(templateRepository.findAll()).isEmpty();
 		}
 	}
 }
