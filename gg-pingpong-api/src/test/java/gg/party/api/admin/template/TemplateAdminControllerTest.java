@@ -19,12 +19,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.auth.utils.AuthTokenProvider;
 import gg.data.party.Category;
+import gg.data.party.GameTemplate;
 import gg.data.party.Room;
 import gg.data.user.User;
 import gg.data.user.type.RacketType;
 import gg.data.user.type.RoleType;
 import gg.data.user.type.SnsType;
 import gg.party.api.admin.templates.controller.request.TemplateAdminCreateReqDto;
+import gg.party.api.admin.templates.controller.request.TemplateAdminUpdateReqDto;
 import gg.party.api.admin.templates.service.TemplateAdminService;
 import gg.party.api.user.room.service.RoomFindService;
 import gg.repo.party.CategoryRepository;
@@ -74,6 +76,7 @@ public class TemplateAdminControllerTest {
 	String otherAccessToken;
 	String reportedAccessToken;
 	Category testCategory;
+	GameTemplate testTemplate;
 	Room openRoom;
 	Room startRoom;
 	Room finishRoom;
@@ -88,6 +91,7 @@ public class TemplateAdminControllerTest {
 			userTester = testDataUtils.createNewUser("adminTester", "adminTester",
 				RacketType.DUAL, SnsType.SLACK, RoleType.ADMIN);
 			userAccessToken = tokenProvider.createToken(userTester.getId());
+			testCategory = testDataUtils.createNewCategory("category");
 		}
 
 		/**
@@ -99,7 +103,6 @@ public class TemplateAdminControllerTest {
 		public void success() throws Exception {
 			String url = "/party/admin/templates";
 			//given
-			Category testCategory = testDataUtils.createNewCategory("category");
 			TemplateAdminCreateReqDto templateAdminCreateReqDto = new TemplateAdminCreateReqDto(
 				testCategory.getId(), "gameName", 4, 2,
 				180, 180, "genre", "difficulty", "summary");
@@ -124,12 +127,99 @@ public class TemplateAdminControllerTest {
 				10L, "gameName", 4, 2,
 				180, 180, "genre", "difficulty", "summary");
 			String jsonRequest = objectMapper.writeValueAsString(templateAdminCreateReqDto);
-			//when
+			//when && then
 			String contentAsString = mockMvc.perform(post(url)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(jsonRequest)
 					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
 				.andExpect(status().isNotFound()).toString();
+		}
+	}
+
+	@Nested
+	@DisplayName("템플릿 수정 테스트")
+	class UpdateTemplate {
+		@BeforeEach
+		void beforeEach() {
+			userTester = testDataUtils.createNewUser("adminTester", "adminTester",
+				RacketType.DUAL, SnsType.SLACK, RoleType.ADMIN);
+			userAccessToken = tokenProvider.createToken(userTester.getId());
+			testTemplate = testDataUtils.createTemplate(testCategory, "gameName", 4,
+				2, 180, 180, "genre", "difficulty", "summary");
+			testCategory = testDataUtils.createNewCategory("category");
+		}
+
+		/**
+		 * 템플릿 수정
+		 * 어드민만 할 수 있음.
+		 */
+		@Test
+		@DisplayName("추가 성공 201")
+		public void success() throws Exception {
+			String templateId = testTemplate.getId().toString();
+			String url = "/party/admin/templates/" + templateId;
+			//given
+			Category newTestCategory = testDataUtils.createNewCategory("newCate");
+			TemplateAdminUpdateReqDto templateAdminUpdateReqDto = new TemplateAdminUpdateReqDto(
+				newTestCategory.getId(), "newGameName", 8, 4,
+				90, 90, "newGenre", "newDifficulty", "newSummary");
+			String jsonRequest = objectMapper.writeValueAsString(templateAdminUpdateReqDto);
+			//when
+			String contentAsString = mockMvc.perform(patch(url)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(jsonRequest)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
+				.andExpect(status().isNoContent())
+				.andReturn().getResponse().getContentAsString();
+			//then
+			assertThat(testTemplate.getGameName()).isEqualTo("newGameName");
+			assertThat(testTemplate.getCategory()).isEqualTo(newTestCategory);
+			assertThat(testTemplate.getMaxGamePeople()).isEqualTo(8);
+			assertThat(testTemplate.getMinGamePeople()).isEqualTo(4);
+			assertThat(testTemplate.getMaxGameTime()).isEqualTo(90);
+			assertThat(testTemplate.getMinGameTime()).isEqualTo(90);
+			assertThat(testTemplate.getGenre()).isEqualTo("newGenre");
+			assertThat(testTemplate.getDifficulty()).isEqualTo("newDifficulty");
+			assertThat(testTemplate.getSummary()).isEqualTo("newSummary");
+		}
+
+		@Test
+		@DisplayName("카테고리 없음으로 인한 추가 실패 404")
+		public void noCategoryFail() throws Exception {
+			String templateId = testTemplate.getId().toString();
+			String url = "/party/admin/templates/" + templateId;
+			//given
+			TemplateAdminUpdateReqDto templateAdminUpdateReqDto = new TemplateAdminUpdateReqDto(
+				10L, "newGameName", 8, 4,
+				90, 90, "newGenre", "newDifficulty", "newSummary");
+			String jsonRequest = objectMapper.writeValueAsString(templateAdminUpdateReqDto);
+			//when
+			String contentAsString = mockMvc.perform(patch(url)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(jsonRequest)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
+				.andExpect(status().isNoContent())
+				.andReturn().getResponse().getContentAsString();
+		}
+
+		@Test
+		@DisplayName("템플릿 없음으로 인한 추가 실패 404")
+		public void noTemplateFail() throws Exception {
+			String templateId = "10";
+			String url = "/party/admin/templates/" + templateId;
+			//given
+			Category newTestCategory = testDataUtils.createNewCategory("newCate");
+			TemplateAdminUpdateReqDto templateAdminUpdateReqDto = new TemplateAdminUpdateReqDto(
+				newTestCategory.getId(), "newGameName", 8, 4,
+				90, 90, "newGenre", "newDifficulty", "newSummary");
+			String jsonRequest = objectMapper.writeValueAsString(templateAdminUpdateReqDto);
+			//when
+			String contentAsString = mockMvc.perform(patch(url)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(jsonRequest)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
+				.andExpect(status().isNoContent())
+				.andReturn().getResponse().getContentAsString();
 		}
 	}
 }

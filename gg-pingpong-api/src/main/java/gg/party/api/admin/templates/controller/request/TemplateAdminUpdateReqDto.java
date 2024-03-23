@@ -31,4 +31,17 @@ public class TemplateAdminUpdateReqDto {
 
 	@NotNull(message = "Summary must not be null")
 	private String summary;
+
+	public TemplateAdminUpdateReqDto(long categoryId, String gameName, int maxGamePeople, int minGamePeople,
+		int maxGameTime, int minGameTime, String genre, String difficulty, String summary) {
+		this.categoryId = categoryId;
+		this.gameName = gameName;
+		this.maxGamePeople = maxGamePeople;
+		this.minGamePeople = minGamePeople;
+		this.maxGameTime = maxGameTime;
+		this.minGameTime = minGameTime;
+		this.genre = genre;
+		this.difficulty = difficulty;
+		this.summary = summary;
+	}
 }
