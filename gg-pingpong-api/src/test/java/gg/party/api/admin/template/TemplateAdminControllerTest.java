@@ -229,7 +229,7 @@ public class TemplateAdminControllerTest {
 		}
 
 		@Test
-		@DisplayName("템플릿 없음으로 인한 삭제 실패 204")
+		@DisplayName("템플릿 없음으로 인한 삭제 실패 404")
 		public void fail() throws Exception {
 			String templateId = "10";
 			String url = "/party/admin/templates/" + templateId;
@@ -237,9 +237,7 @@ public class TemplateAdminControllerTest {
 			mockMvc.perform(delete(url)
 					.contentType(MediaType.APPLICATION_JSON)
 					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
-				.andExpect(status().isNoContent());
-			//then
-			assertThat(templateRepository.findAll()).isEmpty();
+				.andExpect(status().isNotFound());
 		}
 	}
 }
