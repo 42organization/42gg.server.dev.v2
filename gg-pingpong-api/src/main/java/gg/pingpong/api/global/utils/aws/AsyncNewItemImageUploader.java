@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import gg.data.store.Item;
+import gg.data.pingpong.store.Item;
 import gg.pingpong.api.global.utils.ItemImageHandler;
 
 @Component

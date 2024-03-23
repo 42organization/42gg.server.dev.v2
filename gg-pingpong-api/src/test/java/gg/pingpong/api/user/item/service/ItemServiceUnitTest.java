@@ -21,10 +21,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import gg.auth.UserDto;
-import gg.data.store.Item;
-import gg.data.store.Receipt;
-import gg.data.store.type.ItemStatus;
-import gg.data.store.type.ItemType;
+import gg.data.pingpong.store.Item;
+import gg.data.pingpong.store.Receipt;
+import gg.data.pingpong.store.type.ItemStatus;
+import gg.data.pingpong.store.type.ItemType;
 import gg.data.user.User;
 import gg.data.user.type.RacketType;
 import gg.data.user.type.RoleType;

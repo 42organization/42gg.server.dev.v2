@@ -13,7 +13,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 
-import gg.data.store.Item;
+import gg.data.pingpong.store.Item;
 
 @Component
 public class ItemImageHandler {

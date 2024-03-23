@@ -13,9 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import gg.data.match.RedisMatchUser;
-import gg.data.match.type.MatchKey;
-import gg.data.match.type.Option;
+import gg.data.pingpong.match.RedisMatchUser;
+import gg.data.pingpong.match.type.MatchKey;
+import gg.data.pingpong.match.type.Option;
 import gg.data.user.User;
 import gg.pingpong.api.admin.match.service.dto.MatchUser;
 import gg.pingpong.api.user.match.utils.MatchIntegrationTestUtils;

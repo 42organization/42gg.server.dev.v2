@@ -14,7 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import gg.data.store.CoinHistory;
+import gg.data.pingpong.store.CoinHistory;
 import gg.data.user.User;
 import gg.pingpong.api.admin.store.controller.request.CoinUpdateRequestDto;
 import gg.pingpong.api.admin.store.service.CoinAdminService;

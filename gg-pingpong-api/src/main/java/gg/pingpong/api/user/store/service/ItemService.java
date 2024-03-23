@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.auth.UserDto;
-import gg.data.store.Item;
-import gg.data.store.Receipt;
-import gg.data.store.type.ItemStatus;
-import gg.data.store.type.ItemType;
+import gg.data.pingpong.store.Item;
+import gg.data.pingpong.store.Receipt;
+import gg.data.pingpong.store.type.ItemStatus;
+import gg.data.pingpong.store.type.ItemType;
 import gg.data.user.User;
 import gg.data.user.type.RoleType;
 import gg.pingpong.api.user.noti.service.NotiService;

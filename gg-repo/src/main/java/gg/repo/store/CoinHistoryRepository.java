@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import gg.data.store.CoinHistory;
+import gg.data.pingpong.store.CoinHistory;
 import gg.data.user.User;
 
 public interface CoinHistoryRepository extends JpaRepository<CoinHistory, Long> {

@@ -1,7 +1,7 @@
 package gg.pingpong.api.admin.match.service.dto;
 
-import gg.data.match.RedisMatchUser;
-import gg.data.match.type.Option;
+import gg.data.pingpong.match.RedisMatchUser;
+import gg.data.pingpong.match.type.Option;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

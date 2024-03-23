@@ -25,15 +25,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import gg.auth.UserDto;
-import gg.data.game.Game;
-import gg.data.game.type.StatusType;
-import gg.data.tournament.Tournament;
-import gg.data.tournament.TournamentGame;
-import gg.data.tournament.TournamentUser;
-import gg.data.tournament.type.TournamentRound;
-import gg.data.tournament.type.TournamentStatus;
-import gg.data.tournament.type.TournamentType;
-import gg.data.tournament.type.TournamentUserStatus;
+import gg.data.pingpong.game.Game;
+import gg.data.pingpong.game.type.StatusType;
+import gg.data.pingpong.tournament.Tournament;
+import gg.data.pingpong.tournament.TournamentGame;
+import gg.data.pingpong.tournament.TournamentUser;
+import gg.data.pingpong.tournament.type.TournamentRound;
+import gg.data.pingpong.tournament.type.TournamentStatus;
+import gg.data.pingpong.tournament.type.TournamentType;
+import gg.data.pingpong.tournament.type.TournamentUserStatus;
 import gg.data.user.User;
 import gg.data.user.type.RacketType;
 import gg.data.user.type.RoleType;
@@ -75,6 +75,36 @@ class TournamentServiceUnitTest {
 	GameRepository gameRepository;
 	@InjectMocks
 	TournamentService tournamentService;
+
+	private Tournament createTournament(Long id, TournamentStatus status, LocalDateTime startTime,
+		LocalDateTime endTime) {
+		Tournament tournament = Tournament.builder()
+			.title(id + "st tournament")
+			.contents("")
+			.startTime(startTime)
+			.endTime(endTime)
+			.type(TournamentType.ROOKIE)
+			.status(status)
+			.build();
+		ReflectionUtilsForUnitTest.setFieldWithReflection(tournament, "id", id);
+		return tournament;
+	}
+
+	/**
+	 * 유저 생성 매서드 - intraId로만 초기화
+	 * @param intraId
+	 * @return
+	 */
+	private User createUser(String intraId) {
+		return User.builder()
+			.eMail("email")
+			.intraId(intraId)
+			.racketType(RacketType.PENHOLDER)
+			.snsNotiOpt(SnsType.NONE)
+			.roleType(RoleType.USER)
+			.totalExp(1000)
+			.build();
+	}
 
 	@Nested
 	@DisplayName("getAllTournamentList")
@@ -584,35 +614,5 @@ class TournamentServiceUnitTest {
 			verify(tournamentGameRepository, times(1)).findAllByTournamentId(any(Long.class));
 			verify(gameRepository, times(7)).findTeamsByGameId(any(Long.class));
 		}
-	}
-
-	private Tournament createTournament(Long id, TournamentStatus status, LocalDateTime startTime,
-		LocalDateTime endTime) {
-		Tournament tournament = Tournament.builder()
-			.title(id + "st tournament")
-			.contents("")
-			.startTime(startTime)
-			.endTime(endTime)
-			.type(TournamentType.ROOKIE)
-			.status(status)
-			.build();
-		ReflectionUtilsForUnitTest.setFieldWithReflection(tournament, "id", id);
-		return tournament;
-	}
-
-	/**
-	 * 유저 생성 매서드 - intraId로만 초기화
-	 * @param intraId
-	 * @return
-	 */
-	private User createUser(String intraId) {
-		return User.builder()
-			.eMail("email")
-			.intraId(intraId)
-			.racketType(RacketType.PENHOLDER)
-			.snsNotiOpt(SnsType.NONE)
-			.roleType(RoleType.USER)
-			.totalExp(1000)
-			.build();
 	}
 }

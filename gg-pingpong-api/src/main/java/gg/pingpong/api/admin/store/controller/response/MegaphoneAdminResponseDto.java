@@ -1,6 +1,6 @@
 package gg.pingpong.api.admin.store.controller.response;
 
-import gg.data.store.Megaphone;
+import gg.data.pingpong.store.Megaphone;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

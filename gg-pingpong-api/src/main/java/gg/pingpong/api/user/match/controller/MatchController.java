@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
-import gg.data.match.type.Option;
+import gg.data.pingpong.match.type.Option;
 import gg.pingpong.api.user.match.controller.request.MatchRequestDto;
 import gg.pingpong.api.user.match.controller.response.MatchStatusResponseListDto;
 import gg.pingpong.api.user.match.controller.response.SlotStatusResponseListDto;
