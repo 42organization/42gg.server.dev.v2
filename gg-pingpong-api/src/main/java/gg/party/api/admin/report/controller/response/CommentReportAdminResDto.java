@@ -6,9 +6,6 @@ import gg.data.party.CommentReport;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-/**
- * 댓글 신고 dto
- */
 @Getter
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class CommentReportAdminResDto {

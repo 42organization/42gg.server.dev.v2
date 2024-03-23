@@ -30,6 +30,8 @@ import gg.data.user.type.RacketType;
 import gg.data.user.type.RoleType;
 import gg.data.user.type.SnsType;
 import gg.party.api.admin.report.controller.response.CommentReportListResDto;
+import gg.party.api.admin.report.controller.response.RoomReportListResDto;
+import gg.party.api.admin.report.controller.response.UserReportListResDto;
 import gg.party.api.admin.report.service.ReportAdminService;
 import gg.party.api.admin.templates.service.TemplateAdminService;
 import gg.repo.party.CategoryRepository;
@@ -67,7 +69,7 @@ public class ReportAdminControllerTest {
 	GameTemplate testTemplate;
 
 	@Nested
-	@DisplayName("템플릿 추가 테스트")
+	@DisplayName("댓글 신고 리스트 조회 테스트")
 	class GetCommentReports {
 		@BeforeEach
 		void beforeEach() {
@@ -81,28 +83,25 @@ public class ReportAdminControllerTest {
 				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
 			userAccessToken = tokenProvider.createToken(userTester.getId());
 			testCategory = testDataUtils.createNewCategory("test");
-			Room Room1 = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
+			Room room1 = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
 				3, 2, 180, RoomType.OPEN);
-			Room Room2 = testDataUtils.createNewRoom(userTester, userTester, testCategory, 2, 1,
+			Room room2 = testDataUtils.createNewRoom(userTester, userTester, testCategory, 2, 1,
 				3, 2, 180, RoomType.OPEN);
-			Room Room3 = testDataUtils.createNewRoom(userTester, userTester, testCategory, 3, 1,
+			Room room3 = testDataUtils.createNewRoom(userTester, userTester, testCategory, 3, 1,
 				3, 2, 180, RoomType.OPEN);
-			UserRoom userRoom1 = testDataUtils.createNewUserRoom(user1, Room1, "user1", TRUE);
-			UserRoom userRoom2 = testDataUtils.createNewUserRoom(user2, Room2, "user2", TRUE);
-			UserRoom userRoom3 = testDataUtils.createNewUserRoom(user2, Room3, "user3", TRUE);
-			Comment comment1 = testDataUtils.createComment(user1, userRoom1, Room1, "user1 comment");
-			Comment comment2 = testDataUtils.createComment(user2, userRoom2, Room2, "user2 comment");
-			Comment comment3 = testDataUtils.createComment(user3, userRoom3, Room3, "user3 comment");
+			UserRoom userRoom1 = testDataUtils.createNewUserRoom(user1, room1, "user1", TRUE);
+			UserRoom userRoom2 = testDataUtils.createNewUserRoom(user2, room2, "user2", TRUE);
+			UserRoom userRoom3 = testDataUtils.createNewUserRoom(user2, room3, "user3", TRUE);
+			Comment comment1 = testDataUtils.createComment(user1, userRoom1, room1, "user1 comment");
+			Comment comment2 = testDataUtils.createComment(user2, userRoom2, room2, "user2 comment");
+			Comment comment3 = testDataUtils.createComment(user3, userRoom3, room3, "user3 comment");
 			for (int i = 0; i < 5; i++) {
-				testDataUtils.createCommentReport(user1, Room1, comment1);
-				testDataUtils.createCommentReport(user2, Room2, comment2);
-				testDataUtils.createCommentReport(user3, Room3, comment3);
+				testDataUtils.createCommentReport(user1, room1, comment1);
+				testDataUtils.createCommentReport(user2, room2, comment2);
+				testDataUtils.createCommentReport(user3, room3, comment3);
 			}
 		}
 
-		/**
-		 * 댓글 신고 리스트 조회
-		 */
 		@Test
 		@DisplayName("첫 페이지 조회 성공 200")
 		public void startPageSuccess() throws Exception {
@@ -137,6 +136,136 @@ public class ReportAdminControllerTest {
 			//then
 			CommentReportListResDto crlrd = objectMapper.readValue(contentAsString, CommentReportListResDto.class);
 			assertThat(crlrd.getCommentReportList().size()).isEqualTo(5);
+		}
+	}
+
+	@Nested
+	@DisplayName("방 신고 리스트 조회 테스트")
+	class GetRoomReports {
+		@BeforeEach
+		void beforeEach() {
+			userTester = testDataUtils.createNewUser("adminTester", "adminTester",
+				RacketType.DUAL, SnsType.SLACK, RoleType.ADMIN);
+			User user1 = testDataUtils.createNewUser("user1", "user1",
+				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
+			User user2 = testDataUtils.createNewUser("user2", "user2",
+				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
+			User user3 = testDataUtils.createNewUser("user3", "user3",
+				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
+			userAccessToken = tokenProvider.createToken(userTester.getId());
+			testCategory = testDataUtils.createNewCategory("test");
+			Room room1 = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
+				3, 2, 180, RoomType.OPEN);
+			Room room2 = testDataUtils.createNewRoom(userTester, userTester, testCategory, 2, 1,
+				3, 2, 180, RoomType.OPEN);
+			Room room3 = testDataUtils.createNewRoom(userTester, userTester, testCategory, 3, 1,
+				3, 2, 180, RoomType.OPEN);
+			for (int i = 0; i < 5; i++) {
+				testDataUtils.createRoomReport(user1, user2, room1);
+				testDataUtils.createRoomReport(user2, user3, room2);
+				testDataUtils.createRoomReport(user3, user1, room3);
+			}
+		}
+
+		@Test
+		@DisplayName("첫 페이지 조회 성공 200")
+		public void startPageSuccess() throws Exception {
+			//given
+			String currentPage = "1";
+			String pageSize = "10";
+			String url = "/party/admin/reports/rooms?page=" + currentPage + "&size=" + pageSize;
+			//when
+			String contentAsString = mockMvc.perform(get(url)
+					.contentType(MediaType.APPLICATION_JSON)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+			//then
+			RoomReportListResDto rrlrd = objectMapper.readValue(contentAsString, RoomReportListResDto.class);
+			assertThat(rrlrd.getRoomReportList().size()).isEqualTo(10);
+		}
+
+		@Test
+		@DisplayName("마지막 페이지 조회 성공 200")
+		public void middlePageSuccess() throws Exception {
+			//given
+			String currentPage = "2";
+			String pageSize = "10";
+			String url = "/party/admin/reports/rooms?page=" + currentPage + "&size=" + pageSize;
+			//when
+			String contentAsString = mockMvc.perform(get(url)
+					.contentType(MediaType.APPLICATION_JSON)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+			//then
+			RoomReportListResDto rrlrd = objectMapper.readValue(contentAsString, RoomReportListResDto.class);
+			assertThat(rrlrd.getRoomReportList().size()).isEqualTo(5);
+		}
+	}
+
+	@Nested
+	@DisplayName("유저(노쇼) 신고 리스트 조회 테스트")
+	class GetUserReports {
+		@BeforeEach
+		void beforeEach() {
+			userTester = testDataUtils.createNewUser("adminTester", "adminTester",
+				RacketType.DUAL, SnsType.SLACK, RoleType.ADMIN);
+			User user1 = testDataUtils.createNewUser("user1", "user1",
+				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
+			User user2 = testDataUtils.createNewUser("user2", "user2",
+				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
+			User user3 = testDataUtils.createNewUser("user3", "user3",
+				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
+			userAccessToken = tokenProvider.createToken(userTester.getId());
+			testCategory = testDataUtils.createNewCategory("test");
+			Room room1 = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
+				3, 2, 180, RoomType.OPEN);
+			Room room2 = testDataUtils.createNewRoom(userTester, userTester, testCategory, 2, 1,
+				3, 2, 180, RoomType.OPEN);
+			Room room3 = testDataUtils.createNewRoom(userTester, userTester, testCategory, 3, 1,
+				3, 2, 180, RoomType.OPEN);
+			for (int i = 0; i < 5; i++) {
+				testDataUtils.createUserReport(user1, user2, room1);
+				testDataUtils.createUserReport(user2, user3, room2);
+				testDataUtils.createUserReport(user3, user1, room3);
+			}
+		}
+
+		@Test
+		@DisplayName("첫 페이지 조회 성공 200")
+		public void startPageSuccess() throws Exception {
+			//given
+			String currentPage = "1";
+			String pageSize = "10";
+			String url = "/party/admin/reports/users?page=" + currentPage + "&size=" + pageSize;
+			//when
+			String contentAsString = mockMvc.perform(get(url)
+					.contentType(MediaType.APPLICATION_JSON)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+			//then
+			UserReportListResDto urlrd = objectMapper.readValue(contentAsString, UserReportListResDto.class);
+			assertThat(urlrd.getUserReportList().size()).isEqualTo(10);
+		}
+
+		@Test
+		@DisplayName("마지막 페이지 조회 성공 200")
+		public void middlePageSuccess() throws Exception {
+			//given
+			String currentPage = "2";
+			String pageSize = "10";
+			String url = "/party/admin/reports/users?page=" + currentPage + "&size=" + pageSize;
+			//when
+			String contentAsString = mockMvc.perform(get(url)
+					.contentType(MediaType.APPLICATION_JSON)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+			//then
+			UserReportListResDto urlrd = objectMapper.readValue(contentAsString, UserReportListResDto.class);
+			assertThat(urlrd.getUserReportList().size()).isEqualTo(5);
 		}
 	}
 }
