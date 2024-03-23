@@ -347,7 +347,7 @@ public class RoomControllerTest {
 			startRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
 				3, 2, 180, RoomType.START);
 			UserRoom startUserRoom = testDataUtils.createNewUserRoom(userTester, startRoom, "nickname", true);
-			UserRoom otherStartUserRoom = testDataUtils.createNewUserRoom(otherTester, openRoom, "nickname", true);
+			UserRoom otherStartUserRoom = testDataUtils.createNewUserRoom(otherTester, startRoom, "nickname", true);
 			finishRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
 				3, 2, 180, RoomType.FINISH);
 			UserRoom finishUserRoom = testDataUtils.createNewUserRoom(userTester, finishRoom, "nickname", true);
