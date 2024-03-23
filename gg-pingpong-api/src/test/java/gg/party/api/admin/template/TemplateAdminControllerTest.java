@@ -144,9 +144,9 @@ public class TemplateAdminControllerTest {
 			userTester = testDataUtils.createNewUser("adminTester", "adminTester",
 				RacketType.DUAL, SnsType.SLACK, RoleType.ADMIN);
 			userAccessToken = tokenProvider.createToken(userTester.getId());
+			testCategory = testDataUtils.createNewCategory("category");
 			testTemplate = testDataUtils.createTemplate(testCategory, "gameName", 4,
 				2, 180, 180, "genre", "difficulty", "summary");
-			testCategory = testDataUtils.createNewCategory("category");
 		}
 
 		/**
@@ -193,13 +193,12 @@ public class TemplateAdminControllerTest {
 				10L, "newGameName", 8, 4,
 				90, 90, "newGenre", "newDifficulty", "newSummary");
 			String jsonRequest = objectMapper.writeValueAsString(templateAdminUpdateReqDto);
-			//when
+			//when && then
 			String contentAsString = mockMvc.perform(patch(url)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(jsonRequest)
 					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
-				.andExpect(status().isNoContent())
-				.andReturn().getResponse().getContentAsString();
+				.andExpect(status().isNotFound()).toString();
 		}
 
 		@Test
@@ -213,13 +212,12 @@ public class TemplateAdminControllerTest {
 				newTestCategory.getId(), "newGameName", 8, 4,
 				90, 90, "newGenre", "newDifficulty", "newSummary");
 			String jsonRequest = objectMapper.writeValueAsString(templateAdminUpdateReqDto);
-			//when
+			//when && then
 			String contentAsString = mockMvc.perform(patch(url)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(jsonRequest)
 					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
-				.andExpect(status().isNoContent())
-				.andReturn().getResponse().getContentAsString();
+				.andExpect(status().isNotFound()).toString();
 		}
 	}
 }
