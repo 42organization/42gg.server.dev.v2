@@ -7,4 +7,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CategoryAddAdminReqDto {
 	private String categoryName;
+
+	public CategoryAddAdminReqDto(String category) {
+		this.categoryName = category;
+	}
 }
