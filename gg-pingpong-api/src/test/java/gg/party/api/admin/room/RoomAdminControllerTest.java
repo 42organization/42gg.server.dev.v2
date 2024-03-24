@@ -30,6 +30,7 @@ import gg.data.user.User;
 import gg.data.user.type.RacketType;
 import gg.data.user.type.RoleType;
 import gg.data.user.type.SnsType;
+import gg.party.api.admin.room.controller.request.RoomShowChangeReqDto;
 import gg.party.api.admin.room.controller.response.AdminCommentResDto;
 import gg.party.api.admin.room.controller.response.AdminRoomDetailResDto;
 import gg.party.api.admin.room.controller.response.AdminRoomListResDto;
@@ -74,6 +75,74 @@ public class RoomAdminControllerTest {
 		finishReportedRoom, hiddenReportedRoom, failReportedRoom, pageTestRoom};
 	RoomType[] roomTypes = {RoomType.OPEN, RoomType.START, RoomType.FINISH, RoomType.HIDDEN, RoomType.FAIL,
 		RoomType.OPEN, RoomType.START, RoomType.FINISH, RoomType.HIDDEN, RoomType.FAIL, RoomType.OPEN};
+
+	@Nested
+	@DisplayName("Admin 방 Status 변경 테스트")
+	class ModifyRoomVisibility {
+		@BeforeEach
+		void beforeEach() {
+			userTester = testDataUtils.createNewUser("findTester", "findTester",
+				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
+			userAccessToken = tokenProvider.createToken(userTester.getId());
+			adminTester = testDataUtils.createNewUser("adminTester", "adminTester",
+				RacketType.DUAL, SnsType.SLACK, RoleType.ADMIN);
+			adminAccessToken = tokenProvider.createToken(adminTester.getId());
+			testCategory = testDataUtils.createNewCategory("category");
+			openRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1, 3, 2, 180,
+				RoomType.OPEN);
+		}
+
+		@Test
+		@DisplayName("방 Status 변경 성공 204")
+		public void success() throws Exception {
+			//given
+			String roomId = openRoom.getId().toString();
+			String url = "/party/admin/rooms/" + roomId;
+			RoomShowChangeReqDto roomShowChangeReqDto = new RoomShowChangeReqDto(RoomType.START.toString());
+			String jsonRequest = objectMapper.writeValueAsString(roomShowChangeReqDto);
+			//when
+			String contentAsString = mockMvc.perform(patch(url)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(jsonRequest)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + adminAccessToken))
+				.andExpect(status().isNoContent())
+				.andReturn().getResponse().getContentAsString();
+			//then
+			assertThat(openRoom.getStatus()).isEqualTo(RoomType.START);
+		}
+
+		@Test
+		@DisplayName("방이 없음으로 인한 에러 404")
+		public void noRoomFail() throws Exception {
+			//given
+			String roomId = "1000";
+			String url = "/party/admin/rooms/" + roomId;
+			RoomShowChangeReqDto roomShowChangeReqDto = new RoomShowChangeReqDto(RoomType.START.toString());
+			String jsonRequest = objectMapper.writeValueAsString(roomShowChangeReqDto);
+			//when && then
+			String contentAsString = mockMvc.perform(patch(url)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(jsonRequest)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + adminAccessToken))
+				.andExpect(status().isNotFound()).toString();
+		}
+
+		@Test
+		@DisplayName("동일한 Status 변경으로 인한 에러 400")
+		public void sameStatusFail() throws Exception {
+			//given
+			String roomId = openRoom.getId().toString();
+			String url = "/party/admin/rooms/" + roomId;
+			RoomShowChangeReqDto roomShowChangeReqDto = new RoomShowChangeReqDto(RoomType.OPEN.toString());
+			String jsonRequest = objectMapper.writeValueAsString(roomShowChangeReqDto);
+			//when && then
+			String contentAsString = mockMvc.perform(patch(url)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(jsonRequest)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + adminAccessToken))
+				.andExpect(status().isBadRequest()).toString();
+		}
+	}
 
 	@Nested
 	@DisplayName("Admin 방 전체 조회 테스트")
@@ -166,7 +235,8 @@ public class RoomAdminControllerTest {
 						180, roomTypes[i]);
 				}
 				UserRoom testUserRoom = testDataUtils.createNewUserRoom(userTester, rooms[i], "testNickname", TRUE);
-				UserRoom reportUserRoom = testDataUtils.createNewUserRoom(reportedTester, rooms[i], "reportNickname",
+				UserRoom reportUserRoom = testDataUtils.createNewUserRoom(reportedTester, rooms[i],
+					"reportNickname",
 					TRUE);
 				testDataUtils.createComment(userTester, testUserRoom, rooms[i], "testComment" + i);
 				testDataUtils.createComment(reportedTester, reportUserRoom, rooms[i], "reportComment" + i);
@@ -202,7 +272,8 @@ public class RoomAdminControllerTest {
 		@DisplayName("방에 아무도 없어서 FAIL 된 방 상세정보 조회 성공 200")
 		public void failRoomSuccess() throws Exception {
 			//given
-			Room failToNoUserRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 0, 3, 2, 180,
+			Room failToNoUserRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 0, 3, 2,
+				180,
 				RoomType.FAIL);
 			UserRoom testUserRoom = testDataUtils.createNewUserRoom(userTester, failToNoUserRoom, "testNickname",
 				FALSE);
