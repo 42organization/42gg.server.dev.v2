@@ -66,11 +66,24 @@ public class RoomAdminControllerTest {
 	CategoryRepository categoryRepository;
 	@Autowired
 	RoomManagementService roomManagementService;
-	User userTester, adminTester, reportedTester;
-	String userAccessToken, adminAccessToken, reportedAccessToken;
+	User userTester;
+	User adminTester;
+	User reportedTester;
+	String userAccessToken;
+	String adminAccessToken;
+	String reportedAccessToken;
 	Category testCategory;
-	Room openRoom, startRoom, finishRoom, hiddenRoom, failRoom, pageTestRoom;
-	Room openReportedRoom, startReportedRoom, finishReportedRoom, hiddenReportedRoom, failReportedRoom;
+	Room openRoom;
+	Room startRoom;
+	Room finishRoom;
+	Room hiddenRoom;
+	Room failRoom;
+	Room pageTestRoom;
+	Room openReportedRoom;
+	Room startReportedRoom;
+	Room finishReportedRoom;
+	Room hiddenReportedRoom;
+	Room failReportedRoom;
 	Room[] rooms = {openRoom, startRoom, finishRoom, hiddenRoom, failRoom, openReportedRoom, startReportedRoom,
 		finishReportedRoom, hiddenReportedRoom, failReportedRoom, pageTestRoom};
 	RoomType[] roomTypes = {RoomType.OPEN, RoomType.START, RoomType.FINISH, RoomType.HIDDEN, RoomType.FAIL,
@@ -211,7 +224,7 @@ public class RoomAdminControllerTest {
 
 	@Nested
 	@DisplayName("방 상세 조회 테스트")
-	class adminRoomDetailInfo {
+	class AdminRoomDetailInfo {
 		@BeforeEach
 		void beforeEach() {
 			userTester = testDataUtils.createNewImageUser("findTester", "findTester",
