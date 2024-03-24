@@ -24,7 +24,6 @@ import gg.data.user.type.RacketType;
 import gg.data.user.type.RoleType;
 import gg.data.user.type.SnsType;
 import gg.party.api.admin.category.controller.request.CategoryAddAdminReqDto;
-import gg.party.api.admin.report.service.ReportAdminService;
 import gg.repo.party.CategoryRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
@@ -47,8 +46,6 @@ public class CategoryAdminControllerTest {
 	AuthTokenProvider tokenProvider;
 	@Autowired
 	CategoryRepository categoryRepository;
-	@Autowired
-	ReportAdminService reportAdminService;
 	User userTester;
 	String userAccessToken;
 	Category defaultCategory;
@@ -61,7 +58,7 @@ public class CategoryAdminControllerTest {
 			userTester = testDataUtils.createNewUser("adminTester", "adminTester",
 				RacketType.DUAL, SnsType.SLACK, RoleType.ADMIN);
 			userAccessToken = tokenProvider.createToken(userTester.getId());
-			defaultCategory = testDataUtils.createNewCategory("default");
+			defaultCategory = testDataUtils.createNewCategory("etc");
 		}
 
 		@Test
@@ -107,7 +104,7 @@ public class CategoryAdminControllerTest {
 			userTester = testDataUtils.createNewUser("adminTester", "adminTester",
 				RacketType.DUAL, SnsType.SLACK, RoleType.ADMIN);
 			userAccessToken = tokenProvider.createToken(userTester.getId());
-			defaultCategory = testDataUtils.createNewCategory("default");
+			defaultCategory = testDataUtils.createNewCategory("etc");
 		}
 
 		@Test
