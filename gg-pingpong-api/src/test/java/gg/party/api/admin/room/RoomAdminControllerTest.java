@@ -65,8 +65,12 @@ public class RoomAdminControllerTest {
 	User userTester, adminTester, reportedTester;
 	String userAccessToken, adminAccessToken, reportedAccessToken;
 	Category testCategory;
-	Room openRoom, startRoom, finishRoom, hiddenRoom, failRoom;
+	Room openRoom, startRoom, finishRoom, hiddenRoom, failRoom, pageTestRoom;
 	Room openReportedRoom, startReportedRoom, finishReportedRoom, hiddenReportedRoom, failReportedRoom;
+	Room[] rooms = {openRoom, startRoom, finishRoom, hiddenRoom, failRoom, openReportedRoom, startReportedRoom,
+		finishReportedRoom, hiddenReportedRoom, failReportedRoom, pageTestRoom};
+	RoomType[] roomTypes = {RoomType.OPEN, RoomType.START, RoomType.FINISH, RoomType.HIDDEN, RoomType.FAIL,
+		RoomType.OPEN, RoomType.START, RoomType.FINISH, RoomType.HIDDEN, RoomType.FAIL, RoomType.OPEN};
 
 	@Nested
 	@DisplayName("Admin 방 전체 조회 테스트")
@@ -83,26 +87,15 @@ public class RoomAdminControllerTest {
 				RacketType.DUAL, SnsType.SLACK, RoleType.ADMIN);
 			adminAccessToken = tokenProvider.createToken(adminTester.getId());
 			testCategory = testDataUtils.createNewCategory("category");
-			openRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
-				3, 2, 180, RoomType.OPEN);
-			startRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
-				3, 2, 180, RoomType.START);
-			finishRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
-				3, 2, 180, RoomType.FINISH);
-			hiddenRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
-				3, 2, 180, RoomType.HIDDEN);
-			failRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
-				3, 2, 180, RoomType.FAIL);
-			openReportedRoom = testDataUtils.createNewRoom(reportedTester, reportedTester, testCategory, 1, 1,
-				3, 2, 180, RoomType.OPEN);
-			startReportedRoom = testDataUtils.createNewRoom(reportedTester, reportedTester, testCategory, 1, 2,
-				3, 2, 180, RoomType.START);
-			finishReportedRoom = testDataUtils.createNewRoom(reportedTester, reportedTester, testCategory, 1, 2,
-				3, 2, 180, RoomType.FINISH);
-			hiddenReportedRoom = testDataUtils.createNewRoom(reportedTester, reportedTester, testCategory, 1, 1,
-				3, 2, 180, RoomType.HIDDEN);
-			failReportedRoom = testDataUtils.createNewRoom(reportedTester, reportedTester, testCategory, 1, 1,
-				3, 2, 180, RoomType.FAIL);
+			for (int i = 0; i < rooms.length; i++) {
+				if (i < 5) {
+					rooms[i] = testDataUtils.createNewRoom(userTester, userTester, testCategory, i, 1, 3, 2, 180,
+						roomTypes[i]);
+				} else {
+					rooms[i] = testDataUtils.createNewRoom(reportedTester, reportedTester, testCategory, i, 1, 3, 2,
+						180, roomTypes[i]);
+				}
+			}
 		}
 
 		@Test
@@ -111,7 +104,7 @@ public class RoomAdminControllerTest {
 			//given
 			String currentPage = "1";
 			String pageSize = "10";
-			String url = "/party/admin/rooms" + currentPage + "&size=" + pageSize;
+			String url = "/party/admin/rooms?page=" + currentPage + "&size=" + pageSize;
 			//when
 			String contentAsString = mockMvc.perform(get(url)
 					.contentType(MediaType.APPLICATION_JSON)
@@ -129,7 +122,7 @@ public class RoomAdminControllerTest {
 			//given
 			String currentPage = "2";
 			String pageSize = "10";
-			String url = "/party/admin/rooms" + currentPage + "&size=" + pageSize;
+			String url = "/party/admin/rooms?page=" + currentPage + "&size=" + pageSize;
 			//when
 			String contentAsString = mockMvc.perform(get(url)
 					.contentType(MediaType.APPLICATION_JSON)
@@ -138,7 +131,7 @@ public class RoomAdminControllerTest {
 				.andReturn().getResponse().getContentAsString();
 			//then
 			AdminRoomListResDto arlrd = objectMapper.readValue(contentAsString, AdminRoomListResDto.class);
-			assertThat(arlrd.getAdminRoomList().size()).isEqualTo(10);
+			assertThat(arlrd.getAdminRoomList().size()).isEqualTo(1);
 		}
 	}
 
@@ -147,99 +140,36 @@ public class RoomAdminControllerTest {
 	class adminRoomDetailInfo {
 		@BeforeEach
 		void beforeEach() {
-			userTester = testDataUtils.createNewUser("findTester", "findTester",
-				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
+			userTester = testDataUtils.createNewImageUser("findTester", "findTester",
+				RacketType.DUAL, SnsType.SLACK, RoleType.USER, "userImage");
 			userAccessToken = tokenProvider.createToken(userTester.getId());
-			reportedTester = testDataUtils.createNewUser("reportedTester", "reportedTester",
-				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
+			reportedTester = testDataUtils.createNewImageUser("reportedTester", "reportedTester",
+				RacketType.DUAL, SnsType.SLACK, RoleType.USER, "reportedImage");
 			reportedAccessToken = tokenProvider.createToken(reportedTester.getId());
-			adminTester = testDataUtils.createNewUser("adminTester", "adminTester",
-				RacketType.DUAL, SnsType.SLACK, RoleType.ADMIN);
+			adminTester = testDataUtils.createNewImageUser("adminTester", "adminTester",
+				RacketType.DUAL, SnsType.SLACK, RoleType.ADMIN, "adminImage");
 			adminAccessToken = tokenProvider.createToken(adminTester.getId());
 			testCategory = testDataUtils.createNewCategory("category");
-			openRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
-				3, 2, 180, RoomType.OPEN);
-			UserRoom testUserRoom = testDataUtils.createNewUserRoom(userTester, openRoom, "testNickname", TRUE);
-			UserRoom reportUserRoom = testDataUtils.createNewUserRoom(reportedTester, openRoom, "reportNickname",
-				FALSE);
-			testDataUtils.createComment(userTester, testUserRoom, openRoom, "testComment");
-			testDataUtils.createComment(reportedTester, reportUserRoom, openRoom, "reportComment");
-			startRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
-				3, 2, 180, RoomType.START);
-			UserRoom testUserRoom2 = testDataUtils.createNewUserRoom(userTester, startRoom, "testNickname", TRUE);
-			UserRoom reportUserRoom2 = testDataUtils.createNewUserRoom(reportedTester, startRoom, "reportNickname",
-				FALSE);
-			testDataUtils.createComment(userTester, testUserRoom2, startRoom, "testComment2");
-			testDataUtils.createComment(reportedTester, reportUserRoom2, startRoom, "reportComment2");
-			finishRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2,
-				3, 2, 180, RoomType.FINISH);
-			UserRoom testUserRoom3 = testDataUtils.createNewUserRoom(userTester, finishRoom, "testNickname", TRUE);
-			UserRoom reportUserRoom3 = testDataUtils.createNewUserRoom(reportedTester, finishRoom, "reportNickname",
-				FALSE);
-			testDataUtils.createComment(userTester, testUserRoom3, finishRoom, "testComment3");
-			testDataUtils.createComment(reportedTester, reportUserRoom3, finishRoom, "reportComment3");
-			hiddenRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
-				3, 2, 180, RoomType.HIDDEN);
-			UserRoom testUserRoom4 = testDataUtils.createNewUserRoom(userTester, hiddenRoom, "testNickname", TRUE);
-			UserRoom reportUserRoom4 = testDataUtils.createNewUserRoom(reportedTester, hiddenRoom, "reportNickname",
-				FALSE);
-			testDataUtils.createComment(userTester, testUserRoom4, hiddenRoom, "testComment4");
-			testDataUtils.createComment(reportedTester, reportUserRoom4, hiddenRoom, "reportComment4");
-			failRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
-				3, 2, 180, RoomType.FAIL);
-			UserRoom testUserRoom5 = testDataUtils.createNewUserRoom(userTester, failRoom, "testNickname", TRUE);
-			UserRoom reportUserRoom5 = testDataUtils.createNewUserRoom(reportedTester, failRoom, "reportNickname",
-				FALSE);
-			testDataUtils.createComment(userTester, testUserRoom5, failRoom, "testComment5");
-			testDataUtils.createComment(reportedTester, reportUserRoom5, failRoom, "reportComment5");
-			openReportedRoom = testDataUtils.createNewRoom(reportedTester, reportedTester, testCategory, 1, 1,
-				3, 2, 180, RoomType.OPEN);
-			UserRoom testUserRoom6 = testDataUtils.createNewUserRoom(reportedTester, openReportedRoom, "testNickname",
-				TRUE);
-			UserRoom reportUserRoom6 = testDataUtils.createNewUserRoom(reportedTester, openReportedRoom,
-				"reportNickname", FALSE);
-			testDataUtils.createComment(userTester, testUserRoom6, openReportedRoom, "testComment6");
-			testDataUtils.createComment(reportedTester, reportUserRoom6, openReportedRoom, "reportComment6");
-			startReportedRoom = testDataUtils.createNewRoom(reportedTester, reportedTester, testCategory, 1, 2,
-				3, 2, 180, RoomType.START);
-			UserRoom testUserRoom7 = testDataUtils.createNewUserRoom(reportedTester, startReportedRoom, "testNickname",
-				TRUE);
-			UserRoom reportUserRoom7 = testDataUtils.createNewUserRoom(reportedTester, startReportedRoom,
-				"reportNickname", FALSE);
-			testDataUtils.createComment(userTester, testUserRoom7, startReportedRoom, "testComment7");
-			testDataUtils.createComment(reportedTester, reportUserRoom7, startReportedRoom, "reportComment7");
-			finishReportedRoom = testDataUtils.createNewRoom(reportedTester, reportedTester, testCategory, 1, 2,
-				3, 2, 180, RoomType.FINISH);
-			UserRoom testUserRoom8 = testDataUtils.createNewUserRoom(reportedTester, finishReportedRoom, "testNickname",
-				TRUE);
-			UserRoom reportUserRoom8 = testDataUtils.createNewUserRoom(reportedTester, finishReportedRoom,
-				"reportNickname", FALSE);
-			testDataUtils.createComment(userTester, testUserRoom8, finishReportedRoom, "testComment8");
-			testDataUtils.createComment(reportedTester, reportUserRoom8, finishReportedRoom, "reportComment8");
-			hiddenReportedRoom = testDataUtils.createNewRoom(reportedTester, reportedTester, testCategory, 1, 1,
-				3, 2, 180, RoomType.HIDDEN);
-			UserRoom testUserRoom9 = testDataUtils.createNewUserRoom(reportedTester, hiddenReportedRoom, "testNickname",
-				TRUE);
-			UserRoom reportUserRoom9 = testDataUtils.createNewUserRoom(reportedTester, hiddenReportedRoom,
-				"reportNickname", FALSE);
-			testDataUtils.createComment(userTester, testUserRoom9, hiddenReportedRoom, "testComment9");
-			testDataUtils.createComment(reportedTester, reportUserRoom9, hiddenReportedRoom, "reportComment9");
-			failReportedRoom = testDataUtils.createNewRoom(reportedTester, reportedTester, testCategory, 1, 1,
-				3, 2, 180, RoomType.FAIL);
-			UserRoom testUserRoom10 = testDataUtils.createNewUserRoom(reportedTester, failReportedRoom, "testNickname",
-				TRUE);
-			UserRoom reportUserRoom10 = testDataUtils.createNewUserRoom(reportedTester, failReportedRoom,
-				"reportNickname", FALSE);
-			testDataUtils.createComment(userTester, testUserRoom10, failReportedRoom, "testComment10");
-			testDataUtils.createComment(reportedTester, reportUserRoom10, failReportedRoom, "reportComment10");
+			for (int i = 0; i < rooms.length - 1; i++) {
+				if (i < 5) {
+					rooms[i] = testDataUtils.createNewRoom(userTester, userTester, testCategory, i, 1, 3, 2, 180,
+						roomTypes[i]);
+				} else {
+					rooms[i] = testDataUtils.createNewRoom(reportedTester, reportedTester, testCategory, i, 1, 3, 2,
+						180, roomTypes[i]);
+				}
+				UserRoom testUserRoom = testDataUtils.createNewUserRoom(userTester, rooms[i], "testNickname", TRUE);
+				UserRoom reportUserRoom = testDataUtils.createNewUserRoom(reportedTester, rooms[i], "reportNickname",
+					FALSE);
+				testDataUtils.createComment(userTester, testUserRoom, openRoom, "testComment" + i);
+				testDataUtils.createComment(reportedTester, reportUserRoom, openRoom, "reportComment" + i);
+			}
 		}
 
 		@Test
 		@DisplayName("모든 종류에 대한 상세정보 조회 성공 200")
 		public void success() throws Exception {
-			Room[] rooms = {openRoom, startRoom, finishRoom, hiddenRoom, failRoom, openReportedRoom, startReportedRoom,
-				finishReportedRoom, hiddenReportedRoom, failReportedRoom};
-			for (int i = 0; i < rooms.length; i++) {
+			for (int i = 0; i < rooms.length - 1; i++) { // pageTestRoom 제외
 				//given
 				String roomId = (openRoom.getId()).toString();
 				String url = "/party/admin/rooms/" + roomId;
