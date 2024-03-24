@@ -70,7 +70,7 @@ public class CategoryAdminControllerTest {
 
 		@Test
 		@DisplayName("카테고리 추가 성공 201")
-		public void Success() throws Exception {
+		public void success() throws Exception {
 			//given
 			String url = "/party/admin/categories";
 			CategoryAddAdminReqDto categoryAddAdminReqDto = new CategoryAddAdminReqDto("category");
@@ -119,7 +119,7 @@ public class CategoryAdminControllerTest {
 
 		@Test
 		@DisplayName("카테고리 삭제 성공 204")
-		public void Success() throws Exception {
+		public void success() throws Exception {
 			//given
 			String categoryID = testCategory.getId().toString();
 			String url = "/party/admin/categories/" + categoryID;
