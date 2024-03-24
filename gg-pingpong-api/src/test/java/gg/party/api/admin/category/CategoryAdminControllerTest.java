@@ -83,7 +83,7 @@ public class CategoryAdminControllerTest {
 		}
 
 		@Test
-		@DisplayName("이미 존재하는 카테고리로 인한 에러 400")
+		@DisplayName("이미 존재하는 카테고리로 인한 에러 409")
 		public void fail() throws Exception {
 			//given
 			String url = "/party/admin/categories";
@@ -95,7 +95,7 @@ public class CategoryAdminControllerTest {
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(jsonRequest)
 					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
-				.andExpect(status().isBadRequest()).toString();
+				.andExpect(status().isConflict()).toString();
 		}
 	}
 
@@ -118,7 +118,7 @@ public class CategoryAdminControllerTest {
 			String categoryID = testCategory.getId().toString();
 			String url = "/party/admin/categories" + categoryID;
 			//when
-			String contentAsString = mockMvc.perform(post(url)
+			String contentAsString = mockMvc.perform(delete(url)
 					.contentType(MediaType.APPLICATION_JSON)
 					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
 				.andExpect(status().isNoContent())
@@ -134,20 +134,20 @@ public class CategoryAdminControllerTest {
 			String categoryID = "10";
 			String url = "/party/admin/categories" + categoryID;
 			//when & then
-			String contentAsString = mockMvc.perform(post(url)
+			String contentAsString = mockMvc.perform(delete(url)
 					.contentType(MediaType.APPLICATION_JSON)
 					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
 				.andExpect(status().isNotFound()).toString();
 		}
 
 		@Test
-		@DisplayName("default 카테고리 삭제 요청에 대한 오류 400")
+		@DisplayName("default 카테고리 삭제 요청에 대한 에러 400")
 		public void fail() throws Exception {
 			//given
 			String categoryID = defaultCategory.getId().toString();
 			String url = "/party/admin/categories" + categoryID;
 			//when & then
-			String contentAsString = mockMvc.perform(post(url)
+			String contentAsString = mockMvc.perform(delete(url)
 					.contentType(MediaType.APPLICATION_JSON)
 					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
 				.andExpect(status().isBadRequest()).toString();
