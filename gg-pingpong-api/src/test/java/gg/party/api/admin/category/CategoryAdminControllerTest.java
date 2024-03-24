@@ -19,12 +19,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.auth.utils.AuthTokenProvider;
 import gg.data.party.Category;
+import gg.data.party.Room;
+import gg.data.party.type.RoomType;
 import gg.data.user.User;
 import gg.data.user.type.RacketType;
 import gg.data.user.type.RoleType;
 import gg.data.user.type.SnsType;
 import gg.party.api.admin.category.controller.request.CategoryAddAdminReqDto;
 import gg.repo.party.CategoryRepository;
+import gg.repo.party.RoomRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import lombok.RequiredArgsConstructor;
@@ -45,10 +48,14 @@ public class CategoryAdminControllerTest {
 	@Autowired
 	AuthTokenProvider tokenProvider;
 	@Autowired
+	RoomRepository roomRepository;
+	@Autowired
 	CategoryRepository categoryRepository;
 	User userTester;
 	String userAccessToken;
 	Category defaultCategory;
+	Category testCategory;
+	Room testRoom;
 
 	@Nested
 	@DisplayName("카테고리 추가 테스트")
@@ -104,6 +111,9 @@ public class CategoryAdminControllerTest {
 			userTester = testDataUtils.createNewUser("adminTester", "adminTester",
 				RacketType.DUAL, SnsType.SLACK, RoleType.ADMIN);
 			userAccessToken = tokenProvider.createToken(userTester.getId());
+			testCategory = testDataUtils.createNewCategory("test");
+			testRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
+				3, 2, 180, RoomType.OPEN);
 			defaultCategory = testDataUtils.createNewCategory("etc");
 		}
 
@@ -111,9 +121,8 @@ public class CategoryAdminControllerTest {
 		@DisplayName("카테고리 삭제 성공 204")
 		public void Success() throws Exception {
 			//given
-			Category testCategory = testDataUtils.createNewCategory("test");
 			String categoryID = testCategory.getId().toString();
-			String url = "/party/admin/categories" + categoryID;
+			String url = "/party/admin/categories/" + categoryID;
 			//when
 			String contentAsString = mockMvc.perform(delete(url)
 					.contentType(MediaType.APPLICATION_JSON)
@@ -122,6 +131,7 @@ public class CategoryAdminControllerTest {
 				.andReturn().getResponse().getContentAsString();
 			//then
 			assertThat(categoryRepository.findAll()).size().isEqualTo(1);
+			assertThat(roomRepository.findById(testRoom.getId()).get().getCategory().getName()).isEqualTo("etc");
 		}
 
 		@Test
@@ -129,7 +139,7 @@ public class CategoryAdminControllerTest {
 		public void noCategoryFail() throws Exception {
 			//given
 			String categoryID = "10";
-			String url = "/party/admin/categories" + categoryID;
+			String url = "/party/admin/categories/" + categoryID;
 			//when & then
 			String contentAsString = mockMvc.perform(delete(url)
 					.contentType(MediaType.APPLICATION_JSON)
@@ -142,7 +152,7 @@ public class CategoryAdminControllerTest {
 		public void fail() throws Exception {
 			//given
 			String categoryID = defaultCategory.getId().toString();
-			String url = "/party/admin/categories" + categoryID;
+			String url = "/party/admin/categories/" + categoryID;
 			//when & then
 			String contentAsString = mockMvc.perform(delete(url)
 					.contentType(MediaType.APPLICATION_JSON)
