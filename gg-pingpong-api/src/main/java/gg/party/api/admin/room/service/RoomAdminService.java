@@ -91,7 +91,8 @@ public class RoomAdminService {
 
 		Optional<UserRoom> hostUserRoomOptional = userRoomRepository.findByUserIdAndRoomIdAndIsExistTrue(
 			room.getHost().getId(), roomId);
-		String hostNickname = hostUserRoomOptional.get().getNickname();
+		String hostNickname = hostUserRoomOptional.map(UserRoom::getNickname)
+			.orElse(null);
 
 		List<UserRoomResDto> roomUsers = userRoomRepository.findByRoomId(roomId).stream()
 			.filter(UserRoom::getIsExist)

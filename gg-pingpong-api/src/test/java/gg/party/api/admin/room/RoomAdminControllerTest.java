@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.time.LocalDateTime;
+
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.auth.utils.AuthTokenProvider;
 import gg.data.party.Category;
+import gg.data.party.PartyPenalty;
 import gg.data.party.Room;
 import gg.data.party.UserRoom;
 import gg.data.party.type.RoomType;
@@ -83,6 +86,8 @@ public class RoomAdminControllerTest {
 			reportedTester = testDataUtils.createNewUser("reportedTester", "reportedTester",
 				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
 			reportedAccessToken = tokenProvider.createToken(reportedTester.getId());
+			PartyPenalty testPenalty = testDataUtils.createNewPenalty(reportedTester, "test", "test",
+				LocalDateTime.now(), 60);
 			adminTester = testDataUtils.createNewUser("adminTester", "adminTester",
 				RacketType.DUAL, SnsType.SLACK, RoleType.ADMIN);
 			adminAccessToken = tokenProvider.createToken(adminTester.getId());
@@ -146,6 +151,8 @@ public class RoomAdminControllerTest {
 			reportedTester = testDataUtils.createNewImageUser("reportedTester", "reportedTester",
 				RacketType.DUAL, SnsType.SLACK, RoleType.USER, "reportedImage");
 			reportedAccessToken = tokenProvider.createToken(reportedTester.getId());
+			PartyPenalty testPenalty = testDataUtils.createNewPenalty(reportedTester, "test", "test",
+				LocalDateTime.now(), 60);
 			adminTester = testDataUtils.createNewImageUser("adminTester", "adminTester",
 				RacketType.DUAL, SnsType.SLACK, RoleType.ADMIN, "adminImage");
 			adminAccessToken = tokenProvider.createToken(adminTester.getId());
@@ -188,6 +195,33 @@ public class RoomAdminControllerTest {
 				for (AdminCommentResDto comment : ardrd.getComments()) {
 					assertThat(comment.getIntraId()).isNotNull();
 				}
+			}
+		}
+
+		@Test
+		@DisplayName("방에 아무도 없어서 FAIL 된 방 상세정보 조회 성공 200")
+		public void failRoomSuccess() throws Exception {
+			//given
+			Room failToNoUserRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 0, 3, 2, 180,
+				RoomType.FAIL);
+			UserRoom testUserRoom = testDataUtils.createNewUserRoom(userTester, failToNoUserRoom, "testNickname",
+				FALSE);
+			String roomId = failToNoUserRoom.getId().toString();
+			String url = "/party/admin/rooms/" + roomId;
+			//when
+			String contentAsString = mockMvc.perform(get(url)
+					.contentType(MediaType.APPLICATION_JSON)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + adminAccessToken))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+			//then
+			AdminRoomDetailResDto ardrd = objectMapper.readValue(contentAsString, AdminRoomDetailResDto.class);
+			for (UserRoomResDto roomUser : ardrd.getRoomUsers()) {
+				assertThat(roomUser.getIntraId()).isNotNull();
+				assertThat(roomUser.getUserImage()).isNotNull();
+			}
+			for (AdminCommentResDto comment : ardrd.getComments()) {
+				assertThat(comment.getIntraId()).isNotNull();
 			}
 		}
 
