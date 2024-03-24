@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gg.auth.utils.AuthTokenProvider;
 import gg.data.party.Category;
 import gg.data.party.Comment;
-import gg.data.party.GameTemplate;
 import gg.data.party.Room;
 import gg.data.party.UserRoom;
 import gg.data.party.type.RoomType;
@@ -33,9 +32,7 @@ import gg.party.api.admin.report.controller.response.CommentReportListResDto;
 import gg.party.api.admin.report.controller.response.RoomReportListResDto;
 import gg.party.api.admin.report.controller.response.UserReportListResDto;
 import gg.party.api.admin.report.service.ReportAdminService;
-import gg.party.api.admin.templates.service.TemplateAdminService;
 import gg.repo.party.CategoryRepository;
-import gg.repo.party.TemplateRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import lombok.RequiredArgsConstructor;
@@ -59,14 +56,9 @@ public class ReportAdminControllerTest {
 	CategoryRepository categoryRepository;
 	@Autowired
 	ReportAdminService reportAdminService;
-	@Autowired
-	TemplateAdminService templateAdminService;
-	@Autowired
-	TemplateRepository templateRepository;
 	User userTester;
 	String userAccessToken;
 	Category testCategory;
-	GameTemplate testTemplate;
 
 	@Nested
 	@DisplayName("댓글 신고 리스트 조회 테스트")
