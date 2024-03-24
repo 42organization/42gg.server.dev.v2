@@ -51,7 +51,7 @@ public class CategoryAdminControllerTest {
 	ReportAdminService reportAdminService;
 	User userTester;
 	String userAccessToken;
-	Category testCategory;
+	Category defaultCategory;
 
 	@Nested
 	@DisplayName("카테고리 추가 테스트")
@@ -61,7 +61,7 @@ public class CategoryAdminControllerTest {
 			userTester = testDataUtils.createNewUser("adminTester", "adminTester",
 				RacketType.DUAL, SnsType.SLACK, RoleType.ADMIN);
 			userAccessToken = tokenProvider.createToken(userTester.getId());
-			testCategory = testDataUtils.createNewCategory("test");
+			defaultCategory = testDataUtils.createNewCategory("default");
 		}
 
 		@Test
@@ -79,7 +79,7 @@ public class CategoryAdminControllerTest {
 				.andExpect(status().isCreated())
 				.andReturn().getResponse().getContentAsString();
 			//then
-			assertThat(categoryRepository.findAll()).isNotNull();
+			assertThat(categoryRepository.findAll()).size().isEqualTo(2);
 		}
 
 		@Test
@@ -94,6 +94,61 @@ public class CategoryAdminControllerTest {
 			String contentAsString = mockMvc.perform(post(url)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(jsonRequest)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
+				.andExpect(status().isBadRequest()).toString();
+		}
+	}
+
+	@Nested
+	@DisplayName("카테고리 삭제 테스트")
+	class CategoryRemove {
+		@BeforeEach
+		void beforeEach() {
+			userTester = testDataUtils.createNewUser("adminTester", "adminTester",
+				RacketType.DUAL, SnsType.SLACK, RoleType.ADMIN);
+			userAccessToken = tokenProvider.createToken(userTester.getId());
+			defaultCategory = testDataUtils.createNewCategory("default");
+		}
+
+		@Test
+		@DisplayName("카테고리 삭제 성공 204")
+		public void Success() throws Exception {
+			//given
+			Category testCategory = testDataUtils.createNewCategory("test");
+			String categoryID = testCategory.getId().toString();
+			String url = "/party/admin/categories" + categoryID;
+			//when
+			String contentAsString = mockMvc.perform(post(url)
+					.contentType(MediaType.APPLICATION_JSON)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
+				.andExpect(status().isNoContent())
+				.andReturn().getResponse().getContentAsString();
+			//then
+			assertThat(categoryRepository.findAll()).size().isEqualTo(1);
+		}
+
+		@Test
+		@DisplayName("존재하지 않는 카테고리로 인한 에러 404")
+		public void noCategoryFail() throws Exception {
+			//given
+			String categoryID = "10";
+			String url = "/party/admin/categories" + categoryID;
+			//when & then
+			String contentAsString = mockMvc.perform(post(url)
+					.contentType(MediaType.APPLICATION_JSON)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
+				.andExpect(status().isNotFound()).toString();
+		}
+
+		@Test
+		@DisplayName("default 카테고리 삭제 요청에 대한 오류 400")
+		public void fail() throws Exception {
+			//given
+			String categoryID = defaultCategory.getId().toString();
+			String url = "/party/admin/categories" + categoryID;
+			//when & then
+			String contentAsString = mockMvc.perform(post(url)
+					.contentType(MediaType.APPLICATION_JSON)
 					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
 				.andExpect(status().isBadRequest()).toString();
 		}
