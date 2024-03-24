@@ -114,7 +114,7 @@ public class ReportAdminControllerTest {
 
 		@Test
 		@DisplayName("마지막 페이지 조회 성공 200")
-		public void middlePageSuccess() throws Exception {
+		public void lastPageSuccess() throws Exception {
 			//given
 			String currentPage = "2";
 			String pageSize = "10";
@@ -179,7 +179,7 @@ public class ReportAdminControllerTest {
 
 		@Test
 		@DisplayName("마지막 페이지 조회 성공 200")
-		public void middlePageSuccess() throws Exception {
+		public void lastPageSuccess() throws Exception {
 			//given
 			String currentPage = "2";
 			String pageSize = "10";
@@ -244,7 +244,7 @@ public class ReportAdminControllerTest {
 
 		@Test
 		@DisplayName("마지막 페이지 조회 성공 200")
-		public void middlePageSuccess() throws Exception {
+		public void lastPageSuccess() throws Exception {
 			//given
 			String currentPage = "2";
 			String pageSize = "10";
