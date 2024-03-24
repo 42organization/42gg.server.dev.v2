@@ -160,9 +160,9 @@ public class RoomAdminControllerTest {
 				}
 				UserRoom testUserRoom = testDataUtils.createNewUserRoom(userTester, rooms[i], "testNickname", TRUE);
 				UserRoom reportUserRoom = testDataUtils.createNewUserRoom(reportedTester, rooms[i], "reportNickname",
-					FALSE);
-				testDataUtils.createComment(userTester, testUserRoom, openRoom, "testComment" + i);
-				testDataUtils.createComment(reportedTester, reportUserRoom, openRoom, "reportComment" + i);
+					TRUE);
+				testDataUtils.createComment(userTester, testUserRoom, rooms[i], "testComment" + i);
+				testDataUtils.createComment(reportedTester, reportUserRoom, rooms[i], "reportComment" + i);
 			}
 		}
 
@@ -171,7 +171,7 @@ public class RoomAdminControllerTest {
 		public void success() throws Exception {
 			for (int i = 0; i < rooms.length - 1; i++) { // pageTestRoom 제외
 				//given
-				String roomId = (openRoom.getId()).toString();
+				String roomId = (rooms[i].getId()).toString();
 				String url = "/party/admin/rooms/" + roomId;
 				//when
 				String contentAsString = mockMvc.perform(get(url)
