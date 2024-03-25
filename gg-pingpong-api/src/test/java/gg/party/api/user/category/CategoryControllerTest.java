@@ -18,8 +18,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.auth.UserDto;
-import gg.auth.argumentresolver.Login;
 import gg.auth.utils.AuthTokenProvider;
 import gg.data.party.Category;
 import gg.data.party.PartyPenalty;
@@ -33,7 +31,6 @@ import gg.party.api.user.category.service.CategoryService;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import gg.utils.exception.party.OnPenaltyException;
-import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -92,8 +89,10 @@ public class CategoryControllerTest {
 
 			verify(categoryService, times(1)).findCategoryList(any()); //조회 1번만 되었는지 체크
 		}
-	}
 
+		/**
+		 * 신고된 유저일 경우 카테고리 조회 방지로 방 생성 실패하는지 테스트(403나오면 정상)
+		 */
 		@Test
 		@DisplayName("패널티 상태의 유저 카테고리 목록 조회 실패 테스트 403")
 		void categoryListBlockedForPenalizedUser() throws Exception {
@@ -105,4 +104,5 @@ public class CategoryControllerTest {
 
 			verify(categoryService, times(1)).findCategoryList(any());
 		}
+	}
 }
