@@ -39,6 +39,7 @@ import gg.party.api.user.room.controller.response.RoomDetailResDto;
 import gg.party.api.user.room.controller.response.RoomJoinResDto;
 import gg.party.api.user.room.controller.response.RoomListResDto;
 import gg.party.api.user.room.controller.response.RoomResDto;
+import gg.party.api.user.room.controller.response.RoomStartResDto;
 import gg.party.api.user.room.controller.response.UserRoomResDto;
 import gg.party.api.user.room.service.RoomManagementService;
 import gg.pingpong.api.user.noti.service.PartyNotiService;
@@ -462,6 +463,110 @@ public class RoomControllerTest {
 			ResultActions resultActions = mockMvc.perform(
 				get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken));
 			resultActions.andExpect(status().isNotFound());
+		}
+	}
+
+	@Nested
+	@DisplayName("방 시작 테스트")
+	class StartRoom {
+		@BeforeEach
+		void beforeEach() {
+			userTester = testDataUtils.createNewUser("userTester", "userTester",
+				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
+			anotherTester = testDataUtils.createNewUser("anotherTester", "anotherTester",
+				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
+			otherTester = testDataUtils.createNewUser("otherTester", "otherTester",
+				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
+			testDataUtils.createNewPenalty(reportedTester, "test", "test", LocalDateTime.now(), 60);
+			userAccessToken = tokenProvider.createToken(userTester.getId());
+			anotherAccessToken = tokenProvider.createToken(anotherTester.getId());
+			otherAccessToken = tokenProvider.createToken(otherTester.getId());
+			testCategory = testDataUtils.createNewCategory("category");
+			openRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 0, 2, 3, 2, 180,
+				RoomType.OPEN);
+			startRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 2, 3, 2, 180,
+				RoomType.START);
+			testDataUtils.createNewUserRoom(userTester, openRoom, "nickname", true);
+			testDataUtils.createNewUserRoom(otherTester, openRoom, "nickname2", true);
+		}
+
+		@Test
+		@DisplayName("시작 성공 201")
+		public void success() throws Exception {
+			// given
+			String roomId = openRoom.getId().toString();
+			String url = "/party/rooms/" + roomId;
+			// when
+			String contentAsString = mockMvc.perform(
+					post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userTester))
+				.andExpect(status().isCreated())
+				.andReturn().getResponse().getContentAsString();
+			// then
+			RoomStartResDto rsrd = objectMapper.readValue(contentAsString, RoomStartResDto.class);
+			assertThat(rsrd.getRoomId()).isEqualTo(openRoom.getId());
+			then(partyNotiService).should(times(1)).sendPartyNotifications(any());
+		}
+
+		@Test
+		@DisplayName("방 없음으로 인한 에러 404")
+		public void noRoomFail() throws Exception {
+			// given
+			String roomId = "1000";
+			String url = "/party/rooms/" + roomId;
+			// when && then
+			String contentAsString = mockMvc.perform(
+					post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userTester))
+				.andExpect(status().isNotFound()).toString();
+		}
+
+		@Test
+		@DisplayName("Open이 아닌 상태로 인한 에러 400")
+		public void notOpenFail() throws Exception {
+			// given
+			String roomId = startRoom.getId().toString();
+			String url = "/party/rooms/" + roomId;
+			// when && then
+			String contentAsString = mockMvc.perform(
+					post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userTester))
+				.andExpect(status().isBadRequest()).toString();
+		}
+
+		@Test
+		@DisplayName("인원부족으로 인한 에러 400")
+		public void notNotEnoughPeopleFail() throws Exception {
+			// given
+			Room room = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1, 3, 2, 180,
+				RoomType.OPEN);
+			String roomId = room.getId().toString();
+			String url = "/party/rooms/" + roomId;
+			// when && then
+			String contentAsString = mockMvc.perform(
+					post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userTester))
+				.andExpect(status().isBadRequest()).toString();
+		}
+
+		@Test
+		@DisplayName("인원부족으로 인한 에러 400")
+		public void notCurrentFail() throws Exception {
+			// given
+			String roomId = openRoom.getId().toString();
+			String url = "/party/rooms/" + roomId;
+			// when && then
+			String contentAsString = mockMvc.perform(
+					post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + anotherAccessToken))
+				.andExpect(status().isBadRequest()).toString();
+		}
+
+		@Test
+		@DisplayName("방장이 아님으로 인한 에러 403")
+		public void notHostFail() throws Exception {
+			// given
+			String roomId = openRoom.getId().toString();
+			String url = "/party/rooms/" + roomId;
+			// when && then
+			String contentAsString = mockMvc.perform(
+					post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + otherAccessToken))
+				.andExpect(status().isForbidden()).toString();
 		}
 	}
 

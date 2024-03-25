@@ -134,11 +134,11 @@ public class RoomManagementService {
 	 *
 	 * @param roomId, user
 	 * @return 방 id
-	 * @throws RoomNotFoundException 방 없음
-	 * @throws RoomNotOpenException 방이 열리지 않은 상태
-	 * @throws RoomNotEnoughPeopleException 방에 충분한 인원이 없음
-	 * @throws RoomNotParticipantException 방에 참가하지 않은 유저
-	 * @throws UserNotHostException 방장이 아닌 경우
+	 * @throws RoomNotFoundException 방 없음 - 404
+	 * @throws RoomNotOpenException 방이 열리지 않은 상태 - 400
+	 * @throws RoomNotEnoughPeopleException 방에 충분한 인원이 없음 - 400
+	 * @throws RoomNotParticipantException 방에 참가하지 않은 유저 - 400
+	 * @throws UserNotHostException 방장이 아닌 경우 - 403
 	 */
 	@Transactional
 	public RoomStartResDto modifyStartRoom(Long roomId, UserDto user) {
