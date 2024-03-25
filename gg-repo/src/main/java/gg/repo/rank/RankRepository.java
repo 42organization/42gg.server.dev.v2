@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import gg.data.rank.Rank;
+import gg.data.pingpong.rank.Rank;
 
 @Repository
 public interface RankRepository extends JpaRepository<Rank, Long> {

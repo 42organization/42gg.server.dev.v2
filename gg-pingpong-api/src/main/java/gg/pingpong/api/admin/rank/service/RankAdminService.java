@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.admin.repo.user.UserAdminRepository;
-import gg.data.rank.Rank;
-import gg.data.rank.Tier;
-import gg.data.season.Season;
+import gg.data.pingpong.rank.Rank;
+import gg.data.pingpong.rank.Tier;
+import gg.data.pingpong.season.Season;
 import gg.data.user.User;
 import gg.pingpong.api.admin.season.dto.SeasonAdminDto;
 import gg.repo.rank.RankRepository;

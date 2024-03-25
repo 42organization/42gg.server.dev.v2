@@ -20,11 +20,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import gg.admin.repo.manage.PenaltyAdminRepository;
 import gg.auth.UserDto;
-import gg.data.game.Game;
-import gg.data.manage.SlotManagement;
 import gg.data.manage.type.PenaltyKey;
-import gg.data.match.type.Option;
-import gg.data.season.Season;
+import gg.data.pingpong.game.Game;
+import gg.data.pingpong.manage.SlotManagement;
+import gg.data.pingpong.match.type.Option;
+import gg.data.pingpong.season.Season;
 import gg.data.user.User;
 import gg.pingpong.api.user.manage.redis.PenaltyUserRedisRepository;
 import gg.pingpong.api.user.match.utils.MatchIntegrationTestUtils;

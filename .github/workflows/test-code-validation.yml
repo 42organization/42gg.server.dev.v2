@@ -2,7 +2,7 @@ name: 💻 Test code validation
 
 on:
   pull_request:
-    branches: [ main, dev ]
+    branches: [ main, dev, recruit-dev]
 
 jobs:
   test:

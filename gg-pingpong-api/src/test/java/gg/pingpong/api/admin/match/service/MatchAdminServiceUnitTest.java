@@ -20,8 +20,8 @@ import org.mockito.Mock;
 
 import gg.admin.repo.match.RedisMatchTimeAdminRepository;
 import gg.admin.repo.user.UserAdminRepository;
-import gg.data.match.RedisMatchUser;
-import gg.data.match.type.Option;
+import gg.data.pingpong.match.RedisMatchUser;
+import gg.data.pingpong.match.type.Option;
 import gg.data.user.User;
 import gg.pingpong.api.admin.match.service.dto.MatchUser;
 import gg.utils.annotation.UnitTest;

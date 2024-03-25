@@ -6,11 +6,11 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import gg.auth.UserDto;
-import gg.data.game.Game;
-import gg.data.game.Team;
-import gg.data.game.TeamUser;
-import gg.data.manage.SlotManagement;
 import gg.data.noti.Noti;
+import gg.data.pingpong.game.Game;
+import gg.data.pingpong.game.Team;
+import gg.data.pingpong.game.TeamUser;
+import gg.data.pingpong.manage.SlotManagement;
 import gg.data.user.User;
 import gg.pingpong.api.user.match.dto.GameAddDto;
 import gg.pingpong.api.user.noti.service.NotiService;
