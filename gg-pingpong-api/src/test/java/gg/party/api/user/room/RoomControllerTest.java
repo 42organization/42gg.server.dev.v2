@@ -128,7 +128,8 @@ public class RoomControllerTest {
 			RoomListResDto rlrd = objectMapper.readValue(contentAsString, RoomListResDto.class);
 			List<RoomResDto> roomList = rlrd.getRoomList();
 			for (RoomResDto responseDto : roomList) {
-				assertThat(responseDto.getStatus()).isIn(RoomType.OPEN.toString(), RoomType.START.toString());
+				assertThat(responseDto.getStatus()).isIn(RoomType.OPEN.toString(), RoomType.START.toString(),
+					RoomType.FINISH.toString());
 			}
 		}
 	}

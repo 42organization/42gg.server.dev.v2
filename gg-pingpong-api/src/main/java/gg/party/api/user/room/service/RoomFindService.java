@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.transaction.Transactional;
 
@@ -44,9 +45,15 @@ public class RoomFindService {
 
 		List<Room> notStartedRooms = roomRepository.findByStatus(RoomType.OPEN, sortForNotStarted);
 		List<Room> startedRooms = roomRepository.findByStatus(RoomType.START, sortForStarted);
+		List<Room> finishRooms = roomRepository.findByStatus(RoomType.FINISH, sortForStarted);
 
-		notStartedRooms.addAll(startedRooms);
-		List<RoomResDto> roomListResDto = notStartedRooms.stream()
+		List<Room> limitedFinishRooms = finishRooms.stream().limit(10).collect(Collectors.toList());
+
+		List<Room> combinedRooms = Stream.of(notStartedRooms, startedRooms, limitedFinishRooms)
+			.flatMap(List::stream)
+			.collect(Collectors.toList());
+
+		List<RoomResDto> roomListResDto = combinedRooms.stream()
 			.map(RoomResDto::new)
 			.collect(Collectors.toList());
 
