@@ -477,7 +477,6 @@ public class RoomControllerTest {
 				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
 			otherTester = testDataUtils.createNewUser("otherTester", "otherTester",
 				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
-			testDataUtils.createNewPenalty(reportedTester, "test", "test", LocalDateTime.now(), 60);
 			userAccessToken = tokenProvider.createToken(userTester.getId());
 			anotherAccessToken = tokenProvider.createToken(anotherTester.getId());
 			otherAccessToken = tokenProvider.createToken(otherTester.getId());
@@ -495,10 +494,10 @@ public class RoomControllerTest {
 		public void success() throws Exception {
 			// given
 			String roomId = openRoom.getId().toString();
-			String url = "/party/rooms/" + roomId;
+			String url = "/party/rooms/" + roomId + "/start";
 			// when
 			String contentAsString = mockMvc.perform(
-					post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userTester))
+					post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
 				.andExpect(status().isCreated())
 				.andReturn().getResponse().getContentAsString();
 			// then
@@ -512,10 +511,10 @@ public class RoomControllerTest {
 		public void noRoomFail() throws Exception {
 			// given
 			String roomId = "1000";
-			String url = "/party/rooms/" + roomId;
+			String url = "/party/rooms/" + roomId + "/start";
 			// when && then
 			String contentAsString = mockMvc.perform(
-					post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userTester))
+					post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
 				.andExpect(status().isNotFound()).toString();
 		}
 
@@ -524,10 +523,10 @@ public class RoomControllerTest {
 		public void notOpenFail() throws Exception {
 			// given
 			String roomId = startRoom.getId().toString();
-			String url = "/party/rooms/" + roomId;
+			String url = "/party/rooms/" + roomId + "/start";
 			// when && then
 			String contentAsString = mockMvc.perform(
-					post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userTester))
+					post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
 				.andExpect(status().isBadRequest()).toString();
 		}
 
@@ -538,19 +537,19 @@ public class RoomControllerTest {
 			Room room = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1, 3, 2, 180,
 				RoomType.OPEN);
 			String roomId = room.getId().toString();
-			String url = "/party/rooms/" + roomId;
+			String url = "/party/rooms/" + roomId + "/start";
 			// when && then
 			String contentAsString = mockMvc.perform(
-					post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userTester))
+					post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
 				.andExpect(status().isBadRequest()).toString();
 		}
 
 		@Test
-		@DisplayName("인원부족으로 인한 에러 400")
+		@DisplayName("방에 참가하지 않음으로 인한 에러 400")
 		public void notCurrentFail() throws Exception {
 			// given
 			String roomId = openRoom.getId().toString();
-			String url = "/party/rooms/" + roomId;
+			String url = "/party/rooms/" + roomId + "/start";
 			// when && then
 			String contentAsString = mockMvc.perform(
 					post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + anotherAccessToken))
@@ -562,7 +561,7 @@ public class RoomControllerTest {
 		public void notHostFail() throws Exception {
 			// given
 			String roomId = openRoom.getId().toString();
-			String url = "/party/rooms/" + roomId;
+			String url = "/party/rooms/" + roomId + "/start";
 			// when && then
 			String contentAsString = mockMvc.perform(
 					post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + otherAccessToken))
@@ -759,7 +758,7 @@ public class RoomControllerTest {
 			// when && then
 			String contentAsString = mockMvc.perform(
 					patch(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + otherAccessToken))
-				.andExpect(status().isNotFound()).toString();
+				.andExpect(status().isBadRequest()).toString();
 		}
 
 		@Test

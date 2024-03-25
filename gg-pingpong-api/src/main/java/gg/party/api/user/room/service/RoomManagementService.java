@@ -131,7 +131,6 @@ public class RoomManagementService {
 	/**
 	 * 방을 시작 상태로 바꾼다
 	 * 방의 상태를 시작 상태로 변경.
-	 *
 	 * @param roomId, user
 	 * @return 방 id
 	 * @throws RoomNotFoundException 방 없음 - 404
