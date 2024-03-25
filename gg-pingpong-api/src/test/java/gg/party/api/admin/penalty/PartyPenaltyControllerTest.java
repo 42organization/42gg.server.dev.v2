@@ -88,13 +88,16 @@ public class PartyPenaltyControllerTest {
 		void testModifyAdminPenalty() throws Exception {
 			Long penaltyId = 1L;
 
-			PartyPenalty testPenalty = partyPenaltyRepository.save(new PartyPenalty(reportedTester,
-				"test_penalty", "becauseTest",
-				LocalDateTime.now(), 60));
+			PartyPenaltyAdminReqDto penaltyDto = new PartyPenaltyAdminReqDto(
+				"test_penalty",
+				"Test reason",
+				60,
+				reportedTester.getIntraId()
+			);
 
 			mockMvc.perform(patch("/party/admin/penalties/{penaltyId}", penaltyId)
 					.contentType(MediaType.APPLICATION_JSON)
-					.content(objectMapper.writeValueAsString(testPenalty)))
+					.content(objectMapper.writeValueAsString(penaltyDto)))
 				.andExpect(status().isNoContent());
 		}
 
