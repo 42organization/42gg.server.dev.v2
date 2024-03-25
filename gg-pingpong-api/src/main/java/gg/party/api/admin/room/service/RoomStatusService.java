@@ -25,7 +25,7 @@ public class RoomStatusService {
 	@Transactional
 	public void finishStartedRooms() {
 		LocalDateTime twoHoursAgo = LocalDateTime.now().minusHours(2);
-		List<Room> startedRooms = roomRepository.findByStatusAndStartTimeBefore(RoomType.START, twoHoursAgo);
+		List<Room> startedRooms = roomRepository.findByStatusAndStartDate(RoomType.START, twoHoursAgo);
 		for (Room room : startedRooms) {
 			room.updateRoomStatus(RoomType.FINISH);
 			roomRepository.save(room);

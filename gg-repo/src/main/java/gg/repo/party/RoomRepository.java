@@ -21,7 +21,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 	Page<Room> findAll(Pageable pageable);
 
 	@Query("SELECT r FROM Room r WHERE r.status = :status AND r.startDate < :cutline")
-	List<Room> findByStatusAndStartTimeBefore(@Param("status") RoomType status,
-		@Param("cutoffTime") LocalDateTime cutline);
+	List<Room> findByStatusAndStartDate(@Param("status") RoomType status,
+		@Param("cutline") LocalDateTime cutline);
 
 }
