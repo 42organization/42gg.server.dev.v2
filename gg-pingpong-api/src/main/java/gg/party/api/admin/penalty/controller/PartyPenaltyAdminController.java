@@ -40,8 +40,8 @@ public class PartyPenaltyAdminController {
 	 * @param penaltyId 패널티 id
 	 */
 	@PatchMapping("/{penaltyId}")
-	public ResponseEntity<Void> modifyAdminPenalty(@PathVariable @Valid Long penaltyId,
-		@RequestBody PartyPenaltyAdminReqDto reqDto) {
+	public ResponseEntity<Void> modifyAdminPenalty(@PathVariable Long penaltyId,
+		@RequestBody @Valid PartyPenaltyAdminReqDto reqDto) {
 		partyPenaltyAdminService.modifyAdminPenalty(penaltyId, reqDto);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
