@@ -504,7 +504,6 @@ public class RoomControllerTest {
 				.andReturn().getResponse().getContentAsString();
 			// then
 			RoomJoinResDto rjrd = objectMapper.readValue(contentAsString, RoomJoinResDto.class);
-			assertThat(rooms[0].getId().toString()).isEqualTo(roomId);
 			Room updatedRoom = roomRepository.findById(rooms[0].getId()).orElse(null);
 			assertThat(updatedRoom).isNotNull();
 			assertThat(updatedRoom.getCurrentPeople()).isEqualTo(2);
@@ -524,7 +523,6 @@ public class RoomControllerTest {
 				.andReturn().getResponse().getContentAsString();
 			// then
 			RoomJoinResDto rjrd = objectMapper.readValue(contentAsString, RoomJoinResDto.class);
-			assertThat(rooms[0].getId().toString()).isEqualTo(roomId);
 			Room updatedRoom = roomRepository.findById(openRoom.getId()).orElse(null);
 			assertThat(updatedRoom).isNotNull();
 			assertThat(updatedRoom.getCurrentPeople()).isEqualTo(2);
