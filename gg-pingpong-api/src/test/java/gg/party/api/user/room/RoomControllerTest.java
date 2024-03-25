@@ -317,13 +317,17 @@ public class RoomControllerTest {
 				RacketType.DUAL, SnsType.SLACK, RoleType.USER, "image");
 			anotherTester = testDataUtils.createNewImageUser("anotherTester", "anotherTester",
 				RacketType.DUAL, SnsType.SLACK, RoleType.USER, "image");
+			otherTester = testDataUtils.createNewImageUser("otherTester", "otherTester",
+				RacketType.DUAL, SnsType.SLACK, RoleType.USER, "image");
 			userAccessToken = tokenProvider.createToken(userTester.getId());
 			anotherAccessToken = tokenProvider.createToken(anotherTester.getId());
+			otherAccessToken = tokenProvider.createToken(otherTester.getId());
 			testCategory = testDataUtils.createNewCategory("category");
 			for (int i = 0; i < rooms.length; i++) {
 				rooms[i] = testDataUtils.createNewRoom(userTester, userTester, testCategory, i, 1, 3, 2, 180,
 					roomTypes[i]);
 				testDataUtils.createNewUserRoom(userTester, rooms[i], "nickname" + i, true);
+				testDataUtils.createNewUserRoom(otherTester, rooms[i], "nickname" + i, true);
 			}
 		}
 
@@ -331,8 +335,8 @@ public class RoomControllerTest {
 		@DisplayName("OPEN 및 참여한 방 조회 성공 200")
 		public void inOpenRoomSuccess() throws Exception {
 			//given
-			String openRoomId = openRoom.getId().toString();
-			String url = "/party/rooms/" + openRoomId;
+			String roomId = rooms[0].getId().toString(); // openRoom
+			String url = "/party/rooms/" + roomId;
 			//when
 			String contentAsString = mockMvc.perform(
 					get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
@@ -351,8 +355,8 @@ public class RoomControllerTest {
 		@DisplayName("OPEN 및 참여하지 않은 방 조회 성공 200")
 		public void outOpenRoomSuccess() throws Exception {
 			//given
-			String openRoomId = openRoom.getId().toString();
-			String url = "/party/rooms/" + openRoomId;
+			String roomId = rooms[0].getId().toString(); // openRoom
+			String url = "/party/rooms/" + roomId;
 			//when
 			String contentAsString = mockMvc.perform(
 					get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + anotherAccessToken))
@@ -371,8 +375,8 @@ public class RoomControllerTest {
 		@DisplayName("START 및 참여한 방 조회 성공 200")
 		public void inStartRoomSuccess() throws Exception {
 			//given
-			String startRoomId = startRoom.getId().toString();
-			String url = "/party/rooms/" + startRoomId;
+			String roomId = rooms[1].getId().toString(); // startRoom
+			String url = "/party/rooms/" + roomId;
 			//when
 			String contentAsString = mockMvc.perform(
 					get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
@@ -391,8 +395,8 @@ public class RoomControllerTest {
 		@DisplayName("START 및 참여하지 않은 방 조회 성공 200")
 		public void outStartRoomSuccess() throws Exception {
 			//given
-			String startRoomId = startRoom.getId().toString();
-			String url = "/party/rooms/" + startRoomId;
+			String roomId = rooms[1].getId().toString(); // startRoom
+			String url = "/party/rooms/" + roomId;
 			//when
 			String contentAsString = mockMvc.perform(
 					get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + anotherAccessToken))
@@ -408,11 +412,51 @@ public class RoomControllerTest {
 		}
 
 		@Test
+		@DisplayName("START 및 참여한 방장이 아닌 방 조회 성공 200")
+		public void otherStartRoomSuccess() throws Exception {
+			//given
+			String roomId = rooms[1].getId().toString(); // startRoom
+			String url = "/party/rooms/" + roomId;
+			//when
+			String contentAsString = mockMvc.perform(
+					get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + otherAccessToken))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+			//then
+			RoomDetailResDto rdrd = objectMapper.readValue(contentAsString, RoomDetailResDto.class);
+			assertThat(rdrd.getStatus().toString()).isEqualTo(RoomType.START.toString());
+			for (UserRoomResDto roomUser : rdrd.getRoomUsers()) {
+				assertThat(roomUser.getIntraId()).isNotNull();
+				assertThat(roomUser.getUserImage()).isNotNull();
+			}
+		}
+
+		@Test
+		@DisplayName("Finish 및 참여한 방장이 아닌 방 조회 성공 200")
+		public void otherFinishRoomSuccess() throws Exception {
+			//given
+			String roomId = rooms[2].getId().toString(); // finishRoom
+			String url = "/party/rooms/" + roomId;
+			//when
+			String contentAsString = mockMvc.perform(
+					get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + otherAccessToken))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+			//then
+			RoomDetailResDto rdrd = objectMapper.readValue(contentAsString, RoomDetailResDto.class);
+			assertThat(rdrd.getStatus().toString()).isEqualTo(RoomType.FINISH.toString());
+			for (UserRoomResDto roomUser : rdrd.getRoomUsers()) {
+				assertThat(roomUser.getIntraId()).isNotNull();
+				assertThat(roomUser.getUserImage()).isNotNull();
+			}
+		}
+
+		@Test
 		@DisplayName("HIDDEN된 방 조회 실패 404")
 		public void hiddenRoomFail() throws Exception {
 			// given
-			String hiddenRoomId = hiddenRoom.getId().toString();
-			String url = "/party/rooms/" + hiddenRoomId;
+			String roomId = rooms[3].getId().toString();
+			String url = "/party/rooms/" + roomId;
 			// when && then
 			ResultActions resultActions = mockMvc.perform(
 				get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken));
@@ -447,8 +491,8 @@ public class RoomControllerTest {
 		@DisplayName("참여 성공 201")
 		public void success() throws Exception {
 			// given
-			String openRoomId = openRoom.getId().toString();
-			String url = "/party/rooms/" + openRoomId;
+			String roomId = rooms[0].getId().toString(); // openRoom
+			String url = "/party/rooms/" + roomId;
 			// when
 			String contentAsString = mockMvc.perform(
 					post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + anotherAccessToken))
@@ -456,19 +500,19 @@ public class RoomControllerTest {
 				.andReturn().getResponse().getContentAsString();
 			// then
 			RoomJoinResDto rjrd = objectMapper.readValue(contentAsString, RoomJoinResDto.class);
-			assertThat(openRoom.getId().toString()).isEqualTo(openRoomId);
-			Room updatedRoom = roomRepository.findById(openRoom.getId()).orElse(null);
+			assertThat(rooms[0].getId().toString()).isEqualTo(roomId);
+			Room updatedRoom = roomRepository.findById(rooms[0].getId()).orElse(null);
 			assertThat(updatedRoom).isNotNull();
 			assertThat(updatedRoom.getCurrentPeople()).isEqualTo(2);
-			assertThat(rjrd.getRoomId()).isEqualTo(openRoom.getId());
+			assertThat(rjrd.getRoomId()).isEqualTo(rooms[0].getId());
 		}
 
 		@Test
 		@DisplayName("패널티 상태로 인한 참여 실패 403")
 		public void penaltyUserFail() throws Exception {
 			// given
-			String openRoomId = openRoom.getId().toString();
-			String url = "/party/rooms/" + openRoomId;
+			String roomId = rooms[0].getId().toString(); // openRoom
+			String url = "/party/rooms/" + roomId;
 			// when && then
 			String contentAsString = mockMvc.perform(
 					post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + reportedAccessToken))
@@ -493,8 +537,8 @@ public class RoomControllerTest {
 		@DisplayName("이미 참여 중인 상태로 인한 실패 409")
 		public void alreadyInRoomFail() throws Exception {
 			// given
-			String openRoomId = openRoom.getId().toString();
-			String url = "/party/rooms/" + openRoomId;
+			String roomId = rooms[0].getId().toString(); // openRoom
+			String url = "/party/rooms/" + roomId;
 			// when && then
 			String contentAsString = mockMvc.perform(
 					post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
@@ -516,33 +560,35 @@ public class RoomControllerTest {
 			userAccessToken = tokenProvider.createToken(userTester.getId());
 			otherAccessToken = tokenProvider.createToken(otherTester.getId());
 			testCategory = testDataUtils.createNewCategory("category");
-			for (int i = 0; i < rooms.length; i++) {
+			for (int i = 1; i < rooms.length; i++) {
 				rooms[i] = testDataUtils.createNewRoom(userTester, userTester, testCategory, i, 1, 3, 2, 180,
 					roomTypes[i]);
 				testDataUtils.createNewUserRoom(userTester, rooms[i], "nickname" + i, true);
 			}
+			rooms[0] = testDataUtils.createNewRoom(userTester, userTester, testCategory, 0, 2, 3, 2, 180,
+				roomTypes[0]);
+			testDataUtils.createNewUserRoom(userTester, rooms[0], "nickname", true);
+			testDataUtils.createNewUserRoom(anotherTester, rooms[0], "nickname", true);
+			openRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 0, 1, 3, 2, 180,
+				RoomType.OPEN);
 			testDataUtils.createNewUserRoom(userTester, openRoom, "nickname", true);
-			testDataUtils.createNewUserRoom(anotherTester, openRoom, "nickname2", true);
-			testDataUtils.createNewUserRoom(userTester, failRoom, "nickname", true);
-			testDataUtils.createNewUserRoom(userTester, startRoom, "nickname", true);
-
 		}
 
 		@Test
 		@DisplayName("호스트 이전 성공 200")
 		public void hostSuccess() throws Exception {
 			// given
-			String openRoomId = openRoom.getId().toString();
-			String url = "/party/rooms/" + openRoomId;
+			String roomId = rooms[0].getId().toString(); // openRoom
+			String url = "/party/rooms/" + roomId;
 			// when
 			String contentAsString = mockMvc.perform(
 					patch(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
 			// then
-			Room updatedRoom = roomRepository.findById(openRoom.getId()).orElse(null);
-			UserRoom newHostUserRoom = userRoomRepository.findByUserAndRoom(anotherTester, openRoom).orElse(null);
-			UserRoom exitUserRoom = userRoomRepository.findByUserAndRoom(userTester, openRoom).orElse(null);
+			Room updatedRoom = roomRepository.findById(rooms[0].getId()).orElse(null);
+			UserRoom newHostUserRoom = userRoomRepository.findByUserAndRoom(anotherTester, rooms[0]).orElse(null);
+			UserRoom exitUserRoom = userRoomRepository.findByUserAndRoom(userTester, rooms[0]).orElse(null);
 			assertThat(updatedRoom).isNotNull();
 			assertThat(updatedRoom.getCurrentPeople()).isEqualTo(1);
 			assertThat(newHostUserRoom).isNotNull();
@@ -557,8 +603,8 @@ public class RoomControllerTest {
 		@DisplayName("방 FAIL 성공 200")
 		public void failSuccess() throws Exception {
 			// given
-			String willFailRoomId = failRoom.getId().toString();
-			String url = "/party/rooms/" + willFailRoomId;
+			String roomId = openRoom.getId().toString(); // openRoom
+			String url = "/party/rooms/" + roomId;
 			// when
 			String contentAsString = mockMvc.perform(
 					patch(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
@@ -566,8 +612,8 @@ public class RoomControllerTest {
 				.andReturn().getResponse().getContentAsString();
 			// then
 			LeaveRoomResDto lrrd = objectMapper.readValue(contentAsString, LeaveRoomResDto.class);
-			Room updatedRoom = roomRepository.findById(failRoom.getId()).orElse(null);
-			UserRoom exitUserRoom = userRoomRepository.findByUserAndRoom(userTester, failRoom).orElse(null);
+			Room updatedRoom = roomRepository.findById(openRoom.getId()).orElse(null);
+			UserRoom exitUserRoom = userRoomRepository.findByUserAndRoom(userTester, openRoom).orElse(null);
 			assertThat(updatedRoom).isNotNull();
 			assertThat(updatedRoom.getCurrentPeople()).isEqualTo(0);
 			assertThat(updatedRoom.getStatus()).isEqualTo(RoomType.FAIL);
@@ -580,8 +626,8 @@ public class RoomControllerTest {
 		@DisplayName("방에 없는 유저로 인한 나가기 실패 404")
 		public void notInFail() throws Exception {
 			// given
-			String openRoomId = openRoom.getId().toString();
-			String url = "/party/rooms/" + openRoomId;
+			String roomId = rooms[0].getId().toString(); // openRoom
+			String url = "/party/rooms/" + roomId;
 			// when && then
 			String contentAsString = mockMvc.perform(
 					patch(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + otherAccessToken))
@@ -592,7 +638,7 @@ public class RoomControllerTest {
 		@DisplayName("OPEN이 아닌 방으로 인한 나가기 실패 400")
 		public void startFail() throws Exception {
 			// given
-			String startRoomId = startRoom.getId().toString();
+			String startRoomId = rooms[1].getId().toString(); // startRoom
 			String url = "/party/rooms/" + startRoomId;
 			// when && then
 			String contentAsString = mockMvc.perform(
