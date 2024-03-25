@@ -1,5 +1,7 @@
 package gg.utils;
 
+import static java.lang.Boolean.*;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -795,6 +797,9 @@ public class TestDataUtils {
 		return slotManagementRepository.save(slotManagement);
 	}
 
+	/*
+	 * number는 방 순서에 따라 제목 내용을 순서따라 표기하기 위함.
+	 */
 	public Room createNewRoom(User host, User creator, Category category, int number, Integer currentPeople,
 		Integer maxPeople, Integer minPeople, Integer dueDate, RoomType status) {
 		Room room = Room.builder()
@@ -882,5 +887,12 @@ public class TestDataUtils {
 		UserReport userReport = new UserReport(user, targetUser, room, "test");
 		userReportRepository.save(userReport);
 		return userReport;
+	}
+
+	public Comment createReportComment(User user, UserRoom userRoom, Room room, String content) {
+		Comment comment = new Comment(user, userRoom, room, content);
+		comment.updateHidden(TRUE);
+		commentRepository.save(comment);
+		return comment;
 	}
 }

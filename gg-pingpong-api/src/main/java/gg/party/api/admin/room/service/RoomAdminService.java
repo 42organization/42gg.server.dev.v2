@@ -38,8 +38,8 @@ public class RoomAdminService {
 	 * 방 Status 변경
 	 * @param roomId 방 id
 	 * @param newStatus 바꿀 status
-	 * @exception RoomNotFoundException 유효하지 않은 방 입력
-	 * @exception RoomSameStatusException 같은 상태로 변경
+	 * @exception RoomNotFoundException 유효하지 않은 방 입력 - 404
+	 * @exception RoomSameStatusException 같은 상태로 변경 -409
 	 */
 	@Transactional
 	public void modifyRoomStatus(Long roomId, RoomType newStatus) {
@@ -91,7 +91,8 @@ public class RoomAdminService {
 
 		Optional<UserRoom> hostUserRoomOptional = userRoomRepository.findByUserIdAndRoomIdAndIsExistTrue(
 			room.getHost().getId(), roomId);
-		String hostNickname = hostUserRoomOptional.get().getNickname();
+		String hostNickname = hostUserRoomOptional.map(UserRoom::getNickname)
+			.orElse(null);
 
 		List<UserRoomResDto> roomUsers = userRoomRepository.findByRoomId(roomId).stream()
 			.filter(UserRoom::getIsExist)
