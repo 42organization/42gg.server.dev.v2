@@ -1,6 +1,7 @@
 package gg.party.api.user.room;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.BDDMockito.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -485,6 +486,9 @@ public class RoomControllerTest {
 					roomTypes[i]);
 				testDataUtils.createNewUserRoom(userTester, rooms[i], "nickname" + i, true);
 			}
+			openRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 0, 1, 2, 2, 180,
+				RoomType.OPEN);
+			testDataUtils.createNewUserRoom(userTester, openRoom, "nickname", true);
 		}
 
 		@Test
@@ -505,6 +509,27 @@ public class RoomControllerTest {
 			assertThat(updatedRoom).isNotNull();
 			assertThat(updatedRoom.getCurrentPeople()).isEqualTo(2);
 			assertThat(rjrd.getRoomId()).isEqualTo(rooms[0].getId());
+		}
+
+		@Test
+		@DisplayName("참여로 인한 최대인원으로 시작 성공 201")
+		public void startSuccess() throws Exception {
+			// given
+			String roomId = openRoom.getId().toString();
+			String url = "/party/rooms/" + roomId;
+			// when
+			String contentAsString = mockMvc.perform(
+					post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + anotherAccessToken))
+				.andExpect(status().isCreated())
+				.andReturn().getResponse().getContentAsString();
+			// then
+			RoomJoinResDto rjrd = objectMapper.readValue(contentAsString, RoomJoinResDto.class);
+			assertThat(rooms[0].getId().toString()).isEqualTo(roomId);
+			Room updatedRoom = roomRepository.findById(openRoom.getId()).orElse(null);
+			assertThat(updatedRoom).isNotNull();
+			assertThat(updatedRoom.getCurrentPeople()).isEqualTo(2);
+			assertThat(rjrd.getRoomId()).isEqualTo(openRoom.getId());
+			then(partyNotiService).should(times(1)).sendPartyNotifications(any());
 		}
 
 		@Test
