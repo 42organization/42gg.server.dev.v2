@@ -72,6 +72,8 @@ public class CommentAdminControllerTest {
 	String adminAccessToken;
 	Room testRoom;
 	Room reportTestRoom;
+	Comment testComment;
+	Comment reportComment;
 
 	@Nested
 	@DisplayName("Comment Show 여부 수정 테스트")
@@ -95,60 +97,58 @@ public class CommentAdminControllerTest {
 			UserRoom testUserRoom = testDataUtils.createNewUserRoom(userTester, testRoom, "testNickname", TRUE);
 			UserRoom reportUserRoom = testDataUtils.createNewUserRoom(reportedTester, reportTestRoom, "reportNickname",
 				TRUE);
-			userTester = testDataUtils.createNewUser("findTester", "findTester",
-				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
-			testDataUtils.createComment(userTester, testUserRoom, testRoom, "testComment");
-			testDataUtils.createReportComment(reportedTester, reportUserRoom, reportTestRoom, "reportComment");
+			testComment = testDataUtils.createComment(userTester, testUserRoom, testRoom, "testComment");
+			reportComment = testDataUtils.createReportComment(reportedTester, reportUserRoom, reportTestRoom,
+				"reportComment");
 		}
 
 		@Test
 		@DisplayName("isHidden False -> True 변경 성공 204")
 		public void success() throws Exception {
-			Comment comment = commentRepository.findByRoomId(testRoom.getId()).get(0);
-			String commentId = comment.getId().toString();
-			String url = "/party/admin/comments" + commentId;
+			//given
+			String commentId = testComment.getId().toString();
+			String url = "/party/admin/comments/" + commentId;
 			CommentUpdateAdminReqDto commentUpdateAdminReqDto = new CommentUpdateAdminReqDto(TRUE);
 			String requestBody = objectMapper.writeValueAsString(commentUpdateAdminReqDto);
-			//given
-			String contentAsString = mockMvc.perform(post(url)
+			//when && then
+			String contentAsString = mockMvc.perform(patch(url)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(requestBody)
-					.header(HttpHeaders.AUTHORIZATION, "Bearer " + adminTester))
-				.andExpect(status().isBadRequest()).toString();
-			//then
-			assertThat(comment.isHidden()).isEqualTo(TRUE);
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + adminAccessToken))
+				.andExpect(status().isNoContent()).toString();
+			assertThat(testComment.isHidden()).isEqualTo(TRUE);
 		}
 
 		@Test
 		@DisplayName("isHidden True -> False 변경 성공 204")
 		public void reportCommentSuccess() throws Exception {
-			Comment comment = commentRepository.findByRoomId(reportTestRoom.getId()).get(0);
-			String commentId = comment.getId().toString();
-			String url = "/party/admin/comments" + commentId;
+			//given
+			String commentId = reportComment.getId().toString();
+			String url = "/party/admin/comments/" + commentId;
 			CommentUpdateAdminReqDto commentUpdateAdminReqDto = new CommentUpdateAdminReqDto(FALSE);
 			String requestBody = objectMapper.writeValueAsString(commentUpdateAdminReqDto);
-			//given
-			String contentAsString = mockMvc.perform(post(url)
+			//when && then
+			String contentAsString = mockMvc.perform(patch(url)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(requestBody)
-					.header(HttpHeaders.AUTHORIZATION, "Bearer " + adminTester))
-				.andExpect(status().isBadRequest()).toString();
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + adminAccessToken))
+				.andExpect(status().isNoContent()).toString();
 			//then
-			assertThat(comment.isHidden()).isEqualTo(FALSE);
+			assertThat(reportComment.isHidden()).isEqualTo(FALSE);
 		}
 
 		@Test
 		@DisplayName("없는 Comment로 인한 에러 404")
 		public void fail() throws Exception {
 			String commentId = "1000";
-			String url = "/party/admin/comments" + commentId;
+			String url = "/party/admin/comments/" + commentId;
 			CommentUpdateAdminReqDto commentUpdateAdminReqDto = new CommentUpdateAdminReqDto(TRUE);
 			String requestBody = objectMapper.writeValueAsString(commentUpdateAdminReqDto);
 			//given
-			String contentAsString = mockMvc.perform(post(url)
+			String contentAsString = mockMvc.perform(patch(url)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(requestBody)
-					.header(HttpHeaders.AUTHORIZATION, "Bearer " + adminTester))
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + adminAccessToken))
 				.andExpect(status().isNotFound()).toString();
 		}
 	}
