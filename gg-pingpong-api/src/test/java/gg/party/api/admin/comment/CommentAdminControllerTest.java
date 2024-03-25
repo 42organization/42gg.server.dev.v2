@@ -1,4 +1,4 @@
-package gg.party.api.user.room;
+package gg.party.api.admin.comment;
 
 import static java.lang.Boolean.*;
 import static org.assertj.core.api.AssertionsForClassTypes.*;
