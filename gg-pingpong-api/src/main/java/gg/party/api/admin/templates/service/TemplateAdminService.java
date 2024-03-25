@@ -21,7 +21,7 @@ public class TemplateAdminService {
 
 	/**
 	 * 템플릿 추가
-	 * @exception CategoryNotFoundException 존재하지 않는 카테고리 입력
+	 * @exception CategoryNotFoundException 존재하지 않는 카테고리 입력 - 404
 	 */
 	public void addTemplate(TemplateAdminCreateReqDto request) {
 		Category category = categoryRepository.findById(request.getCategoryId())
@@ -34,8 +34,8 @@ public class TemplateAdminService {
 
 	/**
 	 * 템플릿 수정
-	 * @exception TemplateNotFoundException 존재하지 않는 템플릿 입력
-	 * @exception CategoryNotFoundException 존재하지 않는 카테고리 입력
+	 * @exception TemplateNotFoundException 존재하지 않는 템플릿 입력 - 404
+	 * @exception CategoryNotFoundException 존재하지 않는 카테고리 입력 - 404
 	 */
 	@Transactional
 	public void modifyTemplate(Long templateId, TemplateAdminUpdateReqDto request) {
@@ -64,7 +64,7 @@ public class TemplateAdminService {
 
 	/**
 	 * 템플릿 삭제
-	 * @exception TemplateNotFoundException 존재하지 않는 템플릿 입력
+	 * @exception TemplateNotFoundException 존재하지 않는 템플릿 입력 - 404
 	 */
 	@Transactional
 	public void removeTemplate(Long templateId) {
