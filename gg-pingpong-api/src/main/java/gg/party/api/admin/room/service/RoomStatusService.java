@@ -25,11 +25,11 @@ public class RoomStatusService {
 	@Transactional
 	public void finishStartedRooms() {
 		LocalDateTime twoHoursAgo = LocalDateTime.now().minusHours(2);
-		List<Room> startedRooms = roomRepository.findByStatus(RoomType.START, null);
+		List<Room> startedRooms = roomRepository.findByStatusAndStartTimeBefore(RoomType.START, twoHoursAgo);
 		for (Room room : startedRooms) {
 			room.updateRoomStatus(RoomType.FINISH);
 			roomRepository.save(room);
-			log.info("Room {} status updated to FINISH", room.getId());
+			log.info("{}번 방이 종료되었습니다.", room.getId());
 		}
 	}
 
@@ -45,7 +45,7 @@ public class RoomStatusService {
 			if (room.getDueDate().isBefore(now)) {
 				room.updateRoomStatus(RoomType.FAIL);
 				roomRepository.save(room);
-				log.info("Room {} status updated to FAIL", room.getId());
+				log.info("{}번 방이 시간이 지나 Fail되었습니다.", room.getId());
 			}
 		}
 	}
