@@ -19,4 +19,11 @@ public class PartyPenaltyAdminReqDto {
 		Integer penaltyTime) {
 		return new PartyPenalty(user, penaltyType, message, startTime, penaltyTime);
 	}
+
+	public PartyPenaltyAdminReqDto(String penaltyType, String message, int penaltyTime, String userIntraId) {
+		this.penaltyType = penaltyType;
+		this.message = message;
+		this.penaltyTime = penaltyTime;
+		this.userIntraId = userIntraId;
+	}
 }
