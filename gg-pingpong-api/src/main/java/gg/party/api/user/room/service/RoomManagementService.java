@@ -116,7 +116,11 @@ public class RoomManagementService {
 		// 방장 이권
 		if (user.getId().equals(targetRoom.getHost().getId())) {
 			List<User> existUser = userRoomRepository.findByIsExist(roomId);
-			targetRoom.updateHost(existUser.get(0));
+			if (existUser != null && !existUser.isEmpty()) {
+				targetRoom.updateHost(existUser.get(0));
+			} else {
+				targetRoom.updateHost(null);
+			}
 		}
 		userRoomRepository.save(targetUserRoom);
 		roomRepository.save(targetRoom);
