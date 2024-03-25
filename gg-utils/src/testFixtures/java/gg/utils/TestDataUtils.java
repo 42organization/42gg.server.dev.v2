@@ -1,5 +1,7 @@
 package gg.utils;
 
+import static java.lang.Boolean.*;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -885,5 +887,12 @@ public class TestDataUtils {
 		UserReport userReport = new UserReport(user, targetUser, room, "test");
 		userReportRepository.save(userReport);
 		return userReport;
+	}
+
+	public Comment createReportComment(User user, UserRoom userRoom, Room room, String content) {
+		Comment comment = new Comment(user, userRoom, room, content);
+		comment.updateHidden(TRUE);
+		commentRepository.save(comment);
+		return comment;
 	}
 }

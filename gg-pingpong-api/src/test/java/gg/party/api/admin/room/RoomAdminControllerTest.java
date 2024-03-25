@@ -249,10 +249,10 @@ public class RoomAdminControllerTest {
 				}
 				UserRoom testUserRoom = testDataUtils.createNewUserRoom(userTester, rooms[i], "testNickname", TRUE);
 				UserRoom reportUserRoom = testDataUtils.createNewUserRoom(reportedTester, rooms[i],
-					"reportNickname",
-					TRUE);
+					"reportNickname", TRUE);
 				testDataUtils.createComment(userTester, testUserRoom, rooms[i], "testComment" + i);
-				testDataUtils.createComment(reportedTester, reportUserRoom, rooms[i], "reportComment" + i);
+				testDataUtils.createReportComment(reportedTester, reportUserRoom, rooms[i], "reportComment" + i);
+
 			}
 		}
 
