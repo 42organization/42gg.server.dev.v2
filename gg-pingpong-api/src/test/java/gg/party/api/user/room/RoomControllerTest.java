@@ -155,7 +155,7 @@ public class RoomControllerTest {
 		public void success() throws Exception {
 			//given
 			String url = "/party/rooms";
-			RoomCreateReqDto roomCreateReqDto = new RoomCreateReqDto("title", "content", testCategory.getId(),
+			RoomCreateReqDto roomCreateReqDto = new RoomCreateReqDto("title", "content", testCategory.getName(),
 				4, 2, 180);
 			String jsonRequest = objectMapper.writeValueAsString(roomCreateReqDto);
 			//when
@@ -175,7 +175,7 @@ public class RoomControllerTest {
 		public void penaltyUserFail() throws Exception {
 			//given
 			String url = "/party/rooms";
-			RoomCreateReqDto roomCreateReqDto = new RoomCreateReqDto("title", "content", testCategory.getId(), 4, 2,
+			RoomCreateReqDto roomCreateReqDto = new RoomCreateReqDto("title", "content", testCategory.getName(), 4, 2,
 				180);
 			String requestBody = objectMapper.writeValueAsString(roomCreateReqDto);
 			// when && then
@@ -191,7 +191,7 @@ public class RoomControllerTest {
 		public void notValidCategoryFail() throws Exception {
 			//given
 			String url = "/party/rooms";
-			RoomCreateReqDto roomCreateReqDto = new RoomCreateReqDto("title", "content", 100L, 4, 2, 180);
+			RoomCreateReqDto roomCreateReqDto = new RoomCreateReqDto("title", "content", "NOTFOUND", 4, 2, 180);
 			String requestBody = objectMapper.writeValueAsString(roomCreateReqDto);
 			// when && then
 			mockMvc.perform(post(url)
@@ -206,7 +206,7 @@ public class RoomControllerTest {
 		public void minOverMaxFail() throws Exception {
 			//given
 			String url = "/party/rooms";
-			RoomCreateReqDto roomCreateReqDto = new RoomCreateReqDto("title", "content", testCategory.getId(), 2, 4,
+			RoomCreateReqDto roomCreateReqDto = new RoomCreateReqDto("title", "content", testCategory.getName(), 2, 4,
 				180);
 			String requestBody = objectMapper.writeValueAsString(roomCreateReqDto);
 			// when && then
@@ -222,7 +222,7 @@ public class RoomControllerTest {
 		public void notValidTimeFail() throws Exception {
 			//given
 			String url = "/party/rooms";
-			RoomCreateReqDto roomCreateReqDto = new RoomCreateReqDto("title", "content", testCategory.getId(), 4, 2,
+			RoomCreateReqDto roomCreateReqDto = new RoomCreateReqDto("title", "content", testCategory.getName(), 4, 2,
 				-180);
 			String requestBody = objectMapper.writeValueAsString(roomCreateReqDto);
 			// when && then

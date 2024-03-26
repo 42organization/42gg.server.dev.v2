@@ -121,7 +121,7 @@ public class TemplateAdminControllerTest {
 				RacketType.DUAL, SnsType.SLACK, RoleType.ADMIN);
 			userAccessToken = tokenProvider.createToken(userTester.getId());
 			testCategory = testDataUtils.createNewCategory("category");
-			testTemplate = testDataUtils.createTemplate(testCategory, "gameName", 4,
+			testTemplate = testDataUtils.createNewTemplate(testCategory, "gameName", 4,
 				2, 180, 180, "genre", "hard", "summary");
 		}
 
@@ -206,7 +206,7 @@ public class TemplateAdminControllerTest {
 				RacketType.DUAL, SnsType.SLACK, RoleType.ADMIN);
 			userAccessToken = tokenProvider.createToken(userTester.getId());
 			testCategory = testDataUtils.createNewCategory("category");
-			testTemplate = testDataUtils.createTemplate(testCategory, "gameName", 4,
+			testTemplate = testDataUtils.createNewTemplate(testCategory, "gameName", 4,
 				2, 180, 180, "genre", "hard", "summary");
 		}
 

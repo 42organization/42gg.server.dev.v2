@@ -1,4 +1,4 @@
-package gg.party.api.user.templates.controller.response;
+package gg.party.api.user.template.controller.response;
 
 import java.util.List;
 
