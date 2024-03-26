@@ -122,6 +122,22 @@ public class CommentAdminControllerTest {
 		}
 
 		@Test
+		@DisplayName("같은 내용으로 변경으로 인한 에러 409")
+		public void duplicationFail() throws Exception {
+			//given
+			String commentId = reportComment.getId().toString();
+			String url = "/party/admin/comments/" + commentId;
+			CommentUpdateAdminReqDto commentUpdateAdminReqDto = new CommentUpdateAdminReqDto(TRUE);
+			String requestBody = objectMapper.writeValueAsString(commentUpdateAdminReqDto);
+			//when && then
+			mockMvc.perform(patch(url)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(requestBody)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + adminAccessToken))
+				.andExpect(status().isConflict());
+		}
+
+		@Test
 		@DisplayName("없는 Comment로 인한 에러 404")
 		public void fail() throws Exception {
 			//given

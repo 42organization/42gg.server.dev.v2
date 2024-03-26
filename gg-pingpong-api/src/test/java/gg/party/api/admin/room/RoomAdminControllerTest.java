@@ -128,7 +128,7 @@ public class RoomAdminControllerTest {
 		}
 
 		@Test
-		@DisplayName("동일한 Status 변경으로 인한 에러 400")
+		@DisplayName("동일한 Status 변경으로 인한 에러 409")
 		public void sameStatusFail() throws Exception {
 			//given
 			String roomId = openRoom.getId().toString();
@@ -140,7 +140,7 @@ public class RoomAdminControllerTest {
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(jsonRequest)
 					.header(HttpHeaders.AUTHORIZATION, "Bearer " + adminAccessToken))
-				.andExpect(status().isBadRequest());
+				.andExpect(status().isConflict());
 		}
 	}
 
