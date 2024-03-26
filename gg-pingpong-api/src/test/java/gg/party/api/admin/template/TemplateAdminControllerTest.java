@@ -26,7 +26,6 @@ import gg.data.user.type.RoleType;
 import gg.data.user.type.SnsType;
 import gg.party.api.admin.templates.controller.request.TemplateAdminCreateReqDto;
 import gg.party.api.admin.templates.controller.request.TemplateAdminUpdateReqDto;
-import gg.party.api.admin.templates.service.TemplateAdminService;
 import gg.repo.party.CategoryRepository;
 import gg.repo.party.TemplateRepository;
 import gg.utils.TestDataUtils;
@@ -50,8 +49,6 @@ public class TemplateAdminControllerTest {
 	AuthTokenProvider tokenProvider;
 	@Autowired
 	CategoryRepository categoryRepository;
-	@Autowired
-	TemplateAdminService templateAdminService;
 	@Autowired
 	TemplateRepository templateRepository;
 	User userTester;
@@ -166,7 +163,7 @@ public class TemplateAdminControllerTest {
 			String templateId = testTemplate.getId().toString();
 			String url = "/party/admin/templates/" + templateId;
 			TemplateAdminUpdateReqDto templateAdminUpdateReqDto = new TemplateAdminUpdateReqDto(
-				10L, "newGameName", 8, 4,
+				1000L, "newGameName", 8, 4,
 				90, 90, "newGenre", "easy", "newSummary");
 			String jsonRequest = objectMapper.writeValueAsString(templateAdminUpdateReqDto);
 			//when && then
