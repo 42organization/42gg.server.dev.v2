@@ -22,7 +22,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.auth.utils.AuthTokenProvider;
 import gg.data.party.Category;
-import gg.data.party.PartyPenalty;
 import gg.data.party.Room;
 import gg.data.party.UserRoom;
 import gg.data.party.type.RoomType;
@@ -35,10 +34,6 @@ import gg.party.api.admin.room.controller.response.AdminCommentResDto;
 import gg.party.api.admin.room.controller.response.AdminRoomDetailResDto;
 import gg.party.api.admin.room.controller.response.AdminRoomListResDto;
 import gg.party.api.user.room.controller.response.UserRoomResDto;
-import gg.party.api.user.room.service.RoomManagementService;
-import gg.repo.party.CategoryRepository;
-import gg.repo.party.RoomRepository;
-import gg.repo.party.UserRoomRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import lombok.RequiredArgsConstructor;
@@ -58,14 +53,6 @@ public class RoomAdminControllerTest {
 	ObjectMapper objectMapper;
 	@Autowired
 	AuthTokenProvider tokenProvider;
-	@Autowired
-	RoomRepository roomRepository;
-	@Autowired
-	UserRoomRepository userRoomRepository;
-	@Autowired
-	CategoryRepository categoryRepository;
-	@Autowired
-	RoomManagementService roomManagementService;
 	User userTester;
 	User adminTester;
 	User reportedTester;
@@ -114,12 +101,12 @@ public class RoomAdminControllerTest {
 			RoomShowChangeReqDto roomShowChangeReqDto = new RoomShowChangeReqDto(RoomType.START.toString());
 			String jsonRequest = objectMapper.writeValueAsString(roomShowChangeReqDto);
 			//when
-			String contentAsString = mockMvc.perform(patch(url)
+			mockMvc.perform(patch(url)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(jsonRequest)
 					.header(HttpHeaders.AUTHORIZATION, "Bearer " + adminAccessToken))
 				.andExpect(status().isNoContent())
-				.andReturn().getResponse().getContentAsString();
+				.andReturn().getResponse();
 			//then
 			assertThat(openRoom.getStatus()).isEqualTo(RoomType.START);
 		}
@@ -133,11 +120,11 @@ public class RoomAdminControllerTest {
 			RoomShowChangeReqDto roomShowChangeReqDto = new RoomShowChangeReqDto(RoomType.START.toString());
 			String jsonRequest = objectMapper.writeValueAsString(roomShowChangeReqDto);
 			//when && then
-			String contentAsString = mockMvc.perform(patch(url)
+			mockMvc.perform(patch(url)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(jsonRequest)
 					.header(HttpHeaders.AUTHORIZATION, "Bearer " + adminAccessToken))
-				.andExpect(status().isNotFound()).toString();
+				.andExpect(status().isNotFound());
 		}
 
 		@Test
@@ -149,11 +136,11 @@ public class RoomAdminControllerTest {
 			RoomShowChangeReqDto roomShowChangeReqDto = new RoomShowChangeReqDto(RoomType.OPEN.toString());
 			String jsonRequest = objectMapper.writeValueAsString(roomShowChangeReqDto);
 			//when && then
-			String contentAsString = mockMvc.perform(patch(url)
+			mockMvc.perform(patch(url)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(jsonRequest)
 					.header(HttpHeaders.AUTHORIZATION, "Bearer " + adminAccessToken))
-				.andExpect(status().isBadRequest()).toString();
+				.andExpect(status().isBadRequest());
 		}
 	}
 
@@ -168,7 +155,7 @@ public class RoomAdminControllerTest {
 			reportedTester = testDataUtils.createNewUser("reportedTester", "reportedTester",
 				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
 			reportedAccessToken = tokenProvider.createToken(reportedTester.getId());
-			PartyPenalty testPenalty = testDataUtils.createNewPenalty(reportedTester, "test", "test",
+			testDataUtils.createNewPenalty(reportedTester, "test", "test",
 				LocalDateTime.now(), 60);
 			adminTester = testDataUtils.createNewUser("adminTester", "adminTester",
 				RacketType.DUAL, SnsType.SLACK, RoleType.ADMIN);
@@ -233,7 +220,7 @@ public class RoomAdminControllerTest {
 			reportedTester = testDataUtils.createNewImageUser("reportedTester", "reportedTester",
 				RacketType.DUAL, SnsType.SLACK, RoleType.USER, "reportedImage");
 			reportedAccessToken = tokenProvider.createToken(reportedTester.getId());
-			PartyPenalty testPenalty = testDataUtils.createNewPenalty(reportedTester, "test", "test",
+			testDataUtils.createNewPenalty(reportedTester, "test", "test",
 				LocalDateTime.now(), 60);
 			adminTester = testDataUtils.createNewImageUser("adminTester", "adminTester",
 				RacketType.DUAL, SnsType.SLACK, RoleType.ADMIN, "adminImage");
@@ -288,8 +275,7 @@ public class RoomAdminControllerTest {
 			Room failToNoUserRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 0, 3, 2,
 				180,
 				RoomType.FAIL);
-			UserRoom testUserRoom = testDataUtils.createNewUserRoom(userTester, failToNoUserRoom, "testNickname",
-				FALSE);
+			testDataUtils.createNewUserRoom(userTester, failToNoUserRoom, "testNickname", FALSE);
 			String roomId = failToNoUserRoom.getId().toString();
 			String url = "/party/admin/rooms/" + roomId;
 			//when
@@ -316,10 +302,10 @@ public class RoomAdminControllerTest {
 			String roomId = "1000";
 			String url = "/party/admin/rooms/" + roomId;
 			//when
-			String contentAsString = mockMvc.perform(get(url)
+			mockMvc.perform(get(url)
 					.contentType(MediaType.APPLICATION_JSON)
 					.header(HttpHeaders.AUTHORIZATION, "Bearer " + adminAccessToken))
-				.andExpect(status().isNotFound()).toString();
+				.andExpect(status().isNotFound());
 		}
 	}
 }
