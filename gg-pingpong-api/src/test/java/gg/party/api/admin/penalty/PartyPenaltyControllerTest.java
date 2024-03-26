@@ -134,7 +134,12 @@ public class PartyPenaltyControllerTest {
 		@DisplayName("패널티 수정 - 204")
 		void testModifyAdminPenalty() throws Exception {
 			//given
-			PartyPenaltyAdminReqDto penaltyDto = new PartyPenaltyAdminReqDto("test_penalty", "Test reason", 60, reportedTester.getIntraId());
+			PartyPenaltyAdminReqDto penaltyDto = new PartyPenaltyAdminReqDto(
+				"test_penalty",
+				"Test reason",
+				60,
+				reportedTester.getIntraId()
+			);
 
 			//when
 			mockMvc.perform(patch("/party/admin/penalties/{penaltyId}", testPenaltyId)
