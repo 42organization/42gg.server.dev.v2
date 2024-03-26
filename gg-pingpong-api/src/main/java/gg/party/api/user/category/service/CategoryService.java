@@ -28,7 +28,7 @@ public class CategoryService {
 	/**
 	 * 카테고리 전체 조회
 	 * @throws OnPenaltyException 패널티 상태의 유저 입력 - 403
-	 * @return 카테고리 전체 리스트 (name 순으로 오름차순 정렬)
+	 * @return 카테고리 전체 리스트 (id 순으로 오름차순 정렬)
 	 */
 	@Transactional(readOnly = true)
 	public CategoryListResDto findCategoryList(UserDto userDto) {
@@ -38,7 +38,7 @@ public class CategoryService {
 			partyPenalty.getStartTime().plusHours(partyPenalty.getPenaltyTime()))) {
 			throw new OnPenaltyException();
 		}
-		return new CategoryListResDto(categoryRepository.findAll(Sort.by(Sort.Direction.ASC, "name")).stream()
+		return new CategoryListResDto(categoryRepository.findAll(Sort.by(Sort.Direction.ASC, "id")).stream()
 			.map(CategoryResDto::new)
 			.collect(Collectors.toList()));
 	}
