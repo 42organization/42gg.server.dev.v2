@@ -78,6 +78,7 @@ public class PartyPenaltyControllerTest {
 		@Test
 		@DisplayName("패널티 조회")
 		void testRetrievePenaltiesList() throws Exception {
+			//given
 			for (int i = 1; i <= 9; i++) {
 				testDataUtils.createNewPenalty(reportedTester, "test_penalty_" + i,
 					"test_reason" + i, LocalDateTime.now(), 60);
@@ -86,12 +87,14 @@ public class PartyPenaltyControllerTest {
 			int pageNumber = 1;
 			String url = String.format("/party/admin/penalties?page=%d&size=%d", pageNumber, pageSize);
 
+			//when
 			MvcResult result = mockMvc.perform(get(url)
 					.header("Authorization", "Bearer " + adminAccessToken)
 					.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andReturn();
 
+			//then
 			String content = result.getResponse().getContentAsString();
 			PartyPenaltyListAdminResDto responseDto =
 				objectMapper.readValue(content, PartyPenaltyListAdminResDto.class);
@@ -101,6 +104,7 @@ public class PartyPenaltyControllerTest {
 
 		@Test
 		@DisplayName("패널티 조회(pagination)")
+		//given
 		void testPaginationPenaltiesList() throws Exception {
 			for (int i = 1; i <= 15; i++) {
 				testDataUtils.createNewPenalty(reportedTester, "test_penalty_" + i,
@@ -110,12 +114,14 @@ public class PartyPenaltyControllerTest {
 			int pageNumber = 2;
 			String url = String.format("/party/admin/penalties?page=%d&size=%d", pageNumber, pageSize);
 
+			//then
 			MvcResult result = mockMvc.perform(get(url)
 					.header("Authorization", "Bearer " + adminAccessToken)
 					.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andReturn();
 
+			//when
 			String content = result.getResponse().getContentAsString();
 			PartyPenaltyListAdminResDto responseDto =
 				objectMapper.readValue(content, PartyPenaltyListAdminResDto.class);
@@ -127,6 +133,7 @@ public class PartyPenaltyControllerTest {
 		@Test
 		@DisplayName("패널티 수정")
 		void testModifyAdminPenalty() throws Exception {
+			//given
 			PartyPenaltyAdminReqDto penaltyDto = new PartyPenaltyAdminReqDto(
 				"test_penalty",
 				"Test reason",
@@ -134,12 +141,14 @@ public class PartyPenaltyControllerTest {
 				reportedTester.getIntraId()
 			);
 
+			//then
 			mockMvc.perform(patch("/party/admin/penalties/{penaltyId}", testPenaltyId)
 					.header("Authorization", "Bearer " + adminAccessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(penaltyDto)))
 				.andExpect(status().isNoContent());
 
+			//when
 			PartyPenalty updatedPenalty = partyPenaltyRepository.findById(testPenaltyId)
 				.orElseThrow(() -> new AssertionError("Penalty not found after update"));
 
@@ -151,6 +160,7 @@ public class PartyPenaltyControllerTest {
 		@Test
 		@DisplayName("패널티 수정 - 실패 시나리오(없는 유저)")
 		void testModifyAdminPenalty_NotFound() throws Exception {
+			//given
 			Long nonExistentPenaltyId = 999L;
 
 			PartyPenaltyAdminReqDto penaltyDto = new PartyPenaltyAdminReqDto(
@@ -160,6 +170,7 @@ public class PartyPenaltyControllerTest {
 				"nonexistentIntraId"
 			);
 
+			//then
 			mockMvc.perform(patch("/party/admin/penalties/{penaltyId}", nonExistentPenaltyId)
 					.header("Authorization", "Bearer " + adminAccessToken)
 					.contentType(MediaType.APPLICATION_JSON)
@@ -170,6 +181,7 @@ public class PartyPenaltyControllerTest {
 		@Test
 		@DisplayName("패널티 부여 (일반적인 상황)")
 		void testGiveAdminPenalty() throws Exception {
+			//given
 			PartyPenaltyAdminReqDto penaltyDto = new PartyPenaltyAdminReqDto(
 				"test_penalty",
 				"Test reason",
@@ -179,12 +191,14 @@ public class PartyPenaltyControllerTest {
 
 			long penaltyCountBefore = partyPenaltyRepository.count();
 
+			//then
 			mockMvc.perform(post("/party/admin/penalties")
 					.header("Authorization", "Bearer " + adminAccessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(penaltyDto)))
 				.andExpect(status().isCreated());
 
+			//when
 			long penaltyCountAfter = partyPenaltyRepository.count();
 			assertEquals(penaltyCountBefore + 1, penaltyCountAfter);
 		}
@@ -192,6 +206,7 @@ public class PartyPenaltyControllerTest {
 		@Test
 		@DisplayName("패널티 부여 (패널티된 유저에게 추가 패널티 부여)")
 		void testAddAdminPenalty() throws Exception {
+			//given
 			PartyPenaltyAdminReqDto morePenaltyDto = new PartyPenaltyAdminReqDto(
 				"test_penalty",
 				"Test reason",
@@ -199,12 +214,14 @@ public class PartyPenaltyControllerTest {
 				reportedTester.getIntraId()
 			);
 
+			//then
 			mockMvc.perform(post("/party/admin/penalties")
 					.header("Authorization", "Bearer " + adminAccessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(morePenaltyDto)))
 				.andExpect(status().isCreated());
 
+			//when
 			List<PartyPenalty> penalties = partyPenaltyRepository.findAllByUserId(reportedTester.getId());
 			int totalPenaltyTime = penalties.stream().mapToInt(PartyPenalty::getPenaltyTime).sum();
 
@@ -214,6 +231,7 @@ public class PartyPenaltyControllerTest {
 		@Test
 		@DisplayName("패널티 부여 - 실패 시나리오(없는 유저)")
 		void testAddAdminPenalty_UserNotFound() throws Exception {
+			//given
 			PartyPenaltyAdminReqDto penaltyDto = new PartyPenaltyAdminReqDto(
 				"test_penalty",
 				"Test reason",
@@ -221,6 +239,7 @@ public class PartyPenaltyControllerTest {
 				"nonexistentIntraId"
 			);
 
+			//then
 			mockMvc.perform(post("/party/admin/penalties")
 					.header("Authorization", "Bearer " + adminAccessToken)
 					.contentType(MediaType.APPLICATION_JSON)
