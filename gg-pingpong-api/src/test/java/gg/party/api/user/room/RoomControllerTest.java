@@ -191,7 +191,7 @@ public class RoomControllerTest {
 		public void notValidCategoryFail() throws Exception {
 			//given
 			String url = "/party/rooms";
-			RoomCreateReqDto roomCreateReqDto = new RoomCreateReqDto("title", "content", "null", 4, 2, 180);
+			RoomCreateReqDto roomCreateReqDto = new RoomCreateReqDto("title", "content", "NOTFOUND", 4, 2, 180);
 			String requestBody = objectMapper.writeValueAsString(roomCreateReqDto);
 			// when && then
 			mockMvc.perform(post(url)
