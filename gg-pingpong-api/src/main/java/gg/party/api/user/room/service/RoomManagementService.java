@@ -63,7 +63,7 @@ public class RoomManagementService {
 		User user = userRepository.findById(userDto.getId()).get();
 		PartyPenalty partyPenalty = partyPenaltyRepository.findByUserId(user.getId());
 		if (partyPenalty != null && LocalDateTime.now().isBefore(
-			partyPenalty.getStartTime().plusHours(partyPenalty.getPenaltyTime()))) {
+			partyPenalty.getStartTime().plusMinutes(partyPenalty.getPenaltyTime()))) {
 			throw new OnPenaltyException();
 		}
 		if (roomCreateReqDto.getMaxPeople() < roomCreateReqDto.getMinPeople()) {
@@ -183,7 +183,7 @@ public class RoomManagementService {
 		Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
 		PartyPenalty partyPenalty = partyPenaltyRepository.findByUserId(user.getId());
 		if (partyPenalty != null && LocalDateTime.now().isBefore(
-			partyPenalty.getStartTime().plusHours(partyPenalty.getPenaltyTime()))) {
+			partyPenalty.getStartTime().plusMinutes(partyPenalty.getPenaltyTime()))) {
 			throw new OnPenaltyException();
 		}
 		if (room.getStatus() != RoomType.OPEN) {

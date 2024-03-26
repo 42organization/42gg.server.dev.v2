@@ -35,7 +35,7 @@ public class CategoryService {
 		User user = userRepository.findById(userDto.getId()).get();
 		PartyPenalty partyPenalty = partyPenaltyRepository.findByUserId(user.getId());
 		if (partyPenalty != null && LocalDateTime.now().isBefore(
-			partyPenalty.getStartTime().plusHours(partyPenalty.getPenaltyTime()))) {
+			partyPenalty.getStartTime().plusMinutes(partyPenalty.getPenaltyTime()))) {
 			throw new OnPenaltyException();
 		}
 		return new CategoryListResDto(categoryRepository.findAll(Sort.by(Sort.Direction.ASC, "name")).stream()

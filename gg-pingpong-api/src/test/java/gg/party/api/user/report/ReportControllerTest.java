@@ -264,7 +264,7 @@ public class ReportControllerTest {
 			mockMvc.perform(post(url)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(jsonRequest)
-					.header(HttpHeaders.AUTHORIZATION, "Bearer " + reporterAccessToken))
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
 				.andExpect(status().isBadRequest());
 		}
 
@@ -411,7 +411,7 @@ public class ReportControllerTest {
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(jsonRequest)
 						.header(HttpHeaders.AUTHORIZATION, "Bearer " + otherAccessToken))
-					.andExpect(status().isNotFound());
+					.andExpect(status().isBadRequest());
 			}
 		}
 	}
