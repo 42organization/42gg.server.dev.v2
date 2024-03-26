@@ -31,8 +31,6 @@ import gg.data.user.type.SnsType;
 import gg.party.api.admin.report.controller.response.CommentReportListResDto;
 import gg.party.api.admin.report.controller.response.RoomReportListResDto;
 import gg.party.api.admin.report.controller.response.UserReportListResDto;
-import gg.party.api.admin.report.service.ReportAdminService;
-import gg.repo.party.CategoryRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import lombok.RequiredArgsConstructor;
@@ -52,10 +50,6 @@ public class ReportAdminControllerTest {
 	ObjectMapper objectMapper;
 	@Autowired
 	AuthTokenProvider tokenProvider;
-	@Autowired
-	CategoryRepository categoryRepository;
-	@Autowired
-	ReportAdminService reportAdminService;
 	User userTester;
 	String userAccessToken;
 	Category testCategory;

@@ -23,7 +23,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gg.auth.utils.AuthTokenProvider;
 import gg.data.party.Category;
 import gg.data.party.Comment;
-import gg.data.party.PartyPenalty;
 import gg.data.party.Room;
 import gg.data.party.UserRoom;
 import gg.data.party.type.RoomType;
@@ -32,11 +31,6 @@ import gg.data.user.type.RacketType;
 import gg.data.user.type.RoleType;
 import gg.data.user.type.SnsType;
 import gg.party.api.admin.comment.controller.request.CommentUpdateAdminReqDto;
-import gg.repo.party.CategoryRepository;
-import gg.repo.party.CommentRepository;
-import gg.repo.party.PartyPenaltyRepository;
-import gg.repo.party.RoomRepository;
-import gg.repo.party.UserRoomRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import lombok.RequiredArgsConstructor;
@@ -56,16 +50,6 @@ public class CommentAdminControllerTest {
 	ObjectMapper objectMapper;
 	@Autowired
 	AuthTokenProvider tokenProvider;
-	@Autowired
-	RoomRepository roomRepository;
-	@Autowired
-	UserRoomRepository userRoomRepository;
-	@Autowired
-	CategoryRepository categoryRepository;
-	@Autowired
-	PartyPenaltyRepository partyPenaltyRepository;
-	@Autowired
-	CommentRepository commentRepository;
 	User userTester;
 	User reportedTester;
 	User adminTester;
@@ -84,8 +68,7 @@ public class CommentAdminControllerTest {
 				RacketType.DUAL, SnsType.SLACK, RoleType.USER, "userImage");
 			reportedTester = testDataUtils.createNewImageUser("reportedTester", "reportedTester",
 				RacketType.DUAL, SnsType.SLACK, RoleType.USER, "reportedImage");
-			PartyPenalty testPenalty = testDataUtils.createNewPenalty(reportedTester, "test", "test",
-				LocalDateTime.now(), 60);
+			testDataUtils.createNewPenalty(reportedTester, "test", "test", LocalDateTime.now(), 60);
 			adminTester = testDataUtils.createNewImageUser("adminTester", "adminTester",
 				RacketType.DUAL, SnsType.SLACK, RoleType.ADMIN, "adminImage");
 			adminAccessToken = tokenProvider.createToken(adminTester.getId());
@@ -110,12 +93,13 @@ public class CommentAdminControllerTest {
 			String url = "/party/admin/comments/" + commentId;
 			CommentUpdateAdminReqDto commentUpdateAdminReqDto = new CommentUpdateAdminReqDto(TRUE);
 			String requestBody = objectMapper.writeValueAsString(commentUpdateAdminReqDto);
-			//when && then
-			String contentAsString = mockMvc.perform(patch(url)
+			//when
+			mockMvc.perform(patch(url)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(requestBody)
 					.header(HttpHeaders.AUTHORIZATION, "Bearer " + adminAccessToken))
-				.andExpect(status().isNoContent()).toString();
+				.andExpect(status().isNoContent());
+			//then
 			assertThat(testComment.isHidden()).isEqualTo(TRUE);
 		}
 
@@ -127,29 +111,46 @@ public class CommentAdminControllerTest {
 			String url = "/party/admin/comments/" + commentId;
 			CommentUpdateAdminReqDto commentUpdateAdminReqDto = new CommentUpdateAdminReqDto(FALSE);
 			String requestBody = objectMapper.writeValueAsString(commentUpdateAdminReqDto);
-			//when && then
-			String contentAsString = mockMvc.perform(patch(url)
+			//when
+			mockMvc.perform(patch(url)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(requestBody)
 					.header(HttpHeaders.AUTHORIZATION, "Bearer " + adminAccessToken))
-				.andExpect(status().isNoContent()).toString();
+				.andExpect(status().isNoContent());
 			//then
 			assertThat(reportComment.isHidden()).isEqualTo(FALSE);
 		}
 
 		@Test
+		@DisplayName("같은 내용으로 변경으로 인한 에러 409")
+		public void duplicationFail() throws Exception {
+			//given
+			String commentId = reportComment.getId().toString();
+			String url = "/party/admin/comments/" + commentId;
+			CommentUpdateAdminReqDto commentUpdateAdminReqDto = new CommentUpdateAdminReqDto(TRUE);
+			String requestBody = objectMapper.writeValueAsString(commentUpdateAdminReqDto);
+			//when && then
+			mockMvc.perform(patch(url)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(requestBody)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + adminAccessToken))
+				.andExpect(status().isConflict());
+		}
+
+		@Test
 		@DisplayName("없는 Comment로 인한 에러 404")
 		public void fail() throws Exception {
+			//given
 			String commentId = "1000";
 			String url = "/party/admin/comments/" + commentId;
 			CommentUpdateAdminReqDto commentUpdateAdminReqDto = new CommentUpdateAdminReqDto(TRUE);
 			String requestBody = objectMapper.writeValueAsString(commentUpdateAdminReqDto);
-			//given
-			String contentAsString = mockMvc.perform(patch(url)
+			//when && then
+			mockMvc.perform(patch(url)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(requestBody)
 					.header(HttpHeaders.AUTHORIZATION, "Bearer " + adminAccessToken))
-				.andExpect(status().isNotFound()).toString();
+				.andExpect(status().isNotFound());
 		}
 	}
 }

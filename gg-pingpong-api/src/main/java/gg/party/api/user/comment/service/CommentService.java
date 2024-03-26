@@ -36,6 +36,10 @@ public class CommentService {
 	/**
 	 * 댓글 생성
 	 * @param roomId 방 번호
+	 * @throws RoomNotFoundException 방을 찾을 수 없음 - 404
+	 * @throws RoomNotOpenException 방이 열려있지 않음 - 400
+	 * @throws OnPenaltyException 패널티 상태의 유저 입력 - 403
+	 * @throws RoomNotParticipantException 방 참가자가 아님 - 400
 	 * @param reqDto 댓글 정보
 	 */
 	@Transactional
