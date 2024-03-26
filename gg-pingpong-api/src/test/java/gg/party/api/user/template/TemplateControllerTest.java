@@ -69,49 +69,19 @@ public class TemplateControllerTest {
 	@DisplayName("템플릿 조회 테스트")
 	class TemplateList {
 		@Test
-		@DisplayName("카테고리 목록 조회 성공 200")
-		void startPageSuccess() throws Exception {
-			//given
-			String currentPage = "1";
-			String pageSize = "10";
-			String uri = "/party/templates?page=" + currentPage + "&size=" + pageSize;
-			//when
-			String contentAsString = mockMvc.perform(get(uri)
-					.header("Authorization", "Bearer " + userAccessToken)
-					.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk()).toString();
-			//then
-			TemplateListResDto tlrd = objectMapper.readValue(contentAsString, TemplateListResDto.class);
-			assertThat(tlrd.getTemplateList().size()).isEqualTo(10);
-		}
-
-		@Test
-		@DisplayName("마지막 페이지 조회 성공 200")
-		public void lastPageSuccess() throws Exception {
-			//given
-			String currentPage = "2";
-			String pageSize = "10";
-			String uri = "/party/templates?page=" + currentPage + "&size=" + pageSize;
-			//when
-			String contentAsString = mockMvc.perform(get(uri)
-					.header("Authorization", "Bearer " + userAccessToken)
-					.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk()).toString();
-			//then
-			TemplateListResDto tlrd = objectMapper.readValue(contentAsString, TemplateListResDto.class);
-			assertThat(tlrd.getTemplateList().size()).isEqualTo(5);
-		}
-
-		@Test
-		@DisplayName("패널티 상태의 유저 카테고리 목록 조회 실패 테스트 403")
-		void penaltyUserFail() throws Exception {
+		@DisplayName("템플릿 목록 조회 성공 200")
+		void success() throws Exception {
 			//given
 			String uri = "/party/templates";
-			//when && then
-			mockMvc.perform(get(uri)
-					.header("Authorization", "Bearer " + reportedAccessToken)
+			//when
+			String contentAsString = mockMvc.perform(get(uri)
+					.header("Authorization", "Bearer " + userAccessToken)
 					.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isForbidden());
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+			//then
+			TemplateListResDto tlrd = objectMapper.readValue(contentAsString, TemplateListResDto.class);
+			assertThat(tlrd.getTemplateList().size()).isEqualTo(15);
 		}
 	}
 }

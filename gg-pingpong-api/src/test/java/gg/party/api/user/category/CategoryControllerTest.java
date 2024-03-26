@@ -58,7 +58,7 @@ public class CategoryControllerTest {
 			LocalDateTime.now(), 60);
 		userAccessToken = tokenProvider.createToken(userTester.getId());
 		reportedAccessToken = tokenProvider.createToken(reportedTester.getId());
-		for (int i = 0; i < 15; i++) {
+		for (int i = 0; i < 10; i++) {
 			testDataUtils.createNewCategory("테스트 카테고리" + i);
 		}
 	}
@@ -68,40 +68,22 @@ public class CategoryControllerTest {
 	class FindCategoryList {
 		@Test
 		@DisplayName("카테고리 목록 조회 성공 200")
-		void startPageSuccess() throws Exception {
+		void success() throws Exception {
 			//given
-			String currentPage = "1";
-			String pageSize = "10";
-			String uri = "/party/categories?page=" + currentPage + "&size=" + pageSize;
+			String uri = "/party/categories";
 			//when
 			String contentAsString = mockMvc.perform(get(uri)
 					.header("Authorization", "Bearer " + userAccessToken)
 					.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk()).toString();
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
 			//then
 			CategoryListResDto clrd = objectMapper.readValue(contentAsString, CategoryListResDto.class);
 			assertThat(clrd.getCategoryList().size()).isEqualTo(10);
 		}
 
 		@Test
-		@DisplayName("마지막 페이지 조회 성공 200")
-		public void lastPageSuccess() throws Exception {
-			//given
-			String currentPage = "2";
-			String pageSize = "10";
-			String uri = "/party/categories?page=" + currentPage + "&size=" + pageSize;
-			//when
-			String contentAsString = mockMvc.perform(get(uri)
-					.header("Authorization", "Bearer " + userAccessToken)
-					.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk()).toString();
-			//then
-			CategoryListResDto clrd = objectMapper.readValue(contentAsString, CategoryListResDto.class);
-			assertThat(clrd.getCategoryList().size()).isEqualTo(5);
-		}
-
-		@Test
-		@DisplayName("패널티 상태의 유저 카테고리 목록 조회 실패 테스트 403")
+		@DisplayName("패널티 상태의 유저 카테고리 목록 조회 실패 403")
 		void penaltyUserFail() throws Exception {
 			//given
 			String uri = "/party/categories";

@@ -18,11 +18,11 @@ public class TemplateService {
 
 	/**
 	 * 템플릿 전체 조회
-	 * @return 템플릿 전체 리스트 (id 순으로 오름차순 정렬)
+	 * @return 템플릿 전체 리스트 (name 순으로 오름차순 정렬)
 	 */
 	@Transactional(readOnly = true)
 	public TemplateListResDto findTemplateList() {
-		return new TemplateListResDto(templateRepository.findAll(Sort.by(Sort.Direction.ASC, "id")).stream()
+		return new TemplateListResDto(templateRepository.findAll(Sort.by(Sort.Direction.ASC, "name")).stream()
 			.map(TemplateResDto::new)
 			.collect(Collectors.toList()));
 	}
