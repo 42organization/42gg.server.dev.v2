@@ -65,7 +65,7 @@ public class CategoryAdminControllerTest {
 			userTester = testDataUtils.createNewUser("adminTester", "adminTester",
 				RacketType.DUAL, SnsType.SLACK, RoleType.ADMIN);
 			userAccessToken = tokenProvider.createToken(userTester.getId());
-			defaultCategory = testDataUtils.createNewCategory("etc");
+			defaultCategory = testDataUtils.createNewCategory("기타");
 		}
 
 		@Test
@@ -114,7 +114,7 @@ public class CategoryAdminControllerTest {
 			testCategory = testDataUtils.createNewCategory("test");
 			testRoom = testDataUtils.createNewRoom(userTester, userTester, testCategory, 1, 1,
 				3, 2, 180, RoomType.OPEN);
-			defaultCategory = testDataUtils.createNewCategory("etc");
+			defaultCategory = testDataUtils.createNewCategory("기타");
 		}
 
 		@Test
@@ -131,7 +131,7 @@ public class CategoryAdminControllerTest {
 				.andReturn().getResponse();
 			//then
 			assertThat(categoryRepository.findAll()).size().isEqualTo(1);
-			assertThat(roomRepository.findById(testRoom.getId()).get().getCategory().getName()).isEqualTo("etc");
+			assertThat(roomRepository.findById(testRoom.getId()).get().getCategory().getName()).isEqualTo("기타");
 		}
 
 		@Test
