@@ -514,9 +514,8 @@ public class RoomControllerTest {
 			String roomId = "1000";
 			String url = "/party/rooms/" + roomId + "/start";
 			// when && then
-			String contentAsString = mockMvc.perform(
-					post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
-				.andExpect(status().isNotFound()).toString();
+			mockMvc.perform(post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
+				.andExpect(status().isNotFound());
 		}
 
 		@Test
@@ -526,9 +525,8 @@ public class RoomControllerTest {
 			String roomId = startRoom.getId().toString();
 			String url = "/party/rooms/" + roomId + "/start";
 			// when && then
-			String contentAsString = mockMvc.perform(
-					post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
-				.andExpect(status().isBadRequest()).toString();
+			mockMvc.perform(post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
+				.andExpect(status().isBadRequest());
 		}
 
 		@Test
@@ -540,9 +538,8 @@ public class RoomControllerTest {
 			String roomId = room.getId().toString();
 			String url = "/party/rooms/" + roomId + "/start";
 			// when && then
-			String contentAsString = mockMvc.perform(
-					post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
-				.andExpect(status().isBadRequest()).toString();
+			mockMvc.perform(post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
+				.andExpect(status().isBadRequest());
 		}
 
 		@Test
@@ -552,9 +549,8 @@ public class RoomControllerTest {
 			String roomId = openRoom.getId().toString();
 			String url = "/party/rooms/" + roomId + "/start";
 			// when && then
-			String contentAsString = mockMvc.perform(
-					post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + anotherAccessToken))
-				.andExpect(status().isBadRequest()).toString();
+			mockMvc.perform(post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + anotherAccessToken))
+				.andExpect(status().isBadRequest());
 		}
 
 		@Test
@@ -564,9 +560,8 @@ public class RoomControllerTest {
 			String roomId = openRoom.getId().toString();
 			String url = "/party/rooms/" + roomId + "/start";
 			// when && then
-			String contentAsString = mockMvc.perform(
-					post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + otherAccessToken))
-				.andExpect(status().isForbidden()).toString();
+			mockMvc.perform(post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + otherAccessToken))
+				.andExpect(status().isForbidden());
 		}
 	}
 
@@ -642,9 +637,9 @@ public class RoomControllerTest {
 			String roomId = rooms[0].getId().toString(); // openRoom
 			String url = "/party/rooms/" + roomId;
 			// when && then
-			String contentAsString = mockMvc.perform(
+			mockMvc.perform(
 					post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + reportedAccessToken))
-				.andExpect(status().isForbidden()).toString();
+				.andExpect(status().isForbidden());
 		}
 
 		@Test
@@ -655,9 +650,8 @@ public class RoomControllerTest {
 				String roomId = (rooms[i].getId()).toString();
 				String url = "/party/rooms/" + roomId;
 				// when && then
-				String contentAsString = mockMvc.perform(
-						post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + anotherAccessToken))
-					.andExpect(status().isBadRequest()).toString();
+				mockMvc.perform(post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + anotherAccessToken))
+					.andExpect(status().isBadRequest());
 			}
 		}
 
@@ -668,9 +662,8 @@ public class RoomControllerTest {
 			String roomId = rooms[0].getId().toString(); // openRoom
 			String url = "/party/rooms/" + roomId;
 			// when && then
-			String contentAsString = mockMvc.perform(
-					post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
-				.andExpect(status().isConflict()).toString();
+			mockMvc.perform(post(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
+				.andExpect(status().isConflict());
 		}
 	}
 
@@ -757,9 +750,8 @@ public class RoomControllerTest {
 			String roomId = rooms[0].getId().toString(); // openRoom
 			String url = "/party/rooms/" + roomId;
 			// when && then
-			String contentAsString = mockMvc.perform(
-					patch(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + otherAccessToken))
-				.andExpect(status().isBadRequest()).toString();
+			mockMvc.perform(patch(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + otherAccessToken))
+				.andExpect(status().isBadRequest());
 		}
 
 		@Test
@@ -769,9 +761,8 @@ public class RoomControllerTest {
 			String startRoomId = rooms[1].getId().toString(); // startRoom
 			String url = "/party/rooms/" + startRoomId;
 			// when && then
-			String contentAsString = mockMvc.perform(
-					patch(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
-				.andExpect(status().isBadRequest()).toString();
+			mockMvc.perform(patch(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
+				.andExpect(status().isBadRequest());
 		}
 	}
 }
