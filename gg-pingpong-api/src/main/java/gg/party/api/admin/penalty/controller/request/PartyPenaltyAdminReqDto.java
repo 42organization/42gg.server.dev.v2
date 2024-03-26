@@ -2,8 +2,8 @@ package gg.party.api.admin.penalty.controller.request;
 
 import java.time.LocalDateTime;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -20,10 +20,11 @@ public class PartyPenaltyAdminReqDto {
 	String penaltyType;
 
 	@NotBlank(message = "message가 비어있습니다")
-	@Size(max = 100, message = "Penalty type은 최대 100자입니다")
+	@Size(max = 100, message = "message는 최대 100자입니다")
 	String message;
 
 	@NotNull(message = "penaltyTime이 비어있습니다")
+	@Min(value = 1, message = "올바른 penaltyTime을 넣어주세요")
 	int penaltyTime;
 
 	@NotBlank(message = "IntraId가 비어있습니다")
