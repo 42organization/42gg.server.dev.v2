@@ -76,12 +76,12 @@ public class CategoryAdminControllerTest {
 			CategoryAddAdminReqDto categoryAddAdminReqDto = new CategoryAddAdminReqDto("category");
 			String jsonRequest = objectMapper.writeValueAsString(categoryAddAdminReqDto);
 			//when
-			String contentAsString = mockMvc.perform(post(url)
+			mockMvc.perform(post(url)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(jsonRequest)
 					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
 				.andExpect(status().isCreated())
-				.andReturn().getResponse().getContentAsString();
+				.andReturn().getResponse();
 			//then
 			assertThat(categoryRepository.findAll()).size().isEqualTo(2);
 		}
@@ -95,11 +95,11 @@ public class CategoryAdminControllerTest {
 			CategoryAddAdminReqDto categoryAddAdminReqDto = new CategoryAddAdminReqDto("category");
 			String jsonRequest = objectMapper.writeValueAsString(categoryAddAdminReqDto);
 			//when & then
-			String contentAsString = mockMvc.perform(post(url)
+			mockMvc.perform(post(url)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(jsonRequest)
 					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
-				.andExpect(status().isConflict()).toString();
+				.andExpect(status().isConflict());
 		}
 	}
 
@@ -124,11 +124,11 @@ public class CategoryAdminControllerTest {
 			String categoryID = testCategory.getId().toString();
 			String url = "/party/admin/categories/" + categoryID;
 			//when
-			String contentAsString = mockMvc.perform(delete(url)
+			mockMvc.perform(delete(url)
 					.contentType(MediaType.APPLICATION_JSON)
 					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
 				.andExpect(status().isNoContent())
-				.andReturn().getResponse().getContentAsString();
+				.andReturn().getResponse();
 			//then
 			assertThat(categoryRepository.findAll()).size().isEqualTo(1);
 			assertThat(roomRepository.findById(testRoom.getId()).get().getCategory().getName()).isEqualTo("etc");
@@ -141,10 +141,10 @@ public class CategoryAdminControllerTest {
 			String categoryID = "10";
 			String url = "/party/admin/categories/" + categoryID;
 			//when & then
-			String contentAsString = mockMvc.perform(delete(url)
+			mockMvc.perform(delete(url)
 					.contentType(MediaType.APPLICATION_JSON)
 					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
-				.andExpect(status().isNotFound()).toString();
+				.andExpect(status().isNotFound());
 		}
 
 		@Test
@@ -154,10 +154,10 @@ public class CategoryAdminControllerTest {
 			String categoryID = defaultCategory.getId().toString();
 			String url = "/party/admin/categories/" + categoryID;
 			//when & then
-			String contentAsString = mockMvc.perform(delete(url)
+			mockMvc.perform(delete(url)
 					.contentType(MediaType.APPLICATION_JSON)
 					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
-				.andExpect(status().isBadRequest()).toString();
+				.andExpect(status().isBadRequest());
 		}
 	}
 }
