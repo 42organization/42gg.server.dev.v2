@@ -23,8 +23,8 @@ import gg.party.api.user.room.controller.response.UserRoomResDto;
 import gg.repo.party.CommentRepository;
 import gg.repo.party.RoomRepository;
 import gg.repo.party.UserRoomRepository;
+import gg.utils.exception.party.ChangeSameStatusException;
 import gg.utils.exception.party.RoomNotFoundException;
-import gg.utils.exception.party.RoomSameStatusException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -39,7 +39,7 @@ public class RoomAdminService {
 	 * @param roomId 방 id
 	 * @param newStatus 바꿀 status
 	 * @exception RoomNotFoundException 유효하지 않은 방 입력 - 404
-	 * @exception RoomSameStatusException 같은 상태로 변경 -409
+	 * @exception ChangeSameStatusException 같은 상태로 변경 - 409
 	 */
 	@Transactional
 	public void modifyRoomStatus(Long roomId, RoomType newStatus) {
@@ -47,7 +47,7 @@ public class RoomAdminService {
 			.orElseThrow(RoomNotFoundException::new);
 
 		if (room.getStatus() == newStatus) {
-			throw new RoomSameStatusException();
+			throw new ChangeSameStatusException();
 		}
 
 		room.updateRoomStatus(newStatus);
