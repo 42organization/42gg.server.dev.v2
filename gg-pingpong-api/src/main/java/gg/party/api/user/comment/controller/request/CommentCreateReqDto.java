@@ -11,7 +11,7 @@ public class CommentCreateReqDto {
 	@Size(min = 1, max = 100)
 	private String content;
 
-	public void saveContent(String content) {
+	public CommentCreateReqDto(String content) {
 		this.content = content;
 	}
 }
