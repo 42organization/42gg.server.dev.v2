@@ -1,9 +1,11 @@
-package gg.party.api.user.templates.controller.response;
+package gg.party.api.user.template.controller.response;
 
 import gg.data.party.GameTemplate;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class TemplateResDto {
 	private Long gameTemplateId;
 	private Long categoryId;
