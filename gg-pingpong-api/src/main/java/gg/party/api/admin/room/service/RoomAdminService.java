@@ -85,7 +85,7 @@ public class RoomAdminService {
 	public AdminRoomDetailResDto findAdminDetailRoom(Long roomId) {
 		Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
 
-		List<AdminCommentResDto> comments = commentRepository.findByRoomId(roomId).stream()
+		List<AdminCommentResDto> comments = commentRepository.findAllWithCommentFetchJoin(roomId).stream()
 			.map(AdminCommentResDto::new)
 			.collect(Collectors.toList());
 
