@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class TemplateAdminUpdateReqDto {
-	@NotNull(message = "카테고리 ID는 필수입니다.")
-	private Long categoryId;
+	@NotNull(message = "카테고리이름은 필수입니다.")
+	private String categoryName;
 
 	@NotBlank(message = "게임 이름은 필수이며, 비어 있을 수 없습니다.")
 	@Size(max = 15, message = "게임 이름은 15자를 초과할 수 없습니다.")
@@ -45,9 +45,9 @@ public class TemplateAdminUpdateReqDto {
 	@Size(max = 100, message = "내용은 100자를 초과할 수 없습니다.")
 	private String summary;
 
-	public TemplateAdminUpdateReqDto(long categoryId, String gameName, int maxGamePeople, int minGamePeople,
+	public TemplateAdminUpdateReqDto(String categoryName, String gameName, int maxGamePeople, int minGamePeople,
 		int maxGameTime, int minGameTime, String genre, String difficulty, String summary) {
-		this.categoryId = categoryId;
+		this.categoryName = categoryName;
 		this.gameName = gameName;
 		this.maxGamePeople = maxGamePeople;
 		this.minGamePeople = minGamePeople;

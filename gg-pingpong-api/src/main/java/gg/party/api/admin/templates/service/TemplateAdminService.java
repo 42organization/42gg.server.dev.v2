@@ -26,8 +26,10 @@ public class TemplateAdminService {
 	 * @exception CategoryNotFoundException 존재하지 않는 카테고리 입력 - 404
 	 */
 	public void addTemplate(TemplateAdminCreateReqDto request) {
-		Category category = categoryRepository.findById(request.getCategoryId())
-			.orElseThrow(CategoryNotFoundException::new);
+		Category category = categoryRepository.findByName(request.getCategoryName());
+		if (category == null) {
+			throw new CategoryNotFoundException();
+		}
 
 		GameTemplate gameTemplate = TemplateAdminCreateReqDto.toEntity(request, category);
 
@@ -60,9 +62,11 @@ public class TemplateAdminService {
 			request.getSummary()
 		);
 
-		if (request.getCategoryId() != null) {
-			Category newCategory = categoryRepository.findById(request.getCategoryId())
-				.orElseThrow(CategoryNotFoundException::new);
+		if (request.getCategoryName() != null) {
+			Category newCategory = categoryRepository.findByName(request.getCategoryName());
+			if (newCategory == null) {
+				throw new CategoryNotFoundException();
+			}
 			template.modifyCategory(newCategory);
 		}
 
