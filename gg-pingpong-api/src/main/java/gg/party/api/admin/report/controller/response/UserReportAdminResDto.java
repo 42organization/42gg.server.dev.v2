@@ -4,11 +4,10 @@ import java.time.LocalDateTime;
 
 import gg.data.party.UserReport;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-/**
- * 노쇼 신고 dto
- */
 @Getter
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class UserReportAdminResDto {
 	private Long id;
 	private String reporterIntraId;

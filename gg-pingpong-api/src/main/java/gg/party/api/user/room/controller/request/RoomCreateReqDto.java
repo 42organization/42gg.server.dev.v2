@@ -22,7 +22,8 @@ public class RoomCreateReqDto {
 	private String title;
 	@Size(min = 1, max = 100)
 	private String content;
-	private Long categoryId;
+	@Size(min = 1, max = 10)
+	private String categoryName;
 	@Min(2)
 	@Max(8)
 	private Integer maxPeople;

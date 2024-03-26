@@ -69,8 +69,10 @@ public class RoomManagementService {
 		if (roomCreateReqDto.getMaxPeople() < roomCreateReqDto.getMinPeople()) {
 			throw new RoomMinMaxPeople(ErrorCode.ROOM_MIN_MAX_PEOPLE);
 		}
-		Category category = categoryRepository.findById(roomCreateReqDto.getCategoryId())
-			.orElseThrow(CategoryNotFoundException::new);
+		Category category = categoryRepository.findByName(roomCreateReqDto.getCategoryName());
+		if (category == null) {
+			throw new CategoryNotFoundException();
+		}
 		Room room = roomRepository.save(RoomCreateReqDto.toEntity(roomCreateReqDto, user, category));
 
 		String randomNickname = generateRandomNickname();
@@ -116,7 +118,11 @@ public class RoomManagementService {
 		// 방장 이권
 		if (user.getId().equals(targetRoom.getHost().getId())) {
 			List<User> existUser = userRoomRepository.findByIsExist(roomId);
-			targetRoom.updateHost(existUser.get(0));
+			if (existUser != null && !existUser.isEmpty()) {
+				targetRoom.updateHost(existUser.get(0));
+			} else {
+				targetRoom.updateHost(null);
+			}
 		}
 		userRoomRepository.save(targetUserRoom);
 		roomRepository.save(targetRoom);
@@ -127,14 +133,13 @@ public class RoomManagementService {
 	/**
 	 * 방을 시작 상태로 바꾼다
 	 * 방의 상태를 시작 상태로 변경.
-	 *
 	 * @param roomId, user
 	 * @return 방 id
-	 * @throws RoomNotFoundException 방 없음
-	 * @throws RoomNotOpenException 방이 열리지 않은 상태
-	 * @throws RoomNotEnoughPeopleException 방에 충분한 인원이 없음
-	 * @throws RoomNotParticipantException 방에 참가하지 않은 유저
-	 * @throws UserNotHostException 방장이 아닌 경우
+	 * @throws RoomNotFoundException 방 없음 - 404
+	 * @throws RoomNotOpenException 방이 열리지 않은 상태 - 400
+	 * @throws RoomNotEnoughPeopleException 방에 충분한 인원이 없음 - 400
+	 * @throws RoomNotParticipantException 방에 참가하지 않은 유저 - 400
+	 * @throws UserNotHostException 방장이 아닌 경우 - 403
 	 */
 	@Transactional
 	public RoomStartResDto modifyStartRoom(Long roomId, UserDto user) {
