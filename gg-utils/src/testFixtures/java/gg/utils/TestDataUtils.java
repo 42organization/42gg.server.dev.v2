@@ -849,8 +849,9 @@ public class TestDataUtils {
 		return user;
 	}
 
-	public GameTemplate createTemplate(Category category, String gameName, Integer maxGamePeople, Integer minGamePeople,
-		Integer maxGameTime, Integer minGameTime, String genre, String difficulty, String summary) {
+	public GameTemplate createNewTemplate(Category category, String gameName, Integer maxGamePeople,
+		Integer minGamePeople, Integer maxGameTime, Integer minGameTime, String genre, String difficulty,
+		String summary) {
 		GameTemplate gameTemplate = GameTemplate.builder()
 			.category(category)
 			.gameName(gameName)

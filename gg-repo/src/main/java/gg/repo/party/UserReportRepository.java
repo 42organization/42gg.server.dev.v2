@@ -25,5 +25,5 @@ public interface UserReportRepository extends JpaRepository<UserReport, Long> {
 		+ "JOIN FETCH ur.reportee "
 		+ "JOIN FETCH ur.room",
 		countQuery = "SELECT count(ur) FROM UserReport ur")
-	Page<UserReport> findAllWithFetchJoin(Pageable pageable);
+	Page<UserReport> findAllWithUserReportFetchJoin(Pageable pageable);
 }

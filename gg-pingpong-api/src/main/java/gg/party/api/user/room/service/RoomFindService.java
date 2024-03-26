@@ -135,7 +135,7 @@ public class RoomFindService {
 
 		if ((room.getStatus() == RoomType.START || room.getStatus() == RoomType.FINISH)
 			&& userRoomOptional.isPresent()) {
-			List<CommentResDto> comments = commentRepository.findByRoomId(roomId).stream()
+			List<CommentResDto> comments = commentRepository.findAllWithCommentFetchJoin(roomId).stream()
 				.map(comment -> new CommentResDto(comment, comment.getUser().getIntraId()))
 				.collect(Collectors.toList());
 
@@ -146,7 +146,7 @@ public class RoomFindService {
 				.collect(Collectors.toList());
 			return new RoomDetailResDto(room, myNickname, hostNickname, roomUsers, comments);
 		} else { // if 참여자 && Start or Finish 상태인 경우 intraID || else intraId == null
-			List<CommentResDto> comments = commentRepository.findByRoomId(roomId).stream()
+			List<CommentResDto> comments = commentRepository.findAllWithCommentFetchJoin(roomId).stream()
 				.map(CommentResDto::new)
 				.collect(Collectors.toList());
 
