@@ -9,11 +9,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import gg.data.party.Room;
 import gg.data.party.UserReport;
 import gg.data.user.User;
 
 public interface UserReportRepository extends JpaRepository<UserReport, Long> {
-	public Optional<UserReport> findByReporterAndReportee(User reporter, User reportee);
+	Optional<UserReport> findByReporterAndReporteeAndRoom(User reporter, User reportee, Room room);
 
 	@Query("SELECT ur FROM UserReport ur JOIN FETCH ur.reportee "
 		+ "JOIN FETCH ur.room WHERE ur.reportee = :reportee AND ur.room.id = :roomId")

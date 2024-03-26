@@ -57,8 +57,9 @@ public class ReportService {
 	 * @param reportReqDto 신고 내용
 	 * @param user 신고자
 	 * @return 방 번호
-	 * @throws RoomNotFoundException 방을 찾을 수 없음
-	 * @throws AlredayReportedException 이미 신고한 경우
+	 * @throws RoomNotFoundException 방을 찾을 수 없음 - 404
+	 * @throws AlredayReportedException 이미 신고한 경우 - 409
+	 * @throws SelfReportException 자신을 신고한 경우 - 400
 	 */
 	@Transactional
 	public void addReportRoom(Long roomId, ReportReqDto reportReqDto, UserDto user) {
@@ -93,8 +94,9 @@ public class ReportService {
 	 * @param reportReqDto 신고 내용
 	 * @param user         신고자
 	 * @return 방 번호
-	 * @throws CommentNotFoundException 방을 찾을 수 없음
-	 * @throws AlredayReportedException 이미 신고한 경우
+	 * @throws CommentNotFoundException 방을 찾을 수 없음 - 404
+	 * @throws AlredayReportedException 이미 신고한 경우 - 409
+	 * @throws SelfReportException 자신을 신고한 경우 - 400
 	 */
 	@Transactional
 	public void addReportComment(Long commentId, ReportReqDto reportReqDto, UserDto user) {
@@ -132,8 +134,10 @@ public class ReportService {
 	 * @param user         신고자
 	 * @param userIntraId  피신고자
 	 * @return 방 번호
-	 * @throws CommentNotFoundException 방을 찾을 수 없음
-	 * @throws AlredayReportedException 이미 신고한 경우
+	 * @throws CommentNotFoundException 방을 찾을 수 없음 - 404
+	 * @throws AlredayReportedException 이미 신고한 경우 - 409
+	 * @throws SelfReportException 자신을 신고한 경우 - 400
+	 * @throws RoomNotParticipantException 방에 참여하지 않은 경우 - 404
 	 */
 	@Transactional
 	public void addReportUser(Long roomId, ReportReqDto reportReqDto, String userIntraId, UserDto user) {
@@ -154,8 +158,11 @@ public class ReportService {
 			throw new RoomNotFoundException();
 		}
 		// 이미 신고한 경우
-		userReportRepository.findByReporterAndReportee(
-			reporterEntity, reporteeEntity).orElseThrow(AlredayReportedException::new);
+		userReportRepository.findByReporterAndReporteeAndRoom(
+				reporterEntity, reporteeEntity, targetRoom)
+			.ifPresent(userReport -> {
+				throw new AlredayReportedException();
+			});
 		// 신고 저장
 		UserReport userReport = new UserReport(reporterEntity, reporteeEntity, targetRoom, reportReqDto.getContent());
 		userReportRepository.save(userReport);
