@@ -12,7 +12,7 @@ public class AdminRoomResDto {
 	private Long roomId;
 	private String hostIntraId;
 	private String creatorIntraId;
-	private Long categoryId;
+	private String categoryName;
 	private String title;
 	private String content;
 	private Integer currentPeople;
@@ -27,7 +27,7 @@ public class AdminRoomResDto {
 		this.roomId = room.getId();
 		this.hostIntraId = room.getHost().getIntraId();
 		this.creatorIntraId = room.getCreator().getIntraId();
-		this.categoryId = room.getCategory().getId();
+		this.categoryName = room.getCategory().getName();
 		this.title = room.getTitle();
 		this.content = room.getContent();
 		this.currentPeople = room.getCurrentPeople();
