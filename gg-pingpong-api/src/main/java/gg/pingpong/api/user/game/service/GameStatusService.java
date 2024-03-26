@@ -36,12 +36,14 @@ public class GameStatusService {
 	private final UserService userService;
 	private final SlotManagementRepository slotManagementRepository;
 
+	/**
+	 * <p>game before 중에 현재 시작 시간인 경우 LIVE로 update</p>
+	 */
 	@Transactional
 	@Caching(evict = {
 		@CacheEvict(value = "allGameList", allEntries = true),
 	})
 	public void updateBeforeToLiveStatus() {
-		// game before 중에 현재 시작 시간인 경우 LIVE로 update
 		List<Game> game = gameRepository.findAllByStatusAndStartTimeLessThanEqual(StatusType.BEFORE, getTime(0));
 		if (!game.isEmpty()) {
 			cacheDelete();
@@ -54,12 +56,14 @@ public class GameStatusService {
 	void cacheDelete() {
 	}
 
+	/**
+	 * <p>game live 중에 종료 시간인 경우 wait 로 update</p>
+	 */
 	@Transactional
 	@Caching(evict = {
 		@CacheEvict(value = "allGameList", allEntries = true),
 	})
 	public void updateLiveToWaitStatus() {
-		// game live 중에 종료 시간인 경우 wait 로 update
 		LocalDateTime endTime = getTime(1);
 		List<Game> game = gameRepository.findAllByStatusAndEndTimeLessThanEqual(StatusType.LIVE, endTime);
 		if (!game.isEmpty()) {
@@ -70,12 +74,15 @@ public class GameStatusService {
 		}
 	}
 
+	/**
+	 * <p>게임이 제대로 성사되었다면 알림을 보낸다.</p>
+	 */
 	@Transactional
 	public void imminentGame() {
 		SlotManagement slotManagement = slotManagementRepository.findCurrent(LocalDateTime.now())
 			.orElseThrow(SlotNotFoundException::new);
 		List<GameUser> games = gameRepository.findAllByStartTimeLessThanEqual(getTime(slotManagement.getOpenMinute()));
-		if (games.size() > 2) {
+		if (games.size() > 2 || games.size() == 1) {
 			log.error("imminent game size is not 2 -> size: " + games.size() + ", check time: " + getTime(
 				slotManagement.getOpenMinute()));
 			throw new GameDataConsistencyException();
@@ -89,7 +96,7 @@ public class GameStatusService {
 	}
 
 	/**
-	 * private method
+	 * <p>유저에게 알림을 보내는 메서드</p>
 	 */
 	private void notiProcess(GameUser game, String enemyIntra, Integer gameOpenMinute) {
 		Noti noti = notiService.createImminentNoti(userService.getUser(game.getUserId()), enemyIntra, NotiType.IMMINENT,
@@ -97,6 +104,11 @@ public class GameStatusService {
 		snsNotiService.sendSnsNotification(noti, new UserNotiDto(game));
 	}
 
+	/**
+	 * <p>시간 구하는 메서드</p>
+	 * @param plusMiniute
+	 * @return
+	 */
 	private LocalDateTime getTime(int plusMiniute) {
 		LocalDateTime now = LocalDateTime.now();
 		LocalDateTime endTime = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(),

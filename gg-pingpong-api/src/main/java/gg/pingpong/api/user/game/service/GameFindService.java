@@ -1,5 +1,6 @@
 package gg.pingpong.api.user.game.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -124,7 +125,7 @@ public class GameFindService {
 	@Cacheable(value = "allGameListByUser", cacheManager = "gameCacheManager",
 		key = "#pageable.pageNumber + #pageable.pageSize + #pageable.sort.toString() + #status + #intra")
 	public GameListResDto allGameListUser(Pageable pageable, String intra, String status) {
-		List<String> statusTypes = Arrays.asList(StatusType.END.name());
+		List<String> statusTypes = new ArrayList<>(List.of(StatusType.END.name()));
 		if (status != null && status.equals("LIVE")) {
 			statusTypes.add(StatusType.LIVE.name());
 			statusTypes.add(StatusType.WAIT.name());
