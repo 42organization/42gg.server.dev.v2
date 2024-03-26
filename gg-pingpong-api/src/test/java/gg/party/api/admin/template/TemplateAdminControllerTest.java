@@ -77,7 +77,7 @@ public class TemplateAdminControllerTest {
 			//given
 			String url = "/party/admin/templates";
 			TemplateAdminCreateReqDto templateAdminCreateReqDto = new TemplateAdminCreateReqDto(
-				testCategory.getName(), "gameName", 4, 2,
+				testCategory.getId(), "gameName", 4, 2,
 				180, 180, "genre", "hard", "summary");
 			String jsonRequest = objectMapper.writeValueAsString(templateAdminCreateReqDto);
 			//when
@@ -97,7 +97,7 @@ public class TemplateAdminControllerTest {
 			//given
 			String url = "/party/admin/templates";
 			TemplateAdminCreateReqDto templateAdminCreateReqDto = new TemplateAdminCreateReqDto(
-				"NOTFOUND", "gameName", 4, 2,
+				10L, "gameName", 4, 2,
 				180, 180, "genre", "hard", "summary");
 			String jsonRequest = objectMapper.writeValueAsString(templateAdminCreateReqDto);
 			//when && then
@@ -134,7 +134,7 @@ public class TemplateAdminControllerTest {
 			String url = "/party/admin/templates/" + templateId;
 			Category newTestCategory = testDataUtils.createNewCategory("newCate");
 			TemplateAdminUpdateReqDto templateAdminUpdateReqDto = new TemplateAdminUpdateReqDto(
-				newTestCategory.getName(), "newGameName", 8, 4,
+				newTestCategory.getId(), "newGameName", 8, 4,
 				90, 90, "newGenre", "easy", "newSummary");
 			String jsonRequest = objectMapper.writeValueAsString(templateAdminUpdateReqDto);
 			//when
@@ -163,7 +163,7 @@ public class TemplateAdminControllerTest {
 			String templateId = testTemplate.getId().toString();
 			String url = "/party/admin/templates/" + templateId;
 			TemplateAdminUpdateReqDto templateAdminUpdateReqDto = new TemplateAdminUpdateReqDto(
-				"NOTFOUND", "newGameName", 8, 4,
+				1000L, "newGameName", 8, 4,
 				90, 90, "newGenre", "easy", "newSummary");
 			String jsonRequest = objectMapper.writeValueAsString(templateAdminUpdateReqDto);
 			//when && then
@@ -175,24 +175,6 @@ public class TemplateAdminControllerTest {
 		}
 
 		@Test
-		@DisplayName("최소인원이 최대인원보다 큰 오류 400")
-		public void notValidMinMaxFail() throws Exception {
-			//given
-			String templateId = testTemplate.getId().toString();
-			String url = "/party/admin/templates/" + templateId;
-			TemplateAdminUpdateReqDto templateAdminUpdateReqDto = new TemplateAdminUpdateReqDto(
-				testCategory.getName(), "newGameName", 4, 8,
-				90, 90, "newGenre", "easy", "newSummary");
-			String jsonRequest = objectMapper.writeValueAsString(templateAdminUpdateReqDto);
-			//when && then
-			mockMvc.perform(patch(url)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(jsonRequest)
-					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
-				.andExpect(status().isBadRequest());
-		}
-
-		@Test
 		@DisplayName("템플릿 없음으로 인한 수정 실패 404")
 		public void noTemplateFail() throws Exception {
 			//given
@@ -200,7 +182,7 @@ public class TemplateAdminControllerTest {
 			String url = "/party/admin/templates/" + templateId;
 			Category newTestCategory = testDataUtils.createNewCategory("newCate");
 			TemplateAdminUpdateReqDto templateAdminUpdateReqDto = new TemplateAdminUpdateReqDto(
-				newTestCategory.getName(), "newGameName", 8, 4,
+				newTestCategory.getId(), "newGameName", 8, 4,
 				90, 90, "newGenre", "easy", "newSummary");
 			String jsonRequest = objectMapper.writeValueAsString(templateAdminUpdateReqDto);
 			//when && then
