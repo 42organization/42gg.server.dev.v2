@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.transaction.Transactional;
 
@@ -44,9 +45,15 @@ public class RoomFindService {
 
 		List<Room> notStartedRooms = roomRepository.findByStatus(RoomType.OPEN, sortForNotStarted);
 		List<Room> startedRooms = roomRepository.findByStatus(RoomType.START, sortForStarted);
+		List<Room> finishRooms = roomRepository.findByStatus(RoomType.FINISH, sortForStarted);
 
-		notStartedRooms.addAll(startedRooms);
-		List<RoomResDto> roomListResDto = notStartedRooms.stream()
+		List<Room> limitedFinishRooms = finishRooms.stream().limit(10).collect(Collectors.toList());
+
+		List<Room> combinedRooms = Stream.of(notStartedRooms, startedRooms, limitedFinishRooms)
+			.flatMap(List::stream)
+			.collect(Collectors.toList());
+
+		List<RoomResDto> roomListResDto = combinedRooms.stream()
 			.map(RoomResDto::new)
 			.collect(Collectors.toList());
 
@@ -126,7 +133,8 @@ public class RoomFindService {
 			room.getHost().getId(), roomId);
 		String hostNickname = hostUserRoomOptional.get().getNickname();
 
-		if (room.getStatus() == RoomType.START && userRoomOptional.isPresent()) {
+		if ((room.getStatus() == RoomType.START || room.getStatus() == RoomType.FINISH)
+			&& userRoomOptional.isPresent()) {
 			List<CommentResDto> comments = commentRepository.findByRoomId(roomId).stream()
 				.map(comment -> new CommentResDto(comment, comment.getUser().getIntraId()))
 				.collect(Collectors.toList());
@@ -137,7 +145,7 @@ public class RoomFindService {
 					userRoom.getUser().getImageUri()))
 				.collect(Collectors.toList());
 			return new RoomDetailResDto(room, myNickname, hostNickname, roomUsers, comments);
-		} else { // if 참여자 && 시작했을경우 intraID || else intraId == null
+		} else { // if 참여자 && Start or Finish 상태인 경우 intraID || else intraId == null
 			List<CommentResDto> comments = commentRepository.findByRoomId(roomId).stream()
 				.map(CommentResDto::new)
 				.collect(Collectors.toList());

@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
-import gg.data.game.type.Mode;
+import gg.data.pingpong.game.type.Mode;
 import gg.pingpong.api.user.game.controller.request.GameListReqDto;
 import gg.pingpong.api.user.game.controller.request.NormalGameListReqDto;
 import gg.pingpong.api.user.game.controller.request.NormalResultReqDto;

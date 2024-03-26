@@ -5,8 +5,8 @@ import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
-import gg.data.game.Game;
-import gg.data.game.TeamUser;
+import gg.data.pingpong.game.Game;
+import gg.data.pingpong.game.TeamUser;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

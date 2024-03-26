@@ -94,12 +94,14 @@ dependencies {
     testFixturesImplementation project(":gg-repo")
     testFixturesImplementation project(":gg-admin-repo")
     testFixturesImplementation project(":gg-pingpong-api")
+    testFixturesImplementation project(":gg-recruit-api")
 
     jacocoAggregation(project(':gg-data'))
     jacocoAggregation(project(':gg-auth'))
     jacocoAggregation(project(':gg-repo'))
     jacocoAggregation(project(':gg-admin-repo'))
     jacocoAggregation(project(':gg-pingpong-api'))
+    jacocoAggregation(project(':gg-recruit-api'))
 }
 
 test {

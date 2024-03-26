@@ -126,6 +126,8 @@ public enum ErrorCode {
 	VALID_FAILED(400, "CM007", "Valid Test Failed."),
 	BAD_ARGU(400, "ARGUMENT-ERR-400", "잘못된 argument 입니다."),
 	UNREADABLE_HTTP_MESSAGE(400, "CM008", "유효하지 않은 HTTP 메시지입니다."),
+	CONFLICT(409, "CM009", "CONFLICT"),
+	FORBIDDEN(403, "CM010", "접근이 금지된 요청입니다."),
 
 	//Feedback
 	FEEDBACK_NOT_FOUND(404, "FB100", "FB NOT FOUND"),
@@ -177,11 +179,11 @@ public enum ErrorCode {
 	ROOM_SAME_STATUS(400, "PT204", "이미 처리된 방 입니다."),
 	ROOM_NOT_OPEN(400, "PT205", "모집중인 방이 아닙니다."),
 	ROOM_NOT_PARTICIPANT(400, "PT206", "참여하지 않은 방 입니다."),
-	CATEGORY_DUPLICATE(400, "PT207", "중복된 카테고리 입니다."),
-	ROOM_MIN_MAX_PEOPLE(400, "PT208", "최소인원이 최대인원보다 큽니다."),
+	ROOM_MIN_MAX_PEOPLE(400, "PT207", "최소인원이 최대인원보다 큽니다."),
 	USER_ALREADY_IN_ROOM(409, "PT301", "이미 참여한 방 입니다."),
 	ALREADY_REPORTED(409, "PT302", "이미 신고한 요청입니다."),
 	SELF_REPORT(409, "PT303", "자신을 신고할 수 없습니다."),
+	CATEGORY_DUPLICATE(409, "PT304", "중복된 카테고리 입니다."),
 	ON_PENALTY(403, "PT501", "패널티 상태입니다.");
 
 	private final int status;

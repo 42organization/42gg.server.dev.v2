@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import gg.data.game.TeamUser;
+import gg.data.pingpong.game.TeamUser;
 import gg.data.user.User;
 
 public interface TeamUserAdminRepository extends JpaRepository<TeamUser, Long> {

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import gg.data.game.PChange;
+import gg.data.pingpong.game.PChange;
 import gg.utils.annotation.UnitTest;
 
 @UnitTest

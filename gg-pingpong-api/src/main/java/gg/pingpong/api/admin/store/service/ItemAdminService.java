@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import gg.admin.repo.store.ItemAdminRepository;
 import gg.auth.UserDto;
-import gg.data.store.Item;
+import gg.data.pingpong.store.Item;
 import gg.pingpong.api.admin.store.controller.request.ItemUpdateRequestDto;
 import gg.pingpong.api.admin.store.controller.response.ItemHistoryResponseDto;
 import gg.pingpong.api.admin.store.controller.response.ItemListResponseDto;

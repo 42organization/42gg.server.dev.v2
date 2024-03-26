@@ -21,8 +21,8 @@ import com.google.common.net.HttpHeaders;
 
 import gg.admin.repo.season.SeasonAdminRepository;
 import gg.auth.utils.AuthTokenProvider;
-import gg.data.rank.Tier;
-import gg.data.season.Season;
+import gg.data.pingpong.rank.Tier;
+import gg.data.pingpong.season.Season;
 import gg.pingpong.api.admin.rank.service.RankAdminService;
 import gg.pingpong.api.admin.rank.service.RankRedisAdminService;
 import gg.pingpong.api.admin.season.controller.request.SeasonCreateRequestDto;
@@ -50,33 +50,24 @@ class SeasonAdminControllerTest {
 
 	@Autowired
 	ObjectMapper objectMapper;
-
-	@Autowired
-	private SeasonAdminRepository seasonAdminRepository;
-
 	@Autowired
 	AuthTokenProvider tokenProvider;
-
 	@Autowired
 	TestDataUtils testDataUtils;
-
 	@Autowired
 	RankRepository rankRepository;
-
 	@Autowired
 	RankRedisRepository rankRedisRepository;
-
 	@Autowired
 	SeasonAdminService seasonAdminService;
-
 	@Autowired
 	RankAdminService rankAdminService;
-
 	@Autowired
 	RankRedisAdminService rankRedisAdminService;
-
 	SeasonListAdminResponseDto responseDto;
 	Long dbSeasonId;
+	@Autowired
+	private SeasonAdminRepository seasonAdminRepository;
 
 	@AfterEach
 	void tearDown() {

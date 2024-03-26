@@ -12,9 +12,9 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.data.rank.Rank;
-import gg.data.rank.Tier;
-import gg.data.rank.redis.RankRedis;
+import gg.data.pingpong.rank.Rank;
+import gg.data.pingpong.rank.Tier;
+import gg.data.pingpong.rank.redis.RankRedis;
 import gg.data.user.User;
 import gg.data.user.type.RacketType;
 import gg.data.user.type.SnsType;

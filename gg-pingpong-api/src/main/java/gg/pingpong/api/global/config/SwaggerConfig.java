@@ -23,6 +23,24 @@ public class SwaggerConfig {
 	}
 
 	@Bean
+	public GroupedOpenApi recruitGroup() {
+		return GroupedOpenApi.builder()
+			.group("recruit")
+			.pathsToMatch("/recruitments/**")
+			.packagesToScan("gg.recruit.api.user")
+			.build();
+	}
+
+	@Bean
+	public GroupedOpenApi recruitAdminGroup() {
+		return GroupedOpenApi.builder()
+			.group("recruit admin")
+			.pathsToMatch("admin/recruitments/**")
+			.packagesToScan("gg.recruit.api.admin")
+			.build();
+	}
+
+	@Bean
 	public GroupedOpenApi admin_group() {
 		return GroupedOpenApi.builder()
 			.group("pingpong admin")
