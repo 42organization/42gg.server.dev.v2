@@ -2,6 +2,7 @@ package gg.party.api.admin.penalty.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,10 +41,11 @@ public class PartyPenaltyAdminService {
 
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
-		Page<PartyPenaltyAdminResDto> penaltyPage = partyPenaltyRepository.findAll(pageable)
-			.map(PartyPenaltyAdminResDto::new);
+		Page<PartyPenalty> penaltyPage = partyPenaltyRepository.findUserFetchJoin(pageable);
 
-		List<PartyPenaltyAdminResDto> penaltyList = penaltyPage.getContent();
+		List<PartyPenaltyAdminResDto> penaltyList = penaltyPage.getContent().stream()
+			.map(PartyPenaltyAdminResDto::new)
+			.collect(Collectors.toList());
 
 		return new PartyPenaltyListAdminResDto(penaltyList, penaltyPage.getTotalPages());
 	}
