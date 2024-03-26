@@ -38,7 +38,7 @@ public class CategoryService {
 			partyPenalty.getStartTime().plusHours(partyPenalty.getPenaltyTime()))) {
 			throw new OnPenaltyException();
 		}
-		return new CategoryListResDto(categoryRepository.findAll(Sort.by(Sort.Direction.ASC, "id")).stream()
+		return new CategoryListResDto(categoryRepository.findAll(Sort.by(Sort.Direction.ASC, "name")).stream()
 			.map(CategoryResDto::new)
 			.collect(Collectors.toList()));
 	}

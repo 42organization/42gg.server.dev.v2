@@ -12,14 +12,7 @@ import java.util.stream.IntStream;
 import org.springframework.stereotype.Component;
 
 import gg.auth.utils.AuthTokenProvider;
-import gg.data.game.Game;
-import gg.data.game.PChange;
-import gg.data.game.Team;
-import gg.data.game.TeamUser;
-import gg.data.game.type.Mode;
-import gg.data.game.type.StatusType;
 import gg.data.manage.Announcement;
-import gg.data.manage.SlotManagement;
 import gg.data.noti.Noti;
 import gg.data.noti.type.NotiType;
 import gg.data.party.Category;
@@ -32,17 +25,24 @@ import gg.data.party.RoomReport;
 import gg.data.party.UserReport;
 import gg.data.party.UserRoom;
 import gg.data.party.type.RoomType;
-import gg.data.rank.Rank;
-import gg.data.rank.Tier;
-import gg.data.rank.redis.RankRedis;
-import gg.data.season.Season;
-import gg.data.store.CoinPolicy;
-import gg.data.tournament.Tournament;
-import gg.data.tournament.TournamentGame;
-import gg.data.tournament.TournamentUser;
-import gg.data.tournament.type.TournamentRound;
-import gg.data.tournament.type.TournamentStatus;
-import gg.data.tournament.type.TournamentType;
+import gg.data.pingpong.game.Game;
+import gg.data.pingpong.game.PChange;
+import gg.data.pingpong.game.Team;
+import gg.data.pingpong.game.TeamUser;
+import gg.data.pingpong.game.type.Mode;
+import gg.data.pingpong.game.type.StatusType;
+import gg.data.pingpong.manage.SlotManagement;
+import gg.data.pingpong.rank.Rank;
+import gg.data.pingpong.rank.Tier;
+import gg.data.pingpong.rank.redis.RankRedis;
+import gg.data.pingpong.season.Season;
+import gg.data.pingpong.store.CoinPolicy;
+import gg.data.pingpong.tournament.Tournament;
+import gg.data.pingpong.tournament.TournamentGame;
+import gg.data.pingpong.tournament.TournamentUser;
+import gg.data.pingpong.tournament.type.TournamentRound;
+import gg.data.pingpong.tournament.type.TournamentStatus;
+import gg.data.pingpong.tournament.type.TournamentType;
 import gg.data.user.User;
 import gg.data.user.UserImage;
 import gg.data.user.type.RacketType;
@@ -849,8 +849,9 @@ public class TestDataUtils {
 		return user;
 	}
 
-	public GameTemplate createTemplate(Category category, String gameName, Integer maxGamePeople, Integer minGamePeople,
-		Integer maxGameTime, Integer minGameTime, String genre, String difficulty, String summary) {
+	public GameTemplate createNewTemplate(Category category, String gameName, Integer maxGamePeople,
+		Integer minGamePeople, Integer maxGameTime, Integer minGameTime, String genre, String difficulty,
+		String summary) {
 		GameTemplate gameTemplate = GameTemplate.builder()
 			.category(category)
 			.gameName(gameName)
