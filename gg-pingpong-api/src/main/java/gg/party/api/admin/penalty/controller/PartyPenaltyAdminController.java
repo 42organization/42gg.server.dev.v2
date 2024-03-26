@@ -41,7 +41,7 @@ public class PartyPenaltyAdminController {
 	 */
 	@PatchMapping("/{penaltyId}")
 	public ResponseEntity<Void> modifyAdminPenalty(@PathVariable Long penaltyId,
-		@RequestBody PartyPenaltyAdminReqDto reqDto) {
+		@RequestBody @Valid PartyPenaltyAdminReqDto reqDto) {
 		partyPenaltyAdminService.modifyAdminPenalty(penaltyId, reqDto);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
@@ -49,9 +49,9 @@ public class PartyPenaltyAdminController {
 	/**
 	 * 패널티 부여
 	 */
-	@PostMapping()
+	@PostMapping
 	public ResponseEntity<Void> addAdminPenalty(
-		@RequestBody PartyPenaltyAdminReqDto reqDto) {
+		@RequestBody @Valid PartyPenaltyAdminReqDto reqDto) {
 		partyPenaltyAdminService.addAdminPenalty(reqDto);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
