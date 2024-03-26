@@ -53,7 +53,6 @@ public class CommentControllerTest {
 	private CommentRepository commentRepository;
 	@Autowired
 	private RoomRepository roomRepository;
-
 	User userTester;
 	User reportedTester;
 	User anotherUser;
