@@ -50,7 +50,6 @@ public class PartyPenaltyControllerTest {
 	private AuthTokenProvider tokenProvider;
 	@Autowired
 	private PartyPenaltyRepository partyPenaltyRepository;
-
 	private User userTester;
 	private User reportedTester;
 	private User adminUser;
@@ -134,12 +133,8 @@ public class PartyPenaltyControllerTest {
 		@DisplayName("패널티 수정 - 204")
 		void testModifyAdminPenalty() throws Exception {
 			//given
-			PartyPenaltyAdminReqDto penaltyDto = new PartyPenaltyAdminReqDto(
-				"test_penalty",
-				"Test reason",
-				60,
-				reportedTester.getIntraId()
-			);
+			PartyPenaltyAdminReqDto penaltyDto = new PartyPenaltyAdminReqDto("test_penalty", "Test reason", 60,
+				reportedTester.getIntraId());
 
 			//when
 			mockMvc.perform(patch("/party/admin/penalties/{penaltyId}", testPenaltyId)
@@ -162,12 +157,8 @@ public class PartyPenaltyControllerTest {
 			//given
 			Long nonExistentPenaltyId = 999L;
 
-			PartyPenaltyAdminReqDto penaltyDto = new PartyPenaltyAdminReqDto(
-				"test_penalty",
-				"test_reason",
-				60,
-				"nonexistentIntraId"
-			);
+			PartyPenaltyAdminReqDto penaltyDto = new PartyPenaltyAdminReqDto("test_penalty", "Test reason", 60,
+				reportedTester.getIntraId());
 
 			//when
 			mockMvc.perform(patch("/party/admin/penalties/{penaltyId}", nonExistentPenaltyId)
@@ -181,12 +172,8 @@ public class PartyPenaltyControllerTest {
 		@DisplayName("패널티 부여 (일반적인 상황) - 201")
 		void testGiveAdminPenalty() throws Exception {
 			//given
-			PartyPenaltyAdminReqDto penaltyDto = new PartyPenaltyAdminReqDto(
-				"test_penalty",
-				"Test reason",
-				60,
-				userTester.getIntraId()
-			);
+			PartyPenaltyAdminReqDto penaltyDto = new PartyPenaltyAdminReqDto("test_penalty", "Test reason", 60,
+				userTester.getIntraId());
 
 			long penaltyCountBefore = partyPenaltyRepository.count();
 
@@ -206,12 +193,8 @@ public class PartyPenaltyControllerTest {
 		@DisplayName("패널티 부여 (패널티된 유저에게 추가 패널티 부여) - 201")
 		void testAddAdminPenalty() throws Exception {
 			//given
-			PartyPenaltyAdminReqDto morePenaltyDto = new PartyPenaltyAdminReqDto(
-				"test_penalty",
-				"Test reason",
-				60,
-				reportedTester.getIntraId()
-			);
+			PartyPenaltyAdminReqDto morePenaltyDto = new PartyPenaltyAdminReqDto("test_penalty", "Test reason", 60,
+				reportedTester.getIntraId());
 
 			//when
 			mockMvc.perform(post("/party/admin/penalties")
@@ -231,12 +214,8 @@ public class PartyPenaltyControllerTest {
 		@DisplayName("패널티 부여 - 실패 시나리오(없는 유저) - 404")
 		void testAddAdminPenalty_UserNotFound() throws Exception {
 			//given
-			PartyPenaltyAdminReqDto penaltyDto = new PartyPenaltyAdminReqDto(
-				"test_penalty",
-				"Test reason",
-				60,
-				"nonexistentIntraId"
-			);
+			PartyPenaltyAdminReqDto penaltyDto = new PartyPenaltyAdminReqDto("test_penalty", "Test reason", 60,
+				"nonexistentIntraId");
 
 			//when
 			mockMvc.perform(post("/party/admin/penalties")
