@@ -22,6 +22,7 @@ public class SwaggerConfig {
 			.packagesToScan("gg.party.api.user")
 			.build();
 	}
+
 	@Bean
 	public GroupedOpenApi partyAdminGroup() {
 		return GroupedOpenApi.builder()
