@@ -47,7 +47,7 @@ public class Recruitment extends BaseTimeEntity {
 	@Column(nullable = false)
 	private LocalDateTime endTime;
 
-	@OneToMany(mappedBy = "recruitments", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "recruit", cascade = CascadeType.ALL)
 	private List<Question> questions = new ArrayList<>();
 
 	@Builder
