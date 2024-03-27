@@ -5,8 +5,8 @@ import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @Getter
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class TemplateListResDto {
 	private List<TemplateResDto> templateList;
 

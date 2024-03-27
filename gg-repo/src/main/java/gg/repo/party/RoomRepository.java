@@ -16,6 +16,9 @@ import gg.data.party.type.RoomType;
 public interface RoomRepository extends JpaRepository<Room, Long> {
 	List<Room> findByStatus(RoomType status, Sort sort);
 
+	@Query("SELECT r FROM Room r WHERE r.status IN :statuses")
+	List<Room> findByStatusIn(@Param("statuses") List<RoomType> statuses);
+
 	Long findById(Long id, Sort sort);
 
 	Page<Room> findAll(Pageable pageable);

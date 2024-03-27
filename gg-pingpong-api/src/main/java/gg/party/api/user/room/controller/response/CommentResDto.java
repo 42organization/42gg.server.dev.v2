@@ -6,8 +6,8 @@ import gg.data.party.Comment;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
 @Getter
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class CommentResDto {
 	private Long commentId;
 	private String nickname;

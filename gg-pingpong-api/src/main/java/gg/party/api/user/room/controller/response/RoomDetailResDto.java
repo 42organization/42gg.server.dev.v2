@@ -8,8 +8,8 @@ import gg.data.party.type.RoomType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @Getter
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class RoomDetailResDto {
 	private Long roomId;
 	private String title;
