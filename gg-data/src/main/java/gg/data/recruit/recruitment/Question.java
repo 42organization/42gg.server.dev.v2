@@ -1,5 +1,8 @@
 package gg.data.recruit.recruitment;
 
+import static gg.utils.exception.BusinessChecker.*;
+import static gg.utils.exception.ErrorCode.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +50,7 @@ public class Question extends BaseTimeEntity {
 	private int sortNum;
 
 	public Question(Recruitment recruit, InputType inputType, String question, int sortNum) {
+		recruit.addQuestions(this);
 		this.recruit = recruit;
 		this.inputType = inputType;
 		this.question = question;
@@ -54,6 +58,7 @@ public class Question extends BaseTimeEntity {
 	}
 
 	protected void addCheckList(CheckList checkList) {
+		mustNotNull(checkList, NULL_POINT);
 		this.checkLists.add(checkList);
 	}
 }
