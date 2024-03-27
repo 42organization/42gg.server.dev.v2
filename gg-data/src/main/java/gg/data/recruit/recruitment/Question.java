@@ -32,7 +32,7 @@ public class Question extends BaseTimeEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "recruit_id", nullable = false)
-	private Recruitments recruit;
+	private Recruitment recruit;
 
 	@Enumerated(EnumType.STRING)
 	@Column(length = 20, nullable = false)
@@ -46,7 +46,7 @@ public class Question extends BaseTimeEntity {
 
 	private int sortNum;
 
-	public Question(Recruitments recruit, InputType inputType, String question, int sortNum) {
+	public Question(Recruitment recruit, InputType inputType, String question, int sortNum) {
 		this.recruit = recruit;
 		this.inputType = inputType;
 		this.question = question;

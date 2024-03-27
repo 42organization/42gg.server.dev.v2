@@ -8,10 +8,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import gg.data.recruit.recruitment.Question;
-import gg.data.recruit.recruitment.Recruitments;
+import gg.data.recruit.recruitment.Recruitment;
 import gg.recruit.api.user.service.response.RecruitmentDetailSvcDto;
 import gg.recruit.api.user.service.response.RecruitmentListSvcDto;
-import gg.repo.recruit.user.recruitment.RecruitmentRepository;
+import gg.repo.recruit.recruitment.RecruitmentRepository;
 import gg.utils.exception.custom.NotExistException;
 import lombok.RequiredArgsConstructor;
 
@@ -22,12 +22,12 @@ public class RecruitmentService {
 	private final QuestionService questionService;
 
 	public RecruitmentListSvcDto findActiveRecruitmentList(Pageable pageable) {
-		Page<Recruitments> pages = recruitmentRepository.findActiveRecruitmentList(LocalDateTime.now(), pageable);
+		Page<Recruitment> pages = recruitmentRepository.findActiveRecruitmentList(LocalDateTime.now(), pageable);
 		return new RecruitmentListSvcDto(pages.getContent(), pages.getTotalPages());
 	}
 
 	public RecruitmentDetailSvcDto findRecruitmentDetail(Long recruitmentId) {
-		Recruitments recruit = recruitmentRepository.findByActiveRecruit(recruitmentId, LocalDateTime.now())
+		Recruitment recruit = recruitmentRepository.findByActiveRecruit(recruitmentId, LocalDateTime.now())
 			.orElseThrow(() -> new NotExistException("Recruitment id 가 유효하지 않습니다."));
 		List<Question> questions = questionService.findQuestionsByRecruitId(recruitmentId);
 		return new RecruitmentDetailSvcDto(recruit, questions);

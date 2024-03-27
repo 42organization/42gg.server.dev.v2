@@ -9,15 +9,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import gg.data.recruit.recruitment.Recruitments;
+import gg.data.recruit.recruitment.Recruitment;
 
-public interface RecruitmentRepository extends JpaRepository<Recruitments, Long>, RecruitmentRepositoryCustom {
-	@Query("SELECT r FROM Recruitments r "
+public interface RecruitmentRepository extends JpaRepository<Recruitment, Long>, RecruitmentRepositoryCustom {
+	@Query("SELECT r FROM Recruitment r "
 		+ "WHERE r.isDeleted = false AND r.startTime <= :date AND r.isFinish = false "
 		+ "ORDER BY r.startTime DESC")
-	Page<Recruitments> findActiveRecruitmentList(@Param("date") LocalDateTime date, Pageable pageable);
+	Page<Recruitment> findActiveRecruitmentList(@Param("date") LocalDateTime date, Pageable pageable);
 
-	@Query("SELECT r FROM Recruitments r "
+	@Query("SELECT r FROM Recruitment r "
 		+ "WHERE r.id = :recruitId AND r.startTime <= :date AND r.isDeleted = false AND r.isFinish = false")
-	Optional<Recruitments> findByActiveRecruit(@Param("recruitId") Long recruitId, @Param("date") LocalDateTime date);
+	Optional<Recruitment> findByActiveRecruit(@Param("recruitId") Long recruitId, @Param("date") LocalDateTime date);
 }
