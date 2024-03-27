@@ -102,25 +102,22 @@ public class RoomManagementService {
 		UserRoom targetUserRoom = userRoomRepository.findByUserAndRoom(userRepository.findById(user.getId()).get(),
 			targetRoom).orElseThrow(RoomNotParticipantException::new);
 
+		// 모두 나갈 때 방 fail처리
+		if (targetRoom.getCurrentPeople() == 1) {
+			targetRoom.updateCurrentPeople(0);
+			targetRoom.updateRoomStatus(RoomType.FAIL);
+			roomRepository.save(targetRoom);
+			userRoomRepository.save(targetUserRoom);
+			return new LeaveRoomResDto(targetUserRoom.getNickname());
+		}
+
 		targetRoom.updateCurrentPeople(targetRoom.getCurrentPeople() - 1);
 		targetUserRoom.updateIsExist(false);
 
 		// 방장 이권
 		if (user.getId().equals(targetRoom.getHost().getId())) {
 			List<User> existUser = userRoomRepository.findByIsExist(roomId);
-			if (existUser != null && !existUser.isEmpty()) {
-				targetRoom.updateHost(existUser.get(0));
-			} else {
-				targetRoom.updateHost(null);
-			}
-		}
-
-		// 모두 나갈 때 방 fail처리
-		if (targetRoom.getCurrentPeople() == 0) {
-			targetRoom.updateRoomStatus(RoomType.FAIL);
-			roomRepository.save(targetRoom);
-			userRoomRepository.save(targetUserRoom);
-			return new LeaveRoomResDto(targetUserRoom.getNickname());
+			targetRoom.updateHost(existUser.get(0));
 		}
 
 		roomRepository.save(targetRoom);
