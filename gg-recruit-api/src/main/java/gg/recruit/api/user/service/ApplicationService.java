@@ -16,7 +16,7 @@ import gg.data.recruit.application.ApplicationAnswerText;
 import gg.data.recruit.application.RecruitStatus;
 import gg.data.recruit.recruitment.CheckList;
 import gg.data.recruit.recruitment.Question;
-import gg.data.recruit.recruitment.Recruitments;
+import gg.data.recruit.recruitment.Recruitment;
 import gg.data.recruit.recruitment.enums.InputType;
 import gg.data.user.User;
 import gg.data.user.type.SnsType;
@@ -30,12 +30,12 @@ import gg.recruit.api.user.service.param.RecruitApplyParam;
 import gg.recruit.api.user.service.response.ApplicationListSvcDto;
 import gg.recruit.api.user.service.response.ApplicationResultSvcDto;
 import gg.recruit.api.user.service.response.ApplicationWithAnswerSvcDto;
+import gg.repo.recruit.application.ApplicationRepository;
+import gg.repo.recruit.recruitment.CheckListRepository;
+import gg.repo.recruit.recruitment.QuestionRepository;
+import gg.repo.recruit.recruitment.RecruitmentRepository;
 import gg.repo.recruit.user.application.ApplicationAnswerRepository;
-import gg.repo.recruit.user.application.ApplicationRepository;
 import gg.repo.recruit.user.application.RecruitStatusRepository;
-import gg.repo.recruit.user.recruitment.CheckListRepository;
-import gg.repo.recruit.user.recruitment.QuestionRepository;
-import gg.repo.recruit.user.recruitment.RecruitmentRepository;
 import gg.repo.user.UserRepository;
 import gg.utils.exception.ErrorCode;
 import gg.utils.exception.custom.DuplicationException;
@@ -92,7 +92,7 @@ public class ApplicationService {
 		if (user.getSnsNotiOpt().equals(SnsType.NONE) || user.getSnsNotiOpt().equals(SnsType.EMAIL)) {
 			user.updateTypes(user.getRacketType(), SnsType.BOTH);
 		}
-		Recruitments recruitments = recruitmentRepository.getById(param.getRecruitId());
+		Recruitment recruitments = recruitmentRepository.getById(param.getRecruitId());
 		Application newApplication = applicationRepository.save(new Application(user, recruitments));
 		for (RecruitApplyFormParam form :
 			param.getForms()) {

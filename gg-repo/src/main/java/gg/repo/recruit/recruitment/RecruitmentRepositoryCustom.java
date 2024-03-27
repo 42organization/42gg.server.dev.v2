@@ -1,4 +1,4 @@
-package gg.repo.recruit.user.recruitment;
+package gg.repo.recruit.recruitment;
 
 public interface RecruitmentRepositoryCustom {
 
