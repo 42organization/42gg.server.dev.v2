@@ -40,10 +40,9 @@ public class SlackPartybotService {
 		MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
 		parameters.add("email", userEmail);
 
-		SlackPartybotService.SlackUserInfoResponse res = apiUtil.apiCall(userIdGetUrl,
-			SlackPartybotService.SlackUserInfoResponse.class,
+		SlackPartybotService.SlackUserInfoRes res = apiUtil.apiCall(userIdGetUrl, SlackUserInfoRes.class,
 			headers, parameters, HttpMethod.POST);
-		return res.user.getId();
+		return res.user.id;
 	}
 
 	private String createGroupChannelId(List<String> slackUserIds) {
@@ -54,10 +53,10 @@ public class SlackPartybotService {
 		Map<String, String> bodyMap = new HashMap<>();
 		bodyMap.put("users", String.join(",", slackUserIds));
 
-		SlackPartybotService.ConversationResponse res = apiUtil.apiCall(conversationsUrl,
-			SlackPartybotService.ConversationResponse.class, httpHeaders, bodyMap, HttpMethod.POST);
+		ConversationRes res = apiUtil.apiCall(conversationsUrl, ConversationRes.class,
+			httpHeaders, bodyMap, HttpMethod.POST);
 
-		return res.channel.getId();
+		return res.channel.id;
 	}
 
 	@Async("asyncExecutor")
@@ -86,9 +85,9 @@ public class SlackPartybotService {
 	}
 
 	@Getter
-	static class ConversationResponse {
+	static class ConversationRes {
 		private Boolean ok;
-		private SlackbotService.ConversationResponse.Channel channel;
+		private Channel channel;
 
 		@Getter
 		static class Channel {
@@ -97,9 +96,9 @@ public class SlackPartybotService {
 	}
 
 	@Getter
-	static class SlackUserInfoResponse {
+	static class SlackUserInfoRes {
 		private Boolean ok;
-		private SlackbotService.SlackUserInfoResponse.SlackUser user;
+		private SlackUser user;
 
 		@Getter
 		static class SlackUser {

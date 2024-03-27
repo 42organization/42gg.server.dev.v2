@@ -6,17 +6,18 @@ import java.util.Random;
  * 익명 닉네임을 만드는 클래스입니다.
  * PREFIX와 SUFFIX 배열에서 랜덤으로 단어를 선택하여 조합합니다.
  * 둘 중 중복되는 요소도 가능하게 작성했습니다. ex) 용감한 int, 용감한 string이 공존할 수 있습니다.
+ * 최대 4글자 || 7글자로 작성했습니다.
  */
 public class GenerateRandomNickname {
 	private static final String[] PREFIX = {"용감한", "대담한", "밝은", "뛰어난", "쾌활한", "영리한", "도망가는", "든든한",
 		"대담한", "열심인", "힘찬", "불같은", "신선한", "관대한", "유쾌한", "행복한", "희망찬", "명랑한", "친절한", "활기찬",
-		"착한", "이상한", "자랑스러운", "빠른", "안도하는", "수줍은", "어리석은", "강한", "감사하는", "힘든", "용감한", "열정적인",
+		"착한", "이상한", "빠른", "안도하는", "수줍은", "어리석은", "강한", "감사하는", "힘든", "용감한", "열정적인", "졸린",
 		"똑똑한", "즐거운", "굉장한", "고수", "엄청난", "뜬금없는", "충무공", "제너럴", "엠페러", "마제스티", "판타스틱", "레전더리",
-		"먼치킨", "다크호스", "슈퍼루키", "엘리트", "정점", "전교회장", "베테랑"};
+		"먼치킨", "다크호스", "슈퍼루키", "엘리트", "정점", "전교회장", "베테랑", "킹", "퀸", "챔피언"};
 
-	private static final String[] SUFFIX = {"list", "vector", "string", "boolean", "number", "object", "array",
-		"set", "map", "date", "function", "null", "undefined", "buffer", "json", "error", "stack", "queue", "deque",
-		"tree", "graph", "pair", "int", "char", "float", "double", "long", "longlong", "size_t", "short", "struct"};
+	private static final String[] SUFFIX = {"list", "vector", "string", "bool", "number", "object", "array",
+		"set", "map", "date", "null", "buffer", "json", "error", "stack", "queue", "deque", "struct", "tree",
+		"graph", "pair", "int", "char", "float", "double", "long", "size_t", "short", "byte", "bit", "pointer"};
 
 	public static String generateRandomNickname() {
 		Random random = new Random();
