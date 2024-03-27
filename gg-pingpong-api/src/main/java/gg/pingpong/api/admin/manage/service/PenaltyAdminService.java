@@ -39,13 +39,13 @@ public class PenaltyAdminService {
 		Penalty penalty;
 		LocalDateTime now = LocalDateTime.now();
 		if (redisPenaltyUser.isPresent()) {
-			releaseTime = redisPenaltyUser.get().getReleaseTime().plusMinutes(penaltyTime);
+			releaseTime = redisPenaltyUser.get().getReleaseTime().plusHours(penaltyTime);
 			penaltyUser = new RedisPenaltyUser(intraId, redisPenaltyUser.get().getPenaltyTime() + penaltyTime * 60,
 				releaseTime, redisPenaltyUser.get().getStartTime(), reason);
 			penalty = new Penalty(user, PenaltyType.NOSHOW, reason, redisPenaltyUser.get().getReleaseTime(),
 				penaltyTime * 60);
 		} else {
-			releaseTime = now.plusMinutes(penaltyTime);
+			releaseTime = now.plusHours(penaltyTime);
 			penaltyUser = new RedisPenaltyUser(intraId, penaltyTime * 60, releaseTime, now, reason);
 			penalty = new Penalty(user, PenaltyType.NOSHOW, reason, now, penaltyTime * 60);
 		}
