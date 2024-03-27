@@ -78,7 +78,7 @@ public class RoomAdminService {
 	/**
 	 * 방의 상세정보를 조회한다
 	 * @param roomId 방 id
-	 * @exception RoomNotFoundException 유효하지 않은 방 입력
+	 * @exception RoomNotFoundException 유효하지 않은 방 입력 - 404
 	 * @return 방 상세정보 dto
 	 */
 	@Transactional

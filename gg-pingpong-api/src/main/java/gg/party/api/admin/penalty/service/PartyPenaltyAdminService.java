@@ -53,7 +53,7 @@ public class PartyPenaltyAdminService {
 	/**
 	 * 패널티 수정
 	 * @param penaltyId 패널티 번호
-	 * @throws PartyPenaltyNotFoundException 유효하지 않은 패널티
+	 * @throws PartyPenaltyNotFoundException 유효하지 않은 패널티 - 404
 	 */
 	@Transactional
 	public void modifyAdminPenalty(Long penaltyId, PartyPenaltyAdminReqDto reqDto) {
