@@ -31,8 +31,8 @@ public class CheckList extends BaseTimeEntity {
 	private String content;
 
 	public CheckList(Question question, String content) {
+		question.addCheckList(this);
 		this.question = question;
 		this.content = content;
-		question.addCheckList(this);
 	}
 }
