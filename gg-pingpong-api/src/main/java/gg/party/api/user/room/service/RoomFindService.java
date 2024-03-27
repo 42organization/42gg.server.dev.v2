@@ -1,12 +1,12 @@
 package gg.party.api.user.room.service;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,16 +38,26 @@ public class RoomFindService {
 	 */
 	@Transactional(readOnly = true)
 	public RoomListResDto findRoomList() {
-		Sort sortForNotStarted = Sort.by("createdAt").descending();
-		Sort sortForStarted = Sort.by("startDate").descending();
+		List<RoomType> statuses = Arrays.asList(RoomType.OPEN, RoomType.START, RoomType.FINISH);
+		List<Room> rooms = roomRepository.findByStatusIn(statuses);
 
-		List<Room> notStartedRooms = roomRepository.findByStatus(RoomType.OPEN, sortForNotStarted);
-		List<Room> startedRooms = roomRepository.findByStatus(RoomType.START, sortForStarted);
-		List<Room> finishRooms = roomRepository.findByStatus(RoomType.FINISH, sortForStarted);
+		List<Room> openRooms = rooms.stream()
+			.filter(room -> room.getStatus() == RoomType.OPEN)
+			.sorted(Comparator.comparing(Room::getCreatedAt).reversed())
+			.collect(Collectors.toList());
 
-		List<Room> limitedFinishRooms = finishRooms.stream().limit(10).collect(Collectors.toList());
+		List<Room> startRooms = rooms.stream()
+			.filter(room -> room.getStatus() == RoomType.START)
+			.sorted(Comparator.comparing(Room::getStartDate).reversed())
+			.collect(Collectors.toList());
 
-		List<Room> combinedRooms = Stream.of(notStartedRooms, startedRooms, limitedFinishRooms)
+		List<Room> finishRooms = rooms.stream()
+			.filter(room -> room.getStatus() == RoomType.FINISH)
+			.sorted(Comparator.comparing(Room::getStartDate).reversed())
+			.limit(10)
+			.collect(Collectors.toList());
+
+		List<Room> combinedRooms = Stream.of(openRooms, startRooms, finishRooms)
 			.flatMap(List::stream)
 			.collect(Collectors.toList());
 
@@ -132,9 +142,9 @@ public class RoomFindService {
 			myNickname = userRoom.getNickname();
 		}
 
-		Optional<UserRoom> hostUserRoomOptional = userRoomRepository.findByUserIdAndRoomIdAndIsExistTrue(
-			room.getHost().getId(), roomId);
-		String hostNickname = hostUserRoomOptional.get().getNickname();
+		Optional<UserRoom> hostUserRoom = userRoomRepository.findByUserIdAndRoomIdAndIsExistTrue(room.getHost().getId(),
+			roomId);
+		String hostNickname = hostUserRoom.get().getNickname();
 
 		if ((room.getStatus() == RoomType.START || room.getStatus() == RoomType.FINISH)
 			&& userRoomOptional.isPresent()) {
