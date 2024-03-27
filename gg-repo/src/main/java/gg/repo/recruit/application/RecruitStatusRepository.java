@@ -1,4 +1,4 @@
-package gg.repo.recruit.user.application;
+package gg.repo.recruit.application;
 
 import java.util.Optional;
 
