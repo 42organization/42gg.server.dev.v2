@@ -17,8 +17,8 @@ public class TemplateController {
 	private final TemplateService templateService;
 
 	/**
-	 * 탬플릿 목록을 조회한다
-	 * @return 탬플릿 전체 List
+	 * 템플릿 전체 조회
+	 * @return 템플릿 전체 리스트 (가나다 순으로 정렬) 200
 	 */
 	@GetMapping
 	public ResponseEntity<TemplateListResDto> templateList() {
