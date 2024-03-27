@@ -81,5 +81,4 @@ public class GameTemplate extends BaseTimeEntity {
 	public void modifyCategory(Category category) {
 		this.category = category;
 	}
-
 }
