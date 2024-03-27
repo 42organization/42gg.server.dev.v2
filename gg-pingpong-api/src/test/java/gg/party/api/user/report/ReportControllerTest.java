@@ -35,15 +35,9 @@ import gg.data.user.type.RacketType;
 import gg.data.user.type.RoleType;
 import gg.data.user.type.SnsType;
 import gg.party.api.user.report.controller.request.ReportReqDto;
-import gg.party.api.user.room.service.RoomFindService;
-import gg.party.api.user.room.service.RoomManagementService;
-import gg.repo.party.CategoryRepository;
 import gg.repo.party.CommentReportRepository;
-import gg.repo.party.PartyPenaltyRepository;
 import gg.repo.party.RoomReportRepository;
-import gg.repo.party.RoomRepository;
 import gg.repo.party.UserReportRepository;
-import gg.repo.party.UserRoomRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import lombok.RequiredArgsConstructor;
@@ -64,23 +58,11 @@ public class ReportControllerTest {
 	@Autowired
 	AuthTokenProvider tokenProvider;
 	@Autowired
-	RoomRepository roomRepository;
-	@Autowired
 	RoomReportRepository roomReportRepository;
 	@Autowired
 	CommentReportRepository commentReportRepository;
 	@Autowired
-	UserRoomRepository userRoomRepository;
-	@Autowired
-	CategoryRepository categoryRepository;
-	@Autowired
-	PartyPenaltyRepository partyPenaltyRepository;
-	@Autowired
 	UserReportRepository userReportRepository;
-	@Autowired
-	RoomFindService roomFindService;
-	@Autowired
-	RoomManagementService roomManagementService;
 	User userTester;
 	User reporterTester;
 	User otherTester;
@@ -160,7 +142,7 @@ public class ReportControllerTest {
 
 		@Test
 		@Transactional
-		@DisplayName("자진 신고로 인한 신고 실패 409")
+		@DisplayName("자진 신고로 인한 신고 실패 400")
 		public void reportRoomSelfFail() throws Exception {
 			//given
 			String url = "/party/reports/rooms/" + openRoom.getId();
@@ -255,7 +237,7 @@ public class ReportControllerTest {
 
 		@Test
 		@Transactional
-		@DisplayName("자진 신고로 인한 신고 실패 409")
+		@DisplayName("자진 신고로 인한 신고 실패 400")
 		public void reportCommentSelfFail() throws Exception {
 			//given
 			String url = "/party/reports/comments/" + comment.getId();
@@ -364,7 +346,7 @@ public class ReportControllerTest {
 
 		@Test
 		@Transactional
-		@DisplayName("자진 신고로 인한 신고 실패 409")
+		@DisplayName("자진 신고로 인한 신고 실패 400")
 		public void reportCommentSelfFail() throws Exception {
 			for (int i = 1; i < rooms.length - 2; i++) { // open, hidden, fail 제외
 				//given
@@ -399,12 +381,11 @@ public class ReportControllerTest {
 
 		@Test
 		@Transactional
-		@DisplayName("신고자, 피신고자가 같은 방에 없음 404")
+		@DisplayName("신고자, 피신고자가 같은 방에 없음 400")
 		public void reportUserNotParticipantFail() throws Exception {
 			for (int i = 1; i < rooms.length - 2; i++) { // open, hidden, fail 제외
 				//given
 				String url = "/party/reports/rooms/" + rooms[i].getId() + "/users/" + userTester.getIntraId();
-				;
 				String jsonRequest = objectMapper.writeValueAsString(new ReportReqDto("report"));
 				//when & then
 				mockMvc.perform(post(url)
