@@ -102,16 +102,6 @@ public class RoomManagementService {
 		UserRoom targetUserRoom = userRoomRepository.findByUserAndRoom(userRepository.findById(user.getId()).get(),
 			targetRoom).orElseThrow(RoomNotParticipantException::new);
 
-		// 모두 나갈 때 방 fail처리
-		if (targetRoom.getCurrentPeople() == 1) {
-			targetRoom.updateCurrentPeople(0);
-			targetRoom.updateRoomStatus(RoomType.FAIL);
-			targetUserRoom.updateIsExist(false);
-			roomRepository.save(targetRoom);
-			userRoomRepository.save(targetUserRoom);
-			return new LeaveRoomResDto(targetUserRoom.getNickname());
-		}
-
 		targetRoom.updateCurrentPeople(targetRoom.getCurrentPeople() - 1);
 		targetUserRoom.updateIsExist(false);
 
@@ -124,8 +114,17 @@ public class RoomManagementService {
 				targetRoom.updateHost(null);
 			}
 		}
-		userRoomRepository.save(targetUserRoom);
+
+		// 모두 나갈 때 방 fail처리
+		if (targetRoom.getCurrentPeople() == 0) {
+			targetRoom.updateRoomStatus(RoomType.FAIL);
+			roomRepository.save(targetRoom);
+			userRoomRepository.save(targetUserRoom);
+			return new LeaveRoomResDto(targetUserRoom.getNickname());
+		}
+
 		roomRepository.save(targetRoom);
+		userRoomRepository.save(targetUserRoom);
 
 		return new LeaveRoomResDto(targetUserRoom.getNickname());
 	}
@@ -136,27 +135,27 @@ public class RoomManagementService {
 	 * @param roomId, user
 	 * @return 방 id
 	 * @throws RoomNotFoundException 방 없음 - 404
-	 * @throws RoomNotOpenException 방이 열리지 않은 상태 - 400
-	 * @throws RoomNotEnoughPeopleException 방에 충분한 인원이 없음 - 400
 	 * @throws RoomNotParticipantException 방에 참가하지 않은 유저 - 400
 	 * @throws UserNotHostException 방장이 아닌 경우 - 403
+	 * @throws RoomNotOpenException 방이 열리지 않은 상태 - 400
+	 * @throws RoomNotEnoughPeopleException 방에 충분한 인원이 없음 - 400
 	 */
 	@Transactional
 	public RoomStartResDto modifyStartRoom(Long roomId, UserDto user) {
 		Room targetRoom = roomRepository.findById(roomId)
 			.orElseThrow(RoomNotFoundException::new);
-		if (!targetRoom.getStatus().equals(RoomType.OPEN)) {
-			throw new RoomNotOpenException();
-		}
-		if (targetRoom.getMinPeople() > targetRoom.getCurrentPeople()
-			|| targetRoom.getMaxPeople() < targetRoom.getCurrentPeople()) {
-			throw new RoomNotEnoughPeopleException();
-		}
 		UserRoom targetUserRoom = userRoomRepository.findByUserAndRoom(userRepository.findById(user.getId()).get(),
 			targetRoom).orElseThrow(RoomNotParticipantException::new);
 		if (targetRoom.getHost() != targetUserRoom.getUser()) {
 			throw new UserNotHostException();
 		}
+		if (!targetRoom.getStatus().equals(RoomType.OPEN)) {
+			throw new RoomNotOpenException();
+		}
+		if (targetRoom.getMinPeople() > targetRoom.getCurrentPeople()) {
+			throw new RoomNotEnoughPeopleException();
+		}
+
 		targetRoom.updateRoomStatus(RoomType.START);
 		List<User> users = userRoomRepository.findByIsExist(roomId);
 		targetRoom.startRoom(LocalDateTime.now());

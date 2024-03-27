@@ -138,8 +138,7 @@ public class RoomFindService {
 
 		String myNickname = null;
 		if (userRoomOptional.isPresent()) {
-			UserRoom userRoom = userRoomOptional.get();
-			myNickname = userRoom.getNickname();
+			myNickname = userRoomOptional.get().getNickname();
 		}
 
 		Optional<UserRoom> hostUserRoom = userRoomRepository.findByUserIdAndRoomIdAndIsExistTrue(room.getHost().getId(),
