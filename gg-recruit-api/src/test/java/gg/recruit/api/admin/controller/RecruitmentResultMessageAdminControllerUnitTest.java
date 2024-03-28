@@ -68,7 +68,8 @@ class RecruitmentResultMessageAdminControllerUnitTest {
 			//Assert
 			for (RecruitmentResultMessageDto dto : listDto) {
 				Assertions.assertThatExceptionOfType(ConstraintViolationException.class)
-					.isThrownBy(() -> resultMessageAdminController.postResultMessage(dto));
+					.isThrownBy(
+						() -> resultMessageAdminController.postResultMessage(dto));
 			}
 		}
 	}
