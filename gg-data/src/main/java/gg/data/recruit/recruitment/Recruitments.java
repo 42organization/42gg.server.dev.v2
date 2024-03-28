@@ -12,6 +12,7 @@ import gg.data.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -55,5 +56,9 @@ public class Recruitments extends BaseTimeEntity {
 
 	public Boolean isEnd() {
 		return LocalDateTime.now().isAfter(this.endTime);
+	}
+
+	public void setFinish(Boolean finish) {
+		this.isFinish = finish;
 	}
 }

@@ -7,7 +7,7 @@ build/
 gg-pingpong-api/src/main/resources/application.yml
 .DS_Store
 python
-/logs
+**/logs
 
 
 ### STS ###
