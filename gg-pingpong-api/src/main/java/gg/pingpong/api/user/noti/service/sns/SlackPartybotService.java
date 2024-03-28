@@ -47,8 +47,6 @@ public class SlackPartybotService {
 			throw new RuntimeException("슬랙 API 고장으로 인한 NULL 참조" + intraId);
 		}
 
-		SlackPartybotService.SlackUserInfoRes res = apiUtil.apiCall(userIdGetUrl, SlackUserInfoRes.class,
-			headers, parameters, HttpMethod.POST);
 		return res.user.id;
 	}
 
