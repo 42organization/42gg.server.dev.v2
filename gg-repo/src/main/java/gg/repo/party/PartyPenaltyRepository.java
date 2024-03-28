@@ -11,8 +11,7 @@ import org.springframework.data.repository.query.Param;
 import gg.data.party.PartyPenalty;
 
 public interface PartyPenaltyRepository extends JpaRepository<PartyPenalty, Long> {
-	@Query("SELECT p FROM PartyPenalty p WHERE p.user.id = :userId ORDER BY p.startTime DESC")
-	PartyPenalty findLatestByUserId(@Param("userId") Long userId);
+	PartyPenalty findTopByUserIdOrderByStartTimeDesc(@Param("userId") Long userId);
 
 	List<PartyPenalty> findAllByUserId(Long userId);
 

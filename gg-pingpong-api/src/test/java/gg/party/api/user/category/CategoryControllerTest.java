@@ -45,8 +45,10 @@ public class CategoryControllerTest {
 	private AuthTokenProvider tokenProvider;
 	User userTester;
 	User reportedTester;
+	User anotherTester;
 	String userAccessToken;
 	String reportedAccessToken;
+	String anotherAccessToken;
 
 	@BeforeEach
 	void beforeEach() {
@@ -54,10 +56,17 @@ public class CategoryControllerTest {
 			RacketType.DUAL, SnsType.SLACK, RoleType.USER);
 		reportedTester = testDataUtils.createNewUser("reportedTester", "reportedTester",
 			RacketType.DUAL, SnsType.SLACK, RoleType.USER);
+		anotherTester = testDataUtils.createNewUser("anotherUserTester", "anotherUserTester",
+			RacketType.DUAL, SnsType.SLACK, RoleType.USER);
 		testDataUtils.createNewPenalty(reportedTester, "test", "test",
 			LocalDateTime.now(), 60);
+		testDataUtils.createNewPenalty(anotherTester, "test1", "test1",
+			LocalDateTime.now(), 0);
+		testDataUtils.createNewPenalty(anotherTester, "test2", "test2",
+			LocalDateTime.now(), 0);
 		userAccessToken = tokenProvider.createToken(userTester.getId());
 		reportedAccessToken = tokenProvider.createToken(reportedTester.getId());
+		anotherAccessToken = tokenProvider.createToken(anotherTester.getId());
 		for (int i = 0; i < 10; i++) {
 			testDataUtils.createNewCategory("테스트 카테고리" + i);
 		}
@@ -74,6 +83,22 @@ public class CategoryControllerTest {
 			//when
 			String contentAsString = mockMvc.perform(get(uri)
 					.header("Authorization", "Bearer " + userAccessToken)
+					.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+			//then
+			CategoryListResDto clrd = objectMapper.readValue(contentAsString, CategoryListResDto.class);
+			assertThat(clrd.getCategoryList().size()).isEqualTo(10);
+		}
+
+		@Test
+		@DisplayName("카테고리 목록 조회 성공 200")
+		void unLockPenaltySuccess() throws Exception {
+			//given
+			String uri = "/party/categories";
+			//when
+			String contentAsString = mockMvc.perform(get(uri)
+					.header("Authorization", "Bearer " + anotherAccessToken)
 					.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();

@@ -48,7 +48,7 @@ public class CommentService {
 			throw new RoomNotOpenException();
 		}
 
-		PartyPenalty partyPenalty = partyPenaltyRepository.findLatestByUserId(userId);
+		PartyPenalty partyPenalty = partyPenaltyRepository.findTopByUserIdOrderByStartTimeDesc(userId);
 		if (PartyPenalty.isOnPenalty(partyPenalty)) {
 			throw new OnPenaltyException();
 		}
