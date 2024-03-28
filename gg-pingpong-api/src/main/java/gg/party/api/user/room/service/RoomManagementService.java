@@ -104,6 +104,7 @@ public class RoomManagementService {
 		// 모두 나갈 때 방 fail처리
 		if (targetRoom.getCurrentPeople() == 1) {
 			targetRoom.updateCurrentPeople(0);
+			targetUserRoom.updateIsExist(false);
 			targetRoom.updateRoomStatus(RoomType.FAIL);
 			roomRepository.save(targetRoom);
 			userRoomRepository.save(targetUserRoom);
