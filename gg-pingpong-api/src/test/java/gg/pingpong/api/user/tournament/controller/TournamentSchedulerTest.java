@@ -15,10 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.data.manage.SlotManagement;
-import gg.data.tournament.Tournament;
-import gg.data.tournament.TournamentGame;
-import gg.data.tournament.type.TournamentStatus;
+import gg.data.pingpong.manage.SlotManagement;
+import gg.data.pingpong.tournament.Tournament;
+import gg.data.pingpong.tournament.TournamentGame;
+import gg.data.pingpong.tournament.type.TournamentStatus;
 import gg.pingpong.api.admin.noti.controller.request.SendNotiAdminRequestDto;
 import gg.pingpong.api.admin.noti.service.NotiAdminService;
 import gg.pingpong.api.user.tournament.service.TournamentService;

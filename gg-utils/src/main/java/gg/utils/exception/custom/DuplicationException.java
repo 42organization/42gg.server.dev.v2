@@ -6,4 +6,8 @@ public class DuplicationException extends CustomRuntimeException {
 	public DuplicationException(String message, ErrorCode errorCode) {
 		super(message, errorCode);
 	}
+
+	public DuplicationException(String message) {
+		super(message, ErrorCode.CONFLICT);
+	}
 }

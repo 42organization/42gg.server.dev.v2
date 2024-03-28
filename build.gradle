@@ -13,7 +13,7 @@ editorconfig {
 }
 
 springBoot {
-    mainClass = "gg.pingpong.api.PingPongApiApplication"
+    mainClass = "gg.PingPongApiApplication"
 }
 
 group = 'io.42pp'
@@ -55,6 +55,9 @@ subprojects {
         /* redis */
         implementation 'org.springframework.boot:spring-boot-starter-data-redis'
         implementation 'org.redisson:redisson:3.17.3'
+
+        //devtools
+        implementation 'org.springframework.boot:spring-boot-devtools'
 
         /* spring doc */
         implementation 'org.springdoc:springdoc-openapi-ui:1.6.6'
@@ -242,6 +245,30 @@ project(':gg-pingpong-api') {
         implementation project(':gg-data')
         implementation project(':gg-repo')
         implementation project(':gg-admin-repo')
+        implementation project(':gg-utils')
+        implementation project(':gg-auth')
+        implementation project(':gg-recruit-api')
+    }
+}
+
+project(':gg-recruit-api') {
+    bootJar { enabled = false }
+    jar { enabled = true }
+    dependencies {
+        implementation project(':gg-data')
+        implementation project(':gg-repo')
+        implementation project(':gg-admin-repo')
+        implementation project(':gg-utils')
+        implementation project(':gg-auth')
+    }
+}
+
+project(':gg-auth') {
+    bootJar { enabled = false }
+    jar { enabled = true }
+    dependencies {
+        implementation project(':gg-data')
+        implementation project(':gg-repo')
         implementation project(':gg-utils')
     }
 }

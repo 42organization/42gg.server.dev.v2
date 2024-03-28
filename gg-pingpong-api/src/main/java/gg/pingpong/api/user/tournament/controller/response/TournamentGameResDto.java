@@ -1,7 +1,7 @@
 package gg.pingpong.api.user.tournament.controller.response;
 
-import gg.data.tournament.TournamentGame;
-import gg.data.tournament.type.TournamentRound;
+import gg.data.pingpong.tournament.TournamentGame;
+import gg.data.pingpong.tournament.type.TournamentRound;
 import gg.pingpong.api.user.game.controller.response.GameResultResDto;
 import gg.repo.game.out.GameTeamUser;
 import lombok.AccessLevel;

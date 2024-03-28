@@ -15,8 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.admin.repo.store.CoinPolicyAdminRepository;
+import gg.auth.utils.AuthTokenProvider;
 import gg.pingpong.api.admin.store.dto.CoinPolicyAdminAddDto;
-import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import lombok.RequiredArgsConstructor;

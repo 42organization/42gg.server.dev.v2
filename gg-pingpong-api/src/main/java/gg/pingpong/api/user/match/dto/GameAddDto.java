@@ -3,10 +3,10 @@ package gg.pingpong.api.user.match.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import gg.data.game.type.Mode;
-import gg.data.match.RedisMatchUser;
-import gg.data.match.type.Option;
-import gg.data.season.Season;
+import gg.data.pingpong.game.type.Mode;
+import gg.data.pingpong.match.RedisMatchUser;
+import gg.data.pingpong.match.type.Option;
+import gg.data.pingpong.season.Season;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

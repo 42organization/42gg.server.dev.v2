@@ -1,6 +1,6 @@
 package gg.pingpong.api.user.season.controller.response;
 
-import gg.data.season.Season;
+import gg.data.pingpong.season.Season;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

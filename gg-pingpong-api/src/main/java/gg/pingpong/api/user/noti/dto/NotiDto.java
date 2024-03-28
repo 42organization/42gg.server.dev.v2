@@ -3,9 +3,9 @@ package gg.pingpong.api.user.noti.dto;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import gg.auth.UserDto;
 import gg.data.noti.Noti;
 import gg.data.noti.type.NotiType;
-import gg.pingpong.api.user.user.dto.UserDto;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -56,7 +56,7 @@ public class NotiDto {
 		if (!(obj instanceof NotiDto)) {
 			return false;
 		}
-		NotiDto other = (NotiDto)obj;
+		NotiDto other = (NotiDto) obj;
 		return Objects.equals(id, other.id)
 			&& Objects.equals(user, other.user)
 			&& Objects.equals(type, other.type)

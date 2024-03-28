@@ -14,9 +14,9 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import gg.data.game.Game;
-import gg.data.game.type.Mode;
-import gg.data.game.type.StatusType;
+import gg.data.pingpong.game.Game;
+import gg.data.pingpong.game.type.Mode;
+import gg.data.pingpong.game.type.StatusType;
 import gg.repo.game.out.GameTeamUser;
 import gg.repo.game.out.GameTeamUserInfo;
 import gg.repo.game.out.GameUser;

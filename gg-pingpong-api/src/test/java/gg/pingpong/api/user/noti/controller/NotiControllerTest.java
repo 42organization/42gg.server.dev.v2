@@ -16,13 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gg.auth.UserDto;
+import gg.auth.utils.AuthTokenProvider;
 import gg.data.noti.Noti;
 import gg.data.noti.type.NotiType;
 import gg.data.user.User;
-import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.user.noti.controller.response.NotiListResponseDto;
 import gg.pingpong.api.user.noti.service.NotiService;
-import gg.pingpong.api.user.user.dto.UserDto;
 import gg.repo.noti.NotiRepository;
 import gg.repo.user.UserRepository;
 import gg.utils.TestDataUtils;

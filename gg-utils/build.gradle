@@ -47,7 +47,8 @@ integrationTestCoverageReport {
 
     getClassDirectories().setFrom(files(
             [project(':gg-data'), project(':gg-admin-repo'),
-             project(':gg-repo'), project(':gg-pingpong-api')].collect {
+             project(':gg-repo'), project(':gg-pingpong-api'),
+             project(':gg-auth'), project(':gg-utils')].collect {
                 it.fileTree(dir: "${it.buildDir}/classes/java/main", exclude: jacocoExcludes)
             }
     ))
@@ -63,7 +64,8 @@ unitTestCoverageReport {
 
     getClassDirectories().setFrom(files(
             [project(':gg-data'), project(':gg-admin-repo'),
-             project(':gg-repo'), project(':gg-pingpong-api')].collect {
+             project(':gg-repo'), project(':gg-pingpong-api'),
+             project(':gg-auth'), project(':gg-utils')].collect {
                 it.fileTree(dir: "${it.buildDir}/classes/java/main", exclude: jacocoExcludes)
             }
     ))
@@ -88,14 +90,18 @@ dependencies {
     testFixturesAnnotationProcessor("org.projectlombok:lombok")
 
     testFixturesImplementation project(":gg-data")
+    testFixturesImplementation project(":gg-auth")
     testFixturesImplementation project(":gg-repo")
     testFixturesImplementation project(":gg-admin-repo")
     testFixturesImplementation project(":gg-pingpong-api")
+    testFixturesImplementation project(":gg-recruit-api")
 
     jacocoAggregation(project(':gg-data'))
+    jacocoAggregation(project(':gg-auth'))
     jacocoAggregation(project(':gg-repo'))
     jacocoAggregation(project(':gg-admin-repo'))
     jacocoAggregation(project(':gg-pingpong-api'))
+    jacocoAggregation(project(':gg-recruit-api'))
 }
 
 test {

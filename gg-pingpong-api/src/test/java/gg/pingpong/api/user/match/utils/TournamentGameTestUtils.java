@@ -7,16 +7,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import gg.data.game.Game;
-import gg.data.game.Team;
-import gg.data.game.TeamUser;
-import gg.data.game.type.Mode;
-import gg.data.game.type.StatusType;
-import gg.data.season.Season;
-import gg.data.tournament.Tournament;
-import gg.data.tournament.TournamentGame;
-import gg.data.tournament.type.RoundNumber;
-import gg.data.tournament.type.TournamentRound;
+import gg.data.pingpong.game.Game;
+import gg.data.pingpong.game.Team;
+import gg.data.pingpong.game.TeamUser;
+import gg.data.pingpong.game.type.Mode;
+import gg.data.pingpong.game.type.StatusType;
+import gg.data.pingpong.season.Season;
+import gg.data.pingpong.tournament.Tournament;
+import gg.data.pingpong.tournament.TournamentGame;
+import gg.data.pingpong.tournament.type.RoundNumber;
+import gg.data.pingpong.tournament.type.TournamentRound;
 import gg.data.user.User;
 import gg.utils.exception.match.WinningTeamNotFoundException;
 

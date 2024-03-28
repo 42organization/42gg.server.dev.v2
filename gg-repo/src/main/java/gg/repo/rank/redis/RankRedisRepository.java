@@ -10,7 +10,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Repository;
 
-import gg.data.rank.redis.RankRedis;
+import gg.data.pingpong.rank.redis.RankRedis;
 import gg.utils.exception.rank.RedisDataNotFoundException;
 
 @Repository

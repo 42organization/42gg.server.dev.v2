@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import gg.pingpong.api.admin.store.controller.response.MegaphoneHistoryResponseDto;
 import gg.pingpong.api.admin.store.service.MegaphoneAdminService;
-import gg.pingpong.api.global.dto.PageRequestDto;
+import gg.utils.dto.PageRequestDto;
 import lombok.RequiredArgsConstructor;
 
 @RestController

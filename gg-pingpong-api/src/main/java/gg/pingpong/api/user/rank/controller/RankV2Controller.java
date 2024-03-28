@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import gg.pingpong.api.global.dto.PageRequestDto;
-import gg.pingpong.api.global.utils.argumentresolver.Login;
+import gg.auth.UserDto;
+import gg.auth.argumentresolver.Login;
 import gg.pingpong.api.user.rank.controller.response.ExpRankPageResponseDto;
 import gg.pingpong.api.user.rank.controller.response.RankPageResponseDto;
 import gg.pingpong.api.user.rank.service.RankService;
-import gg.pingpong.api.user.user.dto.UserDto;
+import gg.utils.dto.PageRequestDto;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 

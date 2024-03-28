@@ -14,8 +14,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import gg.data.game.Game;
-import gg.data.game.PChange;
+import gg.data.pingpong.game.Game;
+import gg.data.pingpong.game.PChange;
 import gg.data.user.User;
 import gg.data.user.type.RacketType;
 import gg.data.user.type.RoleType;

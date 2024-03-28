@@ -4,7 +4,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 import gg.admin.repo.game.out.GameTeamUser;
-import gg.data.game.type.StatusType;
+import gg.data.pingpong.game.type.StatusType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

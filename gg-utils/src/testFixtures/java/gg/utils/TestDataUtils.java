@@ -1,5 +1,7 @@
 package gg.utils;
 
+import static java.lang.Boolean.*;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,27 +11,38 @@ import java.util.stream.IntStream;
 
 import org.springframework.stereotype.Component;
 
-import gg.data.game.Game;
-import gg.data.game.PChange;
-import gg.data.game.Team;
-import gg.data.game.TeamUser;
-import gg.data.game.type.Mode;
-import gg.data.game.type.StatusType;
+import gg.auth.utils.AuthTokenProvider;
 import gg.data.manage.Announcement;
-import gg.data.manage.SlotManagement;
 import gg.data.noti.Noti;
 import gg.data.noti.type.NotiType;
-import gg.data.rank.Rank;
-import gg.data.rank.Tier;
-import gg.data.rank.redis.RankRedis;
-import gg.data.season.Season;
-import gg.data.store.CoinPolicy;
-import gg.data.tournament.Tournament;
-import gg.data.tournament.TournamentGame;
-import gg.data.tournament.TournamentUser;
-import gg.data.tournament.type.TournamentRound;
-import gg.data.tournament.type.TournamentStatus;
-import gg.data.tournament.type.TournamentType;
+import gg.data.party.Category;
+import gg.data.party.Comment;
+import gg.data.party.CommentReport;
+import gg.data.party.GameTemplate;
+import gg.data.party.PartyPenalty;
+import gg.data.party.Room;
+import gg.data.party.RoomReport;
+import gg.data.party.UserReport;
+import gg.data.party.UserRoom;
+import gg.data.party.type.RoomType;
+import gg.data.pingpong.game.Game;
+import gg.data.pingpong.game.PChange;
+import gg.data.pingpong.game.Team;
+import gg.data.pingpong.game.TeamUser;
+import gg.data.pingpong.game.type.Mode;
+import gg.data.pingpong.game.type.StatusType;
+import gg.data.pingpong.manage.SlotManagement;
+import gg.data.pingpong.rank.Rank;
+import gg.data.pingpong.rank.Tier;
+import gg.data.pingpong.rank.redis.RankRedis;
+import gg.data.pingpong.season.Season;
+import gg.data.pingpong.store.CoinPolicy;
+import gg.data.pingpong.tournament.Tournament;
+import gg.data.pingpong.tournament.TournamentGame;
+import gg.data.pingpong.tournament.TournamentUser;
+import gg.data.pingpong.tournament.type.TournamentRound;
+import gg.data.pingpong.tournament.type.TournamentStatus;
+import gg.data.pingpong.tournament.type.TournamentType;
 import gg.data.user.User;
 import gg.data.user.UserImage;
 import gg.data.user.type.RacketType;
@@ -37,7 +50,6 @@ import gg.data.user.type.RoleType;
 import gg.data.user.type.SnsType;
 import gg.pingpong.api.admin.tournament.controller.request.TournamentAdminCreateRequestDto;
 import gg.pingpong.api.admin.tournament.controller.request.TournamentAdminUpdateRequestDto;
-import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.user.tournament.controller.response.TournamentResponseDto;
 import gg.pingpong.api.user.user.dto.UserImageDto;
 import gg.repo.game.GameRepository;
@@ -47,6 +59,15 @@ import gg.repo.game.TeamUserRepository;
 import gg.repo.manage.AnnouncementRepository;
 import gg.repo.manage.SlotManagementRepository;
 import gg.repo.noti.NotiRepository;
+import gg.repo.party.CategoryRepository;
+import gg.repo.party.CommentReportRepository;
+import gg.repo.party.CommentRepository;
+import gg.repo.party.PartyPenaltyRepository;
+import gg.repo.party.RoomReportRepository;
+import gg.repo.party.RoomRepository;
+import gg.repo.party.TemplateRepository;
+import gg.repo.party.UserReportRepository;
+import gg.repo.party.UserRoomRepository;
 import gg.repo.rank.RankRepository;
 import gg.repo.rank.TierRepository;
 import gg.repo.rank.redis.RankRedisRepository;
@@ -82,6 +103,15 @@ public class TestDataUtils {
 	private final CoinPolicyRepository coinPolicyRepository;
 	private final UserImageRepository userImageRepository;
 	private final SlotManagementRepository slotManagementRepository;
+	private final RoomRepository roomRepository;
+	private final UserRoomRepository userRoomRepository;
+	private final CategoryRepository categoryRepository;
+	private final PartyPenaltyRepository partyPenaltyRepository;
+	private final TemplateRepository templateRepository;
+	private final CommentRepository commentRepository;
+	private final CommentReportRepository commentReportRepository;
+	private final RoomReportRepository roomReportRepository;
+	private final UserReportRepository userReportRepository;
 
 	public String getLoginAccessToken() {
 		User user = User.builder()
@@ -765,5 +795,105 @@ public class TestDataUtils {
 			.startTime(LocalDateTime.now().minusHours(1))
 			.build();
 		return slotManagementRepository.save(slotManagement);
+	}
+
+	/*
+	 * number는 방 순서에 따라 제목 내용을 순서따라 표기하기 위함.
+	 */
+	public Room createNewRoom(User host, User creator, Category category, int number, Integer currentPeople,
+		Integer maxPeople, Integer minPeople, Integer dueDate, RoomType status) {
+		Room room = Room.builder()
+			.host(host)
+			.creator(creator)
+			.category(category)
+			.title("방 제목" + number)
+			.content("방 내용" + number)
+			.currentPeople(currentPeople)
+			.maxPeople(maxPeople)
+			.minPeople(minPeople)
+			.dueDate(LocalDateTime.now().plusMinutes(dueDate))
+			.status(status)
+			.build();
+		return roomRepository.save(room);
+	}
+
+	public Category createNewCategory(String name) {
+		Category newCategory = new Category(name);
+		return categoryRepository.save(newCategory);
+	}
+
+	public PartyPenalty createNewPenalty(User user, String type, String message, LocalDateTime startTime,
+		Integer penaltyTime) {
+		PartyPenalty penalty = new PartyPenalty(user, type, message, startTime, penaltyTime);
+		partyPenaltyRepository.save(penalty);
+		return penalty;
+	}
+
+	public UserRoom createNewUserRoom(User user, Room room, String nickname, boolean isExist) {
+		UserRoom userRoom = new UserRoom(user, room, nickname, isExist);
+		return userRoomRepository.save(userRoom);
+	}
+
+	public User createNewImageUser(String intraId, String email, RacketType racketType,
+		SnsType snsType, RoleType roleType, String userImage) {
+		User user = User.builder()
+			.eMail(email)
+			.intraId(intraId)
+			.racketType(racketType)
+			.snsNotiOpt(snsType)
+			.roleType(roleType)
+			.totalExp(0)
+			.imageUri(userImage)
+			.build();
+		userRepository.save(user);
+		return user;
+	}
+
+	public GameTemplate createNewTemplate(Category category, String gameName, Integer maxGamePeople,
+		Integer minGamePeople, Integer maxGameTime, Integer minGameTime, String genre, String difficulty,
+		String summary) {
+		GameTemplate gameTemplate = GameTemplate.builder()
+			.category(category)
+			.gameName(gameName)
+			.maxGamePeople(maxGamePeople)
+			.minGamePeople(minGamePeople)
+			.maxGameTime(maxGameTime)
+			.minGameTime(minGameTime)
+			.genre(genre)
+			.difficulty(difficulty)
+			.summary(summary)
+			.build();
+		return templateRepository.save(gameTemplate);
+	}
+
+	public Comment createComment(User user, UserRoom userRoom, Room room, String content) {
+		Comment comment = new Comment(user, userRoom, room, content);
+		commentRepository.save(comment);
+		return comment;
+	}
+
+	public CommentReport createCommentReport(User user, Room room, Comment comment) {
+		CommentReport commentReport = new CommentReport(user, comment, room, "test");
+		commentReportRepository.save(commentReport);
+		return commentReport;
+	}
+
+	public RoomReport createRoomReport(User user, User targetUser, Room room) {
+		RoomReport roomReport = new RoomReport(user, targetUser, room, "test");
+		roomReportRepository.save(roomReport);
+		return roomReport;
+	}
+
+	public UserReport createUserReport(User user, User targetUser, Room room) {
+		UserReport userReport = new UserReport(user, targetUser, room, "test");
+		userReportRepository.save(userReport);
+		return userReport;
+	}
+
+	public Comment createReportComment(User user, UserRoom userRoom, Room room, String content) {
+		Comment comment = new Comment(user, userRoom, room, content);
+		comment.updateHidden(TRUE);
+		commentRepository.save(comment);
+		return comment;
 	}
 }

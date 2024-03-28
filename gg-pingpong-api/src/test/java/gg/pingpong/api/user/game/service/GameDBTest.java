@@ -17,14 +17,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.data.game.Game;
-import gg.data.game.Team;
-import gg.data.game.TeamUser;
-import gg.data.game.type.Mode;
-import gg.data.season.Season;
+import gg.auth.utils.AuthTokenProvider;
+import gg.data.pingpong.game.Game;
+import gg.data.pingpong.game.Team;
+import gg.data.pingpong.game.TeamUser;
+import gg.data.pingpong.game.type.Mode;
+import gg.data.pingpong.season.Season;
 import gg.data.user.User;
 import gg.pingpong.api.admin.game.service.GameAdminService;
-import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.repo.game.GameRepository;
 import gg.repo.game.PChangeRepository;
 import gg.repo.game.TeamRepository;
@@ -75,9 +75,9 @@ public class GameDBTest {
 		List<Game> gameList = gameRepository.findAll();
 		List<Team> teamList = teamRepository.findAll();
 		List<TeamUser> teamUserList = teamUserRepository.findAll();
-		log.info("GAME LIST SIZE : " + Integer.toString(gameList.size()));
-		log.info("TEAM LIST SIZE: " + Integer.toString(teamList.size()));
-		log.info("TEAM_USER LIST SIZE: " + Integer.toString(teamUserList.size()));
+		log.info("GAME LIST SIZE : " + gameList.size());
+		log.info("TEAM LIST SIZE: " + teamList.size());
+		log.info("TEAM_USER LIST SIZE: " + teamUserList.size());
 		Assertions.assertThat(teamList.size()).isEqualTo(0);
 		Assertions.assertThat(teamUserList.size()).isEqualTo(0);
 	}

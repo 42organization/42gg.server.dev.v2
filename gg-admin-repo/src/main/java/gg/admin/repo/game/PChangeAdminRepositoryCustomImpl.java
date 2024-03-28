@@ -5,7 +5,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 
-import gg.data.game.PChange;
+import gg.data.pingpong.game.PChange;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

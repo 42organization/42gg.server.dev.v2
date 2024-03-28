@@ -5,9 +5,9 @@ import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.data.store.CoinHistory;
-import gg.data.store.Item;
-import gg.data.store.type.HistoryType;
+import gg.data.pingpong.store.CoinHistory;
+import gg.data.pingpong.store.Item;
+import gg.data.pingpong.store.type.HistoryType;
 import gg.data.user.User;
 import gg.repo.store.CoinHistoryRepository;
 import gg.repo.store.CoinPolicyRepository;

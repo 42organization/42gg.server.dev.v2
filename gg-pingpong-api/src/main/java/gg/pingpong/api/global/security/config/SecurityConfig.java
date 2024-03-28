@@ -52,6 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.and()
 			.authorizeRequests()
 			.antMatchers("/pingpong/admin/**").hasRole("ADMIN")
+			.antMatchers("/party/admin/**").hasRole("ADMIN")
 			.antMatchers(HttpMethod.PUT, "/pingpong/users/{intraId}").hasAnyRole("USER", "ADMIN")
 			.antMatchers(HttpMethod.POST, "/pingpong/match").hasAnyRole("USER", "ADMIN")
 			.antMatchers(HttpMethod.POST, "/pingpong/tournaments/{tournamentId}/users").hasAnyRole("USER", "ADMIN")

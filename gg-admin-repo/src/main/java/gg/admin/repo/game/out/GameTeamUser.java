@@ -2,8 +2,8 @@ package gg.admin.repo.game.out;
 
 import java.time.LocalDateTime;
 
-import gg.data.game.type.Mode;
-import gg.data.game.type.StatusType;
+import gg.data.pingpong.game.type.Mode;
+import gg.data.pingpong.game.type.StatusType;
 
 public interface GameTeamUser {
 	Long getGameId();

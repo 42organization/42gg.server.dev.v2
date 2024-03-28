@@ -8,10 +8,10 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import gg.data.tournament.Tournament;
-import gg.data.tournament.TournamentUser;
-import gg.data.tournament.type.TournamentStatus;
-import gg.data.tournament.type.TournamentType;
+import gg.data.pingpong.tournament.Tournament;
+import gg.data.pingpong.tournament.TournamentUser;
+import gg.data.pingpong.tournament.type.TournamentStatus;
+import gg.data.pingpong.tournament.type.TournamentType;
 import gg.data.user.User;
 import gg.utils.annotation.UnitTest;
 

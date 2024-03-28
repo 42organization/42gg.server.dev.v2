@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import gg.pingpong.api.global.utils.argumentresolver.Login;
+import gg.auth.UserDto;
+import gg.auth.argumentresolver.Login;
 import gg.pingpong.api.user.manage.controller.request.FeedbackRequestDto;
 import gg.pingpong.api.user.manage.service.FeedbackService;
-import gg.pingpong.api.user.user.dto.UserDto;
 import gg.repo.user.UserRepository;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;

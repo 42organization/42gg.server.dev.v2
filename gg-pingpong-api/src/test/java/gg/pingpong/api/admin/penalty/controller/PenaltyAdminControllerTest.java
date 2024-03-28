@@ -30,6 +30,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.admin.repo.manage.PenaltyAdminRepository;
 import gg.admin.repo.manage.PenaltyUserAdminRedisRepository;
+import gg.auth.utils.AuthTokenProvider;
 import gg.data.manage.Penalty;
 import gg.data.manage.redis.RedisPenaltyUser;
 import gg.data.manage.type.PenaltyType;
@@ -40,7 +41,6 @@ import gg.data.user.type.SnsType;
 import gg.pingpong.api.admin.manage.controller.request.PenaltyRequestDto;
 import gg.pingpong.api.admin.manage.controller.response.PenaltyListResponseDto;
 import gg.pingpong.api.admin.manage.service.PenaltyAdminService;
-import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.repo.user.UserRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
@@ -160,12 +160,12 @@ class PenaltyAdminControllerTest {
 		for (int i = 0; i < 20; i++) {
 			User newUser = testDataUtils.createNewUser();
 			users.add(newUser);
-			penaltyAdminService.givePenalty(newUser.getIntraId(), 3, "test" + String.valueOf(i));
+			penaltyAdminService.givePenalty(newUser.getIntraId(), 3, "test" + i);
 		}
 		List<Integer> sizeCounts = new ArrayList<Integer>();
 		Integer totalPages = -1;
 		for (int i = 1; i <= 3; i++) {
-			String url = "/pingpong/admin/penalty?page=" + String.valueOf(i) + "&size=10&current=true";
+			String url = "/pingpong/admin/penalty?page=" + i + "&size=10&current=true";
 			String contentAsString = mockMvc.perform(
 					get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
@@ -207,19 +207,19 @@ class PenaltyAdminControllerTest {
 			User newUser = testDataUtils.createNewUser(intraId, "test", RacketType.NONE, SnsType.EMAIL,
 				RoleType.USER);
 			users.add(newUser);
-			penaltyAdminService.givePenalty(newUser.getIntraId(), 3, "test" + String.valueOf(i));
+			penaltyAdminService.givePenalty(newUser.getIntraId(), 3, "test" + i);
 		}
 		for (int i = 0; i < 20; i++) {
-			String intraId = "dummy" + String.valueOf(i);
+			String intraId = "dummy" + i;
 			User newUser = testDataUtils.createNewUser(intraId, "test", RacketType.NONE, SnsType.EMAIL,
 				RoleType.USER);
 			users.add(newUser);
-			penaltyAdminService.givePenalty(newUser.getIntraId(), 3, "test" + String.valueOf(i));
+			penaltyAdminService.givePenalty(newUser.getIntraId(), 3, "test" + i);
 		}
 		List<Integer> sizeCounts = new ArrayList<Integer>();
 		Integer totalPages = -1;
 		for (int i = 1; i <= 3; i++) {
-			String url = "/pingpong/admin/penalty?page=" + String.valueOf(i) + "&size=10&current=true&intraId=test";
+			String url = "/pingpong/admin/penalty?page=" + i + "&size=10&current=true&intraId=test";
 			String contentAsString = mockMvc.perform(
 					get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
@@ -332,13 +332,13 @@ class PenaltyAdminControllerTest {
 
 		//현재 패널티 부여
 		for (int i = 0; i < 20; i++) {
-			penaltyAdminService.givePenalty(users.get(i).getIntraId(), 3, "test" + String.valueOf(i));
+			penaltyAdminService.givePenalty(users.get(i).getIntraId(), 3, "test" + i);
 		}
 
 		List<Integer> sizeCounts = new ArrayList<Integer>();
 		Integer totalPages = -1;
 		for (int i = 1; i <= 3; i++) {
-			String url = "/pingpong/admin/penalty?page=" + String.valueOf(i) + "&size=10&current=true";
+			String url = "/pingpong/admin/penalty?page=" + i + "&size=10&current=true";
 			String contentAsString = mockMvc.perform(
 					get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();

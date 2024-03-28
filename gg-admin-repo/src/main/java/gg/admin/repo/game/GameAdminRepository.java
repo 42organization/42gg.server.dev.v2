@@ -10,10 +10,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import gg.admin.repo.game.out.GameTeamUser;
-import gg.data.game.Game;
-import gg.data.game.type.Mode;
-import gg.data.game.type.StatusType;
-import gg.data.season.Season;
+import gg.data.pingpong.game.Game;
+import gg.data.pingpong.game.type.Mode;
+import gg.data.pingpong.game.type.StatusType;
+import gg.data.pingpong.season.Season;
 
 public interface GameAdminRepository extends JpaRepository<Game, Long> {
 
@@ -33,8 +33,10 @@ public interface GameAdminRepository extends JpaRepository<Game, Long> {
 		+ "order by t1.startTime desc;", nativeQuery = true)
 	List<GameTeamUser> findTeamsByGameIsIn(@Param("games") List<Long> games);
 
-	@Query(value = "SELECT g FROM Game g, Team t, TeamUser tu WHERE g.status = :status AND g.id = t.game.id"
-		+ " AND t.id = tu.team.id AND tu.user.id = :userId")
+	@Query(value = "SELECT g FROM Game g "
+		+ "INNER JOIN Team t ON g.id = t.game.id "
+		+ "INNER JOIN TeamUser tu ON tu.team.id = t.id "
+		+ "WHERE g.status = :status AND tu.user.id = :userId")
 	Optional<Game> findByStatusTypeAndUserId(@Param("status") StatusType status, @Param("userId") Long userId);
 
 	@Query(value = "SELECT g FROM Game g JOIN FETCH g.season WHERE g.id = :gameId")

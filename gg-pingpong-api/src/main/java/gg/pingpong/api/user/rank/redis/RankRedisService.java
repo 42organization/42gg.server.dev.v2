@@ -8,12 +8,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.data.game.Game;
-import gg.data.game.TeamUser;
-import gg.data.rank.Rank;
-import gg.data.rank.Tier;
-import gg.data.rank.redis.RankRedis;
-import gg.data.season.Season;
+import gg.data.pingpong.game.Game;
+import gg.data.pingpong.game.TeamUser;
+import gg.data.pingpong.rank.Rank;
+import gg.data.pingpong.rank.Tier;
+import gg.data.pingpong.rank.redis.RankRedis;
+import gg.data.pingpong.season.Season;
 import gg.pingpong.api.global.utils.EloRating;
 import gg.pingpong.api.user.game.service.PChangeService;
 import gg.pingpong.api.user.season.service.SeasonFindService;

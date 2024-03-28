@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import gg.data.season.Season;
+import gg.data.pingpong.season.Season;
 
 public interface SeasonRepository extends JpaRepository<Season, Long> {
 	@Query("select s from Season s where s.startTime <= :now and s.endTime >= :now")

@@ -11,9 +11,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import gg.data.game.Game;
-import gg.data.game.type.Mode;
-import gg.data.manage.SlotManagement;
+import gg.data.pingpong.game.Game;
+import gg.data.pingpong.game.type.Mode;
+import gg.data.pingpong.manage.SlotManagement;
 import gg.utils.annotation.UnitTest;
 
 @UnitTest

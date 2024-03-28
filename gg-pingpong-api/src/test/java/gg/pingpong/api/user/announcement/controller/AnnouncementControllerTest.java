@@ -16,9 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gg.auth.utils.AuthTokenProvider;
 import gg.data.manage.Announcement;
 import gg.data.user.User;
-import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.repo.manage.AnnouncementRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;

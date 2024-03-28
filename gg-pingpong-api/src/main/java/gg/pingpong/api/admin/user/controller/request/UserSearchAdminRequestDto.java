@@ -1,6 +1,6 @@
 package gg.pingpong.api.admin.user.controller.request;
 
-import gg.pingpong.api.global.dto.PageRequestDto;
+import gg.utils.dto.PageRequestDto;
 import lombok.Getter;
 import lombok.Setter;
 

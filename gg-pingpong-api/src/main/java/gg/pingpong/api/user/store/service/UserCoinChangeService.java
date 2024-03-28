@@ -5,9 +5,9 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.data.game.Team;
-import gg.data.game.TeamUser;
-import gg.data.store.Item;
+import gg.data.pingpong.game.Team;
+import gg.data.pingpong.game.TeamUser;
+import gg.data.pingpong.store.Item;
 import gg.data.user.User;
 import gg.pingpong.api.user.game.service.GameFindService;
 import gg.pingpong.api.user.store.dto.UserGameCoinResultDto;

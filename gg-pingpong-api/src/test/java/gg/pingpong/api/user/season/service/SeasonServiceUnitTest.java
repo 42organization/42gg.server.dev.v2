@@ -14,7 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import gg.data.season.Season;
+import gg.data.pingpong.season.Season;
 import gg.repo.season.SeasonRepository;
 import gg.utils.annotation.UnitTest;
 import gg.utils.exception.season.SeasonNotFoundException;

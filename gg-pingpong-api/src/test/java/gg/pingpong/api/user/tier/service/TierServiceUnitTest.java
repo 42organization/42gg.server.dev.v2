@@ -22,9 +22,9 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.data.domain.Sort;
 
-import gg.data.rank.Rank;
-import gg.data.rank.Tier;
-import gg.data.season.Season;
+import gg.data.pingpong.rank.Rank;
+import gg.data.pingpong.rank.Tier;
+import gg.data.pingpong.season.Season;
 import gg.data.user.User;
 import gg.pingpong.api.user.rank.service.TierService;
 import gg.repo.rank.RankRepository;
