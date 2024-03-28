@@ -14,6 +14,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import gg.auth.config.AuthWebConfig;
 import gg.data.recruit.manage.ResultMessage;
@@ -49,12 +51,13 @@ class RecruitmentResultMessageAdminControllerUnitTest {
 			//Arrange
 			RecruitmentResultMessageDto dto = new RecruitmentResultMessageDto(MessageType.FAIL, "탈락");
 			//Act
-			resultMessageAdminController.postResultMessage(dto);
+			ResponseEntity<Void> response = resultMessageAdminController.postResultMessage(dto);
 			//Assert
+			Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 		}
 
 		@Test
-		@DisplayName("유효하지 않은 dto")
+		@DisplayName("유효하지 않은 dto는 ConstraintViolationException")
 		void invalidArgument() {
 			//Arrange
 			List<RecruitmentResultMessageDto> listDTO = new ArrayList<>();
