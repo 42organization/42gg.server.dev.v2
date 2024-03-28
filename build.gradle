@@ -91,6 +91,10 @@ subprojects {
         testImplementation "org.junit.jupiter:junit-jupiter:5.8.1"
         testImplementation "org.testcontainers:testcontainers:1.19.3"
         testImplementation "org.testcontainers:junit-jupiter:1.19.3"
+
+        // mapstruct 추가
+        implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+        annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
     }
 
 //테스트 커버리지 측정도구
@@ -247,7 +251,6 @@ project(':gg-pingpong-api') {
         implementation project(':gg-admin-repo')
         implementation project(':gg-utils')
         implementation project(':gg-auth')
-        implementation project(':gg-recruit-api')
     }
 }
 
@@ -255,6 +258,7 @@ project(':gg-recruit-api') {
     bootJar { enabled = false }
     jar { enabled = true }
     dependencies {
+        implementation project(':gg-pingpong-api')
         implementation project(':gg-data')
         implementation project(':gg-repo')
         implementation project(':gg-admin-repo')
