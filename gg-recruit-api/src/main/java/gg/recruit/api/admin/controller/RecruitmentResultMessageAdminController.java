@@ -22,6 +22,11 @@ public class RecruitmentResultMessageAdminController {
 
 	private final RecruitmentResultMessageAdminService resultMessageAdminService;
 
+	/**
+	 * 지원자에게 보여질 결과 메시지 등록
+	 * @param reqDto
+	 * @return ResponseEntity
+	 */
 	@PostMapping
 	public ResponseEntity<Void> postResultMessage(@Valid @RequestBody RecruitmentResultMessageDto reqDto) {
 		resultMessageAdminService.postResultMessage(reqDto);
