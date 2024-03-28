@@ -12,6 +12,7 @@ import gg.data.recruit.recruitment.Question;
 import gg.data.recruit.recruitment.Recruitment;
 import gg.data.recruit.recruitment.enums.InputType;
 import gg.recruit.api.admin.service.response.Form;
+import gg.utils.exception.recruitment.InvalidCheckListException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -24,21 +25,33 @@ public class RecruitmentAdminService {
 	 * Recruitment, Question, CheckList을 저장한다.
 	 * @param recruitment Recruitment
 	 * @param forms Question, CheckList이 포함
+	 * @return Recruitment 생성된 채용 공고
 	 */
 	@Transactional
-	public void createRecruitment(Recruitment recruitment, List<Form> forms) {
-		for (int i = 1; i <= forms.size(); i++) {
+	public Recruitment createRecruitment(Recruitment recruitment, List<Form> forms) {
+		for (int i = 0; i < forms.size(); i++) {
 			Form form = forms.get(i);
-			Question question = form.toQuestion(recruitment, i);
+			Question question = form.toQuestion(recruitment, i + 1);
 			InputType inputType = question.getInputType();
 
 			if (inputType == InputType.SINGLE_CHECK || inputType == InputType.MULTI_CHECK) {
-				List<String> checkList = form.getCheckList();
-				for (String content : checkList) {
-					new CheckList(question, content);
-				}
+				addCheckList(question, form.getCheckList());
 			}
 		}
-		recruitmentAdminRepository.save(recruitment);
+		return recruitmentAdminRepository.save(recruitment);
+	}
+
+	/**
+	 * @param question 질문
+	 * @param checkList 선택지
+	 * @throws InvalidCheckListException 선택지가 필요한데 비어있을 때 발생
+	 */
+	private void addCheckList(Question question, List<String> checkList) {
+		if (checkList == null || checkList.isEmpty()) {
+			throw new InvalidCheckListException();
+		}
+		for (String content : checkList) {
+			new CheckList(question, content);
+		}
 	}
 }

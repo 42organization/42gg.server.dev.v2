@@ -2,6 +2,7 @@ package gg.recruit.api.admin.controller;
 
 import javax.validation.Valid;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,7 +23,7 @@ public class RecruitmentAdminController {
 	@PostMapping
 	public ResponseEntity<Void> createRecruitment(@RequestBody @Valid RecruitmentCreateReqDto recruitmentDto) {
 		Recruitment recruitment = recruitmentDto.toRecruitment();
-		recruitmentAdminService.createRecruitment(recruitment, recruitmentDto.getForms());
-		return ResponseEntity.ok().build();
+		recruitmentAdminService.createRecruitment(recruitment, recruitmentDto.getForm());
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 }

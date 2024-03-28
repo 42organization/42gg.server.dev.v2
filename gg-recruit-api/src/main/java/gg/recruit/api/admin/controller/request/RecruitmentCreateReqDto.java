@@ -12,8 +12,10 @@ import javax.validation.constraints.Size;
 import gg.data.recruit.recruitment.Recruitment;
 import gg.recruit.api.admin.service.response.Form;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class RecruitmentCreateReqDto {
 	@FutureOrPresent(message = "시작일은 현재 시간 이후여야 합니다.")
 	LocalDateTime startDateTime;
@@ -34,7 +36,18 @@ public class RecruitmentCreateReqDto {
 	String generation;
 
 	@NotNull @Valid
-	List<Form> forms;
+	List<Form> form;
+
+	public RecruitmentCreateReqDto(LocalDateTime startDateTime, LocalDateTime endDateTime, String title,
+		String contents,
+		String generation, List<Form> form) {
+		this.startDateTime = startDateTime;
+		this.endDateTime = endDateTime;
+		this.title = title;
+		this.contents = contents;
+		this.generation = generation;
+		this.form = form;
+	}
 
 	public Recruitment toRecruitment() {
 		return Recruitment.builder()

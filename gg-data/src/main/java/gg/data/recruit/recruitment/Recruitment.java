@@ -53,6 +53,12 @@ public class Recruitment extends BaseTimeEntity {
 	@Builder
 	public Recruitment(String title, String contents, String generation, LocalDateTime startTime,
 		LocalDateTime endTime) {
+		mustNotNull(title, NULL_POINT);
+		mustNotNull(contents, NULL_POINT);
+		mustNotNull(generation, NULL_POINT);
+		mustNotNull(startTime, NULL_POINT);
+		mustNotNull(endTime, NULL_POINT);
+
 		this.title = title;
 		this.contents = contents;
 		this.generation = generation;
