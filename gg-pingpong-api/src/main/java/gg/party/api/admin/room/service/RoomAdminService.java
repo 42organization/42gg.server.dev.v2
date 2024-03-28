@@ -59,7 +59,7 @@ public class RoomAdminService {
 	 * @param pageReqDto page번호 및 사이즈(10)
 	 * @return 방 정보 리스트 + totalpages dto
 	 */
-	@Transactional
+	@Transactional(readOnly = true)
 	public AdminRoomListResDto findAllRoomList(PageReqDto pageReqDto) {
 		int page = pageReqDto.getPage();
 		int size = pageReqDto.getSize();
@@ -81,7 +81,7 @@ public class RoomAdminService {
 	 * @exception RoomNotFoundException 유효하지 않은 방 입력 - 404
 	 * @return 방 상세정보 dto
 	 */
-	@Transactional
+	@Transactional(readOnly = true)
 	public AdminRoomDetailResDto findAdminDetailRoom(Long roomId) {
 		Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
 
