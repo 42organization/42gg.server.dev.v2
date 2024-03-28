@@ -6,9 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
+import gg.admin.repo.recruit.manage.RecruitResultMessageRepository;
 import gg.data.recruit.manage.enums.MessageType;
 import gg.recruit.api.admin.service.dto.RecruitmentResultMessageDto;
-import gg.repo.recruit.user.manage.RecruitResultMessageRepository;
 import gg.utils.annotation.UnitTest;
 
 @UnitTest

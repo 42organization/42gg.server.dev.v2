@@ -3,9 +3,9 @@ package gg.recruit.api.admin.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import gg.admin.repo.recruit.manage.RecruitResultMessageRepository;
 import gg.recruit.api.admin.service.dto.RecruitmentResultMessageDto;
 import gg.recruit.api.admin.service.dto.RecruitmentResultMessageDtoMapper;
-import gg.repo.recruit.user.manage.RecruitResultMessageRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service

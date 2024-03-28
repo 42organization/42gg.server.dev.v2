@@ -12,10 +12,12 @@ import gg.data.BaseTimeEntity;
 import gg.data.recruit.manage.enums.MessageType;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class ResultMessage extends BaseTimeEntity {
 	public static final int contentLimit = 100;
 	public static final int messageTypeLimit = 15;
