@@ -62,8 +62,7 @@ public class RoomManagementService {
 	public RoomCreateResDto addCreateRoom(RoomCreateReqDto roomCreateReqDto, UserDto userDto) {
 		User user = userRepository.findById(userDto.getId()).get();
 		PartyPenalty partyPenalty = partyPenaltyRepository.findByUserId(user.getId());
-		if (partyPenalty != null && LocalDateTime.now().isBefore(
-			partyPenalty.getStartTime().plusMinutes(partyPenalty.getPenaltyTime()))) {
+		if (PartyPenalty.isOnPenalty(partyPenalty)) {
 			throw new OnPenaltyException();
 		}
 		if (roomCreateReqDto.getMaxPeople() < roomCreateReqDto.getMinPeople()) {
@@ -102,25 +101,23 @@ public class RoomManagementService {
 		UserRoom targetUserRoom = userRoomRepository.findByUserAndRoom(userRepository.findById(user.getId()).get(),
 			targetRoom).orElseThrow(RoomNotParticipantException::new);
 
+		// 모두 나갈 때 방 fail처리
+		if (targetRoom.getCurrentPeople() == 1) {
+			targetRoom.updateCurrentPeople(0);
+			targetUserRoom.updateIsExist(false);
+			targetRoom.updateRoomStatus(RoomType.FAIL);
+			roomRepository.save(targetRoom);
+			userRoomRepository.save(targetUserRoom);
+			return new LeaveRoomResDto(targetUserRoom.getNickname());
+		}
+
 		targetRoom.updateCurrentPeople(targetRoom.getCurrentPeople() - 1);
 		targetUserRoom.updateIsExist(false);
 
 		// 방장 이권
 		if (user.getId().equals(targetRoom.getHost().getId())) {
 			List<User> existUser = userRoomRepository.findByIsExist(roomId);
-			if (existUser != null && !existUser.isEmpty()) {
-				targetRoom.updateHost(existUser.get(0));
-			} else {
-				targetRoom.updateHost(null);
-			}
-		}
-
-		// 모두 나갈 때 방 fail처리
-		if (targetRoom.getCurrentPeople() == 0) {
-			targetRoom.updateRoomStatus(RoomType.FAIL);
-			roomRepository.save(targetRoom);
-			userRoomRepository.save(targetUserRoom);
-			return new LeaveRoomResDto(targetUserRoom.getNickname());
+			targetRoom.updateHost(existUser.get(0));
 		}
 
 		roomRepository.save(targetRoom);
@@ -155,7 +152,6 @@ public class RoomManagementService {
 		if (targetRoom.getMinPeople() > targetRoom.getCurrentPeople()) {
 			throw new RoomNotEnoughPeopleException();
 		}
-
 		targetRoom.updateRoomStatus(RoomType.START);
 		List<User> users = userRoomRepository.findByIsExist(roomId);
 		targetRoom.startRoom(LocalDateTime.now());
@@ -181,8 +177,7 @@ public class RoomManagementService {
 		User user = userRepository.findById(userDto.getId()).get();
 		Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
 		PartyPenalty partyPenalty = partyPenaltyRepository.findByUserId(user.getId());
-		if (partyPenalty != null && LocalDateTime.now().isBefore(
-			partyPenalty.getStartTime().plusMinutes(partyPenalty.getPenaltyTime()))) {
+		if (PartyPenalty.isOnPenalty(partyPenalty)) {
 			throw new OnPenaltyException();
 		}
 		if (room.getStatus() != RoomType.OPEN) {

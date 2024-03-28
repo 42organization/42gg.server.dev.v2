@@ -1,7 +1,5 @@
 package gg.party.api.user.comment.service;
 
-import java.time.LocalDateTime;
-
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
@@ -50,9 +48,8 @@ public class CommentService {
 			throw new RoomNotOpenException();
 		}
 
-		PartyPenalty penalty = partyPenaltyRepository.findByUserId(userId);
-		if (penalty != null
-			&& penalty.getStartTime().plusMinutes(penalty.getPenaltyTime()).isAfter(LocalDateTime.now())) {
+		PartyPenalty partyPenalty = partyPenaltyRepository.findByUserId(userId);
+		if (PartyPenalty.isOnPenalty(partyPenalty)) {
 			throw new OnPenaltyException();
 		}
 

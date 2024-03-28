@@ -5,6 +5,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import gg.data.party.GameTemplate;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -56,5 +57,18 @@ public class TemplateAdminUpdateReqDto {
 		this.genre = genre;
 		this.difficulty = difficulty;
 		this.summary = summary;
+	}
+
+	public void updateEntity(GameTemplate template) {
+		template.modifyTemplateDetails(
+			this.getGameName(),
+			this.getMaxGamePeople(),
+			this.getMinGamePeople(),
+			this.getMaxGameTime(),
+			this.getMinGameTime(),
+			this.getGenre(),
+			this.getDifficulty(),
+			this.getSummary()
+		);
 	}
 }

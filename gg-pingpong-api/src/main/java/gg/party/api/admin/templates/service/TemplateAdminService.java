@@ -30,9 +30,7 @@ public class TemplateAdminService {
 		if (category == null) {
 			throw new CategoryNotFoundException();
 		}
-
 		GameTemplate gameTemplate = TemplateAdminCreateReqDto.toEntity(request, category);
-
 		templateRepository.save(gameTemplate);
 	}
 
@@ -50,18 +48,7 @@ public class TemplateAdminService {
 		if (request.getMaxGamePeople() < request.getMinGamePeople()) {
 			throw new RoomMinMaxPeople(ErrorCode.ROOM_MIN_MAX_PEOPLE);
 		}
-
-		template.modifyTemplateDetails(
-			request.getGameName(),
-			request.getMaxGamePeople(),
-			request.getMinGamePeople(),
-			request.getMaxGameTime(),
-			request.getMinGameTime(),
-			request.getGenre(),
-			request.getDifficulty(),
-			request.getSummary()
-		);
-
+		request.updateEntity(template);
 		if (request.getCategoryName() != null) {
 			Category newCategory = categoryRepository.findByName(request.getCategoryName());
 			if (newCategory == null) {

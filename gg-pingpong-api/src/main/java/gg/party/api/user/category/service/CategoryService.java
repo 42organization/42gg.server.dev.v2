@@ -1,6 +1,5 @@
 package gg.party.api.user.category.service;
 
-import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Sort;
@@ -34,8 +33,7 @@ public class CategoryService {
 	public CategoryListResDto findCategoryList(UserDto userDto) {
 		User user = userRepository.findById(userDto.getId()).get();
 		PartyPenalty partyPenalty = partyPenaltyRepository.findByUserId(user.getId());
-		if (partyPenalty != null && LocalDateTime.now().isBefore(
-			partyPenalty.getStartTime().plusMinutes(partyPenalty.getPenaltyTime()))) {
+		if (PartyPenalty.isOnPenalty(partyPenalty)) {
 			throw new OnPenaltyException();
 		}
 		return new CategoryListResDto(categoryRepository.findAll(Sort.by(Sort.Direction.ASC, "id")).stream()
