@@ -54,7 +54,7 @@ public class SwaggerConfig {
 	public GroupedOpenApi recruitAdminGroup() {
 		return GroupedOpenApi.builder()
 			.group("recruit admin")
-			.pathsToMatch("admin/recruitments/**")
+			.pathsToMatch("/admin/recruitments/**")
 			.packagesToScan("gg.recruit.api.admin")
 			.build();
 	}
