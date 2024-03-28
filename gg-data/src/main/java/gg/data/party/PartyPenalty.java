@@ -71,4 +71,5 @@ public class PartyPenalty extends BaseTimeEntity {
 		this.message = message;
 		this.penaltyTime = penaltyTime;
 	}
+
 }

@@ -40,8 +40,13 @@ public class SlackPartybotService {
 		MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
 		parameters.add("email", userEmail);
 
-		SlackPartybotService.SlackUserInfoRes res = apiUtil.apiCall(userIdGetUrl, SlackUserInfoRes.class,
+		SlackUserInfoRes res = apiUtil.apiCall(userIdGetUrl, SlackUserInfoRes.class,
 			headers, parameters, HttpMethod.POST);
+
+		if (res == null || res.getUser() == null) {
+			throw new RuntimeException("슬랙 API 고장으로 인한 NULL 참조" + intraId);
+		}
+
 		return res.user.id;
 	}
 

@@ -152,7 +152,6 @@ public class RoomManagementService {
 		if (targetRoom.getMinPeople() > targetRoom.getCurrentPeople()) {
 			throw new RoomNotEnoughPeopleException();
 		}
-
 		targetRoom.updateRoomStatus(RoomType.START);
 		List<User> users = userRoomRepository.findByIsExist(roomId);
 		targetRoom.startRoom(LocalDateTime.now());
