@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class TemplateResDto {
 	private Long gameTemplateId;
-	private Long categoryId;
+	private String categoryName;
 	private String gameName;
 	private Integer maxGamePeople;
 	private Integer minGamePeople;
@@ -20,7 +20,7 @@ public class TemplateResDto {
 
 	public TemplateResDto(GameTemplate template) {
 		this.gameTemplateId = template.getId();
-		this.categoryId = template.getCategory().getId();
+		this.categoryName = template.getCategory().getName();
 		this.gameName = template.getGameName();
 		this.maxGamePeople = template.getMaxGamePeople();
 		this.minGamePeople = template.getMinGamePeople();

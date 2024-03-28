@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class TemplateAdminUpdateReqDto {
-	@NotNull(message = "카테고리이름은 필수입니다.")
+	@NotNull(message = "카테고리 이름은 필수입니다.")
 	private String categoryName;
 
 	@NotBlank(message = "게임 이름은 필수이며, 비어 있을 수 없습니다.")
