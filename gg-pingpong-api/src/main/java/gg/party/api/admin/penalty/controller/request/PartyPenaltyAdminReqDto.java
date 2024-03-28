@@ -24,7 +24,7 @@ public class PartyPenaltyAdminReqDto {
 	String message;
 
 	@NotNull(message = "penaltyTime이 비어있습니다")
-	@Min(value = 1, message = "올바른 penaltyTime을 넣어주세요")
+	@Min(value = 0, message = "올바른 penaltyTime을 넣어주세요")
 	int penaltyTime;
 
 	@NotBlank(message = "IntraId가 비어있습니다")

@@ -61,7 +61,7 @@ public class RoomManagementService {
 	@Transactional
 	public RoomCreateResDto addCreateRoom(RoomCreateReqDto roomCreateReqDto, UserDto userDto) {
 		User user = userRepository.findById(userDto.getId()).get();
-		PartyPenalty partyPenalty = partyPenaltyRepository.findByUserId(user.getId());
+		PartyPenalty partyPenalty = partyPenaltyRepository.findLatestByUserId(user.getId());
 		if (PartyPenalty.isOnPenalty(partyPenalty)) {
 			throw new OnPenaltyException();
 		}
@@ -176,7 +176,7 @@ public class RoomManagementService {
 	public RoomJoinResDto addJoinRoom(Long roomId, UserDto userDto) {
 		User user = userRepository.findById(userDto.getId()).get();
 		Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
-		PartyPenalty partyPenalty = partyPenaltyRepository.findByUserId(user.getId());
+		PartyPenalty partyPenalty = partyPenaltyRepository.findLatestByUserId(user.getId());
 		if (PartyPenalty.isOnPenalty(partyPenalty)) {
 			throw new OnPenaltyException();
 		}

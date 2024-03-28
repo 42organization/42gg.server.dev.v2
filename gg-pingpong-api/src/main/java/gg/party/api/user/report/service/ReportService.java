@@ -183,7 +183,7 @@ public class ReportService {
 	@Transactional
 	public void partyGivePenalty(String intraId, Integer penaltyTime, String penaltyType) {
 		User user = userRepository.findByIntraId(intraId).get();
-		PartyPenalty pPenalty = partyPenaltyRepository.findByUserId(user.getId());
+		PartyPenalty pPenalty = partyPenaltyRepository.findLatestByUserId(user.getId());
 
 		if (pPenalty != null && LocalDateTime.now().isBefore(pPenalty.getStartTime()
 			.plusMinutes(pPenalty.getPenaltyTime()))) {
