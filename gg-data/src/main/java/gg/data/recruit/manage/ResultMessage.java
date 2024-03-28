@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import gg.data.BaseTimeEntity;
 import gg.data.recruit.manage.enums.MessageType;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -30,6 +31,12 @@ public class ResultMessage extends BaseTimeEntity {
 	@Enumerated(EnumType.STRING)
 	private MessageType messageType;
 
-	@Column(nullable = false)
+	@Column
 	private Boolean isUse = true;
+
+	@Builder
+	public ResultMessage(String content, MessageType messageType) {
+		this.content = content;
+		this.messageType = messageType;
+	}
 }

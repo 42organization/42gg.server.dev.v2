@@ -8,25 +8,17 @@ import gg.data.recruit.manage.ResultMessage;
 import gg.data.recruit.manage.enums.MessageType;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-/**
- * RecruitmentResultMessageDto.
- *
- * <p>
- *
- * </p>
- * @see             :
- * @author          : middlefitting
- * @since           : 2024/03/20
- */
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class RecruitmentResultMessageDto {
 	@NotNull
 	private MessageType messageType;
 
 	@NotEmpty
 	@Size(max = ResultMessage.contentLimit)
-	private String message;
+	private String content;
 }
