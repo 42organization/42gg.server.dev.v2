@@ -91,6 +91,10 @@ subprojects {
         testImplementation "org.junit.jupiter:junit-jupiter:5.8.1"
         testImplementation "org.testcontainers:testcontainers:1.19.3"
         testImplementation "org.testcontainers:junit-jupiter:1.19.3"
+
+        // mapstruct 추가
+        implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+        annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
     }
 
 //테스트 커버리지 측정도구
