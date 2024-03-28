@@ -30,5 +30,6 @@ public class ResultMessage extends BaseTimeEntity {
 	@Enumerated(EnumType.STRING)
 	private MessageType messageType;
 
-	private Boolean isUse;
+	@Column(nullable = false)
+	private Boolean isUse = true;
 }
