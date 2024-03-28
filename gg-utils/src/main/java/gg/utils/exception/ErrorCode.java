@@ -176,14 +176,14 @@ public enum ErrorCode {
 	ROOM_NOT_ENOUGH_PEOPLE(400, "PT201", "시작할 수 있는 인원이 아닙니다."),
 	DEFAULT_CATEGORY_NEED(400, "PT202", "기본 카테고리가 존재해야 합니다."),
 	USER_NOT_HOST(400, "PT203", "방장이 아닙니다"),
-	ROOM_SAME_STATUS(400, "PT204", "이미 처리된 방 입니다."),
-	ROOM_NOT_OPEN(400, "PT205", "모집중인 방이 아닙니다."),
-	ROOM_NOT_PARTICIPANT(400, "PT206", "참여하지 않은 방 입니다."),
-	CATEGORY_DUPLICATE(400, "PT207", "중복된 카테고리 입니다."),
-	ROOM_MIN_MAX_PEOPLE(400, "PT208", "최소인원이 최대인원보다 큽니다."),
+	ROOM_NOT_OPEN(400, "PT204", "모집중인 방이 아닙니다."),
+	ROOM_NOT_PARTICIPANT(400, "PT205", "참여하지 않은 방 입니다."),
+	ROOM_MIN_MAX_PEOPLE(400, "PT206", "최소인원이 최대인원보다 큽니다."),
 	USER_ALREADY_IN_ROOM(409, "PT301", "이미 참여한 방 입니다."),
 	ALREADY_REPORTED(409, "PT302", "이미 신고한 요청입니다."),
 	SELF_REPORT(409, "PT303", "자신을 신고할 수 없습니다."),
+	CATEGORY_DUPLICATE(409, "PT304", "중복된 카테고리 입니다."),
+	CHANGE_SAME_STATUS(409, "PT305", "바꾸려는 항목과 동일합니다."),
 	ON_PENALTY(403, "PT501", "패널티 상태입니다.");
 
 	private final int status;

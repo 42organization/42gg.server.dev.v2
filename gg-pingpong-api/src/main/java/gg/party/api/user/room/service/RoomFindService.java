@@ -1,15 +1,14 @@
 package gg.party.api.user.room.service;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import javax.transaction.Transactional;
-
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import gg.data.party.Room;
 import gg.data.party.UserRoom;
@@ -37,16 +36,32 @@ public class RoomFindService {
 	 * 시작하지 않은 방과 시작한 방을 모두 조회한다
 	 * @return 시작하지 않은 방 (최신순) + 시작한 방(끝나는 시간이 빠른 순) 전체 List
 	 */
-	@Transactional
+	@Transactional(readOnly = true)
 	public RoomListResDto findRoomList() {
-		Sort sortForNotStarted = Sort.by("createdAt").descending();
-		Sort sortForStarted = Sort.by("startDate").descending();
+		List<RoomType> statuses = Arrays.asList(RoomType.OPEN, RoomType.START, RoomType.FINISH);
+		List<Room> rooms = roomRepository.findByStatusIn(statuses);
 
-		List<Room> notStartedRooms = roomRepository.findByStatus(RoomType.OPEN, sortForNotStarted);
-		List<Room> startedRooms = roomRepository.findByStatus(RoomType.START, sortForStarted);
+		List<Room> openRooms = rooms.stream()
+			.filter(room -> room.getStatus() == RoomType.OPEN)
+			.sorted(Comparator.comparing(Room::getCreatedAt).reversed())
+			.collect(Collectors.toList());
 
-		notStartedRooms.addAll(startedRooms);
-		List<RoomResDto> roomListResDto = notStartedRooms.stream()
+		List<Room> startRooms = rooms.stream()
+			.filter(room -> room.getStatus() == RoomType.START)
+			.sorted(Comparator.comparing(Room::getStartDate).reversed())
+			.collect(Collectors.toList());
+
+		List<Room> finishRooms = rooms.stream()
+			.filter(room -> room.getStatus() == RoomType.FINISH)
+			.sorted(Comparator.comparing(Room::getStartDate).reversed())
+			.limit(10)
+			.collect(Collectors.toList());
+
+		List<Room> combinedRooms = Stream.of(openRooms, startRooms, finishRooms)
+			.flatMap(List::stream)
+			.collect(Collectors.toList());
+
+		List<RoomResDto> roomListResDto = combinedRooms.stream()
 			.map(RoomResDto::new)
 			.collect(Collectors.toList());
 
@@ -55,25 +70,30 @@ public class RoomFindService {
 
 	/**
 	 * 현재 참여중인 방을 모두 조회한다(만든 방 포함)
+	 * 시작한 방 뒤에 시작하지 않은 방이 오게 작성
 	 * @param userId 자신의 id
 	 * @return 참여한 방 전체 List
 	 */
-	@Transactional
+	@Transactional(readOnly = true)
 	public RoomListResDto findJoinedRoomList(Long userId) {
 		List<UserRoom> userRooms = userRoomRepository.findByUserId(userId);
 		List<Room> joinedRooms = userRooms.stream()
 			.map(UserRoom::getRoom)
 			.collect(Collectors.toList());
 
-		Collections.sort(joinedRooms, Comparator.comparing(Room::getDueDate));
-
-		List<Room> playingRoom = joinedRooms.stream()
-			.filter(room -> room.getStatus() == RoomType.OPEN || room.getStatus() == RoomType.START)
+		List<Room> openRoom = joinedRooms.stream()
+			.filter(room -> room.getStatus() == RoomType.OPEN)
+			.sorted(Comparator.comparing(Room::getDueDate))
 			.collect(Collectors.toList());
 
-		Collections.sort(playingRoom, Comparator.comparing(Room::getDueDate));
+		List<Room> startRoom = joinedRooms.stream()
+			.filter(room -> room.getStatus() == RoomType.START)
+			.sorted(Comparator.comparing(Room::getStartDate))
+			.collect(Collectors.toList());
 
-		List<RoomResDto> roomListResDto = playingRoom.stream()
+		startRoom.addAll(openRoom);
+
+		List<RoomResDto> roomListResDto = openRoom.stream()
 			.map(RoomResDto::new)
 			.collect(Collectors.toList());
 
@@ -81,17 +101,17 @@ public class RoomFindService {
 	}
 
 	/**
-	 * 시간이 지나 보이지 않게 된 내가 플레이한(시작한) 방을 모두 조회한다
+	 * 시간이 지나 보이지 않게 된 내가 플레이한(FINISH) 방을 모두 조회한다
 	 * @param userId 자신의 id
-	 * user_room db에서 자신의 id와 isExist이 true(나가지 않았음)
-	 * 이면서 status가 FINISH인 경우를 마감기한 최신순으로 정렬
-	 * @return 끝난 방 전체 List
+	 * isExist이 true(나가지 않았음)이면서 status가 FINISH인 경우
+	 * @return 시작시간으로 정렬된 끝난 방 전체 List
 	 */
-	@Transactional
+	@Transactional(readOnly = true)
 	public RoomListResDto findMyHistoryRoomList(Long userId) {
-		List<Room> finishRooms = userRoomRepository.findFinishRoomsByUserId(userId, RoomType.FINISH);
+		List<Room> finishRooms = userRoomRepository.findByUserIdAndStatusAndIsExistTrue(userId, RoomType.FINISH);
 
 		List<RoomResDto> roomListResDto = finishRooms.stream()
+			.sorted(Comparator.comparing(Room::getStartDate))
 			.map(RoomResDto::new)
 			.collect(Collectors.toList());
 
@@ -103,11 +123,11 @@ public class RoomFindService {
 	 * @param userId 자신의 id
 	 * @param roomId 방 id
 	 * @return 방 상세정보 dto
-	 * @throws RoomNotFoundException 유효하지 않은 방 입력
-	 * @throws RoomReportedException 신고 받은 방 처리 | 시작한 방도 볼 수 있게 해야하므로 별도처리
+	 * @throws RoomNotFoundException 유효하지 않은 방 입력 - 404
+	 * @throws RoomReportedException 신고 받은 방 처리 - 403
 	 * 익명성을 지키기 위해 nickname을 리턴
 	 */
-	@Transactional
+	@Transactional(readOnly = true)
 	public RoomDetailResDto findRoomDetail(Long userId, Long roomId) {
 		Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
 		if (room.getStatus() == RoomType.HIDDEN) {
@@ -118,36 +138,37 @@ public class RoomFindService {
 
 		String myNickname = null;
 		if (userRoomOptional.isPresent()) {
-			UserRoom userRoom = userRoomOptional.get();
-			myNickname = userRoom.getNickname();
+			myNickname = userRoomOptional.get().getNickname();
 		}
 
-		Optional<UserRoom> hostUserRoomOptional = userRoomRepository.findByUserIdAndRoomIdAndIsExistTrue(
-			room.getHost().getId(), roomId);
-		String hostNickname = hostUserRoomOptional.get().getNickname();
+		Optional<UserRoom> hostUserRoom = userRoomRepository.findByUserIdAndRoomIdAndIsExistTrue(room.getHost().getId(),
+			roomId);
+		String hostNickname = hostUserRoom.get().getNickname();
 
-		if (room.getStatus() == RoomType.START && userRoomOptional.isPresent()) {
-			List<CommentResDto> comments = commentRepository.findByRoomId(roomId).stream()
-				.map(comment -> new CommentResDto(comment, comment.getUser().getIntraId()))
-				.collect(Collectors.toList());
-
-			List<UserRoomResDto> roomUsers = userRoomRepository.findByRoomId(roomId).stream()
-				.filter(UserRoom::getIsExist)
+		if ((room.getStatus() == RoomType.START || room.getStatus() == RoomType.FINISH)
+			&& userRoomOptional.isPresent()) {
+			List<UserRoomResDto> roomUsers = userRoomRepository.findByRoomIdAndIsExistTrue(roomId).stream()
 				.map(userRoom -> new UserRoomResDto(userRoom, userRoom.getUser().getIntraId(),
 					userRoom.getUser().getImageUri()))
 				.collect(Collectors.toList());
+
+			List<CommentResDto> comments = commentRepository.findAllWithCommentFetchJoin(roomId).stream()
+				.filter(comment -> !comment.isHidden())
+				.map(comment -> new CommentResDto(comment, comment.getUser().getIntraId()))
+				.collect(Collectors.toList());
+
 			return new RoomDetailResDto(room, myNickname, hostNickname, roomUsers, comments);
-		} else { // if 참여자 && 시작했을경우 intraID || else intraId == null
-			List<CommentResDto> comments = commentRepository.findByRoomId(roomId).stream()
+		} else { // if 참여자 && Start or Finish 상태인 경우 intraID 제공 || else intraId == null
+			List<UserRoomResDto> roomUsers = userRoomRepository.findByRoomIdAndIsExistTrue(roomId).stream()
+				.map(UserRoomResDto::new)
+				.collect(Collectors.toList());
+
+			List<CommentResDto> comments = commentRepository.findAllWithCommentFetchJoin(roomId).stream()
+				.filter(comment -> !comment.isHidden())
 				.map(CommentResDto::new)
 				.collect(Collectors.toList());
 
-			List<UserRoomResDto> roomUsers = userRoomRepository.findByRoomId(roomId).stream()
-				.filter(UserRoom::getIsExist)
-				.map(UserRoomResDto::new)
-				.collect(Collectors.toList());
 			return new RoomDetailResDto(room, myNickname, hostNickname, roomUsers, comments);
 		}
 	}
-
 }

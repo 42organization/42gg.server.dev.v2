@@ -1,5 +1,7 @@
 package gg.party.api.admin.category.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,7 +27,7 @@ public class CategoryAdminController {
 	 * @return 추가 성공 여부
 	 */
 	@PostMapping
-	public ResponseEntity<Void> categoryAdd(@RequestBody CategoryAddAdminReqDto reqDto) {
+	public ResponseEntity<Void> categoryAdd(@RequestBody @Valid CategoryAddAdminReqDto reqDto) {
 		categoryAdminService.addCategory(reqDto);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}

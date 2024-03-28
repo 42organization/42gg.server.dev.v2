@@ -23,8 +23,8 @@ import gg.party.api.user.room.controller.response.UserRoomResDto;
 import gg.repo.party.CommentRepository;
 import gg.repo.party.RoomRepository;
 import gg.repo.party.UserRoomRepository;
+import gg.utils.exception.party.ChangeSameStatusException;
 import gg.utils.exception.party.RoomNotFoundException;
-import gg.utils.exception.party.RoomSameStatusException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -38,8 +38,8 @@ public class RoomAdminService {
 	 * 방 Status 변경
 	 * @param roomId 방 id
 	 * @param newStatus 바꿀 status
-	 * @exception RoomNotFoundException 유효하지 않은 방 입력
-	 * @exception RoomSameStatusException 같은 상태로 변경
+	 * @exception RoomNotFoundException 유효하지 않은 방 입력 - 404
+	 * @exception ChangeSameStatusException 같은 상태로 변경 - 409
 	 */
 	@Transactional
 	public void modifyRoomStatus(Long roomId, RoomType newStatus) {
@@ -47,7 +47,7 @@ public class RoomAdminService {
 			.orElseThrow(RoomNotFoundException::new);
 
 		if (room.getStatus() == newStatus) {
-			throw new RoomSameStatusException();
+			throw new ChangeSameStatusException();
 		}
 
 		room.updateRoomStatus(newStatus);
@@ -85,13 +85,14 @@ public class RoomAdminService {
 	public AdminRoomDetailResDto findAdminDetailRoom(Long roomId) {
 		Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
 
-		List<AdminCommentResDto> comments = commentRepository.findByRoomId(roomId).stream()
+		List<AdminCommentResDto> comments = commentRepository.findAllWithCommentFetchJoin(roomId).stream()
 			.map(AdminCommentResDto::new)
 			.collect(Collectors.toList());
 
 		Optional<UserRoom> hostUserRoomOptional = userRoomRepository.findByUserIdAndRoomIdAndIsExistTrue(
 			room.getHost().getId(), roomId);
-		String hostNickname = hostUserRoomOptional.get().getNickname();
+		String hostNickname = hostUserRoomOptional.map(UserRoom::getNickname)
+			.orElse(null);
 
 		List<UserRoomResDto> roomUsers = userRoomRepository.findByRoomId(roomId).stream()
 			.filter(UserRoom::getIsExist)

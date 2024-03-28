@@ -21,7 +21,7 @@ public class CategoryAdminService {
 	/**
 	 * 카테고리 추가
 	 * @param reqDto 추가할 카테고리 이름
-	 * @exception CategoryDuplicateException 중복된 카테고리
+	 * @exception CategoryDuplicateException 중복된 카테고리 - 409
 	 */
 	@Transactional
 	public void addCategory(CategoryAddAdminReqDto reqDto) {
@@ -35,20 +35,20 @@ public class CategoryAdminService {
 
 	/**
 	 * 카테고리 삭제
-	 * 삭제 시 기존에 room에 연결되어 있던 카테고리는 default(1) 로 변경
+	 * 삭제 시 기존에 room에 연결되어 있던 카테고리는 etc 로 변경
 	 * @param categoryId 삭제할 카테고리 id
-	 * @exception CategoryNotFoundException 유효하지 않은 카테고리
-	 * @exception DefaultCategoryNeedException default 카테고리 존재 x 또는 default 카테고리 삭제 요청
+	 * @exception CategoryNotFoundException 유효하지 않은 카테고리 - 404
+	 * @exception DefaultCategoryNeedException default 카테고리 존재 x 또는 default 카테고리 삭제 요청 - 400
 	 */
 	@Transactional
 	public void removeCategory(Long categoryId) {
 		Category category = categoryAdminRepository.findById(categoryId)
 			.orElseThrow(CategoryNotFoundException::new);
 
-		Category defaultCategory = categoryAdminRepository.findById(DefaultCategoryNeedException.DEFAULT_CATEGORY_ID)
-			.orElseThrow(DefaultCategoryNeedException::new);
+		Category defaultCategory = categoryAdminRepository.findByName(
+			DefaultCategoryNeedException.DEFAULT_CATEGORY_NAME);
 
-		if (category.equals(defaultCategory)) {
+		if (defaultCategory == null || category.equals(defaultCategory)) {
 			throw new DefaultCategoryNeedException();
 		}
 

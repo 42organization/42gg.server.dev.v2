@@ -4,11 +4,10 @@ import java.time.LocalDateTime;
 
 import gg.data.party.RoomReport;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-/**
- * 방 신고 dto
- */
 @Getter
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class RoomReportAdminResDto {
 	private Long id;
 	private String reporterIntraId;
