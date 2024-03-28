@@ -184,7 +184,10 @@ public enum ErrorCode {
 	USER_ALREADY_IN_ROOM(409, "PT301", "이미 참여한 방 입니다."),
 	ALREADY_REPORTED(409, "PT302", "이미 신고한 요청입니다."),
 	SELF_REPORT(409, "PT303", "자신을 신고할 수 없습니다."),
-	ON_PENALTY(403, "PT501", "패널티 상태입니다.");
+	ON_PENALTY(403, "PT501", "패널티 상태입니다."),
+
+	// recruitment
+	INVALID_CHECKLIST(400, "RE001", "잘못된 요청 데이터입니다.");
 
 	private final int status;
 	private final String errCode;

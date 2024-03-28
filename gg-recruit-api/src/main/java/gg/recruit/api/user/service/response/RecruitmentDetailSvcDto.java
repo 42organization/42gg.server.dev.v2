@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import gg.data.recruit.recruitment.Question;
-import gg.data.recruit.recruitment.Recruitments;
+import gg.data.recruit.recruitment.Recruitment;
 import lombok.Getter;
 
 @Getter
@@ -17,7 +17,7 @@ public class RecruitmentDetailSvcDto {
 	private String generation;
 	private List<FormDetailSvcDto> forms;
 
-	public RecruitmentDetailSvcDto(Recruitments recruit, List<Question> questions) {
+	public RecruitmentDetailSvcDto(Recruitment recruit, List<Question> questions) {
 		this.startDate = recruit.getStartTime();
 		this.endDate = recruit.getEndTime();
 		this.title = recruit.getTitle();
