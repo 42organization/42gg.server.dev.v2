@@ -23,7 +23,7 @@ class RecruitmentResultMessageAdminServiceImplTest {
 
 	@Nested
 	@DisplayName("postResultMessage")
-	class postResultMessage {
+	class PostResultMessage {
 		@Test
 		@DisplayName("성공")
 		void postResultMessageSuccess() {

@@ -44,7 +44,7 @@ class RecruitmentResultMessageAdminControllerUnitTest {
 
 	@Nested
 	@DisplayName("postResultMessage")
-	class postResultMessage {
+	class PostResultMessage {
 		@Test
 		@DisplayName("resultMessage 등록 성공")
 		void postResultMessageSuccess() {
@@ -60,13 +60,13 @@ class RecruitmentResultMessageAdminControllerUnitTest {
 		@DisplayName("유효하지 않은 dto는 ConstraintViolationException")
 		void invalidArgument() {
 			//Arrange
-			List<RecruitmentResultMessageDto> listDTO = new ArrayList<>();
-			listDTO.add(new RecruitmentResultMessageDto(MessageType.FAIL, null));
-			listDTO.add(new RecruitmentResultMessageDto(null, "fail"));
-			listDTO.add(new RecruitmentResultMessageDto(MessageType.FAIL, "f".repeat(ResultMessage.contentLimit + 1)));
+			List<RecruitmentResultMessageDto> listDto = new ArrayList<>();
+			listDto.add(new RecruitmentResultMessageDto(MessageType.FAIL, null));
+			listDto.add(new RecruitmentResultMessageDto(null, "fail"));
+			listDto.add(new RecruitmentResultMessageDto(MessageType.FAIL, "f".repeat(ResultMessage.contentLimit + 1)));
 			//Act
 			//Assert
-			for (RecruitmentResultMessageDto dto : listDTO) {
+			for (RecruitmentResultMessageDto dto : listDto) {
 				Assertions.assertThatExceptionOfType(ConstraintViolationException.class)
 					.isThrownBy(() -> resultMessageAdminController.postResultMessage(dto));
 			}
