@@ -40,6 +40,7 @@ class AdminRecruitmentControllerTest {
 
 	@Autowired
 	private RecruitmentRepository recruitmentRepository;
+
 	@Test
 	@DisplayName("PATCH /admin/recruitments/{recruitId}/status -> 204 NO CONTENT TEST")
 	public void updateRecruitStatusTest() throws Exception {
