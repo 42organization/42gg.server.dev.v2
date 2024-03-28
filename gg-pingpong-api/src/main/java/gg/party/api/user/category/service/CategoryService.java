@@ -32,7 +32,7 @@ public class CategoryService {
 	@Transactional(readOnly = true)
 	public CategoryListResDto findCategoryList(UserDto userDto) {
 		User user = userRepository.findById(userDto.getId()).get();
-		PartyPenalty partyPenalty = partyPenaltyRepository.findLatestByUserId(user.getId());
+		PartyPenalty partyPenalty = partyPenaltyRepository.findTopByUserIdOrderByStartTimeDesc(user.getId());
 		if (PartyPenalty.isOnPenalty(partyPenalty)) {
 			throw new OnPenaltyException();
 		}

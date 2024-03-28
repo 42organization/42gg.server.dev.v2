@@ -66,6 +66,7 @@ public class CategoryControllerTest {
 			LocalDateTime.now(), 0);
 		userAccessToken = tokenProvider.createToken(userTester.getId());
 		reportedAccessToken = tokenProvider.createToken(reportedTester.getId());
+		anotherAccessToken = tokenProvider.createToken(anotherTester.getId());
 		for (int i = 0; i < 10; i++) {
 			testDataUtils.createNewCategory("테스트 카테고리" + i);
 		}
@@ -97,7 +98,7 @@ public class CategoryControllerTest {
 			String uri = "/party/categories";
 			//when
 			String contentAsString = mockMvc.perform(get(uri)
-					.header("Authorization", "Bearer " + anotherTester)
+					.header("Authorization", "Bearer " + anotherAccessToken)
 					.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
