@@ -34,7 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 @AutoConfigureMockMvc
 @RequiredArgsConstructor
 @Slf4j
-public class PenaltyControllerTest {
+public class PartyPenaltyControllerTest {
 	@Autowired
 	MockMvc mockMvc;
 	@Autowired
@@ -56,7 +56,7 @@ public class PenaltyControllerTest {
 			userTester = testDataUtils.createNewUser("userTester", "userTester",
 				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
 			userAccessToken = tokenProvider.createToken(userTester.getId());
-			reportedTester = testDataUtils.createNewUser("reporterTester", "reporterTester",
+			reportedTester = testDataUtils.createNewUser("reportedTester", "reportedTester",
 				RacketType.DUAL, SnsType.SLACK, RoleType.USER);
 			reportedAccessToken = tokenProvider.createToken(reportedTester.getId());
 			testDataUtils.createNewPenalty(reportedTester, "test", "test", LocalDateTime.of(2222, 2, 22, 2, 22), 60);
@@ -66,10 +66,10 @@ public class PenaltyControllerTest {
 		@DisplayName("패널티 조회 성공 200")
 		public void penaltySuccess() throws Exception {
 			//given
-			String url = "/party/report";
+			String url = "/party/penalty";
 			//when
 			String contentAsString = mockMvc.perform(
-					patch(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + reportedAccessToken))
+					get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + reportedAccessToken))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
 			//then
@@ -81,15 +81,15 @@ public class PenaltyControllerTest {
 		@DisplayName("패널티 없는 사람 조회 성공 200")
 		public void userSuccess() throws Exception {
 			//given
-			String url = "/party/report";
+			String url = "/party/penalty";
 			//when
 			String contentAsString = mockMvc.perform(
-					patch(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
+					get(url).header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
 			//then
 			PenaltyResDto prd = objectMapper.readValue(contentAsString, PenaltyResDto.class);
-			assertThat(prd.getPenaltyEndTime()).isEqualTo(null);
+			assertThat(prd.getPenaltyEndTime()).isNull();
 		}
 	}
 }
