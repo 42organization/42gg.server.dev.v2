@@ -87,7 +87,7 @@ public class ApplicationController {
 	@DeleteMapping("/{recruitmentId}/applications/{applicationId}")
 	public ResponseEntity<Void> cancelApplication(@Login @Parameter(hidden = true) UserDto userDto,
 		@PathVariable Long recruitmentId, @PathVariable Long applicationId) {
-		applicationService.deleteApplication(new DelApplicationParam(userDto.getId(), recruitmentId, applicationId));
+		applicationService.deleteApplication(new DelApplicationParam(userDto.getId(), applicationId, recruitmentId));
 		return ResponseEntity.noContent().build();
 	}
 }
