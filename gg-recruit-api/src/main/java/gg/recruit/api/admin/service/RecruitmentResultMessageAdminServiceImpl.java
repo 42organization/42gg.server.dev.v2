@@ -33,6 +33,6 @@ public class RecruitmentResultMessageAdminServiceImpl implements RecruitmentResu
 	 */
 	@Override
 	public List<ResultMessage> getResultMessages() {
-		return recruitResultMessageRepository.findAll();
+		return recruitResultMessageRepository.findAllOrderByIdDesc();
 	}
 }
