@@ -1,9 +1,12 @@
 package gg.recruit.api.admin.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.admin.repo.recruit.manage.RecruitResultMessageRepository;
+import gg.data.recruit.manage.ResultMessage;
 import gg.recruit.api.admin.service.dto.RecruitmentResultMessageDto;
 import gg.recruit.api.admin.service.dto.RecruitmentResultMessageDtoMapper;
 import lombok.RequiredArgsConstructor;
@@ -22,5 +25,10 @@ public class RecruitmentResultMessageAdminServiceImpl implements RecruitmentResu
 	public void postResultMessage(RecruitmentResultMessageDto reqDto) {
 		recruitResultMessageRepository.disablePreviousResultMessages(reqDto.getMessageType());
 		recruitResultMessageRepository.save(RecruitmentResultMessageDtoMapper.INSTANCE.dtoToEntity(reqDto));
+	}
+
+	@Override
+	public List<ResultMessage> getResultMessages() {
+		return null;
 	}
 }
