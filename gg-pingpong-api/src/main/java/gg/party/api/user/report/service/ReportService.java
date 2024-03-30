@@ -166,7 +166,7 @@ public class ReportService {
 		userReportRepository.save(userReport);
 		// 노쇼 패널티 판단
 		List<UserReport> allReportUser = userReportRepository.findByReporteeAndRoomId(reporteeEntity, roomId);
-		if (allReportUser.size() == targetRoom.getMaxPeople() / 2) {
+		if (allReportUser.size() == targetRoom.getCurrentPeople() / 2) {
 			partyGivePenalty(reporteeEntity.getIntraId(), NO_SHOW_PENALTY_TIME, "노쇼 패널티");
 		}
 	}
