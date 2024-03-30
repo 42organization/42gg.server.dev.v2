@@ -1,4 +1,4 @@
-package gg.recruit.api.admin.service.response;
+package gg.recruit.api.admin.service.dto;
 
 import java.util.List;
 

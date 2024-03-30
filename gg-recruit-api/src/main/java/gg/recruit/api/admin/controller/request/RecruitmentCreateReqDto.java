@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import gg.data.recruit.recruitment.Recruitment;
-import gg.recruit.api.admin.service.response.Form;
+import gg.recruit.api.admin.service.dto.Form;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

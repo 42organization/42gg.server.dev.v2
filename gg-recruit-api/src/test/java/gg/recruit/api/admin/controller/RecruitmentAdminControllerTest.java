@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.data.recruit.recruitment.enums.InputType;
 import gg.recruit.api.admin.controller.request.RecruitmentCreateReqDto;
-import gg.recruit.api.admin.service.response.Form;
+import gg.recruit.api.admin.service.dto.Form;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 

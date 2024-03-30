@@ -11,7 +11,9 @@ import gg.data.recruit.recruitment.CheckList;
 import gg.data.recruit.recruitment.Question;
 import gg.data.recruit.recruitment.Recruitment;
 import gg.data.recruit.recruitment.enums.InputType;
-import gg.recruit.api.admin.service.response.Form;
+import gg.recruit.api.admin.service.dto.Form;
+import gg.recruit.api.admin.service.dto.UpdateRecruitStatusParam;
+import gg.utils.exception.custom.NotExistException;
 import gg.utils.exception.recruitment.InvalidCheckListException;
 import lombok.RequiredArgsConstructor;
 
@@ -53,5 +55,12 @@ public class RecruitmentAdminService {
 		for (String content : checkList) {
 			new CheckList(question, content);
 		}
+	}
+
+	@Transactional
+	public void updateRecruitStatus(UpdateRecruitStatusParam updateRecruitStatusParam) {
+		Recruitment recruitments = recruitmentAdminRepository.findById(updateRecruitStatusParam.getRecruitId())
+			.orElseThrow(() -> new NotExistException("Recruitment not found."));
+		recruitments.setFinish(updateRecruitStatusParam.getFinish());
 	}
 }

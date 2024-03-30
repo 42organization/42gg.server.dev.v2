@@ -14,11 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gg.data.recruit.recruitment.Recruitments;
+import gg.data.recruit.recruitment.Recruitment;
 import gg.data.user.User;
 import gg.recruit.api.admin.controller.request.UpdateStatusRequestDto;
 import gg.recruit.api.user.RecruitMockData;
-import gg.repo.recruit.user.recruitment.RecruitmentRepository;
+import gg.repo.recruit.recruitment.RecruitmentRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 
@@ -45,20 +45,19 @@ class AdminRecruitmentControllerTest {
 	@DisplayName("PATCH /admin/recruitments/{recruitId}/status -> 204 NO CONTENT TEST")
 	public void updateRecruitStatusTest() throws Exception {
 		//given
-		Recruitments recruitments = recruitMockData.createRecruitments();
+		Recruitment recruitments = recruitMockData.createRecruitment();
 		UpdateStatusRequestDto requestDto = new UpdateStatusRequestDto(true);
 		User adminUser = testDataUtils.createAdminUser();
 
 		//when
 		mockMvc.perform(patch("/admin/recruitments/{recruitId}/status", recruitments.getId())
-			.header("Authorization", "Bearer " + testDataUtils.getLoginAccessTokenFromUser(adminUser))
-			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(requestDto)))
+				.header("Authorization", "Bearer " + testDataUtils.getLoginAccessTokenFromUser(adminUser))
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(requestDto)))
 			.andExpect(status().isNoContent());
 
 		//then
-		Recruitments updatedRecruitments = recruitmentRepository.findById(recruitments.getId()).get();
+		Recruitment updatedRecruitments = recruitmentRepository.findById(recruitments.getId()).get();
 		assertTrue(updatedRecruitments.getIsFinish());
 	}
-
 }
