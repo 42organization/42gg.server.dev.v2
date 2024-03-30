@@ -2,9 +2,10 @@ package gg.recruit.api.admin.service;
 
 import java.util.List;
 
-import javax.transaction.Transactional;
-
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import gg.admin.repo.recruit.RecruitmentAdminRepository;
 import gg.data.recruit.recruitment.CheckList;
@@ -43,6 +44,24 @@ public class RecruitmentAdminService {
 		return recruitmentAdminRepository.save(recruitment);
 	}
 
+	@Transactional
+	public void updateRecruitStatus(UpdateRecruitStatusParam updateRecruitStatusParam) {
+		Recruitment recruitments = recruitmentAdminRepository.findById(updateRecruitStatusParam.getRecruitId())
+			.orElseThrow(() -> new NotExistException("Recruitment not found."));
+		recruitments.setFinish(updateRecruitStatusParam.getFinish());
+	}
+
+	/**
+	 * 공고 종료 날짜 기준으로 내림차순(최근순) 정렬하여 채용 공고를 조회한다.
+	 * @param pageable
+	 * @return 조회된 채용 공고 리스트
+	 */
+	@Transactional(readOnly = true)
+	public List<Recruitment> getAllRecruitments(Pageable pageable) {
+		Slice<Recruitment> allByOrderByEndDateDesc = recruitmentAdminRepository.findAllByOrderByEndTimeDesc(pageable);
+		return allByOrderByEndDateDesc.getContent();
+	}
+
 	/**
 	 * @param question 질문
 	 * @param checkList 선택지
@@ -55,12 +74,5 @@ public class RecruitmentAdminService {
 		for (String content : checkList) {
 			new CheckList(question, content);
 		}
-	}
-
-	@Transactional
-	public void updateRecruitStatus(UpdateRecruitStatusParam updateRecruitStatusParam) {
-		Recruitment recruitments = recruitmentAdminRepository.findById(updateRecruitStatusParam.getRecruitId())
-			.orElseThrow(() -> new NotExistException("Recruitment not found."));
-		recruitments.setFinish(updateRecruitStatusParam.getFinish());
 	}
 }

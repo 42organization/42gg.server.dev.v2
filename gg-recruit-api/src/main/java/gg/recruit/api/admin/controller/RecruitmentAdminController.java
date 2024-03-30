@@ -1,9 +1,14 @@
 package gg.recruit.api.admin.controller;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,8 +20,10 @@ import gg.data.recruit.recruitment.Recruitment;
 import gg.recruit.api.admin.controller.request.RecruitmentCreateReqDto;
 import gg.recruit.api.admin.controller.request.UpdateStatusRequestDto;
 import gg.recruit.api.admin.controller.response.CreatedRecruitmentResponse;
+import gg.recruit.api.admin.controller.response.RecruitmentsResponse;
 import gg.recruit.api.admin.service.RecruitmentAdminService;
 import gg.recruit.api.admin.service.dto.UpdateRecruitStatusParam;
+import gg.utils.dto.PageRequestDto;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -41,5 +48,12 @@ public class RecruitmentAdminController {
 		recruitmentAdminService.updateRecruitStatus(
 			new UpdateRecruitStatusParam(recruitId, requestDto.getFinish()));
 		return ResponseEntity.noContent().build();
+	}
+
+	@GetMapping
+	public ResponseEntity<RecruitmentsResponse> getRecruitments(PageRequestDto pageRequestDto) {
+		Pageable pageable = PageRequest.of(pageRequestDto.getPage() - 1, pageRequestDto.getSize());
+		List<Recruitment> recruitments = recruitmentAdminService.getAllRecruitments(pageable);
+		return ResponseEntity.ok(new RecruitmentsResponse(recruitments));
 	}
 }
