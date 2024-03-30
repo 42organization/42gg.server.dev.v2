@@ -27,8 +27,12 @@ public class RecruitmentResultMessageAdminServiceImpl implements RecruitmentResu
 		recruitResultMessageRepository.save(RecruitmentResultMessageDtoMapper.INSTANCE.dtoToEntity(reqDto));
 	}
 
+	/**
+	 * 지원 결과 메시지 양식 전체 조회
+	 * @return List<ResultMessage>
+	 */
 	@Override
 	public List<ResultMessage> getResultMessages() {
-		return null;
+		return recruitResultMessageRepository.findAll();
 	}
 }
