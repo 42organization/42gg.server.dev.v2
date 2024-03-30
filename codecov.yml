@@ -18,6 +18,7 @@ flags:
       - gg-data/src/main/java/gg/data
       - gg-auth/src/main/java/gg/auth
       - gg-utils/src/main/java/gg/utils
+      - gg-recruit-api/src/main/java/gg/recruit/api
   integrationTest:
     paths:
       - gg-pingpong-api/src/main/java/gg/pingpong/api
@@ -26,3 +27,4 @@ flags:
       - gg-data/src/main/java/gg/data
       - gg-auth/src/main/java/gg/auth
       - gg-utils/src/main/java/gg/utils
+      - gg-recruit-api/src/main/java/gg/recruit/api
