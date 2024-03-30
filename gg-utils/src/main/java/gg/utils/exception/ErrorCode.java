@@ -184,7 +184,10 @@ public enum ErrorCode {
 	ALREADY_REPORTED(409, "PT302", "이미 신고한 요청입니다."),
 	CATEGORY_DUPLICATE(409, "PT304", "중복된 카테고리 입니다."),
 	CHANGE_SAME_STATUS(409, "PT305", "바꾸려는 항목과 동일합니다."),
-	ON_PENALTY(403, "PT501", "패널티 상태입니다.");
+	ON_PENALTY(403, "PT501", "패널티 상태입니다."),
+
+	// recruitment
+	INVALID_CHECKLIST(400, "RE001", "잘못된 요청 데이터입니다.");
 
 	private final int status;
 	private final String errCode;

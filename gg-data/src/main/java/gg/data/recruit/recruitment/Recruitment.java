@@ -1,22 +1,30 @@
 package gg.data.recruit.recruitment;
 
-import java.time.LocalDateTime;
+import static gg.utils.exception.BusinessChecker.*;
+import static gg.utils.exception.ErrorCode.*;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 import gg.data.BaseTimeEntity;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Recruitments extends BaseTimeEntity {
+public class Recruitment extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -35,11 +43,22 @@ public class Recruitments extends BaseTimeEntity {
 
 	@Column(nullable = false)
 	private LocalDateTime startTime;
+
 	@Column(nullable = false)
 	private LocalDateTime endTime;
 
-	public Recruitments(String title, String contents, String generation, LocalDateTime startTime,
+	@OneToMany(mappedBy = "recruit", cascade = CascadeType.ALL)
+	private List<Question> questions = new ArrayList<>();
+
+	@Builder
+	public Recruitment(String title, String contents, String generation, LocalDateTime startTime,
 		LocalDateTime endTime) {
+		mustNotNull(title, NULL_POINT);
+		mustNotNull(contents, NULL_POINT);
+		mustNotNull(generation, NULL_POINT);
+		mustNotNull(startTime, NULL_POINT);
+		mustNotNull(endTime, NULL_POINT);
+
 		this.title = title;
 		this.contents = contents;
 		this.generation = generation;
@@ -59,5 +78,10 @@ public class Recruitments extends BaseTimeEntity {
 
 	public void setFinish(Boolean finish) {
 		this.isFinish = finish;
+	}
+
+	protected void addQuestions(Question question) {
+		mustNotNull(question, NULL_POINT);
+		this.questions.add(question);
 	}
 }

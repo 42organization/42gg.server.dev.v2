@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import gg.data.recruit.recruitment.Question;
-import gg.repo.recruit.user.recruitment.QuestionRepository;
+import gg.repo.recruit.recruitment.QuestionRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service

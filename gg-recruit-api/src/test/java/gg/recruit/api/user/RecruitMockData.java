@@ -12,15 +12,15 @@ import gg.data.recruit.application.ApplicationAnswerText;
 import gg.data.recruit.application.RecruitStatus;
 import gg.data.recruit.recruitment.CheckList;
 import gg.data.recruit.recruitment.Question;
-import gg.data.recruit.recruitment.Recruitments;
+import gg.data.recruit.recruitment.Recruitment;
 import gg.data.recruit.recruitment.enums.InputType;
 import gg.data.user.User;
-import gg.repo.recruit.user.application.ApplicationAnswerRepository;
-import gg.repo.recruit.user.application.ApplicationRepository;
-import gg.repo.recruit.user.application.RecruitStatusRepository;
-import gg.repo.recruit.user.recruitment.CheckListRepository;
-import gg.repo.recruit.user.recruitment.QuestionRepository;
-import gg.repo.recruit.user.recruitment.RecruitmentRepository;
+import gg.repo.recruit.application.ApplicationAnswerRepository;
+import gg.repo.recruit.application.ApplicationRepository;
+import gg.repo.recruit.application.RecruitStatusRepository;
+import gg.repo.recruit.recruitment.CheckListRepository;
+import gg.repo.recruit.recruitment.QuestionRepository;
+import gg.repo.recruit.recruitment.RecruitmentRepository;
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -33,37 +33,37 @@ public class RecruitMockData {
 	private final CheckListRepository checkListRepository;
 	private final ApplicationAnswerRepository applicationAnswerRepository;
 
-	public Recruitments createRecruitments() {
-		Recruitments recruitments = new Recruitments("title", "contents", "generation",
+	public Recruitment createRecruitment() {
+		Recruitment recruitments = new Recruitment("title", "contents", "generation",
 			LocalDateTime.now(), LocalDateTime.now().plusDays(1));
 		return recruitmentRepository.save(recruitments);
 	}
 
-	public Recruitments createRecruitmentsDel() {
-		Recruitments recruitments = new Recruitments("title", "contents", "generation",
+	public Recruitment createRecruitmentDel() {
+		Recruitment recruitments = new Recruitment("title", "contents", "generation",
 			LocalDateTime.now(), LocalDateTime.now().plusDays(1));
 		recruitments.del();
 		return recruitmentRepository.save(recruitments);
 	}
 
-	public Recruitments createRecruitmentsEnd() {
-		Recruitments recruitments = new Recruitments("title", "contents", "generation",
+	public Recruitment createRecruitmentEnd() {
+		Recruitment recruitments = new Recruitment("title", "contents", "generation",
 			LocalDateTime.now().minusDays(2), LocalDateTime.now().minusDays(1));
 		return recruitmentRepository.save(recruitments);
 	}
 
-	public Application createApplication(User user, Recruitments recruitments) {
+	public Application createApplication(User user, Recruitment recruitments) {
 		Application application = new Application(user, recruitments);
 		return applicationRepository.save(application);
 	}
 
-	public Question createQuestion(Recruitments recruitments) {
+	public Question createQuestion(Recruitment recruitments) {
 		Question question = new Question(recruitments, InputType.TEXT, "question", 1);
 		return questionRepository.save(question);
 	}
 
-	public Question createQuestion(Recruitments recruitments, String question,
-			InputType inputType, String... checkList) {
+	public Question createQuestion(Recruitment recruitments, String question,
+		InputType inputType, String... checkList) {
 		Question questionEntity = new Question(recruitments, inputType, question, 1);
 		questionRepository.save(questionEntity);
 		for (String check : checkList) {
