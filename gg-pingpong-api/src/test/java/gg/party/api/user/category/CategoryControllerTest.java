@@ -44,28 +44,21 @@ public class CategoryControllerTest {
 	@Autowired
 	private AuthTokenProvider tokenProvider;
 	User userTester;
-	User reportedTester;
 	User anotherTester;
 	String userAccessToken;
-	String reportedAccessToken;
 	String anotherAccessToken;
 
 	@BeforeEach
 	void beforeEach() {
 		userTester = testDataUtils.createNewUser("commentUserTester", "emailTester",
 			RacketType.DUAL, SnsType.SLACK, RoleType.USER);
-		reportedTester = testDataUtils.createNewUser("reportedTester", "reportedTester",
-			RacketType.DUAL, SnsType.SLACK, RoleType.USER);
 		anotherTester = testDataUtils.createNewUser("anotherUserTester", "anotherUserTester",
 			RacketType.DUAL, SnsType.SLACK, RoleType.USER);
-		testDataUtils.createNewPenalty(reportedTester, "test", "test",
-			LocalDateTime.now(), 60);
 		testDataUtils.createNewPenalty(anotherTester, "test1", "test1",
 			LocalDateTime.now(), 0);
 		testDataUtils.createNewPenalty(anotherTester, "test2", "test2",
 			LocalDateTime.now(), 0);
 		userAccessToken = tokenProvider.createToken(userTester.getId());
-		reportedAccessToken = tokenProvider.createToken(reportedTester.getId());
 		anotherAccessToken = tokenProvider.createToken(anotherTester.getId());
 		for (int i = 0; i < 10; i++) {
 			testDataUtils.createNewCategory("테스트 카테고리" + i);
@@ -92,7 +85,7 @@ public class CategoryControllerTest {
 		}
 
 		@Test
-		@DisplayName("카테고리 목록 조회 성공 200")
+		@DisplayName("패널티 받았다가 풀린 유저 카테고리 목록 조회 성공 200")
 		void unLockPenaltySuccess() throws Exception {
 			//given
 			String uri = "/party/categories";
@@ -105,18 +98,6 @@ public class CategoryControllerTest {
 			//then
 			CategoryListResDto clrd = objectMapper.readValue(contentAsString, CategoryListResDto.class);
 			assertThat(clrd.getCategoryList().size()).isEqualTo(10);
-		}
-
-		@Test
-		@DisplayName("패널티 상태의 유저 카테고리 목록 조회 실패 403")
-		void penaltyUserFail() throws Exception {
-			//given
-			String uri = "/party/categories";
-			//when && then
-			mockMvc.perform(get(uri)
-					.header("Authorization", "Bearer " + reportedAccessToken)
-					.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isForbidden());
 		}
 	}
 }

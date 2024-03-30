@@ -28,8 +28,9 @@ import gg.repo.party.RoomRepository;
 import gg.repo.party.UserReportRepository;
 import gg.repo.party.UserRoomRepository;
 import gg.repo.user.UserRepository;
-import gg.utils.exception.party.AlredayReportedException;
+import gg.utils.exception.party.AlreadyReportedException;
 import gg.utils.exception.party.CommentNotFoundException;
+import gg.utils.exception.party.OnPenaltyException;
 import gg.utils.exception.party.RoomNotFoundException;
 import gg.utils.exception.party.RoomNotParticipantException;
 import gg.utils.exception.party.SelfReportException;
@@ -57,12 +58,17 @@ public class ReportService {
 	 * @param reportReqDto 신고 내용
 	 * @param user 신고자
 	 * @return 방 번호
+	 * @throws OnPenaltyException 패널티 상태의 유저 입력 - 403
 	 * @throws RoomNotFoundException 방을 찾을 수 없음 - 404
-	 * @throws AlredayReportedException 이미 신고한 경우 - 409
+	 * @throws AlreadyReportedException 이미 신고한 경우 - 409
 	 * @throws SelfReportException 자신을 신고한 경우 - 400
 	 */
 	@Transactional
 	public void addReportRoom(Long roomId, ReportReqDto reportReqDto, UserDto user) {
+		PartyPenalty partyPenalty = partyPenaltyRepository.findTopByUserIdOrderByStartTimeDesc(user.getId());
+		if (PartyPenalty.isOnPenalty(partyPenalty)) {
+			throw new OnPenaltyException();
+		}
 		Room targetRoom = roomRepository.findById(roomId)
 			.orElseThrow(RoomNotFoundException::new);
 		User userEntity = userRepository.findById(user.getId()).get();
@@ -72,14 +78,14 @@ public class ReportService {
 		Optional<RoomReport> existingReport = roomReportRepository.findByReporterAndRoomId(userEntity,
 			targetRoom.getId());
 		if (existingReport.isPresent()) {
-			throw new AlredayReportedException();
+			throw new AlreadyReportedException();
 		}
 		RoomReport roomReport = new RoomReport(userEntity, targetRoom.getCreator(), targetRoom,
 			reportReqDto.getContent());
 		roomReportRepository.save(roomReport);
 
 		List<RoomReport> allReportRoom = roomReportRepository.findByRoomId(targetRoom.getId());
-		if (allReportRoom.size() == 3) {
+		if (allReportRoom.size() == 5) {
 			targetRoom.updateRoomStatus(RoomType.HIDDEN);
 			roomRepository.save(targetRoom);
 			User targetUser = targetRoom.getCreator();
@@ -89,17 +95,22 @@ public class ReportService {
 
 	/**
 	 * 댓글을 신고한다.
-	 *
-	 * @param commentId    방 번호
+	 * @param commentId 방 번호
 	 * @param reportReqDto 신고 내용
-	 * @param user         신고자
+	 * @param user 신고자
 	 * @return 방 번호
-	 * @throws CommentNotFoundException 방을 찾을 수 없음 - 404
-	 * @throws AlredayReportedException 이미 신고한 경우 - 409
+	 * @throws OnPenaltyException 패널티 상태의 유저 입력 - 403
+	 * @throws RoomNotFoundException 방을 찾을 수 없음 - 404
+	 * @throws CommentNotFoundException 댓글을 찾을 수 없음 - 404
+	 * @throws AlreadyReportedException 이미 신고한 경우 - 409
 	 * @throws SelfReportException 자신을 신고한 경우 - 400
 	 */
 	@Transactional
 	public void addReportComment(Long commentId, ReportReqDto reportReqDto, UserDto user) {
+		PartyPenalty partyPenalty = partyPenaltyRepository.findTopByUserIdOrderByStartTimeDesc(user.getId());
+		if (PartyPenalty.isOnPenalty(partyPenalty)) {
+			throw new OnPenaltyException();
+		}
 		Comment targetComment = commentRepository.findById(commentId)
 			.orElseThrow(CommentNotFoundException::new);
 		User userEntity = userRepository.findById(user.getId()).get();
@@ -109,7 +120,7 @@ public class ReportService {
 		Optional<CommentReport> existingReport = commentReportRepository.findByReporterAndCommentId(userEntity,
 			targetComment.getId());
 		if (existingReport.isPresent()) {
-			throw new AlredayReportedException();
+			throw new AlreadyReportedException();
 		}
 		Room targetRoom = roomRepository.findById(targetComment.getRoom().getId())
 			.orElseThrow(RoomNotFoundException::new);
@@ -128,16 +139,15 @@ public class ReportService {
 
 	/**
 	 * 유저 노쇼 신고한다.
-	 *
-	 * @param roomId       방 번호
+	 * @param roomId 방 번호
 	 * @param reportReqDto 신고 내용
-	 * @param user         신고자
-	 * @param userIntraId  피신고자
+	 * @param user 신고자
+	 * @param userIntraId 피신고자
 	 * @return 방 번호
 	 * @throws CommentNotFoundException 방을 찾을 수 없음 - 404
-	 * @throws AlredayReportedException 이미 신고한 경우 - 409
-	 * @throws SelfReportException 자신을 신고한 경우 - 400
+	 * @throws AlreadyReportedException 이미 신고한 경우 - 409
 	 * @throws RoomNotParticipantException 방에 참여하지 않은 경우 - 400
+	 * @throws SelfReportException 자신을 신고한 경우 - 400
 	 */
 	@Transactional
 	public void addReportUser(Long roomId, ReportReqDto reportReqDto, String userIntraId, UserDto user) {
@@ -158,25 +168,23 @@ public class ReportService {
 			throw new RoomNotFoundException();
 		}
 		// 이미 신고한 경우
-		userReportRepository.findByReporterAndReporteeAndRoom(
-				reporterEntity, reporteeEntity, targetRoom)
+		userReportRepository.findByReporterAndReporteeAndRoom(reporterEntity, reporteeEntity, targetRoom)
 			.ifPresent(userReport -> {
-				throw new AlredayReportedException();
+				throw new AlreadyReportedException();
 			});
 		// 신고 저장
 		UserReport userReport = new UserReport(reporterEntity, reporteeEntity, targetRoom, reportReqDto.getContent());
 		userReportRepository.save(userReport);
 		// 노쇼 패널티 판단
 		List<UserReport> allReportUser = userReportRepository.findByReporteeAndRoomId(reporteeEntity, roomId);
-		if (allReportUser.size() == targetRoom.getMaxPeople() / 2) {
+		if (allReportUser.size() == targetRoom.getCurrentPeople() / 2) {
 			partyGivePenalty(reporteeEntity.getIntraId(), NO_SHOW_PENALTY_TIME, "노쇼 패널티");
 		}
 	}
 
 	/**
 	 * 패널티 부여
-	 *
-	 * @param intraId     신고당한 유저 아이디
+	 * @param intraId 신고당한 유저 아이디
 	 * @param penaltyTime 패널티 시간
 	 * @param penaltyType 패널티 타입
 	 */
