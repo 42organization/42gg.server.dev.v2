@@ -1,4 +1,4 @@
-package gg.recruit.api.user;
+package gg.recruit.api;
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -16,7 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gg.data.recruit.application.Application;
 import gg.data.recruit.recruitment.Recruitment;
 import gg.data.user.User;
-import gg.recruit.api.user.RecruitMockData;
+import gg.recruit.api.RecruitMockData;
 import gg.recruit.api.user.controller.response.ActiveRecruitmentListResDto;
 import gg.recruit.api.user.controller.response.RecruitmentDetailResDto;
 import gg.utils.TestDataUtils;
