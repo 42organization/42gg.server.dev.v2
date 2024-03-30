@@ -1,5 +1,8 @@
 package gg.recruit.api.admin.service;
 
+import java.util.List;
+
+import gg.data.recruit.manage.ResultMessage;
 import gg.recruit.api.admin.service.dto.RecruitmentResultMessageDto;
 
 /**
@@ -18,4 +21,10 @@ public interface RecruitmentResultMessageAdminService {
 	 * @param reqDto
 	 */
 	void postResultMessage(RecruitmentResultMessageDto reqDto);
+
+	/**
+	 * 지원 결과 메시지 목록 조회
+	 * @return List<ResultMessage>
+	 */
+	List<ResultMessage> getResultMessages();
 }

@@ -72,4 +72,33 @@ public class RecruitResultMessageRepositoryTest {
 			}
 		}
 	}
+
+	@Nested
+	@DisplayName("findAllOrderByIdDesc")
+	class FindAllOrderByIdDesc {
+		@Test
+		@DisplayName("결과 메시지 조회")
+		void success() {
+			//Arrange
+			createResultMessage(MessageType.FAIL);
+			createResultMessage(MessageType.INTERVIEW);
+			createResultMessage(MessageType.PASS);
+			entityManager.flush();
+			entityManager.clear();
+
+			//Act
+			List<ResultMessage> results = recruitResultMessageRepository.findAllOrderByIdDesc();
+
+			//Assert
+			Assertions.assertThat(results.size()).isEqualTo(3);
+		}
+	}
+
+	void createResultMessage(MessageType messageType) {
+		ResultMessage resultMessage1 = ResultMessage.builder()
+			.messageType(messageType)
+			.content("hello")
+			.build();
+		entityManager.persist(resultMessage1);
+	}
 }
