@@ -146,8 +146,8 @@ public class ReportService {
 	 * @return 방 번호
 	 * @throws CommentNotFoundException 방을 찾을 수 없음 - 404
 	 * @throws AlreadyReportedException 이미 신고한 경우 - 409
-	 * @throws SelfReportException 자신을 신고한 경우 - 400
 	 * @throws RoomNotParticipantException 방에 참여하지 않은 경우 - 400
+	 * @throws SelfReportException 자신을 신고한 경우 - 400
 	 */
 	@Transactional
 	public void addReportUser(Long roomId, ReportReqDto reportReqDto, String userIntraId, UserDto user) {
@@ -168,8 +168,7 @@ public class ReportService {
 			throw new RoomNotFoundException();
 		}
 		// 이미 신고한 경우
-		userReportRepository.findByReporterAndReporteeAndRoom(
-				reporterEntity, reporteeEntity, targetRoom)
+		userReportRepository.findByReporterAndReporteeAndRoom(reporterEntity, reporteeEntity, targetRoom)
 			.ifPresent(userReport -> {
 				throw new AlreadyReportedException();
 			});
