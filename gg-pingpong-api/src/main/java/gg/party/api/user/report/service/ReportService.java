@@ -30,6 +30,7 @@ import gg.repo.party.UserRoomRepository;
 import gg.repo.user.UserRepository;
 import gg.utils.exception.party.AlreadyReportedException;
 import gg.utils.exception.party.CommentNotFoundException;
+import gg.utils.exception.party.OnPenaltyException;
 import gg.utils.exception.party.RoomNotFoundException;
 import gg.utils.exception.party.RoomNotParticipantException;
 import gg.utils.exception.party.SelfReportException;
@@ -57,12 +58,17 @@ public class ReportService {
 	 * @param reportReqDto 신고 내용
 	 * @param user 신고자
 	 * @return 방 번호
+	 * @throws OnPenaltyException 패널티 상태의 유저 입력 - 403
 	 * @throws RoomNotFoundException 방을 찾을 수 없음 - 404
 	 * @throws AlreadyReportedException 이미 신고한 경우 - 409
 	 * @throws SelfReportException 자신을 신고한 경우 - 400
 	 */
 	@Transactional
 	public void addReportRoom(Long roomId, ReportReqDto reportReqDto, UserDto user) {
+		PartyPenalty partyPenalty = partyPenaltyRepository.findTopByUserIdOrderByStartTimeDesc(user.getId());
+		if (PartyPenalty.isOnPenalty(partyPenalty)) {
+			throw new OnPenaltyException();
+		}
 		Room targetRoom = roomRepository.findById(roomId)
 			.orElseThrow(RoomNotFoundException::new);
 		User userEntity = userRepository.findById(user.getId()).get();
@@ -93,12 +99,18 @@ public class ReportService {
 	 * @param reportReqDto 신고 내용
 	 * @param user 신고자
 	 * @return 방 번호
-	 * @throws CommentNotFoundException 방을 찾을 수 없음 - 404
+	 * @throws OnPenaltyException 패널티 상태의 유저 입력 - 403
+	 * @throws RoomNotFoundException 방을 찾을 수 없음 - 404
+	 * @throws CommentNotFoundException 댓글을 찾을 수 없음 - 404
 	 * @throws AlreadyReportedException 이미 신고한 경우 - 409
 	 * @throws SelfReportException 자신을 신고한 경우 - 400
 	 */
 	@Transactional
 	public void addReportComment(Long commentId, ReportReqDto reportReqDto, UserDto user) {
+		PartyPenalty partyPenalty = partyPenaltyRepository.findTopByUserIdOrderByStartTimeDesc(user.getId());
+		if (PartyPenalty.isOnPenalty(partyPenalty)) {
+			throw new OnPenaltyException();
+		}
 		Comment targetComment = commentRepository.findById(commentId)
 			.orElseThrow(CommentNotFoundException::new);
 		User userEntity = userRepository.findById(user.getId()).get();
