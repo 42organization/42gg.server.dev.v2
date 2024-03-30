@@ -12,9 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,7 +24,7 @@ import gg.data.recruit.recruitment.Question;
 import gg.data.recruit.recruitment.Recruitment;
 import gg.data.recruit.recruitment.enums.InputType;
 import gg.data.user.User;
-import gg.recruit.api.user.RecruitMockData;
+import gg.recruit.api.RecruitMockData;
 import gg.recruit.api.user.controller.request.CheckListFormRequest;
 import gg.recruit.api.user.controller.request.FormPatchRequestDto;
 import gg.recruit.api.user.controller.request.FormRequest;
