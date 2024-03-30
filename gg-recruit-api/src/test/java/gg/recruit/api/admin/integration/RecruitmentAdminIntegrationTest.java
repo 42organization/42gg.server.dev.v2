@@ -56,7 +56,8 @@ public class RecruitmentAdminIntegrationTest {
 		@MethodSource("getRecruitments")
 		void getAllRecruitments(List<Recruitment> recruitments) throws Exception {
 			// given
-			int page = 1, size = 10;
+			int page = 1;
+			int size = 10;
 			String url = String.format("/admin/recruitments?page=%d&size=%d", page, size);
 			String accessToken = testDataUtils.getAdminLoginAccessToken();
 			recruitmentAdminRepository.saveAll(recruitments);
