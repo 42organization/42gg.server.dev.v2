@@ -74,7 +74,7 @@ public class RecruitResultMessageRepositoryTest {
 	}
 
 	@Nested
-	@DisplayName("disablePreviousResultMessages")
+	@DisplayName("findAllOrderByIdDesc")
 	class FindAllOrderByIdDesc {
 		@Test
 		@DisplayName("결과 메시지 조회")
