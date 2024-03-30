@@ -1,12 +1,12 @@
-package gg.party.api.user.templates.controller.response;
+package gg.party.api.user.template.controller.response;
 
 import java.util.List;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @Getter
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class TemplateListResDto {
 	private List<TemplateResDto> templateList;
 

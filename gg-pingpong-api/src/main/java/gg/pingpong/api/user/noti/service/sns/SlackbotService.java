@@ -45,6 +45,11 @@ public class SlackbotService {
 
 		SlackUserInfoResponse res = apiUtil.apiCall(userIdGetUrl, SlackUserInfoResponse.class,
 			headers, parameters, HttpMethod.POST);
+
+		if (res == null || res.getUser() == null) {
+			throw new RuntimeException("슬랙 API 고장으로 인한 NULL 참조" + intraId);
+		}
+
 		return res.user.id;
 	}
 

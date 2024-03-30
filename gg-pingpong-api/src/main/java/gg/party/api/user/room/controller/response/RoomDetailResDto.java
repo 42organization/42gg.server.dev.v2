@@ -8,13 +8,13 @@ import gg.data.party.type.RoomType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @Getter
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class RoomDetailResDto {
 	private Long roomId;
 	private String title;
 	private String content;
-	private Long categoryId;
+	private String categoryName;
 	private Integer currentPeople;
 	private Integer minPeople;
 	private Integer maxPeople;
@@ -32,7 +32,7 @@ public class RoomDetailResDto {
 		this.roomId = room.getId();
 		this.title = room.getTitle();
 		this.content = room.getContent();
-		this.categoryId = room.getCategory().getId();
+		this.categoryName = room.getCategory().getName();
 		this.currentPeople = room.getCurrentPeople();
 		this.minPeople = room.getMinPeople();
 		this.maxPeople = room.getMaxPeople();

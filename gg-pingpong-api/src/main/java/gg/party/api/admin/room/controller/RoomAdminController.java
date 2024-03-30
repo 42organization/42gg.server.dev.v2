@@ -32,7 +32,7 @@ public class RoomAdminController {
 	 * 방 Status 변경
 	 * @param roomId 방 id
 	 * @param reqDto 바꿀 status
-	 * @exception RoomNotFoundException 유효하지 않은 방 입력
+	 * @exception RoomNotFoundException 유효하지 않은 방 입력 - 404
 	 */
 	@PatchMapping("/{roomId}")
 	public ResponseEntity<Void> modifyRoomVisibility(@PathVariable Long roomId,

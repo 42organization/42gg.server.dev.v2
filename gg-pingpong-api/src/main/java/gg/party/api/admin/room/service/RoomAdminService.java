@@ -23,8 +23,8 @@ import gg.party.api.user.room.controller.response.UserRoomResDto;
 import gg.repo.party.CommentRepository;
 import gg.repo.party.RoomRepository;
 import gg.repo.party.UserRoomRepository;
+import gg.utils.exception.party.ChangeSameStatusException;
 import gg.utils.exception.party.RoomNotFoundException;
-import gg.utils.exception.party.RoomSameStatusException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -38,8 +38,8 @@ public class RoomAdminService {
 	 * 방 Status 변경
 	 * @param roomId 방 id
 	 * @param newStatus 바꿀 status
-	 * @exception RoomNotFoundException 유효하지 않은 방 입력
-	 * @exception RoomSameStatusException 같은 상태로 변경
+	 * @exception RoomNotFoundException 유효하지 않은 방 입력 - 404
+	 * @exception ChangeSameStatusException 같은 상태로 변경 - 409
 	 */
 	@Transactional
 	public void modifyRoomStatus(Long roomId, RoomType newStatus) {
@@ -47,7 +47,7 @@ public class RoomAdminService {
 			.orElseThrow(RoomNotFoundException::new);
 
 		if (room.getStatus() == newStatus) {
-			throw new RoomSameStatusException();
+			throw new ChangeSameStatusException();
 		}
 
 		room.updateRoomStatus(newStatus);
@@ -59,7 +59,7 @@ public class RoomAdminService {
 	 * @param pageReqDto page번호 및 사이즈(10)
 	 * @return 방 정보 리스트 + totalpages dto
 	 */
-	@Transactional
+	@Transactional(readOnly = true)
 	public AdminRoomListResDto findAllRoomList(PageReqDto pageReqDto) {
 		int page = pageReqDto.getPage();
 		int size = pageReqDto.getSize();
@@ -78,20 +78,21 @@ public class RoomAdminService {
 	/**
 	 * 방의 상세정보를 조회한다
 	 * @param roomId 방 id
-	 * @exception RoomNotFoundException 유효하지 않은 방 입력
+	 * @exception RoomNotFoundException 유효하지 않은 방 입력 - 404
 	 * @return 방 상세정보 dto
 	 */
-	@Transactional
+	@Transactional(readOnly = true)
 	public AdminRoomDetailResDto findAdminDetailRoom(Long roomId) {
 		Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
 
-		List<AdminCommentResDto> comments = commentRepository.findByRoomId(roomId).stream()
+		List<AdminCommentResDto> comments = commentRepository.findAllWithCommentFetchJoin(roomId).stream()
 			.map(AdminCommentResDto::new)
 			.collect(Collectors.toList());
 
 		Optional<UserRoom> hostUserRoomOptional = userRoomRepository.findByUserIdAndRoomIdAndIsExistTrue(
 			room.getHost().getId(), roomId);
-		String hostNickname = hostUserRoomOptional.get().getNickname();
+		String hostNickname = hostUserRoomOptional.map(UserRoom::getNickname)
+			.orElse(null);
 
 		List<UserRoomResDto> roomUsers = userRoomRepository.findByRoomId(roomId).stream()
 			.filter(UserRoom::getIsExist)

@@ -56,4 +56,8 @@ public class Recruitments extends BaseTimeEntity {
 	public Boolean isEnd() {
 		return LocalDateTime.now().isAfter(this.endTime);
 	}
+
+	public void setFinish(Boolean finish) {
+		this.isFinish = finish;
+	}
 }

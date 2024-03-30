@@ -13,6 +13,25 @@ import io.swagger.v3.oas.models.servers.Server;
 
 @Configuration
 public class SwaggerConfig {
+
+	@Bean
+	public GroupedOpenApi partyGroup() {
+		return GroupedOpenApi.builder()
+			.group("party")
+			.pathsToMatch("/party/**")
+			.packagesToScan("gg.party.api.user")
+			.build();
+	}
+
+	@Bean
+	public GroupedOpenApi partyAdminGroup() {
+		return GroupedOpenApi.builder()
+			.group("party admin")
+			.pathsToMatch("/party/admin/**")
+			.packagesToScan("gg.party.api.admin")
+			.build();
+	}
+
 	@Bean
 	public GroupedOpenApi group1() {
 		return GroupedOpenApi.builder()
@@ -35,7 +54,7 @@ public class SwaggerConfig {
 	public GroupedOpenApi recruitAdminGroup() {
 		return GroupedOpenApi.builder()
 			.group("recruit admin")
-			.pathsToMatch("admin/recruitments/**")
+			.pathsToMatch("/admin/recruitments/**")
 			.packagesToScan("gg.recruit.api.admin")
 			.build();
 	}
