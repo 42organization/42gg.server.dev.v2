@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import gg.data.recruit.recruitment.Recruitment;
 import gg.recruit.api.admin.controller.request.RecruitmentCreateReqDto;
 import gg.recruit.api.admin.controller.request.UpdateStatusRequestDto;
+import gg.recruit.api.admin.controller.response.CreatedRecruitmentResponse;
 import gg.recruit.api.admin.service.RecruitmentAdminService;
 import gg.recruit.api.admin.service.dto.UpdateRecruitStatusParam;
 import lombok.RequiredArgsConstructor;
@@ -25,10 +26,12 @@ public class RecruitmentAdminController {
 	private final RecruitmentAdminService recruitmentAdminService;
 
 	@PostMapping
-	public ResponseEntity<Void> createRecruitment(@RequestBody @Valid RecruitmentCreateReqDto recruitmentDto) {
+	public ResponseEntity<CreatedRecruitmentResponse> createRecruitment(
+		@RequestBody @Valid RecruitmentCreateReqDto recruitmentDto) {
 		Recruitment recruitment = recruitmentDto.toRecruitment();
-		recruitmentAdminService.createRecruitment(recruitment, recruitmentDto.getForm());
-		return ResponseEntity.status(HttpStatus.CREATED).build();
+		Long recruitmentId = recruitmentAdminService.createRecruitment(recruitment, recruitmentDto.getForm()).getId();
+		CreatedRecruitmentResponse createdRecruitmentResponse = new CreatedRecruitmentResponse(recruitmentId);
+		return ResponseEntity.status(HttpStatus.CREATED).body(createdRecruitmentResponse);
 	}
 
 	@PatchMapping("/{recruitId}/status")
