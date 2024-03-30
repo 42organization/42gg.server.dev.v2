@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import gg.data.recruit.manage.ResultMessage;
 import gg.recruit.api.admin.controller.response.GetRecruitmentResultMessageResponseDto;
-import gg.recruit.api.admin.controller.response.GetRecruitmentResultMessageResponseDtoMapper;
 import gg.recruit.api.admin.controller.response.GetRecruitmentResultMessagesResponseDto;
 import gg.recruit.api.admin.service.RecruitmentResultMessageAdminService;
 import gg.recruit.api.admin.service.dto.RecruitmentResultMessageDto;
@@ -50,7 +49,7 @@ public class RecruitmentResultMessageAdminController {
 		List<ResultMessage> resultMessages = resultMessageAdminService.getResultMessages();
 
 		List<GetRecruitmentResultMessageResponseDto> resultDto = resultMessages.stream()
-			.map(GetRecruitmentResultMessageResponseDtoMapper.INSTANCE::entityToDto)
+			.map(GetRecruitmentResultMessageResponseDto.MapStruct.INSTANCE::entityToDto)
 			.collect(Collectors.toList());
 
 		return ResponseEntity.ok(new GetRecruitmentResultMessagesResponseDto(resultDto));
