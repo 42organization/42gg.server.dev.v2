@@ -24,6 +24,8 @@ import gg.admin.repo.recruit.manage.RecruitResultMessageRepository;
 import gg.data.recruit.manage.ResultMessage;
 import gg.data.recruit.manage.enums.MessageType;
 import gg.data.user.User;
+import gg.recruit.api.admin.controller.request.GetRecruitmentResultMessagePreviewReqDto;
+import gg.recruit.api.admin.controller.response.GetRecruitmentResultMessagePreviewResDto;
 import gg.recruit.api.admin.service.dto.RecruitmentResultMessageDto;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
@@ -135,6 +137,32 @@ public class RecruitmentResultMessageIntegrationTest {
 				}
 			}
 		}
+	}
+
+	@Test
+	@DisplayName("GET getPreview -> 200 OK TEST")
+	void getPreviewOK() throws Exception {
+		//Arrange
+		MessageType targetType = MessageType.FAIL;
+		User adminUser = testDataUtils.createAdminUser();
+		String accessToken = testDataUtils.getLoginAccessTokenFromUser(adminUser);
+		ResultMessage resultMessage = makeResultMessage(targetType);
+		recruitResultMessageRepository.save(resultMessage);
+		recruitResultMessageRepository.flush();
+		GetRecruitmentResultMessagePreviewReqDto req = new GetRecruitmentResultMessagePreviewReqDto(targetType);
+		String content = objectMapper.writeValueAsString(req);
+
+		//Act
+		String res = mockMvc.perform(get("/admin/recruitments/result/message/preview?messageType=FAIL")
+				.header("Authorization", "Bearer " + accessToken)
+				.contentType("application/json")
+				.content(content))
+			.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+
+		//Assert
+		GetRecruitmentResultMessagePreviewResDto resDto = objectMapper.readValue(res,
+			GetRecruitmentResultMessagePreviewResDto.class);
+		Assertions.assertThat(resDto.getContent()).isEqualTo(resultMessage.getContent());
 	}
 
 	private static ResultMessage makeResultMessage(MessageType targetType) {
