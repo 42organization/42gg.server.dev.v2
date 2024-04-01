@@ -1,5 +1,7 @@
 package gg.recruit.api.admin.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -8,6 +10,8 @@ import javax.validation.constraints.Positive;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -35,6 +39,8 @@ import gg.recruit.api.admin.service.RecruitmentAdminService;
 import gg.recruit.api.admin.service.dto.UpdateApplicationStatusDto;
 import gg.recruit.api.admin.service.dto.UpdateRecruitStatusParam;
 import gg.utils.dto.PageRequestDto;
+import gg.utils.exception.ErrorCode;
+import gg.utils.exception.custom.BusinessException;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -81,6 +87,38 @@ public class RecruitmentAdminController {
 		UpdateApplicationStatusDto dto = new UpdateApplicationStatusDto(reqDto.getStatus(), applicationId, recruitId);
 		recruitmentAdminService.updateFinalApplicationStatusAndNotification(dto);
 		return new ResponseEntity<>(HttpStatus.CREATED);
+	}
+
+	@GetMapping("/{recruitId}/applications")
+	public ResponseEntity<Void> getRecruitmentApplications(
+		@PathVariable @Positive Long recruitId,
+		@RequestParam(value = "question", required = false) Long questionId,
+		@RequestParam(value = "checks", required = false) String checks,
+		@RequestParam(value = "search", required = false) String search,
+		@PageableDefault(sort = "id", direction = Sort.Direction.DESC, page = 1, size = 10) Pageable page
+	) {
+		Pageable parsedPage;
+		parsedPage = PageRequest.of(page.getPageNumber() - 1, Math.min(page.getPageSize(), 20), page.getSort());
+		List<Long> checkListIds = parseChecks(checks);
+
+		return null;
+	}
+
+	/**
+	 * 전달된 checkListId 목록 파싱
+	 * @param checks
+	 * @return List<Long>
+	 */
+	private List<Long> parseChecks(String checks) {
+		try {
+			if (checks != null) {
+				return Arrays.stream(checks.split(",")).map(Long::parseLong).collect(Collectors.toList());
+			} else {
+				return new ArrayList<>();
+			}
+		} catch (Exception e) {
+			throw new BusinessException(ErrorCode.BAD_ARGU);
+		}
 	}
 
 	@DeleteMapping("/{recruitId}")
