@@ -80,7 +80,8 @@ class ApplicationAdminRepositoryTest {
 
 			//Act
 			List<Application> res;
-			res = applicationAdminRepository.findAllByRecruitmentIdWithUserAndRecruitStatusFetchJoin(recruitmentId);
+			res = applicationAdminRepository
+				.findAllByRecruitmentIdWithUserAndRecruitStatusFetchJoinOrderByIdDesc(recruitmentId);
 
 			//Assert
 			Assertions.assertThat(res.get(0).getId()).isEqualTo(application2Id);

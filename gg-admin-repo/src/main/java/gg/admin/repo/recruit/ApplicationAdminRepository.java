@@ -17,6 +17,7 @@ public interface ApplicationAdminRepository extends JpaRepository<Application, L
 		+ "LEFT JOIN FETCH a.recruitStatus "
 		+ "WHERE a.recruit.id = :recruitmentId "
 		+ "ORDER BY a.id DESC")
-	List<Application> findAllByRecruitmentIdWithUserAndRecruitStatusFetchJoin(@Param("recruitmentId") Long recruitId);
+	List<Application> findAllByRecruitmentIdWithUserAndRecruitStatusFetchJoinOrderByIdDesc(
+		@Param("recruitmentId") Long recruitId);
 }
 
