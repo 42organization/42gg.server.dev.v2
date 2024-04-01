@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 import gg.data.BaseTimeEntity;
 import gg.data.recruit.application.enums.ApplicationStatus;
@@ -37,6 +38,9 @@ public class Application extends BaseTimeEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "recruit_id", nullable = false)
 	private Recruitment recruit;
+
+	@OneToOne(mappedBy = "application", fetch = FetchType.LAZY)
+	RecruitStatus recruitStatus;
 
 	private Boolean isDeleted;
 
