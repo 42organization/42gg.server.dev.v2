@@ -13,31 +13,24 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import gg.auth.config.AuthWebConfig;
 import gg.data.recruit.manage.ResultMessage;
 import gg.data.recruit.manage.enums.MessageType;
-import gg.pingpong.api.global.config.WebConfig;
-import gg.pingpong.api.global.security.config.SecurityConfig;
-import gg.pingpong.api.global.security.jwt.utils.TokenAuthenticationFilter;
-import gg.pingpong.api.global.utils.querytracker.LoggingInterceptor;
+import gg.recruit.api.WebMvcTestApplicationContext;
 import gg.recruit.api.admin.controller.response.GetRecruitmentResultMessagesResponseDto;
 import gg.recruit.api.admin.service.RecruitmentResultMessageAdminService;
 import gg.recruit.api.admin.service.dto.RecruitmentResultMessageDto;
 import gg.utils.annotation.UnitTest;
 
 @UnitTest
-@WebMvcTest(controllers = RecruitmentResultMessageAdminController.class, excludeFilters = {
-	@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class),
-	@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebConfig.class),
-	@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = AuthWebConfig.class),
-	@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = TokenAuthenticationFilter.class),
-	@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = LoggingInterceptor.class)})
+@WebMvcTest(controllers = RecruitmentResultMessageAdminController.class)
+@ActiveProfiles("test-mvc")
+@ContextConfiguration(classes = WebMvcTestApplicationContext.class)
 class RecruitmentResultMessageAdminControllerUnitTest {
 
 	@MockBean

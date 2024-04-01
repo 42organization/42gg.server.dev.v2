@@ -43,6 +43,8 @@ import gg.data.pingpong.tournament.TournamentUser;
 import gg.data.pingpong.tournament.type.TournamentRound;
 import gg.data.pingpong.tournament.type.TournamentStatus;
 import gg.data.pingpong.tournament.type.TournamentType;
+import gg.data.recruit.application.Application;
+import gg.data.recruit.recruitment.Recruitment;
 import gg.data.user.User;
 import gg.data.user.UserImage;
 import gg.data.user.type.RacketType;
@@ -71,6 +73,8 @@ import gg.repo.party.UserRoomRepository;
 import gg.repo.rank.RankRepository;
 import gg.repo.rank.TierRepository;
 import gg.repo.rank.redis.RankRedisRepository;
+import gg.repo.recruit.application.ApplicationRepository;
+import gg.repo.recruit.recruitment.RecruitmentRepository;
 import gg.repo.season.SeasonRepository;
 import gg.repo.store.CoinPolicyRepository;
 import gg.repo.tournarment.TournamentGameRepository;
@@ -112,6 +116,8 @@ public class TestDataUtils {
 	private final CommentReportRepository commentReportRepository;
 	private final RoomReportRepository roomReportRepository;
 	private final UserReportRepository userReportRepository;
+	private final RecruitmentRepository recruitmentRepository;
+	private final ApplicationRepository applicationRepository;
 
 	public String getLoginAccessToken() {
 		User user = User.builder()
@@ -895,5 +901,23 @@ public class TestDataUtils {
 		comment.updateHidden(TRUE);
 		commentRepository.save(comment);
 		return comment;
+	}
+
+	public Recruitment createNewRecruitment() {
+		Recruitment recruitment = Recruitment.builder()
+			.contents("contents")
+			.generation("generation")
+			.title("title")
+			.startTime(LocalDateTime.now())
+			.endTime(LocalDateTime.now().plusDays(1))
+			.build();
+		recruitmentRepository.save(recruitment);
+		return recruitment;
+	}
+
+	public Application createApplication(User user, Recruitment recruitment) {
+		Application application = new Application(user, recruitment);
+		applicationRepository.save(application);
+		return application;
 	}
 }

@@ -182,3 +182,20 @@ app:
   auth:
     refreshTokenExpiry: 604800000
     tokenExpiry: 604800000
+
+
+
+---
+spring.config.activate.on-profile: test-mvc
+
+spring:
+  security:
+    oauth2.client:
+      registration:
+        42:
+          client-id: "dummy"
+          client-secret: "dummy"
+        kakao:
+          client-id: "dummy"
+          client-secret: "dummy"
+          client-authentication-method: POST
