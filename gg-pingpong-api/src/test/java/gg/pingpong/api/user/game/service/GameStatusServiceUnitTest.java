@@ -18,8 +18,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
-import gg.data.game.Game;
-import gg.data.manage.SlotManagement;
+import gg.data.pingpong.game.Game;
+import gg.data.pingpong.manage.SlotManagement;
 import gg.pingpong.api.user.noti.service.NotiService;
 import gg.pingpong.api.user.noti.service.SnsNotiService;
 import gg.pingpong.api.user.user.service.UserService;

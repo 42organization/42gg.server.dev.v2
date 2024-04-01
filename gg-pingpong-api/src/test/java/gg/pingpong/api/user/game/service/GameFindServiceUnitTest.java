@@ -19,7 +19,7 @@ import org.mockito.quality.Strictness;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.SliceImpl;
 
-import gg.data.game.Game;
+import gg.data.pingpong.game.Game;
 import gg.repo.game.GameRepository;
 import gg.utils.annotation.UnitTest;
 
