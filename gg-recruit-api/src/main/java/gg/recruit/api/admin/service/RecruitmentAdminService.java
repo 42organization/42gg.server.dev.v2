@@ -99,10 +99,10 @@ public class RecruitmentAdminService {
 	@Transactional
 	public void updateRecruitment(Long recruitId, Recruitment updatedRecruitment, List<Form> forms) {
 		Recruitment target = recruitmentAdminRepository.findById(recruitId)
-			.orElseThrow(() -> new NotExistException("Recruitment not found."));
+			.orElseThrow(() -> new NotExistException("공고를 찾을 수 없습니다."));
 		LocalDateTime now = LocalDateTime.now();
-		if (target.getStartTime().isEqual(now) || target.getStartTime().isAfter(now)) {
-			throw new IllegalArgumentException("Recruitment start time is same or after now.");
+		if (target.getStartTime().isEqual(now) || target.getStartTime().isBefore(now)) {
+			throw new ForbiddenException("수정 불가능한 공고입니다.");
 		}
 		target.update(updatedRecruitment, target.getQuestions());
 		createRecruitment(target, forms);

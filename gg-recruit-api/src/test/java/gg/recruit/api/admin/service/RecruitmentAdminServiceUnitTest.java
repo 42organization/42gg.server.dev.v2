@@ -7,6 +7,8 @@ import static org.mockito.BDDMockito.*;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -17,9 +19,12 @@ import org.springframework.data.domain.Slice;
 
 import gg.admin.repo.recruit.ApplicationAdminRepository;
 import gg.admin.repo.recruit.RecruitmentAdminRepository;
+import gg.data.recruit.recruitment.Question;
 import gg.admin.repo.recruit.recruitment.RecruitStatusAdminRepository;
 import gg.data.recruit.application.Application;
 import gg.data.recruit.recruitment.Recruitment;
+import gg.data.recruit.recruitment.enums.InputType;
+import gg.recruit.api.admin.service.dto.Form;
 import gg.data.user.User;
 import gg.recruit.api.admin.service.dto.UpdateApplicationStatusDto;
 import gg.utils.annotation.UnitTest;
@@ -54,6 +59,91 @@ class RecruitmentAdminServiceUnitTest {
 
 		// then
 		verify(recruitmentAdminRepository, times(1)).findAllByOrderByEndTimeDesc(mockPageable);
+	}
+
+	@Nested
+	@DisplayName("공고 수정")
+	class UpdateRecruitment {
+		LocalDateTime start = LocalDateTime.now().plusDays(1);
+		Long recruitId = 1L;
+
+		@Test
+		@DisplayName("공고 수정 성공")
+		void updateRecruitment() {
+			// given
+			Recruitment target = Recruitment.builder()
+				.title("before-title")
+				.contents("before-contents")
+				.generation("before-5th")
+				.startTime(start.plusDays(1))
+				.endTime(start.plusDays(2))
+				.build();
+			Recruitment recruitment = Recruitment.builder().title("after-title")
+				.contents("after-contents")
+				.generation("after-6th")
+				.startTime(start.plusDays(2))
+				.endTime(start.plusDays(3))
+				.build();
+			List<Form> forms = List.of(
+				Form.builder().question("question").inputType(InputType.TEXT).checkList(List.of()).build());
+			given(recruitmentAdminRepository.findById(recruitId)).willReturn(Optional.of(target));
+
+			// when
+			recruitmentAdminService.updateRecruitment(recruitId, recruitment, forms);
+
+			// then
+			verify(recruitmentAdminRepository, times(1)).findById(recruitId);
+			assertThat(recruitment.getTitle()).isEqualTo(target.getTitle());
+			assertThat(recruitment.getContents()).isEqualTo(target.getContents());
+			assertThat(recruitment.getGeneration()).isEqualTo(target.getGeneration());
+			assertThat(recruitment.getStartTime()).isEqualTo(target.getStartTime());
+			assertThat(recruitment.getEndTime()).isEqualTo(target.getEndTime());
+			List<Question> questions = recruitment.getQuestions();
+			List<Question> questions1 = target.getQuestions();
+			for (int i = 0; i < questions.size(); i++) {
+				assertThat(questions.get(i).getQuestion()).isEqualTo(questions1.get(i).getQuestion());
+				assertThat(questions.get(i).getInputType()).isEqualTo(questions1.get(i).getInputType());
+			}
+		}
+
+		@Test
+		@DisplayName("공고가 이미 시작되어 수정 불가능한 경우 Forbidden Exception 발생")
+		void updateRecruitmentFail() {
+			// given
+			Recruitment pastRecruitment = Recruitment.builder()
+				.title("after-title")
+				.contents("after-contents")
+				.generation("after-5th")
+				.startTime(LocalDateTime.of(2021, 1, 1, 0, 0))
+				.endTime(LocalDateTime.of(2021, 1, 2, 0, 0))
+				.build();
+			given(recruitmentAdminRepository.findById(recruitId)).willReturn(Optional.of(pastRecruitment));
+			Recruitment recruitment = mock(Recruitment.class);
+
+			// when
+			assertThatThrownBy(
+				() -> recruitmentAdminService.updateRecruitment(recruitId, recruitment, List.of()))
+				.isInstanceOf(ForbiddenException.class);
+
+			// then
+			verify(recruitmentAdminRepository, times(1)).findById(recruitId);
+		}
+
+		@Test
+		@DisplayName("공고가 존재하지 않아 수정 불가능한 경우 NotExistException 발생")
+		void updateRecruitmentNotExist() {
+			// given
+			given(recruitmentAdminRepository.findById(recruitId)).willReturn(Optional.empty());
+			Recruitment recruitment = mock(Recruitment.class);
+
+			// when
+			assertThatThrownBy(
+				() -> recruitmentAdminService.updateRecruitment(recruitId, recruitment, List.of()))
+				.isInstanceOf(NotExistException.class);
+
+			// then
+			verify(recruitmentAdminRepository, times(1)).findById(recruitId);
+		}
 	}
 
 	@Nested
