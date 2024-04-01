@@ -35,6 +35,7 @@ import gg.recruit.api.admin.controller.response.RecruitmentApplicantResultRespon
 import gg.recruit.api.admin.controller.response.RecruitmentApplicantResultsResponseDto;
 import gg.recruit.api.admin.service.RecruitmentAdminService;
 import gg.utils.annotation.UnitTest;
+import gg.utils.exception.custom.BusinessException;
 
 @UnitTest
 @WebMvcTest(controllers = RecruitmentAdminController.class)
@@ -157,12 +158,25 @@ class RecruitmentAdminControllerUnitTest {
 	@DisplayName("getRecruitmentApplications")
 	class GetRecruitmentApplications {
 		@Test
+		@DisplayName("long으로 파싱할 수 없는 유효하지 않은 checks의 경우 exceptions 발생")
+		void invalidChecks() {
+			//Arrange
+			//Act
+			//Assert
+			Assertions.assertThatThrownBy(
+					() -> recruitmentAdminController.getRecruitmentApplications(1L, null, "d,d,d", null,
+						PageRequest.of(1, 10, Sort.by(new Sort.Order(Sort.Direction.DESC, "id")))))
+				.isInstanceOf(BusinessException.class);
+
+		}
+
+		@Test
 		@DisplayName("성공")
 		void success() {
 			//Arrange
+			//Act
 			recruitmentAdminController.getRecruitmentApplications(1L, null, "1,2,3", null,
 				PageRequest.of(1, 10, Sort.by(new Sort.Order(Sort.Direction.DESC, "id"))));
-			//Act
 
 			//Assert
 		}
