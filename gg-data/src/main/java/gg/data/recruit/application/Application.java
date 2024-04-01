@@ -15,6 +15,8 @@ import gg.data.BaseTimeEntity;
 import gg.data.recruit.application.enums.ApplicationStatus;
 import gg.data.recruit.recruitment.Recruitment;
 import gg.data.user.User;
+import gg.utils.exception.BusinessChecker;
+import gg.utils.exception.ErrorCode;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -59,5 +61,10 @@ public class Application extends BaseTimeEntity {
 
 	public Boolean isUpdateAvailable() {
 		return !recruit.isEnd();
+	}
+
+	public void updateApplicationStatus(ApplicationStatus status) {
+		BusinessChecker.mustNotNull(status, ErrorCode.BAD_ARGU);
+		this.status = status;
 	}
 }

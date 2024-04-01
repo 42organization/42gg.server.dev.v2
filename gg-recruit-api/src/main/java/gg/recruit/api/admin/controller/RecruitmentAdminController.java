@@ -8,25 +8,30 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import gg.data.recruit.recruitment.Recruitment;
 import gg.recruit.api.admin.controller.request.RecruitmentCreateReqDto;
+import gg.recruit.api.admin.controller.request.SetFinalApplicationStatusResultReqDto;
 import gg.recruit.api.admin.controller.request.UpdateStatusRequestDto;
 import gg.recruit.api.admin.controller.response.CreatedRecruitmentResponse;
 import gg.recruit.api.admin.controller.response.RecruitmentsResponse;
 import gg.recruit.api.admin.service.RecruitmentAdminService;
+import gg.recruit.api.admin.service.dto.UpdateApplicationStatusDto;
 import gg.recruit.api.admin.service.dto.UpdateRecruitStatusParam;
 import gg.utils.dto.PageRequestDto;
 import lombok.RequiredArgsConstructor;
 
 @RestController
+@Validated
 @RequiredArgsConstructor
 @RequestMapping("/admin/recruitments")
 public class RecruitmentAdminController {
@@ -55,5 +60,19 @@ public class RecruitmentAdminController {
 		Pageable pageable = PageRequest.of(pageRequestDto.getPage() - 1, pageRequestDto.getSize());
 		List<Recruitment> recruitments = recruitmentAdminService.getAllRecruitments(pageable);
 		return ResponseEntity.ok(new RecruitmentsResponse(recruitments));
+	}
+
+	/**
+	 * 지원서의 최종 결과를 등록
+	 * @return ResponseEntity<Void>
+	 */
+	@PostMapping("/{recruitId}/result")
+	public ResponseEntity<Void> setFinalApplicationStatusResult(
+		@PathVariable Long recruitId,
+		@RequestParam("application") Long applicationId,
+		@RequestBody @Valid SetFinalApplicationStatusResultReqDto reqDto) {
+		UpdateApplicationStatusDto dto = new UpdateApplicationStatusDto(reqDto.getStatus(), applicationId, recruitId);
+		recruitmentAdminService.updateFinalApplicationStatusAndNotification(dto);
+		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 }
