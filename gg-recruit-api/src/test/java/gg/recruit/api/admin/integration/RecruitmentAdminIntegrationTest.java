@@ -1,5 +1,6 @@
 package gg.recruit.api.admin.integration;
 
+import static org.assertj.core.api.AssertionsForClassTypes.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -11,6 +12,7 @@ import javax.transaction.Transactional;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -85,5 +87,42 @@ public class RecruitmentAdminIntegrationTest {
 				List.of());
 		}
 
+	}
+
+	@Nested
+	@DisplayName("공고 삭제 시 - DELETE /admin/recruitments/{recruitmentId}")
+	class DeleteRecruitment {
+		@Test
+		@DisplayName("공고가 존재할 경우 삭제 성공 (isDeleted = true) - 204 No Content")
+		void deleteRecruitment() throws Exception {
+			// given
+			Recruitment recruitment = recruitMockData.createRecruitment();
+			long recruitmentId = recruitment.getId();
+			String url = String.format("/admin/recruitments/%d", recruitmentId);
+			String accessToken = testDataUtils.getAdminLoginAccessToken();
+
+			// when
+			mockMvc.perform(delete(url)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+				.andExpect(status().isNoContent());
+
+			// then
+			assertThat(recruitmentAdminRepository.findById(recruitmentId).get().getIsDeleted()).isTrue();
+			assertThat(recruitment.getIsDeleted()).isTrue();
+		}
+
+		@Test
+		@DisplayName("공고가 존재하지 않을 경우 NotExistException 발생하고 삭제는 실패한다. - 404 Not Found")
+		void deleteRecruitmentFail() throws Exception {
+			// given
+			long recruitmentId = 1L;
+			String url = String.format("/admin/recruitments/%d", recruitmentId);
+			String accessToken = testDataUtils.getAdminLoginAccessToken();
+
+			// when then
+			mockMvc.perform(delete(url)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+				.andExpect(status().isNotFound());
+		}
 	}
 }
