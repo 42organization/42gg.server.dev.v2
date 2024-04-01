@@ -1,6 +1,7 @@
 package gg.recruit.api.admin.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -20,12 +21,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import gg.data.recruit.application.Application;
 import gg.data.recruit.recruitment.Recruitment;
 import gg.recruit.api.admin.controller.request.InterviewRequestDto;
 import gg.recruit.api.admin.controller.request.RecruitmentCreateReqDto;
 import gg.recruit.api.admin.controller.request.SetFinalApplicationStatusResultReqDto;
 import gg.recruit.api.admin.controller.request.UpdateStatusRequestDto;
 import gg.recruit.api.admin.controller.response.CreatedRecruitmentResponse;
+import gg.recruit.api.admin.controller.response.RecruitmentApplicantResultResponseDto;
+import gg.recruit.api.admin.controller.response.RecruitmentApplicantResultsResponseDto;
 import gg.recruit.api.admin.controller.response.RecruitmentsResponse;
 import gg.recruit.api.admin.service.RecruitmentAdminService;
 import gg.recruit.api.admin.service.dto.UpdateApplicationStatusDto;
@@ -93,5 +97,22 @@ public class RecruitmentAdminController {
 		recruitmentAdminService.updateDocumentScreening(
 			new UpdateApplicationStatusDto(reqDto.getStatus(), applicationId, recruitId, reqDto.getInterviewDate()));
 		return ResponseEntity.status(HttpStatus.CREATED).build();
+	}
+
+	/**
+	 * 모집글 지원서들의 결과 정보 목록 조회
+	 * @param recruitId
+	 * @return
+	 */
+	@GetMapping("/{recruitId}/applicants")
+	public ResponseEntity<RecruitmentApplicantResultsResponseDto> getRecruitmentApplicantResults(
+		@PathVariable @Positive Long recruitId) {
+		List<Application> resultApplications = recruitmentAdminService.getRecruitmentApplicants(recruitId);
+
+		List<RecruitmentApplicantResultResponseDto> resultDto = resultApplications.stream()
+			.map(RecruitmentApplicantResultResponseDto.MapStruct.INSTANCE::entityToDto)
+			.collect(Collectors.toList());
+
+		return ResponseEntity.ok(new RecruitmentApplicantResultsResponseDto(resultDto));
 	}
 }
