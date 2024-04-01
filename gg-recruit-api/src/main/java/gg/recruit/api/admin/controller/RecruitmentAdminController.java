@@ -36,6 +36,7 @@ import gg.recruit.api.admin.controller.response.RecruitmentApplicantResultRespon
 import gg.recruit.api.admin.controller.response.RecruitmentApplicantResultsResponseDto;
 import gg.recruit.api.admin.controller.response.RecruitmentsResponse;
 import gg.recruit.api.admin.service.RecruitmentAdminService;
+import gg.recruit.api.admin.service.dto.GetRecruitmentApplicationsDto;
 import gg.recruit.api.admin.service.dto.UpdateApplicationStatusDto;
 import gg.recruit.api.admin.service.dto.UpdateRecruitStatusParam;
 import gg.utils.dto.PageRequestDto;
@@ -95,13 +96,18 @@ public class RecruitmentAdminController {
 		@RequestParam(value = "question", required = false) Long questionId,
 		@RequestParam(value = "checks", required = false) String checks,
 		@RequestParam(value = "search", required = false) String search,
-		@PageableDefault(sort = "id", direction = Sort.Direction.DESC, page = 1, size = 10) Pageable page
+		@PageableDefault(sort = "id", direction = Sort.Direction.DESC, page = 1) Pageable page
 	) {
 		Pageable parsedPage;
-		parsedPage = PageRequest.of(page.getPageNumber() - 1, Math.min(page.getPageSize(), 20), page.getSort());
-		List<Long> checkListIds = parseChecks(checks);
+		List<Long> checkListIds;
+		GetRecruitmentApplicationsDto dto;
 
-		return null;
+		parsedPage = PageRequest.of(page.getPageNumber() - 1, Math.min(page.getPageSize(), 20), page.getSort());
+		checkListIds = parseChecks(checks);
+		dto = new GetRecruitmentApplicationsDto(recruitId, questionId, checkListIds, search, parsedPage);
+		recruitmentAdminService.getRecruitmentApplications(dto);
+
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	/**

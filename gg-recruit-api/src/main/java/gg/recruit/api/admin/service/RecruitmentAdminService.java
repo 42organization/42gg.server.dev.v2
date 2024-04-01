@@ -19,6 +19,7 @@ import gg.data.recruit.recruitment.Question;
 import gg.data.recruit.recruitment.Recruitment;
 import gg.data.recruit.recruitment.enums.InputType;
 import gg.recruit.api.admin.service.dto.Form;
+import gg.recruit.api.admin.service.dto.GetRecruitmentApplicationsDto;
 import gg.recruit.api.admin.service.dto.UpdateApplicationStatusDto;
 import gg.recruit.api.admin.service.dto.UpdateRecruitStatusParam;
 import gg.utils.exception.ErrorCode;
@@ -180,5 +181,9 @@ public class RecruitmentAdminService {
 	public List<Application> getRecruitmentApplicants(Long recruitId) {
 		return applicationAdminRepository
 			.findAllByRecruitmentIdWithUserAndRecruitStatusFetchJoinOrderByIdDesc(recruitId);
+	}
+
+	public void getRecruitmentApplications(GetRecruitmentApplicationsDto dto) {
+
 	}
 }
