@@ -78,6 +78,7 @@ public class RecruitmentAdminService {
 		Recruitment recruitment = recruitmentAdminRepository.findById(recruitId)
 			.orElseThrow(() -> new NotExistException("Recruitment not found."));
 		recruitment.del();
+		recruitmentAdminRepository.save(recruitment);
 	}
 
 	/**
