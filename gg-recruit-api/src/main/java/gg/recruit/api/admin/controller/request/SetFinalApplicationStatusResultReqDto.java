@@ -20,6 +20,6 @@ public class SetFinalApplicationStatusResultReqDto {
 
 	@AssertTrue(message = MUST_FINAL_STATUS)
 	private boolean isValidFinalStatus() {
-		return status != null && (status == ApplicationStatus.PASS || status == ApplicationStatus.FAIL);
+		return status != null && status.isFinal;
 	}
 }

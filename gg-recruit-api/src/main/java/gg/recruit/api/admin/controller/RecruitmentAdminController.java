@@ -3,6 +3,7 @@ package gg.recruit.api.admin.controller;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -68,8 +69,8 @@ public class RecruitmentAdminController {
 	 */
 	@PostMapping("/{recruitId}/result")
 	public ResponseEntity<Void> setFinalApplicationStatusResult(
-		@PathVariable Long recruitId,
-		@RequestParam("application") Long applicationId,
+		@PathVariable @Positive Long recruitId,
+		@RequestParam("application") @Positive Long applicationId,
 		@RequestBody @Valid SetFinalApplicationStatusResultReqDto reqDto) {
 		UpdateApplicationStatusDto dto = new UpdateApplicationStatusDto(reqDto.getStatus(), applicationId, recruitId);
 		recruitmentAdminService.updateFinalApplicationStatusAndNotification(dto);

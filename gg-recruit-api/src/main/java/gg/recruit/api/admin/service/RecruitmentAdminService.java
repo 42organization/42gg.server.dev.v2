@@ -87,7 +87,7 @@ public class RecruitmentAdminService {
 	 * 최종 결과 등록 후 알림
 	 * @param dto
 	 */
-	@javax.transaction.Transactional
+	@Transactional
 	public void updateFinalApplicationStatusAndNotification(UpdateApplicationStatusDto dto) {
 		finalApplicationStatusCheck(dto.getStatus());
 		updateApplicationStatus(dto);
