@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 import org.junit.jupiter.api.DisplayName;
@@ -29,10 +30,15 @@ import gg.admin.repo.recruit.ApplicationAdminRepository;
 import gg.admin.repo.recruit.RecruitmentAdminRepository;
 import gg.data.recruit.application.Application;
 import gg.data.recruit.application.enums.ApplicationStatus;
+import gg.admin.repo.recruit.recruitment.QuestionAdminRepository;
+import gg.data.recruit.recruitment.Question;
 import gg.data.recruit.recruitment.Recruitment;
 import gg.data.user.User;
+import gg.data.recruit.recruitment.enums.InputType;
 import gg.recruit.api.RecruitMockData;
 import gg.recruit.api.admin.controller.request.InterviewRequestDto;
+import gg.recruit.api.admin.controller.request.RecruitmentRequestDto;
+import gg.recruit.api.admin.service.dto.Form;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 
@@ -54,6 +60,12 @@ public class RecruitmentAdminIntegrationTest {
 
 	@Autowired
 	private RecruitmentAdminRepository recruitmentAdminRepository;
+
+	@Autowired
+	private QuestionAdminRepository questionAdminRepository;
+
+	@Autowired
+	EntityManager em;
 
 	@Autowired
 	private ApplicationAdminRepository applicationAdminRepository;
@@ -162,6 +174,70 @@ public class RecruitmentAdminIntegrationTest {
 			// then
 			Optional<Application> after = applicationAdminRepository.findById(application.getId());
 			assertThat(after.get().getStatus()).isEqualTo(ApplicationStatus.PROGRESS_INTERVIEW);
+		}
+	}
+
+	@Nested
+	@DisplayName("공고 수정 시 - PUT /admin/recruitments/{recruitmentId}")
+	class PutRecruitment {
+		@Test
+		@DisplayName("공고가 존재하지 않아 수정 불가능한 경우 NotExistException 발생 - 404 Not Found")
+		void updateRecruitmentNotExist() throws Exception {
+			// given
+			long recruitmentId = 1L;
+			String url = String.format("/admin/recruitments/%d", recruitmentId);
+			String accessToken = testDataUtils.getAdminLoginAccessToken();
+			RecruitmentRequestDto recruitmentRequestDto = new RecruitmentRequestDto();
+			String content = objectMapper.writeValueAsString(recruitmentRequestDto);
+
+			// when then
+			mockMvc.perform(put(url)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(content))
+				.andExpect(status().isNotFound());
+		}
+
+		@Test
+		@DisplayName("공고 수정 성공 후 - 204 No Content")
+		void updateRecruitment() throws Exception {
+			// given
+			Recruitment beforeRecruitment = recruitMockData.createRecruitment();
+			long beforeQuestionId = recruitMockData.createQuestion(beforeRecruitment).getId();
+			Form afterQuestion = new Form("updated question", InputType.TEXT, List.of());
+			long recruitmentId = beforeRecruitment.getId();
+			String url = String.format("/admin/recruitments/%d", recruitmentId);
+			String accessToken = testDataUtils.getAdminLoginAccessToken();
+			RecruitmentRequestDto afterRecruitment = RecruitmentRequestDto.builder()
+				.title("updated title")
+				.contents("updated contents")
+				.generation("updated generation")
+				.startDateTime(LocalDateTime.now().plusDays(1))
+				.endDateTime(LocalDateTime.now().plusDays(2))
+				.form(List.of(afterQuestion)).
+				build();
+			String content = objectMapper.writeValueAsString(afterRecruitment);
+
+			// when
+			mockMvc.perform(put(url)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(content))
+				.andExpect(status().isNoContent());
+
+			// flush
+			recruitmentAdminRepository.flush();
+			questionAdminRepository.flush();
+
+			// then
+			Recruitment after = recruitmentAdminRepository.findById(recruitmentId).get();
+			assertThat(after.getId()).isEqualTo(recruitmentId);
+			assertThat(after.getTitle()).isEqualTo(afterRecruitment.getTitle());
+			assertThat(after.getContents()).isEqualTo(afterRecruitment.getContents());
+
+			// 삭제 확인
+			Optional<Question> deletedQuestion = questionAdminRepository.findById(beforeQuestionId);
+			assertThat(deletedQuestion).isEmpty();
 		}
 	}
 }
