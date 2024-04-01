@@ -108,6 +108,7 @@ public class RecruitmentAdminService {
 	 * 지원서 상태 변경
 	 * @param dto
 	 */
+	@Transactional
 	public void updateApplicationStatus(UpdateApplicationStatusDto dto) {
 		Application application = applicationAdminRepository
 			.findByIdAndRecruitId(dto.getApplicationId(), dto.getRecruitId())
