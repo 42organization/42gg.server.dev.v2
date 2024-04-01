@@ -70,6 +70,17 @@ public class RecruitmentAdminService {
 	}
 
 	/**
+	 * 공고 삭제
+	 * @param recruitId 삭제할 공고 id
+	 */
+	@Transactional
+	public void deleteRecruitment(Long recruitId) {
+		Recruitment recruitment = recruitmentAdminRepository.findById(recruitId)
+			.orElseThrow(() -> new NotExistException("Recruitment not found."));
+		recruitment.del();
+	}
+
+	/**
 	 * @param question 질문
 	 * @param checkList 선택지
 	 * @throws InvalidCheckListException 선택지가 필요한데 비어있을 때 발생
