@@ -41,15 +41,15 @@ class RecruitmentAdminServiceTest {
 			List<ApplicationStatus> nonFinalStatuses = Arrays.stream(ApplicationStatus.values())
 				.filter(status -> !status.isFinal)
 				.collect(Collectors.toList());
-			List<UpdateApplicationStatusDto> InvalidDtoList = nonFinalStatuses.stream()
+			List<UpdateApplicationStatusDto> invalidDtoList = nonFinalStatuses.stream()
 				.map((status) -> new UpdateApplicationStatusDto(status, 1L, 1L))
 				.collect(Collectors.toList());
 
 			//Act
 			//Assert
-			for (UpdateApplicationStatusDto InvalidDto : InvalidDtoList) {
+			for (UpdateApplicationStatusDto invalidDto : invalidDtoList) {
 				Assertions.assertThatThrownBy(
-						() -> recruitmentAdminService.updateFinalApplicationStatusAndNotification(InvalidDto))
+						() -> recruitmentAdminService.updateFinalApplicationStatusAndNotification(invalidDto))
 					.isInstanceOf(BusinessException.class);
 			}
 		}
