@@ -178,6 +178,6 @@ public class RecruitmentAdminService {
 	}
 
 	public List<Application> getRecruitmentApplicants(Long recruitId) {
-		return null;
+		return applicationAdminRepository.findAllByRecruitmentIdWithUserAndRecruitStatusFetchJoin(recruitId);
 	}
 }
