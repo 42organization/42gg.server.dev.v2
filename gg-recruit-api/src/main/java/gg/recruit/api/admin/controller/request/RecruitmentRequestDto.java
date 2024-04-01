@@ -9,6 +9,10 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
+
 import gg.data.recruit.recruitment.Recruitment;
 import gg.recruit.api.admin.service.dto.Form;
 import lombok.Getter;
@@ -16,7 +20,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class RecruitmentCreateReqDto {
+public class RecruitmentRequestDto {
 	@FutureOrPresent(message = "시작일은 현재 시간 이후여야 합니다.")
 	LocalDateTime startDateTime;
 
@@ -38,7 +42,7 @@ public class RecruitmentCreateReqDto {
 	@NotNull @Valid
 	List<Form> form;
 
-	public RecruitmentCreateReqDto(LocalDateTime startDateTime, LocalDateTime endDateTime, String title,
+	public RecruitmentRequestDto(LocalDateTime startDateTime, LocalDateTime endDateTime, String title,
 		String contents,
 		String generation, List<Form> form) {
 		this.startDateTime = startDateTime;
@@ -49,13 +53,16 @@ public class RecruitmentCreateReqDto {
 		this.form = form;
 	}
 
-	public Recruitment toRecruitment() {
-		return Recruitment.builder()
-			.startTime(startDateTime)
-			.endTime(endDateTime)
-			.title(title)
-			.contents(contents)
-			.generation(generation)
-			.build();
+	@Mapper
+	public interface RecruitmentMapper {
+		RecruitmentMapper INSTANCE = Mappers.getMapper(RecruitmentMapper.class);
+
+		@Mapping(source = "startTime", target = "startDateTime")
+		@Mapping(source = "endTime", target = "endDateTime")
+		RecruitmentRequestDto entityToDto(Recruitment entity);
+
+		@Mapping(source = "startDateTime", target = "startTime")
+		@Mapping(source = "endDateTime", target = "endTime")
+		Recruitment dtoToEntity(RecruitmentRequestDto dto);
 	}
 }

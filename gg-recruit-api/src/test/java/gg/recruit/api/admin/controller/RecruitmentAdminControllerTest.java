@@ -21,7 +21,7 @@ import org.testcontainers.shaded.com.google.common.net.HttpHeaders;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.data.recruit.recruitment.enums.InputType;
-import gg.recruit.api.admin.controller.request.RecruitmentCreateReqDto;
+import gg.recruit.api.admin.controller.request.RecruitmentRequestDto;
 import gg.recruit.api.admin.service.dto.Form;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
@@ -51,7 +51,7 @@ public class RecruitmentAdminControllerTest {
 					.checkList(List.of("선택지1", "선택지2")).build(),
 				Form.builder().question("질문2").inputType(InputType.TEXT).build()
 			);
-			RecruitmentCreateReqDto requestDto = new RecruitmentCreateReqDto(LocalDateTime.now().plusDays(1),
+			RecruitmentRequestDto requestDto = new RecruitmentRequestDto(LocalDateTime.now().plusDays(1),
 				LocalDateTime.now().plusDays(2),
 				"제목", "내용", "모집 기수", forms);
 
@@ -73,7 +73,7 @@ public class RecruitmentAdminControllerTest {
 		String accessToken = testDataUtils.getAdminLoginAccessToken();
 		List<Form> forms = List.of(Form.builder().question("질문").inputType(InputType.SINGLE_CHECK).build());
 		// .checkList(List.of()).build());
-		RecruitmentCreateReqDto requestDto = new RecruitmentCreateReqDto(LocalDateTime.now().plusDays(1),
+		RecruitmentRequestDto requestDto = new RecruitmentRequestDto(LocalDateTime.now().plusDays(1),
 			LocalDateTime.now().plusDays(2),
 			"제목", "내용", "모집 기수", forms);
 

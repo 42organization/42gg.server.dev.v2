@@ -80,8 +80,31 @@ public class Recruitment extends BaseTimeEntity {
 		this.isFinish = finish;
 	}
 
+	/**
+	 * Question에서 호출하는 연관관계 편의 메서드, 기타 호출 금지
+	 * @param question
+	 */
 	protected void addQuestions(Question question) {
 		mustNotNull(question, NULL_POINT);
 		this.questions.add(question);
+	}
+
+	/**
+	 * 연관관계 주인까지 전체 수정 메서드
+	 * @param updatedRecruitment
+	 * @param questions
+	 */
+	public void update(Recruitment updatedRecruitment, List<Question> questions) {
+		mustNotNull(updatedRecruitment, NULL_POINT);
+		mustNotNull(questions, NULL_POINT);
+
+		this.title = updatedRecruitment.getTitle();
+		this.contents = updatedRecruitment.getContents();
+		this.generation = updatedRecruitment.getGeneration();
+		this.startTime = updatedRecruitment.getStartTime();
+		this.endTime = updatedRecruitment.getEndTime();
+
+		this.questions.clear();        // 연관관계 주인이므로 연관관계 수정은 주인이 해야함?
+		this.questions = questions;
 	}
 }

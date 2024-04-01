@@ -89,6 +89,26 @@ public class RecruitmentAdminService {
 	}
 
 	/**
+	 * 채용 공고를 수정한다.
+	 * @param recruitId 채용 공고 ID
+	 * @param updatedRecruitment 수정할 채용 공고
+	 * @param forms 수정할 질문과 선택지
+	 * @throws NotExistException 채용 공고가 존재하지 않을 때 발생
+	 * @throws IllegalArgumentException 채용 공고 시작 시간이 현재 시간과 같거나 이후일 때 발생
+	 */
+	@Transactional
+	public void updateRecruitment(Long recruitId, Recruitment updatedRecruitment, List<Form> forms) {
+		Recruitment target = recruitmentAdminRepository.findById(recruitId)
+			.orElseThrow(() -> new NotExistException("Recruitment not found."));
+		LocalDateTime now = LocalDateTime.now();
+		if (target.getStartTime().isEqual(now) || target.getStartTime().isAfter(now)) {
+			throw new IllegalArgumentException("Recruitment start time is same or after now.");
+		}
+		target.update(updatedRecruitment, target.getQuestions());
+		createRecruitment(target, forms);
+	}
+
+	/**
 	 * @param question 질문
 	 * @param checkList 선택지
 	 * @throws InvalidCheckListException 선택지가 필요한데 비어있을 때 발생

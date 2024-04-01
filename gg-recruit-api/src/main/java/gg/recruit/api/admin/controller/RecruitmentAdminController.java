@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,8 +29,8 @@ import org.springframework.web.bind.annotation.RestController;
 import gg.data.recruit.application.Application;
 import gg.data.recruit.recruitment.Recruitment;
 import gg.recruit.api.admin.controller.request.InterviewRequestDto;
-import gg.recruit.api.admin.controller.request.RecruitmentCreateReqDto;
 import gg.recruit.api.admin.controller.request.SetFinalApplicationStatusResultReqDto;
+import gg.recruit.api.admin.controller.request.RecruitmentRequestDto;
 import gg.recruit.api.admin.controller.request.UpdateStatusRequestDto;
 import gg.recruit.api.admin.controller.response.CreatedRecruitmentResponse;
 import gg.recruit.api.admin.controller.response.GetRecruitmentApplicationResponseDto;
@@ -54,10 +55,11 @@ public class RecruitmentAdminController {
 
 	@PostMapping
 	public ResponseEntity<CreatedRecruitmentResponse> createRecruitment(
-		@RequestBody @Valid RecruitmentCreateReqDto recruitmentDto) {
-		Recruitment recruitment = recruitmentDto.toRecruitment();
+		@RequestBody @Valid RecruitmentRequestDto recruitmentDto) {
+		Recruitment recruitment = RecruitmentRequestDto.RecruitmentMapper.INSTANCE.dtoToEntity(recruitmentDto);
 		Long recruitmentId = recruitmentAdminService.createRecruitment(recruitment, recruitmentDto.getForm()).getId();
 		CreatedRecruitmentResponse createdRecruitmentResponse = new CreatedRecruitmentResponse(recruitmentId);
+
 		return ResponseEntity.status(HttpStatus.CREATED).body(createdRecruitmentResponse);
 	}
 
@@ -128,6 +130,14 @@ public class RecruitmentAdminController {
 	@DeleteMapping("/{recruitId}")
 	public ResponseEntity<Void> deleteRecruitment(@PathVariable @Positive Long recruitId) {
 		recruitmentAdminService.deleteRecruitment(recruitId);
+		return ResponseEntity.noContent().build();
+	}
+
+	@PutMapping("/{recruitId}")
+	public ResponseEntity<Void> updateRecruitment(@PathVariable @Positive Long recruitId,
+		@RequestBody @Valid RecruitmentRequestDto recruitmentDto) {
+		Recruitment recruitment = RecruitmentRequestDto.RecruitmentMapper.INSTANCE.dtoToEntity(recruitmentDto);
+		recruitmentAdminService.updateRecruitment(recruitId, recruitment, recruitmentDto.getForm());
 		return ResponseEntity.noContent().build();
 	}
 
