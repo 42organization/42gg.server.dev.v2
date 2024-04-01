@@ -44,7 +44,7 @@ public class Question extends BaseTimeEntity {
 	@Column(length = 300)
 	private String question;
 
-	@OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "question", orphanRemoval = true, cascade = CascadeType.ALL)
 	private List<CheckList> checkLists = new ArrayList<>();
 
 	private int sortNum;

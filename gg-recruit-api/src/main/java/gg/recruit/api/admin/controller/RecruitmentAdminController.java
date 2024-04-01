@@ -137,7 +137,8 @@ public class RecruitmentAdminController {
 	public ResponseEntity<Void> updateRecruitment(@PathVariable @Positive Long recruitId,
 		@RequestBody @Valid RecruitmentRequestDto recruitmentDto) {
 		Recruitment recruitment = RecruitmentRequestDto.RecruitmentMapper.INSTANCE.dtoToEntity(recruitmentDto);
-		recruitmentAdminService.updateRecruitment(recruitId, recruitment, recruitmentDto.getForm());
+		recruitment = recruitmentAdminService.updateRecruitment(recruitId, recruitment, recruitmentDto.getForm());
+		recruitmentAdminService.createRecruitment(recruitment, recruitmentDto.getForm());
 		return ResponseEntity.noContent().build();
 	}
 

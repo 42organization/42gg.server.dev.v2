@@ -15,10 +15,13 @@ import org.mapstruct.factory.Mappers;
 
 import gg.data.recruit.recruitment.Recruitment;
 import gg.recruit.api.admin.service.dto.Form;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
 @NoArgsConstructor
 public class RecruitmentRequestDto {
 	@FutureOrPresent(message = "시작일은 현재 시간 이후여야 합니다.")
@@ -42,6 +45,7 @@ public class RecruitmentRequestDto {
 	@NotNull @Valid
 	List<Form> form;
 
+	@Builder
 	public RecruitmentRequestDto(LocalDateTime startDateTime, LocalDateTime endDateTime, String title,
 		String contents,
 		String generation, List<Form> form) {
@@ -60,5 +64,9 @@ public class RecruitmentRequestDto {
 		@Mapping(source = "startDateTime", target = "startTime")
 		@Mapping(source = "endDateTime", target = "endTime")
 		Recruitment dtoToEntity(RecruitmentRequestDto dto);
+
+		@Mapping(source = "startTime", target = "startDateTime")
+		@Mapping(source = "endTime", target = "endDateTime")
+		RecruitmentRequestDto entityToDto(Recruitment entity);
 	}
 }

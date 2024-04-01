@@ -3,6 +3,8 @@ package gg.recruit.api.admin.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -36,6 +38,7 @@ import lombok.RequiredArgsConstructor;
 public class RecruitmentAdminService {
 	private final RecruitmentAdminRepository recruitmentAdminRepository;
 	private final ApplicationAdminRepository applicationAdminRepository;
+	private final EntityManager entityManager;
 	private final RecruitStatusAdminRepository recruitStatusAdminRepository;
 
 	/**
@@ -97,15 +100,15 @@ public class RecruitmentAdminService {
 	 * @throws IllegalArgumentException 채용 공고 시작 시간이 현재 시간과 같거나 이후일 때 발생
 	 */
 	@Transactional
-	public void updateRecruitment(Long recruitId, Recruitment updatedRecruitment, List<Form> forms) {
+	public Recruitment updateRecruitment(Long recruitId, Recruitment updatedRecruitment, List<Form> forms) {
 		Recruitment target = recruitmentAdminRepository.findById(recruitId)
 			.orElseThrow(() -> new NotExistException("공고를 찾을 수 없습니다."));
 		LocalDateTime now = LocalDateTime.now();
 		if (target.getStartTime().isEqual(now) || target.getStartTime().isBefore(now)) {
 			throw new ForbiddenException("수정 불가능한 공고입니다.");
 		}
-		target.update(updatedRecruitment, target.getQuestions());
-		createRecruitment(target, forms);
+		target.update(updatedRecruitment);
+		return target;
 	}
 
 	/**

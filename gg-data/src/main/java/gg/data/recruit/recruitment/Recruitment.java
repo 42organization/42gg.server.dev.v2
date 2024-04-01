@@ -47,7 +47,7 @@ public class Recruitment extends BaseTimeEntity {
 	@Column(nullable = false)
 	private LocalDateTime endTime;
 
-	@OneToMany(mappedBy = "recruit", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "recruit", orphanRemoval = true, cascade = CascadeType.ALL)
 	private List<Question> questions = new ArrayList<>();
 
 	@Builder
@@ -92,9 +92,8 @@ public class Recruitment extends BaseTimeEntity {
 	/**
 	 * 연관관계 주인까지 전체 수정 메서드
 	 * @param updatedRecruitment
-	 * @param questions
 	 */
-	public void update(Recruitment updatedRecruitment, List<Question> questions) {
+	public void update(Recruitment updatedRecruitment) {
 		mustNotNull(updatedRecruitment, NULL_POINT);
 		mustNotNull(questions, NULL_POINT);
 
@@ -104,7 +103,10 @@ public class Recruitment extends BaseTimeEntity {
 		this.startTime = updatedRecruitment.getStartTime();
 		this.endTime = updatedRecruitment.getEndTime();
 
-		this.questions.clear();        // 연관관계 주인이므로 연관관계 수정은 주인이 해야함?
-		this.questions = questions;
+		for (Question question : this.questions) {
+			question.getCheckLists().clear();
+		}
+		this.questions.clear();
+		// this.questions = questions;
 	}
 }
