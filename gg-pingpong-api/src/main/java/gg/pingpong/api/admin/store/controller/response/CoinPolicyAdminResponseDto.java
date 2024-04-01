@@ -3,9 +3,9 @@ package gg.pingpong.api.admin.store.controller.response;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import gg.data.pingpong.store.CoinPolicy;
 import gg.data.user.User;
 import gg.utils.exception.user.UserNotFoundException;
-import gg.data.pingpong.store.CoinPolicy;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
