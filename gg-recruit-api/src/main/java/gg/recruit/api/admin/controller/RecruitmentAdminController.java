@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,7 +49,7 @@ public class RecruitmentAdminController {
 	}
 
 	@PatchMapping("/{recruitId}/status")
-	public ResponseEntity<Void> updateRecruitStatus(@PathVariable Long recruitId,
+	public ResponseEntity<Void> updateRecruitStatus(@PathVariable @Positive Long recruitId,
 		@RequestBody UpdateStatusRequestDto requestDto) {
 
 		recruitmentAdminService.updateRecruitStatus(
@@ -75,5 +76,11 @@ public class RecruitmentAdminController {
 		UpdateApplicationStatusDto dto = new UpdateApplicationStatusDto(reqDto.getStatus(), applicationId, recruitId);
 		recruitmentAdminService.updateFinalApplicationStatusAndNotification(dto);
 		return new ResponseEntity<>(HttpStatus.CREATED);
+	}
+
+	@DeleteMapping("/{recruitId}")
+	public ResponseEntity<Void> deleteRecruitment(@PathVariable @Positive Long recruitId) {
+		recruitmentAdminService.deleteRecruitment(recruitId);
+		return ResponseEntity.noContent().build();
 	}
 }
