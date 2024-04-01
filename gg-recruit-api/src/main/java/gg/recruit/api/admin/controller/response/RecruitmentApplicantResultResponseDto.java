@@ -34,8 +34,16 @@ public class RecruitmentApplicantResultResponseDto {
 
 		@Mapping(source = "id", target = "applicationId")
 		@Mapping(source = "user.intraId", target = "intraId")
-		@Mapping(source = "recruitStatus.interviewDate", target = "interviewDate")
+		@Mapping(target = "interviewDate", expression = "java(mapInterviewDate(dto))")
 		@Mapping(source = "status", target = "result")
 		RecruitmentApplicantResultResponseDto entityToDto(Application dto);
+
+		default LocalDateTime mapInterviewDate(Application application) {
+			if (application.getRecruitStatus() != null) {
+				return application.getRecruitStatus().getInterviewDate();
+			} else {
+				return null;
+			}
+		}
 	}
 }
