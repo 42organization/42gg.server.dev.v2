@@ -3,7 +3,6 @@ package gg.data.recruit.application;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 
 import gg.data.recruit.recruitment.Question;
 import lombok.NoArgsConstructor;
@@ -12,10 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @DiscriminatorValue("TEXT")
 public class ApplicationAnswerText extends ApplicationAnswer {
-
-	@Id
-	private Long id;
-
 	@Column(length = 1000)
 	private String answer;
 
