@@ -105,7 +105,7 @@ public class RecruitmentAdminController {
 		parsedPage = PageRequest.of(page.getPageNumber() - 1, Math.min(page.getPageSize(), 20), page.getSort());
 		checkListIds = parseChecks(checks);
 		dto = new GetRecruitmentApplicationsDto(recruitId, questionId, checkListIds, search, parsedPage);
-		recruitmentAdminService.getRecruitmentApplications(dto);
+		recruitmentAdminService.findApplicationsWithAnswersAndUserWithFilter(dto);
 
 		return new ResponseEntity<>(HttpStatus.OK);
 	}

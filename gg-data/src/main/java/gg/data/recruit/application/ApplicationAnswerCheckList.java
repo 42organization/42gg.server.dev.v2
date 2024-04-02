@@ -9,11 +9,13 @@ import javax.persistence.ManyToOne;
 
 import gg.data.recruit.recruitment.CheckList;
 import gg.data.recruit.recruitment.Question;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @DiscriminatorValue("CHECK_LIST")
+@Getter
 public class ApplicationAnswerCheckList extends ApplicationAnswer {
 
 	@Id
