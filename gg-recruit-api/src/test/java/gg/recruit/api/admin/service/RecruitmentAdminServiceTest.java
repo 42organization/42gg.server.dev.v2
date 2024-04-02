@@ -2,6 +2,7 @@ package gg.recruit.api.admin.service;
 
 import static org.mockito.ArgumentMatchers.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -14,11 +15,15 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import gg.admin.repo.recruit.ApplicationAdminRepository;
 import gg.admin.repo.recruit.RecruitmentAdminRepository;
 import gg.data.recruit.application.Application;
 import gg.data.recruit.application.enums.ApplicationStatus;
+import gg.recruit.api.admin.service.dto.GetRecruitmentApplicationsDto;
 import gg.recruit.api.admin.service.dto.UpdateApplicationStatusDto;
 import gg.utils.annotation.UnitTest;
 import gg.utils.exception.custom.NotExistException;
@@ -73,6 +78,24 @@ class RecruitmentAdminServiceTest {
 					eq(validDto.getRecruitId()))).thenReturn(Optional.of(application));
 				recruitmentAdminService.updateFinalApplicationStatusAndNotification(validDto);
 			}
+		}
+	}
+
+	@Nested
+	@DisplayName("getRecruitmentApplicationsFetchApplicationAnswersWithFilter")
+	class GetRecruitmentApplicationsFetchApplicationAnswersWithFilter {
+		@Test
+		@DisplayName("조회 성공")
+		void success() {
+			//Arrange
+			Pageable pageable = PageRequest.of(1, 10, Sort.by(new Sort.Order(Sort.Direction.DESC, "id")));
+			GetRecruitmentApplicationsDto dto = new GetRecruitmentApplicationsDto(1L, null, new ArrayList<>(), null,
+				pageable);
+			recruitmentAdminService.findApplicationsWithAnswersAndUserWithFilter(dto);
+
+			//Act
+
+			//Assert
 		}
 	}
 }
