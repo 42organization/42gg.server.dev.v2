@@ -15,12 +15,26 @@ import gg.data.recruit.application.Application;
 public interface ApplicationAdminRepository extends JpaRepository<Application, Long> {
 	Optional<Application> findByIdAndRecruitId(Long applicationId, Long recruitId);
 
-	@EntityGraph(attributePaths = {"user", "applicationAnswers", "applicationAnswers.question"})
-	Page<Application> findByRecruitIdAndIsDeletedFalse(Long recruitId, Pageable pageable);
-
+	/**
+	 * id 조건에 일치하는 지원서 목록 반환
+	 * @param recruitId
+	 * @param pageable
+	 * @return
+	 */
 	@EntityGraph(attributePaths = {"user", "applicationAnswers", "applicationAnswers.question",
 		"applicationAnswers.question.checkLists"})
-	@Query("SELECT a FROM Application a WHERE a.id IN " +
+	Page<Application> findByRecruitIdAndIsDeletedFalse(Long recruitId, Pageable pageable);
+
+	/**
+	 * id 조건 및 체크리스트 조건에 일치하는 지원서 목록 반환
+	 * @param recruitId
+	 * @param questionId
+	 * @param checkListIds
+	 * @param pageable
+	 */
+	@EntityGraph(attributePaths = {"user", "applicationAnswers", "applicationAnswers.question",
+		"applicationAnswers.question.checkLists"})
+	@Query("SELECT a FROM Application a WHERE a.isDeleted = false AND a.id IN " +
 		"(SELECT aa.application.id FROM ApplicationAnswerCheckList aa " +
 		"JOIN aa.checkList cl " +
 		"JOIN aa.application.recruit r " +

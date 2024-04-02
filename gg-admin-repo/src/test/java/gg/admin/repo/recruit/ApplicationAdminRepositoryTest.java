@@ -8,6 +8,7 @@ import java.util.Optional;
 import javax.persistence.EntityManager;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -104,12 +105,19 @@ class ApplicationAdminRepositoryTest {
 	}
 
 	@Nested
-	@DisplayName("FindAllByCheckList")
-	class FindAllByCheckList {
-		@Test
-		@DisplayName("여러개의 조건 중 하나만 만족해도 조회가 성공")
-		void success() {
-			//Arrange
+	@DisplayName("application by getRecruitmentApplications condition success test")
+	class ApplicationByGetRecruitmentApplicationsCondition {
+		Long wrongApplicationId;
+		Long userId;
+		Long recruitmentId;
+		Long applicationId;
+		Long questionId;
+		Long checkListId1;
+		Long checkListId2;
+		Long applicationAnswerCheckListId;
+
+		@BeforeEach
+		public void init() {
 			Recruitment recruitment = testDataUtils.createNewRecruitment();
 			User user = testDataUtils.createNewUser();
 
@@ -131,50 +139,80 @@ class ApplicationAdminRepositoryTest {
 			CheckList checkList3 = testDataUtils.createNewCheckList(question, "dd");
 			ApplicationAnswerCheckList applicationAnswerCheckList3 = testDataUtils.createNewApplicationAnswerCheckList(
 				application, question, checkList3);
-			Long wrongApplicationId = application3.getId();
 
-			Long userId = user.getId();
-			Long recruitmentId = recruitment.getId();
-			Long applicationId = application.getId();
-			Long questionId = question.getId();
-			Long checkListId1 = checkList.getId();
-			Long checkListId2 = checkList2.getId();
-			Long applicationAnswerCheckListId = applicationAnswerCheckList.getId();
+			wrongApplicationId = application3.getId();
+			userId = user.getId();
+			recruitmentId = recruitment.getId();
+			applicationId = application.getId();
+			questionId = question.getId();
+			checkListId1 = checkList.getId();
+			checkListId2 = checkList2.getId();
+			applicationAnswerCheckListId = applicationAnswerCheckList.getId();
 
 			entityManager.flush();
 			entityManager.clear();
+		}
 
-			List<Long> checkListTargetId = new ArrayList<>();
-			checkListTargetId.add(checkListId1);
-			checkListTargetId.add(checkListId2);
-			Pageable pageable = PageRequest.of(0, 10);
+		@Nested
+		@DisplayName("findByRecruitIdAndIsDeletedFalse")
+		class findByRecruitIdAndIsDeletedFalse {
 
-			// Act
-			System.out.println("/////////////////////////////////////////////////////////////////////////////");
-			Page<Application> result = applicationAdminRepository.findAllByCheckList(recruitmentId,
-				questionId, checkListTargetId, pageable);
+			@Test
+			@DisplayName("조회 성공")
+			void success() {
+				//Arrange
+				Pageable pageable = PageRequest.of(0, 10);
 
-			// Assert
-			Assertions.assertThat(result.getContent().size()).isEqualTo(2);
-			for (Application entity : result.getContent()) {
-				Assertions.assertThat(entity.getId()).isNotEqualTo(wrongApplicationId);
+				// Act
+				Page<Application> result = applicationAdminRepository.findByRecruitIdAndIsDeletedFalse(recruitmentId,
+					pageable);
+
+				// Assert
+				Assertions.assertThat(result.getContent().size()).isEqualTo(3);
 			}
-			System.out.println(result.getContent().get(0).getId());
-			System.out.println(result.getContent().get(0).getUser().getIntraId());
-			// System.out.println(
-			// 	result.getContent().get(0).getApplicationAnswers().get(0).getQuestionId());
-			// System.out.println(
-			// 	result.getContent().get(0).getApplicationAnswers().get(0).getQuestion().getQuestion());
-			// System.out.println(
-			// 	result.getContent().get(0).getApplicationAnswers().get(0).getInputType());
+		}
 
-			// ApplicationAnswerCheckList applicationAnswer = (ApplicationAnswerCheckList)result.getContent()
-			// 	.get(0)
-			// 	.getApplication()
-			// 	.getApplicationAnswers()
-			// 	.get(0);
-			//
-			// System.out.println(applicationAnswer.getCheckList().getContent());
+		@Nested
+		@DisplayName("FindAllByCheckList")
+		class FindAllByCheckList {
+
+			@Test
+			@DisplayName("여러개의 조건 중 하나만 만족해도 조회가 성공")
+			void success() {
+				//Arrange
+				List<Long> checkListTargetId = new ArrayList<>();
+				checkListTargetId.add(checkListId1);
+				checkListTargetId.add(checkListId2);
+				Pageable pageable = PageRequest.of(0, 10);
+
+				// Act
+				System.out.println("/////////////////////////////////////////////////////////////////////////////");
+				Page<Application> result = applicationAdminRepository.findAllByCheckList(recruitmentId,
+					questionId, checkListTargetId, pageable);
+
+				// Assert
+				Assertions.assertThat(result.getContent().size()).isEqualTo(2);
+				for (Application entity : result.getContent()) {
+					Assertions.assertThat(entity.getId()).isNotEqualTo(wrongApplicationId);
+				}
+				System.out.println(result.getContent().get(0).getId());
+				System.out.println(result.getContent().get(0).getUser().getIntraId());
+				// System.out.println(
+				// 	result.getContent().get(0).getApplicationAnswers().get(0).getQuestionId());
+				// System.out.println(
+				// 	result.getContent().get(0).getApplicationAnswers().get(0).getQuestion().getQuestion());
+				// System.out.println(
+				// 	result.getContent().get(0).getApplicationAnswers().get(0).getInputType());
+
+				// ApplicationAnswerCheckList applicationAnswer = (ApplicationAnswerCheckList)result.getContent()
+				// 	.get(0)
+				// 	.getApplication()
+				// 	.getApplicationAnswers()
+				// 	.get(0);
+				//
+				// System.out.println(applicationAnswer.getCheckList().getContent());
+			}
 		}
 	}
+
 }
