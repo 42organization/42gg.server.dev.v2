@@ -64,9 +64,5 @@ public class RecruitmentRequestDto {
 		@Mapping(source = "startDateTime", target = "startTime")
 		@Mapping(source = "endDateTime", target = "endTime")
 		Recruitment dtoToEntity(RecruitmentRequestDto dto);
-
-		@Mapping(source = "startTime", target = "startDateTime")
-		@Mapping(source = "endTime", target = "endDateTime")
-		RecruitmentRequestDto entityToDto(Recruitment entity);
 	}
 }

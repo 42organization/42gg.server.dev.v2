@@ -212,8 +212,8 @@ public class RecruitmentAdminIntegrationTest {
 				.generation("updated generation")
 				.startDateTime(LocalDateTime.now().plusDays(1))
 				.endDateTime(LocalDateTime.now().plusDays(2))
-				.form(List.of(afterQuestion)).
-				build();
+				.form(List.of(afterQuestion))
+				.build();
 			String content = objectMapper.writeValueAsString(afterRecruitment);
 
 			// when
