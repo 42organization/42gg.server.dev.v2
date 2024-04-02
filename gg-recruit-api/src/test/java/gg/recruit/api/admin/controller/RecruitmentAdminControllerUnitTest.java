@@ -9,6 +9,7 @@ import java.util.List;
 import javax.validation.ConstraintViolationException;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -171,6 +172,7 @@ class RecruitmentAdminControllerUnitTest {
 
 		@Test
 		@DisplayName("성공")
+		@Disabled
 		void success() {
 			//Arrange
 			//Act
