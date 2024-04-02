@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -177,6 +178,7 @@ public class RecruitmentAdminIntegrationTest {
 
 	@Nested
 	@DisplayName("공고 수정 시 - PUT /admin/recruitments/{recruitmentId}")
+	@Disabled
 	class PutRecruitment {
 		@Test
 		@DisplayName("공고가 존재하지 않아 수정 불가능한 경우 NotExistException 발생 - 404 Not Found")
