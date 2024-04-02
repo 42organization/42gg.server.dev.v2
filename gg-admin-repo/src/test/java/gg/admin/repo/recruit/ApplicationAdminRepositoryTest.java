@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import gg.data.recruit.application.Application;
 import gg.data.recruit.application.RecruitStatus;
 import gg.data.recruit.application.ApplicationAnswerCheckList;
+import gg.data.recruit.application.ApplicationAnswerText;
 import gg.data.recruit.recruitment.CheckList;
 import gg.data.recruit.recruitment.Question;
 import gg.data.recruit.recruitment.Recruitment;
@@ -115,6 +116,7 @@ class ApplicationAdminRepositoryTest {
 		Long checkListId1;
 		Long checkListId2;
 		Long applicationAnswerCheckListId;
+		String search = "hello world";
 
 		@BeforeEach
 		public void init() {
@@ -134,11 +136,19 @@ class ApplicationAdminRepositoryTest {
 			ApplicationAnswerCheckList applicationAnswerCheckList2 = testDataUtils.createNewApplicationAnswerCheckList(
 				application2, question, checkList2);
 
-			//must not search
+			//must not contain
 			Application application3 = testDataUtils.createApplication(user, recruitment);
 			CheckList checkList3 = testDataUtils.createNewCheckList(question, "dd");
 			ApplicationAnswerCheckList applicationAnswerCheckList3 = testDataUtils.createNewApplicationAnswerCheckList(
 				application, question, checkList3);
+
+			// search target
+			ApplicationAnswerText answerText = testDataUtils.createNewApplicationAnswerText(application, question,
+				search);
+			ApplicationAnswerText answerText2 = testDataUtils.createNewApplicationAnswerText(application2, question,
+				"pp" + search + "pp");
+			ApplicationAnswerText answerText3 = testDataUtils.createNewApplicationAnswerText(application3, question,
+				"pp" + search);
 
 			wrongApplicationId = application3.getId();
 			userId = user.getId();
@@ -186,7 +196,6 @@ class ApplicationAdminRepositoryTest {
 				Pageable pageable = PageRequest.of(0, 10);
 
 				// Act
-				System.out.println("/////////////////////////////////////////////////////////////////////////////");
 				Page<Application> result = applicationAdminRepository.findAllByCheckList(recruitmentId,
 					questionId, checkListTargetId, pageable);
 
@@ -195,24 +204,28 @@ class ApplicationAdminRepositoryTest {
 				for (Application entity : result.getContent()) {
 					Assertions.assertThat(entity.getId()).isNotEqualTo(wrongApplicationId);
 				}
-				System.out.println(result.getContent().get(0).getId());
-				System.out.println(result.getContent().get(0).getUser().getIntraId());
-				// System.out.println(
-				// 	result.getContent().get(0).getApplicationAnswers().get(0).getQuestionId());
-				// System.out.println(
-				// 	result.getContent().get(0).getApplicationAnswers().get(0).getQuestion().getQuestion());
-				// System.out.println(
-				// 	result.getContent().get(0).getApplicationAnswers().get(0).getInputType());
-
-				// ApplicationAnswerCheckList applicationAnswer = (ApplicationAnswerCheckList)result.getContent()
-				// 	.get(0)
-				// 	.getApplication()
-				// 	.getApplicationAnswers()
-				// 	.get(0);
-				//
-				// System.out.println(applicationAnswer.getCheckList().getContent());
 			}
 		}
+
+		@Nested
+		@DisplayName("findAllByContainSearch")
+		class FindAllByContainSearch {
+
+			@Test
+			@DisplayName("search를 포함하면 조회 성공")
+			void success() {
+				//Arrange
+				Pageable pageable = PageRequest.of(0, 10);
+
+				// Act
+				Page<Application> result = applicationAdminRepository.findAllByContainSearch(recruitmentId,
+					questionId, search, pageable);
+
+				// Assert
+				Assertions.assertThat(result.getContent().size()).isEqualTo(3);
+			}
+		}
+
 	}
 
 }

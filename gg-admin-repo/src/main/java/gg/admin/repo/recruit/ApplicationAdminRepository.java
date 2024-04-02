@@ -46,6 +46,19 @@ public interface ApplicationAdminRepository extends JpaRepository<Application, L
 		@Param("checkListIds") List<Long> checkListIds,
 		Pageable pageable);
 
+	@EntityGraph(attributePaths = {"user", "applicationAnswers", "applicationAnswers.question",
+		"applicationAnswers.question.checkLists"})
+	@Query("SELECT a FROM Application a WHERE a.isDeleted = false AND a.id IN " +
+		"(SELECT aa.application.id FROM ApplicationAnswerText aa " +
+		"JOIN aa.application.recruit r " +
+		"WHERE r.id =:recruitId AND aa.question.id = :questionId AND aa.answer LIKE CONCAT('%', :search, '%')) " +
+		"ORDER BY a.id DESC")
+	Page<Application> findAllByContainSearch(
+		@Param("recruitId") Long recruitId,
+		@Param("questionId") Long questionId,
+		@Param("search") String search,
+		Pageable pageable);
+
 	@Query("SELECT a FROM Application a "
 		+ "JOIN FETCH a.user "
 		+ "LEFT JOIN FETCH a.recruitStatus "

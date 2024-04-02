@@ -47,6 +47,7 @@ import gg.data.pingpong.tournament.type.TournamentStatus;
 import gg.data.pingpong.tournament.type.TournamentType;
 import gg.data.recruit.application.Application;
 import gg.data.recruit.application.ApplicationAnswerCheckList;
+import gg.data.recruit.application.ApplicationAnswerText;
 import gg.data.recruit.recruitment.CheckList;
 import gg.data.recruit.recruitment.Question;
 import gg.data.recruit.application.RecruitStatus;
@@ -961,5 +962,12 @@ public class TestDataUtils {
 			question, checkList);
 		entityManager.persist(applicationAnswerCheckList);
 		return applicationAnswerCheckList;
+	}
+
+	public ApplicationAnswerText createNewApplicationAnswerText(Application application, Question question,
+		String search) {
+		ApplicationAnswerText answerText = new ApplicationAnswerText(application, question, search);
+		entityManager.persist(answerText);
+		return answerText;
 	}
 }

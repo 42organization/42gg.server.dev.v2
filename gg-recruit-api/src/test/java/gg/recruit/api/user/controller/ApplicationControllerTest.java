@@ -219,7 +219,7 @@ class ApplicationControllerTest {
 		//then
 		List<ApplicationAnswer> allAnswers = recruitMockData.getAllAnswers(user.getId(),
 			recruitment.getId(), application.getId());
-		assertEquals(2, allAnswers.size());
+		assertEquals(3, allAnswers.size());
 		allAnswers.stream().forEach(answer -> {
 			if (answer.getQuestionId().equals(question1.getId())) {
 				assertEquals(newAnswerText, answer.getAnswer());
