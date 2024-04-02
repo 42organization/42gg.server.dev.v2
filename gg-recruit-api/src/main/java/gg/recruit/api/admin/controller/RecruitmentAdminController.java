@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -97,15 +98,13 @@ public class RecruitmentAdminController {
 		@RequestParam(value = "search", required = false) String search,
 		@PageableDefault(sort = "id", page = 1) Pageable page
 	) {
-		Pageable parsedPage;
-		List<Long> checkListIds;
 		GetRecruitmentApplicationsDto dto;
 
-		parsedPage = PageRequest.of(page.getPageNumber() - 1, Math.min(page.getPageSize(), 20));
-		checkListIds = parseChecks(checks);
+		Pageable parsedPage = PageRequest.of(page.getPageNumber() - 1, Math.min(page.getPageSize(), 20));
+		List<Long> checkListIds = parseChecks(checks);
 		dto = new GetRecruitmentApplicationsDto(recruitId, questionId, checkListIds, search, parsedPage);
-		recruitmentAdminService.findApplicationsWithAnswersAndUserWithFilter(dto);
-
+		Page<Application> applicationsPage = recruitmentAdminService.findApplicationsWithAnswersAndUserWithFilter(dto);
+		
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 

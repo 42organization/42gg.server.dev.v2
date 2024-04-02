@@ -23,7 +23,7 @@ public interface ApplicationAdminRepository extends JpaRepository<Application, L
 	 */
 	@EntityGraph(attributePaths = {"user", "applicationAnswers", "applicationAnswers.question",
 		"applicationAnswers.question.checkLists"})
-	Page<Application> findByRecruitIdAndIsDeletedFalse(Long recruitId, Pageable pageable);
+	Page<Application> findByRecruitIdAndIsDeletedFalseOrderByIdDesc(Long recruitId, Pageable pageable);
 
 	/**
 	 * id 조건 및 체크리스트 조건에 일치하는 지원서 목록 반환

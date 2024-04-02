@@ -174,7 +174,8 @@ class ApplicationAdminRepositoryTest {
 				Pageable pageable = PageRequest.of(0, 10);
 
 				// Act
-				Page<Application> result = applicationAdminRepository.findByRecruitIdAndIsDeletedFalse(recruitmentId,
+				Page<Application> result = applicationAdminRepository.findByRecruitIdAndIsDeletedFalseOrderByIdDesc(
+					recruitmentId,
 					pageable);
 
 				// Assert

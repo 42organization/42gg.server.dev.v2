@@ -186,14 +186,18 @@ public class RecruitmentAdminService {
 	public void getRecruitmentApplications(GetRecruitmentApplicationsDto dto) {
 
 	public Page<Application> findApplicationsWithAnswersAndUserWithFilter(GetRecruitmentApplicationsDto dto) {
-		if (dto.getQuestionId() != null && !dto.getCheckListIds().isEmpty() && dto.getSearch() == null) {
-			return applicationAdminRepository.findAllByCheckList(dto.getRecruitId(), dto.getQuestionId(),
-				dto.getCheckListIds(), dto.getPageable());
-		} else if (dto.getQuestionId() != null && dto.getSearch() != null && dto.getCheckListIds().isEmpty()) {
-			return applicationAdminRepository.findAllByContainSearch(dto.getRecruitId(), dto.getQuestionId(),
-				dto.getSearch(), dto.getPageable());
+		Long recruitId = dto.getRecruitId();
+		Long questionId = dto.getQuestionId();
+		String search = dto.getSearch();
+		Pageable pageable = dto.getPageable();
+		List<Long> checkListIds = dto.getCheckListIds();
+
+		if (questionId != null && !checkListIds.isEmpty() && search == null) {
+			return applicationAdminRepository.findAllByCheckList(recruitId, questionId, checkListIds, pageable);
+		} else if (questionId != null && search != null && checkListIds.isEmpty()) {
+			return applicationAdminRepository.findAllByContainSearch(recruitId, questionId, search, pageable);
 		} else {
-			return applicationAdminRepository.findByRecruitIdAndIsDeletedFalse(dto.getRecruitId(), dto.getPageable());
+			return applicationAdminRepository.findByRecruitIdAndIsDeletedFalseOrderByIdDesc(recruitId, pageable);
 		}
 	}
 }
