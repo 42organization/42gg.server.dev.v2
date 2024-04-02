@@ -165,7 +165,7 @@ class ApplicationAdminRepositoryTest {
 
 		@Nested
 		@DisplayName("findByRecruitIdAndIsDeletedFalse")
-		class findByRecruitIdAndIsDeletedFalse {
+		class FindByRecruitIdAndIsDeletedFalse {
 
 			@Test
 			@DisplayName("조회 성공")

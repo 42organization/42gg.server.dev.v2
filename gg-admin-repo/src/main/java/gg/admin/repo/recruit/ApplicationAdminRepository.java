@@ -34,12 +34,12 @@ public interface ApplicationAdminRepository extends JpaRepository<Application, L
 	 */
 	@EntityGraph(attributePaths = {"user", "applicationAnswers", "applicationAnswers.question",
 		"applicationAnswers.question.checkLists"})
-	@Query("SELECT a FROM Application a WHERE a.isDeleted = false AND a.id IN " +
-		"(SELECT aa.application.id FROM ApplicationAnswerCheckList aa " +
-		"JOIN aa.checkList cl " +
-		"JOIN aa.application.recruit r " +
-		"WHERE r.id =:recruitId AND aa.question.id = :questionId AND cl.id IN :checkListIds) " +
-		"ORDER BY a.id DESC")
+	@Query("SELECT a FROM Application a WHERE a.isDeleted = false AND a.id IN "
+		+ "(SELECT aa.application.id FROM ApplicationAnswerCheckList aa "
+		+ "JOIN aa.checkList cl "
+		+ "JOIN aa.application.recruit r "
+		+ "WHERE r.id =:recruitId AND aa.question.id = :questionId AND cl.id IN :checkListIds) "
+		+ "ORDER BY a.id DESC")
 	Page<Application> findAllByCheckList(
 		@Param("recruitId") Long recruitId,
 		@Param("questionId") Long questionId,
@@ -48,11 +48,11 @@ public interface ApplicationAdminRepository extends JpaRepository<Application, L
 
 	@EntityGraph(attributePaths = {"user", "applicationAnswers", "applicationAnswers.question",
 		"applicationAnswers.question.checkLists"})
-	@Query("SELECT a FROM Application a WHERE a.isDeleted = false AND a.id IN " +
-		"(SELECT aa.application.id FROM ApplicationAnswerText aa " +
-		"JOIN aa.application.recruit r " +
-		"WHERE r.id =:recruitId AND aa.question.id = :questionId AND aa.answer LIKE CONCAT('%', :search, '%')) " +
-		"ORDER BY a.id DESC")
+	@Query("SELECT a FROM Application a WHERE a.isDeleted = false AND a.id IN "
+		+ "(SELECT aa.application.id FROM ApplicationAnswerText aa "
+		+ "JOIN aa.application.recruit r "
+		+ "WHERE r.id =:recruitId AND aa.question.id = :questionId AND aa.answer LIKE CONCAT('%', :search, '%')) "
+		+ "ORDER BY a.id DESC")
 	Page<Application> findAllByContainSearch(
 		@Param("recruitId") Long recruitId,
 		@Param("questionId") Long questionId,
