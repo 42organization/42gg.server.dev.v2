@@ -187,8 +187,8 @@ public class RecruitmentAdminService {
 
 	public Page<Application> findApplicationsWithAnswersAndUserWithFilter(GetRecruitmentApplicationsDto dto) {
 		if (dto.getQuestionId() != null && !dto.getCheckListIds().isEmpty() && dto.getSearch() == null) {
-			// 체크리스트 기준 서치
-			return null;
+			return applicationAdminRepository.findAllByCheckList(
+				dto.getRecruitId(), dto.getQuestionId(), dto.getCheckListIds(), dto.getPageable());
 		} else if (dto.getQuestionId() != null && dto.getSearch() != null && dto.getCheckListIds().isEmpty()) {
 			// 서치 기준 서치
 			return null;

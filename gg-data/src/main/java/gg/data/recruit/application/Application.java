@@ -1,7 +1,7 @@
 package gg.data.recruit.application;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -53,7 +53,7 @@ public class Application extends BaseTimeEntity {
 	private ApplicationStatus status;
 
 	@OneToMany(mappedBy = "application", fetch = FetchType.LAZY)
-	private List<ApplicationAnswer> applicationAnswers = new ArrayList<>();
+	private Set<ApplicationAnswer> applicationAnswers = new HashSet<>();
 
 	public Application(User user, Recruitment recruit) {
 		this.user = user;
