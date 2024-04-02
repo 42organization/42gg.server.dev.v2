@@ -40,7 +40,7 @@ public class Application extends BaseTimeEntity {
 	private Recruitment recruit;
 
 	@OneToOne(mappedBy = "application", fetch = FetchType.LAZY)
-	RecruitStatus recruitStatus;
+	private RecruitStatus recruitStatus;
 
 	private Boolean isDeleted;
 
