@@ -178,6 +178,16 @@ public class RecruitmentAdminIntegrationTest {
 	@Nested
 	@DisplayName("공고 수정 시 - PUT /admin/recruitments/{recruitmentId}")
 	class PutRecruitment {
+		private final Form afterQuestion = new Form("updated question", InputType.TEXT, List.of());
+		RecruitmentRequestDto afterRecruitment = RecruitmentRequestDto.builder()
+			.title("updated title")
+			.contents("updated contents")
+			.generation("updated generation")
+			.startDateTime(LocalDateTime.now().plusDays(1))
+			.endDateTime(LocalDateTime.now().plusDays(2))
+			.form(List.of(afterQuestion))
+			.build();
+
 		@Test
 		@DisplayName("공고가 존재하지 않아 수정 불가능한 경우 NotExistException 발생 - 404 Not Found")
 		void updateRecruitmentNotExist() throws Exception {
@@ -185,8 +195,7 @@ public class RecruitmentAdminIntegrationTest {
 			long recruitmentId = 1L;
 			String url = String.format("/admin/recruitments/%d", recruitmentId);
 			String accessToken = testDataUtils.getAdminLoginAccessToken();
-			RecruitmentRequestDto recruitmentRequestDto = new RecruitmentRequestDto();
-			String content = objectMapper.writeValueAsString(recruitmentRequestDto);
+			String content = objectMapper.writeValueAsString(afterRecruitment);
 
 			// when then
 			mockMvc.perform(put(url)
@@ -201,19 +210,10 @@ public class RecruitmentAdminIntegrationTest {
 		void updateRecruitment() throws Exception {
 			// given
 			Recruitment beforeRecruitment = recruitMockData.createRecruitmentNotStarted();
-			long beforeQuestionId = recruitMockData.createQuestion(beforeRecruitment).getId();
-			Form afterQuestion = new Form("updated question", InputType.TEXT, List.of());
 			long recruitmentId = beforeRecruitment.getId();
+			long beforeQuestionId = recruitMockData.createQuestion(beforeRecruitment).getId();
 			String url = String.format("/admin/recruitments/%d", recruitmentId);
 			String accessToken = testDataUtils.getAdminLoginAccessToken();
-			RecruitmentRequestDto afterRecruitment = RecruitmentRequestDto.builder()
-				.title("updated title")
-				.contents("updated contents")
-				.generation("updated generation")
-				.startDateTime(LocalDateTime.now().plusDays(1))
-				.endDateTime(LocalDateTime.now().plusDays(2))
-				.form(List.of(afterQuestion))
-				.build();
 			String content = objectMapper.writeValueAsString(afterRecruitment);
 
 			// when
