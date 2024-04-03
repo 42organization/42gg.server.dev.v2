@@ -3,7 +3,6 @@ package gg.admin.repo.recruit.recruitment;
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import javax.persistence.EntityManager;
 
@@ -53,11 +52,36 @@ class RecruitStatusAdminRepositoryTest {
 			Long recruitmentId = recruitment.getId();
 
 			// Act
-			Optional<RecruitStatus> res = recruitStatusAdminRepository.findFirstByRecruitmentIdAndInterviewDateBetween(
+			boolean exist = recruitStatusAdminRepository.existsByRecruitmentIdAndInterviewDateBetween(
 				recruitmentId, startTime, endTime);
 
 			// Assert
-			assertThat(res.get()).isNotNull();
+			assertThat(exist).isTrue();
+		}
+
+		@Test
+		@DisplayName("여러개 RecruitStatus에서도 1개만 찾는다.")
+		void findFirst() {
+			// Arrange
+			int minutes = 30;
+			LocalDateTime startTime = LocalDateTime.of(2021, 1, 1, 0, 0);
+			LocalDateTime endTime = startTime.plusMinutes(minutes);
+
+			User user = testDataUtils.createNewUser();
+			Recruitment recruitment = testDataUtils.createNewRecruitment();
+			Application application1 = testDataUtils.createApplication(user, recruitment);
+			Application application2 = testDataUtils.createApplication(user, recruitment);
+			RecruitStatus recruitStatus1 = testDataUtils.createRecruitStatus(application1, startTime);
+			RecruitStatus recruitStatus2 = testDataUtils.createRecruitStatus(application2, startTime.plusMinutes(10));
+			entityManager.flush();
+			Long recruitmentId = recruitment.getId();
+
+			// Act
+			boolean exist = recruitStatusAdminRepository.existsByRecruitmentIdAndInterviewDateBetween(
+				recruitmentId, startTime, endTime);
+
+			// Assert
+			assertThat(exist).isTrue();
 		}
 	}
 }

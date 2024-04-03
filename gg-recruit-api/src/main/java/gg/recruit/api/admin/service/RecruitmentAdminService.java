@@ -2,7 +2,6 @@ package gg.recruit.api.admin.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -169,10 +168,9 @@ public class RecruitmentAdminService {
 	 */
 	private void updateInterviewDate(Application application, long recruitId, LocalDateTime interviewDate) {
 		int minutes = 30;
-		Optional<RecruitStatus> duplicatedInterview = recruitStatusAdminRepository.findFirstByRecruitmentIdAndInterviewDateBetween(
-			recruitId,
-			interviewDate.minusMinutes(minutes), interviewDate.plusMinutes(minutes));
-		if (duplicatedInterview.isPresent()) {
+		boolean isDuplicated = recruitStatusAdminRepository.existsByRecruitmentIdAndInterviewDateBetween(
+			recruitId, interviewDate.minusMinutes(minutes), interviewDate.plusMinutes(minutes));
+		if (isDuplicated) {
 			throw new DuplicationException("면접 시간이 중복됩니다.");
 		}
 		RecruitStatus recruitStatus = new RecruitStatus(application, interviewDate);
