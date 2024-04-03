@@ -44,6 +44,7 @@ import gg.data.pingpong.tournament.type.TournamentRound;
 import gg.data.pingpong.tournament.type.TournamentStatus;
 import gg.data.pingpong.tournament.type.TournamentType;
 import gg.data.recruit.application.Application;
+import gg.data.recruit.application.RecruitStatus;
 import gg.data.recruit.recruitment.Recruitment;
 import gg.data.user.User;
 import gg.data.user.UserImage;
@@ -74,6 +75,7 @@ import gg.repo.rank.RankRepository;
 import gg.repo.rank.TierRepository;
 import gg.repo.rank.redis.RankRedisRepository;
 import gg.repo.recruit.application.ApplicationRepository;
+import gg.repo.recruit.application.RecruitStatusRepository;
 import gg.repo.recruit.recruitment.RecruitmentRepository;
 import gg.repo.season.SeasonRepository;
 import gg.repo.store.CoinPolicyRepository;
@@ -118,6 +120,7 @@ public class TestDataUtils {
 	private final UserReportRepository userReportRepository;
 	private final RecruitmentRepository recruitmentRepository;
 	private final ApplicationRepository applicationRepository;
+	private final RecruitStatusRepository recruitStatusRepository;
 
 	public String getLoginAccessToken() {
 		User user = User.builder()
@@ -919,5 +922,11 @@ public class TestDataUtils {
 		Application application = new Application(user, recruitment);
 		applicationRepository.save(application);
 		return application;
+	}
+
+	public RecruitStatus createRecruitStatus(Application application, LocalDateTime interviewDate) {
+		RecruitStatus recruitStatus = new RecruitStatus(application, interviewDate);
+		recruitStatusRepository.save(recruitStatus);
+		return recruitStatus;
 	}
 }
