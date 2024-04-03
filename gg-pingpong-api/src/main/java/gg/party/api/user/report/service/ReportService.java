@@ -3,7 +3,6 @@ package gg.party.api.user.report.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -75,11 +74,10 @@ public class ReportService {
 		if (Objects.equals(user.getId(), targetRoom.getCreator().getId())) {
 			throw new SelfReportException();
 		}
-		Optional<RoomReport> existingReport = roomReportRepository.findByReporterAndRoomId(userEntity,
-			targetRoom.getId());
-		if (existingReport.isPresent()) {
-			throw new AlreadyReportedException();
-		}
+		roomReportRepository.findByReporterAndRoomId(userEntity, targetRoom.getId())
+			.ifPresent(report -> {
+				throw new AlreadyReportedException();
+			});
 		RoomReport roomReport = new RoomReport(userEntity, targetRoom.getCreator(), targetRoom,
 			reportReqDto.getContent());
 		roomReportRepository.save(roomReport);
@@ -117,11 +115,10 @@ public class ReportService {
 		if (Objects.equals(user.getId(), targetComment.getUser().getId())) {
 			throw new SelfReportException();
 		}
-		Optional<CommentReport> existingReport = commentReportRepository.findByReporterAndCommentId(userEntity,
-			targetComment.getId());
-		if (existingReport.isPresent()) {
-			throw new AlreadyReportedException();
-		}
+		commentReportRepository.findByReporterAndCommentId(userEntity, targetComment.getId())
+			.ifPresent(reporter -> {
+				throw new AlreadyReportedException();
+			});
 		Room targetRoom = roomRepository.findById(targetComment.getRoom().getId())
 			.orElseThrow(RoomNotFoundException::new);
 		CommentReport commentReport = new CommentReport(userEntity, targetComment, targetRoom,
