@@ -1,4 +1,4 @@
-package gg.pingpong.api.admin.coin.controller;
+package gg.pingpong.api.admin.store.controller;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
