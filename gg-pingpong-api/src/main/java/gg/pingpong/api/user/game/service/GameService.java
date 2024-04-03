@@ -254,27 +254,34 @@ public class GameService {
 		throw new TeamIdNotMatchException();
 	}
 
+	/**
+	 * <p>이미 점수가 입력 되지 않은 게임이라면 scoreDto의 점수로 갱신시켜줍니다.</p>
+	 * <p>유저의 경기가 아니라면 InvalidParameterException 반환</p>
+	 * @param game
+	 * @param scoreDto 타겟 점수
+	 * @param userId 유저
+	 * @return
+	 */
 	private Boolean updateRankGameScore(Game game, RankResultReqDto scoreDto, Long userId) {
 		List<TeamUser> teams = teamUserRepository.findAllByGameId(game.getId());
 		TeamUser myTeam = findTeamId(scoreDto.getMyTeamId(), teams);
 		TeamUser enemyTeam = findTeamId(scoreDto.getEnemyTeamId(), teams);
 		if (!myTeam.getUser().getId().equals(userId)) {
 			throw new InvalidParameterException("team user 정보 불일치.", ErrorCode.VALID_FAILED);
-		} else {
-			if (myTeam.getTeam().getScore().equals(-1) && enemyTeam.getTeam().getScore().equals(-1)) {
-				setTeamScore(myTeam, scoreDto.getMyTeamScore(),
-					scoreDto.getMyTeamScore() > scoreDto.getEnemyTeamScore());
-				setTeamScore(enemyTeam, scoreDto.getEnemyTeamScore(),
-					scoreDto.getMyTeamScore() < scoreDto.getEnemyTeamScore());
-				expUpdates(game, teams);
-				rankRedisService.updateRankRedis(myTeam, enemyTeam, game);
-				tierService.updateAllTier(game.getSeason());
-			} else {
-				// score 가 이미 입력됨
-				return false;
-			}
-			return true;
 		}
+		if (myTeam.getTeam().getScore().equals(-1) && enemyTeam.getTeam().getScore().equals(-1)) {
+			setTeamScore(myTeam, scoreDto.getMyTeamScore(),
+				scoreDto.getMyTeamScore() > scoreDto.getEnemyTeamScore());
+			setTeamScore(enemyTeam, scoreDto.getEnemyTeamScore(),
+				scoreDto.getMyTeamScore() < scoreDto.getEnemyTeamScore());
+			expUpdates(game, teams);
+			rankRedisService.updateRankRedis(myTeam, enemyTeam, game);
+			tierService.updateAllTier(game.getSeason());
+		} else {
+			// score 가 이미 입력됨
+			return false;
+		}
+		return true;
 	}
 
 	/**
