@@ -35,4 +35,8 @@ public class InterviewRequestDto {
 		return true;
 	}
 
+	public InterviewRequestDto(ApplicationStatus status, LocalDateTime interviewDate) {
+		this.status = status;
+		this.interviewDate = interviewDate;
+	}
 }
