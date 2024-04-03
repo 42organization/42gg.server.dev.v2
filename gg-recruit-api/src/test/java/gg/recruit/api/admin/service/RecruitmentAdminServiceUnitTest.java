@@ -1,5 +1,6 @@
 package gg.recruit.api.admin.service;
 
+import static gg.data.recruit.application.enums.ApplicationStatus.*;
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 import static org.mockito.BDDMockito.*;
 
@@ -14,9 +15,16 @@ import org.mockito.Mock;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
+import gg.admin.repo.recruit.ApplicationAdminRepository;
 import gg.admin.repo.recruit.RecruitmentAdminRepository;
+import gg.admin.repo.recruit.recruitment.RecruitStatusAdminRepository;
+import gg.data.recruit.application.Application;
 import gg.data.recruit.recruitment.Recruitment;
+import gg.data.user.User;
+import gg.recruit.api.admin.service.dto.UpdateApplicationStatusDto;
 import gg.utils.annotation.UnitTest;
+import gg.utils.exception.custom.DuplicationException;
+import gg.utils.exception.custom.ForbiddenException;
 import gg.utils.exception.custom.NotExistException;
 
 @UnitTest
@@ -26,6 +34,12 @@ class RecruitmentAdminServiceUnitTest {
 
 	@Mock
 	private RecruitmentAdminRepository recruitmentAdminRepository;
+
+	@Mock
+	private ApplicationAdminRepository applicationAdminRepository;
+
+	@Mock
+	private RecruitStatusAdminRepository recruitStatusAdminRepository;
 
 	@Test
 	@DisplayName("공고 조회")
@@ -77,4 +91,87 @@ class RecruitmentAdminServiceUnitTest {
 			verify(recruitmentAdminRepository, times(1)).findById(recruitmentId);
 		}
 	}
+
+	@Nested
+	@DisplayName("서류 전형 결과 등록 테스트")
+	class UpdateFinalApplicationStatusAndNotification {
+		@Test
+		@DisplayName("서류전형 진행중인 지원서가 아닌 경우 실패 - ForbiddenException")
+		void invalidApplicationStatus() {
+			// given
+			Application application = new Application(mock(User.class), mock(Recruitment.class));
+			application.updateApplicationStatus(PROGRESS_INTERVIEW);
+			UpdateApplicationStatusDto dto = new UpdateApplicationStatusDto(FAIL, 1L, 1L);
+			given(
+				applicationAdminRepository.findByIdAndRecruitId(dto.getApplicationId(), dto.getRecruitId()))
+				.willReturn(Optional.of(application));
+
+			// when, then
+			assertThatThrownBy(() -> recruitmentAdminService.updateDocumentScreening(dto))
+				.isInstanceOf(ForbiddenException.class);
+		}
+
+		@Test
+		@DisplayName("서류전형 탈락 등록 성공")
+		void validApplicationStatus() {
+			// given
+			Application application = new Application(mock(User.class), mock(Recruitment.class));
+			UpdateApplicationStatusDto dto = new UpdateApplicationStatusDto(FAIL, 1L, 1L);
+			given(
+				applicationAdminRepository.findByIdAndRecruitId(dto.getApplicationId(), dto.getRecruitId()))
+				.willReturn(Optional.of(application));
+
+			// when
+			recruitmentAdminService.updateDocumentScreening(dto);
+
+			// then
+			verify(applicationAdminRepository, times(1)).findByIdAndRecruitId(
+				dto.getApplicationId(), dto.getRecruitId());
+			assertThat(application.getStatus()).isEqualTo(FAIL);
+		}
+
+		@Test
+		@DisplayName("면접날짜 등록 성공")
+		void validInterviewDate() {
+			// given
+			Application application = new Application(mock(User.class), mock(Recruitment.class));
+			UpdateApplicationStatusDto dto = new UpdateApplicationStatusDto(
+				PROGRESS_INTERVIEW, 1L, 1L, LocalDateTime.of(2024, 1, 1, 0, 0, 0));
+			given(
+				applicationAdminRepository.findByIdAndRecruitId(dto.getApplicationId(), dto.getRecruitId()))
+				.willReturn(Optional.of(application));
+			given(recruitStatusAdminRepository.existsByRecruitmentIdAndInterviewDateBetween(
+				dto.getRecruitId(), dto.getInterviewDate().minusMinutes(30), dto.getInterviewDate().plusMinutes(30)))
+				.willReturn(false);
+
+			// when
+			recruitmentAdminService.updateDocumentScreening(dto);
+
+			// then
+			verify(recruitStatusAdminRepository, times(1)).existsByRecruitmentIdAndInterviewDateBetween(
+				dto.getRecruitId(), dto.getInterviewDate().minusMinutes(30), dto.getInterviewDate().plusMinutes(30));
+			assertThat(application.getStatus()).isEqualTo(PROGRESS_INTERVIEW);
+		}
+
+		@Test
+		@DisplayName("면접 시간 중복으로 등록 실패 - DuplicationException")
+		void invalidInterviewDate() {
+			// given
+			Application application = new Application(mock(User.class), mock(Recruitment.class));
+			UpdateApplicationStatusDto dto = new UpdateApplicationStatusDto(
+				PROGRESS_INTERVIEW, 1L, 1L, LocalDateTime.of(2024, 1, 1, 0, 0, 0));
+			given(
+				applicationAdminRepository.findByIdAndRecruitId(dto.getApplicationId(), dto.getRecruitId()))
+				.willReturn(Optional.of(application));
+			given(recruitStatusAdminRepository.existsByRecruitmentIdAndInterviewDateBetween(
+				dto.getRecruitId(), dto.getInterviewDate().minusMinutes(30), dto.getInterviewDate().plusMinutes(30)))
+				.willReturn(true);
+
+			// when, then
+			assertThatThrownBy(() -> recruitmentAdminService.updateDocumentScreening(dto))
+				.isInstanceOf(DuplicationException.class);
+		}
+
+	}
+
 }

@@ -154,9 +154,9 @@ public class RecruitmentAdminService {
 		}
 		if (dto.getStatus() == ApplicationStatus.PROGRESS_INTERVIEW) {
 			updateInterviewDate(application, dto.getRecruitId(), dto.getInterviewDate());
-			// TODO 사이클로 SNS Noti 접근이 불가능해 알림 기능 추후 구현
 		}
 		application.updateApplicationStatus(dto.getStatus());
+		// TODO 사이클로 SNS Noti 접근이 불가능해 알림 기능 추후 구현
 	}
 
 	/**
