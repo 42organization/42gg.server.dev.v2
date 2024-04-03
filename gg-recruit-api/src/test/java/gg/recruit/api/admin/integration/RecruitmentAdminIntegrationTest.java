@@ -6,12 +6,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -31,6 +31,7 @@ import gg.admin.repo.recruit.RecruitmentAdminRepository;
 import gg.data.recruit.application.Application;
 import gg.data.recruit.application.enums.ApplicationStatus;
 import gg.admin.repo.recruit.recruitment.QuestionAdminRepository;
+import gg.data.recruit.recruitment.Question;
 import gg.data.recruit.recruitment.Recruitment;
 import gg.data.user.User;
 import gg.data.recruit.recruitment.enums.InputType;
@@ -202,7 +203,7 @@ public class RecruitmentAdminIntegrationTest {
 		@DisplayName("공고 수정 성공 후 - 204 No Content")
 		void updateRecruitment() throws Exception {
 			// given
-			Recruitment beforeRecruitment = recruitMockData.createRecruitment();
+			Recruitment beforeRecruitment = recruitMockData.createRecruitmentNotStarted();
 			long beforeQuestionId = recruitMockData.createQuestion(beforeRecruitment).getId();
 			Form afterQuestion = new Form("updated question", InputType.TEXT, List.of());
 			long recruitmentId = beforeRecruitment.getId();
@@ -226,8 +227,10 @@ public class RecruitmentAdminIntegrationTest {
 				.andExpect(status().isNoContent());
 
 			// flush
-			recruitmentAdminRepository.flush();
-			questionAdminRepository.flush();
+			// recruitmentAdminRepository.flush();
+			// questionAdminRepository.flush();
+			em.flush();
+			em.clear();
 
 			// then
 			Recruitment after = recruitmentAdminRepository.findById(recruitmentId).get();
@@ -236,8 +239,8 @@ public class RecruitmentAdminIntegrationTest {
 			assertThat(after.getContents()).isEqualTo(afterRecruitment.getContents());
 
 			// TODO 삭제 확인 -> 에러.. 수정 필요
-			// Optional<Question> deletedQuestion = questionAdminRepository.findById(beforeQuestionId);
-			// assertThat(deletedQuestion).isEmpty();
+			Optional<Question> deletedQuestion = questionAdminRepository.findById(beforeQuestionId);
+			assertThat(deletedQuestion).isEmpty();
 		}
 	}
 }
