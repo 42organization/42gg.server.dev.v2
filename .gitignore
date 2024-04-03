@@ -50,3 +50,5 @@ pingping.pem
 
 ### git commit message convention file ###
 .gitmessage.txt
+
+**/generated
