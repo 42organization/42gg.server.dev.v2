@@ -37,6 +37,7 @@ import gg.utils.exception.party.RoomNotOpenException;
 import gg.utils.exception.party.RoomNotParticipantException;
 import gg.utils.exception.party.UserAlreadyInRoom;
 import gg.utils.exception.party.UserNotHostException;
+import gg.utils.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -53,6 +54,7 @@ public class RoomManagementService {
 	 * 방 생성하고 닉네임 부여
 	 * @param roomCreateReqDto 요청 DTO
 	 * @param userDto user객체를 보내기 위한 DTO객체
+	 * @throws UserNotFoundException 유효하지 않은 유저 입력 - 404
 	 * @throws OnPenaltyException 패널티 상태의 유저 입력 - 403
 	 * @throws RoomMinMaxPeople 최소인원이 최대인원보다 큰 경우 - 400
 	 * @throws CategoryNotFoundException 유효하지 않은 카테고리 입력 - 404
@@ -60,7 +62,7 @@ public class RoomManagementService {
 	 */
 	@Transactional
 	public RoomCreateResDto addCreateRoom(RoomCreateReqDto roomCreateReqDto, UserDto userDto) {
-		User user = userRepository.findById(userDto.getId()).get();
+		User user = userRepository.findById(userDto.getId()).orElseThrow(UserNotFoundException::new);
 		PartyPenalty partyPenalty = partyPenaltyRepository.findTopByUserIdOrderByStartTimeDesc(user.getId());
 		if (PartyPenalty.isOnPenalty(partyPenalty)) {
 			throw new OnPenaltyException();
@@ -85,21 +87,23 @@ public class RoomManagementService {
 	 * 유저가 방을 나간다
 	 * 참가자가 방에 참가한 상태일때만 취소해 준다.
 	 * @param roomId, user
-	 * @param user 참여 유저(사용자 본인)
+	 * @param userDto 참여 유저(사용자 본인)
 	 * @return 나간 사람의 닉네임
+	 * @throws UserNotFoundException 유효하지 않은 유저 입력 - 404
 	 * @throws RoomNotFoundException 방 없음 - 404
 	 * @throws RoomNotOpenException 방이 대기 상태가 아님 - 400
 	 * @throws RoomNotParticipantException 방 참여자가 아님 - 400
 	 */
 	@Transactional
-	public LeaveRoomResDto modifyLeaveRoom(Long roomId, UserDto user) {
+	public LeaveRoomResDto modifyLeaveRoom(Long roomId, UserDto userDto) {
+		User user = userRepository.findById(userDto.getId()).orElseThrow(UserNotFoundException::new);
 		Room targetRoom = roomRepository.findById(roomId)
 			.orElseThrow(RoomNotFoundException::new);
 		if (!targetRoom.getStatus().equals(RoomType.OPEN)) {
 			throw new RoomNotOpenException();
 		}
-		UserRoom targetUserRoom = userRoomRepository.findByUserAndRoom(userRepository.findById(user.getId()).get(),
-			targetRoom).orElseThrow(RoomNotParticipantException::new);
+		UserRoom targetUserRoom = userRoomRepository.findByUserAndRoom(user, targetRoom)
+			.orElseThrow(RoomNotParticipantException::new);
 
 		// 모두 나갈 때 방 fail처리
 		if (targetRoom.getCurrentPeople() == 1) {
@@ -131,6 +135,7 @@ public class RoomManagementService {
 	 * 방의 상태를 시작 상태로 변경.
 	 * @param roomId, user
 	 * @return 방 id
+	 * @throws UserNotFoundException 유효하지 않은 유저 입력 - 404
 	 * @throws RoomNotFoundException 방 없음 - 404
 	 * @throws RoomNotParticipantException 방에 참가하지 않은 유저 - 400
 	 * @throws UserNotHostException 방장이 아닌 경우 - 403
@@ -138,11 +143,12 @@ public class RoomManagementService {
 	 * @throws RoomNotEnoughPeopleException 방에 충분한 인원이 없음 - 400
 	 */
 	@Transactional
-	public RoomStartResDto modifyStartRoom(Long roomId, UserDto user) {
+	public RoomStartResDto modifyStartRoom(Long roomId, UserDto userDto) {
+		User user = userRepository.findById(userDto.getId()).orElseThrow(UserNotFoundException::new);
 		Room targetRoom = roomRepository.findById(roomId)
 			.orElseThrow(RoomNotFoundException::new);
-		UserRoom targetUserRoom = userRoomRepository.findByUserAndRoom(userRepository.findById(user.getId()).get(),
-			targetRoom).orElseThrow(RoomNotParticipantException::new);
+		UserRoom targetUserRoom = userRoomRepository.findByUserAndRoom(user, targetRoom)
+			.orElseThrow(RoomNotParticipantException::new);
 		if (targetRoom.getHost() != targetUserRoom.getUser()) {
 			throw new UserNotHostException();
 		}
@@ -166,6 +172,7 @@ public class RoomManagementService {
 	 * @param roomId 방 id
 	 * @param userDto 유저 정보
 	 * @return roomId
+	 * @throws UserNotFoundException 유효하지 않은 유저 입력 - 404
 	 * @throws RoomNotFoundException 유효하지 않은 방 입력 - 404
 	 * @throws OnPenaltyException 패널티 상태인 유저 - 403
 	 * @throws RoomNotOpenException 모집중인 방이 아님 - 400
@@ -174,7 +181,7 @@ public class RoomManagementService {
 	 */
 	@Transactional
 	public RoomJoinResDto addJoinRoom(Long roomId, UserDto userDto) {
-		User user = userRepository.findById(userDto.getId()).get();
+		User user = userRepository.findById(userDto.getId()).orElseThrow(UserNotFoundException::new);
 		Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
 		PartyPenalty partyPenalty = partyPenaltyRepository.findTopByUserIdOrderByStartTimeDesc(user.getId());
 		if (PartyPenalty.isOnPenalty(partyPenalty)) {

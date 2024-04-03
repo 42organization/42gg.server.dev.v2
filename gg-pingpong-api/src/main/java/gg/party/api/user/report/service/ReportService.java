@@ -55,30 +55,30 @@ public class ReportService {
 	 * 방을 신고한다.
 	 * @param roomId 방 번호
 	 * @param reportReqDto 신고 내용
-	 * @param user 신고자
-	 * @return 방 번호
+	 * @param userDto 신고자
+	 * @throws UserNotFoundException 유효하지 않은 유저 입력 - 404
 	 * @throws OnPenaltyException 패널티 상태의 유저 입력 - 403
 	 * @throws RoomNotFoundException 방을 찾을 수 없음 - 404
 	 * @throws AlreadyReportedException 이미 신고한 경우 - 409
 	 * @throws SelfReportException 자신을 신고한 경우 - 400
 	 */
 	@Transactional
-	public void addReportRoom(Long roomId, ReportReqDto reportReqDto, UserDto user) {
+	public void addReportRoom(Long roomId, ReportReqDto reportReqDto, UserDto userDto) {
+		User user = userRepository.findById(userDto.getId()).orElseThrow(UserNotFoundException::new);
 		PartyPenalty partyPenalty = partyPenaltyRepository.findTopByUserIdOrderByStartTimeDesc(user.getId());
 		if (PartyPenalty.isOnPenalty(partyPenalty)) {
 			throw new OnPenaltyException();
 		}
 		Room targetRoom = roomRepository.findById(roomId)
 			.orElseThrow(RoomNotFoundException::new);
-		User userEntity = userRepository.findById(user.getId()).get();
 		if (Objects.equals(user.getId(), targetRoom.getCreator().getId())) {
 			throw new SelfReportException();
 		}
-		roomReportRepository.findByReporterAndRoomId(userEntity, targetRoom.getId())
+		roomReportRepository.findByReporterAndRoomId(user, targetRoom.getId())
 			.ifPresent(report -> {
 				throw new AlreadyReportedException();
 			});
-		RoomReport roomReport = new RoomReport(userEntity, targetRoom.getCreator(), targetRoom,
+		RoomReport roomReport = new RoomReport(user, targetRoom.getCreator(), targetRoom,
 			reportReqDto.getContent());
 		roomReportRepository.save(roomReport);
 
@@ -95,8 +95,8 @@ public class ReportService {
 	 * 댓글을 신고한다.
 	 * @param commentId 방 번호
 	 * @param reportReqDto 신고 내용
-	 * @param user 신고자
-	 * @return 방 번호
+	 * @param userDto 신고자
+	 * @throws UserNotFoundException 유효하지 않은 유저 입력 - 404
 	 * @throws OnPenaltyException 패널티 상태의 유저 입력 - 403
 	 * @throws RoomNotFoundException 방을 찾을 수 없음 - 404
 	 * @throws CommentNotFoundException 댓글을 찾을 수 없음 - 404
@@ -104,24 +104,24 @@ public class ReportService {
 	 * @throws SelfReportException 자신을 신고한 경우 - 400
 	 */
 	@Transactional
-	public void addReportComment(Long commentId, ReportReqDto reportReqDto, UserDto user) {
+	public void addReportComment(Long commentId, ReportReqDto reportReqDto, UserDto userDto) {
+		User user = userRepository.findById(userDto.getId()).orElseThrow(UserNotFoundException::new);
 		PartyPenalty partyPenalty = partyPenaltyRepository.findTopByUserIdOrderByStartTimeDesc(user.getId());
 		if (PartyPenalty.isOnPenalty(partyPenalty)) {
 			throw new OnPenaltyException();
 		}
 		Comment targetComment = commentRepository.findById(commentId)
 			.orElseThrow(CommentNotFoundException::new);
-		User userEntity = userRepository.findById(user.getId()).get();
 		if (Objects.equals(user.getId(), targetComment.getUser().getId())) {
 			throw new SelfReportException();
 		}
-		commentReportRepository.findByReporterAndCommentId(userEntity, targetComment.getId())
+		commentReportRepository.findByReporterAndCommentId(user, targetComment.getId())
 			.ifPresent(reporter -> {
 				throw new AlreadyReportedException();
 			});
 		Room targetRoom = roomRepository.findById(targetComment.getRoom().getId())
 			.orElseThrow(RoomNotFoundException::new);
-		CommentReport commentReport = new CommentReport(userEntity, targetComment, targetRoom,
+		CommentReport commentReport = new CommentReport(user, targetComment, targetRoom,
 			reportReqDto.getContent());
 		commentReportRepository.save(commentReport);
 
@@ -140,7 +140,6 @@ public class ReportService {
 	 * @param reportReqDto 신고 내용
 	 * @param user 신고자
 	 * @param userIntraId 피신고자
-	 * @return 방 번호
 	 * @throws CommentNotFoundException 방을 찾을 수 없음 - 404
 	 * @throws AlreadyReportedException 이미 신고한 경우 - 409
 	 * @throws RoomNotParticipantException 방에 참여하지 않은 경우 - 400
@@ -184,10 +183,11 @@ public class ReportService {
 	 * @param intraId 신고당한 유저 아이디
 	 * @param penaltyTime 패널티 시간
 	 * @param penaltyType 패널티 타입
+	 * @throws UserNotFoundException 유효하지 않은 유저 입력 - 404
 	 */
 	@Transactional
 	public void partyGivePenalty(String intraId, Integer penaltyTime, String penaltyType) {
-		User user = userRepository.findByIntraId(intraId).get();
+		User user = userRepository.findByIntraId(intraId).orElseThrow(UserNotFoundException::new);
 		PartyPenalty pPenalty = partyPenaltyRepository.findTopByUserIdOrderByStartTimeDesc(user.getId());
 
 		if (pPenalty != null && LocalDateTime.now().isBefore(pPenalty.getStartTime()

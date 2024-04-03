@@ -136,14 +136,17 @@ public class RoomFindService {
 
 		Optional<UserRoom> userRoomOptional = userRoomRepository.findByUserIdAndRoomIdAndIsExistTrue(userId, roomId);
 
-		String myNickname = null;
-		if (userRoomOptional.isPresent()) {
-			myNickname = userRoomOptional.get().getNickname();
-		}
+		String myNickname = userRoomOptional.stream()
+			.map(UserRoom::getNickname)
+			.findFirst()
+			.orElse(null);
 
 		Optional<UserRoom> hostUserRoom = userRoomRepository.findByUserIdAndRoomIdAndIsExistTrue(room.getHost().getId(),
 			roomId);
-		String hostNickname = hostUserRoom.get().getNickname();
+		String hostNickname = hostUserRoom.stream()
+			.map(UserRoom::getNickname)
+			.findFirst()
+			.orElse(null);
 
 		if ((room.getStatus() == RoomType.START || room.getStatus() == RoomType.FINISH)
 			&& userRoomOptional.isPresent()) {
