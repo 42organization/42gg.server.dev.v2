@@ -8,6 +8,7 @@ gg-pingpong-api/src/main/resources/application.yml
 .DS_Store
 python
 **/logs
+gg-recruit-api/src/main/generated/
 
 
 ### STS ###
