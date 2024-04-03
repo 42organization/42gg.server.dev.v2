@@ -70,10 +70,8 @@ public class RoomManagementService {
 		if (roomCreateReqDto.getMaxPeople() < roomCreateReqDto.getMinPeople()) {
 			throw new RoomMinMaxPeople(ErrorCode.ROOM_MIN_MAX_PEOPLE);
 		}
-		Category category = categoryRepository.findByName(roomCreateReqDto.getCategoryName());
-		if (category == null) {
-			throw new CategoryNotFoundException();
-		}
+		Category category = categoryRepository.findByName(roomCreateReqDto.getCategoryName())
+			.orElseThrow(CategoryNotFoundException::new);
 		Room room = roomRepository.save(RoomCreateReqDto.toEntity(roomCreateReqDto, user, category));
 
 		String randomNickname = generateRandomNickname();

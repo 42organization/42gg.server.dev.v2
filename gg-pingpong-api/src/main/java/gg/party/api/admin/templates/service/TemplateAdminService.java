@@ -26,10 +26,8 @@ public class TemplateAdminService {
 	 * @exception CategoryNotFoundException 존재하지 않는 카테고리 입력 - 404
 	 */
 	public void addTemplate(TemplateAdminCreateReqDto request) {
-		Category category = categoryRepository.findByName(request.getCategoryName());
-		if (category == null) {
-			throw new CategoryNotFoundException();
-		}
+		Category category = categoryRepository.findByName(request.getCategoryName())
+			.orElseThrow(CategoryNotFoundException::new);
 		GameTemplate gameTemplate = TemplateAdminCreateReqDto.toEntity(request, category);
 		templateRepository.save(gameTemplate);
 	}
@@ -44,19 +42,16 @@ public class TemplateAdminService {
 	public void modifyTemplate(Long templateId, TemplateAdminUpdateReqDto request) {
 		GameTemplate template = templateRepository.findById(templateId)
 			.orElseThrow(TemplateNotFoundException::new);
-
 		if (request.getMaxGamePeople() < request.getMinGamePeople()) {
 			throw new RoomMinMaxPeople(ErrorCode.ROOM_MIN_MAX_PEOPLE);
 		}
 		request.updateEntity(template);
+
 		if (request.getCategoryName() != null) {
-			Category newCategory = categoryRepository.findByName(request.getCategoryName());
-			if (newCategory == null) {
-				throw new CategoryNotFoundException();
-			}
+			Category newCategory = categoryRepository.findByName(request.getCategoryName())
+				.orElseThrow(CategoryNotFoundException::new);
 			template.modifyCategory(newCategory);
 		}
-
 		templateRepository.save(template);
 	}
 
