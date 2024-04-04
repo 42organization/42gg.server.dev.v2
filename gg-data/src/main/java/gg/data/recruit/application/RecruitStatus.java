@@ -33,4 +33,13 @@ public class RecruitStatus extends BaseTimeEntity {
 	public RecruitStatus(Application application) {
 		this.application = application;
 	}
+
+	public RecruitStatus(Application application, LocalDateTime interviewDate) {
+		this.application = application;
+		this.interviewDate = interviewDate;
+	}
+
+	public void updateInterviewDate(LocalDateTime interviewDate) {
+		this.interviewDate = interviewDate;
+	}
 }

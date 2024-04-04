@@ -21,7 +21,7 @@ import gg.data.recruit.application.Application;
 import gg.data.recruit.application.enums.ApplicationStatus;
 import gg.recruit.api.admin.service.dto.UpdateApplicationStatusDto;
 import gg.utils.annotation.UnitTest;
-import gg.utils.exception.custom.BusinessException;
+import gg.utils.exception.custom.NotExistException;
 
 @UnitTest
 class RecruitmentAdminServiceTest {
@@ -50,7 +50,7 @@ class RecruitmentAdminServiceTest {
 			for (UpdateApplicationStatusDto invalidDto : invalidDtoList) {
 				Assertions.assertThatThrownBy(
 						() -> recruitmentAdminService.updateFinalApplicationStatusAndNotification(invalidDto))
-					.isInstanceOf(BusinessException.class);
+					.isInstanceOf(NotExistException.class);
 			}
 		}
 

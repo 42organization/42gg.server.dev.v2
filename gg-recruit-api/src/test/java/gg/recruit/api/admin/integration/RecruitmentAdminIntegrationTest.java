@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import javax.transaction.Transactional;
@@ -18,14 +19,20 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.shaded.com.google.common.net.HttpHeaders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gg.admin.repo.recruit.ApplicationAdminRepository;
 import gg.admin.repo.recruit.RecruitmentAdminRepository;
+import gg.data.recruit.application.Application;
+import gg.data.recruit.application.enums.ApplicationStatus;
 import gg.data.recruit.recruitment.Recruitment;
+import gg.data.user.User;
 import gg.recruit.api.RecruitMockData;
+import gg.recruit.api.admin.controller.request.InterviewRequestDto;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 
@@ -47,6 +54,9 @@ public class RecruitmentAdminIntegrationTest {
 
 	@Autowired
 	private RecruitmentAdminRepository recruitmentAdminRepository;
+
+	@Autowired
+	private ApplicationAdminRepository applicationAdminRepository;
 
 	@Nested
 	@DisplayName("공고 전체 조회 시 - POST /admin/recruitments")
@@ -123,6 +133,35 @@ public class RecruitmentAdminIntegrationTest {
 			mockMvc.perform(delete(url)
 					.header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
 				.andExpect(status().isNotFound());
+		}
+	}
+
+	@Nested
+	@DisplayName("서류전형 결과 등록 - POST /admin/recruitments/{recruitmentId}/applications/{applicationId}")
+	class PostResultDocumentScreening {
+		@Test
+		@DisplayName("서류전형 합격(PROGRESS_INTERVIEW) 등록 성공 - 201 Created")
+		void postResultDocumentScreening() throws Exception {
+			// given
+			User user = testDataUtils.createAdminUser();
+			Recruitment recruitment = recruitMockData.createRecruitment();
+			Application application = recruitMockData.createApplication(user, recruitment);
+			InterviewRequestDto dto = new InterviewRequestDto(ApplicationStatus.PROGRESS_INTERVIEW,
+				LocalDateTime.now().plusDays(1));
+			String accessToken = testDataUtils.getLoginAccessTokenFromUser(user);
+			String url = String.format("/admin/recruitments/%d/interview?application=%d", recruitment.getId(),
+				application.getId());
+
+			// when
+			mockMvc.perform(post(url)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(objectMapper.writeValueAsString(dto)))
+				.andExpect(status().isCreated());
+
+			// then
+			Optional<Application> after = applicationAdminRepository.findById(application.getId());
+			assertThat(after.get().getStatus()).isEqualTo(ApplicationStatus.PROGRESS_INTERVIEW);
 		}
 	}
 }

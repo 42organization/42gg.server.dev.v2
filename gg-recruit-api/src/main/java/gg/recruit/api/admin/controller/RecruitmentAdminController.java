@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import gg.data.recruit.recruitment.Recruitment;
+import gg.recruit.api.admin.controller.request.InterviewRequestDto;
 import gg.recruit.api.admin.controller.request.RecruitmentCreateReqDto;
 import gg.recruit.api.admin.controller.request.SetFinalApplicationStatusResultReqDto;
 import gg.recruit.api.admin.controller.request.UpdateStatusRequestDto;
@@ -82,5 +83,15 @@ public class RecruitmentAdminController {
 	public ResponseEntity<Void> deleteRecruitment(@PathVariable @Positive Long recruitId) {
 		recruitmentAdminService.deleteRecruitment(recruitId);
 		return ResponseEntity.noContent().build();
+	}
+
+	@PostMapping("/{recruitId}/interview")
+	public ResponseEntity<Void> setInterviewDate(@PathVariable @Positive Long recruitId,
+		@RequestParam("application") @Positive Long applicationId,
+		@RequestBody @Valid InterviewRequestDto reqDto) {
+
+		recruitmentAdminService.updateDocumentScreening(
+			new UpdateApplicationStatusDto(reqDto.getStatus(), applicationId, recruitId, reqDto.getInterviewDate()));
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 }
