@@ -3,6 +3,7 @@ package gg.recruit.api.admin.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -183,8 +184,6 @@ public class RecruitmentAdminService {
 			.findAllByRecruitmentIdWithUserAndRecruitStatusFetchJoinOrderByIdDesc(recruitId);
 	}
 
-	public void getRecruitmentApplications(GetRecruitmentApplicationsDto dto) {
-
 	public Page<Application> findApplicationsWithAnswersAndUserWithFilter(GetRecruitmentApplicationsDto dto) {
 		Long recruitId = dto.getRecruitId();
 		Long questionId = dto.getQuestionId();
@@ -200,4 +199,5 @@ public class RecruitmentAdminService {
 			return applicationAdminRepository.findByRecruitIdAndIsDeletedFalseOrderByIdDesc(recruitId, pageable);
 		}
 	}
+
 }
