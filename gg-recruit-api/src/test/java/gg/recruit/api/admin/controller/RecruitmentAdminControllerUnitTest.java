@@ -9,6 +9,7 @@ import java.util.List;
 import javax.validation.ConstraintViolationException;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
@@ -33,6 +35,7 @@ import gg.recruit.api.admin.controller.response.RecruitmentApplicantResultRespon
 import gg.recruit.api.admin.controller.response.RecruitmentApplicantResultsResponseDto;
 import gg.recruit.api.admin.service.RecruitmentAdminService;
 import gg.utils.annotation.UnitTest;
+import gg.utils.exception.custom.BusinessException;
 
 @UnitTest
 @WebMvcTest(controllers = RecruitmentAdminController.class)
@@ -149,6 +152,35 @@ class RecruitmentAdminControllerUnitTest {
 		Assertions.assertThat(result.getApplicationId()).isEqualTo(applicationId);
 		Assertions.assertThat(result.getInterviewDate()).isEqualTo(interviewDate);
 
+	}
+
+	@Nested
+	@DisplayName("getRecruitmentApplications")
+	class GetRecruitmentApplications {
+		@Test
+		@DisplayName("long으로 파싱할 수 없는 유효하지 않은 checks의 경우 exceptions 발생")
+		void invalidChecks() {
+			//Arrange
+			//Act
+			//Assert
+			Assertions.assertThatThrownBy(
+					() -> recruitmentAdminController.getRecruitmentApplications(1L, null, "d,d,d", null,
+						PageRequest.of(1, 10)))
+				.isInstanceOf(BusinessException.class);
+
+		}
+
+		@Test
+		@DisplayName("성공")
+		@Disabled
+		void success() {
+			//Arrange
+			//Act
+			recruitmentAdminController.getRecruitmentApplications(1L, null, "1,2,3", null,
+				PageRequest.of(1, 10));
+
+			//Assert
+		}
 	}
 }
 

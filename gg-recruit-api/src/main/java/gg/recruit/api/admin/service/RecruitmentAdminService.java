@@ -3,6 +3,7 @@ package gg.recruit.api.admin.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import gg.data.recruit.recruitment.Question;
 import gg.data.recruit.recruitment.Recruitment;
 import gg.data.recruit.recruitment.enums.InputType;
 import gg.recruit.api.admin.service.dto.Form;
+import gg.recruit.api.admin.service.dto.GetRecruitmentApplicationsDto;
 import gg.recruit.api.admin.service.dto.UpdateApplicationStatusDto;
 import gg.recruit.api.admin.service.dto.UpdateRecruitStatusParam;
 import gg.utils.exception.ErrorCode;
@@ -181,4 +183,21 @@ public class RecruitmentAdminService {
 		return applicationAdminRepository
 			.findAllByRecruitmentIdWithUserAndRecruitStatusFetchJoinOrderByIdDesc(recruitId);
 	}
+
+	public Page<Application> findApplicationsWithAnswersAndUserWithFilter(GetRecruitmentApplicationsDto dto) {
+		Long recruitId = dto.getRecruitId();
+		Long questionId = dto.getQuestionId();
+		String search = dto.getSearch();
+		Pageable pageable = dto.getPageable();
+		List<Long> checkListIds = dto.getCheckListIds();
+
+		if (questionId != null && !checkListIds.isEmpty() && search == null) {
+			return applicationAdminRepository.findAllByCheckList(recruitId, questionId, checkListIds, pageable);
+		} else if (questionId != null && search != null && checkListIds.isEmpty()) {
+			return applicationAdminRepository.findAllByContainSearch(recruitId, questionId, search, pageable);
+		} else {
+			return applicationAdminRepository.findByRecruitIdAndIsDeletedFalseOrderByIdDesc(recruitId, pageable);
+		}
+	}
+
 }
