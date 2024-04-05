@@ -2,9 +2,8 @@ package gg.recruit.api.admin.service.param;
 
 import java.util.List;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import gg.data.recruit.recruitment.Question;
@@ -15,7 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class FormParam {
 	@NotBlank(message = "질문을 입력해주세요.")
 	@Size(min = 1, max = 300, message = "질문은 300자 이내로 입력해주세요.")
@@ -23,10 +22,11 @@ public class FormParam {
 
 	InputType inputType;
 
-	List<@NotNull @NotEmpty @Size(min = 1, max = 100, message = "100자 이내로 입력해주세요.") String> checkList;
+	@Valid
+	List<CheckListContent> checkList;
 
 	@Builder
-	public FormParam(String question, InputType inputType, List<String> checkList) {
+	public FormParam(String question, InputType inputType, List<CheckListContent> checkList) {
 		this.question = question;
 		this.inputType = inputType;
 		this.checkList = checkList;
@@ -35,4 +35,5 @@ public class FormParam {
 	public Question toQuestion(Recruitment recruitment, int sortNum) {
 		return new Question(recruitment, inputType, question, sortNum);
 	}
+
 }

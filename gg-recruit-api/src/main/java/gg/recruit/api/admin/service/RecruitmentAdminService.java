@@ -21,6 +21,7 @@ import gg.data.recruit.recruitment.CheckList;
 import gg.data.recruit.recruitment.Question;
 import gg.data.recruit.recruitment.Recruitment;
 import gg.data.recruit.recruitment.enums.InputType;
+import gg.recruit.api.admin.service.param.CheckListContent;
 import gg.recruit.api.admin.service.param.FormParam;
 import gg.recruit.api.admin.service.param.GetRecruitmentApplicationsParam;
 import gg.recruit.api.admin.service.param.UpdateApplicationStatusParam;
@@ -113,15 +114,15 @@ public class RecruitmentAdminService {
 
 	/**
 	 * @param question 질문
-	 * @param checkList 선택지
+	 * @param checkLists 선택지
 	 * @throws InvalidCheckListException 선택지가 필요한데 비어있을 때 발생
 	 */
-	private void addCheckList(Question question, List<String> checkList) {
-		if (checkList == null || checkList.isEmpty()) {
+	private void addCheckList(Question question, List<CheckListContent> checkLists) {
+		if (checkLists == null || checkLists.isEmpty()) {
 			throw new InvalidCheckListException();
 		}
-		for (String content : checkList) {
-			new CheckList(question, content);
+		for (CheckListContent checkList : checkLists) {
+			new CheckList(question, checkList.getContent());
 		}
 	}
 

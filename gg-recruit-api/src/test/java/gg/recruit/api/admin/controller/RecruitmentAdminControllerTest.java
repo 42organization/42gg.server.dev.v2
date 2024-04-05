@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.data.recruit.recruitment.enums.InputType;
 import gg.recruit.api.admin.controller.request.RecruitmentRequestDto;
+import gg.recruit.api.admin.service.param.CheckListContent;
 import gg.recruit.api.admin.service.param.FormParam;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
@@ -48,7 +49,7 @@ public class RecruitmentAdminControllerTest {
 			// given
 			String accessToken = testDataUtils.getAdminLoginAccessToken();
 			List<FormParam> forms = List.of(FormParam.builder().question("질문").inputType(InputType.SINGLE_CHECK)
-					.checkList(List.of("선택지1", "선택지2")).build(),
+					.checkList(List.of(new CheckListContent("선택지1"), new CheckListContent("선택지2"))).build(),
 				FormParam.builder().question("질문2").inputType(InputType.TEXT).build()
 			);
 			RecruitmentRequestDto requestDto = new RecruitmentRequestDto(LocalDateTime.now().plusDays(1),

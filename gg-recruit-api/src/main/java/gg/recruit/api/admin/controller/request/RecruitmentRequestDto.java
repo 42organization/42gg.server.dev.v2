@@ -18,10 +18,8 @@ import gg.recruit.api.admin.service.param.FormParam;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
-@Setter
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class RecruitmentRequestDto {
 	@NotNull
