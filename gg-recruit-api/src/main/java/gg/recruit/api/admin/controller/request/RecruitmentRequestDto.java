@@ -24,9 +24,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class RecruitmentRequestDto {
+	@NotNull
 	@FutureOrPresent(message = "시작일은 현재 시간 이후여야 합니다.")
 	LocalDateTime startDate;
 
+	@NotNull
 	@FutureOrPresent(message = "종료일은 현재 시간 이후여야 합니다.")
 	LocalDateTime endDate;
 
