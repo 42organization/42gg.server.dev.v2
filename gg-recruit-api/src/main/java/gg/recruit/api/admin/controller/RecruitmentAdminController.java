@@ -32,7 +32,6 @@ import gg.recruit.api.admin.controller.request.RecruitmentCreateReqDto;
 import gg.recruit.api.admin.controller.request.SetFinalApplicationStatusResultReqDto;
 import gg.recruit.api.admin.controller.request.UpdateStatusRequestDto;
 import gg.recruit.api.admin.controller.response.CreatedRecruitmentResponse;
-import gg.recruit.api.admin.controller.response.GetRecruitmentApplicationDto;
 import gg.recruit.api.admin.controller.response.GetRecruitmentApplicationResponseDto;
 import gg.recruit.api.admin.controller.response.RecruitmentApplicantResultResponseDto;
 import gg.recruit.api.admin.controller.response.RecruitmentApplicantResultsResponseDto;
@@ -106,17 +105,7 @@ public class RecruitmentAdminController {
 		List<Long> checkListIds = parseChecks(checks);
 		dto = new GetRecruitmentApplicationsDto(recruitId, questionId, checkListIds, search, parsedPage);
 		Page<Application> applicationsPage = recruitmentAdminService.findApplicationsWithAnswersAndUserWithFilter(dto);
-		return ResponseEntity.ok(makeResponseDto(applicationsPage));
-	}
-
-	private GetRecruitmentApplicationResponseDto makeResponseDto(Page<Application> applicationsPage) {
-		int page = applicationsPage.getPageable().getPageNumber() + 1;
-		boolean isLast = applicationsPage.isLast();
-		List<GetRecruitmentApplicationDto> dto = applicationsPage.getContent()
-			.stream()
-			.map(GetRecruitmentApplicationDto.MapStruct.INSTANCE::entityToDto)
-			.collect(Collectors.toList());
-		return new GetRecruitmentApplicationResponseDto(page, isLast, dto);
+		return ResponseEntity.ok(GetRecruitmentApplicationResponseDto.applicationsPageToDto(applicationsPage));
 	}
 
 	/**
