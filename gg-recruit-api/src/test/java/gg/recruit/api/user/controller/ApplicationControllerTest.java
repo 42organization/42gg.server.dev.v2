@@ -12,9 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,10 +21,10 @@ import gg.data.recruit.application.Application;
 import gg.data.recruit.application.ApplicationAnswer;
 import gg.data.recruit.application.enums.ApplicationStatus;
 import gg.data.recruit.recruitment.Question;
-import gg.data.recruit.recruitment.Recruitments;
+import gg.data.recruit.recruitment.Recruitment;
 import gg.data.recruit.recruitment.enums.InputType;
 import gg.data.user.User;
-import gg.recruit.api.user.RecruitMockData;
+import gg.recruit.api.RecruitMockData;
 import gg.recruit.api.user.controller.request.CheckListFormRequest;
 import gg.recruit.api.user.controller.request.FormPatchRequestDto;
 import gg.recruit.api.user.controller.request.FormRequest;
@@ -59,13 +57,13 @@ class ApplicationControllerTest {
 		User user = testDataUtils.createNewUser();
 		String accessToken = testDataUtils.getLoginAccessTokenFromUser(user);
 
-		Recruitments recruitments = recruitMockData.createRecruitments();
-		Recruitments recruitments2 = recruitMockData.createRecruitments();
-		Recruitments recruitments3 = recruitMockData.createRecruitments();
+		Recruitment recruitment = recruitMockData.createRecruitment();
+		Recruitment recruitment2 = recruitMockData.createRecruitment();
+		Recruitment recruitment3 = recruitMockData.createRecruitment();
 
-		recruitMockData.createApplication(user, recruitments);
-		recruitMockData.createApplication(user, recruitments2);
-		recruitMockData.createApplication(user, recruitments3);
+		recruitMockData.createApplication(user, recruitment);
+		recruitMockData.createApplication(user, recruitment2);
+		recruitMockData.createApplication(user, recruitment3);
 
 		//when
 		String res = mockMvc.perform(get(("/recruitments/applications"))
@@ -84,10 +82,10 @@ class ApplicationControllerTest {
 		User user = testDataUtils.createNewUser();
 		String accessToken = testDataUtils.getLoginAccessTokenFromUser(user);
 
-		Recruitments recruitments = recruitMockData.createRecruitments();
-		Question q1 = recruitMockData.createQuestion(recruitments);
-		Question q2 = recruitMockData.createQuestion(recruitments);
-		Question q3 = recruitMockData.createQuestion(recruitments);
+		Recruitment recruitment = recruitMockData.createRecruitment();
+		Question q1 = recruitMockData.createQuestion(recruitment);
+		Question q2 = recruitMockData.createQuestion(recruitment);
+		Question q3 = recruitMockData.createQuestion(recruitment);
 
 		List<RecruitApplyFormReqDto> forms = List.of(new RecruitApplyFormReqDto(q1.getId(), "답변 1"),
 			new RecruitApplyFormReqDto(q2.getId(), "답변 2"),
@@ -96,7 +94,7 @@ class ApplicationControllerTest {
 		String content = objectMapper.writeValueAsString(req);
 
 		//when
-		String res = mockMvc.perform(post(("/recruitments/" + recruitments.getId() + "/applications"))
+		String res = mockMvc.perform(post(("/recruitments/" + recruitment.getId() + "/applications"))
 				.header("Authorization", "Bearer " + accessToken)
 				.contentType("application/json")
 				.content(content))
@@ -111,12 +109,12 @@ class ApplicationControllerTest {
 		//given
 		User user = testDataUtils.createNewUser();
 		String accessToken = testDataUtils.getLoginAccessTokenFromUser(user);
-		Recruitments recruitments = recruitMockData.createRecruitments();
-		Application application = recruitMockData.createApplication(user, recruitments);
+		Recruitment recruitment = recruitMockData.createRecruitment();
+		Application application = recruitMockData.createApplication(user, recruitment);
 		recruitMockData.createRecruitStatus(application);
 
 		//when
-		String url = "/recruitments/" + recruitments.getId()
+		String url = "/recruitments/" + recruitment.getId()
 			+ "/applications/" + application.getId() + "/result";
 
 		String res = mockMvc.perform(get(url)
@@ -126,7 +124,7 @@ class ApplicationControllerTest {
 		ApplicationResultResDto applicationResultResDto = objectMapper
 			.readValue(res, ApplicationResultResDto.class);
 
-		assertEquals(recruitments.getTitle(), applicationResultResDto.getTitle());
+		assertEquals(recruitment.getTitle(), applicationResultResDto.getTitle());
 		assertEquals(ApplicationStatus.PROGRESS_DOCS, applicationResultResDto.getStatus());
 	}
 
@@ -136,11 +134,11 @@ class ApplicationControllerTest {
 		//given
 		User user = testDataUtils.createNewUser();
 		String accessToken = testDataUtils.getLoginAccessTokenFromUser(user);
-		Recruitments recruitments = recruitMockData.createRecruitments();
-		Application application = recruitMockData.createApplication(user, recruitments);
+		Recruitment recruitment = recruitMockData.createRecruitment();
+		Application application = recruitMockData.createApplication(user, recruitment);
 
 		//when
-		String url = "/recruitments/" + recruitments.getId()
+		String url = "/recruitments/" + recruitment.getId()
 			+ "/applications/" + application.getId();
 
 		mockMvc.perform(delete(url)
@@ -154,11 +152,11 @@ class ApplicationControllerTest {
 		//given
 		User user = testDataUtils.createNewUser();
 		String accessToken = testDataUtils.getLoginAccessTokenFromUser(user);
-		Recruitments recruitments = recruitMockData.createRecruitmentsEnd();
-		Application application = recruitMockData.createApplication(user, recruitments);
+		Recruitment recruitment = recruitMockData.createRecruitmentEnd();
+		Application application = recruitMockData.createApplication(user, recruitment);
 
 		//when, then
-		String url = "/recruitments/" + recruitments.getId()
+		String url = "/recruitments/" + recruitment.getId()
 			+ "/applications/" + application.getId();
 
 		mockMvc.perform(delete(url)
@@ -172,11 +170,11 @@ class ApplicationControllerTest {
 		//given
 		User user = testDataUtils.createNewUser();
 		String accessToken = testDataUtils.getLoginAccessTokenFromUser(user);
-		Recruitments recruitments = recruitMockData.createRecruitmentsDel();
-		Application application = recruitMockData.createApplication(user, recruitments);
+		Recruitment recruitment = recruitMockData.createRecruitmentDel();
+		Application application = recruitMockData.createApplication(user, recruitment);
 
 		//when, then
-		String url = "/recruitments/" + recruitments.getId()
+		String url = "/recruitments/" + recruitment.getId()
 			+ "/applications/" + application.getId() + 1;
 
 		mockMvc.perform(delete(url)
@@ -190,12 +188,12 @@ class ApplicationControllerTest {
 		//given
 		User user = testDataUtils.createNewUser();
 		String accessToken = testDataUtils.getLoginAccessTokenFromUser(user);
-		Recruitments recruitments = recruitMockData.createRecruitments();
-		Question question1 = recruitMockData.createQuestion(recruitments, "질문 1", InputType.TEXT);
-		Question question2 = recruitMockData.createQuestion(recruitments, "질문 2", InputType.SINGLE_CHECK,
+		Recruitment recruitment = recruitMockData.createRecruitment();
+		Question question1 = recruitMockData.createQuestion(recruitment, "질문 1", InputType.TEXT);
+		Question question2 = recruitMockData.createQuestion(recruitment, "질문 2", InputType.SINGLE_CHECK,
 			"선택지 1", "선택지 2");
 
-		Application application = recruitMockData.createApplication(user, recruitments);
+		Application application = recruitMockData.createApplication(user, recruitment);
 		recruitMockData.makeAnswer(application, question1, "답변 1");
 		recruitMockData.makeAnswer(application, question2, question2.getCheckLists().get(0).getId());
 
@@ -210,7 +208,7 @@ class ApplicationControllerTest {
 		FormPatchRequestDto requestDto = new FormPatchRequestDto(forms);
 		String content = objectMapper.writeValueAsString(requestDto);
 
-		String url = "/recruitments/" + recruitments.getId()
+		String url = "/recruitments/" + recruitment.getId()
 			+ "/applications/" + application.getId();
 		mockMvc.perform(patch(url)
 				.header("Authorization", "Bearer " + accessToken)
@@ -220,7 +218,7 @@ class ApplicationControllerTest {
 
 		//then
 		List<ApplicationAnswer> allAnswers = recruitMockData.getAllAnswers(user.getId(),
-			recruitments.getId(), application.getId());
+			recruitment.getId(), application.getId());
 		assertEquals(2, allAnswers.size());
 		allAnswers.stream().forEach(answer -> {
 			if (answer.getQuestionId().equals(question1.getId())) {

@@ -14,9 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.data.recruit.application.Application;
-import gg.data.recruit.recruitment.Recruitments;
+import gg.data.recruit.recruitment.Recruitment;
 import gg.data.user.User;
-import gg.recruit.api.user.RecruitMockData;
+import gg.recruit.api.RecruitMockData;
 import gg.recruit.api.user.controller.response.ActiveRecruitmentListResDto;
 import gg.recruit.api.user.controller.response.RecruitmentDetailResDto;
 import gg.utils.TestDataUtils;
@@ -42,9 +42,9 @@ class RecruitmentControllerTest {
 		User user = testDataUtils.createNewUser();
 		String accessToken = testDataUtils.getLoginAccessTokenFromUser(user);
 
-		Recruitments recruitments = recruitMockData.createRecruitments();
-		Recruitments recruitments2 = recruitMockData.createRecruitments();
-		Recruitments recruitments3 = recruitMockData.createRecruitments();
+		Recruitment recruitment = recruitMockData.createRecruitment();
+		Recruitment recruitment2 = recruitMockData.createRecruitment();
+		Recruitment recruitment3 = recruitMockData.createRecruitment();
 		//when
 		String res = mockMvc.perform(get("/recruitments")
 				.param("page", "1")
@@ -65,9 +65,9 @@ class RecruitmentControllerTest {
 		User user = testDataUtils.createNewUser();
 		String accessToken = testDataUtils.getLoginAccessTokenFromUser(user);
 
-		Recruitments recruitments = recruitMockData.createRecruitments();
+		Recruitment recruitment = recruitMockData.createRecruitment();
 		//when
-		String res = mockMvc.perform(get("/recruitments/" + recruitments.getId())
+		String res = mockMvc.perform(get("/recruitments/" + recruitment.getId())
 				.header("Authorization", "Bearer " + accessToken))
 			.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
@@ -81,9 +81,9 @@ class RecruitmentControllerTest {
 		User user = testDataUtils.createNewUser();
 		String accessToken = testDataUtils.getLoginAccessTokenFromUser(user);
 
-		Recruitments recruitments = recruitMockData.createRecruitmentsDel();
+		Recruitment recruitment = recruitMockData.createRecruitmentDel();
 		//when
-		String res = mockMvc.perform(get("/recruitments/" + recruitments.getId())
+		String res = mockMvc.perform(get("/recruitments/" + recruitment.getId())
 				.header("Authorization", "Bearer " + accessToken))
 			.andExpect(status().isNotFound()).andReturn().getResponse().getContentAsString();
 
@@ -97,10 +97,10 @@ class RecruitmentControllerTest {
 		User user = testDataUtils.createNewUser();
 		String accessToken = testDataUtils.getLoginAccessTokenFromUser(user);
 
-		Recruitments recruitments = recruitMockData.createRecruitments();
-		Application application = recruitMockData.createApplication(user, recruitments);
+		Recruitment recruitment = recruitMockData.createRecruitment();
+		Application application = recruitMockData.createApplication(user, recruitment);
 		//when
-		String result = mockMvc.perform(get("/recruitments/" + recruitments.getId())
+		String result = mockMvc.perform(get("/recruitments/" + recruitment.getId())
 				.header("Authorization", "Bearer " + accessToken))
 			.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 

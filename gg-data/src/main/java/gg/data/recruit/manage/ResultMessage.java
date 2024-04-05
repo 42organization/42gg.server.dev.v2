@@ -11,22 +11,34 @@ import javax.persistence.Id;
 import gg.data.BaseTimeEntity;
 import gg.data.recruit.manage.enums.MessageType;
 import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class ResultMessage extends BaseTimeEntity {
+	public static final int contentLimit = 100;
+	public static final int messageTypeLimit = 15;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(length = 100)
+	@Column(length = contentLimit)
 	private String content;
 
-	@Column(length = 15, nullable = false)
+	@Column(length = messageTypeLimit, nullable = false)
 	@Enumerated(EnumType.STRING)
 	private MessageType messageType;
 
-	private Boolean isUse;
+	@Column
+	private Boolean isUse = true;
+
+	@Builder
+	public ResultMessage(String content, MessageType messageType) {
+		this.content = content;
+		this.messageType = messageType;
+	}
 }

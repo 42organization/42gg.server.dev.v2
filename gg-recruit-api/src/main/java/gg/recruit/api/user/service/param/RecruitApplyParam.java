@@ -6,13 +6,13 @@ import lombok.Getter;
 
 @Getter
 public class RecruitApplyParam {
-	private Long recruitId;
 	private Long userId;
+	private Long recruitId;
 	private List<RecruitApplyFormParam> forms;
 
-	public RecruitApplyParam(Long recruitId, Long userId, List<RecruitApplyFormParam> forms) {
-		this.recruitId = recruitId;
+	public RecruitApplyParam(Long userId, Long recruitId, List<RecruitApplyFormParam> forms) {
 		this.userId = userId;
+		this.recruitId = recruitId;
 		this.forms = forms;
 	}
 
