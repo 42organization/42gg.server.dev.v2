@@ -2,7 +2,6 @@ package gg.admin.repo.recruit;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
@@ -19,9 +18,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.data.recruit.application.Application;
-import gg.data.recruit.application.RecruitStatus;
 import gg.data.recruit.application.ApplicationAnswerCheckList;
 import gg.data.recruit.application.ApplicationAnswerText;
+import gg.data.recruit.application.RecruitStatus;
 import gg.data.recruit.recruitment.CheckList;
 import gg.data.recruit.recruitment.Question;
 import gg.data.recruit.recruitment.Recruitment;
