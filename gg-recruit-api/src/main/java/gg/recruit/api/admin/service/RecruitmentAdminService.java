@@ -176,4 +176,9 @@ public class RecruitmentAdminService {
 		RecruitStatus recruitStatus = new RecruitStatus(application, interviewDate);
 		recruitStatusAdminRepository.save(recruitStatus);
 	}
+
+	public List<Application> getRecruitmentApplicants(Long recruitId) {
+		return applicationAdminRepository
+			.findAllByRecruitmentIdWithUserAndRecruitStatusFetchJoinOrderByIdDesc(recruitId);
+	}
 }

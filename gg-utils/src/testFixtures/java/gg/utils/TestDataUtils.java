@@ -924,6 +924,12 @@ public class TestDataUtils {
 		return application;
 	}
 
+	public RecruitStatus createRecruitStatus(Application application) {
+		RecruitStatus recruitStatus = new RecruitStatus(application);
+		recruitStatusRepository.save(recruitStatus);
+		return recruitStatus;
+	}
+
 	public RecruitStatus createRecruitStatus(Application application, LocalDateTime interviewDate) {
 		RecruitStatus recruitStatus = new RecruitStatus(application, interviewDate);
 		recruitStatusRepository.save(recruitStatus);
