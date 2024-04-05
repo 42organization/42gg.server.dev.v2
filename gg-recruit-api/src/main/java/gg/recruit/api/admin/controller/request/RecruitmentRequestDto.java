@@ -25,10 +25,10 @@ import lombok.Setter;
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class RecruitmentRequestDto {
 	@FutureOrPresent(message = "시작일은 현재 시간 이후여야 합니다.")
-	LocalDateTime startDateTime;
+	LocalDateTime startDate;
 
 	@FutureOrPresent(message = "종료일은 현재 시간 이후여야 합니다.")
-	LocalDateTime endDateTime;
+	LocalDateTime endDate;
 
 	@NotBlank(message = "제목을 입력해주세요.")
 	@Size(max = 255, message = "제목은 255자 이내로 입력해주세요.")
@@ -47,11 +47,11 @@ public class RecruitmentRequestDto {
 	List<FormParam> form;
 
 	@Builder
-	public RecruitmentRequestDto(LocalDateTime startDateTime, LocalDateTime endDateTime, String title,
+	public RecruitmentRequestDto(LocalDateTime startDate, LocalDateTime endDate, String title,
 		String contents,
 		String generation, List<FormParam> form) {
-		this.startDateTime = startDateTime;
-		this.endDateTime = endDateTime;
+		this.startDate = startDate;
+		this.endDate = endDate;
 		this.title = title;
 		this.contents = contents;
 		this.generation = generation;
@@ -62,8 +62,8 @@ public class RecruitmentRequestDto {
 	public interface RecruitmentMapper {
 		RecruitmentMapper INSTANCE = Mappers.getMapper(RecruitmentMapper.class);
 
-		@Mapping(source = "startDateTime", target = "startTime")
-		@Mapping(source = "endDateTime", target = "endTime")
+		@Mapping(source = "startDate", target = "startTime")
+		@Mapping(source = "endDate", target = "endTime")
 		Recruitment dtoToEntity(RecruitmentRequestDto dto);
 	}
 }

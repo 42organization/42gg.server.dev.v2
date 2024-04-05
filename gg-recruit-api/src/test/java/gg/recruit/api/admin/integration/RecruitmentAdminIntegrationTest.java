@@ -184,8 +184,8 @@ public class RecruitmentAdminIntegrationTest {
 			.title("updated title")
 			.contents("updated contents")
 			.generation("updated generation")
-			.startDateTime(LocalDateTime.now().plusDays(1))
-			.endDateTime(LocalDateTime.now().plusDays(2))
+			.startDate(LocalDateTime.now().plusDays(1))
+			.endDate(LocalDateTime.now().plusDays(2))
 			.form(List.of(afterQuestion))
 			.build();
 
