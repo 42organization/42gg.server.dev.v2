@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import gg.data.recruit.manage.ResultMessage;
+import gg.recruit.api.admin.controller.request.GetRecruitmentResultMessagePreviewReqDto;
+import gg.recruit.api.admin.controller.response.GetRecruitmentResultMessagePreviewResDto;
 import gg.recruit.api.admin.controller.response.GetRecruitmentResultMessageResponseDto;
 import gg.recruit.api.admin.controller.response.GetRecruitmentResultMessagesResponseDto;
 import gg.recruit.api.admin.service.RecruitmentResultMessageAdminService;
@@ -53,5 +55,11 @@ public class RecruitmentResultMessageAdminController {
 			.collect(Collectors.toList());
 
 		return ResponseEntity.ok(new GetRecruitmentResultMessagesResponseDto(resultDto));
+	}
+
+	@GetMapping("/preview")
+	public GetRecruitmentResultMessagePreviewResDto getPreview(GetRecruitmentResultMessagePreviewReqDto reqDto) {
+		return new GetRecruitmentResultMessagePreviewResDto(
+			resultMessageAdminService.getResultMessagePreview(reqDto.getMessageType()));
 	}
 }

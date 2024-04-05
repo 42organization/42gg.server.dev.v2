@@ -1,6 +1,7 @@
 package gg.admin.repo.recruit.manage;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -19,4 +20,8 @@ public interface RecruitResultMessageRepository extends JpaRepository<ResultMess
 
 	@Query("SELECT r FROM ResultMessage r ORDER BY r.id DESC")
 	List<ResultMessage> findAllOrderByIdDesc();
+
+	@Query("SELECT r FROM ResultMessage r "
+		+ "WHERE r.messageType = :messageType and r.isUse = true ")
+	Optional<ResultMessage> findActiveResultMessageByMessageType(@Param("messageType") MessageType messageType);
 }

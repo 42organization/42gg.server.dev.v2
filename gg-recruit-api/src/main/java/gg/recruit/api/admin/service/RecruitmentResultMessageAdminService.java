@@ -3,6 +3,7 @@ package gg.recruit.api.admin.service;
 import java.util.List;
 
 import gg.data.recruit.manage.ResultMessage;
+import gg.data.recruit.manage.enums.MessageType;
 import gg.recruit.api.admin.service.dto.RecruitmentResultMessageDto;
 
 /**
@@ -27,4 +28,6 @@ public interface RecruitmentResultMessageAdminService {
 	 * @return List<ResultMessage>
 	 */
 	List<ResultMessage> getResultMessages();
+
+	String getResultMessagePreview(MessageType messageType);
 }

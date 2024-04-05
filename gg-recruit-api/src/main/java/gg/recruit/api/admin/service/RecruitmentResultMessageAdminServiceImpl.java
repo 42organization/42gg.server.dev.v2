@@ -7,8 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import gg.admin.repo.recruit.manage.RecruitResultMessageRepository;
 import gg.data.recruit.manage.ResultMessage;
+import gg.data.recruit.manage.enums.MessageType;
 import gg.recruit.api.admin.service.dto.RecruitmentResultMessageDto;
 import gg.recruit.api.admin.service.dto.RecruitmentResultMessageDtoMapper;
+import gg.utils.exception.custom.NotExistException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -34,5 +36,16 @@ public class RecruitmentResultMessageAdminServiceImpl implements RecruitmentResu
 	@Override
 	public List<ResultMessage> getResultMessages() {
 		return recruitResultMessageRepository.findAllOrderByIdDesc();
+	}
+
+	/**
+	 * 지원 결과 메시지 양식 미리보기
+	 * @return String
+	 */
+	@Override
+	public String getResultMessagePreview(MessageType messageType) {
+		return recruitResultMessageRepository.findActiveResultMessageByMessageType(messageType)
+			.orElseThrow(() -> new NotExistException("지원 결과 메시지가 존재하지 않습니다."))
+			.getContent();
 	}
 }
