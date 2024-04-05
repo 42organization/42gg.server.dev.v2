@@ -47,7 +47,7 @@ public class Recruitment extends BaseTimeEntity {
 	@Column(nullable = false)
 	private LocalDateTime endTime;
 
-	@OneToMany(mappedBy = "recruit", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "recruit", orphanRemoval = true, cascade = CascadeType.ALL)
 	private List<Question> questions = new ArrayList<>();
 
 	@Builder
@@ -80,8 +80,33 @@ public class Recruitment extends BaseTimeEntity {
 		this.isFinish = finish;
 	}
 
+	/**
+	 * Question에서 호출하는 연관관계 편의 메서드, 기타 호출 금지
+	 * @param question
+	 */
 	protected void addQuestions(Question question) {
 		mustNotNull(question, NULL_POINT);
 		this.questions.add(question);
+	}
+
+	/**
+	 * 연관관계 주인까지 전체 수정 메서드
+	 * @param updatedRecruitment
+	 */
+	public void update(Recruitment updatedRecruitment) {
+		mustNotNull(updatedRecruitment, NULL_POINT);
+		mustNotNull(questions, NULL_POINT);
+
+		this.title = updatedRecruitment.getTitle();
+		this.contents = updatedRecruitment.getContents();
+		this.generation = updatedRecruitment.getGeneration();
+		this.startTime = updatedRecruitment.getStartTime();
+		this.endTime = updatedRecruitment.getEndTime();
+
+		for (Question question : this.questions) {
+			question.getCheckLists().clear();
+		}
+		this.questions.clear();
+		// this.questions = questions;
 	}
 }

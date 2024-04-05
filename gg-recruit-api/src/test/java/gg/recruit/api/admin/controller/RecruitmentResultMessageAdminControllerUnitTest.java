@@ -24,7 +24,7 @@ import gg.data.recruit.manage.enums.MessageType;
 import gg.recruit.api.WebMvcTestApplicationContext;
 import gg.recruit.api.admin.controller.response.GetRecruitmentResultMessagesResponseDto;
 import gg.recruit.api.admin.service.RecruitmentResultMessageAdminService;
-import gg.recruit.api.admin.service.dto.RecruitmentResultMessageDto;
+import gg.recruit.api.admin.service.param.RecruitmentResultMessageParam;
 import gg.utils.annotation.UnitTest;
 
 @UnitTest
@@ -45,7 +45,7 @@ class RecruitmentResultMessageAdminControllerUnitTest {
 		@DisplayName("resultMessage 등록 성공")
 		void postResultMessageSuccess() {
 			//Arrange
-			RecruitmentResultMessageDto dto = new RecruitmentResultMessageDto(MessageType.FAIL, "탈락");
+			RecruitmentResultMessageParam dto = new RecruitmentResultMessageParam(MessageType.FAIL, "탈락");
 			//Act
 			ResponseEntity<Void> response = resultMessageAdminController.postResultMessage(dto);
 			//Assert
@@ -56,13 +56,14 @@ class RecruitmentResultMessageAdminControllerUnitTest {
 		@DisplayName("유효하지 않은 dto는 ConstraintViolationException")
 		void invalidArgument() {
 			//Arrange
-			List<RecruitmentResultMessageDto> listDto = new ArrayList<>();
-			listDto.add(new RecruitmentResultMessageDto(MessageType.FAIL, null));
-			listDto.add(new RecruitmentResultMessageDto(null, "fail"));
-			listDto.add(new RecruitmentResultMessageDto(MessageType.FAIL, "f".repeat(ResultMessage.contentLimit + 1)));
+			List<RecruitmentResultMessageParam> listDto = new ArrayList<>();
+			listDto.add(new RecruitmentResultMessageParam(MessageType.FAIL, null));
+			listDto.add(new RecruitmentResultMessageParam(null, "fail"));
+			listDto.add(
+				new RecruitmentResultMessageParam(MessageType.FAIL, "f".repeat(ResultMessage.contentLimit + 1)));
 			//Act
 			//Assert
-			for (RecruitmentResultMessageDto dto : listDto) {
+			for (RecruitmentResultMessageParam dto : listDto) {
 				Assertions.assertThatExceptionOfType(ConstraintViolationException.class)
 					.isThrownBy(
 						() -> resultMessageAdminController.postResultMessage(dto));

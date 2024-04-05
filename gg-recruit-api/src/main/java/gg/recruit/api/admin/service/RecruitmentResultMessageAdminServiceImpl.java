@@ -8,8 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import gg.admin.repo.recruit.manage.RecruitResultMessageRepository;
 import gg.data.recruit.manage.ResultMessage;
 import gg.data.recruit.manage.enums.MessageType;
-import gg.recruit.api.admin.service.dto.RecruitmentResultMessageDto;
-import gg.recruit.api.admin.service.dto.RecruitmentResultMessageDtoMapper;
+import gg.recruit.api.admin.service.param.RecruitmentResultMessageDtoMapper;
+import gg.recruit.api.admin.service.param.RecruitmentResultMessageParam;
 import gg.utils.exception.custom.NotExistException;
 import lombok.RequiredArgsConstructor;
 
@@ -24,7 +24,7 @@ public class RecruitmentResultMessageAdminServiceImpl implements RecruitmentResu
 	 */
 	@Override
 	@Transactional
-	public void postResultMessage(RecruitmentResultMessageDto reqDto) {
+	public void postResultMessage(RecruitmentResultMessageParam reqDto) {
 		recruitResultMessageRepository.disablePreviousResultMessages(reqDto.getMessageType());
 		recruitResultMessageRepository.save(RecruitmentResultMessageDtoMapper.INSTANCE.dtoToEntity(reqDto));
 	}

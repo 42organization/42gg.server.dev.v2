@@ -3,6 +3,8 @@ package gg.recruit.api.admin.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -19,10 +21,11 @@ import gg.data.recruit.recruitment.CheckList;
 import gg.data.recruit.recruitment.Question;
 import gg.data.recruit.recruitment.Recruitment;
 import gg.data.recruit.recruitment.enums.InputType;
-import gg.recruit.api.admin.service.dto.Form;
-import gg.recruit.api.admin.service.dto.GetRecruitmentApplicationsDto;
-import gg.recruit.api.admin.service.dto.UpdateApplicationStatusDto;
-import gg.recruit.api.admin.service.dto.UpdateRecruitStatusParam;
+import gg.recruit.api.admin.service.param.CheckListContent;
+import gg.recruit.api.admin.service.param.FormParam;
+import gg.recruit.api.admin.service.param.GetRecruitmentApplicationsParam;
+import gg.recruit.api.admin.service.param.UpdateApplicationStatusParam;
+import gg.recruit.api.admin.service.param.UpdateRecruitStatusParam;
 import gg.utils.exception.ErrorCode;
 import gg.utils.exception.custom.BusinessException;
 import gg.utils.exception.custom.DuplicationException;
@@ -36,6 +39,7 @@ import lombok.RequiredArgsConstructor;
 public class RecruitmentAdminService {
 	private final RecruitmentAdminRepository recruitmentAdminRepository;
 	private final ApplicationAdminRepository applicationAdminRepository;
+	private final EntityManager entityManager;
 	private final RecruitStatusAdminRepository recruitStatusAdminRepository;
 
 	/**
@@ -46,9 +50,9 @@ public class RecruitmentAdminService {
 	 * @return Recruitment 생성된 채용 공고
 	 */
 	@Transactional
-	public Recruitment createRecruitment(Recruitment recruitment, List<Form> forms) {
+	public Recruitment createRecruitment(Recruitment recruitment, List<FormParam> forms) {
 		for (int i = 0; i < forms.size(); i++) {
-			Form form = forms.get(i);
+			FormParam form = forms.get(i);
 			Question question = form.toQuestion(recruitment, i + 1);
 			InputType inputType = question.getInputType();
 
@@ -89,16 +93,36 @@ public class RecruitmentAdminService {
 	}
 
 	/**
+	 * 채용 공고를 수정한다.
+	 * @param recruitId 채용 공고 ID
+	 * @param updatedRecruitment 수정할 채용 공고
+	 * @param forms 수정할 질문과 선택지
+	 * @throws NotExistException 채용 공고가 존재하지 않을 때 발생
+	 * @throws IllegalArgumentException 채용 공고 시작 시간이 현재 시간과 같거나 이후일 때 발생
+	 */
+	@Transactional
+	public Recruitment updateRecruitment(Long recruitId, Recruitment updatedRecruitment, List<FormParam> forms) {
+		Recruitment target = recruitmentAdminRepository.findById(recruitId)
+			.orElseThrow(() -> new NotExistException("공고를 찾을 수 없습니다."));
+		LocalDateTime now = LocalDateTime.now();
+		if (target.getIsFinish() || target.getStartTime().isEqual(now) || target.getStartTime().isBefore(now)) {
+			throw new ForbiddenException("수정 불가능한 공고입니다.");
+		}
+		target.update(updatedRecruitment);
+		return target;
+	}
+
+	/**
 	 * @param question 질문
-	 * @param checkList 선택지
+	 * @param checkLists 선택지
 	 * @throws InvalidCheckListException 선택지가 필요한데 비어있을 때 발생
 	 */
-	private void addCheckList(Question question, List<String> checkList) {
-		if (checkList == null || checkList.isEmpty()) {
+	private void addCheckList(Question question, List<CheckListContent> checkLists) {
+		if (checkLists == null || checkLists.isEmpty()) {
 			throw new InvalidCheckListException();
 		}
-		for (String content : checkList) {
-			new CheckList(question, content);
+		for (CheckListContent checkList : checkLists) {
+			new CheckList(question, checkList.getContent());
 		}
 	}
 
@@ -107,7 +131,7 @@ public class RecruitmentAdminService {
 	 * @param dto
 	 */
 	@Transactional
-	public void updateFinalApplicationStatusAndNotification(UpdateApplicationStatusDto dto) {
+	public void updateFinalApplicationStatusAndNotification(UpdateApplicationStatusParam dto) {
 		Application application = applicationAdminRepository
 			.findByIdAndRecruitId(dto.getApplicationId(), dto.getRecruitId())
 			.orElseThrow(() -> new NotExistException("Application not found."));
@@ -131,7 +155,7 @@ public class RecruitmentAdminService {
 	 * @param dto
 	 */
 	@Transactional
-	public void updateApplicationStatus(UpdateApplicationStatusDto dto) {
+	public void updateApplicationStatus(UpdateApplicationStatusParam dto) {
 		Application application = applicationAdminRepository
 			.findByIdAndRecruitId(dto.getApplicationId(), dto.getRecruitId())
 			.orElseThrow(() -> new NotExistException("Application not found."));
@@ -147,7 +171,7 @@ public class RecruitmentAdminService {
 	 *
 	 */
 	@Transactional
-	public void updateDocumentScreening(UpdateApplicationStatusDto dto) {
+	public void updateDocumentScreening(UpdateApplicationStatusParam dto) {
 		Application application = applicationAdminRepository
 			.findByIdAndRecruitId(dto.getApplicationId(), dto.getRecruitId())
 			.orElseThrow(() -> new NotExistException("Application not found."));
@@ -184,7 +208,7 @@ public class RecruitmentAdminService {
 			.findAllByRecruitmentIdWithUserAndRecruitStatusFetchJoinOrderByIdDesc(recruitId);
 	}
 
-	public Page<Application> findApplicationsWithAnswersAndUserWithFilter(GetRecruitmentApplicationsDto dto) {
+	public Page<Application> findApplicationsWithAnswersAndUserWithFilter(GetRecruitmentApplicationsParam dto) {
 		Long recruitId = dto.getRecruitId();
 		Long questionId = dto.getQuestionId();
 		String search = dto.getSearch();

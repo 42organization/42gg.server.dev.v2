@@ -23,8 +23,8 @@ import gg.admin.repo.recruit.ApplicationAdminRepository;
 import gg.admin.repo.recruit.RecruitmentAdminRepository;
 import gg.data.recruit.application.Application;
 import gg.data.recruit.application.enums.ApplicationStatus;
-import gg.recruit.api.admin.service.dto.GetRecruitmentApplicationsDto;
-import gg.recruit.api.admin.service.dto.UpdateApplicationStatusDto;
+import gg.recruit.api.admin.service.param.GetRecruitmentApplicationsParam;
+import gg.recruit.api.admin.service.param.UpdateApplicationStatusParam;
 import gg.utils.annotation.UnitTest;
 import gg.utils.exception.custom.NotExistException;
 
@@ -46,13 +46,13 @@ class RecruitmentAdminServiceTest {
 			List<ApplicationStatus> nonFinalStatuses = Arrays.stream(ApplicationStatus.values())
 				.filter(status -> !status.isFinal)
 				.collect(Collectors.toList());
-			List<UpdateApplicationStatusDto> invalidDtoList = nonFinalStatuses.stream()
-				.map((status) -> new UpdateApplicationStatusDto(status, 1L, 1L))
+			List<UpdateApplicationStatusParam> invalidDtoList = nonFinalStatuses.stream()
+				.map((status) -> new UpdateApplicationStatusParam(status, 1L, 1L))
 				.collect(Collectors.toList());
 
 			//Act
 			//Assert
-			for (UpdateApplicationStatusDto invalidDto : invalidDtoList) {
+			for (UpdateApplicationStatusParam invalidDto : invalidDtoList) {
 				Assertions.assertThatThrownBy(
 						() -> recruitmentAdminService.updateFinalApplicationStatusAndNotification(invalidDto))
 					.isInstanceOf(NotExistException.class);
@@ -66,14 +66,14 @@ class RecruitmentAdminServiceTest {
 			List<ApplicationStatus> finalStatuses = Arrays.stream(ApplicationStatus.values())
 				.filter(status -> status.isFinal)
 				.collect(Collectors.toList());
-			List<UpdateApplicationStatusDto> validDtoList = finalStatuses.stream()
-				.map((status) -> new UpdateApplicationStatusDto(status, 1L, 1L))
+			List<UpdateApplicationStatusParam> validDtoList = finalStatuses.stream()
+				.map((status) -> new UpdateApplicationStatusParam(status, 1L, 1L))
 				.collect(Collectors.toList());
 			Application application = Mockito.mock(Application.class);
 
 			//Act
 			//Assert
-			for (UpdateApplicationStatusDto validDto : validDtoList) {
+			for (UpdateApplicationStatusParam validDto : validDtoList) {
 				Mockito.when(applicationAdminRepository.findByIdAndRecruitId(eq(validDto.getApplicationId()),
 					eq(validDto.getRecruitId()))).thenReturn(Optional.of(application));
 				recruitmentAdminService.updateFinalApplicationStatusAndNotification(validDto);
@@ -89,7 +89,7 @@ class RecruitmentAdminServiceTest {
 		void success() {
 			//Arrange
 			Pageable pageable = PageRequest.of(1, 10, Sort.by(new Sort.Order(Sort.Direction.DESC, "id")));
-			GetRecruitmentApplicationsDto dto = new GetRecruitmentApplicationsDto(1L, null, new ArrayList<>(), null,
+			GetRecruitmentApplicationsParam dto = new GetRecruitmentApplicationsParam(1L, null, new ArrayList<>(), null,
 				pageable);
 			recruitmentAdminService.findApplicationsWithAnswersAndUserWithFilter(dto);
 

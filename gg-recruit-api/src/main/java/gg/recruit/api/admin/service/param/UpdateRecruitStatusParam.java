@@ -1,4 +1,4 @@
-package gg.recruit.api.admin.service.dto;
+package gg.recruit.api.admin.service.param;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

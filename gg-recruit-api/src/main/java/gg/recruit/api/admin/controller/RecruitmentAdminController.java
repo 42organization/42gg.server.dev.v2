@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 import gg.data.recruit.application.Application;
 import gg.data.recruit.recruitment.Recruitment;
 import gg.recruit.api.admin.controller.request.InterviewRequestDto;
-import gg.recruit.api.admin.controller.request.RecruitmentCreateReqDto;
+import gg.recruit.api.admin.controller.request.RecruitmentRequestDto;
 import gg.recruit.api.admin.controller.request.SetFinalApplicationStatusResultReqDto;
 import gg.recruit.api.admin.controller.request.UpdateStatusRequestDto;
 import gg.recruit.api.admin.controller.response.CreatedRecruitmentResponse;
@@ -37,9 +38,9 @@ import gg.recruit.api.admin.controller.response.RecruitmentApplicantResultRespon
 import gg.recruit.api.admin.controller.response.RecruitmentApplicantResultsResponseDto;
 import gg.recruit.api.admin.controller.response.RecruitmentsResponse;
 import gg.recruit.api.admin.service.RecruitmentAdminService;
-import gg.recruit.api.admin.service.dto.GetRecruitmentApplicationsDto;
-import gg.recruit.api.admin.service.dto.UpdateApplicationStatusDto;
-import gg.recruit.api.admin.service.dto.UpdateRecruitStatusParam;
+import gg.recruit.api.admin.service.param.GetRecruitmentApplicationsParam;
+import gg.recruit.api.admin.service.param.UpdateApplicationStatusParam;
+import gg.recruit.api.admin.service.param.UpdateRecruitStatusParam;
 import gg.utils.dto.PageRequestDto;
 import gg.utils.exception.ErrorCode;
 import gg.utils.exception.custom.BusinessException;
@@ -54,10 +55,11 @@ public class RecruitmentAdminController {
 
 	@PostMapping
 	public ResponseEntity<CreatedRecruitmentResponse> createRecruitment(
-		@RequestBody @Valid RecruitmentCreateReqDto recruitmentDto) {
-		Recruitment recruitment = recruitmentDto.toRecruitment();
+		@RequestBody @Valid RecruitmentRequestDto recruitmentDto) {
+		Recruitment recruitment = RecruitmentRequestDto.RecruitmentMapper.INSTANCE.dtoToEntity(recruitmentDto);
 		Long recruitmentId = recruitmentAdminService.createRecruitment(recruitment, recruitmentDto.getForm()).getId();
 		CreatedRecruitmentResponse createdRecruitmentResponse = new CreatedRecruitmentResponse(recruitmentId);
+
 		return ResponseEntity.status(HttpStatus.CREATED).body(createdRecruitmentResponse);
 	}
 
@@ -86,7 +88,8 @@ public class RecruitmentAdminController {
 		@PathVariable @Positive Long recruitId,
 		@RequestParam("application") @Positive Long applicationId,
 		@RequestBody @Valid SetFinalApplicationStatusResultReqDto reqDto) {
-		UpdateApplicationStatusDto dto = new UpdateApplicationStatusDto(reqDto.getStatus(), applicationId, recruitId);
+		UpdateApplicationStatusParam dto = new UpdateApplicationStatusParam(reqDto.getStatus(), applicationId,
+			recruitId);
 		recruitmentAdminService.updateFinalApplicationStatusAndNotification(dto);
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
@@ -99,11 +102,11 @@ public class RecruitmentAdminController {
 		@RequestParam(value = "search", required = false) String search,
 		@PageableDefault(sort = "id", page = 1) Pageable page
 	) {
-		GetRecruitmentApplicationsDto dto;
+		GetRecruitmentApplicationsParam dto;
 
 		Pageable parsedPage = PageRequest.of(page.getPageNumber() - 1, Math.min(page.getPageSize(), 20));
 		List<Long> checkListIds = parseChecks(checks);
-		dto = new GetRecruitmentApplicationsDto(recruitId, questionId, checkListIds, search, parsedPage);
+		dto = new GetRecruitmentApplicationsParam(recruitId, questionId, checkListIds, search, parsedPage);
 		Page<Application> applicationsPage = recruitmentAdminService.findApplicationsWithAnswersAndUserWithFilter(dto);
 		return ResponseEntity.ok(GetRecruitmentApplicationResponseDto.applicationsPageToDto(applicationsPage));
 	}
@@ -131,13 +134,22 @@ public class RecruitmentAdminController {
 		return ResponseEntity.noContent().build();
 	}
 
+	@PutMapping("/{recruitId}")
+	public ResponseEntity<Void> updateRecruitment(@PathVariable @Positive Long recruitId,
+		@RequestBody @Valid RecruitmentRequestDto recruitmentDto) {
+		Recruitment recruitment = RecruitmentRequestDto.RecruitmentMapper.INSTANCE.dtoToEntity(recruitmentDto);
+		recruitment = recruitmentAdminService.updateRecruitment(recruitId, recruitment, recruitmentDto.getForm());
+		recruitmentAdminService.createRecruitment(recruitment, recruitmentDto.getForm());
+		return ResponseEntity.noContent().build();
+	}
+
 	@PostMapping("/{recruitId}/interview")
 	public ResponseEntity<Void> setInterviewDate(@PathVariable @Positive Long recruitId,
 		@RequestParam("application") @Positive Long applicationId,
 		@RequestBody @Valid InterviewRequestDto reqDto) {
 
 		recruitmentAdminService.updateDocumentScreening(
-			new UpdateApplicationStatusDto(reqDto.getStatus(), applicationId, recruitId, reqDto.getInterviewDate()));
+			new UpdateApplicationStatusParam(reqDto.getStatus(), applicationId, recruitId, reqDto.getInterviewDate()));
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 

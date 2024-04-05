@@ -9,19 +9,26 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
+
 import gg.data.recruit.recruitment.Recruitment;
-import gg.recruit.api.admin.service.dto.Form;
+import gg.recruit.api.admin.service.param.FormParam;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
-public class RecruitmentCreateReqDto {
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
+public class RecruitmentRequestDto {
+	@NotNull
 	@FutureOrPresent(message = "시작일은 현재 시간 이후여야 합니다.")
-	LocalDateTime startDateTime;
+	LocalDateTime startDate;
 
+	@NotNull
 	@FutureOrPresent(message = "종료일은 현재 시간 이후여야 합니다.")
-	LocalDateTime endDateTime;
+	LocalDateTime endDate;
 
 	@NotBlank(message = "제목을 입력해주세요.")
 	@Size(max = 255, message = "제목은 255자 이내로 입력해주세요.")
@@ -35,27 +42,28 @@ public class RecruitmentCreateReqDto {
 	@Size(max = 50, message = "모집 세대는 50자 이내로 입력해주세요.")
 	String generation;
 
-	@NotNull @Valid
-	List<Form> form;
+	@NotNull
+	@Valid
+	List<FormParam> form;
 
-	public RecruitmentCreateReqDto(LocalDateTime startDateTime, LocalDateTime endDateTime, String title,
+	@Builder
+	public RecruitmentRequestDto(LocalDateTime startDate, LocalDateTime endDate, String title,
 		String contents,
-		String generation, List<Form> form) {
-		this.startDateTime = startDateTime;
-		this.endDateTime = endDateTime;
+		String generation, List<FormParam> form) {
+		this.startDate = startDate;
+		this.endDate = endDate;
 		this.title = title;
 		this.contents = contents;
 		this.generation = generation;
 		this.form = form;
 	}
 
-	public Recruitment toRecruitment() {
-		return Recruitment.builder()
-			.startTime(startDateTime)
-			.endTime(endDateTime)
-			.title(title)
-			.contents(contents)
-			.generation(generation)
-			.build();
+	@Mapper
+	public interface RecruitmentMapper {
+		RecruitmentMapper INSTANCE = Mappers.getMapper(RecruitmentMapper.class);
+
+		@Mapping(source = "startDate", target = "startTime")
+		@Mapping(source = "endDate", target = "endTime")
+		Recruitment dtoToEntity(RecruitmentRequestDto dto);
 	}
 }
