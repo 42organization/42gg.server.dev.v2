@@ -14,7 +14,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 import gg.data.recruit.recruitment.Recruitment;
-import gg.recruit.api.admin.service.dto.Form;
+import gg.recruit.api.admin.service.param.FormParam;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,13 +42,14 @@ public class RecruitmentRequestDto {
 	@Size(max = 50, message = "모집 세대는 50자 이내로 입력해주세요.")
 	String generation;
 
-	@NotNull @Valid
-	List<Form> form;
+	@NotNull
+	@Valid
+	List<FormParam> form;
 
 	@Builder
 	public RecruitmentRequestDto(LocalDateTime startDateTime, LocalDateTime endDateTime, String title,
 		String contents,
-		String generation, List<Form> form) {
+		String generation, List<FormParam> form) {
 		this.startDateTime = startDateTime;
 		this.endDateTime = endDateTime;
 		this.title = title;

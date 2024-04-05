@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.data.recruit.recruitment.enums.InputType;
 import gg.recruit.api.admin.controller.request.RecruitmentRequestDto;
-import gg.recruit.api.admin.service.dto.Form;
+import gg.recruit.api.admin.service.param.FormParam;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 
@@ -47,9 +47,9 @@ public class RecruitmentAdminControllerTest {
 		public void testCreateRecruitment() throws Exception {
 			// given
 			String accessToken = testDataUtils.getAdminLoginAccessToken();
-			List<Form> forms = List.of(Form.builder().question("질문").inputType(InputType.SINGLE_CHECK)
+			List<FormParam> forms = List.of(FormParam.builder().question("질문").inputType(InputType.SINGLE_CHECK)
 					.checkList(List.of("선택지1", "선택지2")).build(),
-				Form.builder().question("질문2").inputType(InputType.TEXT).build()
+				FormParam.builder().question("질문2").inputType(InputType.TEXT).build()
 			);
 			RecruitmentRequestDto requestDto = new RecruitmentRequestDto(LocalDateTime.now().plusDays(1),
 				LocalDateTime.now().plusDays(2),
@@ -71,7 +71,7 @@ public class RecruitmentAdminControllerTest {
 	public void testCreateRecruitmentWithEmptyCheckList() throws Exception {
 		// given
 		String accessToken = testDataUtils.getAdminLoginAccessToken();
-		List<Form> forms = List.of(Form.builder().question("질문").inputType(InputType.SINGLE_CHECK).build());
+		List<FormParam> forms = List.of(FormParam.builder().question("질문").inputType(InputType.SINGLE_CHECK).build());
 		// .checkList(List.of()).build());
 		RecruitmentRequestDto requestDto = new RecruitmentRequestDto(LocalDateTime.now().plusDays(1),
 			LocalDateTime.now().plusDays(2),

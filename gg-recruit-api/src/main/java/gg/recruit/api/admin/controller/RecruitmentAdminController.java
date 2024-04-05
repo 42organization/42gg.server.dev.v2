@@ -38,9 +38,9 @@ import gg.recruit.api.admin.controller.response.RecruitmentApplicantResultRespon
 import gg.recruit.api.admin.controller.response.RecruitmentApplicantResultsResponseDto;
 import gg.recruit.api.admin.controller.response.RecruitmentsResponse;
 import gg.recruit.api.admin.service.RecruitmentAdminService;
-import gg.recruit.api.admin.service.dto.GetRecruitmentApplicationsDto;
-import gg.recruit.api.admin.service.dto.UpdateApplicationStatusDto;
-import gg.recruit.api.admin.service.dto.UpdateRecruitStatusParam;
+import gg.recruit.api.admin.service.param.GetRecruitmentApplicationsParam;
+import gg.recruit.api.admin.service.param.UpdateApplicationStatusParam;
+import gg.recruit.api.admin.service.param.UpdateRecruitStatusParam;
 import gg.utils.dto.PageRequestDto;
 import gg.utils.exception.ErrorCode;
 import gg.utils.exception.custom.BusinessException;
@@ -88,7 +88,8 @@ public class RecruitmentAdminController {
 		@PathVariable @Positive Long recruitId,
 		@RequestParam("application") @Positive Long applicationId,
 		@RequestBody @Valid SetFinalApplicationStatusResultReqDto reqDto) {
-		UpdateApplicationStatusDto dto = new UpdateApplicationStatusDto(reqDto.getStatus(), applicationId, recruitId);
+		UpdateApplicationStatusParam dto = new UpdateApplicationStatusParam(reqDto.getStatus(), applicationId,
+			recruitId);
 		recruitmentAdminService.updateFinalApplicationStatusAndNotification(dto);
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
@@ -101,11 +102,11 @@ public class RecruitmentAdminController {
 		@RequestParam(value = "search", required = false) String search,
 		@PageableDefault(sort = "id", page = 1) Pageable page
 	) {
-		GetRecruitmentApplicationsDto dto;
+		GetRecruitmentApplicationsParam dto;
 
 		Pageable parsedPage = PageRequest.of(page.getPageNumber() - 1, Math.min(page.getPageSize(), 20));
 		List<Long> checkListIds = parseChecks(checks);
-		dto = new GetRecruitmentApplicationsDto(recruitId, questionId, checkListIds, search, parsedPage);
+		dto = new GetRecruitmentApplicationsParam(recruitId, questionId, checkListIds, search, parsedPage);
 		Page<Application> applicationsPage = recruitmentAdminService.findApplicationsWithAnswersAndUserWithFilter(dto);
 		return ResponseEntity.ok(GetRecruitmentApplicationResponseDto.applicationsPageToDto(applicationsPage));
 	}
@@ -148,7 +149,7 @@ public class RecruitmentAdminController {
 		@RequestBody @Valid InterviewRequestDto reqDto) {
 
 		recruitmentAdminService.updateDocumentScreening(
-			new UpdateApplicationStatusDto(reqDto.getStatus(), applicationId, recruitId, reqDto.getInterviewDate()));
+			new UpdateApplicationStatusParam(reqDto.getStatus(), applicationId, recruitId, reqDto.getInterviewDate()));
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 

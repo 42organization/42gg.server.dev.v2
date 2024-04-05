@@ -24,8 +24,8 @@ import gg.data.recruit.recruitment.Question;
 import gg.data.recruit.recruitment.Recruitment;
 import gg.data.recruit.recruitment.enums.InputType;
 import gg.data.user.User;
-import gg.recruit.api.admin.service.dto.Form;
-import gg.recruit.api.admin.service.dto.UpdateApplicationStatusDto;
+import gg.recruit.api.admin.service.param.FormParam;
+import gg.recruit.api.admin.service.param.UpdateApplicationStatusParam;
 import gg.utils.annotation.UnitTest;
 import gg.utils.exception.custom.DuplicationException;
 import gg.utils.exception.custom.ForbiddenException;
@@ -83,8 +83,8 @@ class RecruitmentAdminServiceUnitTest {
 				.startTime(start.plusDays(2))
 				.endTime(start.plusDays(3))
 				.build();
-			List<Form> forms = List.of(
-				Form.builder().question("question").inputType(InputType.TEXT).checkList(List.of()).build());
+			List<FormParam> forms = List.of(
+				FormParam.builder().question("question").inputType(InputType.TEXT).checkList(List.of()).build());
 			given(recruitmentAdminRepository.findById(recruitId)).willReturn(Optional.of(target));
 
 			// when
@@ -190,7 +190,7 @@ class RecruitmentAdminServiceUnitTest {
 			// given
 			Application application = new Application(mock(User.class), mock(Recruitment.class));
 			application.updateApplicationStatus(PROGRESS_INTERVIEW);
-			UpdateApplicationStatusDto dto = new UpdateApplicationStatusDto(FAIL, 1L, 1L);
+			UpdateApplicationStatusParam dto = new UpdateApplicationStatusParam(FAIL, 1L, 1L);
 			given(
 				applicationAdminRepository.findByIdAndRecruitId(dto.getApplicationId(), dto.getRecruitId()))
 				.willReturn(Optional.of(application));
@@ -205,7 +205,7 @@ class RecruitmentAdminServiceUnitTest {
 		void validApplicationStatus() {
 			// given
 			Application application = new Application(mock(User.class), mock(Recruitment.class));
-			UpdateApplicationStatusDto dto = new UpdateApplicationStatusDto(FAIL, 1L, 1L);
+			UpdateApplicationStatusParam dto = new UpdateApplicationStatusParam(FAIL, 1L, 1L);
 			given(
 				applicationAdminRepository.findByIdAndRecruitId(dto.getApplicationId(), dto.getRecruitId()))
 				.willReturn(Optional.of(application));
@@ -224,7 +224,7 @@ class RecruitmentAdminServiceUnitTest {
 		void validInterviewDate() {
 			// given
 			Application application = new Application(mock(User.class), mock(Recruitment.class));
-			UpdateApplicationStatusDto dto = new UpdateApplicationStatusDto(
+			UpdateApplicationStatusParam dto = new UpdateApplicationStatusParam(
 				PROGRESS_INTERVIEW, 1L, 1L, LocalDateTime.of(2024, 1, 1, 0, 0, 0));
 			given(
 				applicationAdminRepository.findByIdAndRecruitId(dto.getApplicationId(), dto.getRecruitId()))
@@ -247,7 +247,7 @@ class RecruitmentAdminServiceUnitTest {
 		void invalidInterviewDate() {
 			// given
 			Application application = new Application(mock(User.class), mock(Recruitment.class));
-			UpdateApplicationStatusDto dto = new UpdateApplicationStatusDto(
+			UpdateApplicationStatusParam dto = new UpdateApplicationStatusParam(
 				PROGRESS_INTERVIEW, 1L, 1L, LocalDateTime.of(2024, 1, 1, 0, 0, 0));
 			given(
 				applicationAdminRepository.findByIdAndRecruitId(dto.getApplicationId(), dto.getRecruitId()))

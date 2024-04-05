@@ -20,7 +20,7 @@ import gg.recruit.api.admin.controller.response.GetRecruitmentResultMessagePrevi
 import gg.recruit.api.admin.controller.response.GetRecruitmentResultMessageResponseDto;
 import gg.recruit.api.admin.controller.response.GetRecruitmentResultMessagesResponseDto;
 import gg.recruit.api.admin.service.RecruitmentResultMessageAdminService;
-import gg.recruit.api.admin.service.dto.RecruitmentResultMessageDto;
+import gg.recruit.api.admin.service.param.RecruitmentResultMessageParam;
 import lombok.RequiredArgsConstructor;
 
 @Validated
@@ -37,7 +37,7 @@ public class RecruitmentResultMessageAdminController {
 	 * @return ResponseEntity
 	 */
 	@PostMapping
-	public ResponseEntity<Void> postResultMessage(@Valid @RequestBody RecruitmentResultMessageDto reqDto) {
+	public ResponseEntity<Void> postResultMessage(@Valid @RequestBody RecruitmentResultMessageParam reqDto) {
 		resultMessageAdminService.postResultMessage(reqDto);
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}

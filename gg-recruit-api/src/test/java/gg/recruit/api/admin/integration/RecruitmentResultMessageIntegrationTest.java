@@ -26,7 +26,7 @@ import gg.data.recruit.manage.enums.MessageType;
 import gg.data.user.User;
 import gg.recruit.api.admin.controller.request.GetRecruitmentResultMessagePreviewReqDto;
 import gg.recruit.api.admin.controller.response.GetRecruitmentResultMessagePreviewResDto;
-import gg.recruit.api.admin.service.dto.RecruitmentResultMessageDto;
+import gg.recruit.api.admin.service.param.RecruitmentResultMessageParam;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 
@@ -65,7 +65,7 @@ public class RecruitmentResultMessageIntegrationTest {
 				.collect(Collectors.toCollection(HashSet::new));
 			em.clear();
 
-			RecruitmentResultMessageDto req = new RecruitmentResultMessageDto(targetType, "bye");
+			RecruitmentResultMessageParam req = new RecruitmentResultMessageParam(targetType, "bye");
 			String content = objectMapper.writeValueAsString(req);
 
 			//Act
@@ -112,7 +112,7 @@ public class RecruitmentResultMessageIntegrationTest {
 				.collect(Collectors.toCollection(HashSet::new));
 			em.clear();
 
-			RecruitmentResultMessageDto req = new RecruitmentResultMessageDto(targetType, "bye");
+			RecruitmentResultMessageParam req = new RecruitmentResultMessageParam(targetType, "bye");
 			String content = objectMapper.writeValueAsString(req);
 
 			//Act

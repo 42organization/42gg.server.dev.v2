@@ -37,7 +37,7 @@ import gg.data.user.User;
 import gg.recruit.api.RecruitMockData;
 import gg.recruit.api.admin.controller.request.InterviewRequestDto;
 import gg.recruit.api.admin.controller.request.RecruitmentRequestDto;
-import gg.recruit.api.admin.service.dto.Form;
+import gg.recruit.api.admin.service.param.FormParam;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 
@@ -179,7 +179,7 @@ public class RecruitmentAdminIntegrationTest {
 	@Nested
 	@DisplayName("공고 수정 시 - PUT /admin/recruitments/{recruitmentId}")
 	class PutRecruitment {
-		private final Form afterQuestion = new Form("updated question", InputType.TEXT, List.of());
+		private final FormParam afterQuestion = new FormParam("updated question", InputType.TEXT, List.of());
 		RecruitmentRequestDto afterRecruitment = RecruitmentRequestDto.builder()
 			.title("updated title")
 			.contents("updated contents")

@@ -1,4 +1,4 @@
-package gg.recruit.api.admin.service.dto;
+package gg.recruit.api.admin.service.param;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class Form {
+public class FormParam {
 	@NotBlank(message = "질문을 입력해주세요.")
 	@Size(min = 1, max = 300, message = "질문은 300자 이내로 입력해주세요.")
 	String question;
@@ -26,7 +26,7 @@ public class Form {
 	List<@NotNull @NotEmpty @Size(min = 1, max = 100, message = "100자 이내로 입력해주세요.") String> checkList;
 
 	@Builder
-	public Form(String question, InputType inputType, List<String> checkList) {
+	public FormParam(String question, InputType inputType, List<String> checkList) {
 		this.question = question;
 		this.inputType = inputType;
 		this.checkList = checkList;

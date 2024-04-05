@@ -8,7 +8,7 @@ import org.mockito.Mock;
 
 import gg.admin.repo.recruit.manage.RecruitResultMessageRepository;
 import gg.data.recruit.manage.enums.MessageType;
-import gg.recruit.api.admin.service.dto.RecruitmentResultMessageDto;
+import gg.recruit.api.admin.service.param.RecruitmentResultMessageParam;
 import gg.utils.annotation.UnitTest;
 
 @UnitTest
@@ -19,7 +19,7 @@ class RecruitmentResultMessageAdminServiceImplTest {
 	@InjectMocks
 	RecruitmentResultMessageAdminServiceImpl recruitmentResultMessageAdminService;
 
-	RecruitmentResultMessageDto dto;
+	RecruitmentResultMessageParam dto;
 
 	@Nested
 	@DisplayName("postResultMessage")
@@ -28,7 +28,7 @@ class RecruitmentResultMessageAdminServiceImplTest {
 		@DisplayName("성공")
 		void postResultMessageSuccess() {
 			//Arrange
-			dto = new RecruitmentResultMessageDto(MessageType.FAIL, "message");
+			dto = new RecruitmentResultMessageParam(MessageType.FAIL, "message");
 
 			//Act
 			//Assert

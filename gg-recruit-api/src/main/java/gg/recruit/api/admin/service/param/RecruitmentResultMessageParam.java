@@ -1,4 +1,4 @@
-package gg.recruit.api.admin.service.dto;
+package gg.recruit.api.admin.service.param;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class RecruitmentResultMessageDto {
+public class RecruitmentResultMessageParam {
 	@NotNull
 	private MessageType messageType;
 
