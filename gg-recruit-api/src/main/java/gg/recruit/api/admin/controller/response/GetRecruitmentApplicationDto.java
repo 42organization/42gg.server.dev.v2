@@ -42,7 +42,7 @@ public class GetRecruitmentApplicationDto {
 
 	@NoArgsConstructor(access = AccessLevel.PROTECTED)
 	@Getter
-	protected static class Form {
+	public static class Form {
 		private Long questionId;
 		private String question;
 		private InputType inputType;
@@ -65,7 +65,7 @@ public class GetRecruitmentApplicationDto {
 
 		@NoArgsConstructor(access = AccessLevel.PROTECTED)
 		@Getter
-		protected static class CheckListForm {
+		public static class CheckListForm {
 			private Long checkId;
 			private String content;
 
