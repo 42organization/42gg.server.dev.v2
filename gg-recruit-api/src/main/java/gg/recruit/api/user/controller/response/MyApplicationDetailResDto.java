@@ -16,14 +16,14 @@ public class MyApplicationDetailResDto {
 	private LocalDateTime endTime;
 	private String title;
 	private String content;
-	private List<FormResDto> from;
+	private List<FormResDto> form;
 
 	public MyApplicationDetailResDto(ApplicationWithAnswerSvcDto applicationWithAnswerSvcDto) {
 		this.applicationId = applicationWithAnswerSvcDto.getApplicationId();
 		this.endTime = applicationWithAnswerSvcDto.getEndTime();
 		this.title = applicationWithAnswerSvcDto.getTitle();
 		this.content = applicationWithAnswerSvcDto.getContent();
-		this.from = applicationWithAnswerSvcDto.getForm().stream()
+		this.form = applicationWithAnswerSvcDto.getForm().stream()
 			.map(FormResDto::new)
 			.collect(toList());
 	}
