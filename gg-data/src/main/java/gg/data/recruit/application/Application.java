@@ -1,5 +1,8 @@
 package gg.data.recruit.application;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -10,6 +13,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import gg.data.BaseTimeEntity;
 import gg.data.recruit.application.enums.ApplicationStatus;
@@ -38,11 +43,17 @@ public class Application extends BaseTimeEntity {
 	@JoinColumn(name = "recruit_id", nullable = false)
 	private Recruitment recruit;
 
+	@OneToOne(mappedBy = "application", fetch = FetchType.LAZY)
+	private RecruitStatus recruitStatus;
+
 	private Boolean isDeleted;
 
 	@Enumerated(EnumType.STRING)
 	@Column(length = 15, nullable = false)
 	private ApplicationStatus status;
+
+	@OneToMany(mappedBy = "application", fetch = FetchType.LAZY)
+	private Set<ApplicationAnswer> applicationAnswers = new HashSet<>();
 
 	public Application(User user, Recruitment recruit) {
 		this.user = user;

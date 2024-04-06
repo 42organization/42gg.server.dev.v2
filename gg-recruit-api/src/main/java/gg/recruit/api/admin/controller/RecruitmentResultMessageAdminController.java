@@ -15,10 +15,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import gg.data.recruit.manage.ResultMessage;
+import gg.recruit.api.admin.controller.request.GetRecruitmentResultMessagePreviewReqDto;
+import gg.recruit.api.admin.controller.response.GetRecruitmentResultMessagePreviewResDto;
 import gg.recruit.api.admin.controller.response.GetRecruitmentResultMessageResponseDto;
 import gg.recruit.api.admin.controller.response.GetRecruitmentResultMessagesResponseDto;
 import gg.recruit.api.admin.service.RecruitmentResultMessageAdminService;
-import gg.recruit.api.admin.service.dto.RecruitmentResultMessageDto;
+import gg.recruit.api.admin.service.param.RecruitmentResultMessageParam;
 import lombok.RequiredArgsConstructor;
 
 @Validated
@@ -35,7 +37,7 @@ public class RecruitmentResultMessageAdminController {
 	 * @return ResponseEntity
 	 */
 	@PostMapping
-	public ResponseEntity<Void> postResultMessage(@Valid @RequestBody RecruitmentResultMessageDto reqDto) {
+	public ResponseEntity<Void> postResultMessage(@Valid @RequestBody RecruitmentResultMessageParam reqDto) {
 		resultMessageAdminService.postResultMessage(reqDto);
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
@@ -53,5 +55,11 @@ public class RecruitmentResultMessageAdminController {
 			.collect(Collectors.toList());
 
 		return ResponseEntity.ok(new GetRecruitmentResultMessagesResponseDto(resultDto));
+	}
+
+	@GetMapping("/preview")
+	public GetRecruitmentResultMessagePreviewResDto getPreview(GetRecruitmentResultMessagePreviewReqDto reqDto) {
+		return new GetRecruitmentResultMessagePreviewResDto(
+			resultMessageAdminService.getResultMessagePreview(reqDto.getMessageType()));
 	}
 }

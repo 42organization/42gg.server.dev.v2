@@ -8,6 +8,7 @@ gg-pingpong-api/src/main/resources/application.yml
 .DS_Store
 python
 **/logs
+**/src/main/generated/
 
 
 ### STS ###
@@ -30,6 +31,7 @@ bin/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+**/generated
 
 ### NetBeans ###
 /nbproject/private/

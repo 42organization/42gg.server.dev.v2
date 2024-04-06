@@ -9,6 +9,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import javax.persistence.EntityManager;
+
 import org.springframework.stereotype.Component;
 
 import gg.auth.utils.AuthTokenProvider;
@@ -44,8 +46,13 @@ import gg.data.pingpong.tournament.type.TournamentRound;
 import gg.data.pingpong.tournament.type.TournamentStatus;
 import gg.data.pingpong.tournament.type.TournamentType;
 import gg.data.recruit.application.Application;
+import gg.data.recruit.application.ApplicationAnswerCheckList;
+import gg.data.recruit.application.ApplicationAnswerText;
+import gg.data.recruit.recruitment.CheckList;
+import gg.data.recruit.recruitment.Question;
 import gg.data.recruit.application.RecruitStatus;
 import gg.data.recruit.recruitment.Recruitment;
+import gg.data.recruit.recruitment.enums.InputType;
 import gg.data.user.User;
 import gg.data.user.UserImage;
 import gg.data.user.type.RacketType;
@@ -121,6 +128,7 @@ public class TestDataUtils {
 	private final RecruitmentRepository recruitmentRepository;
 	private final ApplicationRepository applicationRepository;
 	private final RecruitStatusRepository recruitStatusRepository;
+	private final EntityManager entityManager;
 
 	public String getLoginAccessToken() {
 		User user = User.builder()
@@ -924,9 +932,42 @@ public class TestDataUtils {
 		return application;
 	}
 
+	public RecruitStatus createRecruitStatus(Application application) {
+		RecruitStatus recruitStatus = new RecruitStatus(application);
+		recruitStatusRepository.save(recruitStatus);
+		return recruitStatus;
+	}
+
 	public RecruitStatus createRecruitStatus(Application application, LocalDateTime interviewDate) {
 		RecruitStatus recruitStatus = new RecruitStatus(application, interviewDate);
 		recruitStatusRepository.save(recruitStatus);
 		return recruitStatus;
+	}
+
+	public Question createNewQuestion(Recruitment recruitment, InputType inputType, String quest, int sortNum) {
+		Question question = new Question(recruitment, inputType, quest, sortNum);
+		entityManager.persist(question);
+		return question;
+	}
+
+	public CheckList createNewCheckList(Question question, String content) {
+		CheckList checkList = new CheckList(question, content);
+		entityManager.persist(checkList);
+		return checkList;
+	}
+
+	public ApplicationAnswerCheckList createNewApplicationAnswerCheckList(Application application, Question question,
+		CheckList checkList) {
+		ApplicationAnswerCheckList applicationAnswerCheckList = new ApplicationAnswerCheckList(application,
+			question, checkList);
+		entityManager.persist(applicationAnswerCheckList);
+		return applicationAnswerCheckList;
+	}
+
+	public ApplicationAnswerText createNewApplicationAnswerText(Application application, Question question,
+		String search) {
+		ApplicationAnswerText answerText = new ApplicationAnswerText(application, question, search);
+		entityManager.persist(answerText);
+		return answerText;
 	}
 }
