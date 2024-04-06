@@ -119,10 +119,13 @@ public class ApplicationService {
 			result = ApplicationResultSvcDto.nullResult();
 		} else {
 			Application application = optionalApplication.get();
-			RecruitStatus recruitStatus = recruitStatusRepository.findByApplicationId(param.getApplicationId())
-				.orElseThrow(IllegalStateException::new);
-			result = ApplicationResultSvcDto.of(application.getRecruitTitle(),
-				application.getStatus(), recruitStatus.getInterviewDate());
+			Optional<RecruitStatus> recruitStatusOptional = recruitStatusRepository.findByApplicationId(
+				param.getApplicationId());
+			result = recruitStatusOptional.map(
+					recruitStatus -> ApplicationResultSvcDto.of(application.getRecruitTitle(),
+						application.getStatus(), recruitStatus.getInterviewDate()))
+				.orElseGet(
+					() -> ApplicationResultSvcDto.of(application.getRecruitTitle(), application.getStatus(), null));
 		}
 		return result;
 	}
