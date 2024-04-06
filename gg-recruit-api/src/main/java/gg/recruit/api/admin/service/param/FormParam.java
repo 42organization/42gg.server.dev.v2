@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import gg.data.recruit.recruitment.Question;
@@ -20,6 +21,7 @@ public class FormParam {
 	@Size(min = 1, max = 300, message = "질문은 300자 이내로 입력해주세요.")
 	String question;
 
+	@NotNull
 	InputType inputType;
 
 	@Valid

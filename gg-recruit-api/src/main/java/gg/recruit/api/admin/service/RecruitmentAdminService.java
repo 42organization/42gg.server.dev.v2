@@ -7,7 +7,6 @@ import javax.persistence.EntityManager;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +25,7 @@ import gg.recruit.api.admin.service.param.FormParam;
 import gg.recruit.api.admin.service.param.GetRecruitmentApplicationsParam;
 import gg.recruit.api.admin.service.param.UpdateApplicationStatusParam;
 import gg.recruit.api.admin.service.param.UpdateRecruitStatusParam;
+import gg.recruit.api.admin.service.result.AllRecruitmentsResult;
 import gg.utils.exception.ErrorCode;
 import gg.utils.exception.custom.BusinessException;
 import gg.utils.exception.custom.DuplicationException;
@@ -76,9 +76,9 @@ public class RecruitmentAdminService {
 	 * @return 조회된 채용 공고 리스트
 	 */
 	@Transactional(readOnly = true)
-	public List<Recruitment> getAllRecruitments(Pageable pageable) {
-		Slice<Recruitment> allByOrderByEndDateDesc = recruitmentAdminRepository.findAllByOrderByEndTimeDesc(pageable);
-		return allByOrderByEndDateDesc.getContent();
+	public AllRecruitmentsResult getAllRecruitments(Pageable pageable) {
+		Page<Recruitment> allByOrderByEndDateDesc = recruitmentAdminRepository.findAllByOrderByEndTimeDesc(pageable);
+		return new AllRecruitmentsResult(allByOrderByEndDateDesc.getTotalPages(), allByOrderByEndDateDesc.getContent());
 	}
 
 	/**

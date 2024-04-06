@@ -41,6 +41,7 @@ import gg.recruit.api.admin.service.RecruitmentAdminService;
 import gg.recruit.api.admin.service.param.GetRecruitmentApplicationsParam;
 import gg.recruit.api.admin.service.param.UpdateApplicationStatusParam;
 import gg.recruit.api.admin.service.param.UpdateRecruitStatusParam;
+import gg.recruit.api.admin.service.result.AllRecruitmentsResult;
 import gg.utils.dto.PageRequestDto;
 import gg.utils.exception.ErrorCode;
 import gg.utils.exception.custom.BusinessException;
@@ -75,8 +76,9 @@ public class RecruitmentAdminController {
 	@GetMapping
 	public ResponseEntity<RecruitmentsResponse> getRecruitments(PageRequestDto pageRequestDto) {
 		Pageable pageable = PageRequest.of(pageRequestDto.getPage() - 1, pageRequestDto.getSize());
-		List<Recruitment> recruitments = recruitmentAdminService.getAllRecruitments(pageable);
-		return ResponseEntity.ok(new RecruitmentsResponse(recruitments));
+		AllRecruitmentsResult allRecruitments = recruitmentAdminService.getAllRecruitments(pageable);
+		return ResponseEntity.ok(
+			new RecruitmentsResponse(allRecruitments.getAllRecruitments(), allRecruitments.getTotalPage()));
 	}
 
 	/**

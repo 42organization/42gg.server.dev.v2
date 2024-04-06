@@ -7,6 +7,7 @@ import lombok.Getter;
 @Getter
 public enum ErrorCode {
 	//common
+	BUSINESS_EXCEPTION(500, "CM100", "BUSINESS ERROR"),
 	NULL_POINT(500, "G100", "NULL POINT EXCEPTION"),
 
 	//user

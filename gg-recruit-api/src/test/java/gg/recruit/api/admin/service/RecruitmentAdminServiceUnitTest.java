@@ -13,8 +13,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 
 import gg.admin.repo.recruit.ApplicationAdminRepository;
 import gg.admin.repo.recruit.RecruitmentAdminRepository;
@@ -49,7 +49,7 @@ class RecruitmentAdminServiceUnitTest {
 	@DisplayName("공고 조회")
 	void getAllRecruitments() {
 		// given
-		Slice<Recruitment> mock = mock(Slice.class);
+		Page<Recruitment> mock = mock(Page.class);
 		Pageable mockPageable = mock(Pageable.class);
 		given(recruitmentAdminRepository.findAllByOrderByEndTimeDesc(mockPageable)).willReturn(mock);
 

@@ -18,6 +18,7 @@ public class InterviewRequestDto {
 	@NotNull(message = MUST_DOCS_RESULT_STATUS)
 	private ApplicationStatus status;
 
+	@NotNull
 	@FutureOrPresent(message = "면접 일자는 현재 이후여야 합니다.")
 	private LocalDateTime interviewDate;
 

@@ -16,6 +16,7 @@ import com.amazonaws.SdkClientException;
 import gg.utils.exception.ErrorCode;
 import gg.utils.exception.ErrorResponse;
 import gg.utils.exception.custom.AuthenticationException;
+import gg.utils.exception.custom.BusinessException;
 import gg.utils.exception.custom.CustomRuntimeException;
 import gg.utils.exception.custom.DBConsistencyException;
 import gg.utils.exception.custom.DuplicationException;
@@ -131,5 +132,13 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(MissingServletRequestParameterException.class)
 	protected ResponseEntity handleException(MissingServletRequestParameterException exception) {
 		return ResponseEntity.badRequest().body(ErrorCode.BAD_ARGU.getMessage());
+	}
+
+	@ExceptionHandler(BusinessException.class)
+	protected ResponseEntity handleException(BusinessException exception) {
+		log.error("SERVER BUSINESS EXCEPTION", exception.getMessage());
+		exception.printStackTrace();
+		ErrorResponse response = new ErrorResponse(exception.getErrorCode());
+		return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
 	}
 }
