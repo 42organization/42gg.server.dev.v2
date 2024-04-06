@@ -4,6 +4,8 @@ import java.util.Arrays;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -16,6 +18,7 @@ import gg.pingpong.api.global.security.config.properties.CorsProperties;
 import gg.pingpong.api.global.security.handler.OAuthAuthenticationSuccessHandler;
 import gg.pingpong.api.global.security.jwt.utils.TokenAuthenticationFilter;
 import gg.pingpong.api.global.security.repository.OAuthAuthorizationRequestBasedOnCookieRepository;
+import gg.pingpong.api.global.security.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -26,6 +29,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private final CorsProperties corsProperties;
 	private final TokenAuthenticationFilter tokenAuthenticationFilter;
 	private final OAuthAuthorizationRequestBasedOnCookieRepository oAuth2AuthorizationRequestBasedOnCookieRepository;
+	private final CustomUserDetailsService userDetailsService;
+
+	@Override
+	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+		auth.userDetailsService(userDetailsService);
+	}
+
+	@Bean
+	@Override
+	public AuthenticationManager authenticationManagerBean() throws Exception {
+		return super.authenticationManagerBean();
+	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
