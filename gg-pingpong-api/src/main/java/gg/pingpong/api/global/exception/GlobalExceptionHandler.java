@@ -138,7 +138,7 @@ public class GlobalExceptionHandler {
 	protected ResponseEntity handleException(BusinessException exception) {
 		log.error("SERVER BUSINESS EXCEPTION", exception.getMessage());
 		exception.printStackTrace();
-		ErrorResponse response = new ErrorResponse(ErrorCode.BUSINESS_EXCEPTION);
+		ErrorResponse response = new ErrorResponse(exception.getErrorCode());
 		return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
 	}
 }
