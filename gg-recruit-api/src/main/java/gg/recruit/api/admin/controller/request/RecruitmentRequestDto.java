@@ -22,11 +22,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class RecruitmentRequestDto {
-	@NotNull
+	@NotNull(message = "시작일을 입력해주세요.")
 	@FutureOrPresent(message = "시작일은 현재 시간 이후여야 합니다.")
 	LocalDateTime startDate;
 
-	@NotNull
+	@NotNull(message = "종료일을 입력해주세요.")
 	@FutureOrPresent(message = "종료일은 현재 시간 이후여야 합니다.")
 	LocalDateTime endDate;
 
@@ -42,7 +42,7 @@ public class RecruitmentRequestDto {
 	@Size(max = 50, message = "모집 세대는 50자 이내로 입력해주세요.")
 	String generation;
 
-	@NotNull
+	@NotNull(message = "폼을 입력해주세요.")
 	@Valid
 	List<FormParam> form;
 

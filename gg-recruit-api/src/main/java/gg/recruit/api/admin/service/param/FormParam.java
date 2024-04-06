@@ -21,7 +21,7 @@ public class FormParam {
 	@Size(min = 1, max = 300, message = "질문은 300자 이내로 입력해주세요.")
 	String question;
 
-	@NotNull
+	@NotNull(message = "inputType을 입력해주세요.")
 	InputType inputType;
 
 	@Valid
@@ -37,5 +37,4 @@ public class FormParam {
 	public Question toQuestion(Recruitment recruitment, int sortNum) {
 		return new Question(recruitment, inputType, question, sortNum);
 	}
-
 }

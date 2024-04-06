@@ -2,6 +2,9 @@ package gg.recruit.api.user.controller.request;
 
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import gg.data.recruit.recruitment.enums.InputType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,9 +14,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RecruitApplyFormReqDto {
+	@NotNull(message = "질문 ID를 입력해주세요.")
 	private Long questionId;
+	@NotNull(message = "입력 타입을 입력해주세요.")
 	private InputType inputType;
+	@NotNull(message = "체크된 항목을 입력해주세요.")
 	private List<Long> checkedList;
+	@NotBlank(message = "답변을 입력해주세요.")
 	private String answer;
 
 	public RecruitApplyFormReqDto(Long questionId, String answer) {

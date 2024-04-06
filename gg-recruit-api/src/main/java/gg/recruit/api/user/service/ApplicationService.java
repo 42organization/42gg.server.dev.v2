@@ -162,6 +162,7 @@ public class ApplicationService {
 		return newAnswers;
 	}
 
+	@Transactional
 	public void deleteApplication(DelApplicationParam param) {
 		Application application = applicationRepository
 			.findByUserIdAndRecruitId(param.getUserId(), param.getRecruitmentId())
