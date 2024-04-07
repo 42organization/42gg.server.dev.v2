@@ -46,7 +46,7 @@ public class Room extends BaseTimeEntity {
 	private Category category;
 
 	@Column(name = "current_people")
-	private Integer currentPeople;
+	private int currentPeople;
 
 	@Column(name = "title", length = 15)
 	private String title;
@@ -55,10 +55,10 @@ public class Room extends BaseTimeEntity {
 	private String content;
 
 	@Column(name = "max_people")
-	private Integer maxPeople;
+	private int maxPeople;
 
 	@Column(name = "min_people")
-	private Integer minPeople;
+	private int minPeople;
 
 	@Column(name = "due_date")
 	private LocalDateTime dueDate;

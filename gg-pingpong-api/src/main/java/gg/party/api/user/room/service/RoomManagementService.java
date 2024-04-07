@@ -208,7 +208,7 @@ public class RoomManagementService {
 		}
 
 		room.updateCurrentPeople(room.getCurrentPeople() + 1);
-		if (room.getCurrentPeople().equals(room.getMaxPeople())) {
+		if (room.getCurrentPeople() == room.getMaxPeople()) {
 			room.updateRoomStatus(RoomType.START);
 			List<User> users = userRoomRepository.findByIsExist(roomId);
 			room.startRoom(LocalDateTime.now());

@@ -44,7 +44,7 @@ public class PartyPenalty extends BaseTimeEntity {
 
 	@NotNull
 	@Column(name = "penalty_time")
-	private Integer penaltyTime;
+	private int penaltyTime;
 
 	public PartyPenalty(User user, String penaltyType, String message, LocalDateTime startTime, Integer penaltyTime) {
 		this.user = user;

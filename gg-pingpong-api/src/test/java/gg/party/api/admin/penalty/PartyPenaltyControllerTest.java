@@ -148,7 +148,7 @@ public class PartyPenaltyControllerTest {
 
 			assertEquals(penaltyDto.getPenaltyType(), updatedPenalty.getPenaltyType());
 			assertEquals(penaltyDto.getMessage(), updatedPenalty.getMessage());
-			assertEquals(penaltyDto.getPenaltyTime(), updatedPenalty.getPenaltyTime().intValue());
+			assertEquals(penaltyDto.getPenaltyTime(), updatedPenalty.getPenaltyTime());
 		}
 
 		@Test

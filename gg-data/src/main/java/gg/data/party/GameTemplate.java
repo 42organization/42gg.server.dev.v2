@@ -31,16 +31,16 @@ public class GameTemplate extends BaseTimeEntity {
 	private String gameName;
 
 	@Column
-	private Integer maxGamePeople;
+	private int maxGamePeople;
 
 	@Column
-	private Integer minGamePeople;
+	private int minGamePeople;
 
 	@Column
-	private Integer maxGameTime;
+	private int maxGameTime;
 
 	@Column
-	private Integer minGameTime;
+	private int minGameTime;
 
 	@Column(length = 10)
 	private String genre;
