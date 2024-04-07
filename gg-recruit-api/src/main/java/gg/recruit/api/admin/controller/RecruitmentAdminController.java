@@ -34,6 +34,7 @@ import gg.recruit.api.admin.controller.request.SetFinalApplicationStatusResultRe
 import gg.recruit.api.admin.controller.request.UpdateStatusRequestDto;
 import gg.recruit.api.admin.controller.response.CreatedRecruitmentResponse;
 import gg.recruit.api.admin.controller.response.GetRecruitmentApplicationResponseDto;
+import gg.recruit.api.admin.controller.response.RecruitmentAdminDetailResDto;
 import gg.recruit.api.admin.controller.response.RecruitmentApplicantResultResponseDto;
 import gg.recruit.api.admin.controller.response.RecruitmentApplicantResultsResponseDto;
 import gg.recruit.api.admin.controller.response.RecruitmentsResponse;
@@ -62,6 +63,13 @@ public class RecruitmentAdminController {
 		CreatedRecruitmentResponse createdRecruitmentResponse = new CreatedRecruitmentResponse(recruitmentId);
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(createdRecruitmentResponse);
+	}
+
+	@GetMapping("/{recruitId}")
+	public RecruitmentAdminDetailResDto findRecruitmentDetail(@PathVariable Long recruitId) {
+		RecruitmentAdminDetailResDto res = new RecruitmentAdminDetailResDto(
+			recruitmentAdminService.findRecruitmentDetail(recruitId));
+		return res;
 	}
 
 	@PatchMapping("/{recruitId}/status")

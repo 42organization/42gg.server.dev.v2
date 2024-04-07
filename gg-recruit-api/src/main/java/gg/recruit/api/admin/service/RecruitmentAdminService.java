@@ -26,6 +26,7 @@ import gg.recruit.api.admin.service.param.GetRecruitmentApplicationsParam;
 import gg.recruit.api.admin.service.param.UpdateApplicationStatusParam;
 import gg.recruit.api.admin.service.param.UpdateRecruitStatusParam;
 import gg.recruit.api.admin.service.result.AllRecruitmentsResult;
+import gg.recruit.api.admin.service.result.RecruitmentDetailAdminSvcDto;
 import gg.utils.exception.ErrorCode;
 import gg.utils.exception.custom.BusinessException;
 import gg.utils.exception.custom.DuplicationException;
@@ -224,4 +225,9 @@ public class RecruitmentAdminService {
 		}
 	}
 
+	public RecruitmentDetailAdminSvcDto findRecruitmentDetail(Long recruitId) {
+		Recruitment recruitment = recruitmentAdminRepository.findNotDeletedRecruit(recruitId)
+			.orElseThrow(() -> new NotExistException("Recruitment not found."));
+		return new RecruitmentDetailAdminSvcDto(recruitment);
+	}
 }
