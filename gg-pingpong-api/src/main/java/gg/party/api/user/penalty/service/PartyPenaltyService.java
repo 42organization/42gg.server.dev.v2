@@ -1,5 +1,7 @@
 package gg.party.api.user.penalty.service;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,12 +22,12 @@ public class PartyPenaltyService {
 	 */
 	@Transactional
 	public PenaltyResDto findIsPenalty(UserDto userDto) {
-		PartyPenalty partyPenalty = partyPenaltyRepository.findTopByUserIdOrderByStartTimeDesc(userDto.getId());
-		if (PartyPenalty.isOnPenalty(partyPenalty)) {
-			return new PenaltyResDto(partyPenalty);
+		Optional<PartyPenalty> partyPenalty = partyPenaltyRepository.findTopByUserIdOrderByStartTimeDesc(
+			userDto.getId());
+		if (partyPenalty.isPresent() && PartyPenalty.isFreeFromPenalty(partyPenalty.get())) {
+			return new PenaltyResDto(partyPenalty.get());
 		} else {
 			return new PenaltyResDto();
 		}
 	}
-
 }

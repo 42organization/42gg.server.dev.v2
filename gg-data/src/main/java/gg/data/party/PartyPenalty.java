@@ -54,11 +54,8 @@ public class PartyPenalty extends BaseTimeEntity {
 		this.penaltyTime = penaltyTime;
 	}
 
-	public static boolean isOnPenalty(PartyPenalty partyPenalty) {
-		if (partyPenalty == null) {
-			return false;
-		}
-		return LocalDateTime.now().isBefore(partyPenalty.getStartTime().plusMinutes(partyPenalty.getPenaltyTime()));
+	public static boolean isFreeFromPenalty(PartyPenalty partyPenalty) {
+		return !LocalDateTime.now().isAfter(partyPenalty.getStartTime().plusMinutes(partyPenalty.getPenaltyTime()));
 	}
 
 	public void update(String penaltyType, String message, Integer penaltyTime) {

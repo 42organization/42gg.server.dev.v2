@@ -3,6 +3,7 @@ package gg.party.api.user.report.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -65,8 +66,8 @@ public class ReportService {
 	@Transactional
 	public void addReportRoom(Long roomId, ReportReqDto reportReqDto, UserDto userDto) {
 		User user = userRepository.findById(userDto.getId()).orElseThrow(UserNotFoundException::new);
-		PartyPenalty partyPenalty = partyPenaltyRepository.findTopByUserIdOrderByStartTimeDesc(user.getId());
-		if (PartyPenalty.isOnPenalty(partyPenalty)) {
+		Optional<PartyPenalty> partyPenalty = partyPenaltyRepository.findTopByUserIdOrderByStartTimeDesc(user.getId());
+		if (partyPenalty.isPresent() && PartyPenalty.isFreeFromPenalty(partyPenalty.get())) {
 			throw new OnPenaltyException();
 		}
 		Room targetRoom = roomRepository.findById(roomId)
@@ -106,8 +107,8 @@ public class ReportService {
 	@Transactional
 	public void addReportComment(Long commentId, ReportReqDto reportReqDto, UserDto userDto) {
 		User user = userRepository.findById(userDto.getId()).orElseThrow(UserNotFoundException::new);
-		PartyPenalty partyPenalty = partyPenaltyRepository.findTopByUserIdOrderByStartTimeDesc(user.getId());
-		if (PartyPenalty.isOnPenalty(partyPenalty)) {
+		Optional<PartyPenalty> partyPenalty = partyPenaltyRepository.findTopByUserIdOrderByStartTimeDesc(user.getId());
+		if (partyPenalty.isPresent() && PartyPenalty.isFreeFromPenalty(partyPenalty.get())) {
 			throw new OnPenaltyException();
 		}
 		Comment targetComment = commentRepository.findById(commentId)
@@ -188,11 +189,11 @@ public class ReportService {
 	@Transactional
 	public void partyGivePenalty(String intraId, Integer penaltyTime, String penaltyType) {
 		User user = userRepository.findByIntraId(intraId).orElseThrow(UserNotFoundException::new);
-		PartyPenalty pPenalty = partyPenaltyRepository.findTopByUserIdOrderByStartTimeDesc(user.getId());
+		Optional<PartyPenalty> pPenalty = partyPenaltyRepository.findTopByUserIdOrderByStartTimeDesc(user.getId());
 
-		if (pPenalty != null && LocalDateTime.now().isBefore(pPenalty.getStartTime()
-			.plusMinutes(pPenalty.getPenaltyTime()))) {
-			LocalDateTime dueDate = pPenalty.getStartTime().plusMinutes(pPenalty.getPenaltyTime());
+		if (pPenalty.isPresent() && LocalDateTime.now().isBefore(pPenalty.get().getStartTime()
+			.plusMinutes(pPenalty.get().getPenaltyTime()))) {
+			LocalDateTime dueDate = pPenalty.get().getStartTime().plusMinutes(pPenalty.get().getPenaltyTime());
 			partyPenaltyRepository.save(new PartyPenalty(
 				user, penaltyType, penaltyType, dueDate, penaltyTime));
 		} else {

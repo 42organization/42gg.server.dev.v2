@@ -4,6 +4,7 @@ import static gg.party.api.user.room.utils.GenerateRandomNickname.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -63,8 +64,8 @@ public class RoomManagementService {
 	@Transactional
 	public RoomCreateResDto addCreateRoom(RoomCreateReqDto roomCreateReqDto, UserDto userDto) {
 		User user = userRepository.findById(userDto.getId()).orElseThrow(UserNotFoundException::new);
-		PartyPenalty partyPenalty = partyPenaltyRepository.findTopByUserIdOrderByStartTimeDesc(user.getId());
-		if (PartyPenalty.isOnPenalty(partyPenalty)) {
+		Optional<PartyPenalty> partyPenalty = partyPenaltyRepository.findTopByUserIdOrderByStartTimeDesc(user.getId());
+		if (partyPenalty.isPresent() && PartyPenalty.isFreeFromPenalty(partyPenalty.get())) {
 			throw new OnPenaltyException();
 		}
 		if (roomCreateReqDto.getMaxPeople() < roomCreateReqDto.getMinPeople()) {
@@ -181,8 +182,8 @@ public class RoomManagementService {
 	public RoomJoinResDto addJoinRoom(Long roomId, UserDto userDto) {
 		User user = userRepository.findById(userDto.getId()).orElseThrow(UserNotFoundException::new);
 		Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
-		PartyPenalty partyPenalty = partyPenaltyRepository.findTopByUserIdOrderByStartTimeDesc(user.getId());
-		if (PartyPenalty.isOnPenalty(partyPenalty)) {
+		Optional<PartyPenalty> partyPenalty = partyPenaltyRepository.findTopByUserIdOrderByStartTimeDesc(user.getId());
+		if (partyPenalty.isPresent() && PartyPenalty.isFreeFromPenalty(partyPenalty.get())) {
 			throw new OnPenaltyException();
 		}
 		if (room.getStatus() != RoomType.OPEN) {

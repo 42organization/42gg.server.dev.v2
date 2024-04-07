@@ -1,5 +1,7 @@
 package gg.party.api.user.comment.service;
 
+import java.util.Optional;
+
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
@@ -50,8 +52,8 @@ public class CommentService {
 			throw new RoomNotOpenException();
 		}
 
-		PartyPenalty partyPenalty = partyPenaltyRepository.findTopByUserIdOrderByStartTimeDesc(userId);
-		if (PartyPenalty.isOnPenalty(partyPenalty)) {
+		Optional<PartyPenalty> partyPenalty = partyPenaltyRepository.findTopByUserIdOrderByStartTimeDesc(userId);
+		if (partyPenalty.isPresent() && PartyPenalty.isFreeFromPenalty(partyPenalty.get())) {
 			throw new OnPenaltyException();
 		}
 
