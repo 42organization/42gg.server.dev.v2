@@ -30,14 +30,10 @@ import gg.repo.party.CategoryRepository;
 import gg.repo.party.RoomRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @IntegrationTest
 @AutoConfigureMockMvc
 @Transactional
-@RequiredArgsConstructor
-@Slf4j
 public class CategoryAdminControllerTest {
 	@Autowired
 	MockMvc mockMvc;

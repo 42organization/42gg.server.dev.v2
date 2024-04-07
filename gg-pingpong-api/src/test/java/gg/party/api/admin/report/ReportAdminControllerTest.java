@@ -33,14 +33,10 @@ import gg.party.api.admin.report.controller.response.RoomReportListResDto;
 import gg.party.api.admin.report.controller.response.UserReportListResDto;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @IntegrationTest
 @AutoConfigureMockMvc
 @Transactional
-@RequiredArgsConstructor
-@Slf4j
 public class ReportAdminControllerTest {
 	@Autowired
 	MockMvc mockMvc;

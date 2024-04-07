@@ -36,14 +36,10 @@ import gg.party.api.admin.room.controller.response.AdminRoomListResDto;
 import gg.party.api.user.room.controller.response.UserRoomResDto;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @IntegrationTest
 @AutoConfigureMockMvc
 @Transactional
-@RequiredArgsConstructor
-@Slf4j
 public class RoomAdminControllerTest {
 	@Autowired
 	MockMvc mockMvc;
