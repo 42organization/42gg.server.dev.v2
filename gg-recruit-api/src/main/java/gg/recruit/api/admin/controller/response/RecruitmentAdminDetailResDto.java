@@ -5,8 +5,10 @@ import java.util.List;
 
 import gg.recruit.api.admin.service.result.RecruitmentDetailAdminSvcDto;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class RecruitmentAdminDetailResDto {
 	private LocalDateTime startDate;
 	private LocalDateTime endDate;

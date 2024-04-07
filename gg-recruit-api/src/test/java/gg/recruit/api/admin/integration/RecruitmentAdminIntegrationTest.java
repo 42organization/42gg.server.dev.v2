@@ -37,6 +37,7 @@ import gg.data.user.User;
 import gg.recruit.api.RecruitMockData;
 import gg.recruit.api.admin.controller.request.InterviewRequestDto;
 import gg.recruit.api.admin.controller.request.RecruitmentRequestDto;
+import gg.recruit.api.admin.controller.response.RecruitmentAdminDetailResDto;
 import gg.recruit.api.admin.service.param.FormParam;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
@@ -68,6 +69,35 @@ public class RecruitmentAdminIntegrationTest {
 
 	@Autowired
 	private ApplicationAdminRepository applicationAdminRepository;
+
+	@Nested
+	@DisplayName("공고 상세 조회 시 - GET /admin/recruitments/{recruitmentId}")
+	class GetRecruitment {
+
+		@DisplayName("지워진 공고가 아니라면 공고 상세 조회 성공 - 200 OK")
+		@Test
+		void getRecruitment() throws Exception {
+			// given
+			Recruitment recruitment = recruitMockData.createRecruitment();
+			recruitMockData.createQuestion(recruitment);
+			recruitMockData.createQuestion(recruitment, "question2",
+				InputType.MULTI_CHECK, "check1", "check2");
+			long recruitmentId = recruitment.getId();
+			String url = String.format("/admin/recruitments/%d", recruitmentId);
+			String accessToken = testDataUtils.getAdminLoginAccessToken();
+
+			// when
+			String response = mockMvc.perform(get(url)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+			RecruitmentAdminDetailResDto resDto = objectMapper.readValue(response,
+				RecruitmentAdminDetailResDto.class);
+
+			assertThat(resDto.getForms().size()).isEqualTo(2);
+		}
+
+	}
 
 	@Nested
 	@DisplayName("공고 전체 조회 시 - POST /admin/recruitments")
