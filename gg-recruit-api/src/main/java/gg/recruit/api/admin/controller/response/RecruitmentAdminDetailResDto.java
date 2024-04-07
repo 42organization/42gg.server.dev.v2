@@ -2,6 +2,7 @@ package gg.recruit.api.admin.controller.response;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import gg.recruit.api.admin.service.result.RecruitmentDetailAdminSvcDto;
 import lombok.Getter;
@@ -24,6 +25,6 @@ public class RecruitmentAdminDetailResDto {
 		this.contents = recruitmentDetail.getContents();
 		this.generation = recruitmentDetail.getGeneration();
 		this.forms = recruitmentDetail.getForms().stream()
-			.map(FormDetailAdminResDto::new).toList();
+			.map(FormDetailAdminResDto::new).collect(Collectors.toList());
 	}
 }
