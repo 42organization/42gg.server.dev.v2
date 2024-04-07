@@ -138,7 +138,7 @@ public class CommentControllerTest {
 			EnumSet<RoomType> notOpenStatuses = EnumSet.of(RoomType.START, RoomType.FINISH, RoomType.HIDDEN,
 				RoomType.FAIL);
 			for (RoomType status : notOpenStatuses) {
-				openRoom.updateRoomStatus(status);
+				openRoom.changeRoomStatus(status);
 				roomRepository.save(openRoom);
 
 				CommentCreateReqDto reqDto = new CommentCreateReqDto("testComment");

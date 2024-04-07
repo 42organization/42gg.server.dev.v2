@@ -17,7 +17,6 @@ import gg.data.party.Room;
 import gg.data.party.RoomReport;
 import gg.data.party.UserReport;
 import gg.data.party.UserRoom;
-import gg.data.party.type.RoomType;
 import gg.data.user.User;
 import gg.party.api.user.report.controller.request.ReportReqDto;
 import gg.repo.party.CommentReportRepository;
@@ -85,7 +84,7 @@ public class ReportService {
 
 		List<RoomReport> allReportRoom = roomReportRepository.findByRoomId(targetRoom.getId());
 		if (allReportRoom.size() == 5) {
-			targetRoom.updateRoomStatus(RoomType.HIDDEN);
+			targetRoom.roomHidden();
 			roomRepository.save(targetRoom);
 			User targetUser = targetRoom.getCreator();
 			partyGivePenalty(targetUser.getIntraId(), ROOM_PENALTY_TIME, "방 패널티");

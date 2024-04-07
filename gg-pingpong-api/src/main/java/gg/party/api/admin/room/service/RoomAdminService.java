@@ -50,7 +50,7 @@ public class RoomAdminService {
 			throw new ChangeSameStatusException();
 		}
 
-		room.updateRoomStatus(newStatus);
+		room.changeRoomStatus(newStatus);
 		roomRepository.save(room);
 	}
 

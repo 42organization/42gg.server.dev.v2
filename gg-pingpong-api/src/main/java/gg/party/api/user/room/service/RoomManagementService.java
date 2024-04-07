@@ -2,7 +2,6 @@ package gg.party.api.user.room.service;
 
 import static gg.party.api.user.room.utils.GenerateRandomNickname.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -108,7 +107,7 @@ public class RoomManagementService {
 		if (targetRoom.getCurrentPeople() == 1) {
 			targetRoom.updateCurrentPeople(0);
 			targetUserRoom.updateIsExist(false);
-			targetRoom.updateRoomStatus(RoomType.FAIL);
+			targetRoom.roomFail();
 			roomRepository.save(targetRoom);
 			userRoomRepository.save(targetUserRoom);
 			return new LeaveRoomResDto(targetUserRoom.getNickname());
@@ -157,9 +156,8 @@ public class RoomManagementService {
 		if (targetRoom.getMinPeople() > targetRoom.getCurrentPeople()) {
 			throw new RoomNotEnoughPeopleException();
 		}
-		targetRoom.updateRoomStatus(RoomType.START);
 		List<User> users = userRoomRepository.findByIsExist(roomId);
-		targetRoom.startRoom(LocalDateTime.now());
+		targetRoom.roomStart();
 		partyNotiService.sendPartyNotifications(users);
 		roomRepository.save(targetRoom);
 
@@ -209,9 +207,8 @@ public class RoomManagementService {
 
 		room.updateCurrentPeople(room.getCurrentPeople() + 1);
 		if (room.getCurrentPeople() == room.getMaxPeople()) {
-			room.updateRoomStatus(RoomType.START);
 			List<User> users = userRoomRepository.findByIsExist(roomId);
-			room.startRoom(LocalDateTime.now());
+			room.roomStart();
 			partyNotiService.sendPartyNotifications(users);
 		}
 		roomRepository.save(room);
