@@ -80,6 +80,10 @@ public class Recruitment extends BaseTimeEntity {
 		this.isFinish = finish;
 	}
 
+	public boolean getIsFinsh() {
+		return this.isFinish;
+	}
+
 	/**
 	 * Question에서 호출하는 연관관계 편의 메서드, 기타 호출 금지
 	 * @param question

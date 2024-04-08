@@ -82,7 +82,7 @@ public class RecruitmentAdminController {
 	}
 
 	@GetMapping
-	public ResponseEntity<RecruitmentsResponse> getRecruitments(PageRequestDto pageRequestDto) {
+	public ResponseEntity<RecruitmentsResponse> getRecruitments(@Valid PageRequestDto pageRequestDto) {
 		Pageable pageable = PageRequest.of(pageRequestDto.getPage() - 1, pageRequestDto.getSize());
 		AllRecruitmentsResult allRecruitments = recruitmentAdminService.getAllRecruitments(pageable);
 		return ResponseEntity.ok(

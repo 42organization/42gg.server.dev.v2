@@ -78,7 +78,8 @@ public class RecruitmentAdminService {
 	 */
 	@Transactional(readOnly = true)
 	public AllRecruitmentsResult getAllRecruitments(Pageable pageable) {
-		Page<Recruitment> allByOrderByEndDateDesc = recruitmentAdminRepository.findAllByOrderByEndTimeDesc(pageable);
+		Page<Recruitment> allByOrderByEndDateDesc = recruitmentAdminRepository.findAllByIsDeletedOrderByEndTimeDesc(
+			false, pageable);
 		return new AllRecruitmentsResult(allByOrderByEndDateDesc.getTotalPages(), allByOrderByEndDateDesc.getContent());
 	}
 

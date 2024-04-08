@@ -14,8 +14,8 @@ public class RecruitmentsResponse {
 	private List<RecruitmentDto> recruitments = new ArrayList<>();
 	private int totalPage;
 
-	public RecruitmentsResponse(List<Recruitment> recruitments, int totalPage) {
-		for (Recruitment recruitment : recruitments) {
+	public RecruitmentsResponse(List<Recruitment> recruitmentList, int totalPage) {
+		for (Recruitment recruitment : recruitmentList) {
 			this.recruitments.add(RecruitmentDto.toRecruitmentDto(recruitment));
 		}
 		this.totalPage = totalPage;

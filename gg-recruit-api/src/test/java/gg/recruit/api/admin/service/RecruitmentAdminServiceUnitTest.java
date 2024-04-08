@@ -51,13 +51,13 @@ class RecruitmentAdminServiceUnitTest {
 		// given
 		Page<Recruitment> mock = mock(Page.class);
 		Pageable mockPageable = mock(Pageable.class);
-		given(recruitmentAdminRepository.findAllByOrderByEndTimeDesc(mockPageable)).willReturn(mock);
+		given(recruitmentAdminRepository.findAllByIsDeletedOrderByEndTimeDesc(false, mockPageable)).willReturn(mock);
 
 		// when
 		recruitmentAdminService.getAllRecruitments(mockPageable);
 
 		// then
-		verify(recruitmentAdminRepository, times(1)).findAllByOrderByEndTimeDesc(mockPageable);
+		verify(recruitmentAdminRepository, times(1)).findAllByIsDeletedOrderByEndTimeDesc(false, mockPageable);
 	}
 
 	@Nested

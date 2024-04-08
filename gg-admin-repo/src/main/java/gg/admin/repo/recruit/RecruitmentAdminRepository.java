@@ -12,6 +12,8 @@ import gg.data.recruit.recruitment.Recruitment;
 public interface RecruitmentAdminRepository extends JpaRepository<Recruitment, Long> {
 	Page<Recruitment> findAllByOrderByEndTimeDesc(Pageable pageable);
 
+	Page<Recruitment> findAllByIsDeletedOrderByEndTimeDesc(boolean isDeleted, Pageable pageable);
+
 	@Query("SELECT r FROM Recruitment r WHERE r.id = :recruitId AND r.isDeleted = false")
 	Optional<Recruitment> findNotDeletedRecruit(Long recruitId);
 }
