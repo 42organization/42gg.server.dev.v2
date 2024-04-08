@@ -1,7 +1,6 @@
 package gg.party.api.admin.room.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -14,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import gg.data.party.Room;
 import gg.data.party.UserRoom;
 import gg.data.party.type.RoomType;
+import gg.data.user.User;
 import gg.party.api.admin.room.controller.request.PageReqDto;
 import gg.party.api.admin.room.controller.response.AdminCommentResDto;
 import gg.party.api.admin.room.controller.response.AdminRoomDetailResDto;
@@ -89,10 +89,7 @@ public class RoomAdminService {
 			.map(AdminCommentResDto::new)
 			.collect(Collectors.toList());
 
-		Optional<UserRoom> hostUserRoomOptional = userRoomRepository.findByUserIdAndRoomIdAndIsExistTrue(
-			room.getHost().getId(), roomId);
-		String hostNickname = hostUserRoomOptional.map(UserRoom::getNickname)
-			.orElse(null);
+		User host = room.getHost();
 
 		List<UserRoomResDto> roomUsers = userRoomRepository.findByRoomId(roomId).stream()
 			.filter(UserRoom::getIsExist)
@@ -100,6 +97,6 @@ public class RoomAdminService {
 				userRoom.getUser().getImageUri()))
 			.collect(Collectors.toList());
 
-		return new AdminRoomDetailResDto(room, hostNickname, roomUsers, comments);
+		return new AdminRoomDetailResDto(room, host, roomUsers, comments);
 	}
 }
