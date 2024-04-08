@@ -91,7 +91,7 @@ public class RoomFindService {
 			.sorted(Comparator.comparing(Room::getStartDate))
 			.collect(Collectors.toList());
 
-		startRoom.addAll(openRoom);
+		openRoom.addAll(startRoom);
 
 		List<RoomResDto> roomListResDto = openRoom.stream()
 			.map(RoomResDto::new)
