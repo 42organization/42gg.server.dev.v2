@@ -22,7 +22,6 @@ import gg.utils.exception.party.OnPenaltyException;
 import gg.utils.exception.party.RoomNotFoundException;
 import gg.utils.exception.party.RoomNotOpenException;
 import gg.utils.exception.party.RoomNotParticipantException;
-import gg.utils.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -37,7 +36,6 @@ public class CommentService {
 	/**
 	 * 댓글 생성
 	 * @param roomId 방 번호
-	 * @throws UserNotFoundException 유효하지 않은 유저 입력 - 404
 	 * @throws RoomNotFoundException 방을 찾을 수 없음 - 404
 	 * @throws RoomNotOpenException 방이 열려있지 않음 - 400
 	 * @throws OnPenaltyException 패널티 상태의 유저 입력 - 403
@@ -46,7 +44,7 @@ public class CommentService {
 	 */
 	@Transactional
 	public void addCreateComment(Long roomId, CommentCreateReqDto reqDto, Long userId) {
-		User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+		User user = userRepository.getById(userId);
 		Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
 		if (room.getStatus() != RoomType.OPEN) {
 			throw new RoomNotOpenException();

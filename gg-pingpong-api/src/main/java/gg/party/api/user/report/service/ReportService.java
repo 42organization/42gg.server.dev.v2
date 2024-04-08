@@ -56,7 +56,6 @@ public class ReportService {
 	 * @param roomId 방 번호
 	 * @param reportReqDto 신고 내용
 	 * @param userDto 신고자
-	 * @throws UserNotFoundException 유효하지 않은 유저 입력 - 404
 	 * @throws OnPenaltyException 패널티 상태의 유저 입력 - 403
 	 * @throws RoomNotFoundException 방을 찾을 수 없음 - 404
 	 * @throws AlreadyReportedException 이미 신고한 경우 - 409
@@ -64,7 +63,7 @@ public class ReportService {
 	 */
 	@Transactional
 	public void addReportRoom(Long roomId, ReportReqDto reportReqDto, UserDto userDto) {
-		User user = userRepository.findById(userDto.getId()).orElseThrow(UserNotFoundException::new);
+		User user = userRepository.getById(userDto.getId());
 		Optional<PartyPenalty> partyPenalty = partyPenaltyRepository.findTopByUserIdOrderByStartTimeDesc(user.getId());
 		if (partyPenalty.isPresent() && PartyPenalty.isFreeFromPenalty(partyPenalty.get())) {
 			throw new OnPenaltyException();
@@ -152,7 +151,7 @@ public class ReportService {
 			throw new SelfReportException();
 		}
 		// 신고자와 피신고자가 같은 방에 있는지 확인
-		User reporteeEntity = userRepository.findByIntraId(userIntraId)
+		User reporteeEntity = userRepository.getUserByIntraId(userIntraId)
 			.orElseThrow(UserNotFoundException::new);
 		UserRoom reporterUserRoom = userRoomRepository.findByUserIdAndRoomIdAndIsExistTrue(user.getId(), roomId)
 			.orElseThrow(RoomNotParticipantException::new);
@@ -187,7 +186,7 @@ public class ReportService {
 	 */
 	@Transactional
 	public void partyGivePenalty(String intraId, Integer penaltyTime, String penaltyType) {
-		User user = userRepository.findByIntraId(intraId).orElseThrow(UserNotFoundException::new);
+		User user = userRepository.getUserByIntraId(intraId).orElseThrow(UserNotFoundException::new);
 		Optional<PartyPenalty> pPenalty = partyPenaltyRepository.findTopByUserIdOrderByStartTimeDesc(user.getId());
 
 		if (pPenalty.isPresent() && LocalDateTime.now().isBefore(pPenalty.get().getStartTime()
