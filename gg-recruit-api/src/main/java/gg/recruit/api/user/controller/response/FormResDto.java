@@ -13,13 +13,13 @@ import lombok.Getter;
 public class FormResDto {
 	private Long questionId;
 	private String inputType;
-	private List<CheckListResDto> checkeList;
+	private List<CheckListResDto> checkedList;
 	private String answer;
 
 	public FormResDto(FormSvcDto formSvcDto) {
 		this.questionId = formSvcDto.getQuestionId();
 		this.inputType = formSvcDto.getInputType();
-		this.checkeList = formSvcDto.getCheckedList().stream()
+		this.checkedList = formSvcDto.getCheckedList().stream()
 			.map(CheckListResDto::new).collect(toList());
 		this.answer = formSvcDto.getAnswer();
 	}
