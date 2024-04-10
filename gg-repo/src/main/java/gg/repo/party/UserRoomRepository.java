@@ -13,9 +13,10 @@ import gg.data.party.type.RoomType;
 import gg.data.user.User;
 
 public interface UserRoomRepository extends JpaRepository<UserRoom, Long> {
-	List<UserRoom> findByUserId(Long userId);
-
 	List<UserRoom> findByRoomId(Long roomId);
+
+	@Query("SELECT ur FROM UserRoom ur WHERE ur.user.id = :userId AND ur.isExist = true")
+	List<UserRoom> findByUserIdAndIsExistTrue(Long userId);
 
 	@Query("SELECT ur FROM UserRoom ur WHERE ur.room.id = :roomId AND ur.isExist = true")
 	List<UserRoom> findByRoomIdAndIsExistTrue(@Param("roomId") Long roomId);
