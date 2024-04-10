@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 public class CheckListContent {
 	@NotBlank(message = "문항 내용을 입력해주세요.")
 	@Size(min = 1, max = 100, message = "100자 이내로 입력해주세요.")
-	String content;
+	String contents;
 
 	public CheckListContent(String content) {
-		this.content = content;
+		this.contents = content;
 	}
 }

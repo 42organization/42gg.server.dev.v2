@@ -59,7 +59,7 @@ public class RecruitmentAdminController {
 	public ResponseEntity<CreatedRecruitmentResponse> createRecruitment(
 		@RequestBody @Valid RecruitmentRequestDto recruitmentDto) {
 		Recruitment recruitment = RecruitmentRequestDto.RecruitmentMapper.INSTANCE.dtoToEntity(recruitmentDto);
-		Long recruitmentId = recruitmentAdminService.createRecruitment(recruitment, recruitmentDto.getForm()).getId();
+		Long recruitmentId = recruitmentAdminService.createRecruitment(recruitment, recruitmentDto.getForms()).getId();
 		CreatedRecruitmentResponse createdRecruitmentResponse = new CreatedRecruitmentResponse(recruitmentId);
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(createdRecruitmentResponse);
@@ -148,8 +148,8 @@ public class RecruitmentAdminController {
 	public ResponseEntity<Void> updateRecruitment(@PathVariable @Positive Long recruitId,
 		@RequestBody @Valid RecruitmentRequestDto recruitmentDto) {
 		Recruitment recruitment = RecruitmentRequestDto.RecruitmentMapper.INSTANCE.dtoToEntity(recruitmentDto);
-		recruitment = recruitmentAdminService.updateRecruitment(recruitId, recruitment, recruitmentDto.getForm());
-		recruitmentAdminService.createRecruitment(recruitment, recruitmentDto.getForm());
+		recruitment = recruitmentAdminService.updateRecruitment(recruitId, recruitment, recruitmentDto.getForms());
+		recruitmentAdminService.createRecruitment(recruitment, recruitmentDto.getForms());
 		return ResponseEntity.noContent().build();
 	}
 

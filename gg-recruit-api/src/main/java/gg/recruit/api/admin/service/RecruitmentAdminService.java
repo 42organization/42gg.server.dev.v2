@@ -124,7 +124,7 @@ public class RecruitmentAdminService {
 			throw new InvalidCheckListException();
 		}
 		for (CheckListContent checkList : checkLists) {
-			new CheckList(question, checkList.getContent());
+			new CheckList(question, checkList.getContents());
 		}
 	}
 

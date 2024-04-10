@@ -44,7 +44,7 @@ public class RecruitmentRequestDto {
 
 	@NotNull(message = "폼을 입력해주세요.")
 	@Valid
-	List<FormParam> form;
+	List<FormParam> forms;
 
 	@Builder
 	public RecruitmentRequestDto(LocalDateTime startDate, LocalDateTime endDate, String title,
@@ -55,7 +55,7 @@ public class RecruitmentRequestDto {
 		this.title = title;
 		this.contents = contents;
 		this.generation = generation;
-		this.form = form;
+		this.forms = form;
 	}
 
 	@Mapper
