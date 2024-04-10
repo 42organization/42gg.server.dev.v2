@@ -46,7 +46,7 @@ public class CommentService {
 	public void addCreateComment(Long roomId, CommentCreateReqDto reqDto, Long userId) {
 		User user = userRepository.getById(userId);
 		Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
-		if (room.getStatus() != RoomType.OPEN) {
+		if (!room.getStatus().equals(RoomType.OPEN)) {
 			throw new RoomNotOpenException();
 		}
 

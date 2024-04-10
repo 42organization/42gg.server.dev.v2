@@ -143,7 +143,7 @@ public class RoomManagementService {
 			.orElseThrow(RoomNotFoundException::new);
 		UserRoom targetUserRoom = userRoomRepository.findByUserAndRoom(user, targetRoom)
 			.orElseThrow(RoomNotParticipantException::new);
-		if (targetRoom.getHost() != targetUserRoom.getUser()) {
+		if (!targetRoom.getHost().equals(targetUserRoom.getUser())) {
 			throw new UserNotHostException();
 		}
 		if (!targetRoom.getStatus().equals(RoomType.OPEN)) {
@@ -179,7 +179,7 @@ public class RoomManagementService {
 		if (partyPenalty.isPresent() && PartyPenalty.isFreeFromPenalty(partyPenalty.get())) {
 			throw new OnPenaltyException();
 		}
-		if (room.getStatus() != RoomType.OPEN) {
+		if (!room.getStatus().equals(RoomType.OPEN)) {
 			throw new RoomNotOpenException();
 		}
 		UserRoom userRoom = userRoomRepository.findByUserAndRoom(user, room)
