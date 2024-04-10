@@ -76,7 +76,7 @@ public class RoomFindService {
 	 */
 	@Transactional(readOnly = true)
 	public RoomListResDto findJoinedRoomList(Long userId) {
-		List<UserRoom> userRooms = userRoomRepository.findByUserId(userId);
+		List<UserRoom> userRooms = userRoomRepository.findByUserIdAndIsExistTrue(userId);
 		List<Room> joinedRooms = userRooms.stream()
 			.map(UserRoom::getRoom)
 			.collect(Collectors.toList());
