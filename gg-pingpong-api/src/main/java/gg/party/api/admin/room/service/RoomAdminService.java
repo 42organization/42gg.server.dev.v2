@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import gg.data.party.Room;
 import gg.data.party.UserRoom;
 import gg.data.party.type.RoomType;
-import gg.data.user.User;
 import gg.party.api.admin.room.controller.request.PageReqDto;
 import gg.party.api.admin.room.controller.response.AdminCommentResDto;
 import gg.party.api.admin.room.controller.response.AdminRoomDetailResDto;
@@ -89,7 +88,8 @@ public class RoomAdminService {
 			.map(AdminCommentResDto::new)
 			.collect(Collectors.toList());
 
-		User host = room.getHost();
+		UserRoom hostUserRoom = userRoomRepository.findByUserAndRoom(room.getHost(), room)
+			.orElseThrow(RoomNotFoundException::new);
 
 		List<UserRoomResDto> roomUsers = userRoomRepository.findByRoomId(roomId).stream()
 			.filter(UserRoom::getIsExist)
@@ -97,6 +97,6 @@ public class RoomAdminService {
 				userRoom.getUser().getImageUri()))
 			.collect(Collectors.toList());
 
-		return new AdminRoomDetailResDto(room, host, roomUsers, comments);
+		return new AdminRoomDetailResDto(room, hostUserRoom.getNickname(), roomUsers, comments);
 	}
 }
