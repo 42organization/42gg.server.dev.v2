@@ -1,7 +1,6 @@
 package gg.party.api.admin.room.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -50,7 +49,7 @@ public class RoomAdminService {
 			throw new ChangeSameStatusException();
 		}
 
-		room.updateRoomStatus(newStatus);
+		room.changeRoomStatus(newStatus);
 		roomRepository.save(room);
 	}
 
@@ -89,10 +88,8 @@ public class RoomAdminService {
 			.map(AdminCommentResDto::new)
 			.collect(Collectors.toList());
 
-		Optional<UserRoom> hostUserRoomOptional = userRoomRepository.findByUserIdAndRoomIdAndIsExistTrue(
-			room.getHost().getId(), roomId);
-		String hostNickname = hostUserRoomOptional.map(UserRoom::getNickname)
-			.orElse(null);
+		UserRoom hostUserRoom = userRoomRepository.findByUserAndRoom(room.getHost(), room)
+			.orElseThrow(RoomNotFoundException::new);
 
 		List<UserRoomResDto> roomUsers = userRoomRepository.findByRoomId(roomId).stream()
 			.filter(UserRoom::getIsExist)
@@ -100,6 +97,6 @@ public class RoomAdminService {
 				userRoom.getUser().getImageUri()))
 			.collect(Collectors.toList());
 
-		return new AdminRoomDetailResDto(room, hostNickname, roomUsers, comments);
+		return new AdminRoomDetailResDto(room, hostUserRoom.getNickname(), roomUsers, comments);
 	}
 }

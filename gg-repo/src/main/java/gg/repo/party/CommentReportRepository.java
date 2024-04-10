@@ -12,9 +12,9 @@ import gg.data.party.CommentReport;
 import gg.data.user.User;
 
 public interface CommentReportRepository extends JpaRepository<CommentReport, Long> {
-	public List<CommentReport> findByCommentId(Long commentId);
+	List<CommentReport> findByCommentId(Long commentId);
 
-	public Optional<CommentReport> findByReporterAndCommentId(User reporter, Long commentId);
+	Optional<CommentReport> findByReporterAndCommentId(User reporter, Long commentId);
 
 	@Query(value = "SELECT cr FROM CommentReport cr "
 		+ "JOIN FETCH cr.reporter "

@@ -26,14 +26,10 @@ import gg.data.user.type.SnsType;
 import gg.party.api.user.penalty.controller.response.PenaltyResDto;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @IntegrationTest
 @Transactional
 @AutoConfigureMockMvc
-@RequiredArgsConstructor
-@Slf4j
 public class PartyPenaltyControllerTest {
 	@Autowired
 	MockMvc mockMvc;

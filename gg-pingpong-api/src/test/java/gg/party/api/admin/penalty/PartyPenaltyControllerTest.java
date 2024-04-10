@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -32,13 +31,10 @@ import gg.party.api.admin.penalty.controller.response.PartyPenaltyListAdminResDt
 import gg.repo.party.PartyPenaltyRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
-import lombok.extern.slf4j.Slf4j;
 
 @IntegrationTest
 @AutoConfigureMockMvc
-@SpringBootTest
 @Transactional
-@Slf4j
 public class PartyPenaltyControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
@@ -148,7 +144,7 @@ public class PartyPenaltyControllerTest {
 
 			assertEquals(penaltyDto.getPenaltyType(), updatedPenalty.getPenaltyType());
 			assertEquals(penaltyDto.getMessage(), updatedPenalty.getMessage());
-			assertEquals(penaltyDto.getPenaltyTime(), updatedPenalty.getPenaltyTime().intValue());
+			assertEquals(penaltyDto.getPenaltyTime(), updatedPenalty.getPenaltyTime());
 		}
 
 		@Test

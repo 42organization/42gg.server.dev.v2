@@ -40,13 +40,9 @@ import gg.repo.party.RoomReportRepository;
 import gg.repo.party.UserReportRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @IntegrationTest
 @AutoConfigureMockMvc
-@RequiredArgsConstructor
-@Slf4j
 @Rollback(value = true)
 public class ReportControllerTest {
 	@Autowired

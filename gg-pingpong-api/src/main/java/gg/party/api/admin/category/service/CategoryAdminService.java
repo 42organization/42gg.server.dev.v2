@@ -46,9 +46,9 @@ public class CategoryAdminService {
 			.orElseThrow(CategoryNotFoundException::new);
 
 		Category defaultCategory = categoryAdminRepository.findByName(
-			DefaultCategoryNeedException.DEFAULT_CATEGORY_NAME);
+			DefaultCategoryNeedException.DEFAULT_CATEGORY_NAME).orElseThrow(DefaultCategoryNeedException::new);
 
-		if (defaultCategory == null || category.equals(defaultCategory)) {
+		if (category.equals(defaultCategory)) {
 			throw new DefaultCategoryNeedException();
 		}
 

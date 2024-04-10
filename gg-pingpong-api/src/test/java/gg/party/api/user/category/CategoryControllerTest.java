@@ -26,14 +26,10 @@ import gg.data.user.type.SnsType;
 import gg.party.api.user.category.controller.response.CategoryListResDto;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @IntegrationTest
 @AutoConfigureMockMvc
 @Transactional
-@RequiredArgsConstructor
-@Slf4j
 public class CategoryControllerTest {
 	@Autowired
 	private MockMvc mockMvc;

@@ -32,14 +32,10 @@ import gg.repo.party.CommentRepository;
 import gg.repo.party.RoomRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @IntegrationTest
 @AutoConfigureMockMvc
 @Transactional
-@RequiredArgsConstructor
-@Slf4j
 public class CommentControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
@@ -142,7 +138,7 @@ public class CommentControllerTest {
 			EnumSet<RoomType> notOpenStatuses = EnumSet.of(RoomType.START, RoomType.FINISH, RoomType.HIDDEN,
 				RoomType.FAIL);
 			for (RoomType status : notOpenStatuses) {
-				openRoom.updateRoomStatus(status);
+				openRoom.changeRoomStatus(status);
 				roomRepository.save(openRoom);
 
 				CommentCreateReqDto reqDto = new CommentCreateReqDto("testComment");

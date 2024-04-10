@@ -42,17 +42,17 @@ public class RoomFindService {
 		List<Room> rooms = roomRepository.findByStatusIn(statuses);
 
 		List<Room> openRooms = rooms.stream()
-			.filter(room -> room.getStatus() == RoomType.OPEN)
+			.filter(room -> room.getStatus().equals(RoomType.OPEN))
 			.sorted(Comparator.comparing(Room::getCreatedAt).reversed())
 			.collect(Collectors.toList());
 
 		List<Room> startRooms = rooms.stream()
-			.filter(room -> room.getStatus() == RoomType.START)
+			.filter(room -> room.getStatus().equals(RoomType.START))
 			.sorted(Comparator.comparing(Room::getStartDate).reversed())
 			.collect(Collectors.toList());
 
 		List<Room> finishRooms = rooms.stream()
-			.filter(room -> room.getStatus() == RoomType.FINISH)
+			.filter(room -> room.getStatus().equals(RoomType.FINISH))
 			.sorted(Comparator.comparing(Room::getStartDate).reversed())
 			.limit(10)
 			.collect(Collectors.toList());
@@ -82,16 +82,16 @@ public class RoomFindService {
 			.collect(Collectors.toList());
 
 		List<Room> openRoom = joinedRooms.stream()
-			.filter(room -> room.getStatus() == RoomType.OPEN)
+			.filter(room -> room.getStatus().equals(RoomType.OPEN))
 			.sorted(Comparator.comparing(Room::getDueDate))
 			.collect(Collectors.toList());
 
 		List<Room> startRoom = joinedRooms.stream()
-			.filter(room -> room.getStatus() == RoomType.START)
+			.filter(room -> room.getStatus().equals(RoomType.START))
 			.sorted(Comparator.comparing(Room::getStartDate))
 			.collect(Collectors.toList());
 
-		startRoom.addAll(openRoom);
+		openRoom.addAll(startRoom);
 
 		List<RoomResDto> roomListResDto = openRoom.stream()
 			.map(RoomResDto::new)
@@ -130,22 +130,25 @@ public class RoomFindService {
 	@Transactional(readOnly = true)
 	public RoomDetailResDto findRoomDetail(Long userId, Long roomId) {
 		Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
-		if (room.getStatus() == RoomType.HIDDEN) {
+		if (room.getStatus().equals(RoomType.HIDDEN)) {
 			throw new RoomReportedException();
 		}
 
 		Optional<UserRoom> userRoomOptional = userRoomRepository.findByUserIdAndRoomIdAndIsExistTrue(userId, roomId);
 
-		String myNickname = null;
-		if (userRoomOptional.isPresent()) {
-			myNickname = userRoomOptional.get().getNickname();
-		}
+		String myNickname = userRoomOptional.stream()
+			.map(UserRoom::getNickname)
+			.findFirst()
+			.orElse(null);
 
 		Optional<UserRoom> hostUserRoom = userRoomRepository.findByUserIdAndRoomIdAndIsExistTrue(room.getHost().getId(),
 			roomId);
-		String hostNickname = hostUserRoom.get().getNickname();
+		String hostNickname = hostUserRoom.stream()
+			.map(UserRoom::getNickname)
+			.findFirst()
+			.orElse(null);
 
-		if ((room.getStatus() == RoomType.START || room.getStatus() == RoomType.FINISH)
+		if ((room.getStatus().equals(RoomType.START) || room.getStatus().equals(RoomType.FINISH))
 			&& userRoomOptional.isPresent()) {
 			List<UserRoomResDto> roomUsers = userRoomRepository.findByRoomIdAndIsExistTrue(roomId).stream()
 				.map(userRoom -> new UserRoomResDto(userRoom, userRoom.getUser().getIntraId(),

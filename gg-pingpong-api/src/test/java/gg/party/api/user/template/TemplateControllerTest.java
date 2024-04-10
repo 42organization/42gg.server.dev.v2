@@ -27,14 +27,10 @@ import gg.data.user.type.SnsType;
 import gg.party.api.user.template.controller.response.TemplateListResDto;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @IntegrationTest
 @AutoConfigureMockMvc
 @Transactional
-@RequiredArgsConstructor
-@Slf4j
 public class TemplateControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
