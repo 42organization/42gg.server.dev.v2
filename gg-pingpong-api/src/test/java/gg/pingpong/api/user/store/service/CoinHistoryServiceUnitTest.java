@@ -1,7 +1,6 @@
 package gg.pingpong.api.user.store.service;
 
 import static org.mockito.Mockito.*;
-import static org.testcontainers.shaded.org.awaitility.Awaitility.*;
 
 import java.util.Optional;
 
@@ -15,7 +14,6 @@ import org.mockito.Mock;
 import gg.data.pingpong.store.CoinHistory;
 import gg.data.pingpong.store.CoinPolicy;
 import gg.data.pingpong.store.Item;
-import gg.data.pingpong.store.type.HistoryType;
 import gg.data.user.User;
 import gg.repo.store.CoinHistoryRepository;
 import gg.repo.store.CoinPolicyRepository;
