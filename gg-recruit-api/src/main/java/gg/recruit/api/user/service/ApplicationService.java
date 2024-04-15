@@ -1,5 +1,6 @@
 package gg.recruit.api.user.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -93,6 +94,11 @@ public class ApplicationService {
 			user.updateTypes(user.getRacketType(), SnsType.BOTH);
 		}
 		Recruitment recruitments = recruitmentRepository.getById(param.getRecruitId());
+		// recruit가 종료되었는지 확인
+		if (recruitments.getEndTime().isBefore(LocalDateTime.now())) {
+			throw new ForbiddenException("마감된 공고입니다.");
+		}
+
 		Application newApplication = applicationRepository.save(new Application(user, recruitments));
 		for (RecruitApplyFormParam form :
 			param.getForms()) {
