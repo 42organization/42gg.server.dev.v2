@@ -210,6 +210,14 @@ public class RecruitmentAdminService {
 			.findAllByRecruitmentIdWithUserAndRecruitStatusFetchJoinOrderByIdDesc(recruitId);
 	}
 
+	/**
+	 * 지원서 목록 조회
+	 * @param dto
+	 * @return
+	 *
+	 * must query by questionId and checkListIds
+	 * or questionId and search
+	 */
 	public Page<Application> findApplicationsWithAnswersAndUserWithFilter(GetRecruitmentApplicationsParam dto) {
 		Long recruitId = dto.getRecruitId();
 		Long questionId = dto.getQuestionId();
@@ -217,11 +225,14 @@ public class RecruitmentAdminService {
 		Pageable pageable = dto.getPageable();
 		List<Long> checkListIds = dto.getCheckListIds();
 
+		//question && checkList
 		if (questionId != null && !checkListIds.isEmpty() && search == null) {
 			return applicationAdminRepository.findAllByCheckList(recruitId, questionId, checkListIds, pageable);
+			//question && search
 		} else if (questionId != null && search != null && checkListIds.isEmpty()) {
 			return applicationAdminRepository.findAllByContainSearch(recruitId, questionId, search, pageable);
 		} else {
+			//not
 			return applicationAdminRepository.findByRecruitIdAndIsDeletedFalseOrderByIdDesc(recruitId, pageable);
 		}
 	}

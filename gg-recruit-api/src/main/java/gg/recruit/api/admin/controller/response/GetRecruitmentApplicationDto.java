@@ -67,11 +67,11 @@ public class GetRecruitmentApplicationDto {
 		@Getter
 		public static class CheckListForm {
 			private Long checkId;
-			private String content;
+			private String contents;
 
 			public CheckListForm(Long checkId, String content) {
 				this.checkId = checkId;
-				this.content = content;
+				this.contents = content;
 			}
 
 			@Mapper
