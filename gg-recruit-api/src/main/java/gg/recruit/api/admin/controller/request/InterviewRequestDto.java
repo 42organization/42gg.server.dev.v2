@@ -27,7 +27,7 @@ public class InterviewRequestDto {
 		if (status == null) {
 			return false;
 		}
-		if (status != ApplicationStatus.PROGRESS_INTERVIEW && status != ApplicationStatus.FAIL) {
+		if (status != ApplicationStatus.PROGRESS_INTERVIEW && status != ApplicationStatus.INTERVIEW_FAIL) {
 			return false;
 		}
 		if (status == ApplicationStatus.PROGRESS_INTERVIEW) {

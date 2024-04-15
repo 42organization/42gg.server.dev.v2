@@ -52,7 +52,7 @@ class RecruitmentAdminControllerUnitTest {
 	class SetFinalApplicationStatusResult {
 		@ParameterizedTest
 		@DisplayName("PASS, FAIL 파라미터 전달 시 최종 결과 등록 성공")
-		@EnumSource(value = ApplicationStatus.class, mode = EnumSource.Mode.INCLUDE, names = {"PASS", "FAIL"})
+		@EnumSource(value = ApplicationStatus.class, mode = EnumSource.Mode.INCLUDE, names = {"PASS", "INTERVIEW_FAIL"})
 		void setResultSuccess(ApplicationStatus status) {
 			//Arrange
 			SetFinalApplicationStatusResultReqDto reqDto = new SetFinalApplicationStatusResultReqDto(status);
@@ -66,7 +66,7 @@ class RecruitmentAdminControllerUnitTest {
 
 		@ParameterizedTest
 		@DisplayName("PASS, FAIL를 제외한 status는 허용되지 않는다")
-		@EnumSource(value = ApplicationStatus.class, mode = EnumSource.Mode.EXCLUDE, names = {"PASS", "FAIL"})
+		@EnumSource(value = ApplicationStatus.class, mode = EnumSource.Mode.EXCLUDE, names = {"PASS", "INTERVIEW_FAIL"})
 		void invalidStatus(ApplicationStatus status) {
 			//Arrange
 			SetFinalApplicationStatusResultReqDto reqDto = new SetFinalApplicationStatusResultReqDto(status);
@@ -122,7 +122,7 @@ class RecruitmentAdminControllerUnitTest {
 		Application application = Mockito.mock(Application.class);
 		User user = Mockito.mock(User.class);
 		RecruitStatus recruitStatus = Mockito.mock(RecruitStatus.class);
-		ApplicationStatus status = ApplicationStatus.FAIL;
+		ApplicationStatus status = ApplicationStatus.INTERVIEW_FAIL;
 
 		Long applicationId = 1L;
 		LocalDateTime interviewDate = LocalDateTime.now();

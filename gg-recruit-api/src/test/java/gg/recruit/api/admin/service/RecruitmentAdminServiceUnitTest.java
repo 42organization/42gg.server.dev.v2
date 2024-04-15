@@ -190,7 +190,7 @@ class RecruitmentAdminServiceUnitTest {
 			// given
 			Application application = new Application(mock(User.class), mock(Recruitment.class));
 			application.updateApplicationStatus(PROGRESS_INTERVIEW);
-			UpdateApplicationStatusParam dto = new UpdateApplicationStatusParam(FAIL, 1L, 1L);
+			UpdateApplicationStatusParam dto = new UpdateApplicationStatusParam(INTERVIEW_FAIL, 1L, 1L);
 			given(
 				applicationAdminRepository.findByIdAndRecruitId(dto.getApplicationId(), dto.getRecruitId()))
 				.willReturn(Optional.of(application));
@@ -205,7 +205,7 @@ class RecruitmentAdminServiceUnitTest {
 		void validApplicationStatus() {
 			// given
 			Application application = new Application(mock(User.class), mock(Recruitment.class));
-			UpdateApplicationStatusParam dto = new UpdateApplicationStatusParam(FAIL, 1L, 1L);
+			UpdateApplicationStatusParam dto = new UpdateApplicationStatusParam(INTERVIEW_FAIL, 1L, 1L);
 			given(
 				applicationAdminRepository.findByIdAndRecruitId(dto.getApplicationId(), dto.getRecruitId()))
 				.willReturn(Optional.of(application));
@@ -216,7 +216,7 @@ class RecruitmentAdminServiceUnitTest {
 			// then
 			verify(applicationAdminRepository, times(1)).findByIdAndRecruitId(
 				dto.getApplicationId(), dto.getRecruitId());
-			assertThat(application.getStatus()).isEqualTo(FAIL);
+			assertThat(application.getStatus()).isEqualTo(INTERVIEW_FAIL);
 		}
 
 		@Test
