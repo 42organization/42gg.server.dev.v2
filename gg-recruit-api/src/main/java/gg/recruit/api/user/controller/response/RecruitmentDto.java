@@ -13,7 +13,6 @@ public class RecruitmentDto {
 	private LocalDateTime startDate;
 	private LocalDateTime endDate;
 	private String title;
-	private RecruitmentStatus status;
 	private String generation;
 
 	public RecruitmentDto(RecruitmentSvcDto dto) {
@@ -22,11 +21,5 @@ public class RecruitmentDto {
 		this.endDate = dto.getEndDate();
 		this.title = dto.getTitle();
 		this.generation = dto.getGeneration();
-		this.status = RecruitmentStatus.BEFORE;
-		if (LocalDateTime.now().isAfter(dto.getStartDate()) && LocalDateTime.now().isBefore(dto.getEndDate())) {
-			this.status = RecruitmentStatus.PROGRESS;
-		} else if (LocalDateTime.now().isAfter(dto.getEndDate())) {
-			this.status = RecruitmentStatus.FINISHED;
-		}
 	}
 }
