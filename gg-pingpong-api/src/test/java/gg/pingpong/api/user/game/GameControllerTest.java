@@ -25,23 +25,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gg.data.game.Game;
-import gg.data.game.PChange;
-import gg.data.game.Team;
-import gg.data.game.TeamUser;
-import gg.data.game.type.Mode;
-import gg.data.game.type.StatusType;
-import gg.data.rank.Rank;
-import gg.data.rank.Tier;
-import gg.data.rank.redis.RankRedis;
-import gg.data.season.Season;
-import gg.data.tournament.Tournament;
-import gg.data.tournament.TournamentGame;
+import gg.auth.utils.AuthTokenProvider;
+import gg.data.pingpong.game.Game;
+import gg.data.pingpong.game.PChange;
+import gg.data.pingpong.game.Team;
+import gg.data.pingpong.game.TeamUser;
+import gg.data.pingpong.game.type.Mode;
+import gg.data.pingpong.game.type.StatusType;
+import gg.data.pingpong.rank.Rank;
+import gg.data.pingpong.rank.Tier;
+import gg.data.pingpong.rank.redis.RankRedis;
+import gg.data.pingpong.season.Season;
+import gg.data.pingpong.tournament.Tournament;
+import gg.data.pingpong.tournament.TournamentGame;
 import gg.data.user.User;
 import gg.data.user.type.RacketType;
 import gg.data.user.type.RoleType;
 import gg.data.user.type.SnsType;
-import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.user.game.controller.request.RankResultReqDto;
 import gg.pingpong.api.user.game.controller.request.TournamentResultReqDto;
 import gg.pingpong.api.user.game.controller.response.GameListResDto;
@@ -97,11 +97,12 @@ public class GameControllerTest {
 	@Autowired
 	GameFindService gameFindService;
 	@Autowired
-	private MockMvc mockMvc;
-	@Autowired
 	ObjectMapper objectMapper;
 	@Autowired
 	AuthTokenProvider tokenProvider;
+	ArrayList<Tier> tiers;
+	@Autowired
+	private MockMvc mockMvc;
 	private String accessToken;
 	private Season season;
 	private User user1;
@@ -109,7 +110,6 @@ public class GameControllerTest {
 	private User user3;
 	private Game game1;
 	private Game game2;
-	ArrayList<Tier> tiers;
 
 	@BeforeEach
 	void init() {

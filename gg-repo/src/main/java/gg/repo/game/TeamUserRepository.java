@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import gg.data.game.TeamUser;
+import gg.data.pingpong.game.TeamUser;
 
 public interface TeamUserRepository extends JpaRepository<TeamUser, Long> {
 	@Query(value = "select team_user.id, team_user.team_id, team_user.user_id from team, team_user "

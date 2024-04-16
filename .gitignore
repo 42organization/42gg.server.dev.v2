@@ -7,7 +7,8 @@ build/
 gg-pingpong-api/src/main/resources/application.yml
 .DS_Store
 python
-/logs
+**/logs
+**/src/main/generated/
 
 
 ### STS ###
@@ -27,9 +28,11 @@ bin/
 *.iws
 *.iml
 *.ipr
+*.log
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+**/generated
 
 ### NetBeans ###
 /nbproject/private/
@@ -46,7 +49,9 @@ out/
 pingping.pem
 
 ###  logs  ###
-./logs/*
+**/logs/*
 
 ### git commit message convention file ###
 .gitmessage.txt
+
+**/generated

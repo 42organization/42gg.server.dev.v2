@@ -2,12 +2,12 @@ package gg.pingpong.api.user.match.utils;
 
 import java.time.LocalDateTime;
 
-import gg.data.game.Game;
-import gg.data.game.Team;
-import gg.data.game.TeamUser;
-import gg.data.game.type.Mode;
-import gg.data.game.type.StatusType;
-import gg.data.season.Season;
+import gg.data.pingpong.game.Game;
+import gg.data.pingpong.game.Team;
+import gg.data.pingpong.game.TeamUser;
+import gg.data.pingpong.game.type.Mode;
+import gg.data.pingpong.game.type.StatusType;
+import gg.data.pingpong.season.Season;
 import gg.data.user.User;
 
 public class GameTestUtils {

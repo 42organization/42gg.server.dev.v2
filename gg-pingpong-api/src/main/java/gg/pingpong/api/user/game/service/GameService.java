@@ -8,15 +8,15 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.data.game.Game;
-import gg.data.game.PChange;
-import gg.data.game.TeamUser;
-import gg.data.game.type.StatusType;
-import gg.data.match.type.TournamentMatchStatus;
-import gg.data.season.Season;
-import gg.data.tournament.Tournament;
-import gg.data.tournament.TournamentGame;
-import gg.data.tournament.type.RoundNumber;
+import gg.data.pingpong.game.Game;
+import gg.data.pingpong.game.PChange;
+import gg.data.pingpong.game.TeamUser;
+import gg.data.pingpong.game.type.StatusType;
+import gg.data.pingpong.match.type.TournamentMatchStatus;
+import gg.data.pingpong.season.Season;
+import gg.data.pingpong.tournament.Tournament;
+import gg.data.pingpong.tournament.TournamentGame;
+import gg.data.pingpong.tournament.type.RoundNumber;
 import gg.pingpong.api.global.utils.ExpLevelCalculator;
 import gg.pingpong.api.user.game.controller.request.NormalResultReqDto;
 import gg.pingpong.api.user.game.controller.request.RankResultReqDto;
@@ -254,27 +254,34 @@ public class GameService {
 		throw new TeamIdNotMatchException();
 	}
 
+	/**
+	 * <p>이미 점수가 입력 되지 않은 게임이라면 scoreDto의 점수로 갱신시켜줍니다.</p>
+	 * <p>유저의 경기가 아니라면 InvalidParameterException 반환</p>
+	 * @param game
+	 * @param scoreDto 타겟 점수
+	 * @param userId 유저
+	 * @return
+	 */
 	private Boolean updateRankGameScore(Game game, RankResultReqDto scoreDto, Long userId) {
 		List<TeamUser> teams = teamUserRepository.findAllByGameId(game.getId());
 		TeamUser myTeam = findTeamId(scoreDto.getMyTeamId(), teams);
 		TeamUser enemyTeam = findTeamId(scoreDto.getEnemyTeamId(), teams);
 		if (!myTeam.getUser().getId().equals(userId)) {
 			throw new InvalidParameterException("team user 정보 불일치.", ErrorCode.VALID_FAILED);
-		} else {
-			if (myTeam.getTeam().getScore().equals(-1) && enemyTeam.getTeam().getScore().equals(-1)) {
-				setTeamScore(myTeam, scoreDto.getMyTeamScore(),
-					scoreDto.getMyTeamScore() > scoreDto.getEnemyTeamScore());
-				setTeamScore(enemyTeam, scoreDto.getEnemyTeamScore(),
-					scoreDto.getMyTeamScore() < scoreDto.getEnemyTeamScore());
-				expUpdates(game, teams);
-				rankRedisService.updateRankRedis(myTeam, enemyTeam, game);
-				tierService.updateAllTier(game.getSeason());
-			} else {
-				// score 가 이미 입력됨
-				return false;
-			}
-			return true;
 		}
+		if (myTeam.getTeam().getScore().equals(-1) && enemyTeam.getTeam().getScore().equals(-1)) {
+			setTeamScore(myTeam, scoreDto.getMyTeamScore(),
+				scoreDto.getMyTeamScore() > scoreDto.getEnemyTeamScore());
+			setTeamScore(enemyTeam, scoreDto.getEnemyTeamScore(),
+				scoreDto.getMyTeamScore() < scoreDto.getEnemyTeamScore());
+			expUpdates(game, teams);
+			rankRedisService.updateRankRedis(myTeam, enemyTeam, game);
+			tierService.updateAllTier(game.getSeason());
+		} else {
+			// score 가 이미 입력됨
+			return false;
+		}
+		return true;
 	}
 
 	/**

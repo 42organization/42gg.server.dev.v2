@@ -13,12 +13,18 @@ flags:
   unitTest:
     paths:
       - gg-pingpong-api/src/main/java/gg/pingpong/api
-      - gg-pingpong-repo/src/main/java/gg/pingpong/repo
-      - gg-pingpong-admin-repo/src/main/java/gg/pingpong/admin/repo
-      - gg-pingpong-data/src/main/java/gg/pingpong/data
+      - gg-repo/src/main/java/gg/repo
+      - gg-admin-repo/src/main/java/gg/admin/repo
+      - gg-data/src/main/java/gg/data
+      - gg-auth/src/main/java/gg/auth
+      - gg-utils/src/main/java/gg/utils
+      - gg-recruit-api/src/main/java/gg/recruit/api
   integrationTest:
     paths:
       - gg-pingpong-api/src/main/java/gg/pingpong/api
-      - gg-pingpong-repo/src/main/java/gg/pingpong/repo
-      - gg-pingpong-admin-repo/src/main/java/gg/pingpong/admin/repo
-      - gg-pingpong-data/src/main/java/gg/pingpong/data
+      - gg-repo/src/main/java/gg/repo
+      - gg-admin-repo/src/main/java/gg/admin/repo
+      - gg-data/src/main/java/gg/data
+      - gg-auth/src/main/java/gg/auth
+      - gg-utils/src/main/java/gg/utils
+      - gg-recruit-api/src/main/java/gg/recruit/api

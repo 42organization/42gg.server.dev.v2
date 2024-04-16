@@ -1,5 +1,6 @@
 package gg.pingpong.api.user.game.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,9 +11,9 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.data.game.Game;
-import gg.data.game.type.Mode;
-import gg.data.game.type.StatusType;
+import gg.data.pingpong.game.Game;
+import gg.data.pingpong.game.type.Mode;
+import gg.data.pingpong.game.type.StatusType;
 import gg.pingpong.api.user.game.controller.response.GameListResDto;
 import gg.pingpong.api.user.game.controller.response.GameResultResDto;
 import gg.repo.game.GameRepository;
@@ -124,7 +125,7 @@ public class GameFindService {
 	@Cacheable(value = "allGameListByUser", cacheManager = "gameCacheManager",
 		key = "#pageable.pageNumber + #pageable.pageSize + #pageable.sort.toString() + #status + #intra")
 	public GameListResDto allGameListUser(Pageable pageable, String intra, String status) {
-		List<String> statusTypes = Arrays.asList(StatusType.END.name());
+		List<String> statusTypes = new ArrayList<>(List.of(StatusType.END.name()));
 		if (status != null && status.equals("LIVE")) {
 			statusTypes.add(StatusType.LIVE.name());
 			statusTypes.add(StatusType.WAIT.name());

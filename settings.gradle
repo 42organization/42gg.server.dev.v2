@@ -4,4 +4,6 @@ include 'gg-admin-repo'
 include 'gg-repo'
 include 'gg-pingpong-api'
 include 'gg-utils'
+include 'gg-auth'
+include 'gg-recruit-api'
 

@@ -3,8 +3,8 @@ package gg.pingpong.api.user.game.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import gg.data.game.type.Mode;
-import gg.data.game.type.StatusType;
+import gg.data.pingpong.game.type.Mode;
+import gg.data.pingpong.game.type.StatusType;
 import gg.repo.game.out.GameTeamUserInfo;
 import gg.utils.exception.game.GameDataConsistencyException;
 import lombok.Getter;

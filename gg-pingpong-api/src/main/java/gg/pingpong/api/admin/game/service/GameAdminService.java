@@ -20,13 +20,13 @@ import gg.admin.repo.game.TeamUserAdminRepository;
 import gg.admin.repo.game.out.GameTeamUser;
 import gg.admin.repo.season.SeasonAdminRepository;
 import gg.admin.repo.user.UserAdminRepository;
-import gg.data.game.Game;
-import gg.data.game.PChange;
-import gg.data.game.TeamUser;
-import gg.data.game.type.Mode;
-import gg.data.game.type.StatusType;
-import gg.data.rank.redis.RankRedis;
-import gg.data.season.Season;
+import gg.data.pingpong.game.Game;
+import gg.data.pingpong.game.PChange;
+import gg.data.pingpong.game.TeamUser;
+import gg.data.pingpong.game.type.Mode;
+import gg.data.pingpong.game.type.StatusType;
+import gg.data.pingpong.rank.redis.RankRedis;
+import gg.data.pingpong.season.Season;
 import gg.data.user.User;
 import gg.pingpong.api.admin.game.controller.response.GameLogListAdminResponseDto;
 import gg.pingpong.api.admin.game.dto.GameLogAdminDto;
@@ -164,11 +164,9 @@ public class GameAdminService {
 		}
 		RankRedis rankRedis2 = rollbackGameResult(game.getSeason(), teamUsers.get(1), pChanges);
 		pChangeAdminRepository.deleteById(pChanges.get(0).getId());
-		entityManager.flush();
 		for (int i = 0; i < teamUsers.size(); i++) {
 			updateScore(reqDto, teamUsers.get(i));
 		}
-		teamUserAdminRepository.flush();
 		rankRedisService.updateAdminRankData(teamUsers.get(0), teamUsers.get(1), game, rankRedis1, rankRedis2);
 		tierService.updateAllTier(game.getSeason());
 	}

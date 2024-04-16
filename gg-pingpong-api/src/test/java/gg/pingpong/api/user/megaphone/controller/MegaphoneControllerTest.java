@@ -17,17 +17,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gg.data.store.Item;
-import gg.data.store.Megaphone;
-import gg.data.store.Receipt;
-import gg.data.store.type.ItemStatus;
-import gg.data.store.type.ItemType;
+import gg.auth.utils.AuthTokenProvider;
+import gg.data.pingpong.store.Item;
+import gg.data.pingpong.store.Megaphone;
+import gg.data.pingpong.store.Receipt;
+import gg.data.pingpong.store.type.ItemStatus;
+import gg.data.pingpong.store.type.ItemType;
 import gg.data.user.User;
 import gg.data.user.type.RacketType;
 import gg.data.user.type.RoleType;
 import gg.data.user.type.SnsType;
 import gg.pingpong.api.admin.store.controller.request.ItemUpdateRequestDto;
-import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.user.store.controller.request.MegaphoneUseRequestDto;
 import gg.repo.store.MegaphoneRepository;
 import gg.repo.store.ReceiptRepository;
@@ -42,24 +42,18 @@ import lombok.RequiredArgsConstructor;
 class MegaphoneControllerTest {
 	@Autowired
 	TestDataUtils testDataUtils;
-
-	@Autowired
-	private MockMvc mockMvc;
-
 	@Autowired
 	ObjectMapper objectMapper;
-
 	@Autowired
 	AuthTokenProvider tokenProvider;
-
 	@Autowired
 	MegaphoneRepository megaphoneRepository;
-
 	@Autowired
 	ReceiptRepository receiptRepository;
-
 	@Autowired
 	ItemTestUtils itemTestUtils;
+	@Autowired
+	private MockMvc mockMvc;
 
 	@Test
 	@Transactional

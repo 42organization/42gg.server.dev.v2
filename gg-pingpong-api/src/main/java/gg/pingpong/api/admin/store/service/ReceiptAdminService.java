@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.admin.repo.store.ReceiptAdminRepository;
-import gg.data.store.Receipt;
+import gg.data.pingpong.store.Receipt;
 import gg.pingpong.api.admin.store.controller.response.ReceiptListResponseDto;
 import gg.pingpong.api.admin.store.controller.response.ReceiptResponseDto;
 import lombok.RequiredArgsConstructor;

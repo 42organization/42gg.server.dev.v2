@@ -18,8 +18,11 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import gg.pingpong.api.global.security.service.CustomUserDetailsService;
-import gg.pingpong.api.global.utils.HeaderUtil;
+import gg.auth.utils.AuthTokenProvider;
+import gg.auth.utils.HeaderUtil;
+import gg.data.user.User;
+import gg.pingpong.api.global.security.UserPrincipal;
+import gg.repo.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 	private final AuthTokenProvider tokenProvider;
-	private final CustomUserDetailsService customUserDetailsService;
+	private final UserRepository userRepository;
 
 	@Override
 	protected void doFilterInternal(
@@ -55,7 +58,9 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 		Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
 		//access token 검증
 		if (userId != null) {
-			UserDetails userDetails = customUserDetailsService.loadUserById(userId);
+			User loginUser = userRepository.findById(userId)
+				.orElseThrow(() -> new RuntimeException("user not found in db"));
+			UserDetails userDetails = UserPrincipal.create(loginUser);
 			return new OAuth2AuthenticationToken((OAuth2User)userDetails, userDetails.getAuthorities(), "42");
 		}
 		throw new RuntimeException("token not validated");

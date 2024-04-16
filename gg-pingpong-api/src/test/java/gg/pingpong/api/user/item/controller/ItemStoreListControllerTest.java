@@ -1,6 +1,6 @@
 package gg.pingpong.api.user.item.controller;
 
-import static gg.data.store.type.ItemType.*;
+import static gg.data.pingpong.store.type.ItemType.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
@@ -21,7 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
+import gg.auth.utils.AuthTokenProvider;
 import gg.pingpong.api.user.store.controller.response.ItemStoreListResponseDto;
 import gg.pingpong.api.user.store.controller.response.ItemStoreResponseDto;
 import gg.pingpong.api.user.store.service.ItemService;

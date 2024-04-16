@@ -21,18 +21,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import gg.data.game.Game;
-import gg.data.game.type.StatusType;
-import gg.data.manage.SlotManagement;
-import gg.data.match.RedisMatchTime;
-import gg.data.match.type.Option;
-import gg.data.rank.Tier;
-import gg.data.rank.redis.RankRedis;
-import gg.data.season.Season;
+import gg.auth.UserDto;
+import gg.data.pingpong.game.Game;
+import gg.data.pingpong.game.type.StatusType;
+import gg.data.pingpong.manage.SlotManagement;
+import gg.data.pingpong.match.RedisMatchTime;
+import gg.data.pingpong.match.type.Option;
+import gg.data.pingpong.rank.Tier;
+import gg.data.pingpong.rank.redis.RankRedis;
+import gg.data.pingpong.season.Season;
 import gg.data.user.User;
 import gg.pingpong.api.user.match.utils.SlotGenerator;
 import gg.pingpong.api.user.season.service.SeasonFindService;
-import gg.pingpong.api.user.user.dto.UserDto;
 import gg.repo.game.GameRepository;
 import gg.repo.manage.SlotManagementRepository;
 import gg.repo.match.RedisMatchTimeRepository;
@@ -46,6 +46,15 @@ import gg.utils.annotation.UnitTest;
 @UnitTest
 @ExtendWith(MockitoExtension.class)
 public class MatchFindServiceUnitTest {
+	private static final SlotManagement slotManagement = SlotManagement.builder()
+		.pastSlotTime(0)
+		.futureSlotTime(12)
+		.openMinute(5)
+		.gameInterval(15)
+		.startTime(LocalDateTime.now())
+		.build();
+	private static final Season season = Season.builder().startTime(LocalDateTime.now()).startPpp(123).build();
+	private static final Tier tier = new Tier();
 	@InjectMocks
 	MatchFindService matchFindService;
 	@Mock
@@ -64,16 +73,6 @@ public class MatchFindServiceUnitTest {
 	private RedisMatchTimeRepository redisMatchTimeRepository;
 	@Mock
 	private TierRepository tierRepository;
-
-	private static final SlotManagement slotManagement = SlotManagement.builder()
-		.pastSlotTime(0)
-		.futureSlotTime(12)
-		.openMinute(5)
-		.gameInterval(15)
-		.startTime(LocalDateTime.now())
-		.build();
-	private static final Season season = Season.builder().startTime(LocalDateTime.now()).startPpp(123).build();
-	private static final Tier tier = new Tier();
 
 	@BeforeEach
 	public void init() {

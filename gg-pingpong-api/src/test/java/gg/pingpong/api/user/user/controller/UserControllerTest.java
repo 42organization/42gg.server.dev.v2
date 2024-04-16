@@ -27,17 +27,18 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gg.data.game.Game;
-import gg.data.game.type.Mode;
-import gg.data.game.type.StatusType;
-import gg.data.rank.Rank;
-import gg.data.rank.Tier;
-import gg.data.rank.redis.RankRedis;
-import gg.data.season.Season;
-import gg.data.store.Item;
-import gg.data.store.Receipt;
-import gg.data.store.type.ItemStatus;
-import gg.data.store.type.ItemType;
+import gg.auth.utils.AuthTokenProvider;
+import gg.data.pingpong.game.Game;
+import gg.data.pingpong.game.type.Mode;
+import gg.data.pingpong.game.type.StatusType;
+import gg.data.pingpong.rank.Rank;
+import gg.data.pingpong.rank.Tier;
+import gg.data.pingpong.rank.redis.RankRedis;
+import gg.data.pingpong.season.Season;
+import gg.data.pingpong.store.Item;
+import gg.data.pingpong.store.Receipt;
+import gg.data.pingpong.store.type.ItemStatus;
+import gg.data.pingpong.store.type.ItemType;
 import gg.data.user.User;
 import gg.data.user.type.BackgroundType;
 import gg.data.user.type.EdgeType;
@@ -45,7 +46,6 @@ import gg.data.user.type.RacketType;
 import gg.data.user.type.RoleType;
 import gg.data.user.type.SnsType;
 import gg.pingpong.api.admin.store.controller.request.ItemUpdateRequestDto;
-import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
 import gg.pingpong.api.global.utils.UserImageHandler;
 import gg.pingpong.api.user.game.controller.request.RankResultReqDto;
 import gg.pingpong.api.user.game.service.GameService;
@@ -87,46 +87,30 @@ class UserControllerTest {
 
 	@Autowired
 	TestDataUtils testDataUtils;
-
-	@Autowired
-	private MockMvc mockMvc;
-
 	@Autowired
 	ObjectMapper objectMapper;
-
 	@Autowired
 	AuthTokenProvider tokenProvider;
-
 	@Autowired
 	UserRepository userRepository;
-
 	@Autowired
 	RankRedisRepository redisRepository;
-
 	@Autowired
 	TierRepository tierRepository;
-
 	@Autowired
 	RankRepository rankRepository;
-
 	@Autowired
 	SeasonRepository seasonRepository;
-
 	@Autowired
 	GameRepository gameRepository;
-
 	@Autowired
 	GameService gameService;
-
 	@Autowired
 	CoinPolicyRepository coinPolicyRepository;
-
 	@Autowired
 	CoinHistoryRepository coinHistoryRepository;
-
 	@Autowired
 	ReceiptRepository receiptRepository;
-
 	@Autowired
 	CoinHistoryService coinHistoryService;
 	@Autowired
@@ -134,6 +118,8 @@ class UserControllerTest {
 	@MockBean
 	UserImageHandler userImageHandler;
 	User admin;
+	@Autowired
+	private MockMvc mockMvc;
 
 	@BeforeEach
 	public void setUp() {

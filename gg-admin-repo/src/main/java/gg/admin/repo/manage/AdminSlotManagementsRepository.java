@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import gg.data.manage.SlotManagement;
+import gg.data.pingpong.manage.SlotManagement;
 
 public interface AdminSlotManagementsRepository extends JpaRepository<SlotManagement, Long> {
 	@Query("select slot from SlotManagement slot "
@@ -19,5 +19,9 @@ public interface AdminSlotManagementsRepository extends JpaRepository<SlotManage
 	List<SlotManagement> findAllByOrderByCreatedAtDesc();
 
 	Optional<SlotManagement> findFirstByOrderByIdDesc();
+
+	@Query("select sm from SlotManagement sm where (sm.endTime is null"
+		+ " or sm.endTime > :now) and sm.startTime <=:now")
+	Optional<SlotManagement> findCurrent(@Param("now") LocalDateTime now);
 
 }

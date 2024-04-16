@@ -18,8 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gg.data.season.Season;
-import gg.pingpong.api.global.security.jwt.utils.AuthTokenProvider;
+import gg.auth.utils.AuthTokenProvider;
+import gg.data.pingpong.season.Season;
 import gg.pingpong.api.user.season.controller.response.SeasonListResDto;
 import gg.pingpong.api.user.season.controller.response.SeasonResDto;
 import gg.pingpong.api.user.season.service.SeasonService;
@@ -36,14 +36,13 @@ public class SeasonTestController {
 	@Autowired
 	MockMvc mvc;
 	@Autowired
-	private SeasonService seasonService;
-	@Autowired
 	TestDataUtils testDataUtils;
 	@Autowired
 	AuthTokenProvider tokenProvider;
 	@Autowired
 	ObjectMapper objectMapper;
-
+	@Autowired
+	private SeasonService seasonService;
 	@Autowired
 	private SeasonRepository seasonRepository;
 

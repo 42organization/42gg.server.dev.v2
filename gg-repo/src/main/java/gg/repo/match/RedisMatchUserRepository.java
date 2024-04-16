@@ -10,9 +10,9 @@ import java.util.stream.Collectors;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
-import gg.data.match.RedisMatchTime;
-import gg.data.match.type.MatchKey;
-import gg.data.match.type.Option;
+import gg.data.pingpong.match.RedisMatchTime;
+import gg.data.pingpong.match.type.MatchKey;
+import gg.data.pingpong.match.type.Option;
 import gg.utils.exception.match.PastSlotException;
 import lombok.RequiredArgsConstructor;
 
