@@ -180,7 +180,8 @@ public enum ErrorCode {
 	ROOM_NOT_OPEN(400, "PT204", "모집중인 방이 아닙니다."),
 	ROOM_NOT_PARTICIPANT(400, "PT205", "참여하지 않은 방 입니다."),
 	ROOM_MIN_MAX_PEOPLE(400, "PT206", "최소인원이 최대인원보다 큽니다."),
-	SELF_REPORT(400, "PT207", "자신을 신고할 수 없습니다."),
+	ROOM_MIN_MAX_TIME(400, "PT207", "최소시간이 최대시간보다 큽니다."),
+	SELF_REPORT(400, "PT208", "자신을 신고할 수 없습니다."),
 	USER_ALREADY_IN_ROOM(409, "PT301", "이미 참여한 방 입니다."),
 	ALREADY_REPORTED(409, "PT302", "이미 신고한 요청입니다."),
 	CATEGORY_DUPLICATE(409, "PT304", "중복된 카테고리 입니다."),
@@ -189,7 +190,7 @@ public enum ErrorCode {
 
 	// recruitment
 	INVALID_CHECKLIST(400, "RE001", "잘못된 요청 데이터입니다.");
-
+	
 	private final int status;
 	private final String errCode;
 	private String message;
