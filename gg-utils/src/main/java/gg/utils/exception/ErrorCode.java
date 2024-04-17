@@ -190,7 +190,7 @@ public enum ErrorCode {
 
 	// recruitment
 	INVALID_CHECKLIST(400, "RE001", "잘못된 요청 데이터입니다.");
-	
+
 	private final int status;
 	private final String errCode;
 	private String message;
