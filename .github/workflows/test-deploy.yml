@@ -71,12 +71,14 @@ jobs:
 
       - name: Trigger Instance Refresh
         run: |
+          aws autoscaling update-auto-scaling-group --auto-scaling-group-name gg-dev \
+          --launch-template LaunchTemplateId=${{ secrets.DEV_LAUNCH_TEMPLATE_ID }},Version='$Latest'
+          
           aws autoscaling start-instance-refresh \
           --auto-scaling-group-name gg-dev \
           --strategy Rolling \
           --preferences '{"MinHealthyPercentage":
-            100, "InstanceWarmup": 300}' \
-          --launch-template '{"LaunchTemplateId":"${{ secrets.DEV_LAUNCH_TEMPLATE_ID }}","Version":"$Latest"}'
+            100, "InstanceWarmup": 300}'
 
 #      - name: Add Github Actions IP to Security group
 #        run: |
