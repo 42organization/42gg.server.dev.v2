@@ -58,9 +58,9 @@ jobs:
           docker build -t ${{ env.IMAGE_NAME }}:latest .
           docker push ${{ env.IMAGE_NAME }}:latest
 
-      - name: Get Github Actions IP
-        id: ip
-        uses: haythem/public-ip@v1.3
+      #      - name: Get Github Actions IP
+      #        id: ip
+      #        uses: haythem/public-ip@v1.3
 
       - name: Configure AWS CLI
         uses: aws-actions/configure-aws-credentials@v2
@@ -75,7 +75,7 @@ jobs:
           --auto-scaling-group-name gg-dev \
           --strategy Rolling \
           --preferences '{"MinHealthyPercentage":
-            100, "InstanceWarmup": 300}'
+            100, "InstanceWarmup": 300}' \
           --launch-template '{"LaunchTemplateId":"${{ secrets.DEV_LAUNCH_TEMPLATE_ID }}","Version":"$Latest"}'
 
 #      - name: Add Github Actions IP to Security group
