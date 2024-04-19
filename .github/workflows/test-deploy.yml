@@ -47,8 +47,8 @@ jobs:
           username: ${{ env.DOCKER_USER }}
           password: ${{ env.DOCKER_PASSWORD }}
 
-      #      - name: Test with Gradle
-      #        run: ./gradlew clean test
+      - name: Test with Gradle
+        run: ./gradlew clean test
 
       - name: Build with Gradle
         run: ./gradlew clean build -x test
