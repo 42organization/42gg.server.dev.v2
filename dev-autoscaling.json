@@ -8,6 +8,8 @@
   },
   "Preferences": {
     "MinHealthyPercentage": 100,
-    "InstanceWarmup": 300
+    "InstanceWarmup": 300,
+    "ScaleInProtectedInstances": "Ignore",
+    "StandbyInstances": "Ignore"
   }
 }
