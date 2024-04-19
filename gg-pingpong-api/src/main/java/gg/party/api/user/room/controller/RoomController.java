@@ -33,11 +33,6 @@ public class RoomController {
 	private final RoomFindService roomFindService;
 	private final RoomManagementService roomManagementService;
 
-	@GetMapping("/test")
-	public String newFeature() {
-		return "new";
-	}
-
 	/**
 	 * 시작하지 않은 방과 시작한 방을 모두 조회한다
 	 * @return 시작하지 않은 방 (최신순) + 시작한 방(끝나는 시간이 빠른 순) 전체 List - 200
