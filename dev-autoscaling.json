@@ -1,0 +1,13 @@
+{
+  "AutoScalingGroupName": "gg-dev",
+  "DesiredConfiguration": {
+    "LaunchTemplate": {
+      "LaunchTemplateId": "lt-0a57e7db5ccffce75",
+      "Version": "$Latest"
+    }
+  },
+  "Preferences": {
+    "MinHealthyPercentage": 100,
+    "InstanceWarmup": 300
+  }
+}
