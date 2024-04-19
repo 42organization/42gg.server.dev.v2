@@ -78,6 +78,7 @@ jobs:
           }
           }
           EOF
+          cat config.json
 
       - name: Configure AWS CLI
         uses: aws-actions/configure-aws-credentials@v2
