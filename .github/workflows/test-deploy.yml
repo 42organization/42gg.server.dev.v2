@@ -58,9 +58,26 @@ jobs:
           docker build -t ${{ env.IMAGE_NAME }}:latest .
           docker push ${{ env.IMAGE_NAME }}:latest
 
-      #      - name: Get Github Actions IP
-      #        id: ip
-      #        uses: haythem/public-ip@v1.3
+      - name: Create the configuration file
+        run: |
+          cat << EOF > config.json
+          {
+          "AutoScalingGroupName": "gg-dev",
+          "DesiredConfiguration": {
+           "LaunchTemplate": {
+             "LaunchTemplateId": "${{ secrets.DEV_LAUNCH_TEMPLATE_ID }}",
+             "Version": "$Latest"
+           }
+          },
+          "Preferences": {
+           "MinHealthyPercentage": 100,
+           "MaxHealthyPercentage": 110,
+           "InstanceWarmup": 300,
+           "ScaleInProtectedInstances": "Ignore",
+           "StandbyInstances": "Ignore"
+          }
+          }
+          EOF
 
       - name: Configure AWS CLI
         uses: aws-actions/configure-aws-credentials@v2
@@ -71,26 +88,4 @@ jobs:
 
       - name: Trigger Instance Refresh
         run: |
-          aws autoscaling start-instance-refresh --cli-input-json file://dev-autoscaling.json
-
-
-#      - name: Add Github Actions IP to Security group
-#        run: |
-#          aws ec2 authorize-security-group-ingress --group-id ${{ secrets.AWS_TEST_MIGRATE_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
-#
-#      - name: executing docker-compose up on test server
-#        uses: appleboy/ssh-action@master
-#        with:
-#          host: ${{ secrets.TEST_MIGRATE_SERVER_HOST }}
-#          username: ${{ secrets.TEST_MIGRATE_SERVER_USERNAME }}
-#          key: ${{ secrets.TEST_MIGRATE_SERVER_PEM }}
-#          script: |
-#            cd /home/ec2-user/docker
-#            docker-compose down tomcat
-#            docker rmi ${{ env.IMAGE_NAME }}:latest
-#            docker-compose up tomcat -d
-#            docker-compose up prometheus -d
-#
-#      - name: Remove Github Actions IP From Security Group
-#        run: |
-#          aws ec2 revoke-security-group-ingress --group-id ${{ secrets.AWS_TEST_MIGRATE_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+          aws autoscaling start-instance-refresh --cli-input-json file://config.json
