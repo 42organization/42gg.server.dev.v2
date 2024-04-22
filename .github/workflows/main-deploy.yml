@@ -56,9 +56,27 @@ jobs:
           docker tag ${{ env.IMAGE_NAME }}:${{ env.VERSION_TAG }} ${{ env.IMAGE_NAME }}:latest
           docker push ${{ env.IMAGE_NAME }}:latest
 
-      - name: Get Github Actions IP
-        id: ip
-        uses: haythem/public-ip@v1.3
+      - name: Create the configuration file
+        run: |
+          cat << EOF > config.json
+          {
+          "AutoScalingGroupName": "gg-main",
+          "DesiredConfiguration": {
+           "LaunchTemplate": {
+             "LaunchTemplateId": "${{ secrets.LAUNCH_TEMPLATE_ID }}",
+             "Version": "\$Latest"
+           }
+          },
+          "Preferences": {
+           "MinHealthyPercentage": 100,
+           "MaxHealthyPercentage": 110,
+           "InstanceWarmup": 300,
+           "ScaleInProtectedInstances": "Ignore",
+           "StandbyInstances": "Ignore"
+          }
+          }
+          EOF
+          cat config.json
 
       - name: AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -67,23 +85,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECURITY_SECRET_KEY }}
           aws-region: ap-northeast-2
 
-      - name: Add Github Actions IP to Security group
+      - name: Trigger Instance Refresh
         run: |
-          aws ec2 authorize-security-group-ingress --group-id ${{ secrets.AWS_MAIN_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
-
-      - name: executing docker-compose up on main server
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.MAIN_SERVER_HOST }}
-          username: ${{ secrets.MAIN_SERVER_USERNAME }}
-          key: ${{ secrets.MAIN_SERVER_PEM }}
-          script: |
-            cd ./docker
-            docker-compose down tomcat
-            docker rmi ${{ env.IMAGE_NAME }}:latest
-            docker-compose up tomcat -d
-            docker-compose up prometheus -d
-
-      - name: Remove Github Actions IP From Security Group
-        run: |
-          aws ec2 revoke-security-group-ingress --group-id ${{ secrets.AWS_MAIN_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+          aws autoscaling start-instance-refresh --cli-input-json file://config.json
