@@ -14,6 +14,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import gg.pingpong.api.global.security.config.properties.CorsProperties;
 import gg.pingpong.api.global.security.handler.OAuthAuthenticationSuccessHandler;
+import gg.pingpong.api.global.security.handler.OauthAuthenticationFailureHandler;
 import gg.pingpong.api.global.security.jwt.utils.TokenAuthenticationFilter;
 import gg.pingpong.api.global.security.repository.OAuthAuthorizationRequestBasedOnCookieRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	private final OAuthAuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+	private final OauthAuthenticationFailureHandler oauthAuthenticationFailureHandler;
 	private final CorsProperties corsProperties;
 	private final TokenAuthenticationFilter tokenAuthenticationFilter;
 	private final OAuthAuthorizationRequestBasedOnCookieRepository oAuth2AuthorizationRequestBasedOnCookieRepository;
@@ -58,7 +60,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.baseUri("/oauth2/authorization")
 			.authorizationRequestRepository(oAuth2AuthorizationRequestBasedOnCookieRepository)
 			.and()
-			.successHandler(oAuth2AuthenticationSuccessHandler);
+			.successHandler(oAuth2AuthenticationSuccessHandler)
+			.failureHandler(oauthAuthenticationFailureHandler);
 
 		http.addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 	}
