@@ -44,7 +44,7 @@ public class PartyPenalty extends BaseTimeEntity {
 
 	@NotNull
 	@Column(name = "penalty_time")
-	private Integer penaltyTime;
+	private int penaltyTime;
 
 	public PartyPenalty(User user, String penaltyType, String message, LocalDateTime startTime, Integer penaltyTime) {
 		this.user = user;
@@ -54,16 +54,8 @@ public class PartyPenalty extends BaseTimeEntity {
 		this.penaltyTime = penaltyTime;
 	}
 
-	public void updatePenaltyTime(Integer penaltyTime) {
-		this.penaltyTime = penaltyTime;
-	}
-
-	public void updateMessage(String message) {
-		this.message = message;
-	}
-
-	public void updatePenaltyType(String penaltyType) {
-		this.penaltyType = penaltyType;
+	public static boolean isFreeFromPenalty(PartyPenalty partyPenalty) {
+		return !LocalDateTime.now().isAfter(partyPenalty.getStartTime().plusMinutes(partyPenalty.getPenaltyTime()));
 	}
 
 	public void update(String penaltyType, String message, Integer penaltyTime) {
@@ -71,4 +63,5 @@ public class PartyPenalty extends BaseTimeEntity {
 		this.message = message;
 		this.penaltyTime = penaltyTime;
 	}
+
 }

@@ -11,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.auth.utils.AuthTokenProvider;
-import gg.data.store.CoinHistory;
-import gg.data.store.CoinPolicy;
+import gg.data.pingpong.store.CoinHistory;
+import gg.data.pingpong.store.CoinPolicy;
 import gg.data.user.User;
 import gg.pingpong.api.user.store.service.CoinHistoryService;
 import gg.repo.store.CoinHistoryRepository;

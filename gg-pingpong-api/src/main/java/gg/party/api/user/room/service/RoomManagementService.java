@@ -2,8 +2,8 @@ package gg.party.api.user.room.service;
 
 import static gg.party.api.user.room.utils.GenerateRandomNickname.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -60,16 +60,15 @@ public class RoomManagementService {
 	 */
 	@Transactional
 	public RoomCreateResDto addCreateRoom(RoomCreateReqDto roomCreateReqDto, UserDto userDto) {
-		User user = userRepository.findById(userDto.getId()).get();
-		PartyPenalty partyPenalty = partyPenaltyRepository.findByUserId(user.getId());
-		if (partyPenalty != null && LocalDateTime.now().isBefore(
-			partyPenalty.getStartTime().plusHours(partyPenalty.getPenaltyTime()))) {
+		User user = userRepository.getById(userDto.getId());
+		Optional<PartyPenalty> partyPenalty = partyPenaltyRepository.findTopByUserIdOrderByStartTimeDesc(user.getId());
+		if (partyPenalty.isPresent() && PartyPenalty.isFreeFromPenalty(partyPenalty.get())) {
 			throw new OnPenaltyException();
 		}
 		if (roomCreateReqDto.getMaxPeople() < roomCreateReqDto.getMinPeople()) {
 			throw new RoomMinMaxPeople(ErrorCode.ROOM_MIN_MAX_PEOPLE);
 		}
-		Category category = categoryRepository.findById(roomCreateReqDto.getCategoryId())
+		Category category = categoryRepository.findByName(roomCreateReqDto.getCategoryName())
 			.orElseThrow(CategoryNotFoundException::new);
 		Room room = roomRepository.save(RoomCreateReqDto.toEntity(roomCreateReqDto, user, category));
 
@@ -84,27 +83,28 @@ public class RoomManagementService {
 	 * 유저가 방을 나간다
 	 * 참가자가 방에 참가한 상태일때만 취소해 준다.
 	 * @param roomId, user
-	 * @param user 참여 유저(사용자 본인)
+	 * @param userDto 참여 유저(사용자 본인)
 	 * @return 나간 사람의 닉네임
 	 * @throws RoomNotFoundException 방 없음 - 404
 	 * @throws RoomNotOpenException 방이 대기 상태가 아님 - 400
 	 * @throws RoomNotParticipantException 방 참여자가 아님 - 400
 	 */
 	@Transactional
-	public LeaveRoomResDto modifyLeaveRoom(Long roomId, UserDto user) {
+	public LeaveRoomResDto modifyLeaveRoom(Long roomId, UserDto userDto) {
+		User user = userRepository.getById(userDto.getId());
 		Room targetRoom = roomRepository.findById(roomId)
 			.orElseThrow(RoomNotFoundException::new);
 		if (!targetRoom.getStatus().equals(RoomType.OPEN)) {
 			throw new RoomNotOpenException();
 		}
-		UserRoom targetUserRoom = userRoomRepository.findByUserAndRoom(userRepository.findById(user.getId()).get(),
-			targetRoom).orElseThrow(RoomNotParticipantException::new);
+		UserRoom targetUserRoom = userRoomRepository.findByUserAndRoom(user, targetRoom)
+			.orElseThrow(RoomNotParticipantException::new);
 
 		// 모두 나갈 때 방 fail처리
 		if (targetRoom.getCurrentPeople() == 1) {
 			targetRoom.updateCurrentPeople(0);
-			targetRoom.updateRoomStatus(RoomType.FAIL);
 			targetUserRoom.updateIsExist(false);
+			targetRoom.roomFail();
 			roomRepository.save(targetRoom);
 			userRoomRepository.save(targetUserRoom);
 			return new LeaveRoomResDto(targetUserRoom.getNickname());
@@ -118,8 +118,9 @@ public class RoomManagementService {
 			List<User> existUser = userRoomRepository.findByIsExist(roomId);
 			targetRoom.updateHost(existUser.get(0));
 		}
-		userRoomRepository.save(targetUserRoom);
+
 		roomRepository.save(targetRoom);
+		userRoomRepository.save(targetUserRoom);
 
 		return new LeaveRoomResDto(targetUserRoom.getNickname());
 	}
@@ -127,34 +128,32 @@ public class RoomManagementService {
 	/**
 	 * 방을 시작 상태로 바꾼다
 	 * 방의 상태를 시작 상태로 변경.
-	 *
 	 * @param roomId, user
 	 * @return 방 id
-	 * @throws RoomNotFoundException 방 없음
-	 * @throws RoomNotOpenException 방이 열리지 않은 상태
-	 * @throws RoomNotEnoughPeopleException 방에 충분한 인원이 없음
-	 * @throws RoomNotParticipantException 방에 참가하지 않은 유저
-	 * @throws UserNotHostException 방장이 아닌 경우
+	 * @throws RoomNotFoundException 방 없음 - 404
+	 * @throws RoomNotParticipantException 방에 참가하지 않은 유저 - 400
+	 * @throws UserNotHostException 방장이 아닌 경우 - 403
+	 * @throws RoomNotOpenException 방이 열리지 않은 상태 - 400
+	 * @throws RoomNotEnoughPeopleException 방에 충분한 인원이 없음 - 400
 	 */
 	@Transactional
-	public RoomStartResDto modifyStartRoom(Long roomId, UserDto user) {
+	public RoomStartResDto modifyStartRoom(Long roomId, UserDto userDto) {
+		User user = userRepository.getById(userDto.getId());
 		Room targetRoom = roomRepository.findById(roomId)
 			.orElseThrow(RoomNotFoundException::new);
+		UserRoom targetUserRoom = userRoomRepository.findByUserAndRoom(user, targetRoom)
+			.orElseThrow(RoomNotParticipantException::new);
+		if (!targetRoom.getHost().equals(targetUserRoom.getUser())) {
+			throw new UserNotHostException();
+		}
 		if (!targetRoom.getStatus().equals(RoomType.OPEN)) {
 			throw new RoomNotOpenException();
 		}
-		if (targetRoom.getMinPeople() > targetRoom.getCurrentPeople()
-			|| targetRoom.getMaxPeople() < targetRoom.getCurrentPeople()) {
+		if (targetRoom.getMinPeople() > targetRoom.getCurrentPeople()) {
 			throw new RoomNotEnoughPeopleException();
 		}
-		UserRoom targetUserRoom = userRoomRepository.findByUserAndRoom(userRepository.findById(user.getId()).get(),
-			targetRoom).orElseThrow(RoomNotParticipantException::new);
-		if (targetRoom.getHost() != targetUserRoom.getUser()) {
-			throw new UserNotHostException();
-		}
-		targetRoom.updateRoomStatus(RoomType.START);
 		List<User> users = userRoomRepository.findByIsExist(roomId);
-		targetRoom.startRoom(LocalDateTime.now());
+		targetRoom.roomStart();
 		partyNotiService.sendPartyNotifications(users);
 		roomRepository.save(targetRoom);
 
@@ -174,14 +173,13 @@ public class RoomManagementService {
 	 */
 	@Transactional
 	public RoomJoinResDto addJoinRoom(Long roomId, UserDto userDto) {
-		User user = userRepository.findById(userDto.getId()).get();
+		User user = userRepository.getById(userDto.getId());
 		Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
-		PartyPenalty partyPenalty = partyPenaltyRepository.findByUserId(user.getId());
-		if (partyPenalty != null && LocalDateTime.now().isBefore(
-			partyPenalty.getStartTime().plusHours(partyPenalty.getPenaltyTime()))) {
+		Optional<PartyPenalty> partyPenalty = partyPenaltyRepository.findTopByUserIdOrderByStartTimeDesc(user.getId());
+		if (partyPenalty.isPresent() && PartyPenalty.isFreeFromPenalty(partyPenalty.get())) {
 			throw new OnPenaltyException();
 		}
-		if (room.getStatus() != RoomType.OPEN) {
+		if (!room.getStatus().equals(RoomType.OPEN)) {
 			throw new RoomNotOpenException();
 		}
 		UserRoom userRoom = userRoomRepository.findByUserAndRoom(user, room)
@@ -203,10 +201,9 @@ public class RoomManagementService {
 		}
 
 		room.updateCurrentPeople(room.getCurrentPeople() + 1);
-		if (room.getCurrentPeople().equals(room.getMaxPeople())) {
-			room.updateRoomStatus(RoomType.START);
+		if (room.getCurrentPeople() == room.getMaxPeople()) {
 			List<User> users = userRoomRepository.findByIsExist(roomId);
-			room.startRoom(LocalDateTime.now());
+			room.roomStart();
 			partyNotiService.sendPartyNotifications(users);
 		}
 		roomRepository.save(room);

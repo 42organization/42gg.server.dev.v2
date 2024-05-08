@@ -20,7 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import gg.admin.repo.season.SeasonAdminRepository;
-import gg.data.season.Season;
+import gg.data.pingpong.season.Season;
 import gg.pingpong.api.admin.rank.service.RankAdminService;
 import gg.pingpong.api.admin.rank.service.RankRedisAdminService;
 import gg.pingpong.api.admin.season.controller.request.SeasonCreateRequestDto;

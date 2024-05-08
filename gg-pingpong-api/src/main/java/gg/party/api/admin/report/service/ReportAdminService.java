@@ -34,7 +34,6 @@ public class ReportAdminService {
 
 	/**
 	 * 댓글 신고 전체 리스트를 조회한다
-	 *
 	 * @return 전체 댓글 신고 리스트 (시간순 정렬)
 	 */
 	@Transactional(readOnly = true)
@@ -43,7 +42,7 @@ public class ReportAdminService {
 		int size = reportPageReqDto.getSize();
 
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-		Page<CommentReport> commentReportPage = commentReportRepository.findAllWithFetchJoin(pageable);
+		Page<CommentReport> commentReportPage = commentReportRepository.findAllWithCommentReportFetchJoin(pageable);
 
 		List<CommentReportAdminResDto> commentReportPageResDto = commentReportPage.getContent().stream()
 			.map(CommentReportAdminResDto::new)
@@ -62,7 +61,7 @@ public class ReportAdminService {
 		int size = reportPageReqDto.getSize();
 
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-		Page<RoomReport> roomReportPage = roomReportRepository.findAllWithFetchJoin(pageable);
+		Page<RoomReport> roomReportPage = roomReportRepository.findAllWithRoomReportFetchJoin(pageable);
 
 		List<RoomReportAdminResDto> roomReportPageResDto = roomReportPage.getContent().stream()
 			.map(RoomReportAdminResDto::new)
@@ -81,7 +80,7 @@ public class ReportAdminService {
 		int size = reportPageReqDto.getSize();
 
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-		Page<UserReport> userReportPage = userReportRepository.findAllWithFetchJoin(pageable);
+		Page<UserReport> userReportPage = userReportRepository.findAllWithUserReportFetchJoin(pageable);
 
 		List<UserReportAdminResDto> userReportPageResDto = userReportPage.getContent().stream()
 			.map(UserReportAdminResDto::new)

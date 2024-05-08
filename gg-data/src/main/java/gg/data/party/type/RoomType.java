@@ -1,9 +1,5 @@
 package gg.data.party.type;
 
-import java.util.Locale;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -18,19 +14,4 @@ public enum RoomType {
 
 	private final String code;
 	private final String desc;
-
-	@JsonCreator
-	public static RoomType getEnumFromValue(String value) {
-		if (value == null) {
-			return null;
-		}
-		for (RoomType e : values()) {
-			if (e.name().equals(value)) {
-				return e;
-			} else if (e.code.toUpperCase(Locale.ROOT).equals(value.toUpperCase(Locale.ROOT))) {
-				return e;
-			}
-		}
-		return null;
-	}
 }

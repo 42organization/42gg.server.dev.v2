@@ -47,6 +47,7 @@ public class Comment extends BaseTimeEntity {
 		this.room = room;
 		this.content = content;
 		this.isHidden = false;
+		this.room.getComments().add(this);
 	}
 
 	public void updateHidden(boolean isHidden) {

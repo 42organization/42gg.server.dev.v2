@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.auth.utils.AuthTokenProvider;
-import gg.data.tournament.Tournament;
+import gg.data.pingpong.tournament.Tournament;
 import gg.data.user.User;
 import gg.data.user.type.RacketType;
 import gg.data.user.type.RoleType;
@@ -33,6 +33,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TournamentAdminUserControllerTest {
 
+	final int joinUserCnt = 8;
+	final int notJoinUserCnt = 4;
 	@Autowired
 	MockMvc mockMvc;
 	@Autowired
@@ -41,10 +43,7 @@ public class TournamentAdminUserControllerTest {
 	ObjectMapper objectMapper;
 	@Autowired
 	AuthTokenProvider tokenProvider;
-
 	String accessToken;
-	final int joinUserCnt = 8;
-	final int notJoinUserCnt = 4;
 	String testName = "42_gg_tester_";
 	Tournament tournament;
 	String adminUrl = "/pingpong/admin/tournaments/";

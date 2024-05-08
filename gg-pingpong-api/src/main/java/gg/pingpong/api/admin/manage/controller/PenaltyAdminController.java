@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import gg.pingpong.api.admin.manage.controller.request.PenaltyRequestDto;
 import gg.pingpong.api.admin.manage.controller.response.PenaltyListResponseDto;
 import gg.pingpong.api.admin.manage.service.PenaltyAdminService;
-import gg.pingpong.api.global.dto.PageRequestDto;
+import gg.utils.dto.PageRequestDto;
 import lombok.RequiredArgsConstructor;
 
 @RestController

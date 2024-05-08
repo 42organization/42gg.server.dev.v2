@@ -20,7 +20,7 @@ import gg.auth.argumentresolver.Login;
 import gg.pingpong.api.admin.store.controller.response.CoinPolicyAdminListResponseDto;
 import gg.pingpong.api.admin.store.dto.CoinPolicyAdminAddDto;
 import gg.pingpong.api.admin.store.service.CoinPolicyAdminService;
-import gg.pingpong.api.global.dto.PageRequestDto;
+import gg.utils.dto.PageRequestDto;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 

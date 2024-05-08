@@ -7,10 +7,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class RoomResDto {
 	private Long roomId;
-	private Long categoryId;
+	private String categoryName;
 	private String title;
 	private String content;
 	private Integer currentPeople;
@@ -23,7 +23,7 @@ public class RoomResDto {
 
 	public RoomResDto(Room room) {
 		this.roomId = room.getId();
-		this.categoryId = room.getCategory().getId();
+		this.categoryName = room.getCategory().getName();
 		this.title = room.getTitle();
 		this.content = room.getContent();
 		this.currentPeople = room.getCurrentPeople();

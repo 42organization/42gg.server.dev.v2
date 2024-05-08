@@ -46,7 +46,7 @@ public class Room extends BaseTimeEntity {
 	private Category category;
 
 	@Column(name = "current_people")
-	private Integer currentPeople;
+	private int currentPeople;
 
 	@Column(name = "title", length = 15)
 	private String title;
@@ -55,10 +55,10 @@ public class Room extends BaseTimeEntity {
 	private String content;
 
 	@Column(name = "max_people")
-	private Integer maxPeople;
+	private int maxPeople;
 
 	@Column(name = "min_people")
-	private Integer minPeople;
+	private int minPeople;
 
 	@Column(name = "due_date")
 	private LocalDateTime dueDate;
@@ -97,7 +97,7 @@ public class Room extends BaseTimeEntity {
 		this.category = category;
 	}
 
-	public void updateRoomStatus(RoomType status) {
+	public void changeRoomStatus(RoomType status) {
 		this.status = status;
 	}
 
@@ -105,7 +105,20 @@ public class Room extends BaseTimeEntity {
 		this.host = host;
 	}
 
-	public void startRoom(LocalDateTime startDate) {
-		this.startDate = startDate;
+	public void roomStart() {
+		this.startDate = LocalDateTime.now();
+		this.status = RoomType.START;
+	}
+
+	public void roomFinish() {
+		this.status = RoomType.FINISH;
+	}
+
+	public void roomFail() {
+		this.status = RoomType.FAIL;
+	}
+
+	public void roomHidden() {
+		this.status = RoomType.HIDDEN;
 	}
 }

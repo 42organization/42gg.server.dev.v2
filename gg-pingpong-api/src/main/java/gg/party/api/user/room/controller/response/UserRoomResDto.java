@@ -4,8 +4,8 @@ import gg.data.party.UserRoom;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @Getter
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class UserRoomResDto {
 	private Long roomUserId;
 	private String nickname;

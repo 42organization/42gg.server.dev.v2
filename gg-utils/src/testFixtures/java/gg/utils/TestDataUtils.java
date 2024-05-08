@@ -1,5 +1,7 @@
 package gg.utils;
 
+import static java.lang.Boolean.*;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,35 +9,50 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import javax.persistence.EntityManager;
+
 import org.springframework.stereotype.Component;
 
 import gg.auth.utils.AuthTokenProvider;
-import gg.data.game.Game;
-import gg.data.game.PChange;
-import gg.data.game.Team;
-import gg.data.game.TeamUser;
-import gg.data.game.type.Mode;
-import gg.data.game.type.StatusType;
 import gg.data.manage.Announcement;
-import gg.data.manage.SlotManagement;
 import gg.data.noti.Noti;
 import gg.data.noti.type.NotiType;
 import gg.data.party.Category;
+import gg.data.party.Comment;
+import gg.data.party.CommentReport;
+import gg.data.party.GameTemplate;
 import gg.data.party.PartyPenalty;
 import gg.data.party.Room;
+import gg.data.party.RoomReport;
+import gg.data.party.UserReport;
 import gg.data.party.UserRoom;
 import gg.data.party.type.RoomType;
-import gg.data.rank.Rank;
-import gg.data.rank.Tier;
-import gg.data.rank.redis.RankRedis;
-import gg.data.season.Season;
-import gg.data.store.CoinPolicy;
-import gg.data.tournament.Tournament;
-import gg.data.tournament.TournamentGame;
-import gg.data.tournament.TournamentUser;
-import gg.data.tournament.type.TournamentRound;
-import gg.data.tournament.type.TournamentStatus;
-import gg.data.tournament.type.TournamentType;
+import gg.data.pingpong.game.Game;
+import gg.data.pingpong.game.PChange;
+import gg.data.pingpong.game.Team;
+import gg.data.pingpong.game.TeamUser;
+import gg.data.pingpong.game.type.Mode;
+import gg.data.pingpong.game.type.StatusType;
+import gg.data.pingpong.manage.SlotManagement;
+import gg.data.pingpong.rank.Rank;
+import gg.data.pingpong.rank.Tier;
+import gg.data.pingpong.rank.redis.RankRedis;
+import gg.data.pingpong.season.Season;
+import gg.data.pingpong.store.CoinPolicy;
+import gg.data.pingpong.tournament.Tournament;
+import gg.data.pingpong.tournament.TournamentGame;
+import gg.data.pingpong.tournament.TournamentUser;
+import gg.data.pingpong.tournament.type.TournamentRound;
+import gg.data.pingpong.tournament.type.TournamentStatus;
+import gg.data.pingpong.tournament.type.TournamentType;
+import gg.data.recruit.application.Application;
+import gg.data.recruit.application.ApplicationAnswerCheckList;
+import gg.data.recruit.application.ApplicationAnswerText;
+import gg.data.recruit.application.RecruitStatus;
+import gg.data.recruit.recruitment.CheckList;
+import gg.data.recruit.recruitment.Question;
+import gg.data.recruit.recruitment.Recruitment;
+import gg.data.recruit.recruitment.enums.InputType;
 import gg.data.user.User;
 import gg.data.user.UserImage;
 import gg.data.user.type.RacketType;
@@ -53,12 +70,20 @@ import gg.repo.manage.AnnouncementRepository;
 import gg.repo.manage.SlotManagementRepository;
 import gg.repo.noti.NotiRepository;
 import gg.repo.party.CategoryRepository;
+import gg.repo.party.CommentReportRepository;
+import gg.repo.party.CommentRepository;
 import gg.repo.party.PartyPenaltyRepository;
+import gg.repo.party.RoomReportRepository;
 import gg.repo.party.RoomRepository;
+import gg.repo.party.TemplateRepository;
+import gg.repo.party.UserReportRepository;
 import gg.repo.party.UserRoomRepository;
 import gg.repo.rank.RankRepository;
 import gg.repo.rank.TierRepository;
 import gg.repo.rank.redis.RankRedisRepository;
+import gg.repo.recruit.application.ApplicationRepository;
+import gg.repo.recruit.application.RecruitStatusRepository;
+import gg.repo.recruit.recruitment.RecruitmentRepository;
 import gg.repo.season.SeasonRepository;
 import gg.repo.store.CoinPolicyRepository;
 import gg.repo.tournarment.TournamentGameRepository;
@@ -95,6 +120,15 @@ public class TestDataUtils {
 	private final UserRoomRepository userRoomRepository;
 	private final CategoryRepository categoryRepository;
 	private final PartyPenaltyRepository partyPenaltyRepository;
+	private final TemplateRepository templateRepository;
+	private final CommentRepository commentRepository;
+	private final CommentReportRepository commentReportRepository;
+	private final RoomReportRepository roomReportRepository;
+	private final UserReportRepository userReportRepository;
+	private final RecruitmentRepository recruitmentRepository;
+	private final ApplicationRepository applicationRepository;
+	private final RecruitStatusRepository recruitStatusRepository;
+	private final EntityManager entityManager;
 
 	public String getLoginAccessToken() {
 		User user = User.builder()
@@ -780,6 +814,9 @@ public class TestDataUtils {
 		return slotManagementRepository.save(slotManagement);
 	}
 
+	/*
+	 * number는 방 순서에 따라 제목 내용을 순서따라 표기하기 위함.
+	 */
 	public Room createNewRoom(User host, User creator, Category category, int number, Integer currentPeople,
 		Integer maxPeople, Integer minPeople, Integer dueDate, RoomType status) {
 		Room room = Room.builder()
@@ -827,5 +864,110 @@ public class TestDataUtils {
 			.build();
 		userRepository.save(user);
 		return user;
+	}
+
+	public GameTemplate createNewTemplate(Category category, String gameName, Integer maxGamePeople,
+		Integer minGamePeople, Integer maxGameTime, Integer minGameTime, String genre, String difficulty,
+		String summary) {
+		GameTemplate gameTemplate = GameTemplate.builder()
+			.category(category)
+			.gameName(gameName)
+			.maxGamePeople(maxGamePeople)
+			.minGamePeople(minGamePeople)
+			.maxGameTime(maxGameTime)
+			.minGameTime(minGameTime)
+			.genre(genre)
+			.difficulty(difficulty)
+			.summary(summary)
+			.build();
+		return templateRepository.save(gameTemplate);
+	}
+
+	public Comment createComment(User user, UserRoom userRoom, Room room, String content) {
+		Comment comment = new Comment(user, userRoom, room, content);
+		commentRepository.save(comment);
+		return comment;
+	}
+
+	public CommentReport createCommentReport(User user, Room room, Comment comment) {
+		CommentReport commentReport = new CommentReport(user, comment, room, "test");
+		commentReportRepository.save(commentReport);
+		return commentReport;
+	}
+
+	public RoomReport createRoomReport(User user, User targetUser, Room room) {
+		RoomReport roomReport = new RoomReport(user, targetUser, room, "test");
+		roomReportRepository.save(roomReport);
+		return roomReport;
+	}
+
+	public UserReport createUserReport(User user, User targetUser, Room room) {
+		UserReport userReport = new UserReport(user, targetUser, room, "test");
+		userReportRepository.save(userReport);
+		return userReport;
+	}
+
+	public Comment createReportComment(User user, UserRoom userRoom, Room room, String content) {
+		Comment comment = new Comment(user, userRoom, room, content);
+		comment.updateHidden(TRUE);
+		commentRepository.save(comment);
+		return comment;
+	}
+
+	public Recruitment createNewRecruitment() {
+		Recruitment recruitment = Recruitment.builder()
+			.contents("contents")
+			.generation("generation")
+			.title("title")
+			.startTime(LocalDateTime.now())
+			.endTime(LocalDateTime.now().plusDays(1))
+			.build();
+		recruitmentRepository.save(recruitment);
+		return recruitment;
+	}
+
+	public Application createApplication(User user, Recruitment recruitment) {
+		Application application = new Application(user, recruitment);
+		applicationRepository.save(application);
+		return application;
+	}
+
+	public RecruitStatus createRecruitStatus(Application application) {
+		RecruitStatus recruitStatus = new RecruitStatus(application);
+		recruitStatusRepository.save(recruitStatus);
+		return recruitStatus;
+	}
+
+	public RecruitStatus createRecruitStatus(Application application, LocalDateTime interviewDate) {
+		RecruitStatus recruitStatus = new RecruitStatus(application, interviewDate);
+		recruitStatusRepository.save(recruitStatus);
+		return recruitStatus;
+	}
+
+	public Question createNewQuestion(Recruitment recruitment, InputType inputType, String quest, int sortNum) {
+		Question question = new Question(recruitment, inputType, quest, sortNum);
+		entityManager.persist(question);
+		return question;
+	}
+
+	public CheckList createNewCheckList(Question question, String content) {
+		CheckList checkList = new CheckList(question, content);
+		entityManager.persist(checkList);
+		return checkList;
+	}
+
+	public ApplicationAnswerCheckList createNewApplicationAnswerCheckList(Application application, Question question,
+		CheckList checkList) {
+		ApplicationAnswerCheckList applicationAnswerCheckList = new ApplicationAnswerCheckList(application,
+			question, checkList);
+		entityManager.persist(applicationAnswerCheckList);
+		return applicationAnswerCheckList;
+	}
+
+	public ApplicationAnswerText createNewApplicationAnswerText(Application application, Question question,
+		String search) {
+		ApplicationAnswerText answerText = new ApplicationAnswerText(application, question, search);
+		entityManager.persist(answerText);
+		return answerText;
 	}
 }
