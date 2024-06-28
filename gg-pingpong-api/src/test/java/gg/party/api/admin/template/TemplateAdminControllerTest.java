@@ -103,6 +103,40 @@ public class TemplateAdminControllerTest {
 					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
 				.andExpect(status().isNotFound());
 		}
+
+		@Test
+		@DisplayName("최소인원이 최대인원보다 큰 오류 400")
+		public void notValidMinMaxPeopleFail() throws Exception {
+			//given
+			String url = "/party/admin/templates";
+			TemplateAdminCreateReqDto templateAdminCreateReqDto = new TemplateAdminCreateReqDto(
+				"category", "gameName", 2, 4,
+				180, 180, "genre", "hard", "summary");
+			String jsonRequest = objectMapper.writeValueAsString(templateAdminCreateReqDto);
+			//when && then
+			mockMvc.perform(post(url)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(jsonRequest)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("최소시간이 최대시간보다 큰 오류 400")
+		public void notValidMinMaxTimeFail() throws Exception {
+			//given
+			String url = "/party/admin/templates";
+			TemplateAdminCreateReqDto templateAdminCreateReqDto = new TemplateAdminCreateReqDto(
+				"category", "gameName", 4, 2,
+				100, 180, "genre", "hard", "summary");
+			String jsonRequest = objectMapper.writeValueAsString(templateAdminCreateReqDto);
+			//when && then
+			mockMvc.perform(post(url)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(jsonRequest)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
+				.andExpect(status().isBadRequest());
+		}
 	}
 
 	@Nested
@@ -172,13 +206,31 @@ public class TemplateAdminControllerTest {
 
 		@Test
 		@DisplayName("최소인원이 최대인원보다 큰 오류 400")
-		public void notValidMinMaxFail() throws Exception {
+		public void notValidMinMaxPeopleFail() throws Exception {
 			//given
 			String templateId = testTemplate.getId().toString();
 			String url = "/party/admin/templates/" + templateId;
 			TemplateAdminUpdateReqDto templateAdminUpdateReqDto = new TemplateAdminUpdateReqDto(
 				testCategory.getName(), "newGameName", 4, 8,
 				90, 90, "newGenre", "easy", "newSummary");
+			String jsonRequest = objectMapper.writeValueAsString(templateAdminUpdateReqDto);
+			//when && then
+			mockMvc.perform(patch(url)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(jsonRequest)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("최소시간이 최대시간보다 큰 오류 400")
+		public void notValidMinMaxTimeFail() throws Exception {
+			//given
+			String templateId = testTemplate.getId().toString();
+			String url = "/party/admin/templates/" + templateId;
+			TemplateAdminUpdateReqDto templateAdminUpdateReqDto = new TemplateAdminUpdateReqDto(
+				testCategory.getName(), "newGameName", 8, 4,
+				90, 120, "newGenre", "easy", "newSummary");
 			String jsonRequest = objectMapper.writeValueAsString(templateAdminUpdateReqDto);
 			//when && then
 			mockMvc.perform(patch(url)
