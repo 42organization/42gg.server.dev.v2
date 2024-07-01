@@ -1,7 +1,6 @@
 package gg.data.agenda;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -15,7 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Entity
+// @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "agenda", uniqueConstraints = {@UniqueConstraint(name = "uk_agenda_key", columnNames = "key")})
 public class Agenda extends BaseTimeEntity {
