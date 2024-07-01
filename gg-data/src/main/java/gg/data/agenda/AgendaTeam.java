@@ -1,12 +1,9 @@
 package gg.data.agenda;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 import gg.data.BaseTimeEntity;
 import lombok.AccessLevel;
@@ -15,16 +12,16 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Entity
+// @Entity
 public class AgendaTeam extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false)
 	private Long id;
 
-	@ManyToOne
-	@JoinColumn(name = "agenda_id", nullable = false)
-	private Agenda agenda;
+	// @ManyToOne
+	// @JoinColumn(name = "agenda_id", nullable = false)
+	// private Agenda agenda;
 
 	@Column(name = "`key`", nullable = false, unique = true, columnDefinition = "BINARY(16)")
 	private byte[] key;
