@@ -16,8 +16,8 @@ CREATE TABLE `agenda`
     `host_intra_id` VARCHAR(30)  NOT NULL,
     `location`      VARCHAR(30)  NOT NULL,
     `status`        VARCHAR(10)  NOT NULL,
-    `is_official`   BOOL         NOT NULL,
-    `is_ranking`    BOOL         NOT NULL,
+    `is_official`   BIT(1)       NOT NULL,
+    `is_ranking`    BIT(1)       NOT NULL,
     `created_at`    DATETIME     NOT NULL,
     `modified_at`   DATETIME     NOT NULL,
     PRIMARY KEY (`id`),
@@ -37,14 +37,14 @@ CREATE TABLE `agenda_team`
     `mate_count`      INT          NOT NULL,
     `award`           VARCHAR(30)  NOT NULL,
     `award_priority`  INT          NOT NULL,
-    `is_private`      BOOL         NOT NULL,
+    `is_private`      BIT(1)       NOT NULL,
     `created_at`      DATETIME     NOT NULL,
     `modified_at`     DATETIME     NOT NULL,
     PRIMARY KEY (`id`),
     KEY               `fk_agenda_team_agenda_agenda_id` (`agenda_id`),
     CONSTRAINT `fk_agenda_team_agenda_agenda_id` FOREIGN KEY (`agenda_id`) REFERENCES `agenda` (`id`),
     UNIQUE KEY `uk_agenda_team_key` (`key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `agenda_announcement`
 (
@@ -52,13 +52,13 @@ CREATE TABLE `agenda_announcement`
     `agenda_id`   BIGINT        NOT NULL,
     `title`       VARCHAR(50)   NOT NULL,
     `content`     VARCHAR(1000) NOT NULL,
-    `is_show`     BOOL          NOT NULL,
+    `is_show`     BIT(1)        NOT NULL,
     `created_at`  DATETIME      NOT NULL,
     `modified_at` DATETIME      NOT NULL,
     PRIMARY KEY (`id`),
     KEY           `fk_agenda_announcement_agenda_agenda_id` (`agenda_id`),
     CONSTRAINT `fk_agenda_announcement_agenda_agenda_id` FOREIGN KEY (`agenda_id`) REFERENCES `agenda` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `agenda_profile`
 (
@@ -73,14 +73,14 @@ CREATE TABLE `agenda_profile`
     PRIMARY KEY (`id`),
     KEY           `fk_agenda_profile_user_user_id` (`user_id`),
     CONSTRAINT `fk_agenda_profile_user_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `agenda_team_profile`
 (
     `id`             BIGINT   NOT NULL AUTO_INCREMENT,
     `profile_id`     BIGINT   NOT NULL,
     `agenda_team_id` BIGINT   NOT NULL,
-    `is_exist`       BOOL     NOT NULL,
+    `is_exist`       BIT(1)   NOT NULL,
     `created_at`     DATETIME NOT NULL,
     `modified_at`    DATETIME NOT NULL,
     PRIMARY KEY (`id`),
@@ -88,17 +88,17 @@ CREATE TABLE `agenda_team_profile`
     KEY              `fk_agenda_team_profile_agenda_team_agenda_team_id` (`agenda_team_id`),
     CONSTRAINT `fk_agenda_team_profile_profile_profile_id` FOREIGN KEY (`profile_id`) REFERENCES `agenda_profile` (`id`),
     CONSTRAINT `fk_agenda_team_profile_agenda_team_agenda_team_id` FOREIGN KEY (`agenda_team_id`) REFERENCES `agenda_team` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `ticket`
 (
     `id`          BIGINT   NOT NULL AUTO_INCREMENT,
     `profile_id`  BIGINT   NOT NULL,
-    `is_used`     BOOL     NOT NULL,
-    `is_approve`  BOOL     NOT NULL,
+    `is_used`     BIT(1)   NOT NULL,
+    `is_approve`  BIT(1)   NOT NULL,
     `created_at`  DATETIME NOT NULL,
     `modified_at` DATETIME NOT NULL,
     PRIMARY KEY (`id`),
     KEY           `fk_ticket_profile_profile_id` (`profile_id`),
     CONSTRAINT `fk_ticket_profile_profile_id` FOREIGN KEY (`profile_id`) REFERENCES `agenda_profile` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

@@ -1,6 +1,7 @@
 package gg.data.agenda;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,7 +17,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-// @Entity
+@Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "agenda_announcement")
 public class AgendaAnnouncement extends BaseTimeEntity {
@@ -31,7 +32,7 @@ public class AgendaAnnouncement extends BaseTimeEntity {
 	@Column(name = "content", nullable = false, columnDefinition = "VARCHAR(1000)")
 	private String content;
 
-	@Column(name = "is_show", nullable = false, columnDefinition = "BOOL")
+	@Column(name = "is_show", nullable = false, columnDefinition = "BIT(1)")
 	private boolean isShow;
 
 	@ManyToOne(fetch = FetchType.LAZY)

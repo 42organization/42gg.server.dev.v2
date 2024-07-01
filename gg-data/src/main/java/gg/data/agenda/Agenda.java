@@ -1,6 +1,9 @@
 package gg.data.agenda;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -8,13 +11,15 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import gg.data.BaseTimeEntity;
+import gg.data.agenda.type.AgendaStatus;
+import gg.data.agenda.type.Location;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-// @Entity
+@Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "agenda", uniqueConstraints = {@UniqueConstraint(name = "uk_agenda_key", columnNames = "key")})
 public class Agenda extends BaseTimeEntity {
@@ -63,21 +68,23 @@ public class Agenda extends BaseTimeEntity {
 	private String hostIntraId;
 
 	@Column(name = "location", nullable = false, columnDefinition = "VARCHAR(30)")
-	private String location;
+	@Enumerated(EnumType.STRING)
+	private Location location;
 
 	@Column(name = "status", nullable = false, columnDefinition = "VARCHAR(10)")
-	private String status;
+	@Enumerated(EnumType.STRING)
+	private AgendaStatus status;
 
-	@Column(name = "is_official", nullable = false, columnDefinition = "BOOL")
+	@Column(name = "is_official", nullable = false, columnDefinition = "BIT(1)")
 	private boolean isOfficial;
 
-	@Column(name = "is_ranking", nullable = false, columnDefinition = "BOOL")
+	@Column(name = "is_ranking", nullable = false, columnDefinition = "BIT(1)")
 	private boolean isRanking;
 
 	@Builder
 	public Agenda(Long id, byte[] key, String title, String content, String deadline, String startTime, String endTime,
 		int minTeam, int maxTeam, int currentTeam, int minPeople, int maxPeople, String posterUri, String hostIntraId,
-		String location, String status, boolean isOfficial, boolean isRanking) {
+		Location location, AgendaStatus status, boolean isOfficial, boolean isRanking) {
 		this.id = id;
 		this.key = key;
 		this.title = title;
