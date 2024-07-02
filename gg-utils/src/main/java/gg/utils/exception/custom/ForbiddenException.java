@@ -10,4 +10,8 @@ public class ForbiddenException extends CustomRuntimeException {
 	public ForbiddenException(String message) {
 		super(message, ErrorCode.FORBIDDEN);
 	}
+
+	public ForbiddenException(ErrorCode errorCode) {
+		super(errorCode);
+	}
 }
