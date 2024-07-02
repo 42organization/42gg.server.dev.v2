@@ -10,6 +10,6 @@ import gg.data.agenda.Agenda;
 
 public interface AgendaRepository extends JpaRepository<Agenda, Long> {
 
-	@Query("SELECT a FROM Agenda a WHERE key = :key")
+	@Query("SELECT a FROM Agenda a WHERE a.key = :key")
 	Optional<Agenda> findAgendaByKey(UUID key);
 }
