@@ -1,7 +1,5 @@
 package gg.agenda.api.user.service;
 
-import static gg.agenda.api.utils.AgendaErrorCode.*;
-
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -21,7 +19,7 @@ public class AgendaService {
 	@Transactional(readOnly = true)
 	public Agenda findAgenda(UUID agendaKey) {
 		return agendaRepository.findAgendaByKey(agendaKey).orElseThrow(
-			() -> new NotExistException(AGENDA_NOT_FOUND.getMessage())
+			() -> new NotExistException("AGENDA_NOT_FOUND.getMessage()")
 		);
 	}
 }

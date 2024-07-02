@@ -1,5 +1,9 @@
 package gg.agenda.api.user.integration;
 
+import static org.assertj.core.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
@@ -16,10 +20,6 @@ import gg.agenda.api.AgendaMockData;
 import gg.data.agenda.Agenda;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @IntegrationTest
 @Transactional

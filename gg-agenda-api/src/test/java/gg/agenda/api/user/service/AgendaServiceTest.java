@@ -1,6 +1,6 @@
 package gg.agenda.api.user.service;
 
-import static org.mockito.BDDMockito.*;
+import static org.mockito.Mockito.*;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -33,7 +33,7 @@ class AgendaServiceTest {
 			// given
 			UUID agendaKey = UUID.randomUUID();
 			Agenda agenda = mock(Agenda.class);
-			given(agendaRepository.findAgendaByKey(any())).willReturn(Optional.of(agenda));
+			when(agendaRepository.findAgendaByKey(agendaKey)).thenReturn(Optional.of(agenda));
 
 			// when
 			agendaService.findAgenda(agendaKey);

@@ -5,19 +5,20 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
-import gg.agenda.api.user.service.AgendaService;
 import gg.data.agenda.Agenda;
+import gg.data.agenda.type.AgendaStatus;
 import gg.data.agenda.type.Location;
+import gg.repo.agenda.AgendaRepository;
 import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
 public class AgendaMockData {
 
-	private final AgendaService agendaService;
+	private final AgendaRepository agendaRepository;
 
 	public Agenda createAgenda() {
-		return Agenda.builder()
+		Agenda agenda = Agenda.builder()
 			.key(UUID.randomUUID())
 			.title("title")
 			.content("content")
@@ -29,11 +30,13 @@ public class AgendaMockData {
 			.currentTeam(0)
 			.minPeople(1)
 			.maxPeople(5)
+			.status(AgendaStatus.ON_GOING)
 			.posterUri("posterUri")
 			.hostIntraId("hostIntraId")
 			.location(Location.MIX)
 			.isOfficial(true)
 			.isRanking(true)
 			.build();
+		return agendaRepository.save(agenda);
 	}
 }
