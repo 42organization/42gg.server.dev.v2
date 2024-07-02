@@ -1,5 +1,7 @@
 package gg.data.agenda;
 
+import java.util.UUID;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -32,7 +34,7 @@ public class AgendaTeam extends BaseTimeEntity {
 	private Agenda agenda;
 
 	@Column(name = "`key`", nullable = false, unique = true, columnDefinition = "BINARY(16)")
-	private byte[] key;
+	private UUID key;
 
 	@Column(name = "name", nullable = false, length = 30)
 	private String name;
@@ -64,7 +66,7 @@ public class AgendaTeam extends BaseTimeEntity {
 	private boolean isPrivate;
 
 	@Builder
-	public AgendaTeam(Long id, Agenda agenda, byte[] key, String name, String content, String leaderIntraId,
+	public AgendaTeam(Long id, Agenda agenda, UUID key, String name, String content, String leaderIntraId,
 		String status, String location, int mateCount, String award, int awardPriority, boolean isPrivate) {
 		this.id = id;
 		this.agenda = agenda;

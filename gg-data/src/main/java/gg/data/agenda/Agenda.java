@@ -1,5 +1,8 @@
 package gg.data.agenda;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -29,7 +32,7 @@ public class Agenda extends BaseTimeEntity {
 	private Long id;
 
 	@Column(name = "key", nullable = false, columnDefinition = "BINARY(16)")
-	private byte[] key;
+	private UUID key;
 
 	@Column(name = "title", nullable = false, columnDefinition = "VARCHAR(50)")
 	private String title;
@@ -38,13 +41,13 @@ public class Agenda extends BaseTimeEntity {
 	private String content;
 
 	@Column(name = "deadline", nullable = false, columnDefinition = "DATETIME")
-	private String deadline;
+	private LocalDateTime deadline;
 
 	@Column(name = "start_time", nullable = false, columnDefinition = "DATETIME")
-	private String startTime;
+	private LocalDateTime startTime;
 
 	@Column(name = "end_time", nullable = false, columnDefinition = "DATETIME")
-	private String endTime;
+	private LocalDateTime endTime;
 
 	@Column(name = "min_team", nullable = false, columnDefinition = "INT")
 	private int minTeam;
@@ -82,9 +85,10 @@ public class Agenda extends BaseTimeEntity {
 	private boolean isRanking;
 
 	@Builder
-	public Agenda(Long id, byte[] key, String title, String content, String deadline, String startTime, String endTime,
-		int minTeam, int maxTeam, int currentTeam, int minPeople, int maxPeople, String posterUri, String hostIntraId,
-		Location location, AgendaStatus status, boolean isOfficial, boolean isRanking) {
+	public Agenda(Long id, UUID key, String title, String content, LocalDateTime deadline, LocalDateTime startTime,
+		LocalDateTime endTime, int minTeam, int maxTeam, int currentTeam, int minPeople, int maxPeople,
+		String posterUri, String hostIntraId, Location location, AgendaStatus status, boolean isOfficial,
+		boolean isRanking) {
 		this.id = id;
 		this.key = key;
 		this.title = title;
