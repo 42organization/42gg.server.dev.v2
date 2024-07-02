@@ -11,7 +11,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
+import gg.agenda.api.user.agenda.service.AgendaService;
 import gg.data.agenda.Agenda;
+import gg.repo.agenda.AgendaAnnouncementRepository;
 import gg.repo.agenda.AgendaRepository;
 import gg.utils.annotation.UnitTest;
 
@@ -20,6 +22,9 @@ class AgendaServiceTest {
 
 	@Mock
 	AgendaRepository agendaRepository;
+
+	@Mock
+	AgendaAnnouncementRepository agendaAnnouncementRepository;
 
 	@InjectMocks
 	AgendaService agendaService;
@@ -34,12 +39,14 @@ class AgendaServiceTest {
 			UUID agendaKey = UUID.randomUUID();
 			Agenda agenda = mock(Agenda.class);
 			when(agendaRepository.findAgendaByKey(agendaKey)).thenReturn(Optional.of(agenda));
+			when(agendaAnnouncementRepository.findLatestByAgenda(agenda)).thenReturn(Optional.empty());
 
 			// when
-			agendaService.findAgenda(agendaKey);
+			agendaService.findAgendaWithLatestAnnouncement(agendaKey);
 
 			// then
 			verify(agendaRepository, times(1)).findAgendaByKey(agendaKey);
+			verify(agendaAnnouncementRepository, times(1)).findLatestByAgenda(agenda);
 		}
 	}
 }
