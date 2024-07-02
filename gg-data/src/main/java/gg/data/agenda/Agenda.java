@@ -1,5 +1,7 @@
 package gg.data.agenda;
 
+import static gg.utils.exception.ErrorCode.*;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -16,6 +18,8 @@ import javax.persistence.UniqueConstraint;
 import gg.data.BaseTimeEntity;
 import gg.data.agenda.type.AgendaStatus;
 import gg.data.agenda.type.Location;
+import gg.utils.exception.custom.ForbiddenException;
+import gg.utils.exception.custom.InvalidParameterException;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,15 +28,15 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "agenda", uniqueConstraints = {@UniqueConstraint(name = "uk_agenda_key", columnNames = "key")})
+@Table(name = "agenda", uniqueConstraints = {@UniqueConstraint(name = "uk_agenda_agenda_key", columnNames = "agenda_key")})
 public class Agenda extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "key", nullable = false, columnDefinition = "BINARY(16)")
-	private UUID key;
+	@Column(name = "agenda_key", nullable = false, columnDefinition = "BINARY(16)")
+	private UUID agendaKey;
 
 	@Column(name = "title", nullable = false, columnDefinition = "VARCHAR(50)")
 	private String title;
@@ -85,12 +89,12 @@ public class Agenda extends BaseTimeEntity {
 	private boolean isRanking;
 
 	@Builder
-	public Agenda(Long id, UUID key, String title, String content, LocalDateTime deadline, LocalDateTime startTime,
+	public Agenda(Long id, UUID agendaKey, String title, String content, LocalDateTime deadline, LocalDateTime startTime,
 		LocalDateTime endTime, int minTeam, int maxTeam, int currentTeam, int minPeople, int maxPeople,
 		String posterUri, String hostIntraId, Location location, AgendaStatus status, boolean isOfficial,
 		boolean isRanking) {
 		this.id = id;
-		this.key = key;
+		this.agendaKey = agendaKey;
 		this.title = title;
 		this.content = content;
 		this.deadline = deadline;
@@ -107,5 +111,37 @@ public class Agenda extends BaseTimeEntity {
 		this.status = status;
 		this.isOfficial = isOfficial;
 		this.isRanking = isRanking;
+	}
+
+	public void addTeam(AgendaTeam agendaTeam, LocalDateTime now) {
+		mustBeWithinLocation(agendaTeam);
+		mustStatusOnGoing();
+		mustBeforeDeadline(now);
+		mustHaveCapacity();
+		this.currentTeam++;
+	}
+
+	private void mustBeWithinLocation(AgendaTeam agendaTeam) {
+		if (this.location != Location.MIX && this.location != agendaTeam.getLocation()) {
+			throw new InvalidParameterException(LOCATION_NOT_VALID);
+		}
+	}
+
+	private void mustStatusOnGoing() {
+		if (this.status != AgendaStatus.ON_GOING) {
+			throw new  InvalidParameterException(AGENDA_NOT_OPEN);
+		}
+	}
+
+	private void mustBeforeDeadline(LocalDateTime now) {
+		if (this.deadline.isBefore(now)) {
+			throw new InvalidParameterException(AGENDA_NOT_OPEN);
+		}
+	}
+
+	private void mustHaveCapacity() {
+		if (this.currentTeam == this.maxTeam) {
+			throw new ForbiddenException(AGENDA_NO_CAPACITY);
+		}
 	}
 }
