@@ -252,6 +252,7 @@ project(':gg-pingpong-api') {
         implementation project(':gg-utils')
         implementation project(':gg-auth')
         implementation project(':gg-recruit-api')
+        implementation project(':gg-agenda-api')
     }
 }
 
