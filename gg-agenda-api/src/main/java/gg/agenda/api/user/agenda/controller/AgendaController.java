@@ -1,4 +1,4 @@
-package gg.agenda.api.user.controller;
+package gg.agenda.api.user.agenda.controller;
 
 import java.util.UUID;
 
@@ -8,9 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import gg.agenda.api.user.controller.dto.AgendaResponseDto;
-import gg.agenda.api.user.service.AgendaService;
-import gg.data.agenda.Agenda;
+import gg.agenda.api.user.agenda.controller.dto.AgendaResponseDto;
+import gg.agenda.api.user.agenda.service.AgendaService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -22,8 +21,7 @@ public class AgendaController {
 
 	@GetMapping
 	public ResponseEntity<AgendaResponseDto> agendaDetails(@RequestParam("agenda_id") UUID agendaKey) {
-		Agenda agenda = agendaService.findAgenda(agendaKey);
-		AgendaResponseDto agendaDto = AgendaResponseDto.MapStruct.INSTANCE.toDto(agenda);
+		AgendaResponseDto agendaDto = agendaService.findAgendaWithLatestAnnouncement(agendaKey);
 		return ResponseEntity.ok(agendaDto);
 	}
 }
