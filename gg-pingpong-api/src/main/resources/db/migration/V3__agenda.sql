@@ -1,7 +1,7 @@
 CREATE TABLE `agenda`
 (
     `id`            BIGINT       NOT NULL AUTO_INCREMENT,
-    `key`           BINARY(16) NOT NULL,
+    `agenda_key`           BINARY(16) NOT NULL,
     `title`         VARCHAR(50)  NOT NULL,
     `content`       VARCHAR(500) NOT NULL,
     `deadline`      DATETIME     NOT NULL,
@@ -21,14 +21,14 @@ CREATE TABLE `agenda`
     `created_at`    DATETIME     NOT NULL,
     `modified_at`   DATETIME     NOT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE KEY `uk_agenda_key` (`key`)
+    UNIQUE KEY `uk_agenda_agenda_key` (`agenda_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `agenda_team`
 (
     `id`              BIGINT       NOT NULL AUTO_INCREMENT,
     `agenda_id`       BIGINT       NOT NULL,
-    `key`             BINARY(16) NOT NULL,
+    `team_key`             BINARY(16) NOT NULL,
     `name`            VARCHAR(30)  NOT NULL,
     `content`         VARCHAR(500) NOT NULL,
     `leader_intra_id` VARCHAR(30)  NOT NULL,
@@ -43,7 +43,7 @@ CREATE TABLE `agenda_team`
     PRIMARY KEY (`id`),
     KEY               `fk_agenda_team_agenda_agenda_id` (`agenda_id`),
     CONSTRAINT `fk_agenda_team_agenda_agenda_id` FOREIGN KEY (`agenda_id`) REFERENCES `agenda` (`id`),
-    UNIQUE KEY `uk_agenda_team_key` (`key`)
+    UNIQUE KEY `uk_agenda_team_team_key` (`team_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `agenda_announcement`
