@@ -3,6 +3,7 @@ package gg.agenda.api;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import javax.persistence.EntityManager;
@@ -94,7 +95,7 @@ public class AgendaMockData {
 				.isRanking(true)
 				.build()
 			)
-			.toList();
+			.collect(Collectors.toList());
 		return agendaRepository.saveAll(agendas);
 	}
 
@@ -119,7 +120,7 @@ public class AgendaMockData {
 				.isRanking(true)
 				.build()
 			)
-			.toList();
+			.collect(Collectors.toList());
 		return agendaRepository.saveAll(agendas);
 	}
 
