@@ -6,12 +6,13 @@ import org.mapstruct.factory.Mappers;
 
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaAnnouncement;
+import lombok.AccessLevel;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Data
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AgendaResponseDto {
 
 	private String agendaTitle;
