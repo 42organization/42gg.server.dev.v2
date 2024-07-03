@@ -1,11 +1,15 @@
 package gg.agenda.api.user.agenda.controller.dto;
 
+import java.time.LocalDateTime;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaAnnouncement;
+import gg.data.agenda.type.AgendaStatus;
+import gg.data.agenda.type.Location;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,11 +23,11 @@ public class AgendaResponseDto {
 
 	private String agendaContents;
 
-	private String agendaDeadLine;
+	private LocalDateTime agendaDeadLine;
 
-	private String agendaStartTime;
+	private LocalDateTime agendaStartTime;
 
-	private String agendaEndTime;
+	private LocalDateTime agendaEndTime;
 
 	private int agendaMinTeam;
 
@@ -39,21 +43,22 @@ public class AgendaResponseDto {
 
 	private String agendaHost;
 
-	private String agendaLocation;
+	private Location agendaLocation;
 
-	private String agendaStatus;
+	private AgendaStatus agendaStatus;
 
-	private String createdAt;
+	private LocalDateTime createdAt;
 
-	private boolean isOfficial;
+	private Boolean isOfficial;
 
 	private String announcementTitle;
 
 	@Builder
-	public AgendaResponseDto(String agendaTitle, String agendaContents, String agendaDeadLine, String agendaStartTime,
-		String agendaEndTime, int agendaMinTeam, int agendaMaxTeam, int agendaCurrentTeam, int agendaMinPeople,
-		int agendaMaxPeople, String agendaPoster, String agendaHost, String agendaLocation, String agendaStatus,
-		String createdAt, String announcementTitle, boolean isOfficial) {
+	public AgendaResponseDto(String agendaTitle, String agendaContents, LocalDateTime agendaDeadLine,
+		LocalDateTime agendaStartTime, LocalDateTime agendaEndTime, int agendaMinTeam, int agendaMaxTeam,
+		int agendaCurrentTeam, int agendaMinPeople, int agendaMaxPeople, String agendaPoster, String agendaHost,
+		Location agendaLocation, AgendaStatus agendaStatus, LocalDateTime createdAt, String announcementTitle,
+		boolean isOfficial) {
 		this.agendaTitle = agendaTitle;
 		this.agendaContents = agendaContents;
 		this.agendaDeadLine = agendaDeadLine;
@@ -93,7 +98,7 @@ public class AgendaResponseDto {
 		@Mapping(target = "agendaLocation", source = "agenda.location")
 		@Mapping(target = "agendaStatus", source = "agenda.status")
 		@Mapping(target = "createdAt", source = "agenda.createdAt")
-		@Mapping(target = "isOfficial", source = "agenda.official")
+		@Mapping(target = "isOfficial", source = "agenda.isOfficial")
 		@Mapping(target = "announcementTitle", source = "announcement.title")
 		AgendaResponseDto toDto(Agenda agenda, AgendaAnnouncement announcement);
 	}

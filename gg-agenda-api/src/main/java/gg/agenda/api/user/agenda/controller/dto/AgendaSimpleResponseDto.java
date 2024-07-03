@@ -1,5 +1,6 @@
 package gg.agenda.api.user.agenda.controller.dto;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.mapstruct.Mapper;
@@ -7,6 +8,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 import gg.data.agenda.Agenda;
+import gg.data.agenda.type.Location;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,11 +19,11 @@ import lombok.NoArgsConstructor;
 public class AgendaSimpleResponseDto {
 	private String agendaTitle;
 
-	private String agendaDeadLine;
+	private LocalDateTime agendaDeadLine;
 
-	private String agendaStartTime;
+	private LocalDateTime agendaStartTime;
 
-	private String agendaEndTime;
+	private LocalDateTime agendaEndTime;
 
 	private int agendaCurrentTeam;
 
@@ -31,16 +33,16 @@ public class AgendaSimpleResponseDto {
 
 	private int agendaMaxPeople;
 
-	private String agendaLocation;
+	private Location agendaLocation;
 
 	private UUID agendaKey;
 
-	private boolean isOfficial;
+	private Boolean isOfficial;
 
 	@Builder
-	public AgendaSimpleResponseDto(String agendaTitle, String agendaDeadLine, String agendaStartTime,
-		String agendaEndTime, int agendaCurrentTeam, int agendaMaxTeam, int agendaMinPeople, int agendaMaxPeople,
-		String agendaLocation, UUID agendaKey, boolean isOfficial) {
+	public AgendaSimpleResponseDto(String agendaTitle, LocalDateTime agendaDeadLine, LocalDateTime agendaStartTime,
+		LocalDateTime agendaEndTime, int agendaCurrentTeam, int agendaMaxTeam, int agendaMinPeople,
+		int agendaMaxPeople, Location agendaLocation, UUID agendaKey, boolean isOfficial) {
 		this.agendaTitle = agendaTitle;
 		this.agendaDeadLine = agendaDeadLine;
 		this.agendaStartTime = agendaStartTime;
@@ -68,7 +70,7 @@ public class AgendaSimpleResponseDto {
 		@Mapping(target = "agendaMaxPeople", source = "maxTeam")
 		@Mapping(target = "agendaLocation", source = "location")
 		@Mapping(target = "agendaKey", source = "agendaKey")
-		@Mapping(target = "isOfficial", source = "official")
+		@Mapping(target = "isOfficial", source = "isOfficial")
 		AgendaSimpleResponseDto toDto(Agenda agenda);
 	}
 }
