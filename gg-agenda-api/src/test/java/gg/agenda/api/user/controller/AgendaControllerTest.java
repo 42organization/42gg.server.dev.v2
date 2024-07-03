@@ -26,7 +26,6 @@ import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @IntegrationTest
 @Transactional
 @AutoConfigureMockMvc
