@@ -114,36 +114,4 @@ public class Agenda extends BaseTimeEntity {
 		this.isOfficial = isOfficial;
 		this.isRanking = isRanking;
 	}
-
-	public void addTeam(AgendaTeam agendaTeam, LocalDateTime now) {
-		mustBeWithinLocation(agendaTeam);
-		mustStatusOnGoing();
-		mustBeforeDeadline(now);
-		mustHaveCapacity();
-		this.currentTeam++;
-	}
-
-	private void mustBeWithinLocation(AgendaTeam agendaTeam) {
-		if (this.location != Location.MIX && this.location != agendaTeam.getLocation()) {
-			throw new InvalidParameterException(LOCATION_NOT_VALID);
-		}
-	}
-
-	private void mustStatusOnGoing() {
-		if (this.status != AgendaStatus.ON_GOING) {
-			throw new InvalidParameterException(AGENDA_NOT_OPEN);
-		}
-	}
-
-	private void mustBeforeDeadline(LocalDateTime now) {
-		if (this.deadline.isBefore(now)) {
-			throw new InvalidParameterException(AGENDA_NOT_OPEN);
-		}
-	}
-
-	private void mustHaveCapacity() {
-		if (this.currentTeam == this.maxTeam) {
-			throw new ForbiddenException(AGENDA_NO_CAPACITY);
-		}
-	}
 }
