@@ -75,7 +75,7 @@ public class AgendaResponseDto {
 	}
 
 	@Mapper
-	public interface MapStruct{
+	public interface MapStruct {
 
 		AgendaResponseDto.MapStruct INSTANCE = Mappers.getMapper(AgendaResponseDto.MapStruct.class);
 

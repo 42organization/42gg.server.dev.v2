@@ -28,7 +28,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "agenda", uniqueConstraints = {@UniqueConstraint(name = "uk_agenda_agenda_key", columnNames = "agenda_key")})
+@Table(name = "agenda", uniqueConstraints = {
+	@UniqueConstraint(name = "uk_agenda_agenda_key", columnNames = "agenda_key")
+})
 public class Agenda extends BaseTimeEntity {
 
 	@Id
@@ -89,10 +91,10 @@ public class Agenda extends BaseTimeEntity {
 	private boolean isRanking;
 
 	@Builder
-	public Agenda(Long id, UUID agendaKey, String title, String content, LocalDateTime deadline, LocalDateTime startTime,
-		LocalDateTime endTime, int minTeam, int maxTeam, int currentTeam, int minPeople, int maxPeople,
-		String posterUri, String hostIntraId, Location location, AgendaStatus status, boolean isOfficial,
-		boolean isRanking) {
+	public Agenda(Long id, UUID agendaKey, String title, String content, LocalDateTime deadline,
+		LocalDateTime startTime, LocalDateTime endTime, int minTeam, int maxTeam, int currentTeam, int minPeople,
+		int maxPeople, String posterUri, String hostIntraId, Location location, AgendaStatus status,
+		boolean isOfficial, boolean isRanking) {
 		this.id = id;
 		this.agendaKey = agendaKey;
 		this.title = title;
@@ -129,7 +131,7 @@ public class Agenda extends BaseTimeEntity {
 
 	private void mustStatusOnGoing() {
 		if (this.status != AgendaStatus.ON_GOING) {
-			throw new  InvalidParameterException(AGENDA_NOT_OPEN);
+			throw new InvalidParameterException(AGENDA_NOT_OPEN);
 		}
 	}
 
