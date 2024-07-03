@@ -4,6 +4,9 @@ import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.List;
+import java.util.stream.IntStream;
+
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
@@ -15,16 +18,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
 
 import gg.agenda.api.AgendaMockData;
 import gg.agenda.api.user.agenda.controller.dto.AgendaResponseDto;
+import gg.agenda.api.user.agenda.controller.dto.AgendaSimpleResponseDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaAnnouncement;
 import gg.data.user.User;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @IntegrationTest
 @Transactional
 @AutoConfigureMockMvc
@@ -61,7 +69,7 @@ public class AgendaControllerTest {
 		@DisplayName("agenda_id에 해당하는 Agenda를 상세 조회합니다.")
 		void test() throws Exception {
 			// given
-			Agenda agenda = agendaMockData.createAgenda();
+			Agenda agenda = agendaMockData.createOfficialAgenda();
 			AgendaAnnouncement announcement = agendaMockData.createAgendaAnnouncement(agenda);
 
 			// when
@@ -81,7 +89,7 @@ public class AgendaControllerTest {
 		@DisplayName("announce가 없는 경우 announcementTitle를 null로 반환합니다.")
 		void test2() throws Exception {
 			// given
-			Agenda agenda = agendaMockData.createAgenda();
+			Agenda agenda = agendaMockData.createOfficialAgenda();
 
 			// when
 			String response = mockMvc.perform(get("/agenda")
@@ -100,7 +108,7 @@ public class AgendaControllerTest {
 		@DisplayName("announce가 여러 개인 경우 가장 최근 작성된 announce를 반환합니다.")
 		void test3() throws Exception {
 			// given
-			Agenda agenda = agendaMockData.createAgenda();
+			Agenda agenda = agendaMockData.createOfficialAgenda();
 			AgendaAnnouncement announcement1 = agendaMockData.createAgendaAnnouncement(agenda);
 			AgendaAnnouncement announcement2 = agendaMockData.createAgendaAnnouncement(agenda);
 			AgendaAnnouncement announcement3 = agendaMockData.createAgendaAnnouncement(agenda);
@@ -118,6 +126,39 @@ public class AgendaControllerTest {
 			assertThat(result.getAnnouncementTitle()).isNotEqualTo(announcement1.getTitle());
 			assertThat(result.getAnnouncementTitle()).isNotEqualTo(announcement2.getTitle());
 			assertThat(result.getAnnouncementTitle()).isEqualTo(announcement3.getTitle());
+		}
+	}
+
+	@Nested
+	@DisplayName("Agenda 현황 전체 조회")
+	class GetAgendaListCurrent {
+
+		@Test
+		@DisplayName("Official과 Deadline이 빠른 순으로 정렬하여 반환합니다.")
+		void getAgendaListSuccess() throws Exception {
+			// given
+			List<Agenda> officialAgendaList = agendaMockData.createOfficialAgendaList(3);
+			List<Agenda> nonOfficialAgendaList = agendaMockData.createNonOfficialAgendaList(6);
+
+			// when
+			String response = mockMvc.perform(get("/agenda/list")
+					.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+			AgendaSimpleResponseDto[] result = objectMapper.readValue(response, AgendaSimpleResponseDto[].class);
+
+			// then
+			assertThat(result.length).isEqualTo(officialAgendaList.size() + nonOfficialAgendaList.size());
+			IntStream.range(0, officialAgendaList.size())
+				.forEach(i -> assertThat(result[i].getIsOfficial()).isEqualTo(true));
+			IntStream.range(officialAgendaList.size(), result.length)
+				.forEach(i -> assertThat(result[i].getIsOfficial()).isEqualTo(false));
+			for (int i = 1; i < officialAgendaList.size(); i++) {
+				assertThat(result[i].getAgendaDeadLine()).isBefore(result[i - 1].getAgendaDeadLine());
+			}
+			for (int i = officialAgendaList.size() + 1; i < result.length; i++) {
+				assertThat(result[i].getAgendaDeadLine()).isBefore(result[i - 1].getAgendaDeadLine());
+			}
 		}
 	}
 }

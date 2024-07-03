@@ -2,6 +2,7 @@ package gg.agenda.api.user.agenda.service;
 
 import static gg.utils.exception.ErrorCode.*;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,6 +39,9 @@ public class AgendaService {
 	@Transactional(readOnly = true)
 	public List<AgendaSimpleResponseDto> findCurrentAgendaList() {
 		return agendaRepository.findAllByStatusIs(AgendaStatus.ON_GOING).stream()
-			.map(AgendaSimpleResponseDto.MapStruct.INSTANCE::toDto).toList();
+			.sorted(Comparator.comparing(Agenda::getIsOfficial, Comparator.reverseOrder())
+				.thenComparing(Agenda::getDeadline, Comparator.reverseOrder()))
+			.map(AgendaSimpleResponseDto.MapStruct.INSTANCE::toDto)
+			.toList();
 	}
 }
