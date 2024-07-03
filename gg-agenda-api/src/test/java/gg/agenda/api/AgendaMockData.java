@@ -30,8 +30,8 @@ public class AgendaMockData {
 	public Agenda createAgenda() {
 		Agenda agenda = Agenda.builder()
 			.agendaKey(UUID.randomUUID())
-			.title("agenda title")
-			.content("agenda content")
+			.title("title " + UUID.randomUUID())
+			.content("content " + UUID.randomUUID())
 			.deadline(LocalDateTime.now().plusDays(3))
 			.startTime(LocalDateTime.now().plusDays(5))
 			.endTime(LocalDateTime.now().plusDays(6))

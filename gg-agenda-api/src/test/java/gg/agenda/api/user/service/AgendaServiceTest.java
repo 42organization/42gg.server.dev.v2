@@ -1,5 +1,6 @@
 package gg.agenda.api.user.service;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Optional;
@@ -16,6 +17,7 @@ import gg.data.agenda.Agenda;
 import gg.repo.agenda.AgendaAnnouncementRepository;
 import gg.repo.agenda.AgendaRepository;
 import gg.utils.annotation.UnitTest;
+import gg.utils.exception.custom.NotExistException;
 
 @UnitTest
 class AgendaServiceTest {
@@ -30,11 +32,12 @@ class AgendaServiceTest {
 	AgendaService agendaService;
 
 	@Nested
+	@DisplayName("Agenda 단건 조회")
 	class GetAgenda {
 
 		@Test
-		@DisplayName("Agenda 단건 조회")
-		void test() {
+		@DisplayName("Agenda 단건 조회 성공")
+		void getAgendaSuccess() {
 			// given
 			UUID agendaKey = UUID.randomUUID();
 			Agenda agenda = mock(Agenda.class);
@@ -47,6 +50,21 @@ class AgendaServiceTest {
 			// then
 			verify(agendaRepository, times(1)).findAgendaByKey(agendaKey);
 			verify(agendaAnnouncementRepository, times(1)).findLatestByAgenda(agenda);
+		}
+
+		@Test
+		@DisplayName("Agenda 단건 조회 실패")
+		void getAgendaFailedWithnoAgenda() {
+			// given
+			UUID agendaKey = UUID.randomUUID();
+			Agenda agenda = mock(Agenda.class);
+			when(agendaRepository.findAgendaByKey(agendaKey)).thenReturn(Optional.empty());
+
+			// expected
+			assertThrows(NotExistException.class,
+				() -> agendaService.findAgendaWithLatestAnnouncement(agendaKey));
+			verify(agendaRepository, times(1)).findAgendaByKey(agendaKey);
+			verify(agendaAnnouncementRepository, never()).findLatestByAgenda(agenda);
 		}
 	}
 }
