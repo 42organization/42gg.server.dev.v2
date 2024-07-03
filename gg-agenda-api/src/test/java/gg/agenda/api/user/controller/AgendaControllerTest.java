@@ -1,4 +1,4 @@
-package gg.agenda.api.user.integration;
+package gg.agenda.api.user.controller;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -30,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 @IntegrationTest
 @Transactional
 @AutoConfigureMockMvc
-public class AgendaIntegrationTest {
+public class AgendaControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
