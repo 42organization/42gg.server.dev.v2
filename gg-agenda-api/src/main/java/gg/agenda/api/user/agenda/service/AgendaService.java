@@ -37,7 +37,7 @@ public class AgendaService {
 
 	@Transactional(readOnly = true)
 	public List<AgendaSimpleResponseDto> findCurrentAgendaList() {
-		List<Agenda> agendas = agendaRepository.findAllByStatusIs(AgendaStatus.ON_GOING);
-		return agendas.stream().map(AgendaSimpleResponseDto.MapStruct.INSTANCE::toDto).toList();
+		return agendaRepository.findAllByStatusIs(AgendaStatus.ON_GOING).stream()
+			.map(AgendaSimpleResponseDto.MapStruct.INSTANCE::toDto).toList();
 	}
 }
