@@ -27,10 +27,10 @@ public class AgendaService {
 
 	@Transactional(readOnly = true)
 	public AgendaResponseDto findAgendaWithLatestAnnouncement(UUID agendaKey) {
-		Agenda agenda = agendaRepository.findAgendaByKey(agendaKey).orElseThrow(
-			() -> new NotExistException(AGENDA_NOT_FOUND)
-		);
-		AgendaAnnouncement announcement = agendaAnnouncementRepository.findLatestByAgenda(agenda).orElse(null);
+		Agenda agenda = agendaRepository.findAgendaByKey(agendaKey)
+			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
+		AgendaAnnouncement announcement = agendaAnnouncementRepository
+			.findLatestByAgenda(agenda).orElse(null);
 		return AgendaResponseDto.MapStruct.INSTANCE.toDto(agenda, announcement);
 	}
 }
