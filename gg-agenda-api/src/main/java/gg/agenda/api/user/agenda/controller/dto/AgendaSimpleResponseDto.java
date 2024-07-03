@@ -68,7 +68,7 @@ public class AgendaSimpleResponseDto {
 		@Mapping(target = "agendaMaxPeople", source = "maxTeam")
 		@Mapping(target = "agendaLocation", source = "location")
 		@Mapping(target = "agendaKey", source = "agendaKey")
-		@Mapping(target = "isOfficial", source = "isOfficial")
+		@Mapping(target = "isOfficial", source = "official")
 		AgendaSimpleResponseDto toDto(Agenda agenda);
 	}
 }
