@@ -27,7 +27,7 @@ public class AgendaController {
 		@ApiResponse(responseCode = "400", description = "Agenda 조회 요청이 잘못됨"),
 		@ApiResponse(responseCode = "404", description = "Agenda를 찾을 수 없음")
 	})
-	public ResponseEntity<AgendaResponseDto> agendaDetails(@RequestParam("agenda_id") UUID agendaKey) {
+	public ResponseEntity<AgendaResponseDto> agendaDetails(@RequestParam("agenda_key") UUID agendaKey) {
 		AgendaResponseDto agendaDto = agendaService.findAgendaWithLatestAnnouncement(agendaKey);
 		return ResponseEntity.ok(agendaDto);
 	}
