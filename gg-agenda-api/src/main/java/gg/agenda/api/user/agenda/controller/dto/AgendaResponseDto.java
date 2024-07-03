@@ -9,11 +9,9 @@ import gg.data.agenda.AgendaAnnouncement;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
-import lombok.Setter;
 
 @Data
 @Getter
-@Setter
 public class AgendaResponseDto {
 
 	private String agendaTitle;
