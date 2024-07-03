@@ -27,6 +27,7 @@ import gg.agenda.api.user.agenda.controller.dto.AgendaResponseDto;
 import gg.agenda.api.user.agenda.controller.dto.AgendaSimpleResponseDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaAnnouncement;
+import gg.data.agenda.type.AgendaStatus;
 import gg.data.user.User;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
@@ -137,8 +138,9 @@ public class AgendaControllerTest {
 		@DisplayName("Official과 Deadline이 빠른 순으로 정렬하여 반환합니다.")
 		void getAgendaListSuccess() throws Exception {
 			// given
-			List<Agenda> officialAgendaList = agendaMockData.createOfficialAgendaList(3);
-			List<Agenda> nonOfficialAgendaList = agendaMockData.createNonOfficialAgendaList(6);
+			List<Agenda> officialAgendaList = agendaMockData.createOfficialAgendaList(3, AgendaStatus.ON_GOING);
+			List<Agenda> nonOfficialAgendaList = agendaMockData
+				.createNonOfficialAgendaList(6, AgendaStatus.ON_GOING);
 
 			// when
 			String response = mockMvc.perform(get("/agenda/list")
@@ -149,16 +151,31 @@ public class AgendaControllerTest {
 
 			// then
 			assertThat(result.length).isEqualTo(officialAgendaList.size() + nonOfficialAgendaList.size());
-			IntStream.range(0, officialAgendaList.size())
-				.forEach(i -> assertThat(result[i].getIsOfficial()).isEqualTo(true));
-			IntStream.range(officialAgendaList.size(), result.length)
-				.forEach(i -> assertThat(result[i].getIsOfficial()).isEqualTo(false));
-			for (int i = 1; i < officialAgendaList.size(); i++) {
+			for (int i = 0; i < result.length; i++) {
+				assertThat(result[i].getIsOfficial()).isEqualTo(i < officialAgendaList.size());
+				if (i == 0 || i == officialAgendaList.size()) {
+					continue;
+				}
 				assertThat(result[i].getAgendaDeadLine()).isBefore(result[i - 1].getAgendaDeadLine());
 			}
-			for (int i = officialAgendaList.size() + 1; i < result.length; i++) {
-				assertThat(result[i].getAgendaDeadLine()).isBefore(result[i - 1].getAgendaDeadLine());
-			}
+		}
+
+		@Test
+		@DisplayName("진행 중인 Agenda가 없는 경우 빈 리스트를 반환합니다.")
+		void getAgendaListSuccessWithNoAgenda() throws Exception {
+			// given
+			agendaMockData.createOfficialAgendaList(3, AgendaStatus.CONFIRM);
+			agendaMockData.createNonOfficialAgendaList(6, AgendaStatus.CANCEL);
+
+			// when
+			String response = mockMvc.perform(get("/agenda/list")
+					.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+			AgendaSimpleResponseDto[] result = objectMapper.readValue(response, AgendaSimpleResponseDto[].class);
+
+			// then
+			assertThat(result.length).isEqualTo(0);
 		}
 	}
 }

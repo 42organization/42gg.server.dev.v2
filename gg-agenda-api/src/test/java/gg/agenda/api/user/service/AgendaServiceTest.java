@@ -1,8 +1,10 @@
 package gg.agenda.api.user.service;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
+import gg.agenda.api.user.agenda.controller.dto.AgendaSimpleResponseDto;
 import gg.agenda.api.user.agenda.service.AgendaService;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.type.AgendaStatus;
@@ -22,7 +25,9 @@ import gg.repo.agenda.AgendaAnnouncementRepository;
 import gg.repo.agenda.AgendaRepository;
 import gg.utils.annotation.UnitTest;
 import gg.utils.exception.custom.NotExistException;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @UnitTest
 class AgendaServiceTest {
 
@@ -79,15 +84,29 @@ class AgendaServiceTest {
 		@DisplayName("Agenda 현황 전체를 반환합니다.")
 		void getAgendaListSuccess() {
 			// given
+			int officialSize = 3;
+			int nonOfficialSize = 6;
 			List<Agenda> agendas = new ArrayList<>();
-			IntStream.range(1, 10).forEach(i -> agendas.add(mock(Agenda.class)));
+			IntStream.range(0, officialSize).forEach(i -> agendas.add(Agenda.builder()
+				.agendaKey(UUID.randomUUID()).isOfficial(true)
+				.deadline(LocalDateTime.now().plusDays(i + 3)).build()));
+			IntStream.range(0, nonOfficialSize).forEach(i -> agendas.add(Agenda.builder()
+				.agendaKey(UUID.randomUUID()).isOfficial(false)
+				.deadline(LocalDateTime.now().plusDays(i + 3)).build()));
 			when(agendaRepository.findAllByStatusIs(AgendaStatus.ON_GOING)).thenReturn(agendas);
 
 			// when
-			agendaService.findCurrentAgendaList();
+			List<AgendaSimpleResponseDto> result = agendaService.findCurrentAgendaList();
 
 			// then
 			verify(agendaRepository, times(1)).findAllByStatusIs(any());
+			for (int i = 0; i < result.size(); i++) {
+				assertThat(result.get(i).getIsOfficial()).isEqualTo(i < officialSize);
+				if (i == 0 || i == officialSize) {
+					continue;
+				}
+				assertThat(result.get(i).getAgendaDeadLine()).isBefore(result.get(i - 1).getAgendaDeadLine());
+			}
 		}
 
 		@Test
@@ -101,7 +120,6 @@ class AgendaServiceTest {
 			agendaService.findCurrentAgendaList();
 
 			// then
-
 			verify(agendaRepository, times(1)).findAllByStatusIs(any());
 		}
 	}

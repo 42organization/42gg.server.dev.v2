@@ -73,7 +73,7 @@ public class AgendaMockData {
 		return agendaRepository.save(agenda);
 	}
 
-	public List<Agenda> createOfficialAgendaList(int size) {
+	public List<Agenda> createOfficialAgendaList(int size, AgendaStatus status) {
 		List<Agenda> agendas = IntStream.range(0, size).mapToObj(i -> Agenda.builder()
 				.agendaKey(UUID.randomUUID())
 				.title("title " + UUID.randomUUID())
@@ -86,7 +86,7 @@ public class AgendaMockData {
 				.currentTeam(0)
 				.minPeople(1)
 				.maxPeople(5)
-				.status(AgendaStatus.ON_GOING)
+				.status(status)
 				.posterUri("posterUri")
 				.hostIntraId("hostIntraId")
 				.location(Location.MIX)
@@ -98,7 +98,7 @@ public class AgendaMockData {
 		return agendaRepository.saveAll(agendas);
 	}
 
-	public List<Agenda> createNonOfficialAgendaList(int size) {
+	public List<Agenda> createNonOfficialAgendaList(int size, AgendaStatus status) {
 		List<Agenda> agendas = IntStream.range(0, size).mapToObj(i -> Agenda.builder()
 				.agendaKey(UUID.randomUUID())
 				.title("title " + UUID.randomUUID())
@@ -111,7 +111,7 @@ public class AgendaMockData {
 				.currentTeam(0)
 				.minPeople(1)
 				.maxPeople(5)
-				.status(AgendaStatus.ON_GOING)
+				.status(status)
 				.posterUri("posterUri")
 				.hostIntraId("hostIntraId")
 				.location(Location.MIX)
