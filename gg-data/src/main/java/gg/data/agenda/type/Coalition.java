@@ -13,7 +13,8 @@ public enum Coalition {
 	SPRING("SPRING"),
 	SUMMER("SUMMER"),
 	AUTUMN("AUTUMN"),
-	WINTER("WINTER");
+	WINTER("WINTER"),
+	OTHER("OTHER");
 
 	private String coalition;
 }

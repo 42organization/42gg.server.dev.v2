@@ -1,17 +1,6 @@
 package gg.pingpong.api.global.security.service;
 
-import java.time.LocalDateTime;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.InternalAuthenticationServiceException;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
-import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
+import gg.data.agenda.AgendaProfile;
 import gg.data.pingpong.rank.Rank;
 import gg.data.pingpong.rank.Tier;
 import gg.data.pingpong.rank.redis.RankRedis;
@@ -23,6 +12,7 @@ import gg.pingpong.api.global.security.info.OAuthUserInfo;
 import gg.pingpong.api.global.security.info.OAuthUserInfoFactory;
 import gg.pingpong.api.global.security.info.ProviderType;
 import gg.pingpong.api.global.utils.aws.AsyncNewUserImageUploader;
+import gg.repo.agenda.AgendaProfileRepository;
 import gg.repo.rank.RankRepository;
 import gg.repo.rank.TierRepository;
 import gg.repo.rank.redis.RankRedisRepository;
@@ -31,6 +21,17 @@ import gg.repo.user.UserRepository;
 import gg.utils.RedisKeyManager;
 import gg.utils.exception.tier.TierNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -42,6 +43,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 	private final SeasonRepository seasonRepository;
 	private final RankRedisRepository rankRedisRepository;
 	private final TierRepository tierRepository;
+	private final AgendaProfileRepository agendaProfileRepository;
 
 	@Value("${info.image.defaultUrl}")
 	private String defaultImageUrl;
@@ -81,6 +83,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 				asyncNewUserImageUploader.upload(userInfo.getIntraId(), userInfo.getImageUrl());
 			}
 		}
+		i
 		return UserPrincipal.create(savedUser, user.getAttributes());
 	}
 
@@ -108,6 +111,14 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 			.totalExp(0)
 			.eMail(userInfo.getEmail())
 			.build();
+		AgendaProfile agendaProfile = AgendaProfile.builder()
+			.userId(user.getId())
+			.content("안녕하세요! " + user.getIntraId() + "입니다.")
+			.githubUrl(null)
+			.coalition(userInfo.getCoalition())
+			.location(userInfo.getLocation())
+			.build();
+		agendaProfileRepository.save(agendaProfile);
 		return userRepository.saveAndFlush(user);
 	}
 }
