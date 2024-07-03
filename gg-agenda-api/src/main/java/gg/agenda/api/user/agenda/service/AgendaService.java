@@ -5,6 +5,7 @@ import static gg.utils.exception.ErrorCode.*;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +43,6 @@ public class AgendaService {
 			.sorted(Comparator.comparing(Agenda::getIsOfficial, Comparator.reverseOrder())
 				.thenComparing(Agenda::getDeadline, Comparator.reverseOrder()))
 			.map(AgendaSimpleResponseDto.MapStruct.INSTANCE::toDto)
-			.toList();
+			.collect(Collectors.toList());
 	}
 }
