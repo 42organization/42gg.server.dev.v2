@@ -67,7 +67,7 @@ public class AgendaControllerTest {
 			// when
 			String response = mockMvc.perform(get("/agenda")
 					.header("Authorization", "Bearer " + accessToken)
-					.param("agenda_id", agenda.getAgendaKey().toString()))
+					.param("agenda_key", agenda.getAgendaKey().toString()))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
 			AgendaResponseDto result = objectMapper.readValue(response, AgendaResponseDto.class);
@@ -86,7 +86,7 @@ public class AgendaControllerTest {
 			// when
 			String response = mockMvc.perform(get("/agenda")
 					.header("Authorization", "Bearer " + accessToken)
-					.param("agenda_id", agenda.getAgendaKey().toString()))
+					.param("agenda_key", agenda.getAgendaKey().toString()))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
 			AgendaResponseDto result = objectMapper.readValue(response, AgendaResponseDto.class);
@@ -108,7 +108,7 @@ public class AgendaControllerTest {
 			// when
 			String response = mockMvc.perform(get("/agenda")
 					.header("Authorization", "Bearer " + accessToken)
-					.param("agenda_id", agenda.getAgendaKey().toString()))
+					.param("agenda_key", agenda.getAgendaKey().toString()))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
 			AgendaResponseDto result = objectMapper.readValue(response, AgendaResponseDto.class);
