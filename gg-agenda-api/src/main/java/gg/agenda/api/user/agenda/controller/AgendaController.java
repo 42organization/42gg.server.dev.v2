@@ -47,6 +47,10 @@ public class AgendaController {
 		return ResponseEntity.ok(agendaList);
 	}
 
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "Agenda 생성 성공"),
+		@ApiResponse(responseCode = "400", description = "Agenda 생성 요청 파라미터가 잘못됨")
+	})
 	@PostMapping("/create")
 	public ResponseEntity<UUID> agendaAdd(@Login UserDto user, @RequestBody AgendaCreateDto agendaCreateDto) {
 		AgendaKeyResponseDto agendaKey = agendaService.addAgenda(agendaCreateDto, user);
