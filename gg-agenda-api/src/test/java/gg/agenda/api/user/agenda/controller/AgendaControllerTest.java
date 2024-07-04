@@ -133,17 +133,11 @@ public class AgendaControllerTest {
 			Agenda agenda = agendaMockData.createOfficialAgenda();
 			AgendaAnnouncement announcement = agendaMockData.createAgendaAnnouncement(agenda);
 
-			// when
-			String response = mockMvc.perform(get("/agenda")
+			// expected
+			mockMvc.perform(get("/agenda")
 					.header("Authorization", "Bearer " + accessToken)
-					.param("agenda_key", agenda.getAgendaKey().toString()))
-				.andExpect(status().isOk())
-				.andReturn().getResponse().getContentAsString();
-			AgendaResponseDto result = objectMapper.readValue(response, AgendaResponseDto.class);
-
-			// then
-			assertThat(result.getAgendaTitle()).isEqualTo(agenda.getTitle());
-			assertThat(result.getAnnouncementTitle()).isEqualTo(announcement.getTitle());
+					.param("agenda_key", "invalid_key"))
+				.andExpect(status().isBadRequest());
 		}
 	}
 

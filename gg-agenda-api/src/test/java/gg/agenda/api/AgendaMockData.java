@@ -146,9 +146,7 @@ public class AgendaMockData {
 	}
 
 	public Agenda createAgenda() {
-		UUID uuid = randomUUID();
 		Agenda agenda = Agenda.builder()
-			.agendaKey(uuid)
 			.title("title")
 			.content("content")
 			.deadline(LocalDateTime.now().plusDays(1))
@@ -170,9 +168,7 @@ public class AgendaMockData {
 	}
 
 	public Agenda createAgenda(String intraId) {
-		UUID uuid = randomUUID();
 		Agenda agenda = Agenda.builder()
-			.agendaKey(uuid)
 			.title("title")
 			.content("content")
 			.deadline(LocalDateTime.now().plusDays(1))
@@ -194,9 +190,7 @@ public class AgendaMockData {
 	}
 
 	public Agenda createAgenda(Location location) {
-		UUID uuid = randomUUID();
 		Agenda agenda = Agenda.builder()
-			.agendaKey(uuid)
 			.title("title")
 			.content("content")
 			.deadline(LocalDateTime.now().plusDays(1))
@@ -218,9 +212,7 @@ public class AgendaMockData {
 	}
 
 	public Agenda createAgenda(int curruentTeam) {
-		UUID uuid = randomUUID();
 		Agenda agenda = Agenda.builder()
-			.agendaKey(uuid)
 			.title("title")
 			.content("content")
 			.deadline(LocalDateTime.now().plusDays(1))
@@ -242,9 +234,7 @@ public class AgendaMockData {
 	}
 
 	public Agenda createAgenda(AgendaStatus status) {
-		UUID uuid = randomUUID();
 		Agenda agenda = Agenda.builder()
-			.agendaKey(uuid)
 			.title("title")
 			.content("content")
 			.deadline(LocalDateTime.now().plusDays(1))
