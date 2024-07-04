@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import javax.validation.Valid;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -54,9 +55,9 @@ public class AgendaController {
 		@ApiResponse(responseCode = "400", description = "Agenda 생성 요청 파라미터가 잘못됨")
 	})
 	@PostMapping("/create")
-	public ResponseEntity<UUID> agendaAdd(@Login UserDto user, @RequestBody @Valid AgendaCreateDto agendaCreateDto) {
+	public ResponseEntity<AgendaKeyResponseDto> agendaAdd(@Login UserDto user, @RequestBody @Valid AgendaCreateDto agendaCreateDto) {
 		AgendaKeyResponseDto agendaKey = agendaService.addAgenda(agendaCreateDto, user);
-		return ResponseEntity.ok(agendaKey.getAgendaKey());
+		return ResponseEntity.status(HttpStatus.CREATED).body(agendaKey);
 	}
 
 }

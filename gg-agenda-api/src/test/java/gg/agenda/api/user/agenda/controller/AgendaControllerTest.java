@@ -210,6 +210,7 @@ public class AgendaControllerTest {
 				.agendaEndTime(LocalDateTime.now().plusDays(7))
 				.agendaMinTeam(2).agendaMaxTeam(5)
 				.agendaMinPeople(1).agendaMaxPeople(5)
+				.agendaIsRanking(true).agendaIsOfficial(true)
 				.agendaLocation(Location.SEOUL)
 				.build();
 			String request = objectMapper.writeValueAsString(dto);
@@ -219,7 +220,7 @@ public class AgendaControllerTest {
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType("application/json")
 					.content(request))
-				.andExpect(status().isOk())
+				.andExpect(status().isCreated())
 				.andReturn().getResponse().getContentAsString();
 			AgendaKeyResponseDto agendaKeyResponseDto = objectMapper.readValue(response, AgendaKeyResponseDto.class);
 			Agenda agenda = em.find(Agenda.class, agendaKeyResponseDto.getAgendaKey());
