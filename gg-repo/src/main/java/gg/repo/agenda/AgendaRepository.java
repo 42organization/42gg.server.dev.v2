@@ -12,7 +12,7 @@ import gg.data.agenda.type.AgendaStatus;
 
 public interface AgendaRepository extends JpaRepository<Agenda, Long> {
 	@Query("SELECT a FROM Agenda a WHERE a.agendaKey = :agendaKey")
-	Optional<Agenda> findAgendaByKey(UUID agendaKey);
+	Optional<Agenda> findByAgendaKey(UUID agendaKey);
 
 	@Query("SELECT a FROM Agenda a WHERE a.status = :status")
 	List<Agenda> findAllByStatusIs(AgendaStatus status);

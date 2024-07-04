@@ -11,7 +11,8 @@ import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.type.AgendaTeamStatus;
 
 public interface AgendaTeamRepository extends JpaRepository<AgendaTeam, Long> {
-	@Query("SELECT a FROM AgendaTeam a WHERE a.agenda = :agenda AND a.name = :teamName AND (a.status = :status1 OR a.status = :status2)")
+	@Query("SELECT a FROM AgendaTeam a WHERE a.agenda = :agenda AND a.name = :teamName AND"
+		+ " (a.status = :status1 OR a.status = :status2)")
 	Optional<AgendaTeam> findByAgendaAndTeamNameAndStatus(Agenda agenda, String teamName, AgendaTeamStatus status1,
 		AgendaTeamStatus status2);
 

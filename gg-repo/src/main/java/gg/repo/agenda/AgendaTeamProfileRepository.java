@@ -10,7 +10,8 @@ import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.AgendaTeamProfile;
 
 public interface AgendaTeamProfileRepository extends JpaRepository<AgendaTeamProfile, Long> {
-	@Query("SELECT atp FROM AgendaTeamProfile atp WHERE atp.agendaTeam.agenda = :agenda AND atp.profile = :agendaProfile AND atp.isExist = true")
+	@Query("SELECT atp FROM AgendaTeamProfile atp WHERE atp.agendaTeam.agenda = :agenda "
+		+ "AND atp.profile = :agendaProfile AND atp.isExist = true")
 	Optional<AgendaTeamProfile> findByAgendaAndIsExistTrue(Agenda agenda, AgendaProfile agendaProfile);
 
 }
