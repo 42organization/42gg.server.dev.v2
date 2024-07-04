@@ -1,5 +1,7 @@
 package gg.data.agenda;
 
+import static gg.utils.exception.ErrorCode.*;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -16,6 +18,8 @@ import javax.persistence.UniqueConstraint;
 import gg.data.BaseTimeEntity;
 import gg.data.agenda.type.AgendaStatus;
 import gg.data.agenda.type.Location;
+import gg.utils.exception.custom.ForbiddenException;
+import gg.utils.exception.custom.InvalidParameterException;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,7 +37,7 @@ public class Agenda extends BaseTimeEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "agenda_key", nullable = false, columnDefinition = "BINARY(16)")
+	@Column(name = "agenda_key", nullable = false, unique = true, columnDefinition = "BINARY(16)")
 	private UUID agendaKey;
 
 	@Column(name = "title", nullable = false, columnDefinition = "VARCHAR(50)")
@@ -88,9 +92,10 @@ public class Agenda extends BaseTimeEntity {
 
 	@Builder
 	public Agenda(Long id, UUID agendaKey, String title, String content, LocalDateTime deadline,
-		LocalDateTime startTime, LocalDateTime endTime, int minTeam, int maxTeam, int currentTeam, int minPeople,
-		int maxPeople, String posterUri, String hostIntraId, Location location, AgendaStatus status,
-		boolean isOfficial, boolean isRanking) {
+		LocalDateTime startTime,
+		LocalDateTime endTime, int minTeam, int maxTeam, int currentTeam, int minPeople, int maxPeople,
+		String posterUri, String hostIntraId, Location location, AgendaStatus status, Boolean isOfficial,
+		Boolean isRanking) {
 		this.id = id;
 		this.agendaKey = agendaKey;
 		this.title = title;
@@ -109,5 +114,37 @@ public class Agenda extends BaseTimeEntity {
 		this.status = status;
 		this.isOfficial = isOfficial;
 		this.isRanking = isRanking;
+	}
+
+	public void addTeam(Location location, LocalDateTime now) {
+		mustBeWithinLocation(location);
+		mustStatusOnGoing();
+		mustBeforeDeadline(now);
+		mustHaveCapacity();
+		this.currentTeam++;
+	}
+
+	private void mustBeWithinLocation(Location location) {
+		if (this.location != Location.MIX && this.location != location) {
+			throw new InvalidParameterException(LOCATION_NOT_VALID);
+		}
+	}
+
+	private void mustStatusOnGoing() {
+		if (this.status != AgendaStatus.ON_GOING) {
+			throw new InvalidParameterException(AGENDA_NOT_OPEN);
+		}
+	}
+
+	private void mustBeforeDeadline(LocalDateTime now) {
+		if (this.deadline.isBefore(now)) {
+			throw new InvalidParameterException(AGENDA_NOT_OPEN);
+		}
+	}
+
+	private void mustHaveCapacity() {
+		if (this.currentTeam == this.maxTeam) {
+			throw new ForbiddenException(AGENDA_NO_CAPACITY);
+		}
 	}
 }

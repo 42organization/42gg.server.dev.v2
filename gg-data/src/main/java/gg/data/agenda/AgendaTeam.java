@@ -63,5 +63,22 @@ public class AgendaTeam extends BaseTimeEntity {
 	private int awardPriority;
 
 	@Column(name = "is_private", nullable = false, columnDefinition = "BIT(1)")
-	private boolean isPrivate;
+	private Boolean isPrivate;
+
+	@Builder
+	public AgendaTeam(Agenda agenda, UUID teamKey, String name, String content, String leaderIntraId,
+		AgendaTeamStatus status, Location location, int mateCount, String award, int awardPriority, Boolean isPrivate) {
+		this.agenda = agenda;
+		this.teamKey = teamKey;
+		this.name = name;
+		this.content = content;
+		this.leaderIntraId = leaderIntraId;
+		this.status = status;
+		this.location = location;
+		this.mateCount = mateCount;
+		this.award = award;
+		this.awardPriority = awardPriority;
+		this.isPrivate = isPrivate;
+	}
+
 }

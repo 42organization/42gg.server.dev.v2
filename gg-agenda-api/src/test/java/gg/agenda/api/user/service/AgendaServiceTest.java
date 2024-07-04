@@ -50,14 +50,14 @@ class AgendaServiceTest {
 			// given
 			UUID agendaKey = UUID.randomUUID();
 			Agenda agenda = mock(Agenda.class);
-			when(agendaRepository.findAgendaByKey(agendaKey)).thenReturn(Optional.of(agenda));
+			when(agendaRepository.findByAgendaKey(agendaKey)).thenReturn(Optional.of(agenda));
 			when(agendaAnnouncementRepository.findLatestByAgenda(agenda)).thenReturn(Optional.empty());
 
 			// when
 			agendaService.findAgendaWithLatestAnnouncement(agendaKey);
 
 			// then
-			verify(agendaRepository, times(1)).findAgendaByKey(agendaKey);
+			verify(agendaRepository, times(1)).findByAgendaKey(agendaKey);
 			verify(agendaAnnouncementRepository, times(1)).findLatestByAgenda(agenda);
 		}
 
@@ -67,11 +67,11 @@ class AgendaServiceTest {
 			// given
 			UUID agendaKey = UUID.randomUUID();
 			Agenda agenda = mock(Agenda.class);
-			when(agendaRepository.findAgendaByKey(agendaKey)).thenReturn(Optional.empty());
+			when(agendaRepository.findByAgendaKey(agendaKey)).thenReturn(Optional.empty());
 
 			// expected
 			assertThrows(NotExistException.class, () -> agendaService.findAgendaWithLatestAnnouncement(agendaKey));
-			verify(agendaRepository, times(1)).findAgendaByKey(agendaKey);
+			verify(agendaRepository, times(1)).findByAgendaKey(agendaKey);
 			verify(agendaAnnouncementRepository, never()).findLatestByAgenda(agenda);
 		}
 	}
