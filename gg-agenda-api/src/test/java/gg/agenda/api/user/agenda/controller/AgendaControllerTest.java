@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
@@ -75,7 +76,7 @@ public class AgendaControllerTest {
 
 		@Test
 		@DisplayName("agenda_id에 해당하는 Agenda를 상세 조회합니다.")
-		void test() throws Exception {
+		void getAgendaSuccess() throws Exception {
 			// given
 			Agenda agenda = agendaMockData.createOfficialAgenda();
 			AgendaAnnouncement announcement = agendaMockData.createAgendaAnnouncement(agenda);
@@ -95,7 +96,7 @@ public class AgendaControllerTest {
 
 		@Test
 		@DisplayName("announce가 없는 경우 announcementTitle를 null로 반환합니다.")
-		void test2() throws Exception {
+		void getAgendaWithNoAnnounce() throws Exception {
 			// given
 			Agenda agenda = agendaMockData.createOfficialAgenda();
 
@@ -114,7 +115,7 @@ public class AgendaControllerTest {
 
 		@Test
 		@DisplayName("announce가 여러 개인 경우 가장 최근 작성된 announce를 반환합니다.")
-		void test3() throws Exception {
+		void getAgendaWithLatestAnnounce() throws Exception {
 			// given
 			Agenda agenda = agendaMockData.createOfficialAgenda();
 			AgendaAnnouncement announcement1 = agendaMockData.createAgendaAnnouncement(agenda);
@@ -138,7 +139,7 @@ public class AgendaControllerTest {
 
 		@Test
 		@DisplayName("agenda_key가 잘못된 경우 400를 반환합니다.")
-		void test4() throws Exception {
+		void getAgendaFailedWhenInvalidKey() throws Exception {
 			// given
 			Agenda agenda = agendaMockData.createOfficialAgenda();
 			AgendaAnnouncement announcement = agendaMockData.createAgendaAnnouncement(agenda);
@@ -148,6 +149,19 @@ public class AgendaControllerTest {
 					.header("Authorization", "Bearer " + accessToken)
 					.param("agenda_key", "invalid_key"))
 				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("agenda_key에 해당하는 agenda가 없는 경우 404를 반환합니다.")
+		void getAgendaFailedWhenNoContent() throws Exception {
+			// given
+			UUID invalidKey = UUID.randomUUID();
+
+			// expected
+			mockMvc.perform(get("/agenda")
+					.header("Authorization", "Bearer " + accessToken)
+					.param("agenda_key", invalidKey.toString()))
+				.andExpect(status().isNotFound());
 		}
 	}
 
