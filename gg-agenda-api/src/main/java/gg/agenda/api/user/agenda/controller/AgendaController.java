@@ -1,15 +1,23 @@
 package gg.agenda.api.user.agenda.controller;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import gg.agenda.api.user.agenda.controller.dto.AgendaCreateDto;
+import gg.agenda.api.user.agenda.controller.dto.AgendaKeyResponseDto;
 import gg.agenda.api.user.agenda.controller.dto.AgendaResponseDto;
+import gg.agenda.api.user.agenda.controller.dto.AgendaSimpleResponseDto;
 import gg.agenda.api.user.agenda.service.AgendaService;
+import gg.auth.UserDto;
+import gg.auth.argumentresolver.Login;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -31,4 +39,18 @@ public class AgendaController {
 		AgendaResponseDto agendaDto = agendaService.findAgendaWithLatestAnnouncement(agendaKey);
 		return ResponseEntity.ok(agendaDto);
 	}
+
+	@ApiResponse(responseCode = "200", description = "현재 진행중인 Agenda 목록 조회 성공")
+	@GetMapping("/list")
+	public ResponseEntity<List<AgendaSimpleResponseDto>> agendaListCurrent() {
+		List<AgendaSimpleResponseDto> agendaList = agendaService.findCurrentAgendaList();
+		return ResponseEntity.ok(agendaList);
+	}
+
+	@PostMapping("/create")
+	public ResponseEntity<UUID> agendaAdd(@Login UserDto user, @RequestBody AgendaCreateDto agendaCreateDto) {
+		AgendaKeyResponseDto agendaKey = agendaService.addAgenda(agendaCreateDto, user);
+		return ResponseEntity.ok(agendaKey.getAgendaKey());
+	}
+
 }
