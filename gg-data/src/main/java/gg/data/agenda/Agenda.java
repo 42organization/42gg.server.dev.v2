@@ -28,7 +28,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "agenda", uniqueConstraints = {@UniqueConstraint(name = "uk_agenda_key", columnNames = "agenda_key")})
+@Table(name = "agenda", uniqueConstraints = {
+	@UniqueConstraint(name = "uk_agenda_agenda_key", columnNames = "agenda_key")
+})
 public class Agenda extends BaseTimeEntity {
 
 	@Id

@@ -12,6 +12,6 @@ public class ForbiddenException extends CustomRuntimeException {
 	}
 
 	public ForbiddenException(ErrorCode errorCode) {
-		super(errorCode.getMessage(), errorCode);
+		super(errorCode);
 	}
 }

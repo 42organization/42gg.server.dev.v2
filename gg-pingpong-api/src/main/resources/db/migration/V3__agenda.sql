@@ -21,7 +21,7 @@ CREATE TABLE `agenda`
     `created_at`    DATETIME     NOT NULL,
     `modified_at`   DATETIME     NOT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE KEY `uk_agenda_key` (`agenda_key`)
+    UNIQUE KEY `uk_agenda_agenda_key` (`agenda_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `agenda_team`
@@ -43,7 +43,7 @@ CREATE TABLE `agenda_team`
     PRIMARY KEY (`id`),
     KEY               `fk_agenda_team_agenda_agenda_id` (`agenda_id`),
     CONSTRAINT `fk_agenda_team_agenda_agenda_id` FOREIGN KEY (`agenda_id`) REFERENCES `agenda` (`id`),
-    UNIQUE KEY `uk_team_key` (`team_key`)
+    UNIQUE KEY `uk_agenda_team_team_key` (`team_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `agenda_announcement`
