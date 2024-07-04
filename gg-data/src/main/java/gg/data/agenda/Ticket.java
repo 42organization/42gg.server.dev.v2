@@ -35,5 +35,12 @@ public class Ticket extends BaseTimeEntity {
 
 	@Column(name = "is_approve", nullable = false, columnDefinition = "BIT(1)")
 	private Boolean isApprove;
+
+	@Builder
+	public Ticket(AgendaProfile agendaProfile, Boolean isUsed, Boolean isApprove) {
+		this.agendaProfile = agendaProfile;
+		this.isUsed = isUsed;
+		this.isApprove = isApprove;
+	}
 }
 

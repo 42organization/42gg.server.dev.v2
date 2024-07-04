@@ -1,7 +1,7 @@
 CREATE TABLE `agenda`
 (
     `id`            BIGINT       NOT NULL AUTO_INCREMENT,
-    `agenda_key`           BINARY(16) NOT NULL,
+    `agenda_key`    BINARY(16)   NOT NULL,
     `title`         VARCHAR(50)  NOT NULL,
     `content`       VARCHAR(500) NOT NULL,
     `deadline`      DATETIME     NOT NULL,
@@ -28,7 +28,7 @@ CREATE TABLE `agenda_team`
 (
     `id`              BIGINT       NOT NULL AUTO_INCREMENT,
     `agenda_id`       BIGINT       NOT NULL,
-    `team_key`             BINARY(16) NOT NULL,
+    `team_key`        BINARY(16)   NOT NULL,
     `name`            VARCHAR(30)  NOT NULL,
     `content`         VARCHAR(500) NOT NULL,
     `leader_intra_id` VARCHAR(30)  NOT NULL,

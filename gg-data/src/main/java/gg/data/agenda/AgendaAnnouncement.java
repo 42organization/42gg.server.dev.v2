@@ -33,14 +33,14 @@ public class AgendaAnnouncement extends BaseTimeEntity {
 	private String content;
 
 	@Column(name = "is_show", nullable = false, columnDefinition = "BIT(1)")
-	private boolean isShow;
+	private Boolean isShow;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "agenda_id")
 	private Agenda agenda;
 
 	@Builder
-	public AgendaAnnouncement(Long id, String title, String content, boolean isShow, Agenda agenda) {
+	public AgendaAnnouncement(Long id, String title, String content, Boolean isShow, Agenda agenda) {
 		this.id = id;
 		this.title = title;
 		this.content = content;
