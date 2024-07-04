@@ -125,6 +125,26 @@ public class AgendaControllerTest {
 			assertThat(result.getAnnouncementTitle()).isNotEqualTo(announcement2.getTitle());
 			assertThat(result.getAnnouncementTitle()).isEqualTo(announcement3.getTitle());
 		}
+
+		@Test
+		@DisplayName("agenda_key가 잘못된 경우 400를 반환합니다.")
+		void test4() throws Exception {
+			// given
+			Agenda agenda = agendaMockData.createOfficialAgenda();
+			AgendaAnnouncement announcement = agendaMockData.createAgendaAnnouncement(agenda);
+
+			// when
+			String response = mockMvc.perform(get("/agenda")
+					.header("Authorization", "Bearer " + accessToken)
+					.param("agenda_key", agenda.getAgendaKey().toString()))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+			AgendaResponseDto result = objectMapper.readValue(response, AgendaResponseDto.class);
+
+			// then
+			assertThat(result.getAgendaTitle()).isEqualTo(agenda.getTitle());
+			assertThat(result.getAnnouncementTitle()).isEqualTo(announcement.getTitle());
+		}
 	}
 
 	@Nested

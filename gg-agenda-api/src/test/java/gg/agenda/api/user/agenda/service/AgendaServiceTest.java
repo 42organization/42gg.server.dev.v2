@@ -1,4 +1,4 @@
-package gg.agenda.api.user.service;
+package gg.agenda.api.user.agenda.service;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
