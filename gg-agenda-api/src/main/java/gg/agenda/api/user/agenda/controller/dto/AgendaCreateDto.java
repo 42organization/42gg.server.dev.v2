@@ -10,7 +10,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-import org.mapstruct.AfterMapping;
 import org.mapstruct.BeforeMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -120,11 +119,6 @@ public class AgendaCreateDto {
 		@Mapping(target = "isOfficial", source = "dto.agendaIsOfficial")
 		@Mapping(target = "isRanking", source = "dto.agendaIsRanking")
 		Agenda toEntity(AgendaCreateDto dto, UserDto user);
-
-		@AfterMapping
-		default void assignAgendaKey(AgendaCreateDto dto, UserDto user, @MappingTarget Agenda agenda) {
-			agenda.assignAgendaKey();
-		}
 
 		@BeforeMapping
 		default void mustHaveValidAgendaSchedule(AgendaCreateDto dto, UserDto user, @MappingTarget Agenda agenda) {
