@@ -1,15 +1,14 @@
 package gg.pingpong.api.global.security.info.impl;
 
-import gg.data.agenda.type.Coalition;
-import gg.data.agenda.type.Location;
-import gg.data.user.type.RoleType;
-import gg.pingpong.api.global.security.info.OAuthUserInfo;
-import org.springframework.beans.factory.annotation.Value;
+import static gg.data.agenda.type.Location.*;
 
 import java.util.Map;
 
-import static gg.data.agenda.type.Coalition.OTHER;
-import static gg.data.agenda.type.Location.MIX;
+import org.springframework.beans.factory.annotation.Value;
+
+import gg.data.agenda.type.Location;
+import gg.data.user.type.RoleType;
+import gg.pingpong.api.global.security.info.OAuthUserInfo;
 
 public class KakaoOAuthUserInfo extends OAuthUserInfo {
 	@Value("${info.image.defaultUrl}")
@@ -27,7 +26,7 @@ public class KakaoOAuthUserInfo extends OAuthUserInfo {
 
 	@Override
 	public String getEmail() {
-		Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+		Map<String, Object> kakaoAccount = (Map<String, Object>)attributes.get("kakao_account");
 		if (kakaoAccount.get("email") == null) {
 			return null;
 		}
@@ -36,7 +35,7 @@ public class KakaoOAuthUserInfo extends OAuthUserInfo {
 
 	@Override
 	public String getImageUrl() {
-		Map<String, Object> properties = (Map<String, Object>) attributes.get("properties");
+		Map<String, Object> properties = (Map<String, Object>)attributes.get("properties");
 		return properties.get("profile_image").toString();
 	}
 
@@ -47,12 +46,12 @@ public class KakaoOAuthUserInfo extends OAuthUserInfo {
 
 	@Override
 	public Long getKakaoId() {
-		return (Long) attributes.get("id");
+		return (Long)attributes.get("id");
 	}
 
 	@Override
-	public Coalition getCoalition() {
-		return OTHER;
+	public String getUserId() {
+		return "OTHER";
 	}
 
 	@Override

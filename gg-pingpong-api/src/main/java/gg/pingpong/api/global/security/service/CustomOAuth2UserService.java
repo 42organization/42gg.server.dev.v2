@@ -1,8 +1,15 @@
 package gg.pingpong.api.global.security.service;
 
+import static gg.data.agenda.type.Coalition.*;
+
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -11,8 +18,10 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import gg.data.agenda.AgendaProfile;
+import gg.data.agenda.type.Coalition;
 import gg.data.pingpong.rank.Rank;
 import gg.data.pingpong.rank.Tier;
 import gg.data.pingpong.rank.redis.RankRedis;
@@ -24,6 +33,7 @@ import gg.pingpong.api.global.security.info.OAuthUserInfo;
 import gg.pingpong.api.global.security.info.OAuthUserInfoFactory;
 import gg.pingpong.api.global.security.info.ProviderType;
 import gg.pingpong.api.global.utils.aws.AsyncNewUserImageUploader;
+import gg.pingpong.api.global.utils.external.ApiUtil;
 import gg.repo.agenda.AgendaProfileRepository;
 import gg.repo.rank.RankRepository;
 import gg.repo.rank.TierRepository;
@@ -38,6 +48,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Transactional
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
+	private final ApiUtil apiUtil;
 	private final UserRepository userRepository;
 	private final AsyncNewUserImageUploader asyncNewUserImageUploader;
 	private final RankRepository rankRepository;
@@ -48,6 +59,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
 	@Value("${info.image.defaultUrl}")
 	private String defaultImageUrl;
+	private RestTemplate restTemplate;
 
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -85,7 +97,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 			}
 		}
 		if (agendaProfileRepository.findByUserId(savedUser.getId()).isEmpty()) {
-			createProfile(userInfo, savedUser);
+			String token = userRequest.getAccessToken().getTokenValue();
+			createProfile(userInfo, savedUser, token);
 		}
 		return UserPrincipal.create(savedUser, user.getAttributes());
 	}
@@ -117,14 +130,33 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		return userRepository.saveAndFlush(user);
 	}
 
-	private void createProfile(OAuthUserInfo userInfo, User user) {
+	private void createProfile(OAuthUserInfo userInfo, User user, String accessToken) {
 		AgendaProfile agendaProfile = AgendaProfile.builder()
 			.userId(user.getId())
 			.content("안녕하세요! " + userInfo.getIntraId() + "입니다.")
 			.githubUrl(null)
-			.coalition(userInfo.getCoalition())
+			.coalition(findCoalition(userInfo.getUserId(), accessToken))
 			.location(userInfo.getLocation())
 			.build();
 		agendaProfileRepository.save(agendaProfile);
+	}
+
+	private Coalition findCoalition(String id, String accessToken) {
+		String coalitionUrl = "https://api.intra.42.fr/v2/users/{id}/coalitions";
+		String url = coalitionUrl.replace("{id}", id);
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", "Bearer " + accessToken);
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		// HttpEntity 객체를 생성하여 헤더를 포함한 요청을 보냄
+		List<Map<String, Object>> response = apiUtil.apiCall(url, List.class, headers, HttpMethod.GET);
+
+		if (response != null && !response.isEmpty()) {
+			Map<String, Object> coalition = response.get(0);
+			String coalitionName = (String)coalition.get("name");
+			return Coalition.valueOfCoalition(coalitionName);
+		} else {
+			return OTHER;
+		}
 	}
 }

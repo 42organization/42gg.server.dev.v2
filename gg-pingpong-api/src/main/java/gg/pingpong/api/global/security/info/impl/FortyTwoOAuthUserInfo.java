@@ -1,15 +1,12 @@
 package gg.pingpong.api.global.security.info.impl;
 
-import static gg.data.agenda.type.Coalition.*;
 import static gg.data.agenda.type.Location.*;
 
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.client.RestTemplate;
 
-import gg.data.agenda.type.Coalition;
 import gg.data.agenda.type.Location;
 import gg.data.user.type.RoleType;
 import gg.pingpong.api.global.security.info.OAuthUserInfo;
@@ -18,8 +15,6 @@ public class FortyTwoOAuthUserInfo extends OAuthUserInfo {
 
 	@Value("${info.image.defaultUrl}")
 	private String defaultImageUrl;
-	private final String coalitionUrl = "https://api.intra.42.fr/v2/users/{id}/coalitions";
-	private RestTemplate restTemplate;
 
 	public FortyTwoOAuthUserInfo(Map<String, Object> attributes) {
 		super(attributes);
@@ -56,18 +51,26 @@ public class FortyTwoOAuthUserInfo extends OAuthUserInfo {
 	}
 
 	@Override
-	public Coalition getCoalition() {
+	public String getUserId() {
 		String id = attributes.get("id").toString();
-		String url = coalitionUrl.replace("{id}", id);
-		List<Map<String, Object>> response = restTemplate.getForObject(url, List.class);
-
-		if (response != null && !response.isEmpty()) {
-			Map<String, Object> coalition = response.get(0);
-			String coalitionName = (String)coalition.get("name");
-			return Coalition.valueOfCoalition(coalitionName);
-		} else {
-			return OTHER;
-		}
+		// String url = coalitionUrl.replace("{id}", id);
+		// HttpHeaders headers = new HttpHeaders();
+		// String accessToken =
+		// 	headers.set("Authorization", "Bearer " + accessToken);
+		// headers.setContentType(MediaType.APPLICATION_JSON);
+		//
+		// // HttpEntity 객체를 생성하여 헤더를 포함한 요청을 보냄
+		// List<Map<String, Object>> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers),
+		// 	List.class).getBody();
+		//
+		// if (response != null && !response.isEmpty()) {
+		// 	Map<String, Object> coalition = response.get(0);
+		// 	String coalitionName = (String)coalition.get("name");
+		// 	return Coalition.valueOfCoalition(coalitionName);
+		// } else {
+		// 	return OTHER;
+		// }
+		return id;
 	}
 
 	@Override

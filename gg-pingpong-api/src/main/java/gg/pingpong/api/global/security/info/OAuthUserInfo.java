@@ -1,10 +1,9 @@
 package gg.pingpong.api.global.security.info;
 
-import gg.data.agenda.type.Coalition;
+import java.util.Map;
+
 import gg.data.agenda.type.Location;
 import gg.data.user.type.RoleType;
-
-import java.util.Map;
 
 public abstract class OAuthUserInfo {
 	protected Map<String, Object> attributes;
@@ -27,7 +26,7 @@ public abstract class OAuthUserInfo {
 
 	public abstract Long getKakaoId();
 
-	public abstract Coalition getCoalition();
+	public abstract String getUserId();
 
 	public abstract Location getLocation();
 }
