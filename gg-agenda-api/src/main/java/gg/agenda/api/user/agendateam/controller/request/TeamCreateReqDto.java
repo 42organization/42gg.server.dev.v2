@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaTeam;
+import gg.data.agenda.type.Location;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -24,8 +25,8 @@ public class TeamCreateReqDto {
 			.name(teamCreateReqDto.getTeamName())
 			.content(teamCreateReqDto.getTeamContent())
 			.leaderIntraId(intraId)
-			.status(String.valueOf(OPEN))
-			.location(teamCreateReqDto.getTeamLocation())
+			.status(OPEN)
+			.location(Location.valueOf(teamCreateReqDto.getTeamLocation()))
 			.mateCount(1)
 			.award("award")
 			.awardPriority(1)

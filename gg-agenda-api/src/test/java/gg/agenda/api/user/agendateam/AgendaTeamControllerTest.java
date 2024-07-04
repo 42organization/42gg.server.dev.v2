@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gg.agenda.api.user.AgendaMockData;
+import gg.agenda.api.AgendaMockData;
 import gg.agenda.api.user.agendateam.controller.request.TeamCreateReqDto;
 import gg.agenda.api.user.agendateam.controller.response.TeamCreateResDto;
 import gg.data.agenda.Agenda;

@@ -43,4 +43,13 @@ public class AgendaProfile extends BaseTimeEntity {
 
 	@Column(name = "user_id", nullable = false, columnDefinition = "BIGINT")
 	private Long userId;
+
+	@Builder
+	public AgendaProfile(String content, String githubUrl, Coalition coalition, Location location, Long userId) {
+		this.content = content;
+		this.githubUrl = githubUrl;
+		this.coalition = coalition;
+		this.location = location;
+		this.userId = userId;
+	}
 }
