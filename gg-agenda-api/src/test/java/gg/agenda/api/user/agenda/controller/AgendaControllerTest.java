@@ -223,7 +223,9 @@ public class AgendaControllerTest {
 				.andExpect(status().isCreated())
 				.andReturn().getResponse().getContentAsString();
 			AgendaKeyResponseDto agendaKeyResponseDto = objectMapper.readValue(response, AgendaKeyResponseDto.class);
-			Agenda agenda = em.find(Agenda.class, agendaKeyResponseDto.getAgendaKey());
+			Agenda agenda = em.createQuery("SELECT a FROM Agenda a WHERE a.agendaKey = :agendaKey", Agenda.class)
+				.setParameter("agendaKey", agendaKeyResponseDto.getAgendaKey())
+				.getSingleResult();
 
 			// then
 			assertThat(agenda.getTitle()).isEqualTo(dto.getAgendaTitle());
