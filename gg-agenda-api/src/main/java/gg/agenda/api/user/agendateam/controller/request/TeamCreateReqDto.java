@@ -44,7 +44,7 @@ public class TeamCreateReqDto {
 			.mateCount(1)
 			.award("award")
 			.awardPriority(1)
-			.isPrivate(teamCreateReqDto.isTeamIsPrivate())
+			.isPrivate(teamCreateReqDto.getTeamIsPrivate())
 			.build();
 	}
 }
