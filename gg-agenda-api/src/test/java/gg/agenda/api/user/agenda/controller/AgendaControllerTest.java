@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -17,14 +18,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.agenda.api.AgendaMockData;
+import gg.agenda.api.user.agenda.controller.dto.AgendaCreateDto;
+import gg.agenda.api.user.agenda.controller.dto.AgendaKeyResponseDto;
 import gg.agenda.api.user.agenda.controller.dto.AgendaResponseDto;
 import gg.agenda.api.user.agenda.controller.dto.AgendaSimpleResponseDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaAnnouncement;
 import gg.data.agenda.type.AgendaStatus;
+import gg.data.agenda.type.Location;
 import gg.data.user.User;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
@@ -187,6 +192,41 @@ public class AgendaControllerTest {
 
 			// then
 			assertThat(result.length).isEqualTo(0);
+		}
+	}
+
+	@Nested
+	@DisplayName("Agenda 생성하기")
+	class CreateAgenda {
+
+		@Test
+		@DisplayName("Agenda를 생성합니다.")
+		void CreateAgendaSuccess() throws Exception {
+			// given
+			AgendaCreateDto dto = AgendaCreateDto.builder()
+				.agendaTitle("title").agendaContents("content")
+				.agendaDeadLine(LocalDateTime.now().plusDays(3))
+				.agendaStartTime(LocalDateTime.now().plusDays(5))
+				.agendaEndTime(LocalDateTime.now().plusDays(7))
+				.agendaMinTeam(2).agendaMaxTeam(5)
+				.agendaMinPeople(1).agendaMaxPeople(5)
+				.agendaLocation(Location.SEOUL)
+				.build();
+			String request = objectMapper.writeValueAsString(dto);
+
+			// when
+			String response = mockMvc.perform(post("/agenda/create")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType("application/json")
+					.content(request))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+			AgendaKeyResponseDto agendaKeyResponseDto = objectMapper.readValue(response, AgendaKeyResponseDto.class);
+			Agenda agenda = em.find(Agenda.class, agendaKeyResponseDto.getAgendaKey());
+
+			// then
+			assertThat(agenda.getTitle()).isEqualTo(dto.getAgendaTitle());
+			assertThat(agenda.getContent()).isEqualTo(dto.getAgendaContent());
 		}
 	}
 }

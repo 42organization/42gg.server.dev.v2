@@ -13,7 +13,6 @@ import javax.validation.constraints.NotNull;
 import org.mapstruct.BeforeMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 
 import gg.auth.UserDto;
@@ -35,7 +34,7 @@ public class AgendaCreateDto {
 
 	@NotNull
 	@NotEmpty
-	private String agendaContents;
+	private String agendaContent;
 
 	@NotNull
 	@Future(message = "마감일은 현재 시간 이후여야 합니다.")
@@ -82,7 +81,7 @@ public class AgendaCreateDto {
 		int agendaMinPeople, int agendaMaxPeople, String agendaPoster, Location agendaLocation,
 		Boolean agendaIsRanking, Boolean agendaIsOfficial) {
 		this.agendaTitle = agendaTitle;
-		this.agendaContents = agendaContents;
+		this.agendaContent = agendaContents;
 		this.agendaDeadLine = agendaDeadLine;
 		this.agendaStartTime = agendaStartTime;
 		this.agendaEndTime = agendaEndTime;
@@ -102,7 +101,7 @@ public class AgendaCreateDto {
 
 		@Mapping(target = "id", ignore = true)
 		@Mapping(target = "title", source = "dto.agendaTitle")
-		@Mapping(target = "content", source = "dto.agendaContents")
+		@Mapping(target = "content", source = "dto.agendaContent")
 		@Mapping(target = "deadline", source = "dto.agendaDeadLine")
 		@Mapping(target = "startTime", source = "dto.agendaStartTime")
 		@Mapping(target = "endTime", source = "dto.agendaEndTime")
