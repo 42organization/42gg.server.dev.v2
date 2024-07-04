@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 
 import gg.agenda.api.user.agenda.controller.dto.AgendaCreateDto;
 import gg.agenda.api.user.agenda.controller.dto.AgendaKeyResponseDto;

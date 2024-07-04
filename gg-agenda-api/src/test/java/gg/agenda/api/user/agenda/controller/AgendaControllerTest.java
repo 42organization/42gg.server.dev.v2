@@ -1,4 +1,4 @@
-package gg.agenda.api.user.controller;
+package gg.agenda.api.user.agenda.controller;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
