@@ -1,17 +1,18 @@
 package gg.pingpong.api.global.security.info.impl;
 
-import gg.data.agenda.type.Coalition;
-import gg.data.agenda.type.Location;
-import gg.data.user.type.RoleType;
-import gg.pingpong.api.global.security.info.OAuthUserInfo;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.client.RestTemplate;
+import static gg.data.agenda.type.Coalition.*;
+import static gg.data.agenda.type.Location.*;
 
 import java.util.List;
 import java.util.Map;
 
-import static gg.data.agenda.type.Coalition.OTHER;
-import static gg.data.agenda.type.Location.MIX;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.client.RestTemplate;
+
+import gg.data.agenda.type.Coalition;
+import gg.data.agenda.type.Location;
+import gg.data.user.type.RoleType;
+import gg.pingpong.api.global.security.info.OAuthUserInfo;
 
 public class FortyTwoOAuthUserInfo extends OAuthUserInfo {
 
@@ -34,7 +35,7 @@ public class FortyTwoOAuthUserInfo extends OAuthUserInfo {
 	}
 
 	public String getImageUrl() {
-		Map<String, Object> image = (Map<String, Object>) attributes.get("image");
+		Map<String, Object> image = (Map<String, Object>)attributes.get("image");
 		if (image == null) {
 			return defaultImageUrl;
 		}
@@ -62,8 +63,8 @@ public class FortyTwoOAuthUserInfo extends OAuthUserInfo {
 
 		if (response != null && !response.isEmpty()) {
 			Map<String, Object> coalition = response.get(0);
-			String coalitionName = (String) coalition.get("name");
-			return Coalition.valueOf(coalitionName.toUpperCase());
+			String coalitionName = (String)coalition.get("name");
+			return Coalition.valueOfCoalition(coalitionName);
 		} else {
 			return OTHER;
 		}
@@ -71,11 +72,11 @@ public class FortyTwoOAuthUserInfo extends OAuthUserInfo {
 
 	@Override
 	public Location getLocation() {
-		List<Map<String, Object>> campuses = (List<Map<String, Object>>) attributes.get("campus");
+		List<Map<String, Object>> campuses = (List<Map<String, Object>>)attributes.get("campus");
 		if (campuses != null && !campuses.isEmpty()) {
 			Map<String, Object> campus = campuses.get(0);
-			String campusName = (String) campus.get("city");
-			return Location.valueOf(campusName.toUpperCase());
+			String campusName = (String)campus.get("city");
+			return Location.valueOfLocation(campusName);
 		} else {
 			return MIX;
 		}

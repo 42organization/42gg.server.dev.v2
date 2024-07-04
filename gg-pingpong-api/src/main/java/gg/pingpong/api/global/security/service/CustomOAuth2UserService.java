@@ -1,5 +1,17 @@
 package gg.pingpong.api.global.security.service;
 
+import java.time.LocalDateTime;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import gg.data.agenda.AgendaProfile;
 import gg.data.pingpong.rank.Rank;
 import gg.data.pingpong.rank.Tier;
@@ -21,17 +33,6 @@ import gg.repo.user.UserRepository;
 import gg.utils.RedisKeyManager;
 import gg.utils.exception.tier.TierNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.InternalAuthenticationServiceException;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
-import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -83,7 +84,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 				asyncNewUserImageUploader.upload(userInfo.getIntraId(), userInfo.getImageUrl());
 			}
 		}
-		i
+		if (agendaProfileRepository.findByUserId(savedUser.getId()).isEmpty()) {
+			createProfile(userInfo, savedUser);
+		}
 		return UserPrincipal.create(savedUser, user.getAttributes());
 	}
 
@@ -111,14 +114,17 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 			.totalExp(0)
 			.eMail(userInfo.getEmail())
 			.build();
+		return userRepository.saveAndFlush(user);
+	}
+
+	private void createProfile(OAuthUserInfo userInfo, User user) {
 		AgendaProfile agendaProfile = AgendaProfile.builder()
 			.userId(user.getId())
-			.content("안녕하세요! " + user.getIntraId() + "입니다.")
+			.content("안녕하세요! " + userInfo.getIntraId() + "입니다.")
 			.githubUrl(null)
 			.coalition(userInfo.getCoalition())
 			.location(userInfo.getLocation())
 			.build();
 		agendaProfileRepository.save(agendaProfile);
-		return userRepository.saveAndFlush(user);
 	}
 }
