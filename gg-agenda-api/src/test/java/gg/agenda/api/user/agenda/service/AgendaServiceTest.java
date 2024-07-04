@@ -16,9 +16,12 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 
+import gg.agenda.api.user.agenda.controller.dto.AgendaCreateDto;
+import gg.agenda.api.user.agenda.controller.dto.AgendaKeyResponseDto;
 import gg.agenda.api.user.agenda.controller.dto.AgendaSimpleResponseDto;
-import gg.agenda.api.user.agenda.service.AgendaService;
+import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.type.AgendaStatus;
 import gg.repo.agenda.AgendaAnnouncementRepository;
@@ -119,6 +122,35 @@ class AgendaServiceTest {
 
 			// then
 			verify(agendaRepository, times(1)).findAllByStatusIs(any());
+		}
+	}
+
+	@Nested
+	@DisplayName("Agenda 생성")
+	class CreateAgenda {
+
+		@Test
+		@DisplayName("Agenda 생성 성공")
+		void createAgendaSuccess() {
+			// given
+			UserDto user = UserDto.builder().intraId("intraId").build();
+			AgendaCreateDto agendaCreateDto = AgendaCreateDto.builder()
+				.agendaDeadLine(LocalDateTime.now().plusDays(5))
+				.agendaStartTime(LocalDateTime.now().plusDays(8))
+				.agendaEndTime(LocalDateTime.now().plusDays(10))
+				.agendaMinTeam(2).agendaMaxTeam(5)
+				.agendaMinPeople(1).agendaMaxPeople(5)
+				.build();
+			Agenda agenda = Agenda.builder().build();
+			when(agendaRepository.save(any(Agenda.class))).thenReturn(agenda);
+
+			// when
+			AgendaKeyResponseDto agendaKeyResponseDto = agendaService.addAgenda(agendaCreateDto, user);
+
+			// then
+			verify(agendaRepository, times(1)).save(any(Agenda.class));
+			assertThat(agendaKeyResponseDto).isNotNull();
+			assertThat(agendaKeyResponseDto.getAgendaKey()).isEqualTo(agenda.getAgendaKey());
 		}
 	}
 }
