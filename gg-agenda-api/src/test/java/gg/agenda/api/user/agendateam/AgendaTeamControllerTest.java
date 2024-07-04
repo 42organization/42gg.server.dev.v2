@@ -55,7 +55,7 @@ public class AgendaTeamControllerTest {
 
 	@Nested
 	@DisplayName("팀 생성 테스트")
-	class addTeamTest {
+	class AddTeamTest {
 		@BeforeEach
 		void beforeEach() {
 			user = testDataUtils.createNewUser();
@@ -72,7 +72,8 @@ public class AgendaTeamControllerTest {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(SEOUL);
 			Ticket ticket = agendaMockData.createTicket(agendaProfile);
-			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "SEOUL", "teamContent");
+			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "SEOUL",
+				"teamContent");
 			String content = objectMapper.writeValueAsString(req);
 			// when
 			String res = mockMvc.perform(
@@ -99,7 +100,8 @@ public class AgendaTeamControllerTest {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(GYEONGSAN);
 			Ticket ticket = agendaMockData.createTicket(anotherAgendaProfile);
-			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "GYEONGSAN", "teamContent");
+			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "GYEONGSAN",
+				"teamContent");
 			String content = objectMapper.writeValueAsString(req);
 			// when
 			String res = mockMvc.perform(
@@ -126,7 +128,8 @@ public class AgendaTeamControllerTest {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(MIX);
 			Ticket ticket = agendaMockData.createTicket(agendaProfile);
-			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "SEOUL", "teamContent");
+			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "SEOUL",
+				"teamContent");
 			String content = objectMapper.writeValueAsString(req);
 			// when
 			String res = mockMvc.perform(
@@ -153,7 +156,8 @@ public class AgendaTeamControllerTest {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(MIX);
 			Ticket ticket = agendaMockData.createTicket(anotherAgendaProfile);
-			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "GYEONGSAN", "teamContent");
+			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "GYEONGSAN",
+				"teamContent");
 			String content = objectMapper.writeValueAsString(req);
 			// when
 			String res = mockMvc.perform(
@@ -180,7 +184,8 @@ public class AgendaTeamControllerTest {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(MIX);
 			Ticket ticket = agendaMockData.createTicket(agendaProfile);
-			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "MIX", "teamContent");
+			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "MIX",
+				"teamContent");
 			String content = objectMapper.writeValueAsString(req);
 			// when
 			String res = mockMvc.perform(
@@ -207,7 +212,8 @@ public class AgendaTeamControllerTest {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(MIX);
 			Ticket ticket = agendaMockData.createTicket(anotherAgendaProfile);
-			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "MIX", "teamContent");
+			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "MIX",
+				"teamContent");
 			String content = objectMapper.writeValueAsString(req);
 			// when
 			String res = mockMvc.perform(
@@ -234,7 +240,8 @@ public class AgendaTeamControllerTest {
 			//given
 			UUID noAgendaKey = UUID.randomUUID();
 			Ticket ticket = agendaMockData.createTicket(agendaProfile);
-			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "SEOUL", "teamContent");
+			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "SEOUL",
+				"teamContent");
 			String content = objectMapper.writeValueAsString(req);
 			// when && then
 			String res = mockMvc.perform(
@@ -253,7 +260,8 @@ public class AgendaTeamControllerTest {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(SEOUL);
 			Ticket ticket = agendaMockData.createTicket(anotherAgendaProfile);
-			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "GYEONGSAN", "teamContent");
+			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "GYEONGSAN",
+				"teamContent");
 			String content = objectMapper.writeValueAsString(req);
 			// when && then
 			String res = mockMvc.perform(
@@ -272,7 +280,8 @@ public class AgendaTeamControllerTest {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(AgendaStatus.CONFIRM);
 			Ticket ticket = agendaMockData.createTicket(agendaProfile);
-			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "SEOUL", "teamContent");
+			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "SEOUL",
+				"teamContent");
 			String content = objectMapper.writeValueAsString(req);
 			// when && then
 			String res = mockMvc.perform(
@@ -291,7 +300,8 @@ public class AgendaTeamControllerTest {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(5);
 			Ticket ticket = agendaMockData.createTicket(agendaProfile);
-			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "SEOUL", "teamContent");
+			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "SEOUL",
+				"teamContent");
 			String content = objectMapper.writeValueAsString(req);
 			// when && then
 			String res = mockMvc.perform(
@@ -310,7 +320,8 @@ public class AgendaTeamControllerTest {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(SEOUL);
 			Ticket ticket = agendaMockData.createTicket(anotherAgendaProfile);
-			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "GYEONGSAN", "teamContent");
+			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "GYEONGSAN",
+				"teamContent");
 			String content = objectMapper.writeValueAsString(req);
 			// when && then
 			String res = mockMvc.perform(
@@ -329,7 +340,8 @@ public class AgendaTeamControllerTest {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(user.getIntraId());
 			Ticket ticket = agendaMockData.createTicket(agendaProfile);
-			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "SEOUL", "teamContent");
+			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "SEOUL",
+				"teamContent");
 			String content = objectMapper.writeValueAsString(req);
 			// when && then
 			String res = mockMvc.perform(
@@ -348,7 +360,8 @@ public class AgendaTeamControllerTest {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(SEOUL);
 			Ticket ticket = agendaMockData.createTicket(anotherAgendaProfile);
-			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "SEOUL", "teamContent");
+			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "SEOUL",
+				"teamContent");
 			String content = objectMapper.writeValueAsString(req);
 			// when && then
 			String res = mockMvc.perform(
