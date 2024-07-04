@@ -26,7 +26,6 @@ class AgendaSimpleResponseDtoTest {
 		void createAgendaSimpleResponseDtoSuccess(boolean value) {
 			// when
 			Agenda agenda = Agenda.builder()
-				.agendaKey(UUID.randomUUID())
 				.isOfficial(value)
 				.build();
 

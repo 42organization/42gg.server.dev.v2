@@ -42,7 +42,6 @@ public class AgendaMockData {
 
 	public Agenda createOfficialAgenda() {
 		Agenda agenda = Agenda.builder()
-			.agendaKey(UUID.randomUUID())
 			.title("title " + UUID.randomUUID())
 			.content("content " + UUID.randomUUID())
 			.deadline(LocalDateTime.now().plusDays(3))
@@ -65,7 +64,6 @@ public class AgendaMockData {
 
 	public Agenda createNonOfficialAgenda() {
 		Agenda agenda = Agenda.builder()
-			.agendaKey(UUID.randomUUID())
 			.title("title " + UUID.randomUUID())
 			.content("content " + UUID.randomUUID())
 			.deadline(LocalDateTime.now().plusDays(3))
@@ -88,7 +86,6 @@ public class AgendaMockData {
 
 	public List<Agenda> createOfficialAgendaList(int size, AgendaStatus status) {
 		List<Agenda> agendas = IntStream.range(0, size).mapToObj(i -> Agenda.builder()
-				.agendaKey(UUID.randomUUID())
 				.title("title " + UUID.randomUUID())
 				.content("content " + UUID.randomUUID())
 				.deadline(LocalDateTime.now().plusDays(i + 3))
@@ -113,7 +110,6 @@ public class AgendaMockData {
 
 	public List<Agenda> createNonOfficialAgendaList(int size, AgendaStatus status) {
 		List<Agenda> agendas = IntStream.range(0, size).mapToObj(i -> Agenda.builder()
-				.agendaKey(UUID.randomUUID())
 				.title("title " + UUID.randomUUID())
 				.content("content " + UUID.randomUUID())
 				.deadline(LocalDateTime.now().plusDays(i + 3))

@@ -87,11 +87,9 @@ class AgendaServiceTest {
 			int officialSize = 3;
 			int nonOfficialSize = 6;
 			List<Agenda> agendas = new ArrayList<>();
-			IntStream.range(0, officialSize).forEach(i -> agendas.add(Agenda.builder()
-				.agendaKey(UUID.randomUUID()).isOfficial(true)
+			IntStream.range(0, officialSize).forEach(i -> agendas.add(Agenda.builder().isOfficial(true)
 				.deadline(LocalDateTime.now().plusDays(i + 3)).build()));
-			IntStream.range(0, nonOfficialSize).forEach(i -> agendas.add(Agenda.builder()
-				.agendaKey(UUID.randomUUID()).isOfficial(false)
+			IntStream.range(0, nonOfficialSize).forEach(i -> agendas.add(Agenda.builder().isOfficial(false)
 				.deadline(LocalDateTime.now().plusDays(i + 3)).build()));
 			when(agendaRepository.findAllByStatusIs(AgendaStatus.ON_GOING)).thenReturn(agendas);
 

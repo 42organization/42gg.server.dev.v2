@@ -101,10 +101,9 @@ public class AgendaCreateDto {
 		AgendaCreateDto.MapStruct INSTANCE = Mappers.getMapper(AgendaCreateDto.MapStruct.class);
 
 		@Mapping(target = "id", ignore = true)
-		@Mapping(target = "agendaKey", ignore = true)
 		@Mapping(target = "title", source = "dto.agendaTitle")
-		@Mapping(target = "contents", source = "dto.agendaContents")
-		@Mapping(target = "deadLine", source = "dto.agendaDeadLine")
+		@Mapping(target = "content", source = "dto.agendaContents")
+		@Mapping(target = "deadline", source = "dto.agendaDeadLine")
 		@Mapping(target = "startTime", source = "dto.agendaStartTime")
 		@Mapping(target = "endTime", source = "dto.agendaEndTime")
 		@Mapping(target = "minTeam", source = "dto.agendaMinTeam")
