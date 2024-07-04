@@ -1,7 +1,5 @@
 package gg.data.agenda;
 
-import static gg.utils.exception.ErrorCode.*;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -18,8 +16,6 @@ import javax.persistence.UniqueConstraint;
 import gg.data.BaseTimeEntity;
 import gg.data.agenda.type.AgendaStatus;
 import gg.data.agenda.type.Location;
-import gg.utils.exception.custom.ForbiddenException;
-import gg.utils.exception.custom.InvalidParameterException;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -85,10 +81,10 @@ public class Agenda extends BaseTimeEntity {
 	private AgendaStatus status;
 
 	@Column(name = "is_official", nullable = false, columnDefinition = "BIT(1)")
-	private boolean isOfficial;
+	private Boolean isOfficial;
 
 	@Column(name = "is_ranking", nullable = false, columnDefinition = "BIT(1)")
-	private boolean isRanking;
+	private Boolean isRanking;
 
 	@Builder
 	public Agenda(Long id, UUID agendaKey, String title, String content, LocalDateTime deadline,

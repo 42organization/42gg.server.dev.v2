@@ -1,7 +1,10 @@
 package gg.agenda.api;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.persistence.EntityManager;
 
@@ -25,7 +28,7 @@ public class AgendaMockData {
 
 	private final AgendaAnnouncementRepository agendaAnnouncementRepository;
 
-	public Agenda createAgenda() {
+	public Agenda createOfficialAgenda() {
 		Agenda agenda = Agenda.builder()
 			.agendaKey(UUID.randomUUID())
 			.title("title " + UUID.randomUUID())
@@ -46,6 +49,79 @@ public class AgendaMockData {
 			.isRanking(true)
 			.build();
 		return agendaRepository.save(agenda);
+	}
+
+	public Agenda createNonOfficialAgenda() {
+		Agenda agenda = Agenda.builder()
+			.agendaKey(UUID.randomUUID())
+			.title("title " + UUID.randomUUID())
+			.content("content " + UUID.randomUUID())
+			.deadline(LocalDateTime.now().plusDays(3))
+			.startTime(LocalDateTime.now().plusDays(5))
+			.endTime(LocalDateTime.now().plusDays(6))
+			.minTeam(2)
+			.maxTeam(5)
+			.currentTeam(0)
+			.minPeople(1)
+			.maxPeople(5)
+			.status(AgendaStatus.ON_GOING)
+			.posterUri("posterUri")
+			.hostIntraId("hostIntraId")
+			.location(Location.MIX)
+			.isOfficial(true)
+			.isRanking(true)
+			.build();
+		return agendaRepository.save(agenda);
+	}
+
+	public List<Agenda> createOfficialAgendaList(int size, AgendaStatus status) {
+		List<Agenda> agendas = IntStream.range(0, size).mapToObj(i -> Agenda.builder()
+				.agendaKey(UUID.randomUUID())
+				.title("title " + UUID.randomUUID())
+				.content("content " + UUID.randomUUID())
+				.deadline(LocalDateTime.now().plusDays(i + 3))
+				.startTime(LocalDateTime.now().plusDays(i + 5))
+				.endTime(LocalDateTime.now().plusDays(i + 6))
+				.minTeam(2)
+				.maxTeam(5)
+				.currentTeam(0)
+				.minPeople(1)
+				.maxPeople(5)
+				.status(status)
+				.posterUri("posterUri")
+				.hostIntraId("hostIntraId")
+				.location(Location.MIX)
+				.isOfficial(true)	// true
+				.isRanking(true)
+				.build()
+			)
+			.collect(Collectors.toList());
+		return agendaRepository.saveAll(agendas);
+	}
+
+	public List<Agenda> createNonOfficialAgendaList(int size, AgendaStatus status) {
+		List<Agenda> agendas = IntStream.range(0, size).mapToObj(i -> Agenda.builder()
+				.agendaKey(UUID.randomUUID())
+				.title("title " + UUID.randomUUID())
+				.content("content " + UUID.randomUUID())
+				.deadline(LocalDateTime.now().plusDays(i + 3))
+				.startTime(LocalDateTime.now().plusDays(i + 5))
+				.endTime(LocalDateTime.now().plusDays(i + 6))
+				.minTeam(2)
+				.maxTeam(5)
+				.currentTeam(0)
+				.minPeople(1)
+				.maxPeople(5)
+				.status(status)
+				.posterUri("posterUri")
+				.hostIntraId("hostIntraId")
+				.location(Location.MIX)
+				.isOfficial(false)	// false
+				.isRanking(true)
+				.build()
+			)
+			.collect(Collectors.toList());
+		return agendaRepository.saveAll(agendas);
 	}
 
 	public AgendaAnnouncement createAgendaAnnouncement(Agenda agenda) {
