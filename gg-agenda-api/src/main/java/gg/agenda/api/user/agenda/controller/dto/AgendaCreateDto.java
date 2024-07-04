@@ -120,7 +120,7 @@ public class AgendaCreateDto {
 		Agenda toEntity(AgendaCreateDto dto, UserDto user);
 
 		@BeforeMapping
-		default void mustHaveValidAgendaSchedule(AgendaCreateDto dto, UserDto user, @MappingTarget Agenda agenda) {
+		default void mustHaveValidAgendaSchedule(AgendaCreateDto dto, UserDto user) {
 			if (!dto.getAgendaDeadLine().isBefore(dto.getAgendaStartTime())) {
 				throw new InvalidParameterException(AGENDA_INVALID_SCHEDULE);
 			}
@@ -130,17 +130,15 @@ public class AgendaCreateDto {
 			if (!dto.getAgendaStartTime().isBefore(dto.getAgendaEndTime())) {
 				throw new InvalidParameterException(AGENDA_INVALID_SCHEDULE);
 			}
-
 		}
 
 		@BeforeMapping
-		default void mustHaveValidParam(AgendaCreateDto dto, UserDto user, @MappingTarget Agenda agenda) {
+		default void mustHaveValidParam(AgendaCreateDto dto, UserDto user) {
 			if (dto.getAgendaMinTeam() > dto.getAgendaMaxTeam()) {
 				throw new InvalidParameterException(AGENDA_INVALID_PARAM);
 			}
 			if (dto.getAgendaMinPeople() > dto.getAgendaMaxPeople()) {
 				throw new InvalidParameterException(AGENDA_INVALID_PARAM);
-
 			}
 		}
 	}
