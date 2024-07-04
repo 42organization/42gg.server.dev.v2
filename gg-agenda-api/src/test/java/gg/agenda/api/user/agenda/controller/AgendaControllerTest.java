@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
@@ -31,6 +32,7 @@ import gg.data.agenda.AgendaAnnouncement;
 import gg.data.agenda.type.AgendaStatus;
 import gg.data.agenda.type.Location;
 import gg.data.user.User;
+import gg.repo.agenda.AgendaRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import lombok.extern.slf4j.Slf4j;
@@ -55,6 +57,9 @@ public class AgendaControllerTest {
 
 	@Autowired
 	EntityManager em;
+
+	@Autowired
+	AgendaRepository agendaRepository;
 
 	private String accessToken;
 
@@ -201,7 +206,7 @@ public class AgendaControllerTest {
 
 		@Test
 		@DisplayName("Agenda를 생성합니다.")
-		void CreateAgendaSuccess() throws Exception {
+		void createAgendaSuccess() throws Exception {
 			// given
 			AgendaCreateDto dto = AgendaCreateDto.builder()
 				.agendaTitle("title").agendaContents("content")
@@ -222,14 +227,13 @@ public class AgendaControllerTest {
 					.content(request))
 				.andExpect(status().isCreated())
 				.andReturn().getResponse().getContentAsString();
-			AgendaKeyResponseDto agendaKeyResponseDto = objectMapper.readValue(response, AgendaKeyResponseDto.class);
-			Agenda agenda = em.createQuery("SELECT a FROM Agenda a WHERE a.agendaKey = :agendaKey", Agenda.class)
-				.setParameter("agendaKey", agendaKeyResponseDto.getAgendaKey())
-				.getSingleResult();
+			AgendaKeyResponseDto result = objectMapper.readValue(response, AgendaKeyResponseDto.class);
+			Optional<Agenda> agenda = agendaRepository.findByAgendaKey(result.getAgendaKey());
 
 			// then
-			assertThat(agenda.getTitle()).isEqualTo(dto.getAgendaTitle());
-			assertThat(agenda.getContent()).isEqualTo(dto.getAgendaContent());
+			assertThat(agenda.isPresent()).isTrue();
+			assertThat(agenda.get().getTitle()).isEqualTo(dto.getAgendaTitle());
+			assertThat(agenda.get().getContent()).isEqualTo(dto.getAgendaContent());
 		}
 	}
 }
