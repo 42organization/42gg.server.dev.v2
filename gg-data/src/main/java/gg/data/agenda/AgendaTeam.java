@@ -33,8 +33,8 @@ public class AgendaTeam extends BaseTimeEntity {
 	@JoinColumn(name = "agenda_id", nullable = false)
 	private Agenda agenda;
 
-	@Column(name = "`key`", nullable = false, unique = true, columnDefinition = "BINARY(16)")
-	private UUID key;
+	@Column(name = "`team_key`", nullable = false, unique = true, columnDefinition = "BINARY(16)")
+	private UUID teamKey;
 
 	@Column(name = "name", nullable = false, length = 30)
 	private String name;
@@ -63,14 +63,14 @@ public class AgendaTeam extends BaseTimeEntity {
 	private int awardPriority;
 
 	@Column(name = "is_private", nullable = false, columnDefinition = "BIT(1)")
-	private boolean isPrivate;
+	private Boolean isPrivate;
 
 	@Builder
-	public AgendaTeam(Long id, Agenda agenda, UUID key, String name, String content, String leaderIntraId,
-		String status, String location, int mateCount, String award, int awardPriority, boolean isPrivate) {
+	public AgendaTeam(Long id, Agenda agenda, UUID teamKey, String name, String content, String leaderIntraId,
+		String status, String location, int mateCount, String award, int awardPriority, Boolean isPrivate) {
 		this.id = id;
 		this.agenda = agenda;
-		this.key = key;
+		this.teamKey = teamKey;
 		this.name = name;
 		this.content = content;
 		this.leaderIntraId = leaderIntraId;
@@ -81,4 +81,5 @@ public class AgendaTeam extends BaseTimeEntity {
 		this.awardPriority = awardPriority;
 		this.isPrivate = isPrivate;
 	}
+
 }

@@ -32,10 +32,10 @@ public class AgendaTeamProfile extends BaseTimeEntity {
 	private AgendaTeam agendaTeam;
 
 	@Column(name = "is_exist", nullable = false, columnDefinition = "BIT(1)")
-	private boolean isExist;
+	private Boolean isExist;
 
 	@Builder
-	public AgendaTeamProfile(Long id, AgendaProfile profile, AgendaTeam agendaTeam, boolean isExist) {
+	public AgendaTeamProfile(Long id, AgendaProfile profile, AgendaTeam agendaTeam, Boolean isExist) {
 		this.id = id;
 		this.profile = profile;
 		this.agendaTeam = agendaTeam;

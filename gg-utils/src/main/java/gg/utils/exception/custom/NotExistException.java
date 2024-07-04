@@ -12,4 +12,8 @@ public class NotExistException extends CustomRuntimeException {
 	public NotExistException(String message) {
 		super(message, ErrorCode.NOT_FOUND);
 	}
+
+	public NotExistException(ErrorCode errorCode) {
+		super(errorCode);
+	}
 }
