@@ -107,6 +107,7 @@ subprojects {
             '*Application*',
             "**/config/*",
             "**/security/*",
+            "**/external/*",
             "**/dto/*",
             "**/aws/*",
             "*NotiMailSender*",

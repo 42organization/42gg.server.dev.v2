@@ -52,25 +52,7 @@ public class FortyTwoOAuthUserInfo extends OAuthUserInfo {
 
 	@Override
 	public String getUserId() {
-		String id = attributes.get("id").toString();
-		// String url = coalitionUrl.replace("{id}", id);
-		// HttpHeaders headers = new HttpHeaders();
-		// String accessToken =
-		// 	headers.set("Authorization", "Bearer " + accessToken);
-		// headers.setContentType(MediaType.APPLICATION_JSON);
-		//
-		// // HttpEntity 객체를 생성하여 헤더를 포함한 요청을 보냄
-		// List<Map<String, Object>> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers),
-		// 	List.class).getBody();
-		//
-		// if (response != null && !response.isEmpty()) {
-		// 	Map<String, Object> coalition = response.get(0);
-		// 	String coalitionName = (String)coalition.get("name");
-		// 	return Coalition.valueOfCoalition(coalitionName);
-		// } else {
-		// 	return OTHER;
-		// }
-		return id;
+		return attributes.get("id").toString();
 	}
 
 	@Override
