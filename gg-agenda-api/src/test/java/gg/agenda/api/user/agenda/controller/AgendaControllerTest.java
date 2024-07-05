@@ -16,6 +16,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
@@ -227,11 +229,8 @@ public class AgendaControllerTest {
 				.agendaDeadLine(LocalDateTime.now().plusDays(3))
 				.agendaStartTime(LocalDateTime.now().plusDays(5))
 				.agendaEndTime(LocalDateTime.now().plusDays(7))
-				.agendaMinTeam(2).agendaMaxTeam(5)
-				.agendaMinPeople(1).agendaMaxPeople(5)
-				.agendaIsRanking(true).agendaIsOfficial(true)
-				.agendaLocation(Location.SEOUL)
-				.build();
+				.agendaMinTeam(2).agendaMaxTeam(5).agendaMinPeople(1).agendaMaxPeople(5)
+				.agendaIsRanking(true).agendaIsOfficial(true).agendaLocation(Location.SEOUL).build();
 			String request = objectMapper.writeValueAsString(dto);
 
 			// when
@@ -248,6 +247,155 @@ public class AgendaControllerTest {
 			assertThat(agenda.isPresent()).isTrue();
 			assertThat(agenda.get().getTitle()).isEqualTo(dto.getAgendaTitle());
 			assertThat(agenda.get().getContent()).isEqualTo(dto.getAgendaContent());
+		}
+
+		@Test
+		@DisplayName("deadline이 startTime보다 미래인 경우 400을 반환합니다.")
+		void createAgendaFailedWhenDeadlineIsAfterStartTime() throws Exception {
+			// given
+			AgendaCreateDto dto = AgendaCreateDto.builder()
+				.agendaTitle("title").agendaContents("content")
+				.agendaDeadLine(LocalDateTime.now().plusDays(6))
+				.agendaStartTime(LocalDateTime.now().plusDays(5))
+				.agendaEndTime(LocalDateTime.now().plusDays(7))
+				.agendaMinTeam(2).agendaMaxTeam(5).agendaMinPeople(1).agendaMaxPeople(5)
+				.agendaIsRanking(true).agendaIsOfficial(true).agendaLocation(Location.SEOUL).build();
+			String request = objectMapper.writeValueAsString(dto);
+
+			// expected
+			mockMvc.perform(post("/agenda/create")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType("application/json")
+					.content(request))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("deadline이 endTime보다 미래인 경우 400을 반환합니다.")
+		void createAgendaFailedWhenDeadlineIsAfterEndTime() throws Exception {
+			// given
+			AgendaCreateDto dto = AgendaCreateDto.builder()
+				.agendaTitle("title").agendaContents("content")
+				.agendaDeadLine(LocalDateTime.now().plusDays(3))
+				.agendaStartTime(LocalDateTime.now().plusDays(5))
+				.agendaEndTime(LocalDateTime.now().plusDays(4))
+				.agendaMinTeam(2).agendaMaxTeam(5).agendaMinPeople(1).agendaMaxPeople(5)
+				.agendaIsRanking(true).agendaIsOfficial(true).agendaLocation(Location.SEOUL).build();
+			String request = objectMapper.writeValueAsString(dto);
+
+			// expected
+			mockMvc.perform(post("/agenda/create")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType("application/json")
+					.content(request))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("startTime이 endTime보다 미래인 경우 400을 반환합니다.")
+		void createAgendaFailedWhenStartTimeIsAfterEndTime() throws Exception {
+			// given
+			AgendaCreateDto dto = AgendaCreateDto.builder()
+				.agendaTitle("title").agendaContents("content")
+				.agendaDeadLine(LocalDateTime.now().plusDays(3))
+				.agendaStartTime(LocalDateTime.now().plusDays(7))
+				.agendaEndTime(LocalDateTime.now().plusDays(5))
+				.agendaMinTeam(2).agendaMaxTeam(5).agendaMinPeople(1).agendaMaxPeople(5)
+				.agendaIsRanking(true).agendaIsOfficial(true).agendaLocation(Location.SEOUL).build();
+			String request = objectMapper.writeValueAsString(dto);
+
+			// expected
+			mockMvc.perform(post("/agenda/create")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType("application/json")
+					.content(request))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("min team이 max team보다 큰 경우 400을 반환합니다.")
+		void createAgendaFailedWhenMinTeamGreaterThanMaxTeam() throws Exception {
+			// given
+			AgendaCreateDto dto = AgendaCreateDto.builder()
+				.agendaTitle("title").agendaContents("content")
+				.agendaDeadLine(LocalDateTime.now().plusDays(3))
+				.agendaStartTime(LocalDateTime.now().plusDays(5))
+				.agendaEndTime(LocalDateTime.now().plusDays(7))
+				.agendaMinTeam(7).agendaMaxTeam(5).agendaMinPeople(1).agendaMaxPeople(5)
+				.agendaIsRanking(true).agendaIsOfficial(true).agendaLocation(Location.SEOUL).build();
+			String request = objectMapper.writeValueAsString(dto);
+
+			// expected
+			mockMvc.perform(post("/agenda/create")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType("application/json")
+					.content(request))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("min people이 max people보다 큰 경우 400을 반환합니다.")
+		void createAgendaFailedWhenMinPeopleGreaterThanMaxPeople() throws Exception {
+			// given
+			AgendaCreateDto dto = AgendaCreateDto.builder()
+				.agendaTitle("title").agendaContents("content")
+				.agendaDeadLine(LocalDateTime.now().plusDays(3))
+				.agendaStartTime(LocalDateTime.now().plusDays(5))
+				.agendaEndTime(LocalDateTime.now().plusDays(7))
+				.agendaMinTeam(2).agendaMaxTeam(5).agendaMinPeople(6).agendaMaxPeople(5)
+				.agendaIsRanking(true).agendaIsOfficial(true).agendaLocation(Location.SEOUL).build();
+			String request = objectMapper.writeValueAsString(dto);
+
+			// expected
+			mockMvc.perform(post("/agenda/create")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType("application/json")
+					.content(request))
+				.andExpect(status().isBadRequest());
+		}
+
+		@ParameterizedTest
+		@ValueSource(ints = {1, 0, -1})
+		@DisplayName("min team이 1 이하인 경우 400을 반환합니다.")
+		void createAgendaFailedWhenNegativeMinTeam(int value) throws Exception {
+			// given
+			AgendaCreateDto dto = AgendaCreateDto.builder()
+				.agendaTitle("title").agendaContents("content")
+				.agendaDeadLine(LocalDateTime.now().plusDays(3))
+				.agendaStartTime(LocalDateTime.now().plusDays(5))
+				.agendaEndTime(LocalDateTime.now().plusDays(7))
+				.agendaMinTeam(value).agendaMaxTeam(5).agendaMinPeople(1).agendaMaxPeople(5)
+				.agendaIsRanking(true).agendaIsOfficial(true).agendaLocation(Location.SEOUL).build();
+			String request = objectMapper.writeValueAsString(dto);
+
+			// expected
+			mockMvc.perform(post("/agenda/create")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType("application/json")
+					.content(request))
+				.andExpect(status().isBadRequest());
+		}
+
+		@ParameterizedTest
+		@ValueSource(ints = {0, -1})
+		@DisplayName("min people이 0 이하인 경우 400을 반환합니다.")
+		void createAgendaFailedWhenNegativeMinPeople(int value) throws Exception {
+			// given
+			AgendaCreateDto dto = AgendaCreateDto.builder()
+				.agendaTitle("title").agendaContents("content")
+				.agendaDeadLine(LocalDateTime.now().plusDays(3))
+				.agendaStartTime(LocalDateTime.now().plusDays(5))
+				.agendaEndTime(LocalDateTime.now().plusDays(7))
+				.agendaMinTeam(2).agendaMaxTeam(5).agendaMinPeople(value).agendaMaxPeople(5)
+				.agendaIsRanking(true).agendaIsOfficial(true).agendaLocation(Location.SEOUL).build();
+			String request = objectMapper.writeValueAsString(dto);
+
+			// expected
+			mockMvc.perform(post("/agenda/create")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType("application/json")
+					.content(request))
+				.andExpect(status().isBadRequest());
 		}
 	}
 }
