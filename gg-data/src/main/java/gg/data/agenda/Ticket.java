@@ -42,5 +42,9 @@ public class Ticket extends BaseTimeEntity {
 		this.isUsed = isUsed;
 		this.isApprove = isApprove;
 	}
+
+	public void useTicket() {
+		this.isUsed = true;
+	}
 }
 
