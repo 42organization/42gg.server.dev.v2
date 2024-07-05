@@ -59,6 +59,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
 	@Value("${info.image.defaultUrl}")
 	private String defaultImageUrl;
+	@Value("https://api.intra.42.fr/v2/users/{id}/coalitions")
+	private String coalitionUrl;
+
 	private RestTemplate restTemplate;
 
 	@Override
@@ -142,7 +145,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 	}
 
 	private Coalition findCoalition(String id, String accessToken) {
-		String coalitionUrl = "https://api.intra.42.fr/v2/users/{id}/coalitions";
 		String url = coalitionUrl.replace("{id}", id);
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Authorization", "Bearer " + accessToken);
