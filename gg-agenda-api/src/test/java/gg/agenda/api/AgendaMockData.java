@@ -1,6 +1,7 @@
 package gg.agenda.api;
 
 import static gg.data.agenda.type.AgendaStatus.*;
+import static gg.data.agenda.type.AgendaTeamStatus.*;
 import static gg.data.agenda.type.Coalition.*;
 import static gg.data.agenda.type.Location.*;
 import static java.util.UUID.*;
@@ -18,6 +19,8 @@ import org.springframework.stereotype.Component;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaAnnouncement;
 import gg.data.agenda.AgendaProfile;
+import gg.data.agenda.AgendaTeam;
+import gg.data.agenda.AgendaTeamProfile;
 import gg.data.agenda.Ticket;
 import gg.data.agenda.type.AgendaStatus;
 import gg.data.agenda.type.Location;
@@ -26,6 +29,7 @@ import gg.repo.agenda.AgendaAnnouncementRepository;
 import gg.repo.agenda.AgendaProfileRepository;
 import gg.repo.agenda.AgendaRepository;
 import gg.repo.agenda.AgendaTeamProfileRepository;
+import gg.repo.agenda.AgendaTeamRepository;
 import gg.repo.agenda.TicketRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -36,6 +40,7 @@ public class AgendaMockData {
 	private final EntityManager em;
 	private final TicketRepository ticketRepository;
 	private final AgendaRepository agendaRepository;
+	private final AgendaTeamRepository agendaTeamRepository;
 	private final AgendaProfileRepository agendaProfileRepository;
 	private final AgendaTeamProfileRepository agendaTeamProfileRepository;
 	private final AgendaAnnouncementRepository agendaAnnouncementRepository;
@@ -287,5 +292,48 @@ public class AgendaMockData {
 			.isUsed(false)
 			.build();
 		return ticketRepository.save(ticket);
+	}
+
+	public AgendaTeam createAgendaTeam(Agenda agenda) {
+		AgendaTeam agendaTeam = AgendaTeam.builder()
+			.agenda(agenda)
+			.teamKey(randomUUID())
+			.name("name")
+			.content("content")
+			.leaderIntraId("leaderIntraId")
+			.status(OPEN)
+			.location(SEOUL)
+			.mateCount(3)
+			.award("award")
+			.awardPriority(1)
+			.isPrivate(false)
+			.build();
+		return agendaTeamRepository.save(agendaTeam);
+	}
+
+	public AgendaTeam createAgendaTeam(Agenda agenda, User user) {
+		AgendaTeam agendaTeam = AgendaTeam.builder()
+			.agenda(agenda)
+			.teamKey(randomUUID())
+			.name("name")
+			.content("content")
+			.leaderIntraId(user.getIntraId())
+			.status(OPEN)
+			.location(SEOUL)
+			.mateCount(3)
+			.award("award")
+			.awardPriority(1)
+			.isPrivate(false)
+			.build();
+		return agendaTeamRepository.save(agendaTeam);
+	}
+
+	public AgendaTeamProfile createAgendaTeamProfile(AgendaTeam agendaTeam, AgendaProfile agendaProfile) {
+		AgendaTeamProfile agendaTeamProfile = AgendaTeamProfile.builder()
+			.agendaTeam(agendaTeam)
+			.profile(agendaProfile)
+			.isExist(true)
+			.build();
+		return agendaTeamProfileRepository.save(agendaTeamProfile);
 	}
 }
