@@ -17,7 +17,6 @@ import gg.utils.exception.custom.NotExistException;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class AgendaProfileFindService {
 
