@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -16,4 +19,6 @@ public interface AgendaRepository extends JpaRepository<Agenda, Long> {
 
 	@Query("SELECT a FROM Agenda a WHERE a.status = :status")
 	List<Agenda> findAllByStatusIs(AgendaStatus status);
+
+	Page<Agenda> findAllByStatusIs(Pageable pageable, AgendaStatus status);
 }

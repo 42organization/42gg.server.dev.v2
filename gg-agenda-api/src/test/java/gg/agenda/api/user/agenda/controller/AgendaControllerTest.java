@@ -20,6 +20,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -38,6 +39,7 @@ import gg.data.user.User;
 import gg.repo.agenda.AgendaRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
+import gg.utils.dto.PageRequestDto;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -396,6 +398,163 @@ public class AgendaControllerTest {
 					.contentType("application/json")
 					.content(request))
 				.andExpect(status().isBadRequest());
+		}
+	}
+
+	@Nested
+	@DisplayName("Agenda 지난 목록 조회")
+	class GetAgendaListHistory {
+
+		@ParameterizedTest
+		@ValueSource(ints = {1, 2, 3, 4})
+		@DisplayName("지난 Agenda 목록을 조회합니다.")
+		void getAgendaListHistorySuccess(int page) throws Exception {
+			// given
+			int totalCount = 35;
+			int size = 10;
+			List<Agenda> agendaHistory = agendaMockData.createAgendaHistory(totalCount);
+			PageRequestDto pageRequestDto = new PageRequestDto(page, size);
+			String req = objectMapper.writeValueAsString(pageRequestDto);
+
+			// when
+			String response = mockMvc.perform(get("/agenda/history")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(req))
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+			AgendaSimpleResponseDto[] result = objectMapper.readValue(response, AgendaSimpleResponseDto[].class);
+
+			// then
+			assertThat(result.length).isEqualTo(size * page < totalCount ? size : totalCount % size);
+			for (int i = 0; i < result.length; i++) {
+				assertThat(result[i].getAgendaTitle()).isEqualTo(agendaHistory.get(size * (page - 1) + i).getTitle());
+				if (i == 0) {
+					continue;
+				}
+				assertThat(result[i].getAgendaStartTime()).isBefore(result[i - 1].getAgendaStartTime());
+			}
+		}
+
+		@Test
+		@DisplayName("지난 Agenda가 없는 경우 빈 리스트를 반환합니다.")
+		void getAgendaListHistoryWithNoContent() throws Exception {
+			// given
+			int page = 1;
+			int size = 10;
+			PageRequestDto pageRequestDto = new PageRequestDto(page, size);
+			String req = objectMapper.writeValueAsString(pageRequestDto);
+
+			// when
+			String response = mockMvc.perform(get("/agenda/history")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(req))
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+			AgendaSimpleResponseDto[] result = objectMapper.readValue(response, AgendaSimpleResponseDto[].class);
+
+			// then
+			assertThat(result.length).isEqualTo(0);
+		}
+
+		@ParameterizedTest
+		@ValueSource(ints = {0, -1})
+		@DisplayName("page가 1보다 작은 경우 400을 반환합니다.")
+		void getAgendaListHistoryWithInvalidPage(int page) throws Exception {
+			// given
+			int size = 10;
+			PageRequestDto pageRequestDto = new PageRequestDto(page, size);
+			String req = objectMapper.writeValueAsString(pageRequestDto);
+
+			// expected
+			mockMvc.perform(get("/agenda/history")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(req))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("page가 null인 경우 400을 반환합니다.")
+		void getAgendaListHistoryWithoutPage() throws Exception {
+			// given
+			int size = 10;
+			PageRequestDto pageRequestDto = new PageRequestDto(null, size);
+			String req = objectMapper.writeValueAsString(pageRequestDto);
+
+			// expected
+			mockMvc.perform(get("/agenda/history")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(req))
+				.andExpect(status().isBadRequest());
+		}
+
+		@ParameterizedTest
+		@ValueSource(ints = {5, 6, 7, 8})
+		@DisplayName("page가 실제 페이지 수보다 큰 경우 빈 리스트를 반환합니다.")
+		void getAgendaListHistoryWithExcessPage(int page) throws Exception {
+			// given
+			int totalCount = 35;
+			int size = 10;
+			List<Agenda> agendaHistory = agendaMockData.createAgendaHistory(totalCount);
+			PageRequestDto pageRequestDto = new PageRequestDto(page, size);
+			String req = objectMapper.writeValueAsString(pageRequestDto);
+
+			// when
+			String response = mockMvc.perform(get("/agenda/history")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(req))
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+			AgendaSimpleResponseDto[] result = objectMapper.readValue(response, AgendaSimpleResponseDto[].class);
+
+			// then
+			assertThat(result.length).isEqualTo(0);
+		}
+
+		@ParameterizedTest
+		@ValueSource(ints = {0, -1, 31})
+		@DisplayName("size가 1 미만, 30 초과인 경우 400을 반환합니다.")
+		void getAgendaListHistoryWithInvalidSize(int size) throws Exception {
+			// given
+			int page = 1;
+			PageRequestDto pageRequestDto = new PageRequestDto(page, size);
+			String req = objectMapper.writeValueAsString(pageRequestDto);
+
+			// expected
+			mockMvc.perform(get("/agenda/history")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(req))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("size가 null인 경우 size=20으로 조회합니다.")
+		void getAgendaListHistoryWithoutSize() throws Exception {
+			// given
+			int page = 1;
+			List<Agenda> agendaHistory = agendaMockData.createAgendaHistory(30);
+			PageRequestDto pageRequestDto = new PageRequestDto(page, null);
+			String req = objectMapper.writeValueAsString(pageRequestDto);
+
+			// when
+			String response = mockMvc.perform(get("/agenda/history")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(req))
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+			AgendaSimpleResponseDto[] result = objectMapper.readValue(response, AgendaSimpleResponseDto[].class);
+
+			// then
+			assertThat(result.length).isEqualTo(20);
+			for (int i = 0; i < result.length; i++) {
+				assertThat(result[i].getAgendaTitle()).isEqualTo(agendaHistory.get(i).getTitle());
+				if (i == 0) {
+					continue;
+				}
+				assertThat(result[i].getAgendaStartTime()).isBefore(result[i - 1].getAgendaStartTime());
+			}
 		}
 	}
 }

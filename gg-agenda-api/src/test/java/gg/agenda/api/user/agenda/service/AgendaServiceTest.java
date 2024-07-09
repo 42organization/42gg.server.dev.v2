@@ -16,6 +16,11 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import gg.agenda.api.user.agenda.controller.dto.AgendaCreateDto;
 import gg.agenda.api.user.agenda.controller.dto.AgendaKeyResponseDto;
@@ -150,6 +155,40 @@ class AgendaServiceTest {
 			verify(agendaRepository, times(1)).save(any(Agenda.class));
 			assertThat(agendaKeyResponseDto).isNotNull();
 			assertThat(agendaKeyResponseDto.getAgendaKey()).isEqualTo(agenda.getAgendaKey());
+		}
+	}
+
+	@Nested
+	@DisplayName("지난 Agenda 조회")
+	class GetAgendaListHistory {
+
+		@Test
+		@DisplayName("지난 Agenda 조회 성공")
+		void getAgendaListHistorySuccess() {
+			// given
+			int page = 1;
+			int size = 10;
+			Pageable pageable = PageRequest.of(page - 1, size, Sort.by("startTime").descending());
+			List<Agenda> agendas = new ArrayList<>();
+			IntStream.range(0, size * 2).forEach(i -> agendas.add(Agenda.builder()
+				.startTime(LocalDateTime.now().minusDays(i))
+				.build()
+			));
+			Page<Agenda> agendaPage = new PageImpl<>(agendas.subList(0, 10), pageable, size);
+			when(agendaRepository.findAllByStatusIs(any(Pageable.class), eq(AgendaStatus.CONFIRM)))
+				.thenReturn(agendaPage);
+
+			// when
+			List<AgendaSimpleResponseDto> result = agendaService.findHistoryAgendaList(pageable);
+
+			// then
+			verify(agendaRepository, times(1))
+				.findAllByStatusIs(pageable, AgendaStatus.CONFIRM);
+			assertThat(result.size()).isEqualTo(size);
+			for (int i = 1; i < result.size(); i++) {
+				assertThat(result.get(i).getAgendaStartTime())
+					.isBefore(result.get(i - 1).getAgendaStartTime());
+			}
 		}
 	}
 }

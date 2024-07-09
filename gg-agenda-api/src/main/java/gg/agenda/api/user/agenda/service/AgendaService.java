@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +23,7 @@ import gg.data.agenda.AgendaAnnouncement;
 import gg.data.agenda.type.AgendaStatus;
 import gg.repo.agenda.AgendaAnnouncementRepository;
 import gg.repo.agenda.AgendaRepository;
+import gg.utils.dto.PageRequestDto;
 import gg.utils.exception.custom.NotExistException;
 import lombok.RequiredArgsConstructor;
 
@@ -54,5 +58,12 @@ public class AgendaService {
 		Agenda newAgenda = AgendaCreateDto.MapStruct.INSTANCE.toEntity(agendaCreateDto, user);
 		Agenda savedAgenda = agendaRepository.save(newAgenda);
 		return AgendaKeyResponseDto.builder().agendaKey(savedAgenda.getAgendaKey()).build();
+	}
+
+	@Transactional(readOnly = true)
+	public List<AgendaSimpleResponseDto> findHistoryAgendaList(Pageable pageable) {
+		return agendaRepository.findAllByStatusIs(pageable, AgendaStatus.CONFIRM).getContent().stream()
+			.map(AgendaSimpleResponseDto.MapStruct.INSTANCE::toDto)
+			.collect(Collectors.toList());
 	}
 }

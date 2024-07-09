@@ -1,6 +1,7 @@
 package gg.agenda.api;
 
 import static gg.data.agenda.type.AgendaStatus.*;
+import static gg.data.agenda.type.AgendaStatus.CONFIRM;
 import static gg.data.agenda.type.AgendaTeamStatus.*;
 import static gg.data.agenda.type.Coalition.*;
 import static gg.data.agenda.type.Location.*;
@@ -148,6 +149,30 @@ public class AgendaMockData {
 		em.flush();
 		em.clear();
 		return announcement;
+	}
+
+	public List<Agenda> createAgendaHistory(int size) {
+		List<Agenda> agendas = IntStream.range(0, size).mapToObj(i -> Agenda.builder()
+				.title("title " + UUID.randomUUID())
+				.content("content " + UUID.randomUUID())
+				.deadline(LocalDateTime.now().minusDays(i + 6))
+				.startTime(LocalDateTime.now().minusDays(i + 4))
+				.endTime(LocalDateTime.now().minusDays(i + 2))
+				.minTeam(2)
+				.maxTeam(5)
+				.currentTeam(0)
+				.minPeople(1)
+				.maxPeople(5)
+				.status(CONFIRM)
+				.posterUri("posterUri")
+				.hostIntraId("hostIntraId")
+				.location(Location.MIX)
+				.isOfficial(true)
+				.isRanking(true)
+				.build()
+			)
+			.collect(Collectors.toList());
+		return agendaRepository.saveAll(agendas);
 	}
 
 	public Agenda createAgenda() {
