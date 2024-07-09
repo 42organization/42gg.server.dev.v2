@@ -15,6 +15,15 @@ import io.swagger.v3.oas.models.servers.Server;
 public class SwaggerConfig {
 
 	@Bean
+	public GroupedOpenApi agendaGroup() {
+		return GroupedOpenApi.builder()
+			.group("agenda")
+			.pathsToMatch("/agenda/**")
+			.packagesToScan("gg.agenda.api.user")
+			.build();
+	}
+
+	@Bean
 	public GroupedOpenApi partyGroup() {
 		return GroupedOpenApi.builder()
 			.group("party")
