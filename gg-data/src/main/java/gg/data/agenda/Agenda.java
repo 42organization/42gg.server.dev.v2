@@ -91,13 +91,12 @@ public class Agenda extends BaseTimeEntity {
 	private Boolean isRanking;
 
 	@Builder
-	public Agenda(Long id, UUID agendaKey, String title, String content, LocalDateTime deadline,
-		LocalDateTime startTime,
-		LocalDateTime endTime, int minTeam, int maxTeam, int currentTeam, int minPeople, int maxPeople,
-		String posterUri, String hostIntraId, Location location, AgendaStatus status, Boolean isOfficial,
-		Boolean isRanking) {
+	public Agenda(Long id, String title, String content, LocalDateTime deadline,
+		LocalDateTime startTime, LocalDateTime endTime, int minTeam, int maxTeam, int currentTeam,
+		int minPeople, int maxPeople, String posterUri, String hostIntraId, Location location,
+		AgendaStatus status, Boolean isOfficial, Boolean isRanking) {
 		this.id = id;
-		this.agendaKey = agendaKey;
+		this.agendaKey = UUID.randomUUID();
 		this.title = title;
 		this.content = content;
 		this.deadline = deadline;

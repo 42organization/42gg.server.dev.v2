@@ -1,4 +1,4 @@
-package gg.agenda.api.user.controller.dto;
+package gg.agenda.api.user.agenda.controller.dto;
 
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 
@@ -26,7 +26,6 @@ class AgendaSimpleResponseDtoTest {
 		void createAgendaSimpleResponseDtoSuccess(boolean value) {
 			// when
 			Agenda agenda = Agenda.builder()
-				.agendaKey(UUID.randomUUID())
 				.isOfficial(value)
 				.build();
 

@@ -42,7 +42,6 @@ public class AgendaMockData {
 
 	public Agenda createOfficialAgenda() {
 		Agenda agenda = Agenda.builder()
-			.agendaKey(UUID.randomUUID())
 			.title("title " + UUID.randomUUID())
 			.content("content " + UUID.randomUUID())
 			.deadline(LocalDateTime.now().plusDays(3))
@@ -65,7 +64,6 @@ public class AgendaMockData {
 
 	public Agenda createNonOfficialAgenda() {
 		Agenda agenda = Agenda.builder()
-			.agendaKey(UUID.randomUUID())
 			.title("title " + UUID.randomUUID())
 			.content("content " + UUID.randomUUID())
 			.deadline(LocalDateTime.now().plusDays(3))
@@ -88,7 +86,6 @@ public class AgendaMockData {
 
 	public List<Agenda> createOfficialAgendaList(int size, AgendaStatus status) {
 		List<Agenda> agendas = IntStream.range(0, size).mapToObj(i -> Agenda.builder()
-				.agendaKey(UUID.randomUUID())
 				.title("title " + UUID.randomUUID())
 				.content("content " + UUID.randomUUID())
 				.deadline(LocalDateTime.now().plusDays(i + 3))
@@ -113,7 +110,6 @@ public class AgendaMockData {
 
 	public List<Agenda> createNonOfficialAgendaList(int size, AgendaStatus status) {
 		List<Agenda> agendas = IntStream.range(0, size).mapToObj(i -> Agenda.builder()
-				.agendaKey(UUID.randomUUID())
 				.title("title " + UUID.randomUUID())
 				.content("content " + UUID.randomUUID())
 				.deadline(LocalDateTime.now().plusDays(i + 3))
@@ -150,9 +146,7 @@ public class AgendaMockData {
 	}
 
 	public Agenda createAgenda() {
-		UUID uuid = randomUUID();
 		Agenda agenda = Agenda.builder()
-			.agendaKey(uuid)
 			.title("title")
 			.content("content")
 			.deadline(LocalDateTime.now().plusDays(1))
@@ -174,9 +168,7 @@ public class AgendaMockData {
 	}
 
 	public Agenda createAgenda(String intraId) {
-		UUID uuid = randomUUID();
 		Agenda agenda = Agenda.builder()
-			.agendaKey(uuid)
 			.title("title")
 			.content("content")
 			.deadline(LocalDateTime.now().plusDays(1))
@@ -198,9 +190,7 @@ public class AgendaMockData {
 	}
 
 	public Agenda createAgenda(Location location) {
-		UUID uuid = randomUUID();
 		Agenda agenda = Agenda.builder()
-			.agendaKey(uuid)
 			.title("title")
 			.content("content")
 			.deadline(LocalDateTime.now().plusDays(1))
@@ -222,9 +212,7 @@ public class AgendaMockData {
 	}
 
 	public Agenda createAgenda(int curruentTeam) {
-		UUID uuid = randomUUID();
 		Agenda agenda = Agenda.builder()
-			.agendaKey(uuid)
 			.title("title")
 			.content("content")
 			.deadline(LocalDateTime.now().plusDays(1))
@@ -246,9 +234,7 @@ public class AgendaMockData {
 	}
 
 	public Agenda createAgenda(AgendaStatus status) {
-		UUID uuid = randomUUID();
 		Agenda agenda = Agenda.builder()
-			.agendaKey(uuid)
 			.title("title")
 			.content("content")
 			.deadline(LocalDateTime.now().plusDays(1))

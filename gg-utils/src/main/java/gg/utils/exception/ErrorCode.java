@@ -194,12 +194,14 @@ public enum ErrorCode {
 	// agenda
 	AGENDA_NOT_FOUND(404, "AG", "해당 일정이 존재하지 않습니다."),
 	AGENDA_NOT_OPEN(400, "AG", "마감된 일정에는 팀을 생성할 수 없습니다."),
+	AGENDA_NO_CAPACITY(403, "AG", "해당 일정에 참여할 수 있는 팀이 꽉 찼습니다."),
+	AGENDA_INVALID_SCHEDULE(400, "AG", "유효하지 않은 일정입니다."),
+	AGENDA_INVALID_PARAM(400, "AG", "유효하지 않은 파라미터입니다."),
 	HOST_FORBIDDEN(403, "AG", "개최자는 팀을 생성할 수 없습니다."),
 	LOCATION_NOT_VALID(400, "AG", "유효하지 않은 지역입니다."),
 	TEAM_FORBIDDEN(403, "AG", "일정에는 한 팀으로만 참여할 수 있습니다."),
 	TEAM_NAME_EXIST(409, "AG", "이미 존재하는 팀 이름입니다."),
-	TICKET_NOT_EXIST(403, "AG", "보유한 티켓이 부족합니다."),
-	AGENDA_NO_CAPACITY(403, "AG", "해당 일정에 참여할 수 있는 팀이 꽉 찼습니다.");
+	TICKET_NOT_EXIST(403, "AG", "보유한 티켓이 부족합니다.");
 
 	private final int status;
 	private final String errCode;
