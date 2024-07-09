@@ -32,19 +32,14 @@ public class AgendaProfileFindService {
 	 */
 	@Transactional(readOnly = true)
 	public AgendaProfileDetailsResDto getAgendaProfileDetails(@Login UserDto user) {
-		// UserDto를 User 엔티티로 변환
 		User loginUser = userRepository.getById(user.getId());
 
-		// 유저의 ID로 AgendaProfile을 조회
 		AgendaProfile agendaProfile = agendaProfileRepository.findByUserId(loginUser.getId())
 			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
 
-		// 임시로 지정된 티켓 수를 가져오는 메서드
 		int ticketCount = ticketRepository.findByAgendaProfileIdAndIsUsedFalseAndIsApproveTrue(agendaProfile.getId())
 			.size();
 
-		// AgendaProfileDetailsResDto 객체를 생성하여 반환
 		return new AgendaProfileDetailsResDto(loginUser, agendaProfile, ticketCount);
 	}
-
 }

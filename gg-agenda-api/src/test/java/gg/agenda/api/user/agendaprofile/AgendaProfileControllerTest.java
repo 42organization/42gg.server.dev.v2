@@ -22,8 +22,6 @@ import gg.agenda.api.user.agendaprofile.controller.response.AgendaProfileDetails
 import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.Ticket;
 import gg.data.user.User;
-import gg.repo.agenda.AgendaProfileRepository;
-import gg.repo.agenda.TicketRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 
@@ -39,15 +37,8 @@ public class AgendaProfileControllerTest {
 	private TestDataUtils testDataUtils;
 	@Autowired
 	private AgendaMockData agendaMockData;
-	@Autowired
-	private AgendaProfileRepository agendaProfileRepository;
-	@Autowired
-	private TicketRepository ticketRepository;
 	User user;
-	User anotherUser;
 	String accessToken;
-	String anotherAccessToken;
-	AgendaProfile agendaProfile;
 
 	@Nested
 	@DisplayName("agenda profile 상세 조회")
@@ -57,8 +48,6 @@ public class AgendaProfileControllerTest {
 		void beforeEach() {
 			user = testDataUtils.createNewUser();
 			accessToken = testDataUtils.getLoginAccessTokenFromUser(user);
-			anotherUser = testDataUtils.createNewUser();
-			anotherAccessToken = testDataUtils.getLoginAccessTokenFromUser(anotherUser);
 		}
 
 		@Test
