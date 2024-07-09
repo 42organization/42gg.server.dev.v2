@@ -2,6 +2,7 @@ package gg.agenda.api.user.agenda.service;
 
 import static gg.utils.exception.ErrorCode.*;
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -65,5 +66,12 @@ public class AgendaService {
 		return agendaRepository.findAllByStatusIs(pageable, AgendaStatus.CONFIRM).getContent().stream()
 			.map(AgendaSimpleResponseDto.MapStruct.INSTANCE::toDto)
 			.collect(Collectors.toList());
+	}
+
+	@Transactional
+	public void confirmAgenda(UUID agendaKey) {
+		Agenda agenda = agendaRepository.findByAgendaKey(agendaKey)
+			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
+		agenda.confirm(LocalDateTime.now());
 	}
 }
