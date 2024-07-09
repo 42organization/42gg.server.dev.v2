@@ -202,7 +202,6 @@ public enum ErrorCode {
 	TEAM_FORBIDDEN(403, "AG", "일정에는 한 팀으로만 참여할 수 있습니다."),
 	TEAM_NAME_EXIST(409, "AG", "이미 존재하는 팀 이름입니다."),
 	TICKET_NOT_EXIST(403, "AG", "보유한 티켓이 부족합니다."),
-	AGENDA_NO_CAPACITY(403, "AG", "해당 일정에 참여할 수 있는 팀이 꽉 찼습니다."),
 	AGENDA_PROFILE_NOT_FOUND(404, "AG", "프로필이 존재하지 않습니다.");
 
 	private final int status;
