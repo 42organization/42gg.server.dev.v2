@@ -1,5 +1,6 @@
 package gg.repo.agenda;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -7,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaProfile;
+import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.AgendaTeamProfile;
 
 public interface AgendaTeamProfileRepository extends JpaRepository<AgendaTeamProfile, Long> {
@@ -14,4 +16,6 @@ public interface AgendaTeamProfileRepository extends JpaRepository<AgendaTeamPro
 		+ "AND atp.profile = :agendaProfile AND atp.isExist = true")
 	Optional<AgendaTeamProfile> findByAgendaAndIsExistTrue(Agenda agenda, AgendaProfile agendaProfile);
 
+	@Query("SELECT atp FROM AgendaTeamProfile atp WHERE atp.agendaTeam = :agendaTeam AND atp.isExist = true")
+	List<AgendaTeamProfile> findByAgendaTeamAndIsExistTrue(AgendaTeam agendaTeam);
 }
