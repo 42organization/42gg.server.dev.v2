@@ -21,13 +21,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.agenda.api.AgendaMockData;
 import gg.agenda.api.user.agendateam.controller.request.TeamCreateReqDto;
+import gg.agenda.api.user.agendateam.controller.request.TeamDetailsReqDto;
 import gg.agenda.api.user.agendateam.controller.response.TeamCreateResDto;
+import gg.agenda.api.user.agendateam.controller.response.TeamDetailsResDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.AgendaTeamProfile;
 import gg.data.agenda.Ticket;
 import gg.data.agenda.type.AgendaStatus;
+import gg.data.agenda.type.AgendaTeamStatus;
 import gg.data.user.User;
 import gg.repo.agenda.AgendaTeamRepository;
 import gg.utils.TestDataUtils;
@@ -415,6 +418,147 @@ public class AgendaTeamControllerTest {
 						.content(content)
 						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isConflict())
+				.andReturn().getResponse().getContentAsString();
+		}
+	}
+
+	@Nested
+	@DisplayName("팀 상세 정보 조회 테스트")
+	class agendaTeamDetails {
+		@BeforeEach
+		void beforeEach() {
+			seoulUser = testDataUtils.createNewUser();
+			seoulUserAccessToken = testDataUtils.getLoginAccessTokenFromUser(seoulUser);
+			seoulUserAgendaProfile = agendaMockData.createAgendaProfile(seoulUser, SEOUL);
+			gyeongsanUser = testDataUtils.createNewUser();
+			gyeongsanUserAccessToken = testDataUtils.getLoginAccessTokenFromUser(gyeongsanUser);
+			gyeongsanUserAgendaProfile = agendaMockData.createAgendaProfile(gyeongsanUser, GYEONGSAN);
+		}
+
+		@Test
+		@DisplayName("200 팀 상세 정보 조회 성공")
+		public void teamDetailsGetSuccess() throws Exception {
+			//given
+			Agenda agenda = agendaMockData.createAgenda(MIX);
+			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser, MIX);
+			agendaMockData.createAgendaTeamProfile(team, seoulUserAgendaProfile);
+			agendaMockData.createAgendaTeamProfile(team, gyeongsanUserAgendaProfile);
+			TeamDetailsReqDto req = new TeamDetailsReqDto(team.getTeamKey());
+			String content = objectMapper.writeValueAsString(req);
+			// when
+			String res = mockMvc.perform(
+					get("/agenda/team")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+			TeamDetailsResDto result = objectMapper.readValue(res, TeamDetailsResDto.class);
+			// then
+			assertThat(result.getTeamName()).isEqualTo(team.getName());
+			assertThat(result.getTeamLeaderIntraId()).isEqualTo(seoulUser.getIntraId());
+			assertThat(result.getTeamStatus()).isEqualTo(team.getStatus());
+			assertThat(result.getTeamLocation()).isEqualTo(team.getLocation());
+			assertThat(result.getTeamContent()).isEqualTo(team.getContent());
+			assertThat(result.getTeamMates().get(0).getIntraId()).isEqualTo(seoulUser.getIntraId());
+			assertThat(result.getTeamMates().get(0).getCoalition()).isEqualTo(seoulUserAgendaProfile.getCoalition());
+			assertThat(result.getTeamMates().get(1).getIntraId()).isEqualTo(gyeongsanUser.getIntraId());
+			assertThat(result.getTeamMates().get(1).getCoalition()).isEqualTo(
+				gyeongsanUserAgendaProfile.getCoalition());
+		}
+
+		@Test
+		@DisplayName("404 agenda가 없음으로 인한 팀 상세 정보 조회 실패")
+		public void teamDetailsGetFailByNoAgenda() throws Exception {
+			//given
+			TeamDetailsReqDto req = new TeamDetailsReqDto(UUID.randomUUID());
+			String content = objectMapper.writeValueAsString(req);
+			// when && then
+			String res = mockMvc.perform(
+					get("/agenda/team")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.param("agenda_key", UUID.randomUUID().toString())
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound())
+				.andReturn().getResponse().getContentAsString();
+		}
+
+		@Test
+		@DisplayName("404 team이 없음으로 인한 팀 상세 정보 조회 실패")
+		public void teamDetailsGetFailByNoTeam() throws Exception {
+			//given
+			Agenda agenda = agendaMockData.createAgenda(MIX);
+			TeamDetailsReqDto req = new TeamDetailsReqDto(UUID.randomUUID());
+			String content = objectMapper.writeValueAsString(req);
+			// when && then
+			String res = mockMvc.perform(
+					get("/agenda/team")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound())
+				.andReturn().getResponse().getContentAsString();
+		}
+
+		@Test
+		@DisplayName("403 조회 불가능한 team으로 인한 팀 상세 정보 조회 실패")
+		public void teamDetailsGetFailByConfirmTeam() throws Exception {
+			//given
+			Agenda agenda = agendaMockData.createAgenda(AgendaStatus.CONFIRM);
+			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser, MIX, AgendaTeamStatus.CONFIRM);
+			TeamDetailsReqDto req = new TeamDetailsReqDto(team.getTeamKey());
+			String content = objectMapper.writeValueAsString(req);
+			// when && then
+			String res = mockMvc.perform(
+					get("/agenda/team")
+						.header("Authorization", "Bearer " + gyeongsanUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isForbidden())
+				.andReturn().getResponse().getContentAsString();
+		}
+
+		@Test
+		@DisplayName("404 조회 불가능한 team으로 인한 팀 상세 정보 조회 실패")
+		public void teamDetailsGetFailByCancelTeam() throws Exception {
+			//given
+			Agenda agenda = agendaMockData.createAgenda(AgendaStatus.CONFIRM);
+			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser, MIX, AgendaTeamStatus.CANCEL);
+			agendaMockData.createAgendaTeamProfile(team, seoulUserAgendaProfile);
+			TeamDetailsReqDto req = new TeamDetailsReqDto(team.getTeamKey());
+			String content = objectMapper.writeValueAsString(req);
+			// when && then
+			String res = mockMvc.perform(
+					get("/agenda/team")
+						.header("Authorization", "Bearer " + gyeongsanUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound())
+				.andReturn().getResponse().getContentAsString();
+		}
+
+		@Test
+		@DisplayName("403 참여하지 않은 비공개 방으로 인한 team 상세 정보 조회 실패")
+		public void teamDetailsGetFailBySecretTeam() throws Exception {
+			//given
+			Agenda agenda = agendaMockData.createAgenda(AgendaStatus.CONFIRM);
+			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser, MIX, AgendaTeamStatus.OPEN, true);
+			agendaMockData.createAgendaTeamProfile(team, seoulUserAgendaProfile);
+			TeamDetailsReqDto req = new TeamDetailsReqDto(team.getTeamKey());
+			String content = objectMapper.writeValueAsString(req);
+			// when && then
+			String res = mockMvc.perform(
+					get("/agenda/team")
+						.header("Authorization", "Bearer " + gyeongsanUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isForbidden())
 				.andReturn().getResponse().getContentAsString();
 		}
 	}

@@ -18,7 +18,7 @@ public interface AgendaTeamRepository extends JpaRepository<AgendaTeam, Long> {
 
 	@Query("SELECT a FROM AgendaTeam a WHERE a.agenda = :agenda AND a.teamKey = :teamKey AND"
 		+ " (a.status = :status1 OR a.status = :status2)")
-	Optional<AgendaTeam> findByAgendaAndTeamKeyAndStatus(Agenda agenda, UUID teamKey, AgendaTeamStatus status,
+	Optional<AgendaTeam> findByAgendaAndTeamKeyAndStatus(Agenda agenda, UUID teamKey, AgendaTeamStatus status1,
 		AgendaTeamStatus status2);
 
 	@Query("SELECT a FROM AgendaTeam a WHERE a.teamKey = :teamKey")
