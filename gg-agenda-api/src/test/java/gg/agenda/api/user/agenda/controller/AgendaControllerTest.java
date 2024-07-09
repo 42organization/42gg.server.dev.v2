@@ -20,6 +20,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -38,6 +39,7 @@ import gg.data.user.User;
 import gg.repo.agenda.AgendaRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
+import gg.utils.dto.PageRequestDto;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -396,6 +398,41 @@ public class AgendaControllerTest {
 					.contentType("application/json")
 					.content(request))
 				.andExpect(status().isBadRequest());
+		}
+	}
+
+	@Nested
+	@DisplayName("Agenda 지난 목록 조회")
+	class GetAgendaListHistory {
+
+		@ParameterizedTest
+		@ValueSource(ints = {1, 2, 3, 4})
+		@DisplayName("지난 Agenda 목록을 조회합니다.")
+		void getAgendaListHistorySuccess(int page) throws Exception {
+			// given
+			int totalCount = 35;
+			int size = 10;
+			List<Agenda> agendaHistory = agendaMockData.createAgendaHistory(totalCount);
+			PageRequestDto pageRequestDto = new PageRequestDto(page, size);
+			String req = objectMapper.writeValueAsString(pageRequestDto);
+
+			// when
+			String response = mockMvc.perform(get("/agenda/history")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(req))
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+			AgendaSimpleResponseDto[] result = objectMapper.readValue(response, AgendaSimpleResponseDto[].class);
+
+			// then
+			assertThat(result.length).isEqualTo(size * page < totalCount ? size : totalCount % size);
+			for (int i = 0; i < result.length; i++) {
+				assertThat(result[i].getAgendaTitle()).isEqualTo(agendaHistory.get(size * (page - 1) + i).getTitle());
+				if (i == 0) {
+					continue;
+				}
+				assertThat(result[i].getAgendaStartTime()).isBefore(result[i - 1].getAgendaStartTime());
+			}
 		}
 	}
 }
