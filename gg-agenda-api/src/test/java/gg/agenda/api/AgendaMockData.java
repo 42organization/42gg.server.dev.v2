@@ -266,6 +266,7 @@ public class AgendaMockData {
 			.githubUrl("githubUrl")
 			.coalition(LEE)
 			.location(location)
+			.intraId(user.getIntraId())
 			.userId(user.getId())
 			.build();
 		return agendaProfileRepository.save(agendaProfile);
