@@ -1,4 +1,4 @@
-package gg.agenda.api.user.service;
+package gg.agenda.api.user.agenda.service;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,8 +17,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
+import gg.agenda.api.user.agenda.controller.dto.AgendaCreateDto;
+import gg.agenda.api.user.agenda.controller.dto.AgendaKeyResponseDto;
 import gg.agenda.api.user.agenda.controller.dto.AgendaSimpleResponseDto;
-import gg.agenda.api.user.agenda.service.AgendaService;
+import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.type.AgendaStatus;
 import gg.repo.agenda.AgendaAnnouncementRepository;
@@ -87,11 +89,9 @@ class AgendaServiceTest {
 			int officialSize = 3;
 			int nonOfficialSize = 6;
 			List<Agenda> agendas = new ArrayList<>();
-			IntStream.range(0, officialSize).forEach(i -> agendas.add(Agenda.builder()
-				.agendaKey(UUID.randomUUID()).isOfficial(true)
+			IntStream.range(0, officialSize).forEach(i -> agendas.add(Agenda.builder().isOfficial(true)
 				.deadline(LocalDateTime.now().plusDays(i + 3)).build()));
-			IntStream.range(0, nonOfficialSize).forEach(i -> agendas.add(Agenda.builder()
-				.agendaKey(UUID.randomUUID()).isOfficial(false)
+			IntStream.range(0, nonOfficialSize).forEach(i -> agendas.add(Agenda.builder().isOfficial(false)
 				.deadline(LocalDateTime.now().plusDays(i + 3)).build()));
 			when(agendaRepository.findAllByStatusIs(AgendaStatus.ON_GOING)).thenReturn(agendas);
 
@@ -121,6 +121,35 @@ class AgendaServiceTest {
 
 			// then
 			verify(agendaRepository, times(1)).findAllByStatusIs(any());
+		}
+	}
+
+	@Nested
+	@DisplayName("Agenda 생성")
+	class CreateAgenda {
+
+		@Test
+		@DisplayName("Agenda 생성 성공")
+		void createAgendaSuccess() {
+			// given
+			UserDto user = UserDto.builder().intraId("intraId").build();
+			AgendaCreateDto agendaCreateDto = AgendaCreateDto.builder()
+				.agendaDeadLine(LocalDateTime.now().plusDays(5))
+				.agendaStartTime(LocalDateTime.now().plusDays(8))
+				.agendaEndTime(LocalDateTime.now().plusDays(10))
+				.agendaMinTeam(2).agendaMaxTeam(5)
+				.agendaMinPeople(1).agendaMaxPeople(5)
+				.build();
+			Agenda agenda = Agenda.builder().build();
+			when(agendaRepository.save(any(Agenda.class))).thenReturn(agenda);
+
+			// when
+			AgendaKeyResponseDto agendaKeyResponseDto = agendaService.addAgenda(agendaCreateDto, user);
+
+			// then
+			verify(agendaRepository, times(1)).save(any(Agenda.class));
+			assertThat(agendaKeyResponseDto).isNotNull();
+			assertThat(agendaKeyResponseDto.getAgendaKey()).isEqualTo(agenda.getAgendaKey());
 		}
 	}
 }
