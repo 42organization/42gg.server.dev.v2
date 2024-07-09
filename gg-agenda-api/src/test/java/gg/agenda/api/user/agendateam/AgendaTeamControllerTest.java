@@ -424,7 +424,7 @@ public class AgendaTeamControllerTest {
 
 	@Nested
 	@DisplayName("팀 상세 정보 조회 테스트")
-	class agendaTeamDetails {
+	class AgendaTeamDetails {
 		@BeforeEach
 		void beforeEach() {
 			seoulUser = testDataUtils.createNewUser();
