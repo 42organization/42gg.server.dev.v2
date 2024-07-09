@@ -5,6 +5,9 @@ import java.util.UUID;
 
 import javax.validation.Valid;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +24,7 @@ import gg.agenda.api.user.agenda.controller.dto.AgendaSimpleResponseDto;
 import gg.agenda.api.user.agenda.service.AgendaService;
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
+import gg.utils.dto.PageRequestDto;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -59,5 +63,16 @@ public class AgendaController {
 		@RequestBody @Valid AgendaCreateDto agendaCreateDto) {
 		AgendaKeyResponseDto agendaKey = agendaService.addAgenda(agendaCreateDto, user);
 		return ResponseEntity.status(HttpStatus.CREATED).body(agendaKey);
+	}
+
+	@ApiResponse(responseCode = "200", description = "지난 Agenda 목록 조회 성공")
+	@GetMapping("/history")
+	public ResponseEntity<List<AgendaSimpleResponseDto>> agendaListHistory(
+		@RequestBody @Valid PageRequestDto pageRequest) {
+		int page = pageRequest.getPage();
+		int size = pageRequest.getSize();
+		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("startTime").descending());
+		List<AgendaSimpleResponseDto> agendaList = agendaService.findHistoryAgendaList(pageable);
+		return ResponseEntity.ok(agendaList);
 	}
 }
