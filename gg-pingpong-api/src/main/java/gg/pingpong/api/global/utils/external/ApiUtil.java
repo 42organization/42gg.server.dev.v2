@@ -49,4 +49,13 @@ public class ApiUtil {
 		}
 		return res.getBody();
 	}
+
+	public <T> T apiCall(String url, Class<T> responseType, HttpHeaders headers, HttpMethod method) {
+		HttpEntity<String> request = new HttpEntity<>(headers);
+		ResponseEntity<T> res = restTemplate.exchange(url, method, request, responseType);
+		if (!res.getStatusCode().is2xxSuccessful()) {
+			throw new RuntimeException("api call error");
+		}
+		return res.getBody();
+	}
 }

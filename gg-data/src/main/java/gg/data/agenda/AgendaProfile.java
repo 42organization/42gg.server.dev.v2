@@ -30,7 +30,7 @@ public class AgendaProfile extends BaseTimeEntity {
 	@Column(name = "content", length = 1000, nullable = false)
 	private String content;
 
-	@Column(name = "github_url", length = 255, nullable = false)
+	@Column(name = "github_url", length = 255, nullable = true)
 	private String githubUrl;
 
 	@Column(name = "coalition", length = 30, nullable = false)

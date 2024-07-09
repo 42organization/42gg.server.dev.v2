@@ -15,6 +15,8 @@ import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.AgendaTeam;
+import gg.data.agenda.AgendaTeamProfile;
+import gg.data.agenda.Ticket;
 import gg.data.agenda.type.Location;
 import gg.repo.agenda.AgendaProfileRepository;
 import gg.repo.agenda.AgendaRepository;
@@ -64,14 +66,9 @@ public class AgendaTeamService {
 		});
 
 		if (agenda.getIsOfficial()) {
-			ticketRepository.findByAgendaProfileAndIsApproveTrueAndIsUsedFalse(agendaProfile)
+			Ticket ticket = ticketRepository.findByAgendaProfileAndIsApproveTrueAndIsUsedFalse(agendaProfile)
 				.orElseThrow(() -> new ForbiddenException(TICKET_NOT_EXIST));
-		}
-
-		try {
-			Location.valueOf(teamCreateReqDto.getTeamLocation().toUpperCase());
-		} catch (IllegalArgumentException e) {
-			throw new BusinessException(LOCATION_NOT_VALID);
+			ticket.useTicket();
 		}
 
 		agendaTeamRepository.findByAgendaAndTeamNameAndStatus(agenda, teamCreateReqDto.getTeamName(), OPEN, CONFIRM)
@@ -80,9 +77,10 @@ public class AgendaTeamService {
 			});
 
 		AgendaTeam agendaTeam = TeamCreateReqDto.toEntity(teamCreateReqDto, agenda, user.getIntraId());
-		agendaTeamRepository.save(agendaTeam);
+		AgendaTeamProfile agendaTeamProfile = new AgendaTeamProfile(agendaTeam, agendaProfile);
 		agendaRepository.save(agenda);
-
+		agendaTeamRepository.save(agendaTeam);
+		agendaTeamProfileRepository.save(agendaTeamProfile);
 		return new TeamCreateResDto(agendaTeam.getTeamKey().toString());
 	}
 }

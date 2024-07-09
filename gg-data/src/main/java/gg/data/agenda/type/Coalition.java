@@ -13,7 +13,18 @@ public enum Coalition {
 	SPRING("SPRING"),
 	SUMMER("SUMMER"),
 	AUTUMN("AUTUMN"),
-	WINTER("WINTER");
+	WINTER("WINTER"),
+	OTHER("OTHER");
 
 	private String coalition;
+
+	public static Coalition valueOfCoalition(String coalition) {
+		String coalitionToUpper = coalition.toUpperCase();
+		for (Coalition c : values()) {
+			if (c.coalition.equals(coalitionToUpper)) {
+				return c;
+			}
+		}
+		return OTHER;
+	}
 }

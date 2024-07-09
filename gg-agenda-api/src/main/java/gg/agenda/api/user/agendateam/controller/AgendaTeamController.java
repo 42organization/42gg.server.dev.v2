@@ -2,6 +2,8 @@ package gg.agenda.api.user.agendateam.controller;
 
 import java.util.UUID;
 
+import javax.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,7 +33,7 @@ public class AgendaTeamController {
 	 */
 	@PostMapping
 	public ResponseEntity<TeamCreateResDto> agendaTeamAdd(@Parameter(hidden = true) @Login UserDto user,
-		@RequestBody TeamCreateReqDto teamCreateReqDto, @RequestParam("agenda_key") UUID agendaKey) {
+		@RequestBody @Valid TeamCreateReqDto teamCreateReqDto, @RequestParam("agenda_key") UUID agendaKey) {
 		TeamCreateResDto teamCreateResDto = agendaTeamService.addAgendaTeam(user, teamCreateReqDto, agendaKey);
 		return ResponseEntity.status(HttpStatus.CREATED).body(teamCreateResDto);
 	}

@@ -65,7 +65,7 @@ CREATE TABLE `agenda_profile`
     `id`          BIGINT        NOT NULL AUTO_INCREMENT,
     `user_id`     BIGINT        NOT NULL,
     `content`     VARCHAR(1000) NOT NULL,
-    `github_url`  VARCHAR(255)  NOT NULL,
+    `github_url`  VARCHAR(255)  NULL,
     `coalition`   VARCHAR(30)   NOT NULL,
     `location`    VARCHAR(30)   NOT NULL,
     `created_at`  DATETIME      NOT NULL,
