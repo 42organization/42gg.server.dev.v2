@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.IntStream;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -22,15 +23,21 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import gg.agenda.api.user.agenda.controller.request.AgendaConfirmRequestDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaCreateDto;
+import gg.agenda.api.user.agenda.controller.request.AgendaTeamAwardDto;
 import gg.agenda.api.user.agenda.controller.response.AgendaKeyResponseDto;
 import gg.agenda.api.user.agenda.controller.response.AgendaSimpleResponseDto;
 import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
+import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.type.AgendaStatus;
 import gg.repo.agenda.AgendaAnnouncementRepository;
 import gg.repo.agenda.AgendaRepository;
+import gg.repo.agenda.AgendaTeamRepository;
 import gg.utils.annotation.UnitTest;
+import gg.utils.exception.custom.ForbiddenException;
+import gg.utils.exception.custom.InvalidParameterException;
 import gg.utils.exception.custom.NotExistException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,6 +50,9 @@ class AgendaServiceTest {
 
 	@Mock
 	AgendaAnnouncementRepository agendaAnnouncementRepository;
+
+	@Mock
+	AgendaTeamRepository agendaTeamRepository;
 
 	@InjectMocks
 	AgendaService agendaService;
@@ -189,6 +199,116 @@ class AgendaServiceTest {
 				assertThat(result.get(i).getAgendaStartTime())
 					.isBefore(result.get(i - 1).getAgendaStartTime());
 			}
+		}
+	}
+
+	@Nested
+	@DisplayName("Agenda 시상 및 확정")
+	class ConfirmAgenda {
+
+		int seq;
+
+		@BeforeEach
+		void setUp() {
+			seq = 0;
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 성공")
+		void confirmAgendaSuccess() {
+			// given
+			Agenda agenda = Agenda.builder()
+				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
+				.status(AgendaStatus.ON_GOING).isRanking(true).build();
+			List<AgendaTeam> agendaTeams = new ArrayList<>();
+			IntStream.range(0, 10).forEach(i -> agendaTeams.add(AgendaTeam.builder().name("team" + i).build()));
+			AgendaTeamAwardDto awardDto = AgendaTeamAwardDto.builder()
+				.teamName("team1").awardName("award").awardPriority(1).build();
+			UserDto user = UserDto.builder().intraId(agenda.getHostIntraId()).build();
+			UUID agendaKey = agenda.getAgendaKey();
+			AgendaConfirmRequestDto confirmDto = AgendaConfirmRequestDto.builder()
+				.awards(List.of(awardDto)).build();
+
+			when(agendaRepository.findByAgendaKey(any(UUID.class))).thenReturn(Optional.of(agenda));
+			when(agendaTeamRepository.findByAgendaAndNameAndStatus(any(), any(), any()))
+				.thenReturn(Optional.of(agendaTeams.get(seq++)));
+
+			// when
+			agendaService.confirmAgenda(user, agendaKey, confirmDto);
+
+			// then
+			verify(agendaRepository, times(1)).findByAgendaKey(agendaKey);
+			verify(agendaTeamRepository, times(1)).findByAgendaAndNameAndStatus(any(), any(), any());
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 실패 - Agenda가 없는 경우")
+		void confirmAgendaFailedWithNoAgenda() {
+			UserDto user = mock(UserDto.class);
+			AgendaConfirmRequestDto confirmDto = mock(AgendaConfirmRequestDto.class);
+			UUID agendaKey = UUID.randomUUID();
+			when(agendaRepository.findByAgendaKey(any())).thenReturn(Optional.empty());
+
+			// expected
+			assertThrows(NotExistException.class,
+				() -> agendaService.confirmAgenda(user, agendaKey, confirmDto));
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 실패 - 개최자가 아닌 경우")
+		void confirmAgendaFailedNotHost() {
+			// given
+			AgendaConfirmRequestDto confirmDto = mock(AgendaConfirmRequestDto.class);
+			UUID agendaKey = UUID.randomUUID();
+			Agenda agenda = Agenda.builder().hostIntraId("intraId").build();
+			UserDto user = UserDto.builder().intraId("another").build();    // 개최자가 아닌 경우
+			when(agendaRepository.findByAgendaKey(any())).thenReturn(Optional.of(agenda));
+
+			// expected
+			assertThrows(ForbiddenException.class,
+				() -> agendaService.confirmAgenda(user, agendaKey, confirmDto));
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 실패 - 시상 내역이 없는 경우")
+		void confirmAgendaFailedWithNoAwards() {
+			// given
+			Agenda agenda = Agenda.builder()
+				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
+				.status(AgendaStatus.ON_GOING).isRanking(true).build();
+			UserDto user = UserDto.builder().intraId(agenda.getHostIntraId()).build();
+			UUID agendaKey = agenda.getAgendaKey();
+
+			AgendaConfirmRequestDto confirmDto = AgendaConfirmRequestDto.builder().build();
+
+			when(agendaRepository.findByAgendaKey(any(UUID.class))).thenReturn(Optional.of(agenda));
+
+			// expected
+			assertThrows(InvalidParameterException.class,
+				() -> agendaService.confirmAgenda(user, agendaKey, confirmDto));
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 실패 - 존재하지 않는 팀에 대한 시상인 경우")
+		void confirmAgendaFailedWithInvalidTeam() {
+			// given
+			Agenda agenda = Agenda.builder()
+				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
+				.status(AgendaStatus.ON_GOING).isRanking(true).build();
+			UserDto user = UserDto.builder().intraId(agenda.getHostIntraId()).build();
+			UUID agendaKey = agenda.getAgendaKey();
+			AgendaTeamAwardDto awardDto = AgendaTeamAwardDto.builder()
+				.teamName("invalidTeam").awardName("award").awardPriority(1).build();
+			AgendaConfirmRequestDto confirmDto = AgendaConfirmRequestDto.builder()
+				.awards(List.of(awardDto)).build();
+
+			when(agendaRepository.findByAgendaKey(any(UUID.class))).thenReturn(Optional.of(agenda));
+			when(agendaTeamRepository.findByAgendaAndNameAndStatus(any(), any(), any()))
+				.thenReturn(Optional.empty());
+
+			// expected
+			assertThrows(NotExistException.class,
+				() -> agendaService.confirmAgenda(user, agendaKey, confirmDto));
 		}
 	}
 }
