@@ -5,6 +5,7 @@ import static gg.utils.exception.ErrorCode.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -46,26 +47,28 @@ public class AgendaTeamService {
 	 * @param user 사용자 정보, agendaId 아젠다 아이디
 	 * @return 내 팀 간단 정보
 	 */
-	public MyTeamSimpleResDto detailsMyTeamSimple(UserDto user, UUID agendaKey) {
+	public Optional<MyTeamSimpleResDto> detailsMyTeamSimple(UserDto user, UUID agendaKey) {
 		Agenda agenda = agendaRepository.findByAgendaKey(agendaKey)
 			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
 
-		AgendaProfile agendaProfile = agendaProfileRepository.findById(user.getId())
+		AgendaProfile agendaProfile = agendaProfileRepository.findByUserId(user.getId())
 			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
 
-		AgendaTeam agendaTeam = agendaTeamProfileRepository.findByAgendaAndIsExistTrue(agenda, agendaProfile)
-			.map(AgendaTeamProfile::getAgendaTeam)
-			.orElseThrow(() -> new NotExistException(TEAM_NOT_FOUND));
+		Optional<AgendaTeam> agendaTeam = agendaTeamProfileRepository.findByAgendaAndIsExistTrue(agenda, agendaProfile)
+			.map(AgendaTeamProfile::getAgendaTeam);
+		if (agendaTeam.isEmpty()) {
+			return Optional.empty();
+		}
 
 		List<AgendaTeamProfile> agendaTeamProfileList = agendaTeamProfileRepository
-			.findByAgendaTeamAndIsExistTrue(agendaTeam);
+			.findByAgendaTeamAndIsExistTrue(agendaTeam.get());
 
 		List<Coalition> coalitions = agendaTeamProfileList.stream()
 			.map(AgendaTeamProfile::getProfile)
 			.map(AgendaProfile::getCoalition)
 			.toList();
 
-		return new MyTeamSimpleResDto(agendaTeam, coalitions);
+		return Optional.of(new MyTeamSimpleResDto(agendaTeam.get(), coalitions));
 	}
 
 	/**

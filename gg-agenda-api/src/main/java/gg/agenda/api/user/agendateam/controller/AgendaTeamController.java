@@ -1,5 +1,6 @@
 package gg.agenda.api.user.agendateam.controller;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.validation.Valid;
@@ -30,13 +31,18 @@ public class AgendaTeamController {
 
 	/**
 	 * 내 팀 간단 정보 조회
+	 *
 	 * @param user 사용자 정보, agendaId 아젠다 아이디
 	 * @return 내 팀 간단 정보
 	 */
 	@GetMapping("/my")
-	public ResponseEntity<MyTeamSimpleResDto> myTeamSimpleDetails(@Parameter(hidden = true) @Login UserDto user,
+	public ResponseEntity<Optional<MyTeamSimpleResDto>> myTeamSimpleDetails(
+		@Parameter(hidden = true) @Login UserDto user,
 		@RequestParam("agenda_key") UUID agendaKey) {
-		MyTeamSimpleResDto myTeamSimpleResDto = agendaTeamService.detailsMyTeamSimple(user, agendaKey);
+		Optional<MyTeamSimpleResDto> myTeamSimpleResDto = agendaTeamService.detailsMyTeamSimple(user, agendaKey);
+		if (myTeamSimpleResDto.isEmpty()) {
+			return ResponseEntity.noContent().build();
+		}
 		return ResponseEntity.ok(myTeamSimpleResDto);
 	}
 
