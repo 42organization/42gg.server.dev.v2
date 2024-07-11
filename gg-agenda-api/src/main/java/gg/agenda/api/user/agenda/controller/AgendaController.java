@@ -79,7 +79,8 @@ public class AgendaController {
 	}
 
 	@PatchMapping("/confirm")
-	public ResponseEntity<Void> agendaConfirm(@RequestParam("agenda_key") UUID agendaKey) {
+	public ResponseEntity<Void> agendaConfirm(@RequestParam("agenda_key") UUID agendaKey,
+		@RequestBody AgendaConfirmRequestDto agendaConfirmRequestDto) {
 		agendaService.confirmAgenda(agendaKey);
 		return ResponseEntity.ok().build();
 	}
