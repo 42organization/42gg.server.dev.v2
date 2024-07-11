@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class TeamMateDto {
 	private String intraId;
 	private Coalition coalition;
