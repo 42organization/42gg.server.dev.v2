@@ -322,6 +322,23 @@ public class AgendaMockData {
 		return agendaTeamRepository.save(agendaTeam);
 	}
 
+	public AgendaTeam createAgendaTeam(Agenda agenda, String teamName) {
+		AgendaTeam agendaTeam = AgendaTeam.builder()
+			.agenda(agenda)
+			.teamKey(randomUUID())
+			.name(teamName)
+			.content("content")
+			.leaderIntraId("leaderIntraId")
+			.status(OPEN)
+			.location(SEOUL)
+			.mateCount(3)
+			.award("award")
+			.awardPriority(1)
+			.isPrivate(false)
+			.build();
+		return agendaTeamRepository.save(agendaTeam);
+	}
+
 	public AgendaTeam createAgendaTeam(Agenda agenda, User user) {
 		AgendaTeam agendaTeam = AgendaTeam.builder()
 			.agenda(agenda)
