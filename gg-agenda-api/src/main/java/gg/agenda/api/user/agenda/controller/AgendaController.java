@@ -80,8 +80,8 @@ public class AgendaController {
 
 	@PatchMapping("/confirm")
 	public ResponseEntity<Void> agendaConfirm(@RequestParam("agenda_key") UUID agendaKey,
-		@RequestBody AgendaConfirmRequestDto agendaConfirmRequestDto) {
-		agendaService.confirmAgenda(agendaKey);
+		@RequestBody AgendaConfirmRequestDto agendaConfirmRequestDto, @Login UserDto user) {
+		agendaService.confirmAgenda(user, agendaKey, agendaConfirmRequestDto);
 		return ResponseEntity.ok().build();
 	}
 }

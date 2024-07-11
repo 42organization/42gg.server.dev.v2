@@ -12,16 +12,23 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import gg.agenda.api.user.agenda.controller.request.AgendaConfirmRequestDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaCreateDto;
+import gg.agenda.api.user.agenda.controller.request.AgendaTeamAwardDto;
 import gg.agenda.api.user.agenda.controller.response.AgendaKeyResponseDto;
 import gg.agenda.api.user.agenda.controller.response.AgendaResponseDto;
 import gg.agenda.api.user.agenda.controller.response.AgendaSimpleResponseDto;
 import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaAnnouncement;
+import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.type.AgendaStatus;
+import gg.data.agenda.type.AgendaTeamStatus;
+import gg.data.user.User;
 import gg.repo.agenda.AgendaAnnouncementRepository;
 import gg.repo.agenda.AgendaRepository;
+import gg.repo.agenda.AgendaTeamRepository;
+import gg.utils.exception.custom.ForbiddenException;
 import gg.utils.exception.custom.NotExistException;
 import lombok.RequiredArgsConstructor;
 
@@ -32,6 +39,8 @@ public class AgendaService {
 	private final AgendaRepository agendaRepository;
 
 	private final AgendaAnnouncementRepository agendaAnnouncementRepository;
+
+	private final AgendaTeamRepository agendaTeamRepository;
 
 	@Transactional(readOnly = true)
 	public AgendaResponseDto findAgendaWithLatestAnnouncement(UUID agendaKey) {
@@ -66,9 +75,21 @@ public class AgendaService {
 	}
 
 	@Transactional
-	public void confirmAgenda(UUID agendaKey) {
+	public void confirmAgenda(UserDto user, UUID agendaKey, AgendaConfirmRequestDto agendaConfirmRequestDto) {
 		Agenda agenda = agendaRepository.findByAgendaKey(agendaKey)
 			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
+		if (!user.getIntraId().equals(agenda.getHostIntraId())) {
+			throw new ForbiddenException(CONFIRM_FORBIDDEN);
+		}
+		if (agenda.getIsRanking()) {
+			agendaConfirmRequestDto.mustNotNullOrEmpty();
+		}
+		agendaConfirmRequestDto.getAwards().forEach(award -> {
+			AgendaTeam agendaTeam = agendaTeamRepository
+				.findByAgendaAndNameAndStatus(agenda, award.getTeamName(), AgendaTeamStatus.CONFIRM)
+				.orElseThrow(() -> new NotExistException(TEAM_NOT_FOUND));
+			agendaTeam.acceptAward(award.getAwardName(), award.getAwardPriority());
+		});
 		agenda.confirm(LocalDateTime.now());
 	}
 }
