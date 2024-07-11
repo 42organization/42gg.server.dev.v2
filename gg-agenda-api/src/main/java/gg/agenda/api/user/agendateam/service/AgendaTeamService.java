@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,7 +67,7 @@ public class AgendaTeamService {
 		List<Coalition> coalitions = agendaTeamProfileList.stream()
 			.map(AgendaTeamProfile::getProfile)
 			.map(AgendaProfile::getCoalition)
-			.toList();
+			.collect(Collectors.toList());
 
 		return Optional.of(new MyTeamSimpleResDto(agendaTeam.get(), coalitions));
 	}
