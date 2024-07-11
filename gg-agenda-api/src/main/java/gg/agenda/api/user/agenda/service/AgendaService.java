@@ -8,23 +8,20 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.agenda.api.user.agenda.controller.dto.AgendaCreateDto;
-import gg.agenda.api.user.agenda.controller.dto.AgendaKeyResponseDto;
-import gg.agenda.api.user.agenda.controller.dto.AgendaResponseDto;
-import gg.agenda.api.user.agenda.controller.dto.AgendaSimpleResponseDto;
+import gg.agenda.api.user.agenda.controller.request.AgendaCreateDto;
+import gg.agenda.api.user.agenda.controller.response.AgendaKeyResponseDto;
+import gg.agenda.api.user.agenda.controller.response.AgendaResponseDto;
+import gg.agenda.api.user.agenda.controller.response.AgendaSimpleResponseDto;
 import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaAnnouncement;
 import gg.data.agenda.type.AgendaStatus;
 import gg.repo.agenda.AgendaAnnouncementRepository;
 import gg.repo.agenda.AgendaRepository;
-import gg.utils.dto.PageRequestDto;
 import gg.utils.exception.custom.NotExistException;
 import lombok.RequiredArgsConstructor;
 

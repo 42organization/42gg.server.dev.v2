@@ -23,14 +23,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.agenda.api.AgendaMockData;
-import gg.agenda.api.user.agenda.controller.dto.AgendaCreateDto;
-import gg.agenda.api.user.agenda.controller.dto.AgendaKeyResponseDto;
-import gg.agenda.api.user.agenda.controller.dto.AgendaResponseDto;
-import gg.agenda.api.user.agenda.controller.dto.AgendaSimpleResponseDto;
+import gg.agenda.api.user.agenda.controller.request.AgendaCreateDto;
+import gg.agenda.api.user.agenda.controller.response.AgendaKeyResponseDto;
+import gg.agenda.api.user.agenda.controller.response.AgendaResponseDto;
+import gg.agenda.api.user.agenda.controller.response.AgendaSimpleResponseDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaAnnouncement;
 import gg.data.agenda.type.AgendaStatus;

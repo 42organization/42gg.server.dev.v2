@@ -18,10 +18,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import gg.agenda.api.user.agenda.controller.dto.AgendaCreateDto;
-import gg.agenda.api.user.agenda.controller.dto.AgendaKeyResponseDto;
-import gg.agenda.api.user.agenda.controller.dto.AgendaResponseDto;
-import gg.agenda.api.user.agenda.controller.dto.AgendaSimpleResponseDto;
+import gg.agenda.api.user.agenda.controller.request.AgendaConfirmRequestDto;
+import gg.agenda.api.user.agenda.controller.request.AgendaCreateDto;
+import gg.agenda.api.user.agenda.controller.response.AgendaKeyResponseDto;
+import gg.agenda.api.user.agenda.controller.response.AgendaResponseDto;
+import gg.agenda.api.user.agenda.controller.response.AgendaSimpleResponseDto;
 import gg.agenda.api.user.agenda.service.AgendaService;
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;

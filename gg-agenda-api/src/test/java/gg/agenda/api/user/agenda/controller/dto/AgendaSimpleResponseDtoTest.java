@@ -2,14 +2,12 @@ package gg.agenda.api.user.agenda.controller.dto;
 
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 
-import java.util.UUID;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import gg.agenda.api.user.agenda.controller.dto.AgendaSimpleResponseDto;
+import gg.agenda.api.user.agenda.controller.response.AgendaSimpleResponseDto;
 import gg.data.agenda.Agenda;
 import gg.utils.annotation.UnitTest;
 

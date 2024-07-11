@@ -1,4 +1,4 @@
-package gg.agenda.api.user.agenda.controller.dto;
+package gg.agenda.api.user.agenda.controller.request;
 
 import static gg.utils.exception.ErrorCode.*;
 

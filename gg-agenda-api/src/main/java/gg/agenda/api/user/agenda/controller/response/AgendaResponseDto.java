@@ -1,4 +1,4 @@
-package gg.agenda.api.user.agenda.controller.dto;
+package gg.agenda.api.user.agenda.controller.response;
 
 import java.time.LocalDateTime;
 

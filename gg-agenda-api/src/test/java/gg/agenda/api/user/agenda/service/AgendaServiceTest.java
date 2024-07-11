@@ -22,9 +22,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import gg.agenda.api.user.agenda.controller.dto.AgendaCreateDto;
-import gg.agenda.api.user.agenda.controller.dto.AgendaKeyResponseDto;
-import gg.agenda.api.user.agenda.controller.dto.AgendaSimpleResponseDto;
+import gg.agenda.api.user.agenda.controller.request.AgendaCreateDto;
+import gg.agenda.api.user.agenda.controller.response.AgendaKeyResponseDto;
+import gg.agenda.api.user.agenda.controller.response.AgendaSimpleResponseDto;
 import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.type.AgendaStatus;

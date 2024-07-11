@@ -9,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import gg.agenda.api.user.agenda.controller.request.AgendaCreateDto;
 import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
 import gg.utils.annotation.UnitTest;
