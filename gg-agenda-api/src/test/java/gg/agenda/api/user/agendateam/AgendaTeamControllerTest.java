@@ -541,25 +541,5 @@ public class AgendaTeamControllerTest {
 				.andExpect(status().isNotFound())
 				.andReturn().getResponse().getContentAsString();
 		}
-
-		@Test
-		@DisplayName("403 참여하지 않은 비공개 방으로 인한 team 상세 정보 조회 실패")
-		public void teamDetailsGetFailBySecretTeam() throws Exception {
-			//given
-			Agenda agenda = agendaMockData.createAgenda(AgendaStatus.CONFIRM);
-			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser, MIX, AgendaTeamStatus.OPEN, true);
-			agendaMockData.createAgendaTeamProfile(team, seoulUserAgendaProfile);
-			TeamDetailsReqDto req = new TeamDetailsReqDto(team.getTeamKey());
-			String content = objectMapper.writeValueAsString(req);
-			// when && then
-			String res = mockMvc.perform(
-					get("/agenda/team")
-						.header("Authorization", "Bearer " + gyeongsanUserAccessToken)
-						.param("agenda_key", agenda.getAgendaKey().toString())
-						.content(content)
-						.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isForbidden())
-				.andReturn().getResponse().getContentAsString();
-		}
 	}
 }

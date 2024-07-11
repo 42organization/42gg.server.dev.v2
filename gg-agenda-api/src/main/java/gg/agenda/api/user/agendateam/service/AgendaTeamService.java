@@ -46,20 +46,22 @@ public class AgendaTeamService {
 	 * @param user 사용자 정보, teamCreateReqDto 팀 키, agendaKey 아젠다 키
 	 * @return 만들어진 팀 상세 정보
 	 */
+	@Transactional(readOnly = true)
 	public TeamDetailsResDto detailsAgendaTeam(UserDto user, UUID agendaKey, TeamDetailsReqDto teamDetailsReqDto) {
 		Agenda agenda = agendaRepository.findByAgendaKey(agendaKey)
 			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
 
-		AgendaTeam agendaTeam = agendaTeamRepository.findByAgendaAndTeamKeyAndStatus(agenda,
-			teamDetailsReqDto.getTeamKey(), OPEN, CONFIRM).orElseThrow(() -> new NotExistException(TEAM_NOT_FOUND));
+		AgendaTeam agendaTeam = agendaTeamRepository
+			.findByAgendaAndTeamKeyAndStatus(agenda, teamDetailsReqDto.getTeamKey(), OPEN, CONFIRM)
+			.orElseThrow(() -> new NotExistException(TEAM_NOT_FOUND));
 
-		List<AgendaTeamProfile> agendaTeamProfileList = agendaTeamProfileRepository.findByAgendaTeamAndIsExistTrue(
-			agendaTeam);
+		List<AgendaTeamProfile> agendaTeamProfileList = agendaTeamProfileRepository
+			.findByAgendaTeamAndIsExistTrue(agendaTeam);
 
-		if (agendaTeam.getIsPrivate() || agendaTeam.getStatus().equals(CONFIRM)) {
-			if (agendaTeamProfileList.stream()
+		if (agendaTeam.getStatus().equals(CONFIRM)) {  // 팀이 확정 상태인 경우에
+			if (agendaTeamProfileList.stream() // 팀에 속한 유저가 아닌 경우
 				.noneMatch(profile -> profile.getProfile().getUserId().equals(user.getId()))) {
-				throw new ForbiddenException(TEAM_FORBIDDEN);
+				throw new ForbiddenException(TEAM_FORBIDDEN); // 조회 불가
 			}
 		}
 		return new TeamDetailsResDto(agendaTeam, agendaTeamProfileList);
