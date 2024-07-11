@@ -53,7 +53,7 @@ public class AgendaTeamService {
 
 		AgendaTeam agendaTeam = agendaTeamRepository
 			.findByAgendaAndTeamKeyAndStatus(agenda, teamDetailsReqDto.getTeamKey(), OPEN, CONFIRM)
-			.orElseThrow(() -> new NotExistException(TEAM_NOT_FOUND));
+			.orElseThrow(() -> new NotExistException(AGENDA_TEAM_NOT_FOUND));
 
 		List<AgendaTeamProfile> agendaTeamProfileList = agendaTeamProfileRepository
 			.findByAgendaTeamAndIsExistTrue(agendaTeam);
