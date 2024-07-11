@@ -125,7 +125,9 @@ public class Agenda extends BaseTimeEntity {
 
 	public void confirm(LocalDateTime confirmTime) {
 		mustStatusOngoing();
-		mustBeforeStartTime(confirmTime);
+		if (this.startTime.isAfter(confirmTime)) {
+			throw new InvalidParameterException(AGENDA_INVALID_PARAM);
+		}
 		this.status = AgendaStatus.CONFIRM;
 	}
 

@@ -78,6 +78,12 @@ public class AgendaController {
 		return ResponseEntity.ok(agendaList);
 	}
 
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "Agenda 참가 신청 성공"),
+		@ApiResponse(responseCode = "400", description = "Agenda 참가 신청 요청이 잘못됨"),
+		@ApiResponse(responseCode = "404", description = "Agenda를 찾을 수 없음"),
+		@ApiResponse(responseCode = "409", description = "Agenda 참가 신청이 이미 완료됨")
+	})
 	@PatchMapping("/confirm")
 	public ResponseEntity<Void> agendaConfirm(@RequestParam("agenda_key") UUID agendaKey,
 		@RequestBody AgendaConfirmRequestDto agendaConfirmRequestDto, @Login UserDto user) {

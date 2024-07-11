@@ -19,6 +19,19 @@ public class AgendaConfirmRequestDto {
 	@Builder
 	public AgendaConfirmRequestDto(List<AgendaTeamAwardDto> awards) {
 		this.awards = awards;
+
+		if (awards == null) {
+			return;
+		}
+
+		long priorityCount = awards.stream()
+			.map(AgendaTeamAwardDto::getAwardPriority)
+			.distinct()
+			.count();
+
+		if (priorityCount != awards.size()) {
+			throw new InvalidParameterException(AGENDA_AWARD_PRIORITY_DUPLICATE);
+		}
 	}
 
 	public void mustNotNullOrEmpty() {
