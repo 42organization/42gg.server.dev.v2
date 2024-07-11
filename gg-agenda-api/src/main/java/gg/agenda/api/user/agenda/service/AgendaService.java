@@ -87,7 +87,7 @@ public class AgendaService {
 		agendaConfirmRequestDto.getAwards().forEach(award -> {
 			AgendaTeam agendaTeam = agendaTeamRepository
 				.findByAgendaAndNameAndStatus(agenda, award.getTeamName(), AgendaTeamStatus.CONFIRM)
-				.orElseThrow(() -> new NotExistException(TEAM_NOT_FOUND));
+				.orElseThrow(() -> new NotExistException(TEAM_NOT_FOUND));	// TODO: AGENDA_TEAM_NOT_FOUND
 			agendaTeam.acceptAward(award.getAwardName(), award.getAwardPriority());
 		});
 		agenda.confirm(LocalDateTime.now());
