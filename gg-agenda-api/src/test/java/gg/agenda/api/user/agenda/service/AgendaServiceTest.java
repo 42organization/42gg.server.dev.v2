@@ -271,7 +271,7 @@ class AgendaServiceTest {
 
 		@Test
 		@DisplayName("Agenda 시상 및 확정 실패 - 시상 내역이 없는 경우")
-		void confirmAgendaFailedWithNoAwards() {
+		void confirmAgendaFailedWithoutAwards() {
 			// given
 			Agenda agenda = Agenda.builder()
 				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
