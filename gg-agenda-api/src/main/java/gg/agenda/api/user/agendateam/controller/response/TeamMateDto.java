@@ -11,7 +11,7 @@ public class TeamMateDto {
 	private String intraId;
 	private Coalition coalition;
 
-	TeamMateDto(AgendaTeamProfile agendaTeamProfile) {
+	public TeamMateDto(AgendaTeamProfile agendaTeamProfile) {
 		this.intraId = agendaTeamProfile.getProfile().getIntraId();
 		this.coalition = agendaTeamProfile.getProfile().getCoalition();
 	}

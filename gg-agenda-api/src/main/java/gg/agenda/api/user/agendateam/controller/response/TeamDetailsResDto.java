@@ -7,13 +7,11 @@ import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.AgendaTeamProfile;
 import gg.data.agenda.type.AgendaTeamStatus;
 import gg.data.agenda.type.Location;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class TeamDetailsResDto {
 	private String teamName;
 	private String teamLeaderIntraId;
