@@ -4,12 +4,14 @@ import static gg.data.agenda.type.AgendaTeamStatus.*;
 import static gg.utils.exception.ErrorCode.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.agenda.api.user.agendateam.controller.request.TeamCreateReqDto;
+import gg.agenda.api.user.agendateam.controller.response.MyTeamSimpleResDto;
 import gg.agenda.api.user.agendateam.controller.response.TeamCreateResDto;
 import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
@@ -17,6 +19,7 @@ import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.AgendaTeamProfile;
 import gg.data.agenda.Ticket;
+import gg.data.agenda.type.Coalition;
 import gg.data.agenda.type.Location;
 import gg.repo.agenda.AgendaProfileRepository;
 import gg.repo.agenda.AgendaRepository;
@@ -39,6 +42,33 @@ public class AgendaTeamService {
 	private final AgendaTeamProfileRepository agendaTeamProfileRepository;
 
 	/**
+	 * 내 팀 간단 정보 조회
+	 * @param user 사용자 정보, agendaId 아젠다 아이디
+	 * @return 내 팀 간단 정보
+	 */
+	public MyTeamSimpleResDto detailsMyTeamSimple(UserDto user, UUID agendaKey) {
+		Agenda agenda = agendaRepository.findByAgendaKey(agendaKey)
+			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
+
+		AgendaProfile agendaProfile = agendaProfileRepository.findById(user.getId())
+			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
+
+		AgendaTeam agendaTeam = agendaTeamProfileRepository.findByAgendaAndIsExistTrue(agenda, agendaProfile)
+			.map(AgendaTeamProfile::getAgendaTeam)
+			.orElseThrow(() -> new NotExistException(TEAM_NOT_FOUND));
+
+		List<AgendaTeamProfile> agendaTeamProfileList = agendaTeamProfileRepository
+			.findByAgendaTeamAndIsExistTrue(agendaTeam);
+
+		List<Coalition> coalitions = agendaTeamProfileList.stream()
+			.map(AgendaTeamProfile::getProfile)
+			.map(AgendaProfile::getCoalition)
+			.toList();
+
+		return new MyTeamSimpleResDto(agendaTeam, coalitions);
+	}
+
+	/**
 	 * 아젠다 팀 생성하기
 	 * @param user 사용자 정보, teamCreateReqDto 팀 생성 요청 정보, agendaId 아젠다 아이디
 	 * @return 만들어진 팀 KEY
@@ -46,7 +76,7 @@ public class AgendaTeamService {
 	@Transactional
 	public TeamCreateResDto addAgendaTeam(UserDto user, TeamCreateReqDto teamCreateReqDto, UUID agendaKey) {
 		AgendaProfile agendaProfile = agendaProfileRepository.findByUserId(user.getId())
-			.orElseThrow(() -> new NotExistException("해당 유저의 프로필이 존재하지 않습니다."));
+			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
 
 		Agenda agenda = agendaRepository.findByAgendaKey(agendaKey)
 			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
