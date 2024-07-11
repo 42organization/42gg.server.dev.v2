@@ -1,6 +1,6 @@
 # 42arcade.gg.server.v2
 
-https://42gg.kr/
+https://gg.42seoul.kr/
 
 
 ## ⚡️ 프로젝트 소개
@@ -38,6 +38,8 @@ https://42gg.kr/
 - 4기: 2023.08.01 ~ 2023.09.21
 
 - 5기 : 2023.11.01 ~ 2024.01.31
+
+- 6기 : 2023.02.01 ~ 2024.05.10
 
 ## ⚡️ 프로젝트 아키텍처
 ![gg-5th-architecture](https://github.com/42organization/42gg.server.dev.v2/assets/33301153/f801e7b5-d579-467b-9ad0-2bfec506dcaa)
@@ -226,6 +228,54 @@ https://42gg.kr/
         <td align=center>토너먼트 개발, <br> 테스트 커버리지 개선</td>
         <td align=center>토너먼트 개발, <br> 테스트 커버리지 개선</td>
         <td align=center>인프라 담당, <br> 테스트 커버리지 개선</td>
+    </tr>
+</table>
+
+### 6기
+<details>
+<summary> 6기 진행 사항</summary>
+<div markdown="1">
+
+### ⚡️⚡ 파티 서비스 개발
+<img width="677" alt="42party" src="https://github.com/42organization/42gg.server.dev.v2/assets/79272189/1d2f114a-0d8e-401a-a45b-9419881f86f2">
+
+
+### ⚡️⚡ 테스트 커버리지 개선 (2024-04-16 기준)
+### 전체 74% -> 75.9%
+![integrationTest](https://github.com/42organization/42gg.server.dev.v2/assets/79272189/79731062-a8f4-4575-a683-61fa5dd60a15)
+
+
+### 단위 테스트 30% -> 36.7%
+![unitTest](https://github.com/42organization/42gg.server.dev.v2/assets/79272189/b0e5055b-9008-40d8-b93a-3b05fdffc710)
+
+
+### ⚡️⚡ DB table 구조 변경
+![image](https://github.com/42organization/42gg.server.dev.v2/assets/79272189/c9c47670-b955-4e34-a589-c498008446f0)
+
+
+</div>
+</details>
+
+<table>
+  <thead>
+    <tr>
+        <td align=center>🏓</td>
+        <td align=center>🏓</td>
+        <td align=center>🏓</td>
+        <td align=center>🏓</td>
+    </tr>
+  </thead>
+    <tr>
+        <td align=center><a href="https://github.com/ghyen">권기현 @ghyen</a></td> 
+        <td align=center><a href="https://github.com/AreSain">정승수 @AreSain</a></td>
+        <td align=center><a href="https://github.com/JayJay-Kay">김정주 @JayJay-Kay</a></td>
+        <td align=center><a href="https://github.com/yes-ee"> 이예슬 @yes-ee</a></td>
+    </tr>
+    <tr>
+        <td align=center>파티 서비스 개발, <br> 테스트 커버리지 개선</td>
+        <td align=center>팀장, 파티 서비스 개발, <br> 테스트 커버리지 개선</td>
+        <td align=center>파티 서비스 개발, <br> 테스트 커버리지 개선</td>
+        <td align=center>파티 서비스 개발, <br> 테스트 커버리지 개선</td>
     </tr>
 </table>
 
