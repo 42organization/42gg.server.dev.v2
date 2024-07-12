@@ -4,13 +4,16 @@ import static gg.data.agenda.type.AgendaTeamStatus.*;
 import static gg.utils.exception.ErrorCode.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.agenda.api.user.agendateam.controller.request.TeamCreateReqDto;
+import gg.agenda.api.user.agendateam.controller.request.TeamDetailsReqDto;
 import gg.agenda.api.user.agendateam.controller.response.TeamCreateResDto;
+import gg.agenda.api.user.agendateam.controller.response.TeamDetailsResDto;
 import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaProfile;
@@ -37,6 +40,32 @@ public class AgendaTeamService {
 	private final AgendaTeamRepository agendaTeamRepository;
 	private final AgendaProfileRepository agendaProfileRepository;
 	private final AgendaTeamProfileRepository agendaTeamProfileRepository;
+
+	/**
+	 * 아젠다 팀 상세 정보 조회
+	 * @param user 사용자 정보, teamCreateReqDto 팀 키, agendaKey 아젠다 키
+	 * @return 만들어진 팀 상세 정보
+	 */
+	@Transactional(readOnly = true)
+	public TeamDetailsResDto detailsAgendaTeam(UserDto user, UUID agendaKey, TeamDetailsReqDto teamDetailsReqDto) {
+		Agenda agenda = agendaRepository.findByAgendaKey(agendaKey)
+			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
+
+		AgendaTeam agendaTeam = agendaTeamRepository
+			.findByAgendaAndTeamKeyAndStatus(agenda, teamDetailsReqDto.getTeamKey(), OPEN, CONFIRM)
+			.orElseThrow(() -> new NotExistException(AGENDA_TEAM_NOT_FOUND));
+
+		List<AgendaTeamProfile> agendaTeamProfileList = agendaTeamProfileRepository
+			.findByAgendaTeamAndIsExistTrue(agendaTeam);
+
+		if (agendaTeam.getStatus().equals(CONFIRM)) {  // 팀이 확정 상태인 경우에
+			if (agendaTeamProfileList.stream() // 팀에 속한 유저가 아닌 경우
+				.noneMatch(profile -> profile.getProfile().getUserId().equals(user.getId()))) {
+				throw new ForbiddenException(TEAM_FORBIDDEN); // 조회 불가
+			}
+		}
+		return new TeamDetailsResDto(agendaTeam, agendaTeamProfileList);
+	}
 
 	/**
 	 * 아젠다 팀 생성하기

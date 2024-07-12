@@ -11,11 +11,10 @@ import javax.validation.constraints.Size;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.type.Location;
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
 public class TeamCreateReqDto {
 	@NotBlank
 	@Size(max = 30)
@@ -31,6 +30,14 @@ public class TeamCreateReqDto {
 	@NotBlank
 	@Size(max = 500)
 	private String teamContent;
+
+	@Builder
+	public TeamCreateReqDto(String teamName, Boolean teamIsPrivate, String teamLocation, String teamContent) {
+		this.teamName = teamName;
+		this.teamIsPrivate = teamIsPrivate;
+		this.teamLocation = teamLocation;
+		this.teamContent = teamContent;
+	}
 
 	public static AgendaTeam toEntity(TeamCreateReqDto teamCreateReqDto, Agenda agenda, String intraId) {
 		return AgendaTeam.builder()
