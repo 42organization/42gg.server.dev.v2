@@ -1,5 +1,6 @@
 package gg.agenda.api.user.agenda.controller.request;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -22,6 +23,7 @@ public class AgendaTeamAwardDto {
 	private String awardName;
 
 	@Min(1)
+	@Max(1000)
 	private int awardPriority;
 
 	@Builder
