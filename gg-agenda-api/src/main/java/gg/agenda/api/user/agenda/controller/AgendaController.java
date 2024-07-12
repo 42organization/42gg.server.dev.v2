@@ -3,6 +3,7 @@ package gg.agenda.api.user.agenda.controller;
 import static gg.utils.exception.ErrorCode.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.validation.Valid;
@@ -29,6 +30,7 @@ import gg.agenda.api.user.agenda.service.AgendaService;
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
 import gg.data.agenda.Agenda;
+import gg.data.agenda.AgendaAnnouncement;
 import gg.utils.dto.PageRequestDto;
 import gg.utils.exception.custom.ForbiddenException;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -50,8 +52,10 @@ public class AgendaController {
 	})
 	public ResponseEntity<AgendaResponseDto> agendaDetails(@RequestParam("agenda_key") UUID agendaKey) {
 		Agenda agenda = agendaService.findAgendaByAgendaKey(agendaKey);
-		AgendaResponseDto agendaDto = agendaService.findAgendaWithLatestAnnouncement(agenda);
-		return ResponseEntity.ok(agendaDto);
+		Optional<AgendaAnnouncement> announcement = agendaService.findAgendaWithLatestAnnouncement(agenda);
+		String announcementTitle = announcement.map(AgendaAnnouncement::getTitle).orElse("");
+		AgendaResponseDto agendaResponseDto = AgendaResponseDto.MapStruct.INSTANCE.toDto(agenda,  announcementTitle);
+		return ResponseEntity.ok(agendaResponseDto);
 	}
 
 	@ApiResponse(responseCode = "200", description = "현재 진행중인 Agenda 목록 조회 성공")

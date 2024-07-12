@@ -99,7 +99,7 @@ public class AgendaResponseDto {
 		@Mapping(target = "agendaStatus", source = "agenda.status")
 		@Mapping(target = "createdAt", source = "agenda.createdAt")
 		@Mapping(target = "isOfficial", source = "agenda.isOfficial")
-		@Mapping(target = "announcementTitle", source = "announcement.title")
-		AgendaResponseDto toDto(Agenda agenda, AgendaAnnouncement announcement);
+		@Mapping(target = "announcementTitle", source = "announcementTitle")
+		AgendaResponseDto toDto(Agenda agenda, String announcementTitle);
 	}
 }

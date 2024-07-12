@@ -5,6 +5,7 @@ import static gg.utils.exception.ErrorCode.*;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -48,10 +49,8 @@ public class AgendaService {
 	}
 
 	@Transactional(readOnly = true)
-	public AgendaResponseDto findAgendaWithLatestAnnouncement(Agenda agenda) {
-		AgendaAnnouncement announcement = agendaAnnouncementRepository
-			.findLatestByAgenda(agenda).orElse(null);
-		return AgendaResponseDto.MapStruct.INSTANCE.toDto(agenda, announcement);
+	public Optional<AgendaAnnouncement> findAgendaWithLatestAnnouncement(Agenda agenda) {
+		return agendaAnnouncementRepository.findLatestByAgenda(agenda);
 	}
 
 	@Transactional(readOnly = true)
