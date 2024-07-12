@@ -60,42 +60,6 @@ class AgendaServiceTest {
 	AgendaService agendaService;
 
 	@Nested
-	@DisplayName("Agenda 단건 조회")
-	class GetAgenda {
-
-		@Test
-		@DisplayName("Agenda 단건 조회 성공")
-		void getAgendaSuccessWithAnnounce() {
-			// given
-			Agenda agenda = mock(Agenda.class);
-			when(agendaAnnouncementRepository.findLatestByAgenda(agenda)).thenReturn(Optional.empty());
-
-			// when
-			AgendaResponseDto result = agendaService.findAgendaWithLatestAnnouncement(agenda);
-
-			// then
-			verify(agendaAnnouncementRepository, times(1)).findLatestByAgenda(agenda);
-			assertThat(result.getAnnouncementTitle()).isNull();
-		}
-
-		@Test
-		@DisplayName("Agenda 단건 조회 실패")
-		void getAgendaSuccessWithNoAnnounce() {
-			Agenda agenda = mock(Agenda.class);
-			AgendaAnnouncement announcement = AgendaAnnouncement.builder().title("title").build();
-			when(agendaAnnouncementRepository.findLatestByAgenda(agenda)).thenReturn(Optional.of(announcement));
-
-			// when
-			AgendaResponseDto result = agendaService.findAgendaWithLatestAnnouncement(agenda);
-
-			// then
-			verify(agendaAnnouncementRepository, times(1)).findLatestByAgenda(agenda);
-			assertThat(result.getAnnouncementTitle()).isEqualTo(announcement.getTitle());
-
-		}
-	}
-
-	@Nested
 	@DisplayName("Agenda 현황 전체 조회")
 	class GetAgendaListCurrent {
 
