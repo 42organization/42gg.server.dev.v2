@@ -242,6 +242,28 @@ public class AgendaMockData {
 		return agendaRepository.save(agenda);
 	}
 
+	public Agenda createAgenda(String intraId, LocalDateTime startTime, AgendaStatus status) {
+		Agenda agenda = Agenda.builder()
+			.title("title")
+			.content("content")
+			.deadline(startTime.minusDays(1))
+			.startTime(startTime)
+			.endTime(startTime.plusDays(1))
+			.minTeam(1)
+			.maxTeam(5)
+			.currentTeam(0)
+			.minPeople(1)
+			.maxPeople(3)
+			.posterUri("posterUri")
+			.hostIntraId(intraId)
+			.location(SEOUL)
+			.status(status)
+			.isOfficial(true)
+			.isRanking(true)
+			.build();
+		return agendaRepository.save(agenda);
+	}
+
 	public Agenda createAgenda(Location location) {
 		Agenda agenda = Agenda.builder()
 			.title("title")

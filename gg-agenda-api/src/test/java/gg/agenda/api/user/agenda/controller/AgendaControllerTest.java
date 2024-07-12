@@ -797,5 +797,86 @@ public class AgendaControllerTest {
 					.content(response))
 				.andExpect(status().isForbidden());
 		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 실패 - 이미 확정된 경우")
+		void confirmAgendaFailedAlreadyConfirm() throws Exception {
+			// given
+			int teamSize = 10;
+			int awardSize = 3;
+			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(),
+				LocalDateTime.now().minusDays(10), AgendaStatus.CONFIRM);
+			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
+				.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
+				.collect(Collectors.toList());
+			List<AgendaTeamAwardDto> awards = IntStream.range(0, awardSize)
+				.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
+					.awardName("prize" + i).awardPriority(i).build())
+				.collect(Collectors.toList());
+			AgendaConfirmRequestDto agendaConfirmRequestDto = AgendaConfirmRequestDto.builder().awards(awards).build();
+			String response = objectMapper.writeValueAsString(agendaConfirmRequestDto);
+
+			// expected
+			mockMvc.perform(patch("/agenda/confirm")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(response))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 실패 - 이미 취소된 경우")
+		void confirmAgendaFailedAlreadyCancel() throws Exception {
+			// given
+			int teamSize = 10;
+			int awardSize = 3;
+			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(),
+				LocalDateTime.now().minusDays(10), AgendaStatus.CANCEL);
+			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
+				.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
+				.collect(Collectors.toList());
+			List<AgendaTeamAwardDto> awards = IntStream.range(0, awardSize)
+				.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
+					.awardName("prize" + i).awardPriority(i).build())
+				.collect(Collectors.toList());
+			AgendaConfirmRequestDto agendaConfirmRequestDto = AgendaConfirmRequestDto.builder().awards(awards).build();
+			String response = objectMapper.writeValueAsString(agendaConfirmRequestDto);
+
+			// expected
+			mockMvc.perform(patch("/agenda/confirm")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(response))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 실패 - 아직 시작하지 않은 경우")
+		void confirmAgendaFailedBeforeStartTime() throws Exception {
+			// given
+			int teamSize = 10;
+			int awardSize = 3;
+			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(),
+				LocalDateTime.now().plusDays(1), AgendaStatus.ON_GOING);
+			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
+				.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
+				.collect(Collectors.toList());
+			List<AgendaTeamAwardDto> awards = IntStream.range(0, awardSize)
+				.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
+					.awardName("prize" + i).awardPriority(i).build())
+				.collect(Collectors.toList());
+			AgendaConfirmRequestDto agendaConfirmRequestDto = AgendaConfirmRequestDto.builder().awards(awards).build();
+			String response = objectMapper.writeValueAsString(agendaConfirmRequestDto);
+
+			// expected
+			mockMvc.perform(patch("/agenda/confirm")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(response))
+				.andExpect(status().isBadRequest());
+		}
 	}
 }
