@@ -242,6 +242,98 @@ class AgendaServiceTest {
 		}
 
 		@Test
+		@DisplayName("Agenda 시상 및 확정 성공 - 시상하지 않는 대회인 경우")
+		void confirmAgendaSuccessWithNoRank() {
+			// given
+			Agenda agenda = Agenda.builder()
+				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
+				.status(AgendaStatus.ON_GOING).isRanking(false).build();
+			UserDto user = UserDto.builder().intraId(agenda.getHostIntraId()).build();
+			UUID agendaKey = agenda.getAgendaKey();
+
+			when(agendaRepository.findByAgendaKey(any(UUID.class))).thenReturn(Optional.of(agenda));
+
+			// when
+			agendaService.confirmAgenda(user, agendaKey, null);
+
+			// then
+			verify(agendaRepository, times(1)).findByAgendaKey(agendaKey);
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 성공 - 시상하지 않는 대회에 시상 내역이 들어온 경우")
+		void confirmAgendaSuccessWithNoRankAndAwards() {
+			// given
+			Agenda agenda = Agenda.builder()
+				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
+				.status(AgendaStatus.ON_GOING).isRanking(false).build();
+			List<AgendaTeam> agendaTeams = new ArrayList<>();
+			IntStream.range(0, 10).forEach(i -> agendaTeams.add(AgendaTeam.builder().name("team" + i).build()));
+			AgendaTeamAwardDto awardDto = AgendaTeamAwardDto.builder()
+				.teamName("team1").awardName("award").awardPriority(1).build();
+			UserDto user = UserDto.builder().intraId(agenda.getHostIntraId()).build();
+			UUID agendaKey = agenda.getAgendaKey();
+			AgendaConfirmRequestDto confirmDto = AgendaConfirmRequestDto.builder()
+				.awards(List.of(awardDto)).build();
+
+			when(agendaRepository.findByAgendaKey(any(UUID.class))).thenReturn(Optional.of(agenda));
+
+			// when
+			agendaService.confirmAgenda(user, agendaKey, confirmDto);
+
+			// then
+			verify(agendaRepository, times(1)).findByAgendaKey(agendaKey);
+			verify(agendaTeamRepository, never()).findByAgendaAndNameAndStatus(any(), any(), any());
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 성공 - 시상하지 않는 대회에 시상 내역이 빈 리스트로 들어온 경우")
+		void confirmAgendaSuccessWithNoRankAndEmtpyAwards() {
+			// given
+			Agenda agenda = Agenda.builder()
+				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
+				.status(AgendaStatus.ON_GOING).isRanking(false).build();
+			List<AgendaTeam> agendaTeams = new ArrayList<>();
+			IntStream.range(0, 10).forEach(i -> agendaTeams.add(AgendaTeam.builder().name("team" + i).build()));
+			UserDto user = UserDto.builder().intraId(agenda.getHostIntraId()).build();
+			UUID agendaKey = agenda.getAgendaKey();
+			AgendaConfirmRequestDto confirmDto = AgendaConfirmRequestDto.builder()
+				.awards(List.of()).build();
+
+			when(agendaRepository.findByAgendaKey(any(UUID.class))).thenReturn(Optional.of(agenda));
+
+			// when
+			agendaService.confirmAgenda(user, agendaKey, confirmDto);
+
+			// then
+			verify(agendaRepository, times(1)).findByAgendaKey(agendaKey);
+			verify(agendaTeamRepository, never()).findByAgendaAndNameAndStatus(any(), any(), any());
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 성공 - 시상하지 않는 대회에 시상 내역이 null로 들어온 경우")
+		void confirmAgendaSuccessWithNoRankAndNullAwards() {
+			// given
+			Agenda agenda = Agenda.builder()
+				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
+				.status(AgendaStatus.ON_GOING).isRanking(false).build();
+			List<AgendaTeam> agendaTeams = new ArrayList<>();
+			IntStream.range(0, 10).forEach(i -> agendaTeams.add(AgendaTeam.builder().name("team" + i).build()));
+			UserDto user = UserDto.builder().intraId(agenda.getHostIntraId()).build();
+			UUID agendaKey = agenda.getAgendaKey();
+			AgendaConfirmRequestDto confirmDto = AgendaConfirmRequestDto.builder().build();
+
+			when(agendaRepository.findByAgendaKey(any(UUID.class))).thenReturn(Optional.of(agenda));
+
+			// when
+			agendaService.confirmAgenda(user, agendaKey, confirmDto);
+
+			// then
+			verify(agendaRepository, times(1)).findByAgendaKey(agendaKey);
+			verify(agendaTeamRepository, never()).findByAgendaAndNameAndStatus(any(), any(), any());
+		}
+
+		@Test
 		@DisplayName("Agenda 시상 및 확정 실패 - Agenda가 없는 경우")
 		void confirmAgendaFailedWithNoAgenda() {
 			UserDto user = mock(UserDto.class);

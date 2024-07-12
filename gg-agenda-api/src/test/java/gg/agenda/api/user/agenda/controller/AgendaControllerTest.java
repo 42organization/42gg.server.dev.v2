@@ -570,12 +570,12 @@ public class AgendaControllerTest {
 	class ConfirmAgenda {
 
 		@Test
-		@DisplayName("Agenda 시상 및 확정 성공")
+		@DisplayName("Agenda 시상 및 확정 성공 - 시상 대회인 경우")
 		void confirmAgendaSuccess() throws Exception {
 			// given
 			int teamSize = 10;
 			int awardSize = 3;
-			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10));
+			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), true);
 			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
 					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
 					.collect(Collectors.toList());
@@ -611,12 +611,74 @@ public class AgendaControllerTest {
 		}
 
 		@Test
+		@DisplayName("Agenda 시상 및 확정 성공 - 시상하지 않는 대회인 경우")
+		void confirmAgendaSuccessWithNoRanking() throws Exception {
+			// given
+			int teamSize = 10;
+			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), false);
+			IntStream.range(0, teamSize)
+				.forEach(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM));
+
+			// when
+			mockMvc.perform(patch("/agenda/confirm")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isNoContent());
+			Agenda result = em.createQuery("select a from Agenda a where a.agendaKey = :agendaKey", Agenda.class)
+				.setParameter("agendaKey", agenda.getAgendaKey()).getSingleResult();
+
+			// then
+			assertThat(result.getStatus()).isEqualTo(AgendaStatus.CONFIRM);
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 성공 - 시상하지 않는 대회에 시상 내역이 들어온 경우")
+		void confirmAgendaSuccessWithNoRankAndAwards() throws Exception {
+			// given
+			int teamSize = 10;
+			int awardSize = 3;
+			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), false);
+			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
+				.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
+				.collect(Collectors.toList());
+			List<AgendaTeamAwardDto> awards = IntStream.range(0, awardSize)
+				.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
+					.awardName("prize" + i).awardPriority(i).build())
+				.collect(Collectors.toList());
+			AgendaConfirmRequestDto agendaConfirmRequestDto = AgendaConfirmRequestDto.builder().awards(awards).build();
+			String response = objectMapper.writeValueAsString(agendaConfirmRequestDto);
+
+			// when
+			mockMvc.perform(patch("/agenda/confirm")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(response))
+				.andExpect(status().isNoContent());
+			Agenda result = em.createQuery("select a from Agenda a where a.agendaKey = :agendaKey", Agenda.class)
+				.setParameter("agendaKey", agenda.getAgendaKey()).getSingleResult();
+
+			// then
+			assertThat(result.getStatus()).isEqualTo(AgendaStatus.CONFIRM);
+			awards.forEach(award -> {
+				AgendaTeam agendaTeam = em.createQuery(
+						"select at from AgendaTeam at where at.agenda = :agenda and at.name = :teamName",
+						AgendaTeam.class)
+					.setParameter("agenda", agenda)
+					.setParameter("teamName", award.getTeamName())
+					.getSingleResult();
+				assertThat(agendaTeam.getAward()).isNotEqualTo(award.getAwardName());
+				assertThat(agendaTeam.getAwardPriority()).isNotEqualTo(award.getAwardPriority());
+			});
+		}
+
+		@Test
 		@DisplayName("Agenda 시상 및 확정 실패 - 존재하지 않는 팀에 대한 시상인 경우")
 		void confirmAgendaFailedWithInvalidTeam() throws Exception {
 			// given
 			int teamSize = 10;
 			int awardSize = 3;
-			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10));
+			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), true);
 			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
 					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
 					.collect(Collectors.toList());
@@ -645,7 +707,7 @@ public class AgendaControllerTest {
 			// given
 			int teamSize = 10;
 			int awardSize = 3;
-			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10));
+			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), true);
 			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
 					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
 					.collect(Collectors.toList());
@@ -672,7 +734,7 @@ public class AgendaControllerTest {
 		void confirmAgendaFailedWithoutAwards() throws Exception {
 			// given
 			int teamSize = 10;
-			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10));
+			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), true);
 			IntStream.range(0, teamSize).forEach(i ->
 				agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM));
 			AgendaConfirmRequestDto agendaConfirmRequestDto = AgendaConfirmRequestDto.builder().build();    // null
@@ -692,7 +754,7 @@ public class AgendaControllerTest {
 		void confirmAgendaFailedWithEmptyAwards() throws Exception {
 			// given
 			int teamSize = 10;
-			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10));
+			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), true);
 			IntStream.range(0, teamSize).forEach(i ->
 				agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM));
 			AgendaConfirmRequestDto agendaConfirmRequestDto = AgendaConfirmRequestDto.builder()
@@ -716,7 +778,7 @@ public class AgendaControllerTest {
 			int teamSize = 10;
 			int awardSize = 3;
 			User another = testDataUtils.createNewUser();
-			Agenda agenda = agendaMockData.createAgenda(another.getIntraId(), LocalDateTime.now().minusDays(10));
+			Agenda agenda = agendaMockData.createAgenda(another.getIntraId(), LocalDateTime.now().minusDays(10), true);
 			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
 					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
 					.collect(Collectors.toList());

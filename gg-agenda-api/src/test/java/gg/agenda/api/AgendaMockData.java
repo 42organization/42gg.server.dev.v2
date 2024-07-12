@@ -220,7 +220,7 @@ public class AgendaMockData {
 		return agendaRepository.save(agenda);
 	}
 
-	public Agenda createAgenda(String intraId, LocalDateTime startTime) {
+	public Agenda createAgenda(String intraId, LocalDateTime startTime, boolean rank) {
 		Agenda agenda = Agenda.builder()
 			.title("title")
 			.content("content")
@@ -237,7 +237,7 @@ public class AgendaMockData {
 			.location(SEOUL)
 			.status(ON_GOING)
 			.isOfficial(true)
-			.isRanking(true)
+			.isRanking(rank)
 			.build();
 		return agendaRepository.save(agenda);
 	}
@@ -373,7 +373,7 @@ public class AgendaMockData {
 			.location(SEOUL)
 			.mateCount(3)
 			.award("award")
-			.awardPriority(1)
+			.awardPriority(-1)
 			.isPrivate(false)
 			.build();
 		return agendaTeamRepository.save(agendaTeam);
