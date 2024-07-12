@@ -2,6 +2,7 @@ package gg.agenda.api.user.agenda.controller.request;
 
 import java.util.List;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -14,6 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AgendaConfirmReqDto {
 
+	@Valid
 	@NotNull
 	@NotEmpty
 	private List<AgendaTeamAwardDto> awards;

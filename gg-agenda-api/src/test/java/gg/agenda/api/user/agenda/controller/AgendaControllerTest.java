@@ -581,7 +581,7 @@ public class AgendaControllerTest {
 					.collect(Collectors.toList());
 			List<AgendaTeamAwardDto> awards = IntStream.range(0, awardSize)
 					.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
-						.awardName("prize" + i).awardPriority(i).build())
+						.awardName("prize" + i).awardPriority(i + 1).build())
 					.collect(Collectors.toList());
 			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder().awards(awards).build();
 			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
@@ -643,7 +643,7 @@ public class AgendaControllerTest {
 					.collect(Collectors.toList());
 			List<AgendaTeamAwardDto> awards = IntStream.range(0, awardSize)
 					.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
-						.awardName("prize" + i).awardPriority(i).build())
+					.awardName("prize" + i).awardPriority(i + 1).build())
 					.collect(Collectors.toList());
 			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder().awards(awards).build();
 			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
@@ -684,13 +684,12 @@ public class AgendaControllerTest {
 					.collect(Collectors.toList());
 			List<AgendaTeamAwardDto> awards = IntStream.range(0, awardSize)
 					.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
-						.awardName("prize" + i).awardPriority(i).build())
+					.awardName("prize" + i).awardPriority(i + 1).build())
 					.collect(Collectors.toList());
 			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder().awards(awards).build();
 			awards.add(AgendaTeamAwardDto.builder()
 				.teamName("invalid_team").awardName("prize").awardPriority(1).build());    // invalid team
 			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
-
 
 			// expected
 			mockMvc.perform(patch("/agenda/confirm")
@@ -713,7 +712,7 @@ public class AgendaControllerTest {
 					.collect(Collectors.toList());
 			List<AgendaTeamAwardDto> awards = IntStream.range(0, awardSize)
 					.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
-						.awardName("prize" + i).awardPriority(i).build())
+					.awardName("prize" + i).awardPriority(i + 1).build())
 					.collect(Collectors.toList());
 			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder().awards(awards).build();
 			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
@@ -784,7 +783,7 @@ public class AgendaControllerTest {
 					.collect(Collectors.toList());
 			List<AgendaTeamAwardDto> awards = IntStream.range(0, awardSize)
 					.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
-						.awardName("prize" + i).awardPriority(i).build())
+					.awardName("prize" + i).awardPriority(i + 1).build())
 					.collect(Collectors.toList());
 			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder().awards(awards).build();
 			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
@@ -811,7 +810,7 @@ public class AgendaControllerTest {
 					.collect(Collectors.toList());
 			List<AgendaTeamAwardDto> awards = IntStream.range(0, awardSize)
 					.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
-						.awardName("prize" + i).awardPriority(i).build())
+						.awardName("prize" + i).awardPriority(i + 1).build())
 					.collect(Collectors.toList());
 			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder().awards(awards).build();
 			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
@@ -838,7 +837,7 @@ public class AgendaControllerTest {
 					.collect(Collectors.toList());
 			List<AgendaTeamAwardDto> awards = IntStream.range(0, awardSize)
 					.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
-						.awardName("prize" + i).awardPriority(i).build())
+					.awardName("prize" + i).awardPriority(i + 1).build())
 					.collect(Collectors.toList());
 			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder().awards(awards).build();
 			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
@@ -865,8 +864,120 @@ public class AgendaControllerTest {
 					.collect(Collectors.toList());
 			List<AgendaTeamAwardDto> awards = IntStream.range(0, awardSize)
 					.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
-						.awardName("prize" + i).awardPriority(i).build())
+						.awardName("prize" + i).awardPriority(i + 1).build())
 					.collect(Collectors.toList());
+			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder().awards(awards).build();
+			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
+
+			// expected
+			mockMvc.perform(patch("/agenda/confirm")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(response))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 실패 - empty awardName")
+		void confirmAgendaFailedWithEmptyAwardName() throws Exception {
+			// given
+			int teamSize = 10;
+			int awardSize = 3;
+			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), true);
+			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
+					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
+					.collect(Collectors.toList());
+			List<AgendaTeamAwardDto> awards = IntStream.range(0, awardSize)
+					.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
+						.awardName("prize" + i).awardPriority(i + 1).build())
+					.collect(Collectors.toList());
+			awards.add(AgendaTeamAwardDto.builder().teamName(agendaTeams.get(awardSize).getName())
+				.awardName("").awardPriority(awardSize).build());    // empty award name
+			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder().awards(awards).build();
+			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
+
+			// expected
+			mockMvc.perform(patch("/agenda/confirm")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(response))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 실패 - null awardName")
+		void confirmAgendaFailedWithNullAwardName() throws Exception {
+			// given
+			int teamSize = 10;
+			int awardSize = 3;
+			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), true);
+			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
+					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
+					.collect(Collectors.toList());
+			List<AgendaTeamAwardDto> awards = IntStream.range(0, awardSize)
+					.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
+						.awardName("prize" + i).awardPriority(i + 1).build())
+					.collect(Collectors.toList());
+			awards.add(AgendaTeamAwardDto.builder().teamName(agendaTeams.get(awardSize).getName())
+				.awardPriority(awardSize).build());    // null award name
+			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder().awards(awards).build();
+			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
+
+			// expected
+			mockMvc.perform(patch("/agenda/confirm")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(response))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 실패 - empty teamName")
+		void confirmAgendaFailedWithEmptyTeamName() throws Exception {
+			// given
+			int teamSize = 10;
+			int awardSize = 3;
+			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), true);
+			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
+					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
+					.collect(Collectors.toList());
+			List<AgendaTeamAwardDto> awards = IntStream.range(0, awardSize)
+					.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
+						.awardName("prize" + i).awardPriority(i + 1).build())
+					.collect(Collectors.toList());
+			awards.add(AgendaTeamAwardDto.builder().awardName("prize" + awardSize)
+				.teamName("").awardPriority(awardSize).build());    // empty award name
+			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder().awards(awards).build();
+			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
+
+			// expected
+			mockMvc.perform(patch("/agenda/confirm")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(response))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 실패 - null teamName")
+		void confirmAgendaFailedWithNullTeamName() throws Exception {
+			// given
+			int teamSize = 10;
+			int awardSize = 3;
+			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), true);
+			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
+					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
+					.collect(Collectors.toList());
+			List<AgendaTeamAwardDto> awards = IntStream.range(0, awardSize)
+					.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
+						.awardName("prize" + i).awardPriority(i + 1).build())
+					.collect(Collectors.toList());
+			awards.add(AgendaTeamAwardDto.builder().awardName("prize" + awardSize)
+				.awardPriority(awardSize).build());    // null award name
 			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder().awards(awards).build();
 			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
 
