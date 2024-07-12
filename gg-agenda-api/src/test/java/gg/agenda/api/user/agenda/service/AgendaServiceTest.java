@@ -93,7 +93,7 @@ class AgendaServiceTest {
 		@Test
 		@DisplayName("AgendaAnnouncement 조회 성공 - 최신 공지사항이 있는 경우")
 		void findAgendaAnnouncementSuccess() {
-		    			// given
+			// given
 			Agenda agenda = Agenda.builder().build();
 			AgendaAnnouncement announcement = AgendaAnnouncement.builder().title("title").content("content").build();
 			when(agendaAnnouncementRepository.findLatestByAgenda(agenda)).thenReturn(Optional.of(announcement));
@@ -110,7 +110,7 @@ class AgendaServiceTest {
 		@Test
 		@DisplayName("AgendaAnnouncement 조회 성공 - 최신 공지사항이 없는 경우")
 		void findAgendaAnnouncementSuccessWithNoAnnounce() {
-		    			// given
+			// given
 			Agenda agenda = Agenda.builder().build();
 			when(agendaAnnouncementRepository.findLatestByAgenda(agenda)).thenReturn(Optional.empty());
 
