@@ -42,10 +42,13 @@ public class AgendaService {
 
 	private final AgendaTeamRepository agendaTeamRepository;
 
-	@Transactional(readOnly = true)
-	public AgendaResponseDto findAgendaWithLatestAnnouncement(UUID agendaKey) {
-		Agenda agenda = agendaRepository.findByAgendaKey(agendaKey)
+	public Agenda findAgendaByAgendaKey(UUID agendaKey) {
+		return agendaRepository.findByAgendaKey(agendaKey)
 			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
+	}
+
+	@Transactional(readOnly = true)
+	public AgendaResponseDto findAgendaWithLatestAnnouncement(Agenda agenda) {
 		AgendaAnnouncement announcement = agendaAnnouncementRepository
 			.findLatestByAgenda(agenda).orElse(null);
 		return AgendaResponseDto.MapStruct.INSTANCE.toDto(agenda, announcement);
@@ -75,12 +78,7 @@ public class AgendaService {
 	}
 
 	@Transactional
-	public void confirmAgenda(UserDto user, UUID agendaKey, AgendaConfirmRequestDto agendaConfirmRequestDto) {
-		Agenda agenda = agendaRepository.findByAgendaKey(agendaKey)
-			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
-		if (!user.getIntraId().equals(agenda.getHostIntraId())) {
-			throw new ForbiddenException(CONFIRM_FORBIDDEN);
-		}
+	public void confirmAgenda(AgendaConfirmRequestDto agendaConfirmRequestDto, Agenda agenda) {
 		if (agenda.getIsRanking()) {
 			AgendaConfirmRequestDto.mustNotNullOrEmpty(agendaConfirmRequestDto);
 			agendaConfirmRequestDto.getAwards().forEach(award -> {

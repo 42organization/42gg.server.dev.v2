@@ -1,5 +1,7 @@
 package gg.agenda.api.user.agenda.controller;
 
+import static gg.utils.exception.ErrorCode.*;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -26,7 +28,9 @@ import gg.agenda.api.user.agenda.controller.response.AgendaSimpleResponseDto;
 import gg.agenda.api.user.agenda.service.AgendaService;
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
+import gg.data.agenda.Agenda;
 import gg.utils.dto.PageRequestDto;
+import gg.utils.exception.custom.ForbiddenException;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +49,8 @@ public class AgendaController {
 		@ApiResponse(responseCode = "404", description = "Agenda를 찾을 수 없음")
 	})
 	public ResponseEntity<AgendaResponseDto> agendaDetails(@RequestParam("agenda_key") UUID agendaKey) {
-		AgendaResponseDto agendaDto = agendaService.findAgendaWithLatestAnnouncement(agendaKey);
+		Agenda agenda = agendaService.findAgendaByAgendaKey(agendaKey);
+		AgendaResponseDto agendaDto = agendaService.findAgendaWithLatestAnnouncement(agenda);
 		return ResponseEntity.ok(agendaDto);
 	}
 
@@ -87,7 +92,11 @@ public class AgendaController {
 	@PatchMapping("/confirm")
 	public ResponseEntity<Void> agendaConfirm(@RequestParam("agenda_key") UUID agendaKey,
 		@RequestBody(required = false) AgendaConfirmRequestDto agendaConfirmRequestDto, @Login UserDto user) {
-		agendaService.confirmAgenda(user, agendaKey, agendaConfirmRequestDto);
+		Agenda agenda = agendaService.findAgendaByAgendaKey(agendaKey);
+		if (!user.getIntraId().equals(agenda.getHostIntraId())) {
+			throw new ForbiddenException(CONFIRM_FORBIDDEN);
+		}
+		agendaService.confirmAgenda(agendaConfirmRequestDto, agenda);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 }
