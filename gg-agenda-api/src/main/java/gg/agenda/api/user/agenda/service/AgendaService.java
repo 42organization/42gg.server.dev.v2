@@ -13,23 +13,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.agenda.api.user.agenda.controller.request.AgendaConfirmRequestDto;
+import gg.agenda.api.user.agenda.controller.request.AgendaConfirmReqDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaCreateDto;
-import gg.agenda.api.user.agenda.controller.request.AgendaTeamAwardDto;
-import gg.agenda.api.user.agenda.controller.response.AgendaKeyResponseDto;
-import gg.agenda.api.user.agenda.controller.response.AgendaResponseDto;
-import gg.agenda.api.user.agenda.controller.response.AgendaSimpleResponseDto;
 import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaAnnouncement;
 import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.type.AgendaStatus;
 import gg.data.agenda.type.AgendaTeamStatus;
-import gg.data.user.User;
 import gg.repo.agenda.AgendaAnnouncementRepository;
 import gg.repo.agenda.AgendaRepository;
 import gg.repo.agenda.AgendaTeamRepository;
-import gg.utils.exception.custom.ForbiddenException;
 import gg.utils.exception.custom.NotExistException;
 import lombok.RequiredArgsConstructor;
 
@@ -74,9 +68,9 @@ public class AgendaService {
 	}
 
 	@Transactional
-	public void confirmAgenda(AgendaConfirmRequestDto agendaConfirmRequestDto, Agenda agenda) {
+	public void confirmAgenda(AgendaConfirmReqDto agendaConfirmReqDto, Agenda agenda) {
 		if (agenda.getIsRanking()) {
-			agendaConfirmRequestDto.getAwards().forEach(award -> {
+			agendaConfirmReqDto.getAwards().forEach(award -> {
 				AgendaTeam agendaTeam = agendaTeamRepository
 					.findByAgendaAndNameAndStatus(agenda, award.getTeamName(), AgendaTeamStatus.CONFIRM)
 					.orElseThrow(() -> new NotExistException(AGENDA_TEAM_NOT_FOUND));

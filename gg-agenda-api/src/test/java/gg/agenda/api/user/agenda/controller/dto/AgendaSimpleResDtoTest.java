@@ -7,16 +7,16 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import gg.agenda.api.user.agenda.controller.response.AgendaSimpleResponseDto;
+import gg.agenda.api.user.agenda.controller.response.AgendaSimpleResDto;
 import gg.data.agenda.Agenda;
 import gg.utils.annotation.UnitTest;
 
 @UnitTest
-class AgendaSimpleResponseDtoTest {
+class AgendaSimpleResDtoTest {
 
 	@Nested
 	@DisplayName("AgendaSimpleResponseDto 생성")
-	class CreateAgendaSimpleResponseDto {
+	class CreateAgendaSimpleResDto {
 
 		@ParameterizedTest
 		@ValueSource(booleans = {true, false})
@@ -28,7 +28,7 @@ class AgendaSimpleResponseDtoTest {
 				.build();
 
 			// given
-			AgendaSimpleResponseDto dto = AgendaSimpleResponseDto.MapStruct.INSTANCE.toDto(agenda);
+			AgendaSimpleResDto dto = AgendaSimpleResDto.MapStruct.INSTANCE.toDto(agenda);
 
 			// then
 			assertThat(dto).isNotNull();

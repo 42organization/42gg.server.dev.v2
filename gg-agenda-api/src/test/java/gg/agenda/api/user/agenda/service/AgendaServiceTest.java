@@ -23,12 +23,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import gg.agenda.api.user.agenda.controller.request.AgendaConfirmRequestDto;
+import gg.agenda.api.user.agenda.controller.request.AgendaConfirmReqDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaCreateDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaTeamAwardDto;
-import gg.agenda.api.user.agenda.controller.response.AgendaKeyResponseDto;
-import gg.agenda.api.user.agenda.controller.response.AgendaResponseDto;
-import gg.agenda.api.user.agenda.controller.response.AgendaSimpleResponseDto;
 import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaAnnouncement;
@@ -38,8 +35,6 @@ import gg.repo.agenda.AgendaAnnouncementRepository;
 import gg.repo.agenda.AgendaRepository;
 import gg.repo.agenda.AgendaTeamRepository;
 import gg.utils.annotation.UnitTest;
-import gg.utils.exception.custom.ForbiddenException;
-import gg.utils.exception.custom.InvalidParameterException;
 import gg.utils.exception.custom.NotExistException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -255,7 +250,7 @@ class AgendaServiceTest {
 				.teamName("team1").awardName("award").awardPriority(1).build();
 			UserDto user = UserDto.builder().intraId(agenda.getHostIntraId()).build();
 			UUID agendaKey = agenda.getAgendaKey();
-			AgendaConfirmRequestDto confirmDto = AgendaConfirmRequestDto.builder()
+			AgendaConfirmReqDto confirmDto = AgendaConfirmReqDto.builder()
 				.awards(List.of(awardDto)).build();
 
 			when(agendaTeamRepository.findByAgendaAndNameAndStatus(any(), any(), any()))
@@ -299,7 +294,7 @@ class AgendaServiceTest {
 				.teamName("team1").awardName("award").awardPriority(1).build();
 			UserDto user = UserDto.builder().intraId(agenda.getHostIntraId()).build();
 			UUID agendaKey = agenda.getAgendaKey();
-			AgendaConfirmRequestDto confirmDto = AgendaConfirmRequestDto.builder()
+			AgendaConfirmReqDto confirmDto = AgendaConfirmReqDto.builder()
 				.awards(List.of(awardDto)).build();
 
 			// when
@@ -321,7 +316,7 @@ class AgendaServiceTest {
 			IntStream.range(0, 10).forEach(i -> agendaTeams.add(AgendaTeam.builder().name("team" + i).build()));
 			UserDto user = UserDto.builder().intraId(agenda.getHostIntraId()).build();
 			UUID agendaKey = agenda.getAgendaKey();
-			AgendaConfirmRequestDto confirmDto = AgendaConfirmRequestDto.builder()
+			AgendaConfirmReqDto confirmDto = AgendaConfirmReqDto.builder()
 				.awards(List.of()).build();
 
 			// when
@@ -343,7 +338,7 @@ class AgendaServiceTest {
 			IntStream.range(0, 10).forEach(i -> agendaTeams.add(AgendaTeam.builder().name("team" + i).build()));
 			UserDto user = UserDto.builder().intraId(agenda.getHostIntraId()).build();
 			UUID agendaKey = agenda.getAgendaKey();
-			AgendaConfirmRequestDto confirmDto = AgendaConfirmRequestDto.builder().build();
+			AgendaConfirmReqDto confirmDto = AgendaConfirmReqDto.builder().build();
 
 			// when
 			agendaService.confirmAgenda(confirmDto, agenda);
@@ -361,7 +356,7 @@ class AgendaServiceTest {
 				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
 				.status(AgendaStatus.ON_GOING).isRanking(true).build();
 
-			AgendaConfirmRequestDto confirmDto = AgendaConfirmRequestDto.builder().build();
+			AgendaConfirmReqDto confirmDto = AgendaConfirmReqDto.builder().build();
 
 			// expected
 			assertThrows(NullPointerException.class,
@@ -390,7 +385,7 @@ class AgendaServiceTest {
 				.status(AgendaStatus.ON_GOING).isRanking(true).build();
 			AgendaTeamAwardDto awardDto = AgendaTeamAwardDto.builder()
 				.teamName("invalidTeam").awardName("award").awardPriority(1).build();
-			AgendaConfirmRequestDto confirmDto = AgendaConfirmRequestDto.builder()
+			AgendaConfirmReqDto confirmDto = AgendaConfirmReqDto.builder()
 				.awards(List.of(awardDto)).build();
 
 			when(agendaTeamRepository.findByAgendaAndNameAndStatus(any(), any(), any()))

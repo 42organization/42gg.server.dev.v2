@@ -28,12 +28,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.agenda.api.AgendaMockData;
-import gg.agenda.api.user.agenda.controller.request.AgendaConfirmRequestDto;
+import gg.agenda.api.user.agenda.controller.request.AgendaConfirmReqDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaCreateDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaTeamAwardDto;
-import gg.agenda.api.user.agenda.controller.response.AgendaKeyResponseDto;
-import gg.agenda.api.user.agenda.controller.response.AgendaResponseDto;
-import gg.agenda.api.user.agenda.controller.response.AgendaSimpleResponseDto;
+import gg.agenda.api.user.agenda.controller.response.AgendaKeyResDto;
+import gg.agenda.api.user.agenda.controller.response.AgendaResDto;
+import gg.agenda.api.user.agenda.controller.response.AgendaSimpleResDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaAnnouncement;
 import gg.data.agenda.AgendaTeam;
@@ -98,7 +98,7 @@ public class AgendaControllerTest {
 					.param("agenda_key", agenda.getAgendaKey().toString()))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
-			AgendaResponseDto result = objectMapper.readValue(response, AgendaResponseDto.class);
+			AgendaResDto result = objectMapper.readValue(response, AgendaResDto.class);
 
 			// then
 			assertThat(result.getAgendaTitle()).isEqualTo(agenda.getTitle());
@@ -117,7 +117,7 @@ public class AgendaControllerTest {
 					.param("agenda_key", agenda.getAgendaKey().toString()))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
-			AgendaResponseDto result = objectMapper.readValue(response, AgendaResponseDto.class);
+			AgendaResDto result = objectMapper.readValue(response, AgendaResDto.class);
 
 			// then
 			assertThat(result.getAgendaTitle()).isEqualTo(agenda.getTitle());
@@ -139,7 +139,7 @@ public class AgendaControllerTest {
 					.param("agenda_key", agenda.getAgendaKey().toString()))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
-			AgendaResponseDto result = objectMapper.readValue(response, AgendaResponseDto.class);
+			AgendaResDto result = objectMapper.readValue(response, AgendaResDto.class);
 
 			// then
 			assertThat(result.getAgendaTitle()).isEqualTo(agenda.getTitle());
@@ -193,7 +193,7 @@ public class AgendaControllerTest {
 					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
-			AgendaSimpleResponseDto[] result = objectMapper.readValue(response, AgendaSimpleResponseDto[].class);
+			AgendaSimpleResDto[] result = objectMapper.readValue(response, AgendaSimpleResDto[].class);
 
 			// then
 			assertThat(result.length).isEqualTo(officialAgendaList.size() + nonOfficialAgendaList.size());
@@ -218,7 +218,7 @@ public class AgendaControllerTest {
 					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
-			AgendaSimpleResponseDto[] result = objectMapper.readValue(response, AgendaSimpleResponseDto[].class);
+			AgendaSimpleResDto[] result = objectMapper.readValue(response, AgendaSimpleResDto[].class);
 
 			// then
 			assertThat(result.length).isEqualTo(0);
@@ -249,7 +249,7 @@ public class AgendaControllerTest {
 					.content(request))
 				.andExpect(status().isCreated())
 				.andReturn().getResponse().getContentAsString();
-			AgendaKeyResponseDto result = objectMapper.readValue(response, AgendaKeyResponseDto.class);
+			AgendaKeyResDto result = objectMapper.readValue(response, AgendaKeyResDto.class);
 			Optional<Agenda> agenda = agendaRepository.findByAgendaKey(result.getAgendaKey());
 
 			// then
@@ -429,7 +429,7 @@ public class AgendaControllerTest {
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(req))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			AgendaSimpleResponseDto[] result = objectMapper.readValue(response, AgendaSimpleResponseDto[].class);
+			AgendaSimpleResDto[] result = objectMapper.readValue(response, AgendaSimpleResDto[].class);
 
 			// then
 			assertThat(result.length).isEqualTo(size * page < totalCount ? size : totalCount % size);
@@ -457,7 +457,7 @@ public class AgendaControllerTest {
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(req))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			AgendaSimpleResponseDto[] result = objectMapper.readValue(response, AgendaSimpleResponseDto[].class);
+			AgendaSimpleResDto[] result = objectMapper.readValue(response, AgendaSimpleResDto[].class);
 
 			// then
 			assertThat(result.length).isEqualTo(0);
@@ -513,7 +513,7 @@ public class AgendaControllerTest {
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(req))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			AgendaSimpleResponseDto[] result = objectMapper.readValue(response, AgendaSimpleResponseDto[].class);
+			AgendaSimpleResDto[] result = objectMapper.readValue(response, AgendaSimpleResDto[].class);
 
 			// then
 			assertThat(result.length).isEqualTo(0);
@@ -551,7 +551,7 @@ public class AgendaControllerTest {
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(req))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			AgendaSimpleResponseDto[] result = objectMapper.readValue(response, AgendaSimpleResponseDto[].class);
+			AgendaSimpleResDto[] result = objectMapper.readValue(response, AgendaSimpleResDto[].class);
 
 			// then
 			assertThat(result.length).isEqualTo(20);
@@ -583,8 +583,8 @@ public class AgendaControllerTest {
 					.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
 						.awardName("prize" + i).awardPriority(i).build())
 					.collect(Collectors.toList());
-			AgendaConfirmRequestDto agendaConfirmRequestDto = AgendaConfirmRequestDto.builder().awards(awards).build();
-			String response = objectMapper.writeValueAsString(agendaConfirmRequestDto);
+			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder().awards(awards).build();
+			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
 
 			// when
 			mockMvc.perform(patch("/agenda/confirm")
@@ -645,8 +645,8 @@ public class AgendaControllerTest {
 					.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
 						.awardName("prize" + i).awardPriority(i).build())
 					.collect(Collectors.toList());
-			AgendaConfirmRequestDto agendaConfirmRequestDto = AgendaConfirmRequestDto.builder().awards(awards).build();
-			String response = objectMapper.writeValueAsString(agendaConfirmRequestDto);
+			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder().awards(awards).build();
+			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
 
 			// when
 			mockMvc.perform(patch("/agenda/confirm")
@@ -686,10 +686,10 @@ public class AgendaControllerTest {
 					.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
 						.awardName("prize" + i).awardPriority(i).build())
 					.collect(Collectors.toList());
-			AgendaConfirmRequestDto agendaConfirmRequestDto = AgendaConfirmRequestDto.builder().awards(awards).build();
+			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder().awards(awards).build();
 			awards.add(AgendaTeamAwardDto.builder()
 				.teamName("invalid_team").awardName("prize").awardPriority(1).build());    // invalid team
-			String response = objectMapper.writeValueAsString(agendaConfirmRequestDto);
+			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
 
 
 			// expected
@@ -715,8 +715,8 @@ public class AgendaControllerTest {
 					.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
 						.awardName("prize" + i).awardPriority(i).build())
 					.collect(Collectors.toList());
-			AgendaConfirmRequestDto agendaConfirmRequestDto = AgendaConfirmRequestDto.builder().awards(awards).build();
-			String response = objectMapper.writeValueAsString(agendaConfirmRequestDto);
+			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder().awards(awards).build();
+			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
 
 			UUID invalidAgendaKey = UUID.randomUUID();    // invalid agenda key
 
@@ -737,8 +737,8 @@ public class AgendaControllerTest {
 			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), true);
 			IntStream.range(0, teamSize).forEach(i ->
 				agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM));
-			AgendaConfirmRequestDto agendaConfirmRequestDto = AgendaConfirmRequestDto.builder().build();    // null
-			String response = objectMapper.writeValueAsString(agendaConfirmRequestDto);
+			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder().build();    // null
+			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
 
 			// when
 			mockMvc.perform(patch("/agenda/confirm")
@@ -757,10 +757,10 @@ public class AgendaControllerTest {
 			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), true);
 			IntStream.range(0, teamSize).forEach(i ->
 				agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM));
-			AgendaConfirmRequestDto agendaConfirmRequestDto = AgendaConfirmRequestDto.builder()
+			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder()
 				.awards(List.of())    // empty
 				.build();
-			String response = objectMapper.writeValueAsString(agendaConfirmRequestDto);
+			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
 
 			// when
 			mockMvc.perform(patch("/agenda/confirm")
@@ -786,8 +786,8 @@ public class AgendaControllerTest {
 					.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
 						.awardName("prize" + i).awardPriority(i).build())
 					.collect(Collectors.toList());
-			AgendaConfirmRequestDto agendaConfirmRequestDto = AgendaConfirmRequestDto.builder().awards(awards).build();
-			String response = objectMapper.writeValueAsString(agendaConfirmRequestDto);
+			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder().awards(awards).build();
+			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
 
 			// when
 			mockMvc.perform(patch("/agenda/confirm")
@@ -813,8 +813,8 @@ public class AgendaControllerTest {
 					.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
 						.awardName("prize" + i).awardPriority(i).build())
 					.collect(Collectors.toList());
-			AgendaConfirmRequestDto agendaConfirmRequestDto = AgendaConfirmRequestDto.builder().awards(awards).build();
-			String response = objectMapper.writeValueAsString(agendaConfirmRequestDto);
+			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder().awards(awards).build();
+			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
 
 			// expected
 			mockMvc.perform(patch("/agenda/confirm")
@@ -840,8 +840,8 @@ public class AgendaControllerTest {
 					.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
 						.awardName("prize" + i).awardPriority(i).build())
 					.collect(Collectors.toList());
-			AgendaConfirmRequestDto agendaConfirmRequestDto = AgendaConfirmRequestDto.builder().awards(awards).build();
-			String response = objectMapper.writeValueAsString(agendaConfirmRequestDto);
+			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder().awards(awards).build();
+			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
 
 			// expected
 			mockMvc.perform(patch("/agenda/confirm")
@@ -867,8 +867,8 @@ public class AgendaControllerTest {
 					.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
 						.awardName("prize" + i).awardPriority(i).build())
 					.collect(Collectors.toList());
-			AgendaConfirmRequestDto agendaConfirmRequestDto = AgendaConfirmRequestDto.builder().awards(awards).build();
-			String response = objectMapper.writeValueAsString(agendaConfirmRequestDto);
+			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder().awards(awards).build();
+			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
 
 			// expected
 			mockMvc.perform(patch("/agenda/confirm")

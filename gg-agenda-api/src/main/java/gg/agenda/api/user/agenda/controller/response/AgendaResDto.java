@@ -7,7 +7,6 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 import gg.data.agenda.Agenda;
-import gg.data.agenda.AgendaAnnouncement;
 import gg.data.agenda.type.AgendaStatus;
 import gg.data.agenda.type.Location;
 import lombok.AccessLevel;
@@ -17,7 +16,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AgendaResponseDto {
+public class AgendaResDto {
 
 	private String agendaTitle;
 
@@ -54,7 +53,7 @@ public class AgendaResponseDto {
 	private String announcementTitle;
 
 	@Builder
-	public AgendaResponseDto(String agendaTitle, String agendaContents, LocalDateTime agendaDeadLine,
+	public AgendaResDto(String agendaTitle, String agendaContents, LocalDateTime agendaDeadLine,
 		LocalDateTime agendaStartTime, LocalDateTime agendaEndTime, int agendaMinTeam, int agendaMaxTeam,
 		int agendaCurrentTeam, int agendaMinPeople, int agendaMaxPeople, String agendaPoster, String agendaHost,
 		Location agendaLocation, AgendaStatus agendaStatus, LocalDateTime createdAt, String announcementTitle,
@@ -81,7 +80,7 @@ public class AgendaResponseDto {
 	@Mapper
 	public interface MapStruct {
 
-		AgendaResponseDto.MapStruct INSTANCE = Mappers.getMapper(AgendaResponseDto.MapStruct.class);
+		AgendaResDto.MapStruct INSTANCE = Mappers.getMapper(AgendaResDto.MapStruct.class);
 
 		@Mapping(target = "agendaTitle", source = "agenda.title")
 		@Mapping(target = "agendaContents", source = "agenda.content")
@@ -100,6 +99,6 @@ public class AgendaResponseDto {
 		@Mapping(target = "createdAt", source = "agenda.createdAt")
 		@Mapping(target = "isOfficial", source = "agenda.isOfficial")
 		@Mapping(target = "announcementTitle", source = "announcementTitle")
-		AgendaResponseDto toDto(Agenda agenda, String announcementTitle);
+		AgendaResDto toDto(Agenda agenda, String announcementTitle);
 	}
 }

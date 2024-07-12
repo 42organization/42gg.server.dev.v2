@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AgendaSimpleResponseDto {
+public class AgendaSimpleResDto {
 	private String agendaTitle;
 
 	private LocalDateTime agendaDeadLine;
@@ -40,7 +40,7 @@ public class AgendaSimpleResponseDto {
 	private Boolean isOfficial;
 
 	@Builder
-	public AgendaSimpleResponseDto(String agendaTitle, LocalDateTime agendaDeadLine, LocalDateTime agendaStartTime,
+	public AgendaSimpleResDto(String agendaTitle, LocalDateTime agendaDeadLine, LocalDateTime agendaStartTime,
 		LocalDateTime agendaEndTime, int agendaCurrentTeam, int agendaMaxTeam, int agendaMinPeople,
 		int agendaMaxPeople, Location agendaLocation, UUID agendaKey, boolean isOfficial) {
 		this.agendaTitle = agendaTitle;
@@ -58,7 +58,7 @@ public class AgendaSimpleResponseDto {
 
 	@Mapper
 	public interface MapStruct {
-		AgendaSimpleResponseDto.MapStruct INSTANCE = Mappers.getMapper(AgendaSimpleResponseDto.MapStruct.class);
+		AgendaSimpleResDto.MapStruct INSTANCE = Mappers.getMapper(AgendaSimpleResDto.MapStruct.class);
 
 		@Mapping(target = "agendaTitle", source = "title")
 		@Mapping(target = "agendaDeadLine", source = "deadline")
@@ -71,6 +71,6 @@ public class AgendaSimpleResponseDto {
 		@Mapping(target = "agendaLocation", source = "location")
 		@Mapping(target = "agendaKey", source = "agendaKey")
 		@Mapping(target = "isOfficial", source = "isOfficial")
-		AgendaSimpleResponseDto toDto(Agenda agenda);
+		AgendaSimpleResDto toDto(Agenda agenda);
 	}
 }
