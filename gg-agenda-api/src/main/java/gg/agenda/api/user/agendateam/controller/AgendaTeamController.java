@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import gg.agenda.api.user.agendateam.controller.request.TeamCreateReqDto;
+import gg.agenda.api.user.agendateam.controller.request.TeamDetailsReqDto;
 import gg.agenda.api.user.agendateam.controller.response.MyTeamSimpleResDto;
 import gg.agenda.api.user.agendateam.controller.response.TeamCreateResDto;
+import gg.agenda.api.user.agendateam.controller.response.TeamDetailsResDto;
 import gg.agenda.api.user.agendateam.service.AgendaTeamService;
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
@@ -31,7 +33,6 @@ public class AgendaTeamController {
 
 	/**
 	 * 내 팀 간단 정보 조회
-	 *
 	 * @param user 사용자 정보, agendaId 아젠다 아이디
 	 * @return 내 팀 간단 정보
 	 */
@@ -44,6 +45,18 @@ public class AgendaTeamController {
 			return ResponseEntity.noContent().build();
 		}
 		return ResponseEntity.ok(myTeamSimpleResDto);
+	}
+
+	/*
+	 * 아젠다 팀 상세 정보 조회
+	 * @param user 사용자 정보, teamDetailsReqDto 팀 상세 정보 요청 정보, agendaId 아젠다 아이디
+	 * @return 팀 상세 정보
+	 */
+	@GetMapping
+	public ResponseEntity<TeamDetailsResDto> agendaTeamDetails(@Parameter(hidden = true) @Login UserDto user,
+		@RequestBody @Valid TeamDetailsReqDto teamDetailsReqDto, @RequestParam("agenda_key") UUID agendaKey) {
+		TeamDetailsResDto teamDetailsResDto = agendaTeamService.detailsAgendaTeam(user, agendaKey, teamDetailsReqDto);
+		return ResponseEntity.ok(teamDetailsResDto);
 	}
 
 	/**

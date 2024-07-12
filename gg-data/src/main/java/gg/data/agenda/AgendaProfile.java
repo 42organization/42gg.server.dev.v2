@@ -41,15 +41,20 @@ public class AgendaProfile extends BaseTimeEntity {
 	@Enumerated(EnumType.STRING)
 	private Location location;
 
+	@Column(name = "intra_id", length = 30, nullable = false)
+	private String intraId;
+
 	@Column(name = "user_id", nullable = false, columnDefinition = "BIGINT")
 	private Long userId;
 
 	@Builder
-	public AgendaProfile(String content, String githubUrl, Coalition coalition, Location location, Long userId) {
+	public AgendaProfile(String content, String githubUrl, Coalition coalition, Location location, String intraId,
+		Long userId) {
 		this.content = content;
 		this.githubUrl = githubUrl;
 		this.coalition = coalition;
 		this.location = location;
+		this.intraId = intraId;
 		this.userId = userId;
 	}
 }

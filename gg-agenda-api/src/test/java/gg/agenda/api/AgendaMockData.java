@@ -24,6 +24,7 @@ import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.AgendaTeamProfile;
 import gg.data.agenda.Ticket;
 import gg.data.agenda.type.AgendaStatus;
+import gg.data.agenda.type.AgendaTeamStatus;
 import gg.data.agenda.type.Location;
 import gg.data.user.User;
 import gg.repo.agenda.AgendaAnnouncementRepository;
@@ -291,6 +292,7 @@ public class AgendaMockData {
 			.githubUrl("githubUrl")
 			.coalition(LEE)
 			.location(location)
+			.intraId(user.getIntraId())
 			.userId(user.getId())
 			.build();
 		return agendaProfileRepository.save(agendaProfile);
@@ -335,6 +337,58 @@ public class AgendaMockData {
 			.award("award")
 			.awardPriority(1)
 			.isPrivate(false)
+			.build();
+		return agendaTeamRepository.save(agendaTeam);
+	}
+
+	public AgendaTeam createAgendaTeam(Agenda agenda, User user, Location location) {
+		AgendaTeam agendaTeam = AgendaTeam.builder()
+			.agenda(agenda)
+			.teamKey(randomUUID())
+			.name("name")
+			.content("content")
+			.leaderIntraId(user.getIntraId())
+			.status(OPEN)
+			.location(location)
+			.mateCount(3)
+			.award("award")
+			.awardPriority(1)
+			.isPrivate(false)
+			.build();
+		return agendaTeamRepository.save(agendaTeam);
+	}
+
+	public AgendaTeam createAgendaTeam(Agenda agenda, User user, Location location, AgendaTeamStatus status) {
+		AgendaTeam agendaTeam = AgendaTeam.builder()
+			.agenda(agenda)
+			.teamKey(randomUUID())
+			.name("name")
+			.content("content")
+			.leaderIntraId(user.getIntraId())
+			.status(status)
+			.location(location)
+			.mateCount(3)
+			.award("award")
+			.awardPriority(1)
+			.isPrivate(false)
+			.build();
+		return agendaTeamRepository.save(agendaTeam);
+	}
+
+	public AgendaTeam createAgendaTeam(Agenda agenda, User user, Location location, AgendaTeamStatus status,
+		Boolean isPrivate) {
+		AgendaTeam agendaTeam = AgendaTeam.builder()
+			.agenda(agenda)
+			.teamKey(randomUUID())
+			.name("name")
+			.content("content")
+			.leaderIntraId(user.getIntraId())
+			.status(status)
+			.location(location)
+			.mateCount(3)
+			.award("award")
+			.awardPriority(1)
+			.isPrivate(isPrivate)
 			.build();
 		return agendaTeamRepository.save(agendaTeam);
 	}
