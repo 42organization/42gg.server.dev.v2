@@ -79,7 +79,7 @@ public class AgendaController {
 	}
 
 	@ApiResponses(value = {
-		@ApiResponse(responseCode = "200", description = "Agenda 참가 신청 성공"),
+		@ApiResponse(responseCode = "203", description = "Agenda 참가 신청 성공"),
 		@ApiResponse(responseCode = "400", description = "Agenda 참가 신청 요청이 잘못됨"),
 		@ApiResponse(responseCode = "404", description = "Agenda를 찾을 수 없음"),
 		@ApiResponse(responseCode = "409", description = "Agenda 참가 신청이 이미 완료됨")
@@ -88,6 +88,6 @@ public class AgendaController {
 	public ResponseEntity<Void> agendaConfirm(@RequestParam("agenda_key") UUID agendaKey,
 		@RequestBody AgendaConfirmRequestDto agendaConfirmRequestDto, @Login UserDto user) {
 		agendaService.confirmAgenda(user, agendaKey, agendaConfirmRequestDto);
-		return ResponseEntity.ok().build();
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 }

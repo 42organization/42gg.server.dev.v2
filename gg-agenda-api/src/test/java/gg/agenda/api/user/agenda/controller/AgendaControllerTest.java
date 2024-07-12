@@ -592,7 +592,7 @@ public class AgendaControllerTest {
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(response))
-				.andExpect(status().isOk());
+				.andExpect(status().isNoContent());
 			Agenda result = em.createQuery("select a from Agenda a where a.agendaKey = :agendaKey", Agenda.class)
 				.setParameter("agendaKey", agenda.getAgendaKey()).getSingleResult();
 
