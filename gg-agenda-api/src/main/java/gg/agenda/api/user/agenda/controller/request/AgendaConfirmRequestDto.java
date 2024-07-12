@@ -17,20 +17,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AgendaConfirmRequestDto {
 
-	List<AgendaTeamAwardDto> awards;
+	@NotNull
+	@NotEmpty
+	private List<AgendaTeamAwardDto> awards;
 
 	@Builder
 	public AgendaConfirmRequestDto(List<AgendaTeamAwardDto> awards) {
 		this.awards = awards;
-	}
-
-	public static void mustNotNullOrEmpty(AgendaConfirmRequestDto agendaConfirmRequestDto) {
-		if (agendaConfirmRequestDto == null) {
-			throw new InvalidParameterException(AGENDA_AWARD_EMPTY);
-		}
-		List<AgendaTeamAwardDto> awards = agendaConfirmRequestDto.getAwards();
-		if (awards == null || awards.isEmpty()) {
-			throw new InvalidParameterException(AGENDA_AWARD_EMPTY);
-		}
 	}
 }

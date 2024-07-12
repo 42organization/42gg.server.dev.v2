@@ -364,23 +364,7 @@ class AgendaServiceTest {
 			AgendaConfirmRequestDto confirmDto = AgendaConfirmRequestDto.builder().build();
 
 			// expected
-			assertThrows(InvalidParameterException.class,
-				() -> agendaService.confirmAgenda(confirmDto, agenda));
-		}
-
-		@Test
-		@DisplayName("Agenda 시상 및 확정 실패 - 시상 내역이 빈 리스트인 경우")
-		void confirmAgendaFailedWithEmptyAwards() {
-			// given
-			Agenda agenda = Agenda.builder()
-				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
-				.status(AgendaStatus.ON_GOING).isRanking(true).build();
-
-			AgendaConfirmRequestDto confirmDto = AgendaConfirmRequestDto.builder()
-				.awards(List.of()).build();
-
-			// expected
-			assertThrows(InvalidParameterException.class,
+			assertThrows(NullPointerException.class,
 				() -> agendaService.confirmAgenda(confirmDto, agenda));
 		}
 
@@ -393,7 +377,7 @@ class AgendaServiceTest {
 				.status(AgendaStatus.ON_GOING).isRanking(true).build();
 
 			// expected
-			assertThrows(InvalidParameterException.class,
+			assertThrows(NullPointerException.class,
 				() -> agendaService.confirmAgenda(null, agenda));
 		}
 

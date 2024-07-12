@@ -76,7 +76,6 @@ public class AgendaService {
 	@Transactional
 	public void confirmAgenda(AgendaConfirmRequestDto agendaConfirmRequestDto, Agenda agenda) {
 		if (agenda.getIsRanking()) {
-			AgendaConfirmRequestDto.mustNotNullOrEmpty(agendaConfirmRequestDto);
 			agendaConfirmRequestDto.getAwards().forEach(award -> {
 				AgendaTeam agendaTeam = agendaTeamRepository
 					.findByAgendaAndNameAndStatus(agenda, award.getTeamName(), AgendaTeamStatus.CONFIRM)

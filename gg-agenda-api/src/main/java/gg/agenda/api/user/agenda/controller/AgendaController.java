@@ -34,6 +34,7 @@ import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaAnnouncement;
 import gg.utils.dto.PageRequestDto;
 import gg.utils.exception.custom.ForbiddenException;
+import gg.utils.exception.custom.InvalidParameterException;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -102,11 +103,14 @@ public class AgendaController {
 		@ApiResponse(responseCode = "409", description = "Agenda 참가 신청이 이미 완료됨")
 	})
 	@PatchMapping("/confirm")
-	public ResponseEntity<Void> agendaConfirm(@RequestParam("agenda_key") UUID agendaKey,
-		@RequestBody(required = false) AgendaConfirmRequestDto agendaConfirmRequestDto, @Login UserDto user) {
+	public ResponseEntity<Void> agendaConfirm(@RequestParam("agenda_key") UUID agendaKey, @Login UserDto user,
+		@RequestBody(required = false) @Valid AgendaConfirmRequestDto agendaConfirmRequestDto) {
 		Agenda agenda = agendaService.findAgendaByAgendaKey(agendaKey);
 		if (!user.getIntraId().equals(agenda.getHostIntraId())) {
 			throw new ForbiddenException(CONFIRM_FORBIDDEN);
+		}
+		if (agenda.getIsRanking() && agendaConfirmRequestDto == null) {
+			throw new InvalidParameterException(AGENDA_INVALID_PARAM);
 		}
 		agendaService.confirmAgenda(agendaConfirmRequestDto, agenda);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
