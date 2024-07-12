@@ -17,8 +17,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AgendaConfirmRequestDto {
 
-	@NotNull
-	@NotEmpty
 	List<AgendaTeamAwardDto> awards;
 
 	@Builder
