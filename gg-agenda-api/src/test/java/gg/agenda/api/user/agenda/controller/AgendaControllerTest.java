@@ -639,12 +639,12 @@ public class AgendaControllerTest {
 			int awardSize = 3;
 			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), false);
 			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
-				.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
-				.collect(Collectors.toList());
+					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
+					.collect(Collectors.toList());
 			List<AgendaTeamAwardDto> awards = IntStream.range(0, awardSize)
-				.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
-					.awardName("prize" + i).awardPriority(i).build())
-				.collect(Collectors.toList());
+					.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
+						.awardName("prize" + i).awardPriority(i).build())
+					.collect(Collectors.toList());
 			AgendaConfirmRequestDto agendaConfirmRequestDto = AgendaConfirmRequestDto.builder().awards(awards).build();
 			String response = objectMapper.writeValueAsString(agendaConfirmRequestDto);
 
