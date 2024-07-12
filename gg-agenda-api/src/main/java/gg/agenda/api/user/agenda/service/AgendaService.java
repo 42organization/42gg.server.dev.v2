@@ -43,6 +43,7 @@ public class AgendaService {
 
 	private final AgendaTeamRepository agendaTeamRepository;
 
+	@Transactional(readOnly = true)
 	public Agenda findAgendaByAgendaKey(UUID agendaKey) {
 		return agendaRepository.findByAgendaKey(agendaKey)
 			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
@@ -54,26 +55,22 @@ public class AgendaService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<AgendaSimpleResponseDto> findCurrentAgendaList() {
+	public List<Agenda> findCurrentAgendaList() {
 		return agendaRepository.findAllByStatusIs(AgendaStatus.ON_GOING).stream()
 			.sorted(Comparator.comparing(Agenda::getIsOfficial, Comparator.reverseOrder())
 				.thenComparing(Agenda::getDeadline, Comparator.reverseOrder()))
-			.map(AgendaSimpleResponseDto.MapStruct.INSTANCE::toDto)
 			.collect(Collectors.toList());
 	}
 
 	@Transactional
-	public AgendaKeyResponseDto addAgenda(AgendaCreateDto agendaCreateDto, UserDto user) {
+	public Agenda addAgenda(AgendaCreateDto agendaCreateDto, UserDto user) {
 		Agenda newAgenda = AgendaCreateDto.MapStruct.INSTANCE.toEntity(agendaCreateDto, user);
-		Agenda savedAgenda = agendaRepository.save(newAgenda);
-		return AgendaKeyResponseDto.builder().agendaKey(savedAgenda.getAgendaKey()).build();
+		return agendaRepository.save(newAgenda);
 	}
 
 	@Transactional(readOnly = true)
-	public List<AgendaSimpleResponseDto> findHistoryAgendaList(Pageable pageable) {
-		return agendaRepository.findAllByStatusIs(pageable, AgendaStatus.CONFIRM).getContent().stream()
-			.map(AgendaSimpleResponseDto.MapStruct.INSTANCE::toDto)
-			.collect(Collectors.toList());
+	public List<Agenda> findHistoryAgendaList(Pageable pageable) {
+		return agendaRepository.findAllByStatusIs(pageable, AgendaStatus.CONFIRM).getContent();
 	}
 
 	@Transactional

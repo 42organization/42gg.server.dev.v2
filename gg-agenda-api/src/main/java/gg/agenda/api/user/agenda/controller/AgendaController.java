@@ -5,6 +5,7 @@ import static gg.utils.exception.ErrorCode.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -61,8 +62,11 @@ public class AgendaController {
 	@ApiResponse(responseCode = "200", description = "현재 진행중인 Agenda 목록 조회 성공")
 	@GetMapping("/list")
 	public ResponseEntity<List<AgendaSimpleResponseDto>> agendaListCurrent() {
-		List<AgendaSimpleResponseDto> agendaList = agendaService.findCurrentAgendaList();
-		return ResponseEntity.ok(agendaList);
+		List<Agenda> agendaList = agendaService.findCurrentAgendaList();
+		List<AgendaSimpleResponseDto> agendaSimpleResponseDtoList = agendaList.stream()
+			.map(AgendaSimpleResponseDto.MapStruct.INSTANCE::toDto)
+			.collect(Collectors.toList());
+		return ResponseEntity.ok(agendaSimpleResponseDtoList);
 	}
 
 	@ApiResponses(value = {
@@ -72,8 +76,9 @@ public class AgendaController {
 	@PostMapping("/create")
 	public ResponseEntity<AgendaKeyResponseDto> agendaAdd(@Login UserDto user,
 		@RequestBody @Valid AgendaCreateDto agendaCreateDto) {
-		AgendaKeyResponseDto agendaKey = agendaService.addAgenda(agendaCreateDto, user);
-		return ResponseEntity.status(HttpStatus.CREATED).body(agendaKey);
+		UUID agendaKey = agendaService.addAgenda(agendaCreateDto, user).getAgendaKey();
+		AgendaKeyResponseDto responseDto = AgendaKeyResponseDto.builder().agendaKey(agendaKey).build();
+		return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
 	}
 
 	@ApiResponse(responseCode = "200", description = "지난 Agenda 목록 조회 성공")
@@ -83,8 +88,11 @@ public class AgendaController {
 		int page = pageRequest.getPage();
 		int size = pageRequest.getSize();
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("startTime").descending());
-		List<AgendaSimpleResponseDto> agendaList = agendaService.findHistoryAgendaList(pageable);
-		return ResponseEntity.ok(agendaList);
+		List<Agenda> agendas = agendaService.findHistoryAgendaList(pageable);
+		List<AgendaSimpleResponseDto> agendaSimpleResponseDtoList = agendas.stream()
+			.map(AgendaSimpleResponseDto.MapStruct.INSTANCE::toDto)
+			.collect(Collectors.toList());
+		return ResponseEntity.ok(agendaSimpleResponseDtoList);
 	}
 
 	@ApiResponses(value = {
