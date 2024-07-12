@@ -124,7 +124,12 @@ public class Agenda extends BaseTimeEntity {
 	}
 
 	public void confirm(LocalDateTime confirmTime) {
-		mustStatusOngoing();
+		if (this.status == AgendaStatus.CONFIRM) {
+			throw new InvalidParameterException(AGENDA_ALREADY_CONFIRMED);
+		}
+		if (this.status == AgendaStatus.CANCEL) {
+			throw new InvalidParameterException(AGENDA_ALREADY_CANCELED);
+		}
 		if (this.startTime.isAfter(confirmTime)) {
 			throw new InvalidParameterException(AGENDA_INVALID_PARAM);
 		}
@@ -158,15 +163,6 @@ public class Agenda extends BaseTimeEntity {
 	private void mustHaveCapacity() {
 		if (this.currentTeam == this.maxTeam) {
 			throw new ForbiddenException(AGENDA_NO_CAPACITY);
-		}
-	}
-
-	public void mustStatusOngoing() {
-		if (this.status == AgendaStatus.CONFIRM) {
-			throw new InvalidParameterException(AGENDA_ALREADY_CONFIRMED);
-		}
-		if (this.status == AgendaStatus.CANCEL) {
-			throw new InvalidParameterException(AGENDA_ALREADY_CANCELED);
 		}
 	}
 }
