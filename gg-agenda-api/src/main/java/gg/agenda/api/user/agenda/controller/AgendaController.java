@@ -71,7 +71,7 @@ public class AgendaController {
 	}
 
 	@ApiResponses(value = {
-		@ApiResponse(responseCode = "200", description = "Agenda 생성 성공"),
+		@ApiResponse(responseCode = "201", description = "Agenda 생성 성공"),
 		@ApiResponse(responseCode = "400", description = "Agenda 생성 요청 파라미터가 잘못됨")
 	})
 	@PostMapping("/create")
@@ -97,7 +97,7 @@ public class AgendaController {
 	}
 
 	@ApiResponses(value = {
-		@ApiResponse(responseCode = "203", description = "Agenda 참가 신청 성공"),
+		@ApiResponse(responseCode = "204", description = "Agenda 참가 신청 성공"),
 		@ApiResponse(responseCode = "400", description = "Agenda 참가 신청 요청이 잘못됨"),
 		@ApiResponse(responseCode = "404", description = "Agenda를 찾을 수 없음"),
 		@ApiResponse(responseCode = "409", description = "Agenda 참가 신청이 이미 완료됨")
