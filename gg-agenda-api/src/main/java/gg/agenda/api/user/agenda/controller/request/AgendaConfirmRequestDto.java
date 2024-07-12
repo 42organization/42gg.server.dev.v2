@@ -24,7 +24,11 @@ public class AgendaConfirmRequestDto {
 		this.awards = awards;
 	}
 
-	public void mustNotNullOrEmpty() {
+	public static void mustNotNullOrEmpty(AgendaConfirmRequestDto agendaConfirmRequestDto) {
+		if (agendaConfirmRequestDto == null) {
+			throw new InvalidParameterException(AGENDA_AWARD_EMPTY);
+		}
+		List<AgendaTeamAwardDto> awards = agendaConfirmRequestDto.getAwards();
 		if (awards == null || awards.isEmpty()) {
 			throw new InvalidParameterException(AGENDA_AWARD_EMPTY);
 		}
