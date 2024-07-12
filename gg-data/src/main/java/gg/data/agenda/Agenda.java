@@ -154,12 +154,6 @@ public class Agenda extends BaseTimeEntity {
 		}
 	}
 
-	private void mustBeforeStartTime(LocalDateTime confirmTime) {
-		if (this.startTime.isBefore(confirmTime)) {
-			throw new InvalidParameterException(AGENDA_NOT_OPEN);
-		}
-	}
-
 	private void mustHaveCapacity() {
 		if (this.currentTeam == this.maxTeam) {
 			throw new ForbiddenException(AGENDA_NO_CAPACITY);
