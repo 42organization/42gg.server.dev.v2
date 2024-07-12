@@ -27,9 +27,11 @@ import gg.agenda.api.user.agenda.controller.request.AgendaConfirmRequestDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaCreateDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaTeamAwardDto;
 import gg.agenda.api.user.agenda.controller.response.AgendaKeyResponseDto;
+import gg.agenda.api.user.agenda.controller.response.AgendaResponseDto;
 import gg.agenda.api.user.agenda.controller.response.AgendaSimpleResponseDto;
 import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
+import gg.data.agenda.AgendaAnnouncement;
 import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.type.AgendaStatus;
 import gg.repo.agenda.AgendaAnnouncementRepository;
@@ -63,33 +65,33 @@ class AgendaServiceTest {
 
 		@Test
 		@DisplayName("Agenda 단건 조회 성공")
-		void getAgendaSuccess() {
+		void getAgendaSuccessWithAnnounce() {
 			// given
-			UUID agendaKey = UUID.randomUUID();
 			Agenda agenda = mock(Agenda.class);
-			when(agendaRepository.findByAgendaKey(agendaKey)).thenReturn(Optional.of(agenda));
 			when(agendaAnnouncementRepository.findLatestByAgenda(agenda)).thenReturn(Optional.empty());
 
 			// when
-			agendaService.findAgendaWithLatestAnnouncement(agendaKey);
+			AgendaResponseDto result = agendaService.findAgendaWithLatestAnnouncement(agenda);
 
 			// then
-			verify(agendaRepository, times(1)).findByAgendaKey(agendaKey);
 			verify(agendaAnnouncementRepository, times(1)).findLatestByAgenda(agenda);
+			assertThat(result.getAnnouncementTitle()).isNull();
 		}
 
 		@Test
 		@DisplayName("Agenda 단건 조회 실패")
-		void getAgendaFailedWithnoAgenda() {
-			// given
-			UUID agendaKey = UUID.randomUUID();
+		void getAgendaSuccessWithNoAnnounce() {
 			Agenda agenda = mock(Agenda.class);
-			when(agendaRepository.findByAgendaKey(agendaKey)).thenReturn(Optional.empty());
+			AgendaAnnouncement announcement = AgendaAnnouncement.builder().title("title").build();
+			when(agendaAnnouncementRepository.findLatestByAgenda(agenda)).thenReturn(Optional.of(announcement));
 
-			// expected
-			assertThrows(NotExistException.class, () -> agendaService.findAgendaWithLatestAnnouncement(agendaKey));
-			verify(agendaRepository, times(1)).findByAgendaKey(agendaKey);
-			verify(agendaAnnouncementRepository, never()).findLatestByAgenda(agenda);
+			// when
+			AgendaResponseDto result = agendaService.findAgendaWithLatestAnnouncement(agenda);
+
+			// then
+			verify(agendaAnnouncementRepository, times(1)).findLatestByAgenda(agenda);
+			assertThat(result.getAnnouncementTitle()).isEqualTo(announcement.getTitle());
+
 		}
 	}
 
@@ -234,7 +236,7 @@ class AgendaServiceTest {
 				.thenReturn(Optional.of(agendaTeams.get(seq++)));
 
 			// when
-			agendaService.confirmAgenda(user, agendaKey, confirmDto);
+			agendaService.confirmAgenda(confirmDto, agenda);
 
 			// then
 			verify(agendaRepository, times(1)).findByAgendaKey(agendaKey);
@@ -254,7 +256,7 @@ class AgendaServiceTest {
 			when(agendaRepository.findByAgendaKey(any(UUID.class))).thenReturn(Optional.of(agenda));
 
 			// when
-			agendaService.confirmAgenda(user, agendaKey, null);
+			agendaService.confirmAgenda(null, agenda);
 
 			// then
 			verify(agendaRepository, times(1)).findByAgendaKey(agendaKey);
@@ -279,7 +281,7 @@ class AgendaServiceTest {
 			when(agendaRepository.findByAgendaKey(any(UUID.class))).thenReturn(Optional.of(agenda));
 
 			// when
-			agendaService.confirmAgenda(user, agendaKey, confirmDto);
+			agendaService.confirmAgenda(confirmDto, agenda);
 
 			// then
 			verify(agendaRepository, times(1)).findByAgendaKey(agendaKey);
@@ -303,7 +305,7 @@ class AgendaServiceTest {
 			when(agendaRepository.findByAgendaKey(any(UUID.class))).thenReturn(Optional.of(agenda));
 
 			// when
-			agendaService.confirmAgenda(user, agendaKey, confirmDto);
+			agendaService.confirmAgenda(confirmDto, agenda);
 
 			// then
 			verify(agendaRepository, times(1)).findByAgendaKey(agendaKey);
@@ -326,7 +328,7 @@ class AgendaServiceTest {
 			when(agendaRepository.findByAgendaKey(any(UUID.class))).thenReturn(Optional.of(agenda));
 
 			// when
-			agendaService.confirmAgenda(user, agendaKey, confirmDto);
+			agendaService.confirmAgenda(confirmDto, agenda);
 
 			// then
 			verify(agendaRepository, times(1)).findByAgendaKey(agendaKey);
@@ -334,42 +336,12 @@ class AgendaServiceTest {
 		}
 
 		@Test
-		@DisplayName("Agenda 시상 및 확정 실패 - Agenda가 없는 경우")
-		void confirmAgendaFailedWithNoAgenda() {
-			UserDto user = mock(UserDto.class);
-			AgendaConfirmRequestDto confirmDto = mock(AgendaConfirmRequestDto.class);
-			UUID agendaKey = UUID.randomUUID();
-			when(agendaRepository.findByAgendaKey(any())).thenReturn(Optional.empty());
-
-			// expected
-			assertThrows(NotExistException.class,
-				() -> agendaService.confirmAgenda(user, agendaKey, confirmDto));
-		}
-
-		@Test
-		@DisplayName("Agenda 시상 및 확정 실패 - 개최자가 아닌 경우")
-		void confirmAgendaFailedNotHost() {
-			// given
-			AgendaConfirmRequestDto confirmDto = mock(AgendaConfirmRequestDto.class);
-			UUID agendaKey = UUID.randomUUID();
-			Agenda agenda = Agenda.builder().hostIntraId("intraId").build();
-			UserDto user = UserDto.builder().intraId("another").build();    // 개최자가 아닌 경우
-			when(agendaRepository.findByAgendaKey(any())).thenReturn(Optional.of(agenda));
-
-			// expected
-			assertThrows(ForbiddenException.class,
-				() -> agendaService.confirmAgenda(user, agendaKey, confirmDto));
-		}
-
-		@Test
-		@DisplayName("Agenda 시상 및 확정 실패 - 시상 내역이 없는 경우")
+		@DisplayName("Agenda 시상 및 확정 실패 - 시상 내역이 null인 경우")
 		void confirmAgendaFailedWithoutAwards() {
 			// given
 			Agenda agenda = Agenda.builder()
 				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
 				.status(AgendaStatus.ON_GOING).isRanking(true).build();
-			UserDto user = UserDto.builder().intraId(agenda.getHostIntraId()).build();
-			UUID agendaKey = agenda.getAgendaKey();
 
 			AgendaConfirmRequestDto confirmDto = AgendaConfirmRequestDto.builder().build();
 
@@ -377,8 +349,42 @@ class AgendaServiceTest {
 
 			// expected
 			assertThrows(InvalidParameterException.class,
-				() -> agendaService.confirmAgenda(user, agendaKey, confirmDto));
+				() -> agendaService.confirmAgenda(confirmDto, agenda));
 		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 실패 - 시상 내역이 빈 리스트인 경우")
+		void confirmAgendaFailedWithEmptyAwards() {
+			// given
+			Agenda agenda = Agenda.builder()
+				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
+				.status(AgendaStatus.ON_GOING).isRanking(true).build();
+
+			AgendaConfirmRequestDto confirmDto = AgendaConfirmRequestDto.builder()
+				.awards(List.of()).build();
+
+			when(agendaRepository.findByAgendaKey(any(UUID.class))).thenReturn(Optional.of(agenda));
+
+			// expected
+			assertThrows(InvalidParameterException.class,
+				() -> agendaService.confirmAgenda(confirmDto, agenda));
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 실패 - 매개변수가 null인 경우")
+			void confirmAgendaFailedWithNullDto() {
+				// given
+				Agenda agenda = Agenda.builder()
+					.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
+					.status(AgendaStatus.ON_GOING).isRanking(true).build();
+
+				when(agendaRepository.findByAgendaKey(any(UUID.class))).thenReturn(Optional.of(agenda));
+
+				// expected
+				assertThrows(InvalidParameterException.class,
+					() -> agendaService.confirmAgenda(null, agenda));
+		}
+
 
 		@Test
 		@DisplayName("Agenda 시상 및 확정 실패 - 존재하지 않는 팀에 대한 시상인 경우")
@@ -387,8 +393,6 @@ class AgendaServiceTest {
 			Agenda agenda = Agenda.builder()
 				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
 				.status(AgendaStatus.ON_GOING).isRanking(true).build();
-			UserDto user = UserDto.builder().intraId(agenda.getHostIntraId()).build();
-			UUID agendaKey = agenda.getAgendaKey();
 			AgendaTeamAwardDto awardDto = AgendaTeamAwardDto.builder()
 				.teamName("invalidTeam").awardName("award").awardPriority(1).build();
 			AgendaConfirmRequestDto confirmDto = AgendaConfirmRequestDto.builder()
@@ -400,7 +404,7 @@ class AgendaServiceTest {
 
 			// expected
 			assertThrows(NotExistException.class,
-				() -> agendaService.confirmAgenda(user, agendaKey, confirmDto));
+				() -> agendaService.confirmAgenda(confirmDto, agenda));
 		}
 	}
 }
