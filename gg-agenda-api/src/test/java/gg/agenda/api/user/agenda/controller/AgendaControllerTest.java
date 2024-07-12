@@ -106,7 +106,7 @@ public class AgendaControllerTest {
 		}
 
 		@Test
-		@DisplayName("announce가 없는 경우 announcementTitle를 null로 반환합니다.")
+		@DisplayName("announce가 없는 경우 announcementTitle를 빈 문자열로 반환합니다.")
 		void getAgendaWithNoAnnounce() throws Exception {
 			// given
 			Agenda agenda = agendaMockData.createOfficialAgenda();
@@ -121,7 +121,7 @@ public class AgendaControllerTest {
 
 			// then
 			assertThat(result.getAgendaTitle()).isEqualTo(agenda.getTitle());
-			assertThat(result.getAnnouncementTitle()).isEqualTo(null);
+			assertThat(result.getAnnouncementTitle()).isEqualTo("");
 		}
 
 		@Test
