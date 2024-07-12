@@ -136,6 +136,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 	private void createProfile(OAuthUserInfo userInfo, User user, String accessToken) {
 		AgendaProfile agendaProfile = AgendaProfile.builder()
 			.userId(user.getId())
+			.intraId(userInfo.getIntraId())
 			.content("안녕하세요! " + userInfo.getIntraId() + "입니다.")
 			.githubUrl(null)
 			.coalition(findCoalition(userInfo.getUserId(), accessToken))
