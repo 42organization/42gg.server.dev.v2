@@ -38,6 +38,7 @@ import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaAnnouncement;
 import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.type.AgendaStatus;
+import gg.data.agenda.type.AgendaTeamStatus;
 import gg.data.agenda.type.Location;
 import gg.data.user.User;
 import gg.repo.agenda.AgendaRepository;
@@ -70,11 +71,13 @@ public class AgendaControllerTest {
 	@Autowired
 	AgendaRepository agendaRepository;
 
+	private User user;
+
 	private String accessToken;
 
 	@BeforeEach
 	void setUp() {
-		User user = testDataUtils.createNewUser();
+		user = testDataUtils.createNewUser();
 		accessToken = testDataUtils.getLoginAccessTokenFromUser(user);
 	}
 
@@ -572,9 +575,9 @@ public class AgendaControllerTest {
 			// given
 			int teamSize = 10;
 			int awardSize = 3;
-			Agenda agenda = agendaMockData.createAgenda();
+			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10));
 			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
-				.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i))
+				.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
 				.collect(Collectors.toList());
 			List<AgendaTeamAwardDto> awards = IntStream.range(0, awardSize)
 				.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())

@@ -24,6 +24,7 @@ import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.AgendaTeamProfile;
 import gg.data.agenda.Ticket;
 import gg.data.agenda.type.AgendaStatus;
+import gg.data.agenda.type.AgendaTeamStatus;
 import gg.data.agenda.type.Location;
 import gg.data.user.User;
 import gg.repo.agenda.AgendaAnnouncementRepository;
@@ -219,6 +220,28 @@ public class AgendaMockData {
 		return agendaRepository.save(agenda);
 	}
 
+	public Agenda createAgenda(String intraId, LocalDateTime startTime) {
+		Agenda agenda = Agenda.builder()
+			.title("title")
+			.content("content")
+			.deadline(startTime.minusDays(1))
+			.startTime(startTime)
+			.endTime(startTime.plusDays(1))
+			.minTeam(1)
+			.maxTeam(5)
+			.currentTeam(0)
+			.minPeople(1)
+			.maxPeople(3)
+			.posterUri("posterUri")
+			.hostIntraId(intraId)
+			.location(SEOUL)
+			.status(ON_GOING)
+			.isOfficial(true)
+			.isRanking(true)
+			.build();
+		return agendaRepository.save(agenda);
+	}
+
 	public Agenda createAgenda(Location location) {
 		Agenda agenda = Agenda.builder()
 			.title("title")
@@ -330,6 +353,23 @@ public class AgendaMockData {
 			.content("content")
 			.leaderIntraId("leaderIntraId")
 			.status(OPEN)
+			.location(SEOUL)
+			.mateCount(3)
+			.award("award")
+			.awardPriority(1)
+			.isPrivate(false)
+			.build();
+		return agendaTeamRepository.save(agendaTeam);
+	}
+
+	public AgendaTeam createAgendaTeam(Agenda agenda, String teamName, AgendaTeamStatus status) {
+		AgendaTeam agendaTeam = AgendaTeam.builder()
+			.agenda(agenda)
+			.teamKey(randomUUID())
+			.name(teamName)
+			.content("content")
+			.leaderIntraId("leaderIntraId")
+			.status(status)
 			.location(SEOUL)
 			.mateCount(3)
 			.award("award")
