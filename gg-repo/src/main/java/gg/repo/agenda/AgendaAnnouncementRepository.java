@@ -3,6 +3,7 @@ package gg.repo.agenda;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -13,8 +14,7 @@ public interface AgendaAnnouncementRepository extends JpaRepository<AgendaAnnoun
 
 	Optional<AgendaAnnouncement> findFirstByAgendaAndIsShowIsTrueOrderByIdDesc(Agenda agenda);
 
-	@Query("SELECT aa FROM AgendaAnnouncement aa WHERE aa.agenda = :agenda ORDER BY aa.id DESC")
-	List<AgendaAnnouncement> findAllByAgenda(Agenda agenda);
+	List<AgendaAnnouncement> findAllByAgendaAndIsShowIsTrue(Pageable pageable, Agenda agenda);
 
 	default Optional<AgendaAnnouncement> findLatestByAgenda(Agenda agenda) {
 		return findFirstByAgendaAndIsShowIsTrueOrderByIdDesc(agenda);
