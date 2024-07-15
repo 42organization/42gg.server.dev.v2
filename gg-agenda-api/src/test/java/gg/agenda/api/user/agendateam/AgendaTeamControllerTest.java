@@ -542,4 +542,100 @@ public class AgendaTeamControllerTest {
 				.andReturn().getResponse().getContentAsString();
 		}
 	}
+
+	@Nested
+	@DisplayName("내 팀 조회 테스트")
+	class MyTeamTest {
+		@BeforeEach
+		void beforeEach() {
+			seoulUser = testDataUtils.createNewUser();
+			seoulUserAccessToken = testDataUtils.getLoginAccessTokenFromUser(seoulUser);
+			seoulUserAgendaProfile = agendaMockData.createAgendaProfile(seoulUser, SEOUL);
+			gyeongsanUser = testDataUtils.createNewUser();
+			gyeongsanUserAccessToken = testDataUtils.getLoginAccessTokenFromUser(gyeongsanUser);
+			gyeongsanUserAgendaProfile = agendaMockData.createAgendaProfile(gyeongsanUser, GYEONGSAN);
+		}
+
+		@Test
+		@DisplayName("200 서울 agenda에 서울 user 팀 조회 성공")
+		public void myTeamSimpleDetailsStatusSeoul() throws Exception {
+			//given
+			Agenda agenda = agendaMockData.createAgenda(SEOUL);
+			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser);
+			agendaMockData.createAgendaTeamProfile(team, seoulUserAgendaProfile);
+			// when
+			String res = mockMvc.perform(
+					get("/agenda/team/my")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString()))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+			// then
+			assertThat(res).isNotNull();
+		}
+
+		@Test
+		@DisplayName("200 경산 agenda에 경산 user 팀 조회 성공")
+		public void myTeamSimpleDetailsStatusGyeongsan() throws Exception {
+			//given
+			Agenda agenda = agendaMockData.createAgenda(GYEONGSAN);
+			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, gyeongsanUser);
+			agendaMockData.createAgendaTeamProfile(team, gyeongsanUserAgendaProfile);
+			// when
+			String res = mockMvc.perform(
+					get("/agenda/team/my")
+						.header("Authorization", "Bearer " + gyeongsanUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString()))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+			// then
+			assertThat(res).isNotNull();
+		}
+
+		@Test
+		@DisplayName("204 my팀 없을때 조회 성공")
+		public void myTeamSimpleDetailsStatusNoTeam() throws Exception {
+			//given
+			Agenda agenda = agendaMockData.createAgenda(SEOUL);
+			// when
+			String res = mockMvc.perform(
+					get("/agenda/team/my")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString()))
+				.andExpect(status().isNoContent())
+				.andReturn().getResponse().getContentAsString();
+			// then
+			assertThat(res).isNotNull();
+		}
+
+		@Test
+		@DisplayName("404 agenda 없음으로 인한 실패")
+		public void noAgendaFail() throws Exception {
+			//given
+			UUID noAgendaKey = UUID.randomUUID();
+			// when && then
+			String res = mockMvc.perform(
+					get("/agenda/team/my")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.param("agenda_key", noAgendaKey.toString()))
+				.andExpect(status().isNotFound())
+				.andReturn().getResponse().getContentAsString();
+		}
+
+		@Test
+		@DisplayName("404 agenda에 프로필 없음으로 인한 실패")
+		public void noAgendaProfileFail() throws Exception {
+			//given
+			Agenda agenda = agendaMockData.createAgenda(SEOUL);
+			User noProfileUser = testDataUtils.createNewUser();
+			String noProfileUserAccessToken = testDataUtils.getLoginAccessTokenFromUser(noProfileUser);
+			// when && then
+			String res = mockMvc.perform(
+					get("/agenda/team/my")
+						.header("Authorization", "Bearer " + noProfileUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString()))
+				.andExpect(status().isNotFound())
+				.andReturn().getResponse().getContentAsString();
+		}
+	}
 }

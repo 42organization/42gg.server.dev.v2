@@ -1,5 +1,6 @@
 package gg.agenda.api.user.agendateam.controller;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.validation.Valid;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import gg.agenda.api.user.agendateam.controller.request.TeamCreateReqDto;
 import gg.agenda.api.user.agendateam.controller.request.TeamDetailsReqDto;
+import gg.agenda.api.user.agendateam.controller.response.MyTeamSimpleResDto;
 import gg.agenda.api.user.agendateam.controller.response.TeamCreateResDto;
 import gg.agenda.api.user.agendateam.controller.response.TeamDetailsResDto;
 import gg.agenda.api.user.agendateam.service.AgendaTeamService;
@@ -30,6 +32,22 @@ public class AgendaTeamController {
 	private final AgendaTeamService agendaTeamService;
 
 	/**
+	 * 내 팀 간단 정보 조회
+	 * @param user 사용자 정보, agendaId 아젠다 아이디
+	 * @return 내 팀 간단 정보
+	 */
+	@GetMapping("/my")
+	public ResponseEntity<Optional<MyTeamSimpleResDto>> myTeamSimpleDetails(
+		@Parameter(hidden = true) @Login UserDto user,
+		@RequestParam("agenda_key") UUID agendaKey) {
+		Optional<MyTeamSimpleResDto> myTeamSimpleResDto = agendaTeamService.detailsMyTeamSimple(user, agendaKey);
+		if (myTeamSimpleResDto.isEmpty()) {
+			return ResponseEntity.noContent().build();
+		}
+		return ResponseEntity.ok(myTeamSimpleResDto);
+	}
+
+	/*
 	 * 아젠다 팀 상세 정보 조회
 	 * @param user 사용자 정보, teamDetailsReqDto 팀 상세 정보 요청 정보, agendaId 아젠다 아이디
 	 * @return 팀 상세 정보
