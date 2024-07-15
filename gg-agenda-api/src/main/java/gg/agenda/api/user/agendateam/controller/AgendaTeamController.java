@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import gg.agenda.api.user.agendateam.controller.request.TeamCreateReqDto;
-import gg.agenda.api.user.agendateam.controller.request.TeamDetailsReqDto;
+import gg.agenda.api.user.agendateam.controller.request.TeamKeyReqDto;
 import gg.agenda.api.user.agendateam.controller.response.MyTeamSimpleResDto;
 import gg.agenda.api.user.agendateam.controller.response.TeamCreateResDto;
 import gg.agenda.api.user.agendateam.controller.response.TeamDetailsResDto;
@@ -54,8 +55,8 @@ public class AgendaTeamController {
 	 */
 	@GetMapping
 	public ResponseEntity<TeamDetailsResDto> agendaTeamDetails(@Parameter(hidden = true) @Login UserDto user,
-		@RequestBody @Valid TeamDetailsReqDto teamDetailsReqDto, @RequestParam("agenda_key") UUID agendaKey) {
-		TeamDetailsResDto teamDetailsResDto = agendaTeamService.detailsAgendaTeam(user, agendaKey, teamDetailsReqDto);
+		@RequestBody @Valid TeamKeyReqDto teamKeyReqDto, @RequestParam("agenda_key") UUID agendaKey) {
+		TeamDetailsResDto teamDetailsResDto = agendaTeamService.detailsAgendaTeam(user, agendaKey, teamKeyReqDto);
 		return ResponseEntity.ok(teamDetailsResDto);
 	}
 
@@ -69,5 +70,12 @@ public class AgendaTeamController {
 		@RequestBody @Valid TeamCreateReqDto teamCreateReqDto, @RequestParam("agenda_key") UUID agendaKey) {
 		TeamCreateResDto teamCreateResDto = agendaTeamService.addAgendaTeam(user, teamCreateReqDto, agendaKey);
 		return ResponseEntity.status(HttpStatus.CREATED).body(teamCreateResDto);
+	}
+
+	@PatchMapping("/confirm")
+	public ResponseEntity<Void> confirmTeam(@Parameter(hidden = true) @Login UserDto user,
+		@RequestBody @Valid TeamKeyReqDto teamKeyReqDto, @RequestParam("agenda_key") UUID agendaKey) {
+		agendaTeamService.confirmTeam(user, agendaKey, teamKeyReqDto);
+		return ResponseEntity.ok().build();
 	}
 }
