@@ -9,11 +9,11 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
-public class TeamDetailsReqDto {
+public class TeamKeyReqDto {
 	@NotNull
 	private UUID teamKey;
 
-	public TeamDetailsReqDto(UUID teamKey) {
+	public TeamKeyReqDto(UUID teamKey) {
 		this.teamKey = teamKey;
 	}
 }
