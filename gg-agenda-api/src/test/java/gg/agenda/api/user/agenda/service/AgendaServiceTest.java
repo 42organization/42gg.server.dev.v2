@@ -45,9 +45,6 @@ class AgendaServiceTest {
 	AgendaRepository agendaRepository;
 
 	@Mock
-	AgendaAnnouncementRepository agendaAnnouncementRepository;
-
-	@Mock
 	AgendaTeamRepository agendaTeamRepository;
 
 	@InjectMocks
