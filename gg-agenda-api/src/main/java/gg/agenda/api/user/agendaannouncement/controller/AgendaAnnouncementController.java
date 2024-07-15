@@ -44,9 +44,7 @@ public class AgendaAnnouncementController {
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
-	/**
-	 * No Pagination
-	 */
+	// TODO: Pagination
 	@GetMapping
 	public ResponseEntity<List<AgendaAnnouncementResDto>> agendaAnnouncementList(
 		@RequestParam("agenda_key") UUID agendaKey) {
