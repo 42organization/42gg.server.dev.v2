@@ -37,9 +37,9 @@ public class AgendaAnnouncementCreateReqDto {
 		MapStruct INSTANCE = Mappers.getMapper(MapStruct.class);
 
 		@Mapping(target = "id", ignore = true)
-		@Mapping(target = "isShow", constant = "true")
 		@Mapping(target = "title", source = "dto.title")
 		@Mapping(target = "content", source = "dto.content")
+		@Mapping(target = "isShow", constant = "true")
 		@Mapping(target = "agenda", source = "agenda")
 		AgendaAnnouncement toEntity(AgendaAnnouncementCreateReqDto dto, Agenda agenda);
 	}
