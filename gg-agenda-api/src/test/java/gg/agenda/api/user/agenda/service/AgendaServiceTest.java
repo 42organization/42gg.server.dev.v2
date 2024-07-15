@@ -28,7 +28,6 @@ import gg.agenda.api.user.agenda.controller.request.AgendaCreateReqDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaTeamAwardDto;
 import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
-import gg.data.agenda.AgendaAnnouncement;
 import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.type.AgendaStatus;
 import gg.repo.agenda.AgendaAnnouncementRepository;
