@@ -14,9 +14,13 @@ public interface AgendaAnnouncementRepository extends JpaRepository<AgendaAnnoun
 
 	Optional<AgendaAnnouncement> findFirstByAgendaAndIsShowIsTrueOrderByIdDesc(Agenda agenda);
 
-	List<AgendaAnnouncement> findAllByAgendaAndIsShowIsTrue(Pageable pageable, Agenda agenda);
+	List<AgendaAnnouncement> findAllByAgendaAndIsShowIsTrueOrderByIdDesc(Pageable pageable, Agenda agenda);
 
 	default Optional<AgendaAnnouncement> findLatestByAgenda(Agenda agenda) {
 		return findFirstByAgendaAndIsShowIsTrueOrderByIdDesc(agenda);
+	}
+
+	default List<AgendaAnnouncement> findListByAgenda(Pageable pageable, Agenda agenda) {
+		return findAllByAgendaAndIsShowIsTrueOrderByIdDesc(pageable, agenda);
 	}
 }

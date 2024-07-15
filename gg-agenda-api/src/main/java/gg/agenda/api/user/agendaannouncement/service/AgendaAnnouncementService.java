@@ -28,7 +28,7 @@ public class AgendaAnnouncementService {
 
 	@Transactional(readOnly = true)
 	public List<AgendaAnnouncement> findAnnouncementListByAgenda(Pageable pageable, Agenda agenda) {
-		return agendaAnnouncementRepository.findAllByAgendaAndIsShowIsTrue(pageable, agenda);
+		return agendaAnnouncementRepository.findListByAgenda(pageable, agenda);
 	}
 
 	@Transactional(readOnly = true)

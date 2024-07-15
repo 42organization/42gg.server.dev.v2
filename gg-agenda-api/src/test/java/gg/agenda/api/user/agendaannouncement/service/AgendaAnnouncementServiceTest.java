@@ -61,14 +61,14 @@ public class AgendaAnnouncementServiceTest {
 			// given
 			Agenda agenda = mock(Agenda.class);
 			Pageable pageable = mock(Pageable.class);
-			when(agendaAnnouncementRepository.findAllByAgendaAndIsShowIsTrue(pageable, agenda))
+			when(agendaAnnouncementRepository.findListByAgenda(pageable, agenda))
 				.thenReturn(List.of());
 
 			// when
 			agendaAnnouncementService.findAnnouncementListByAgenda(pageable, agenda);
 
 			// then
-			verify(agendaAnnouncementRepository, times(1)).findAllByAgendaAndIsShowIsTrue(pageable, agenda);
+			verify(agendaAnnouncementRepository, times(1)).findListByAgenda(pageable, agenda);
 		}
 	}
 
