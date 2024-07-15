@@ -736,7 +736,7 @@ public class AgendaTeamControllerTest {
 		}
 
 		@Test
-		@DisplayName("400 OPEN 상태가 아닌 팀으로 인한 실패")
+		@DisplayName("404 OPEN 상태가 아닌 팀으로 인한 실패 -> 서비스 로직에서 처리됨, 엔티티는 별개")
 		public void notValidTeamStatusFail() throws Exception {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(SEOUL);
