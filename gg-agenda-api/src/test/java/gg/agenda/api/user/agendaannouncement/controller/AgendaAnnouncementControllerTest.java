@@ -114,4 +114,25 @@ public class AgendaAnnouncementControllerTest {
 			// then
 		}
 	}
+
+	@Nested
+	@DisplayName("AgendaAnnouncement 전체 조회")
+	class getAgendaAnnouncementList {
+
+		@Test
+		@DisplayName("AgendaAnnouncement 전체 조회 성공")
+		void getAgendaAnnouncementListSuccess() {
+			// given
+			// when
+			// then
+		}
+
+		@Test
+		@DisplayName("AgendaAnnouncement 전체 조회 성공 - 데이터 없는 경우")
+		void getAgendaAnnouncementListSuccessWhenNoEntity() {
+			// given
+			// when
+			// then
+		}
+	}
 }
