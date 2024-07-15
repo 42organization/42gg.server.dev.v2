@@ -1,6 +1,7 @@
 package gg.agenda.api.user.agendaannouncement.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,5 +28,10 @@ public class AgendaAnnouncementService {
 	@Transactional(readOnly = true)
 	public List<AgendaAnnouncement> findAllByAgenda(Agenda agenda) {
 		return agendaAnnouncementRepository.findAllByAgenda(agenda);
+	}
+
+	@Transactional(readOnly = true)
+	public Optional<AgendaAnnouncement> findAgendaWithLatestAnnouncement(Agenda agenda) {
+		return agendaAnnouncementRepository.findLatestByAgenda(agenda);
 	}
 }

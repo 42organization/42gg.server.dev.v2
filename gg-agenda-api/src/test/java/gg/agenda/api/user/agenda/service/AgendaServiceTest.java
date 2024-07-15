@@ -84,38 +84,6 @@ class AgendaServiceTest {
 			assertThrows(NotExistException.class,
 				() -> agendaService.findAgendaByAgendaKey(agendaKey));
 		}
-
-		@Test
-		@DisplayName("AgendaAnnouncement 조회 성공 - 최신 공지사항이 있는 경우")
-		void findAgendaAnnouncementSuccess() {
-			// given
-			Agenda agenda = Agenda.builder().build();
-			AgendaAnnouncement announcement = AgendaAnnouncement.builder().title("title").content("content").build();
-			when(agendaAnnouncementRepository.findLatestByAgenda(agenda)).thenReturn(Optional.of(announcement));
-
-			// when
-			Optional<AgendaAnnouncement> result = agendaService.findAgendaWithLatestAnnouncement(agenda);
-
-			// then
-			verify(agendaAnnouncementRepository, times(1)).findLatestByAgenda(agenda);
-			assertThat(result).isPresent();
-			assertThat(result.get().getTitle()).isEqualTo(announcement.getTitle());
-		}
-
-		@Test
-		@DisplayName("AgendaAnnouncement 조회 성공 - 최신 공지사항이 없는 경우")
-		void findAgendaAnnouncementSuccessWithNoAnnounce() {
-			// given
-			Agenda agenda = Agenda.builder().build();
-			when(agendaAnnouncementRepository.findLatestByAgenda(agenda)).thenReturn(Optional.empty());
-
-			// when
-			Optional<AgendaAnnouncement> result = agendaService.findAgendaWithLatestAnnouncement(agenda);
-
-			// then
-			verify(agendaAnnouncementRepository, times(1)).findLatestByAgenda(agenda);
-			assertThat(result).isEmpty();
-		}
 	}
 
 	@Nested

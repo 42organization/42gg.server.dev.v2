@@ -28,6 +28,7 @@ import gg.agenda.api.user.agenda.controller.response.AgendaKeyResDto;
 import gg.agenda.api.user.agenda.controller.response.AgendaResDto;
 import gg.agenda.api.user.agenda.controller.response.AgendaSimpleResDto;
 import gg.agenda.api.user.agenda.service.AgendaService;
+import gg.agenda.api.user.agendaannouncement.service.AgendaAnnouncementService;
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
 import gg.data.agenda.Agenda;
@@ -45,6 +46,8 @@ public class AgendaController {
 
 	private final AgendaService agendaService;
 
+	private final AgendaAnnouncementService agendaAnnouncementService;
+
 	@GetMapping
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "Agenda 상세 조회 성공"),
@@ -53,7 +56,7 @@ public class AgendaController {
 	})
 	public ResponseEntity<AgendaResDto> agendaDetails(@RequestParam("agenda_key") UUID agendaKey) {
 		Agenda agenda = agendaService.findAgendaByAgendaKey(agendaKey);
-		Optional<AgendaAnnouncement> announcement = agendaService.findAgendaWithLatestAnnouncement(agenda);
+		Optional<AgendaAnnouncement> announcement = agendaAnnouncementService.findAgendaWithLatestAnnouncement(agenda);
 		String announcementTitle = announcement.map(AgendaAnnouncement::getTitle).orElse("");
 		AgendaResDto agendaResDto = AgendaResDto.MapStruct.INSTANCE.toDto(agenda,  announcementTitle);
 		return ResponseEntity.ok(agendaResDto);
