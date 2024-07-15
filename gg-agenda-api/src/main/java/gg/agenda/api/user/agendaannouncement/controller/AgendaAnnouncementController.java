@@ -48,8 +48,7 @@ public class AgendaAnnouncementController {
 
 	@GetMapping
 	public ResponseEntity<List<AgendaAnnouncementResDto>> agendaAnnouncementList(
-		@RequestParam("agenda_key") UUID agendaKey,
-		@RequestBody @Valid PageRequestDto pageRequest) {
+		@RequestParam("agenda_key") UUID agendaKey, @RequestBody @Valid PageRequestDto pageRequest) {
 		Agenda agenda = agendaService.findAgendaByAgendaKey(agendaKey);
 		int page = pageRequest.getPage();
 		int size = pageRequest.getSize();
