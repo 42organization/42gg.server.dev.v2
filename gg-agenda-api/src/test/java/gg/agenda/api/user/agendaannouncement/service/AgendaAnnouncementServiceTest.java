@@ -86,6 +86,7 @@ public class AgendaAnnouncementServiceTest {
 
 			// when
 			agendaAnnouncementService.findAgendaWithLatestAnnouncement(agenda);
+
 			// then
 			verify(agendaAnnouncementRepository, times(1)).findLatestByAgenda(agenda);
 		}
