@@ -9,27 +9,28 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import gg.agenda.api.user.agenda.controller.request.AgendaCreateReqDto;
 import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
 import gg.utils.annotation.UnitTest;
 import gg.utils.exception.custom.InvalidParameterException;
 
 @UnitTest
-class AgendaCreateDtoTest {
+class AgendaCreateReqDtoTest {
 
 	@Test
 	@DisplayName("Agenda 생성 성공")
 	void createAgendaSuccess() {
 		//given
 		UserDto user = UserDto.builder().intraId("intraId").build();
-		AgendaCreateDto dto = AgendaCreateDto.builder()
+		AgendaCreateReqDto dto = AgendaCreateReqDto.builder()
 			.agendaDeadLine(LocalDateTime.now().plusDays(5))
 			.agendaStartTime(LocalDateTime.now().plusDays(8))
 			.agendaEndTime(LocalDateTime.now().plusDays(10))
 			.build();
 
 		// when
-		Agenda agenda = AgendaCreateDto.MapStruct.INSTANCE.toEntity(dto, user);
+		Agenda agenda = AgendaCreateReqDto.MapStruct.INSTANCE.toEntity(dto, user);
 
 		// then
 		assertNotNull(agenda);
@@ -45,7 +46,7 @@ class AgendaCreateDtoTest {
 		void createAgendaFailedWhenDeadlineIsBeforeStartTime() {
 			//given
 			UserDto user = UserDto.builder().intraId("intraId").build();
-			AgendaCreateDto dto = AgendaCreateDto.builder()
+			AgendaCreateReqDto dto = AgendaCreateReqDto.builder()
 				.agendaDeadLine(LocalDateTime.now().plusDays(5))
 				.agendaStartTime(LocalDateTime.now().plusDays(2))
 				.agendaEndTime(LocalDateTime.now().plusDays(7))
@@ -53,7 +54,7 @@ class AgendaCreateDtoTest {
 
 			// expected
 			assertThrows(InvalidParameterException.class,
-				() -> AgendaCreateDto.MapStruct.INSTANCE.toEntity(dto, user));
+				() -> AgendaCreateReqDto.MapStruct.INSTANCE.toEntity(dto, user));
 		}
 
 		@Test
@@ -61,7 +62,7 @@ class AgendaCreateDtoTest {
 		void createAgendaFailedWhenDeadlineIsBeforeEndTime() {
 			//given
 			UserDto user = UserDto.builder().intraId("intraId").build();
-			AgendaCreateDto dto = AgendaCreateDto.builder()
+			AgendaCreateReqDto dto = AgendaCreateReqDto.builder()
 				.agendaDeadLine(LocalDateTime.now().plusDays(5))
 				.agendaStartTime(LocalDateTime.now().plusDays(7))
 				.agendaEndTime(LocalDateTime.now().plusDays(6))
@@ -69,7 +70,7 @@ class AgendaCreateDtoTest {
 
 			// expected
 			assertThrows(InvalidParameterException.class,
-				() -> AgendaCreateDto.MapStruct.INSTANCE.toEntity(dto, user));
+				() -> AgendaCreateReqDto.MapStruct.INSTANCE.toEntity(dto, user));
 		}
 
 		@Test
@@ -77,7 +78,7 @@ class AgendaCreateDtoTest {
 		void createAgendaFailedWhenStartTimeIsBeforeEndTime() {
 			//given
 			UserDto user = UserDto.builder().intraId("intraId").build();
-			AgendaCreateDto dto = AgendaCreateDto.builder()
+			AgendaCreateReqDto dto = AgendaCreateReqDto.builder()
 				.agendaDeadLine(LocalDateTime.now().plusDays(3))
 				.agendaStartTime(LocalDateTime.now().plusDays(6))
 				.agendaEndTime(LocalDateTime.now().plusDays(5))
@@ -85,7 +86,7 @@ class AgendaCreateDtoTest {
 
 			// expected
 			assertThrows(InvalidParameterException.class,
-				() -> AgendaCreateDto.MapStruct.INSTANCE.toEntity(dto, user));
+				() -> AgendaCreateReqDto.MapStruct.INSTANCE.toEntity(dto, user));
 		}
 
 		@Test
@@ -93,7 +94,7 @@ class AgendaCreateDtoTest {
 		void createAgendaFailedWhenMinTeamIsGreaterThanMaxTeam() {
 			//given
 			UserDto user = UserDto.builder().intraId("intraId").build();
-			AgendaCreateDto dto = AgendaCreateDto.builder()
+			AgendaCreateReqDto dto = AgendaCreateReqDto.builder()
 				.agendaDeadLine(LocalDateTime.now().plusDays(3))
 				.agendaStartTime(LocalDateTime.now().plusDays(6))
 				.agendaEndTime(LocalDateTime.now().plusDays(8))
@@ -102,7 +103,7 @@ class AgendaCreateDtoTest {
 
 			// expected
 			assertThrows(InvalidParameterException.class,
-				() -> AgendaCreateDto.MapStruct.INSTANCE.toEntity(dto, user));
+				() -> AgendaCreateReqDto.MapStruct.INSTANCE.toEntity(dto, user));
 		}
 
 		@Test
@@ -110,7 +111,7 @@ class AgendaCreateDtoTest {
 		void createAgendaFailedWhenMinPeopleIsGreaterThanMaxPeople() {
 			//given
 			UserDto user = UserDto.builder().intraId("intraId").build();
-			AgendaCreateDto dto = AgendaCreateDto.builder()
+			AgendaCreateReqDto dto = AgendaCreateReqDto.builder()
 				.agendaDeadLine(LocalDateTime.now().plusDays(3))
 				.agendaStartTime(LocalDateTime.now().plusDays(6))
 				.agendaEndTime(LocalDateTime.now().plusDays(8))
@@ -119,7 +120,7 @@ class AgendaCreateDtoTest {
 
 			// expected
 			assertThrows(InvalidParameterException.class,
-				() -> AgendaCreateDto.MapStruct.INSTANCE.toEntity(dto, user));
+				() -> AgendaCreateReqDto.MapStruct.INSTANCE.toEntity(dto, user));
 		}
 	}
 }

@@ -1,4 +1,4 @@
-package gg.agenda.api.user.agenda.controller.dto;
+package gg.agenda.api.user.agenda.controller.response;
 
 import java.util.UUID;
 
@@ -9,12 +9,12 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AgendaKeyResponseDto {
+public class AgendaKeyResDto {
 
 	private UUID agendaKey;
 
 	@Builder
-	public AgendaKeyResponseDto(UUID agendaKey) {
+	public AgendaKeyResDto(UUID agendaKey) {
 		this.agendaKey = agendaKey;
 	}
 }

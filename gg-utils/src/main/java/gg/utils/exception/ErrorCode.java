@@ -198,12 +198,17 @@ public enum ErrorCode {
 	AGENDA_INVALID_SCHEDULE(400, "AG", "유효하지 않은 일정입니다."),
 	AGENDA_INVALID_PARAM(400, "AG", "유효하지 않은 파라미터입니다."),
 	HOST_FORBIDDEN(403, "AG", "개최자는 팀을 생성할 수 없습니다."),
+	CONFIRM_FORBIDDEN(403, "AG", "개최자만 일정을 종료할 수 있습니다."),
 	LOCATION_NOT_VALID(400, "AG", "유효하지 않은 지역입니다."),
 	TEAM_FORBIDDEN(403, "AG", "일정에는 한 팀으로만 참여할 수 있습니다."),
 	TEAM_NAME_EXIST(409, "AG", "이미 존재하는 팀 이름입니다."),
 	TICKET_NOT_EXIST(403, "AG", "보유한 티켓이 부족합니다."),
 	AGENDA_TEAM_NOT_FOUND(404, "AG", "팀이 존재하지 않습니다."),
-	AGENDA_PROFILE_NOT_FOUND(404, "AG", "프로필이 존재하지 않습니다.");
+	AGENDA_PROFILE_NOT_FOUND(404, "AG", "프로필이 존재하지 않습니다."),
+	AGENDA_ALREADY_CONFIRMED(409, "AG", "이미 종료된 일정입니다."),
+	AGENDA_ALREADY_CANCELED(409, "AG", "이미 취소된 일정입니다."),
+	AGENDA_AWARD_EMPTY(400, "AG", "시상 정보가 없습니다."),
+	AGENDA_AWARD_PRIORITY_DUPLICATE(400, "AG", "시상 우선순위가 중복됩니다.");
 
 	private final int status;
 	private final String errCode;

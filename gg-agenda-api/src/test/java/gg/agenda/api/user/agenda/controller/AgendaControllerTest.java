@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
@@ -23,17 +25,20 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.agenda.api.AgendaMockData;
-import gg.agenda.api.user.agenda.controller.dto.AgendaCreateDto;
-import gg.agenda.api.user.agenda.controller.dto.AgendaKeyResponseDto;
-import gg.agenda.api.user.agenda.controller.dto.AgendaResponseDto;
-import gg.agenda.api.user.agenda.controller.dto.AgendaSimpleResponseDto;
+import gg.agenda.api.user.agenda.controller.request.AgendaConfirmReqDto;
+import gg.agenda.api.user.agenda.controller.request.AgendaCreateReqDto;
+import gg.agenda.api.user.agenda.controller.request.AgendaTeamAwardDto;
+import gg.agenda.api.user.agenda.controller.response.AgendaKeyResDto;
+import gg.agenda.api.user.agenda.controller.response.AgendaResDto;
+import gg.agenda.api.user.agenda.controller.response.AgendaSimpleResDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaAnnouncement;
+import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.type.AgendaStatus;
+import gg.data.agenda.type.AgendaTeamStatus;
 import gg.data.agenda.type.Location;
 import gg.data.user.User;
 import gg.repo.agenda.AgendaRepository;
@@ -66,11 +71,13 @@ public class AgendaControllerTest {
 	@Autowired
 	AgendaRepository agendaRepository;
 
+	private User user;
+
 	private String accessToken;
 
 	@BeforeEach
 	void setUp() {
-		User user = testDataUtils.createNewUser();
+		user = testDataUtils.createNewUser();
 		accessToken = testDataUtils.getLoginAccessTokenFromUser(user);
 	}
 
@@ -91,7 +98,7 @@ public class AgendaControllerTest {
 					.param("agenda_key", agenda.getAgendaKey().toString()))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
-			AgendaResponseDto result = objectMapper.readValue(response, AgendaResponseDto.class);
+			AgendaResDto result = objectMapper.readValue(response, AgendaResDto.class);
 
 			// then
 			assertThat(result.getAgendaTitle()).isEqualTo(agenda.getTitle());
@@ -99,7 +106,7 @@ public class AgendaControllerTest {
 		}
 
 		@Test
-		@DisplayName("announce가 없는 경우 announcementTitle를 null로 반환합니다.")
+		@DisplayName("announce가 없는 경우 announcementTitle를 빈 문자열로 반환합니다.")
 		void getAgendaWithNoAnnounce() throws Exception {
 			// given
 			Agenda agenda = agendaMockData.createOfficialAgenda();
@@ -110,11 +117,11 @@ public class AgendaControllerTest {
 					.param("agenda_key", agenda.getAgendaKey().toString()))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
-			AgendaResponseDto result = objectMapper.readValue(response, AgendaResponseDto.class);
+			AgendaResDto result = objectMapper.readValue(response, AgendaResDto.class);
 
 			// then
 			assertThat(result.getAgendaTitle()).isEqualTo(agenda.getTitle());
-			assertThat(result.getAnnouncementTitle()).isEqualTo(null);
+			assertThat(result.getAnnouncementTitle()).isEqualTo("");
 		}
 
 		@Test
@@ -132,7 +139,7 @@ public class AgendaControllerTest {
 					.param("agenda_key", agenda.getAgendaKey().toString()))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
-			AgendaResponseDto result = objectMapper.readValue(response, AgendaResponseDto.class);
+			AgendaResDto result = objectMapper.readValue(response, AgendaResDto.class);
 
 			// then
 			assertThat(result.getAgendaTitle()).isEqualTo(agenda.getTitle());
@@ -186,7 +193,7 @@ public class AgendaControllerTest {
 					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
-			AgendaSimpleResponseDto[] result = objectMapper.readValue(response, AgendaSimpleResponseDto[].class);
+			AgendaSimpleResDto[] result = objectMapper.readValue(response, AgendaSimpleResDto[].class);
 
 			// then
 			assertThat(result.length).isEqualTo(officialAgendaList.size() + nonOfficialAgendaList.size());
@@ -211,7 +218,7 @@ public class AgendaControllerTest {
 					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
-			AgendaSimpleResponseDto[] result = objectMapper.readValue(response, AgendaSimpleResponseDto[].class);
+			AgendaSimpleResDto[] result = objectMapper.readValue(response, AgendaSimpleResDto[].class);
 
 			// then
 			assertThat(result.length).isEqualTo(0);
@@ -226,7 +233,7 @@ public class AgendaControllerTest {
 		@DisplayName("Agenda를 생성합니다.")
 		void createAgendaSuccess() throws Exception {
 			// given
-			AgendaCreateDto dto = AgendaCreateDto.builder()
+			AgendaCreateReqDto dto = AgendaCreateReqDto.builder()
 				.agendaTitle("title").agendaContents("content")
 				.agendaDeadLine(LocalDateTime.now().plusDays(3))
 				.agendaStartTime(LocalDateTime.now().plusDays(5))
@@ -242,7 +249,7 @@ public class AgendaControllerTest {
 					.content(request))
 				.andExpect(status().isCreated())
 				.andReturn().getResponse().getContentAsString();
-			AgendaKeyResponseDto result = objectMapper.readValue(response, AgendaKeyResponseDto.class);
+			AgendaKeyResDto result = objectMapper.readValue(response, AgendaKeyResDto.class);
 			Optional<Agenda> agenda = agendaRepository.findByAgendaKey(result.getAgendaKey());
 
 			// then
@@ -255,7 +262,7 @@ public class AgendaControllerTest {
 		@DisplayName("deadline이 startTime보다 미래인 경우 400을 반환합니다.")
 		void createAgendaFailedWhenDeadlineIsAfterStartTime() throws Exception {
 			// given
-			AgendaCreateDto dto = AgendaCreateDto.builder()
+			AgendaCreateReqDto dto = AgendaCreateReqDto.builder()
 				.agendaTitle("title").agendaContents("content")
 				.agendaDeadLine(LocalDateTime.now().plusDays(6))
 				.agendaStartTime(LocalDateTime.now().plusDays(5))
@@ -276,7 +283,7 @@ public class AgendaControllerTest {
 		@DisplayName("deadline이 endTime보다 미래인 경우 400을 반환합니다.")
 		void createAgendaFailedWhenDeadlineIsAfterEndTime() throws Exception {
 			// given
-			AgendaCreateDto dto = AgendaCreateDto.builder()
+			AgendaCreateReqDto dto = AgendaCreateReqDto.builder()
 				.agendaTitle("title").agendaContents("content")
 				.agendaDeadLine(LocalDateTime.now().plusDays(3))
 				.agendaStartTime(LocalDateTime.now().plusDays(5))
@@ -297,7 +304,7 @@ public class AgendaControllerTest {
 		@DisplayName("startTime이 endTime보다 미래인 경우 400을 반환합니다.")
 		void createAgendaFailedWhenStartTimeIsAfterEndTime() throws Exception {
 			// given
-			AgendaCreateDto dto = AgendaCreateDto.builder()
+			AgendaCreateReqDto dto = AgendaCreateReqDto.builder()
 				.agendaTitle("title").agendaContents("content")
 				.agendaDeadLine(LocalDateTime.now().plusDays(3))
 				.agendaStartTime(LocalDateTime.now().plusDays(7))
@@ -318,7 +325,7 @@ public class AgendaControllerTest {
 		@DisplayName("min team이 max team보다 큰 경우 400을 반환합니다.")
 		void createAgendaFailedWhenMinTeamGreaterThanMaxTeam() throws Exception {
 			// given
-			AgendaCreateDto dto = AgendaCreateDto.builder()
+			AgendaCreateReqDto dto = AgendaCreateReqDto.builder()
 				.agendaTitle("title").agendaContents("content")
 				.agendaDeadLine(LocalDateTime.now().plusDays(3))
 				.agendaStartTime(LocalDateTime.now().plusDays(5))
@@ -339,7 +346,7 @@ public class AgendaControllerTest {
 		@DisplayName("min people이 max people보다 큰 경우 400을 반환합니다.")
 		void createAgendaFailedWhenMinPeopleGreaterThanMaxPeople() throws Exception {
 			// given
-			AgendaCreateDto dto = AgendaCreateDto.builder()
+			AgendaCreateReqDto dto = AgendaCreateReqDto.builder()
 				.agendaTitle("title").agendaContents("content")
 				.agendaDeadLine(LocalDateTime.now().plusDays(3))
 				.agendaStartTime(LocalDateTime.now().plusDays(5))
@@ -361,7 +368,7 @@ public class AgendaControllerTest {
 		@DisplayName("min team이 1 이하인 경우 400을 반환합니다.")
 		void createAgendaFailedWhenNegativeMinTeam(int value) throws Exception {
 			// given
-			AgendaCreateDto dto = AgendaCreateDto.builder()
+			AgendaCreateReqDto dto = AgendaCreateReqDto.builder()
 				.agendaTitle("title").agendaContents("content")
 				.agendaDeadLine(LocalDateTime.now().plusDays(3))
 				.agendaStartTime(LocalDateTime.now().plusDays(5))
@@ -383,7 +390,7 @@ public class AgendaControllerTest {
 		@DisplayName("min people이 0 이하인 경우 400을 반환합니다.")
 		void createAgendaFailedWhenNegativeMinPeople(int value) throws Exception {
 			// given
-			AgendaCreateDto dto = AgendaCreateDto.builder()
+			AgendaCreateReqDto dto = AgendaCreateReqDto.builder()
 				.agendaTitle("title").agendaContents("content")
 				.agendaDeadLine(LocalDateTime.now().plusDays(3))
 				.agendaStartTime(LocalDateTime.now().plusDays(5))
@@ -422,7 +429,7 @@ public class AgendaControllerTest {
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(req))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			AgendaSimpleResponseDto[] result = objectMapper.readValue(response, AgendaSimpleResponseDto[].class);
+			AgendaSimpleResDto[] result = objectMapper.readValue(response, AgendaSimpleResDto[].class);
 
 			// then
 			assertThat(result.length).isEqualTo(size * page < totalCount ? size : totalCount % size);
@@ -450,7 +457,7 @@ public class AgendaControllerTest {
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(req))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			AgendaSimpleResponseDto[] result = objectMapper.readValue(response, AgendaSimpleResponseDto[].class);
+			AgendaSimpleResDto[] result = objectMapper.readValue(response, AgendaSimpleResDto[].class);
 
 			// then
 			assertThat(result.length).isEqualTo(0);
@@ -506,7 +513,7 @@ public class AgendaControllerTest {
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(req))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			AgendaSimpleResponseDto[] result = objectMapper.readValue(response, AgendaSimpleResponseDto[].class);
+			AgendaSimpleResDto[] result = objectMapper.readValue(response, AgendaSimpleResDto[].class);
 
 			// then
 			assertThat(result.length).isEqualTo(0);
@@ -544,7 +551,7 @@ public class AgendaControllerTest {
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(req))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			AgendaSimpleResponseDto[] result = objectMapper.readValue(response, AgendaSimpleResponseDto[].class);
+			AgendaSimpleResDto[] result = objectMapper.readValue(response, AgendaSimpleResDto[].class);
 
 			// then
 			assertThat(result.length).isEqualTo(20);
@@ -555,6 +562,432 @@ public class AgendaControllerTest {
 				}
 				assertThat(result[i].getAgendaStartTime()).isBefore(result[i - 1].getAgendaStartTime());
 			}
+		}
+	}
+
+	@Nested
+	@DisplayName("Agenda 시상 및 확정")
+	class ConfirmAgenda {
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 성공 - 시상 대회인 경우")
+		void confirmAgendaSuccess() throws Exception {
+			// given
+			int teamSize = 10;
+			int awardSize = 3;
+			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), true);
+			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
+					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
+					.collect(Collectors.toList());
+			List<AgendaTeamAwardDto> awards = IntStream.range(0, awardSize)
+					.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
+						.awardName("prize" + i).awardPriority(i + 1).build())
+					.collect(Collectors.toList());
+			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder().awards(awards).build();
+			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
+
+			// when
+			mockMvc.perform(patch("/agenda/confirm")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(response))
+				.andExpect(status().isNoContent());
+			Agenda result = em.createQuery("select a from Agenda a where a.agendaKey = :agendaKey", Agenda.class)
+				.setParameter("agendaKey", agenda.getAgendaKey()).getSingleResult();
+
+			// then
+			assertThat(result.getStatus()).isEqualTo(AgendaStatus.CONFIRM);
+			awards.forEach(award -> {
+				AgendaTeam agendaTeam = em.createQuery(
+						"select at from AgendaTeam at where at.agenda = :agenda and at.name = :teamName",
+						AgendaTeam.class)
+					.setParameter("agenda", agenda)
+					.setParameter("teamName", award.getTeamName())
+					.getSingleResult();
+				assertThat(agendaTeam.getAward()).isEqualTo(award.getAwardName());
+				assertThat(agendaTeam.getAwardPriority()).isEqualTo(award.getAwardPriority());
+			});
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 성공 - 시상하지 않는 대회인 경우")
+		void confirmAgendaSuccessWithNoRanking() throws Exception {
+			// given
+			int teamSize = 10;
+			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), false);
+			IntStream.range(0, teamSize)
+				.forEach(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM));
+
+			// when
+			mockMvc.perform(patch("/agenda/confirm")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isNoContent());
+			Agenda result = em.createQuery("select a from Agenda a where a.agendaKey = :agendaKey", Agenda.class)
+				.setParameter("agendaKey", agenda.getAgendaKey()).getSingleResult();
+
+			// then
+			assertThat(result.getStatus()).isEqualTo(AgendaStatus.CONFIRM);
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 성공 - 시상하지 않는 대회에 시상 내역이 들어온 경우")
+		void confirmAgendaSuccessWithNoRankAndAwards() throws Exception {
+			// given
+			int teamSize = 10;
+			int awardSize = 3;
+			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), false);
+			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
+					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
+					.collect(Collectors.toList());
+			List<AgendaTeamAwardDto> awards = IntStream.range(0, awardSize)
+					.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
+					.awardName("prize" + i).awardPriority(i + 1).build())
+					.collect(Collectors.toList());
+			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder().awards(awards).build();
+			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
+
+			// when
+			mockMvc.perform(patch("/agenda/confirm")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(response))
+				.andExpect(status().isNoContent());
+			Agenda result = em.createQuery("select a from Agenda a where a.agendaKey = :agendaKey", Agenda.class)
+				.setParameter("agendaKey", agenda.getAgendaKey()).getSingleResult();
+
+			// then
+			assertThat(result.getStatus()).isEqualTo(AgendaStatus.CONFIRM);
+			awards.forEach(award -> {
+				AgendaTeam agendaTeam = em.createQuery(
+						"select at from AgendaTeam at where at.agenda = :agenda and at.name = :teamName",
+						AgendaTeam.class)
+					.setParameter("agenda", agenda)
+					.setParameter("teamName", award.getTeamName())
+					.getSingleResult();
+				assertThat(agendaTeam.getAward()).isNotEqualTo(award.getAwardName());
+				assertThat(agendaTeam.getAwardPriority()).isNotEqualTo(award.getAwardPriority());
+			});
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 실패 - 존재하지 않는 팀에 대한 시상인 경우")
+		void confirmAgendaFailedWithInvalidTeam() throws Exception {
+			// given
+			int teamSize = 10;
+			int awardSize = 3;
+			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), true);
+			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
+					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
+					.collect(Collectors.toList());
+			List<AgendaTeamAwardDto> awards = IntStream.range(0, awardSize)
+					.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
+					.awardName("prize" + i).awardPriority(i + 1).build())
+					.collect(Collectors.toList());
+			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder().awards(awards).build();
+			awards.add(AgendaTeamAwardDto.builder()
+				.teamName("invalid_team").awardName("prize").awardPriority(1).build());    // invalid team
+			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
+
+			// expected
+			mockMvc.perform(patch("/agenda/confirm")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(response))
+				.andExpect(status().isNotFound());
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 실패 - Agenda가 없는 경우")
+		void confirmAgendaFailedWithNoAgenda() throws Exception {
+			// given
+			int teamSize = 10;
+			int awardSize = 3;
+			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), true);
+			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
+					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
+					.collect(Collectors.toList());
+			List<AgendaTeamAwardDto> awards = IntStream.range(0, awardSize)
+					.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
+					.awardName("prize" + i).awardPriority(i + 1).build())
+					.collect(Collectors.toList());
+			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder().awards(awards).build();
+			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
+
+			UUID invalidAgendaKey = UUID.randomUUID();    // invalid agenda key
+
+			// expected
+			mockMvc.perform(patch("/agenda/confirm")
+					.param("agenda_key", invalidAgendaKey.toString())
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(response))
+				.andExpect(status().isNotFound());
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 실패 - 시상 내역이 없는 경우")
+		void confirmAgendaFailedWithoutAwards() throws Exception {
+			// given
+			int teamSize = 10;
+			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), true);
+			IntStream.range(0, teamSize).forEach(i ->
+				agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM));
+			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder().build();    // null
+			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
+
+			// when
+			mockMvc.perform(patch("/agenda/confirm")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(response))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 실패 - 시상 내역이 빈 리스트인 경우")
+		void confirmAgendaFailedWithEmptyAwards() throws Exception {
+			// given
+			int teamSize = 10;
+			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), true);
+			IntStream.range(0, teamSize).forEach(i ->
+				agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM));
+			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder()
+				.awards(List.of())    // empty
+				.build();
+			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
+
+			// when
+			mockMvc.perform(patch("/agenda/confirm")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(response))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 실패 - 개최자가 아닌 경우")
+		void confirmAgendaFailedNotHost() throws Exception {
+			// given
+			int teamSize = 10;
+			int awardSize = 3;
+			User another = testDataUtils.createNewUser();
+			Agenda agenda = agendaMockData.createAgenda(another.getIntraId(), LocalDateTime.now().minusDays(10), true);
+			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
+					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
+					.collect(Collectors.toList());
+			List<AgendaTeamAwardDto> awards = IntStream.range(0, awardSize)
+					.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
+					.awardName("prize" + i).awardPriority(i + 1).build())
+					.collect(Collectors.toList());
+			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder().awards(awards).build();
+			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
+
+			// when
+			mockMvc.perform(patch("/agenda/confirm")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(response))
+				.andExpect(status().isForbidden());
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 실패 - 이미 확정된 경우")
+		void confirmAgendaFailedAlreadyConfirm() throws Exception {
+			// given
+			int teamSize = 10;
+			int awardSize = 3;
+			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(),
+				LocalDateTime.now().minusDays(10), AgendaStatus.CONFIRM);
+			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
+					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
+					.collect(Collectors.toList());
+			List<AgendaTeamAwardDto> awards = IntStream.range(0, awardSize)
+					.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
+						.awardName("prize" + i).awardPriority(i + 1).build())
+					.collect(Collectors.toList());
+			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder().awards(awards).build();
+			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
+
+			// expected
+			mockMvc.perform(patch("/agenda/confirm")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(response))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 실패 - 이미 취소된 경우")
+		void confirmAgendaFailedAlreadyCancel() throws Exception {
+			// given
+			int teamSize = 10;
+			int awardSize = 3;
+			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(),
+				LocalDateTime.now().minusDays(10), AgendaStatus.CANCEL);
+			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
+					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
+					.collect(Collectors.toList());
+			List<AgendaTeamAwardDto> awards = IntStream.range(0, awardSize)
+					.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
+					.awardName("prize" + i).awardPriority(i + 1).build())
+					.collect(Collectors.toList());
+			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder().awards(awards).build();
+			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
+
+			// expected
+			mockMvc.perform(patch("/agenda/confirm")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(response))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 실패 - 아직 시작하지 않은 경우")
+		void confirmAgendaFailedBeforeStartTime() throws Exception {
+			// given
+			int teamSize = 10;
+			int awardSize = 3;
+			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(),
+				LocalDateTime.now().plusDays(1), AgendaStatus.ON_GOING);
+			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
+					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
+					.collect(Collectors.toList());
+			List<AgendaTeamAwardDto> awards = IntStream.range(0, awardSize)
+					.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
+						.awardName("prize" + i).awardPriority(i + 1).build())
+					.collect(Collectors.toList());
+			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder().awards(awards).build();
+			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
+
+			// expected
+			mockMvc.perform(patch("/agenda/confirm")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(response))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 실패 - empty awardName")
+		void confirmAgendaFailedWithEmptyAwardName() throws Exception {
+			// given
+			int teamSize = 10;
+			int awardSize = 3;
+			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), true);
+			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
+					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
+					.collect(Collectors.toList());
+			List<AgendaTeamAwardDto> awards = IntStream.range(0, awardSize)
+					.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
+						.awardName("prize" + i).awardPriority(i + 1).build())
+					.collect(Collectors.toList());
+			awards.add(AgendaTeamAwardDto.builder().teamName(agendaTeams.get(awardSize).getName())
+				.awardName("").awardPriority(awardSize).build());    // empty award name
+			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder().awards(awards).build();
+			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
+
+			// expected
+			mockMvc.perform(patch("/agenda/confirm")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(response))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 실패 - null awardName")
+		void confirmAgendaFailedWithNullAwardName() throws Exception {
+			// given
+			int teamSize = 10;
+			int awardSize = 3;
+			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), true);
+			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
+					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
+					.collect(Collectors.toList());
+			List<AgendaTeamAwardDto> awards = IntStream.range(0, awardSize)
+					.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
+						.awardName("prize" + i).awardPriority(i + 1).build())
+					.collect(Collectors.toList());
+			awards.add(AgendaTeamAwardDto.builder().teamName(agendaTeams.get(awardSize).getName())
+				.awardPriority(awardSize).build());    // null award name
+			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder().awards(awards).build();
+			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
+
+			// expected
+			mockMvc.perform(patch("/agenda/confirm")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(response))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 실패 - empty teamName")
+		void confirmAgendaFailedWithEmptyTeamName() throws Exception {
+			// given
+			int teamSize = 10;
+			int awardSize = 3;
+			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), true);
+			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
+					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
+					.collect(Collectors.toList());
+			List<AgendaTeamAwardDto> awards = IntStream.range(0, awardSize)
+					.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
+						.awardName("prize" + i).awardPriority(i + 1).build())
+					.collect(Collectors.toList());
+			awards.add(AgendaTeamAwardDto.builder().awardName("prize" + awardSize)
+				.teamName("").awardPriority(awardSize).build());    // empty award name
+			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder().awards(awards).build();
+			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
+
+			// expected
+			mockMvc.perform(patch("/agenda/confirm")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(response))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 실패 - null teamName")
+		void confirmAgendaFailedWithNullTeamName() throws Exception {
+			// given
+			int teamSize = 10;
+			int awardSize = 3;
+			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), true);
+			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
+					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
+					.collect(Collectors.toList());
+			List<AgendaTeamAwardDto> awards = IntStream.range(0, awardSize)
+					.mapToObj(i -> AgendaTeamAwardDto.builder().teamName(agendaTeams.get(i).getName())
+						.awardName("prize" + i).awardPriority(i + 1).build())
+					.collect(Collectors.toList());
+			awards.add(AgendaTeamAwardDto.builder().awardName("prize" + awardSize)
+				.awardPriority(awardSize).build());    // null award name
+			AgendaConfirmReqDto agendaConfirmReqDto = AgendaConfirmReqDto.builder().awards(awards).build();
+			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
+
+			// expected
+			mockMvc.perform(patch("/agenda/confirm")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(response))
+				.andExpect(status().isBadRequest());
 		}
 	}
 }

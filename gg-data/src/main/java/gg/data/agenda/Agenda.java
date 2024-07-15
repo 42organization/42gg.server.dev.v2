@@ -123,6 +123,19 @@ public class Agenda extends BaseTimeEntity {
 		this.currentTeam++;
 	}
 
+	public void confirm(LocalDateTime confirmTime) {
+		if (this.status == AgendaStatus.CONFIRM) {
+			throw new InvalidParameterException(AGENDA_ALREADY_CONFIRMED);
+		}
+		if (this.status == AgendaStatus.CANCEL) {
+			throw new InvalidParameterException(AGENDA_ALREADY_CANCELED);
+		}
+		if (this.startTime.isAfter(confirmTime)) {
+			throw new InvalidParameterException(AGENDA_INVALID_PARAM);
+		}
+		this.status = AgendaStatus.CONFIRM;
+	}
+
 	private void mustBeWithinLocation(Location location) {
 		if (this.location != Location.MIX && this.location != location) {
 			throw new InvalidParameterException(LOCATION_NOT_VALID);

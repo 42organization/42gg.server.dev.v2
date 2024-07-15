@@ -1,4 +1,4 @@
-package gg.agenda.api.user.agenda.controller.dto;
+package gg.agenda.api.user.agenda.controller.request;
 
 import static gg.utils.exception.ErrorCode.*;
 
@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AgendaCreateDto {
+public class AgendaCreateReqDto {
 
 	@NotNull
 	@NotEmpty
@@ -76,7 +76,7 @@ public class AgendaCreateDto {
 	private Boolean agendaIsOfficial;
 
 	@Builder
-	public AgendaCreateDto(String agendaTitle, String agendaContents, LocalDateTime agendaDeadLine,
+	public AgendaCreateReqDto(String agendaTitle, String agendaContents, LocalDateTime agendaDeadLine,
 		LocalDateTime agendaStartTime, LocalDateTime agendaEndTime, int agendaMinTeam, int agendaMaxTeam,
 		int agendaMinPeople, int agendaMaxPeople, String agendaPoster, Location agendaLocation,
 		Boolean agendaIsRanking, Boolean agendaIsOfficial) {
@@ -97,7 +97,7 @@ public class AgendaCreateDto {
 
 	@Mapper
 	public interface MapStruct {
-		AgendaCreateDto.MapStruct INSTANCE = Mappers.getMapper(AgendaCreateDto.MapStruct.class);
+		AgendaCreateReqDto.MapStruct INSTANCE = Mappers.getMapper(AgendaCreateReqDto.MapStruct.class);
 
 		@Mapping(target = "id", ignore = true)
 		@Mapping(target = "title", source = "dto.agendaTitle")
@@ -116,10 +116,10 @@ public class AgendaCreateDto {
 		@Mapping(target = "status", constant = "ON_GOING")
 		@Mapping(target = "isOfficial", source = "dto.agendaIsOfficial")
 		@Mapping(target = "isRanking", source = "dto.agendaIsRanking")
-		Agenda toEntity(AgendaCreateDto dto, UserDto user);
+		Agenda toEntity(AgendaCreateReqDto dto, UserDto user);
 
 		@BeforeMapping
-		default void mustHaveValidAgendaSchedule(AgendaCreateDto dto, UserDto user) {
+		default void mustHaveValidAgendaSchedule(AgendaCreateReqDto dto, UserDto user) {
 			if (!dto.getAgendaDeadLine().isBefore(dto.getAgendaStartTime())) {
 				throw new InvalidParameterException(AGENDA_INVALID_SCHEDULE);
 			}
@@ -132,7 +132,7 @@ public class AgendaCreateDto {
 		}
 
 		@BeforeMapping
-		default void mustHaveValidParam(AgendaCreateDto dto, UserDto user) {
+		default void mustHaveValidParam(AgendaCreateReqDto dto, UserDto user) {
 			if (dto.getAgendaMinTeam() > dto.getAgendaMaxTeam()) {
 				throw new InvalidParameterException(AGENDA_INVALID_PARAM);
 			}

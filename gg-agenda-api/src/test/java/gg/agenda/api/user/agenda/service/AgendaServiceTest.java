@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.IntStream;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -22,14 +23,17 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import gg.agenda.api.user.agenda.controller.dto.AgendaCreateDto;
-import gg.agenda.api.user.agenda.controller.dto.AgendaKeyResponseDto;
-import gg.agenda.api.user.agenda.controller.dto.AgendaSimpleResponseDto;
+import gg.agenda.api.user.agenda.controller.request.AgendaConfirmReqDto;
+import gg.agenda.api.user.agenda.controller.request.AgendaCreateReqDto;
+import gg.agenda.api.user.agenda.controller.request.AgendaTeamAwardDto;
 import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
+import gg.data.agenda.AgendaAnnouncement;
+import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.type.AgendaStatus;
 import gg.repo.agenda.AgendaAnnouncementRepository;
 import gg.repo.agenda.AgendaRepository;
+import gg.repo.agenda.AgendaTeamRepository;
 import gg.utils.annotation.UnitTest;
 import gg.utils.exception.custom.NotExistException;
 import lombok.extern.slf4j.Slf4j;
@@ -44,42 +48,73 @@ class AgendaServiceTest {
 	@Mock
 	AgendaAnnouncementRepository agendaAnnouncementRepository;
 
+	@Mock
+	AgendaTeamRepository agendaTeamRepository;
+
 	@InjectMocks
 	AgendaService agendaService;
 
 	@Nested
-	@DisplayName("Agenda 단건 조회")
+	@DisplayName("Agenda 상세 조회")
 	class GetAgenda {
-
 		@Test
-		@DisplayName("Agenda 단건 조회 성공")
-		void getAgendaSuccess() {
+		@DisplayName("AgendaKey로 Agenda 상세 조회")
+		void findAgendaByAgendaKeySuccess() {
 			// given
-			UUID agendaKey = UUID.randomUUID();
-			Agenda agenda = mock(Agenda.class);
+			Agenda agenda = Agenda.builder().build();
+			UUID agendaKey = agenda.getAgendaKey();
 			when(agendaRepository.findByAgendaKey(agendaKey)).thenReturn(Optional.of(agenda));
-			when(agendaAnnouncementRepository.findLatestByAgenda(agenda)).thenReturn(Optional.empty());
 
 			// when
-			agendaService.findAgendaWithLatestAnnouncement(agendaKey);
+			Agenda result = agendaService.findAgendaByAgendaKey(agendaKey);
 
 			// then
 			verify(agendaRepository, times(1)).findByAgendaKey(agendaKey);
-			verify(agendaAnnouncementRepository, times(1)).findLatestByAgenda(agenda);
+			assertThat(result).isEqualTo(agenda);
 		}
 
 		@Test
-		@DisplayName("Agenda 단건 조회 실패")
-		void getAgendaFailedWithnoAgenda() {
+		@DisplayName("AgendaKey로 Agenda 상세 조회 - 존재하지 않는 AgendaKey인 경우")
+		void findAgendaByAgendaKeyFailedWithNoAgenda() {
 			// given
 			UUID agendaKey = UUID.randomUUID();
-			Agenda agenda = mock(Agenda.class);
 			when(agendaRepository.findByAgendaKey(agendaKey)).thenReturn(Optional.empty());
 
 			// expected
-			assertThrows(NotExistException.class, () -> agendaService.findAgendaWithLatestAnnouncement(agendaKey));
-			verify(agendaRepository, times(1)).findByAgendaKey(agendaKey);
-			verify(agendaAnnouncementRepository, never()).findLatestByAgenda(agenda);
+			assertThrows(NotExistException.class,
+				() -> agendaService.findAgendaByAgendaKey(agendaKey));
+		}
+
+		@Test
+		@DisplayName("AgendaAnnouncement 조회 성공 - 최신 공지사항이 있는 경우")
+		void findAgendaAnnouncementSuccess() {
+			// given
+			Agenda agenda = Agenda.builder().build();
+			AgendaAnnouncement announcement = AgendaAnnouncement.builder().title("title").content("content").build();
+			when(agendaAnnouncementRepository.findLatestByAgenda(agenda)).thenReturn(Optional.of(announcement));
+
+			// when
+			Optional<AgendaAnnouncement> result = agendaService.findAgendaWithLatestAnnouncement(agenda);
+
+			// then
+			verify(agendaAnnouncementRepository, times(1)).findLatestByAgenda(agenda);
+			assertThat(result).isPresent();
+			assertThat(result.get().getTitle()).isEqualTo(announcement.getTitle());
+		}
+
+		@Test
+		@DisplayName("AgendaAnnouncement 조회 성공 - 최신 공지사항이 없는 경우")
+		void findAgendaAnnouncementSuccessWithNoAnnounce() {
+			// given
+			Agenda agenda = Agenda.builder().build();
+			when(agendaAnnouncementRepository.findLatestByAgenda(agenda)).thenReturn(Optional.empty());
+
+			// when
+			Optional<AgendaAnnouncement> result = agendaService.findAgendaWithLatestAnnouncement(agenda);
+
+			// then
+			verify(agendaAnnouncementRepository, times(1)).findLatestByAgenda(agenda);
+			assertThat(result).isEmpty();
 		}
 	}
 
@@ -101,7 +136,7 @@ class AgendaServiceTest {
 			when(agendaRepository.findAllByStatusIs(AgendaStatus.ON_GOING)).thenReturn(agendas);
 
 			// when
-			List<AgendaSimpleResponseDto> result = agendaService.findCurrentAgendaList();
+			List<Agenda> result = agendaService.findCurrentAgendaList();
 
 			// then
 			verify(agendaRepository, times(1)).findAllByStatusIs(any());
@@ -110,7 +145,7 @@ class AgendaServiceTest {
 				if (i == 0 || i == officialSize) {
 					continue;
 				}
-				assertThat(result.get(i).getAgendaDeadLine()).isBefore(result.get(i - 1).getAgendaDeadLine());
+				assertThat(result.get(i).getDeadline()).isBefore(result.get(i - 1).getDeadline());
 			}
 		}
 
@@ -138,7 +173,7 @@ class AgendaServiceTest {
 		void createAgendaSuccess() {
 			// given
 			UserDto user = UserDto.builder().intraId("intraId").build();
-			AgendaCreateDto agendaCreateDto = AgendaCreateDto.builder()
+			AgendaCreateReqDto agendaCreateReqDto = AgendaCreateReqDto.builder()
 				.agendaDeadLine(LocalDateTime.now().plusDays(5))
 				.agendaStartTime(LocalDateTime.now().plusDays(8))
 				.agendaEndTime(LocalDateTime.now().plusDays(10))
@@ -149,12 +184,11 @@ class AgendaServiceTest {
 			when(agendaRepository.save(any(Agenda.class))).thenReturn(agenda);
 
 			// when
-			AgendaKeyResponseDto agendaKeyResponseDto = agendaService.addAgenda(agendaCreateDto, user);
+			Agenda result = agendaService.addAgenda(agendaCreateReqDto, user);
 
 			// then
 			verify(agendaRepository, times(1)).save(any(Agenda.class));
-			assertThat(agendaKeyResponseDto).isNotNull();
-			assertThat(agendaKeyResponseDto.getAgendaKey()).isEqualTo(agenda.getAgendaKey());
+			assertThat(result.getAgendaKey()).isEqualTo(agenda.getAgendaKey());
 		}
 	}
 
@@ -179,16 +213,187 @@ class AgendaServiceTest {
 				.thenReturn(agendaPage);
 
 			// when
-			List<AgendaSimpleResponseDto> result = agendaService.findHistoryAgendaList(pageable);
+			List<Agenda> result = agendaService.findHistoryAgendaList(pageable);
 
 			// then
 			verify(agendaRepository, times(1))
 				.findAllByStatusIs(pageable, AgendaStatus.CONFIRM);
 			assertThat(result.size()).isEqualTo(size);
 			for (int i = 1; i < result.size(); i++) {
-				assertThat(result.get(i).getAgendaStartTime())
-					.isBefore(result.get(i - 1).getAgendaStartTime());
+				assertThat(result.get(i).getStartTime())
+					.isBefore(result.get(i - 1).getStartTime());
 			}
+		}
+	}
+
+	@Nested
+	@DisplayName("Agenda 시상 및 확정")
+	class ConfirmAgenda {
+
+		int seq;
+
+		@BeforeEach
+		void setUp() {
+			seq = 0;
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 성공")
+		void confirmAgendaSuccess() {
+			// given
+			Agenda agenda = Agenda.builder()
+				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
+				.status(AgendaStatus.ON_GOING).isRanking(true).build();
+			List<AgendaTeam> agendaTeams = new ArrayList<>();
+			IntStream.range(0, 10).forEach(i -> agendaTeams.add(AgendaTeam.builder().name("team" + i).build()));
+			AgendaTeamAwardDto awardDto = AgendaTeamAwardDto.builder()
+				.teamName("team1").awardName("award").awardPriority(1).build();
+			UserDto user = UserDto.builder().intraId(agenda.getHostIntraId()).build();
+			UUID agendaKey = agenda.getAgendaKey();
+			AgendaConfirmReqDto confirmDto = AgendaConfirmReqDto.builder()
+				.awards(List.of(awardDto)).build();
+
+			when(agendaTeamRepository.findByAgendaAndNameAndStatus(any(), any(), any()))
+				.thenReturn(Optional.of(agendaTeams.get(seq++)));
+
+			// when
+			agendaService.confirmAgenda(confirmDto, agenda);
+
+			// then
+			verify(agendaTeamRepository, times(1)).findByAgendaAndNameAndStatus(any(), any(), any());
+			assertThat(agenda.getStatus()).isEqualTo(AgendaStatus.CONFIRM);
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 성공 - 시상하지 않는 대회인 경우")
+		void confirmAgendaSuccessWithNoRank() {
+			// given
+			Agenda agenda = Agenda.builder()
+				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
+				.status(AgendaStatus.ON_GOING).isRanking(false).build();
+			UserDto user = UserDto.builder().intraId(agenda.getHostIntraId()).build();
+			UUID agendaKey = agenda.getAgendaKey();
+
+			// when
+			agendaService.confirmAgenda(null, agenda);
+
+			// then
+			assertThat(agenda.getStatus()).isEqualTo(AgendaStatus.CONFIRM);
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 성공 - 시상하지 않는 대회에 시상 내역이 들어온 경우")
+		void confirmAgendaSuccessWithNoRankAndAwards() {
+			// given
+			Agenda agenda = Agenda.builder()
+				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
+				.status(AgendaStatus.ON_GOING).isRanking(false).build();
+			List<AgendaTeam> agendaTeams = new ArrayList<>();
+			IntStream.range(0, 10).forEach(i -> agendaTeams.add(AgendaTeam.builder().name("team" + i).build()));
+			AgendaTeamAwardDto awardDto = AgendaTeamAwardDto.builder()
+				.teamName("team1").awardName("award").awardPriority(1).build();
+			UserDto user = UserDto.builder().intraId(agenda.getHostIntraId()).build();
+			UUID agendaKey = agenda.getAgendaKey();
+			AgendaConfirmReqDto confirmDto = AgendaConfirmReqDto.builder()
+				.awards(List.of(awardDto)).build();
+
+			// when
+			agendaService.confirmAgenda(confirmDto, agenda);
+
+			// then
+			verify(agendaTeamRepository, never()).findByAgendaAndNameAndStatus(any(), any(), any());
+			assertThat(agenda.getStatus()).isEqualTo(AgendaStatus.CONFIRM);
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 성공 - 시상하지 않는 대회에 시상 내역이 빈 리스트로 들어온 경우")
+		void confirmAgendaSuccessWithNoRankAndEmtpyAwards() {
+			// given
+			Agenda agenda = Agenda.builder()
+				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
+				.status(AgendaStatus.ON_GOING).isRanking(false).build();
+			List<AgendaTeam> agendaTeams = new ArrayList<>();
+			IntStream.range(0, 10).forEach(i -> agendaTeams.add(AgendaTeam.builder().name("team" + i).build()));
+			UserDto user = UserDto.builder().intraId(agenda.getHostIntraId()).build();
+			UUID agendaKey = agenda.getAgendaKey();
+			AgendaConfirmReqDto confirmDto = AgendaConfirmReqDto.builder()
+				.awards(List.of()).build();
+
+			// when
+			agendaService.confirmAgenda(confirmDto, agenda);
+
+			// then
+			verify(agendaTeamRepository, never()).findByAgendaAndNameAndStatus(any(), any(), any());
+			assertThat(agenda.getStatus()).isEqualTo(AgendaStatus.CONFIRM);
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 성공 - 시상하지 않는 대회에 시상 내역이 null로 들어온 경우")
+		void confirmAgendaSuccessWithNoRankAndNullAwards() {
+			// given
+			Agenda agenda = Agenda.builder()
+				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
+				.status(AgendaStatus.ON_GOING).isRanking(false).build();
+			List<AgendaTeam> agendaTeams = new ArrayList<>();
+			IntStream.range(0, 10).forEach(i -> agendaTeams.add(AgendaTeam.builder().name("team" + i).build()));
+			UserDto user = UserDto.builder().intraId(agenda.getHostIntraId()).build();
+			UUID agendaKey = agenda.getAgendaKey();
+			AgendaConfirmReqDto confirmDto = AgendaConfirmReqDto.builder().build();
+
+			// when
+			agendaService.confirmAgenda(confirmDto, agenda);
+
+			// then
+			verify(agendaTeamRepository, never()).findByAgendaAndNameAndStatus(any(), any(), any());
+			assertThat(agenda.getStatus()).isEqualTo(AgendaStatus.CONFIRM);
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 실패 - 시상 내역이 null인 경우")
+		void confirmAgendaFailedWithoutAwards() {
+			// given
+			Agenda agenda = Agenda.builder()
+				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
+				.status(AgendaStatus.ON_GOING).isRanking(true).build();
+
+			AgendaConfirmReqDto confirmDto = AgendaConfirmReqDto.builder().build();
+
+			// expected
+			assertThrows(NullPointerException.class,
+				() -> agendaService.confirmAgenda(confirmDto, agenda));
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 실패 - 매개변수가 null인 경우")
+		void confirmAgendaFailedWithNullDto() {
+			// given
+			Agenda agenda = Agenda.builder()
+				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
+				.status(AgendaStatus.ON_GOING).isRanking(true).build();
+
+			// expected
+			assertThrows(NullPointerException.class,
+				() -> agendaService.confirmAgenda(null, agenda));
+		}
+
+		@Test
+		@DisplayName("Agenda 시상 및 확정 실패 - 존재하지 않는 팀에 대한 시상인 경우")
+		void confirmAgendaFailedWithInvalidTeam() {
+			// given
+			Agenda agenda = Agenda.builder()
+				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
+				.status(AgendaStatus.ON_GOING).isRanking(true).build();
+			AgendaTeamAwardDto awardDto = AgendaTeamAwardDto.builder()
+				.teamName("invalidTeam").awardName("award").awardPriority(1).build();
+			AgendaConfirmReqDto confirmDto = AgendaConfirmReqDto.builder()
+				.awards(List.of(awardDto)).build();
+
+			when(agendaTeamRepository.findByAgendaAndNameAndStatus(any(), any(), any()))
+				.thenReturn(Optional.empty());
+
+			// expected
+			assertThrows(NotExistException.class,
+				() -> agendaService.confirmAgenda(confirmDto, agenda));
 		}
 	}
 }

@@ -81,4 +81,8 @@ public class AgendaTeam extends BaseTimeEntity {
 		this.isPrivate = isPrivate;
 	}
 
+	public void acceptAward(String award, int awardPriority) {
+		this.award = award;
+		this.awardPriority = awardPriority;
+	}
 }
