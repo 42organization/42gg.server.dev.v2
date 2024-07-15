@@ -106,9 +106,7 @@ public class AgendaController {
 	public ResponseEntity<Void> agendaConfirm(@RequestParam("agenda_key") UUID agendaKey, @Login UserDto user,
 		@RequestBody(required = false) @Valid AgendaConfirmReqDto agendaConfirmReqDto) {
 		Agenda agenda = agendaService.findAgendaByAgendaKey(agendaKey);
-		if (!user.getIntraId().equals(agenda.getHostIntraId())) {
-			throw new ForbiddenException(CONFIRM_FORBIDDEN);
-		}
+		agenda.mustModifiedByHost(user.getIntraId());
 		if (agenda.getIsRanking() && agendaConfirmReqDto == null) {
 			throw new InvalidParameterException(AGENDA_INVALID_PARAM);
 		}
