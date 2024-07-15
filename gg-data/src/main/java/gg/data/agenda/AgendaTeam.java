@@ -90,9 +90,6 @@ public class AgendaTeam extends BaseTimeEntity {
 	}
 
 	public void confirm() {
-		if (this.status == AgendaTeamStatus.CANCEL) {
-			throw new BusinessException(AGENDA_TEAM_NOT_OPEN);
-		}
 		if (this.status == AgendaTeamStatus.CONFIRM) {
 			throw new BusinessException(AGENDA_TEAM_ALREADY_CONFIRM);
 		}

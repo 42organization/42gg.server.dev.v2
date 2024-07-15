@@ -736,6 +736,26 @@ public class AgendaTeamControllerTest {
 		}
 
 		@Test
+		@DisplayName("400 OPEN 상태가 아닌 팀으로 인한 실패")
+		public void notValidTeamStatusFail() throws Exception {
+			//given
+			Agenda agenda = agendaMockData.createAgenda(SEOUL);
+			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser, SEOUL, AgendaTeamStatus.CANCEL);
+			agendaMockData.createAgendaTeamProfile(team, seoulUserAgendaProfile);
+			TeamKeyReqDto req = new TeamKeyReqDto(team.getTeamKey());
+			String content = objectMapper.writeValueAsString(req);
+			// when && then
+			String res = mockMvc.perform(
+					patch("/agenda/team/confirm")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound())
+				.andReturn().getResponse().getContentAsString();
+		}
+
+		@Test
 		@DisplayName("409 이미 CONFIRM된 팀으로 인한 실패")
 		public void alreadyConfirmTeamFail() throws Exception {
 			//given
