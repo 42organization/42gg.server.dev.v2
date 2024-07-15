@@ -159,4 +159,10 @@ public class Agenda extends BaseTimeEntity {
 			throw new ForbiddenException(AGENDA_NO_CAPACITY);
 		}
 	}
+
+	public void mustModifiedByHost(String userIntraId) {
+		if (!this.hostIntraId.equals(userIntraId)) {
+			throw new ForbiddenException(AGENDA_MODIFICATION_FORBIDDEN);
+		}
+	}
 }
