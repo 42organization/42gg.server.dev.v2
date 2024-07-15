@@ -24,7 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import gg.agenda.api.user.agenda.controller.request.AgendaConfirmReqDto;
-import gg.agenda.api.user.agenda.controller.request.AgendaCreateDto;
+import gg.agenda.api.user.agenda.controller.request.AgendaCreateReqDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaTeamAwardDto;
 import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
@@ -173,7 +173,7 @@ class AgendaServiceTest {
 		void createAgendaSuccess() {
 			// given
 			UserDto user = UserDto.builder().intraId("intraId").build();
-			AgendaCreateDto agendaCreateDto = AgendaCreateDto.builder()
+			AgendaCreateReqDto agendaCreateReqDto = AgendaCreateReqDto.builder()
 				.agendaDeadLine(LocalDateTime.now().plusDays(5))
 				.agendaStartTime(LocalDateTime.now().plusDays(8))
 				.agendaEndTime(LocalDateTime.now().plusDays(10))
@@ -184,7 +184,7 @@ class AgendaServiceTest {
 			when(agendaRepository.save(any(Agenda.class))).thenReturn(agenda);
 
 			// when
-			Agenda result = agendaService.addAgenda(agendaCreateDto, user);
+			Agenda result = agendaService.addAgenda(agendaCreateReqDto, user);
 
 			// then
 			verify(agendaRepository, times(1)).save(any(Agenda.class));

@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import gg.agenda.api.user.agenda.controller.request.AgendaConfirmReqDto;
-import gg.agenda.api.user.agenda.controller.request.AgendaCreateDto;
+import gg.agenda.api.user.agenda.controller.request.AgendaCreateReqDto;
 import gg.agenda.api.user.agenda.controller.response.AgendaKeyResDto;
 import gg.agenda.api.user.agenda.controller.response.AgendaResDto;
 import gg.agenda.api.user.agenda.controller.response.AgendaSimpleResDto;
@@ -76,8 +76,8 @@ public class AgendaController {
 	})
 	@PostMapping("/create")
 	public ResponseEntity<AgendaKeyResDto> agendaAdd(@Login UserDto user,
-		@RequestBody @Valid AgendaCreateDto agendaCreateDto) {
-		UUID agendaKey = agendaService.addAgenda(agendaCreateDto, user).getAgendaKey();
+		@RequestBody @Valid AgendaCreateReqDto agendaCreateReqDto) {
+		UUID agendaKey = agendaService.addAgenda(agendaCreateReqDto, user).getAgendaKey();
 		AgendaKeyResDto responseDto = AgendaKeyResDto.builder().agendaKey(agendaKey).build();
 		return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
 	}

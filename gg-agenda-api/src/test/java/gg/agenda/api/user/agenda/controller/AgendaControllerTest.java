@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.agenda.api.AgendaMockData;
 import gg.agenda.api.user.agenda.controller.request.AgendaConfirmReqDto;
-import gg.agenda.api.user.agenda.controller.request.AgendaCreateDto;
+import gg.agenda.api.user.agenda.controller.request.AgendaCreateReqDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaTeamAwardDto;
 import gg.agenda.api.user.agenda.controller.response.AgendaKeyResDto;
 import gg.agenda.api.user.agenda.controller.response.AgendaResDto;
@@ -233,7 +233,7 @@ public class AgendaControllerTest {
 		@DisplayName("Agenda를 생성합니다.")
 		void createAgendaSuccess() throws Exception {
 			// given
-			AgendaCreateDto dto = AgendaCreateDto.builder()
+			AgendaCreateReqDto dto = AgendaCreateReqDto.builder()
 				.agendaTitle("title").agendaContents("content")
 				.agendaDeadLine(LocalDateTime.now().plusDays(3))
 				.agendaStartTime(LocalDateTime.now().plusDays(5))
@@ -262,7 +262,7 @@ public class AgendaControllerTest {
 		@DisplayName("deadline이 startTime보다 미래인 경우 400을 반환합니다.")
 		void createAgendaFailedWhenDeadlineIsAfterStartTime() throws Exception {
 			// given
-			AgendaCreateDto dto = AgendaCreateDto.builder()
+			AgendaCreateReqDto dto = AgendaCreateReqDto.builder()
 				.agendaTitle("title").agendaContents("content")
 				.agendaDeadLine(LocalDateTime.now().plusDays(6))
 				.agendaStartTime(LocalDateTime.now().plusDays(5))
@@ -283,7 +283,7 @@ public class AgendaControllerTest {
 		@DisplayName("deadline이 endTime보다 미래인 경우 400을 반환합니다.")
 		void createAgendaFailedWhenDeadlineIsAfterEndTime() throws Exception {
 			// given
-			AgendaCreateDto dto = AgendaCreateDto.builder()
+			AgendaCreateReqDto dto = AgendaCreateReqDto.builder()
 				.agendaTitle("title").agendaContents("content")
 				.agendaDeadLine(LocalDateTime.now().plusDays(3))
 				.agendaStartTime(LocalDateTime.now().plusDays(5))
@@ -304,7 +304,7 @@ public class AgendaControllerTest {
 		@DisplayName("startTime이 endTime보다 미래인 경우 400을 반환합니다.")
 		void createAgendaFailedWhenStartTimeIsAfterEndTime() throws Exception {
 			// given
-			AgendaCreateDto dto = AgendaCreateDto.builder()
+			AgendaCreateReqDto dto = AgendaCreateReqDto.builder()
 				.agendaTitle("title").agendaContents("content")
 				.agendaDeadLine(LocalDateTime.now().plusDays(3))
 				.agendaStartTime(LocalDateTime.now().plusDays(7))
@@ -325,7 +325,7 @@ public class AgendaControllerTest {
 		@DisplayName("min team이 max team보다 큰 경우 400을 반환합니다.")
 		void createAgendaFailedWhenMinTeamGreaterThanMaxTeam() throws Exception {
 			// given
-			AgendaCreateDto dto = AgendaCreateDto.builder()
+			AgendaCreateReqDto dto = AgendaCreateReqDto.builder()
 				.agendaTitle("title").agendaContents("content")
 				.agendaDeadLine(LocalDateTime.now().plusDays(3))
 				.agendaStartTime(LocalDateTime.now().plusDays(5))
@@ -346,7 +346,7 @@ public class AgendaControllerTest {
 		@DisplayName("min people이 max people보다 큰 경우 400을 반환합니다.")
 		void createAgendaFailedWhenMinPeopleGreaterThanMaxPeople() throws Exception {
 			// given
-			AgendaCreateDto dto = AgendaCreateDto.builder()
+			AgendaCreateReqDto dto = AgendaCreateReqDto.builder()
 				.agendaTitle("title").agendaContents("content")
 				.agendaDeadLine(LocalDateTime.now().plusDays(3))
 				.agendaStartTime(LocalDateTime.now().plusDays(5))
@@ -368,7 +368,7 @@ public class AgendaControllerTest {
 		@DisplayName("min team이 1 이하인 경우 400을 반환합니다.")
 		void createAgendaFailedWhenNegativeMinTeam(int value) throws Exception {
 			// given
-			AgendaCreateDto dto = AgendaCreateDto.builder()
+			AgendaCreateReqDto dto = AgendaCreateReqDto.builder()
 				.agendaTitle("title").agendaContents("content")
 				.agendaDeadLine(LocalDateTime.now().plusDays(3))
 				.agendaStartTime(LocalDateTime.now().plusDays(5))
@@ -390,7 +390,7 @@ public class AgendaControllerTest {
 		@DisplayName("min people이 0 이하인 경우 400을 반환합니다.")
 		void createAgendaFailedWhenNegativeMinPeople(int value) throws Exception {
 			// given
-			AgendaCreateDto dto = AgendaCreateDto.builder()
+			AgendaCreateReqDto dto = AgendaCreateReqDto.builder()
 				.agendaTitle("title").agendaContents("content")
 				.agendaDeadLine(LocalDateTime.now().plusDays(3))
 				.agendaStartTime(LocalDateTime.now().plusDays(5))

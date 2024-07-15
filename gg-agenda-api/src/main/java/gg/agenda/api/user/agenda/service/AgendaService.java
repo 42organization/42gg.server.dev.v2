@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.agenda.api.user.agenda.controller.request.AgendaConfirmReqDto;
-import gg.agenda.api.user.agenda.controller.request.AgendaCreateDto;
+import gg.agenda.api.user.agenda.controller.request.AgendaCreateReqDto;
 import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaAnnouncement;
@@ -57,8 +57,8 @@ public class AgendaService {
 	}
 
 	@Transactional
-	public Agenda addAgenda(AgendaCreateDto agendaCreateDto, UserDto user) {
-		Agenda newAgenda = AgendaCreateDto.MapStruct.INSTANCE.toEntity(agendaCreateDto, user);
+	public Agenda addAgenda(AgendaCreateReqDto agendaCreateReqDto, UserDto user) {
+		Agenda newAgenda = AgendaCreateReqDto.MapStruct.INSTANCE.toEntity(agendaCreateReqDto, user);
 		return agendaRepository.save(newAgenda);
 	}
 
