@@ -7,6 +7,7 @@ import static gg.data.agenda.type.Location.*;
 import static java.util.UUID.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -149,6 +150,32 @@ public class AgendaMockData {
 		em.flush();
 		em.clear();
 		return announcement;
+	}
+
+	public List<AgendaAnnouncement> createAgendaAnnouncementList(Agenda agenda, int size) {
+		List<AgendaAnnouncement> announcements = new ArrayList<>();
+		for (int i = 0; i < size; i++) {
+			announcements.add(AgendaAnnouncement.builder()
+				.title("title " + i)
+				.content("content " + i)
+				.isShow(true)
+				.agenda(agenda)
+				.build());
+		}
+		return agendaAnnouncementRepository.saveAll(announcements);
+	}
+
+	public List<AgendaAnnouncement> createAgendaAnnouncementList(Agenda agenda, int size, boolean isShow) {
+		List<AgendaAnnouncement> announcements = new ArrayList<>();
+		for (int i = 0; i < size; i++) {
+			announcements.add(AgendaAnnouncement.builder()
+				.title("title " + i)
+				.content("content " + i)
+				.isShow(isShow)
+				.agenda(agenda)
+				.build());
+		}
+		return agendaAnnouncementRepository.saveAll(announcements);
 	}
 
 	public List<Agenda> createAgendaHistory(int size) {
