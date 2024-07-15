@@ -1,6 +1,8 @@
 package gg.agenda.api.user.agendaannouncement.controller;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -15,10 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import gg.agenda.api.user.agenda.service.AgendaService;
 import gg.agenda.api.user.agendaannouncement.controller.request.AgendaAnnouncementCreateReqDto;
+import gg.agenda.api.user.agendaannouncement.controller.response.AgendaAnnouncementResDto;
 import gg.agenda.api.user.agendaannouncement.service.AgendaAnnouncementService;
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
 import gg.data.agenda.Agenda;
+import gg.data.agenda.AgendaAnnouncement;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -37,5 +42,19 @@ public class AgendaAnnouncementController {
 		agenda.mustModifiedByHost(user.getIntraId());
 		agendaAnnouncementService.addAgendaAnnouncement(agendaAnnouncementCreateReqDto, agenda);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
+	}
+
+	/**
+	 * No Pagination
+	 */
+	@GetMapping
+	public ResponseEntity<List<AgendaAnnouncementResDto>> agendaAnnouncementList(
+		@RequestParam("agenda_key") UUID agendaKey) {
+		Agenda agenda = agendaService.findAgendaByAgendaKey(agendaKey);
+		List<AgendaAnnouncement> announcements = agendaAnnouncementService.findAllByAgenda(agenda);
+		List<AgendaAnnouncementResDto> announceDto = announcements.stream()
+			.map(AgendaAnnouncementResDto.MapStruct.INSTANCE::toDto)
+			.collect(Collectors.toList());
+		return ResponseEntity.ok(announceDto);
 	}
 }

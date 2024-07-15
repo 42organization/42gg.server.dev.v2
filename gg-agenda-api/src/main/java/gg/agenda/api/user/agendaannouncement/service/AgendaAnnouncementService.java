@@ -1,5 +1,7 @@
 package gg.agenda.api.user.agendaannouncement.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,5 +22,10 @@ public class AgendaAnnouncementService {
 		AgendaAnnouncement newAnnounce = AgendaAnnouncementCreateReqDto
 			.MapStruct.INSTANCE.toEntity(announceCreateDto, agenda);
 		agendaAnnouncementRepository.save(newAnnounce);
+	}
+
+	@Transactional(readOnly = true)
+	public List<AgendaAnnouncement> findAllByAgenda(Agenda agenda) {
+		return agendaAnnouncementRepository.findAllByAgenda(agenda);
 	}
 }
