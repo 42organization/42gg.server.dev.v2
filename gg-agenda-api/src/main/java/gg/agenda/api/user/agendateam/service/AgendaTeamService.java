@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.agenda.api.user.agendateam.controller.request.TeamCreateReqDto;
-import gg.agenda.api.user.agendateam.controller.request.TeamDetailsReqDto;
+import gg.agenda.api.user.agendateam.controller.request.TeamKeyReqDto;
 import gg.agenda.api.user.agendateam.controller.response.MyTeamSimpleResDto;
 import gg.agenda.api.user.agendateam.controller.response.TeamCreateResDto;
 import gg.agenda.api.user.agendateam.controller.response.TeamDetailsResDto;
@@ -80,12 +80,12 @@ public class AgendaTeamService {
 	 * @return 만들어진 팀 상세 정보
 	 */
 	@Transactional(readOnly = true)
-	public TeamDetailsResDto detailsAgendaTeam(UserDto user, UUID agendaKey, TeamDetailsReqDto teamDetailsReqDto) {
+	public TeamDetailsResDto detailsAgendaTeam(UserDto user, UUID agendaKey, TeamKeyReqDto teamKeyReqDto) {
 		Agenda agenda = agendaRepository.findByAgendaKey(agendaKey)
 			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
 
 		AgendaTeam agendaTeam = agendaTeamRepository
-			.findByAgendaAndTeamKeyAndStatus(agenda, teamDetailsReqDto.getTeamKey(), OPEN, CONFIRM)
+			.findByAgendaAndTeamKeyAndStatus(agenda, teamKeyReqDto.getTeamKey(), OPEN, CONFIRM)
 			.orElseThrow(() -> new NotExistException(AGENDA_TEAM_NOT_FOUND));
 
 		List<AgendaTeamProfile> agendaTeamProfileList = agendaTeamProfileRepository
@@ -144,5 +144,25 @@ public class AgendaTeamService {
 		agendaTeamRepository.save(agendaTeam);
 		agendaTeamProfileRepository.save(agendaTeamProfile);
 		return new TeamCreateResDto(agendaTeam.getTeamKey().toString());
+	}
+
+	@Transactional
+	public void confirmTeam(UserDto user, UUID agendaKey, TeamKeyReqDto teamKeyReqDto) {
+		Agenda agenda = agendaRepository.findByAgendaKey(agendaKey)
+			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
+
+		AgendaTeam agendaTeam = agendaTeamRepository
+			.findByAgendaAndTeamKeyAndStatus(agenda, teamKeyReqDto.getTeamKey(), OPEN, CONFIRM)
+			.orElseThrow(() -> new NotExistException(AGENDA_TEAM_NOT_FOUND));
+
+		if (!agendaTeam.getLeaderIntraId().equals(user.getIntraId())) {
+			throw new ForbiddenException(TEAM_LEADER_FORBIDDEN);
+		}
+		if (agendaTeam.getMateCount() < agenda.getMinPeople()) {
+			throw new BusinessException(NOT_ENOUGH_TEAM_MEMBER);
+		}
+		agenda.checkAgenda(agendaTeam.getLocation(), LocalDateTime.now());
+		agendaTeam.confirm();
+		agendaTeamRepository.save(agendaTeam);
 	}
 }
