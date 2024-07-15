@@ -1,7 +1,6 @@
 package gg.agenda.api;
 
 import static gg.data.agenda.type.AgendaStatus.*;
-import static gg.data.agenda.type.AgendaStatus.CONFIRM;
 import static gg.data.agenda.type.AgendaTeamStatus.*;
 import static gg.data.agenda.type.Coalition.*;
 import static gg.data.agenda.type.Location.*;
@@ -59,7 +58,7 @@ public class AgendaMockData {
 			.currentTeam(0)
 			.minPeople(1)
 			.maxPeople(5)
-			.status(AgendaStatus.ON_GOING)
+			.status(ON_GOING)
 			.posterUri("posterUri")
 			.hostIntraId("hostIntraId")
 			.location(Location.MIX)
@@ -81,7 +80,7 @@ public class AgendaMockData {
 			.currentTeam(0)
 			.minPeople(1)
 			.maxPeople(5)
-			.status(AgendaStatus.ON_GOING)
+			.status(ON_GOING)
 			.posterUri("posterUri")
 			.hostIntraId("hostIntraId")
 			.location(Location.MIX)
@@ -164,7 +163,7 @@ public class AgendaMockData {
 				.currentTeam(0)
 				.minPeople(1)
 				.maxPeople(5)
-				.status(CONFIRM)
+				.status(AgendaStatus.CONFIRM)
 				.posterUri("posterUri")
 				.hostIntraId("hostIntraId")
 				.location(Location.MIX)
@@ -298,6 +297,28 @@ public class AgendaMockData {
 			.currentTeam(curruentTeam)
 			.minPeople(1)
 			.maxPeople(3)
+			.posterUri("posterUri")
+			.hostIntraId("hostIntraId")
+			.location(SEOUL)
+			.status(ON_GOING)
+			.isOfficial(true)
+			.isRanking(true)
+			.build();
+		return agendaRepository.save(agenda);
+	}
+
+	public Agenda createNeedMorePeopleAgenda(int curruentTeam) {
+		Agenda agenda = Agenda.builder()
+			.title("title")
+			.content("content")
+			.deadline(LocalDateTime.now().plusDays(1))
+			.startTime(LocalDateTime.now().plusDays(2))
+			.endTime(LocalDateTime.now().plusDays(3))
+			.minTeam(1)
+			.maxTeam(5)
+			.currentTeam(curruentTeam)
+			.minPeople(3)
+			.maxPeople(5)
 			.posterUri("posterUri")
 			.hostIntraId("hostIntraId")
 			.location(SEOUL)
@@ -446,6 +467,23 @@ public class AgendaMockData {
 			.status(status)
 			.location(location)
 			.mateCount(3)
+			.award("award")
+			.awardPriority(1)
+			.isPrivate(false)
+			.build();
+		return agendaTeamRepository.save(agendaTeam);
+	}
+
+	public AgendaTeam createAgendaTeam(int currentTeam, Agenda agenda, User user, Location location) {
+		AgendaTeam agendaTeam = AgendaTeam.builder()
+			.agenda(agenda)
+			.teamKey(randomUUID())
+			.name("name")
+			.content("content")
+			.leaderIntraId(user.getIntraId())
+			.status(OPEN)
+			.location(location)
+			.mateCount(currentTeam)
 			.award("award")
 			.awardPriority(1)
 			.isPrivate(false)
