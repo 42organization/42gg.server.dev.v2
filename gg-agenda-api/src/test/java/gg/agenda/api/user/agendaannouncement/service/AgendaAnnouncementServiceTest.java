@@ -31,29 +31,29 @@ public class AgendaAnnouncementServiceTest {
 
 	@Nested
 	@DisplayName("AgendaAnnouncement 생성")
-	class createAgendaAnnouncement {
+	class CreateAgendaAnnouncement {
 
 		@Test
 		@DisplayName("AgendaAnnouncement 생성 성공")
 		void createAgendaAnnouncementSuccess() {
-		    // given
+			// given
 			Agenda agenda = mock(Agenda.class);
 			AgendaAnnouncement newAnnounce = mock(AgendaAnnouncement.class);
 			AgendaAnnouncementCreateReqDto dto = AgendaAnnouncementCreateReqDto.builder()
 				.title("title").content("content").build();
 			when(agendaAnnouncementRepository.save(any())).thenReturn(newAnnounce);
 
-		    // when
+			// when
 			agendaAnnouncementService.addAgendaAnnouncement(dto, agenda);
 
-		    // then
+			// then
 			verify(agendaAnnouncementRepository, times(1)).save(any());
 		}
 	}
 
 	@Nested
 	@DisplayName("AgendaAnnouncement 전체 조회")
-	class getAgendaAnnouncementList {
+	class GetAgendaAnnouncementList {
 
 		@Test
 		@DisplayName("AgendaAnnouncement 전체 조회 성공")
@@ -74,7 +74,7 @@ public class AgendaAnnouncementServiceTest {
 
 	@Nested
 	@DisplayName("마지막 AgendaAnnouncement 조회")
-	class getAgendaAnnouncementLatest {
+	class GetAgendaAnnouncementLatest {
 
 		@Test
 		@DisplayName("마지막 AgendaAnnouncement 조회 성공")

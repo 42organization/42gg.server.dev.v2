@@ -77,7 +77,7 @@ public class AgendaAnnouncementControllerTest {
 
 	@Nested
 	@DisplayName("AgendaAnnouncement 생성")
-	class createAgendaAnnouncement {
+	class CreateAgendaAnnouncement {
 
 		@Test
 		@DisplayName("AgendaAnnouncement 생성 성공")
@@ -213,7 +213,7 @@ public class AgendaAnnouncementControllerTest {
 
 	@Nested
 	@DisplayName("AgendaAnnouncement 전체 조회")
-	class getAgendaAnnouncementList {
+	class GetAgendaAnnouncementList {
 
 		@ParameterizedTest
 		@ValueSource(ints = {1, 2, 3})
