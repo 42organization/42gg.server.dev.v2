@@ -203,6 +203,7 @@ public enum ErrorCode {
 	HOST_FORBIDDEN(403, "AG", "개최자는 팀을 생성할 수 없습니다."),
 	TEAM_LEADER_FORBIDDEN(403, "AG", "팀장만 팀을 확정할 수 있습니다."),
 	CONFIRM_FORBIDDEN(403, "AG", "개최자만 일정을 종료할 수 있습니다."),
+	AGENDA_MODIFICATION_FORBIDDEN(403, "AG", "개최자만 일정을 수정할 수 있습니다."),
 	LOCATION_NOT_VALID(400, "AG", "유효하지 않은 지역입니다."),
 	TEAM_FORBIDDEN(403, "AG", "일정에는 한 팀으로만 참여할 수 있습니다."),
 	NOT_TEAM_MATE(403, "AG", "팀원이 아닙니다."),

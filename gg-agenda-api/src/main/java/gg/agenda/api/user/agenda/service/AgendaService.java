@@ -33,19 +33,12 @@ public class AgendaService {
 
 	private final AgendaRepository agendaRepository;
 
-	private final AgendaAnnouncementRepository agendaAnnouncementRepository;
-
 	private final AgendaTeamRepository agendaTeamRepository;
 
 	@Transactional(readOnly = true)
 	public Agenda findAgendaByAgendaKey(UUID agendaKey) {
 		return agendaRepository.findByAgendaKey(agendaKey)
 			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
-	}
-
-	@Transactional(readOnly = true)
-	public Optional<AgendaAnnouncement> findAgendaWithLatestAnnouncement(Agenda agenda) {
-		return agendaAnnouncementRepository.findLatestByAgenda(agenda);
 	}
 
 	@Transactional(readOnly = true)
