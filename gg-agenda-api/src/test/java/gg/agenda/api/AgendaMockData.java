@@ -1,6 +1,5 @@
 package gg.agenda.api;
 
-import static gg.data.agenda.type.AgendaStatus.CONFIRM;
 import static gg.data.agenda.type.AgendaStatus.*;
 import static gg.data.agenda.type.AgendaTeamStatus.*;
 import static gg.data.agenda.type.Coalition.*;
@@ -8,6 +7,7 @@ import static gg.data.agenda.type.Location.*;
 import static java.util.UUID.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -152,6 +152,32 @@ public class AgendaMockData {
 		return announcement;
 	}
 
+	public List<AgendaAnnouncement> createAgendaAnnouncementList(Agenda agenda, int size) {
+		List<AgendaAnnouncement> announcements = new ArrayList<>();
+		for (int i = 0; i < size; i++) {
+			announcements.add(AgendaAnnouncement.builder()
+				.title("title " + i)
+				.content("content " + i)
+				.isShow(true)
+				.agenda(agenda)
+				.build());
+		}
+		return agendaAnnouncementRepository.saveAll(announcements);
+	}
+
+	public List<AgendaAnnouncement> createAgendaAnnouncementList(Agenda agenda, int size, boolean isShow) {
+		List<AgendaAnnouncement> announcements = new ArrayList<>();
+		for (int i = 0; i < size; i++) {
+			announcements.add(AgendaAnnouncement.builder()
+				.title("title " + i)
+				.content("content " + i)
+				.isShow(isShow)
+				.agenda(agenda)
+				.build());
+		}
+		return agendaAnnouncementRepository.saveAll(announcements);
+	}
+
 	public List<Agenda> createAgendaHistory(int size) {
 		List<Agenda> agendas = IntStream.range(0, size).mapToObj(i -> Agenda.builder()
 				.title("title " + UUID.randomUUID())
@@ -164,7 +190,7 @@ public class AgendaMockData {
 				.currentTeam(0)
 				.minPeople(1)
 				.maxPeople(5)
-				.status(CONFIRM)
+				.status(AgendaStatus.CONFIRM)
 				.posterUri("posterUri")
 				.hostIntraId("hostIntraId")
 				.location(Location.MIX)
@@ -308,6 +334,28 @@ public class AgendaMockData {
 		return agendaRepository.save(agenda);
 	}
 
+	public Agenda createNeedMorePeopleAgenda(int curruentTeam) {
+		Agenda agenda = Agenda.builder()
+			.title("title")
+			.content("content")
+			.deadline(LocalDateTime.now().plusDays(1))
+			.startTime(LocalDateTime.now().plusDays(2))
+			.endTime(LocalDateTime.now().plusDays(3))
+			.minTeam(1)
+			.maxTeam(5)
+			.currentTeam(curruentTeam)
+			.minPeople(3)
+			.maxPeople(5)
+			.posterUri("posterUri")
+			.hostIntraId("hostIntraId")
+			.location(SEOUL)
+			.status(ON_GOING)
+			.isOfficial(true)
+			.isRanking(true)
+			.build();
+		return agendaRepository.save(agenda);
+	}
+
 	public Agenda createAgenda(AgendaStatus status) {
 		Agenda agenda = Agenda.builder()
 			.title("title")
@@ -345,9 +393,11 @@ public class AgendaMockData {
 	public Ticket createTicket(AgendaProfile agendaProfile) {
 		Ticket ticket = Ticket.builder()
 			.agendaProfile(agendaProfile)
-			.isApprove(true)
-			.issuedFrom(randomUUID())
+			.issuedFrom(null)
 			.usedTo(null)
+			.isApprove(true)
+			.approvedAt(LocalDateTime.now().minusDays(1))
+			.usedAt(null)
 			.build();
 		return ticketRepository.save(ticket);
 	}
@@ -420,6 +470,23 @@ public class AgendaMockData {
 		return agendaTeamRepository.save(agendaTeam);
 	}
 
+	public AgendaTeam createAgendaTeam(Agenda agenda, User user, int mateCount) {
+		AgendaTeam agendaTeam = AgendaTeam.builder()
+			.agenda(agenda)
+			.teamKey(randomUUID())
+			.name("name")
+			.content("content")
+			.leaderIntraId(user.getIntraId())
+			.status(OPEN)
+			.location(SEOUL)
+			.mateCount(mateCount)
+			.award("award")
+			.awardPriority(1)
+			.isPrivate(false)
+			.build();
+		return agendaTeamRepository.save(agendaTeam);
+	}
+
 	public AgendaTeam createAgendaTeam(Agenda agenda, User user, Location location) {
 		AgendaTeam agendaTeam = AgendaTeam.builder()
 			.agenda(agenda)
@@ -447,6 +514,23 @@ public class AgendaMockData {
 			.status(status)
 			.location(location)
 			.mateCount(3)
+			.award("award")
+			.awardPriority(1)
+			.isPrivate(false)
+			.build();
+		return agendaTeamRepository.save(agendaTeam);
+	}
+
+	public AgendaTeam createAgendaTeam(int currentTeam, Agenda agenda, User user, Location location) {
+		AgendaTeam agendaTeam = AgendaTeam.builder()
+			.agenda(agenda)
+			.teamKey(randomUUID())
+			.name("name")
+			.content("content")
+			.leaderIntraId(user.getIntraId())
+			.status(OPEN)
+			.location(location)
+			.mateCount(currentTeam)
 			.award("award")
 			.awardPriority(1)
 			.isPrivate(false)

@@ -205,6 +205,7 @@ public class AgendaTeamService {
 		if (agendaTeam.getLeaderIntraId().equals(user.getIntraId())) { // 방장일 경우 팀원들 전부 leave 처리
 			changedProfiles = agendaTeamProfileRepository.findByAgendaTeamAndIsExistTrue(agendaTeam).stream()
 				.map(agendaTeamProfile -> {
+					agendaTeam.leaveTeamLeader();
 					agendaTeamProfile.leaveTeam();
 					agendaTeamProfileRepository.save(agendaTeamProfile);
 					return agendaTeamProfile.getProfile();
@@ -215,6 +216,7 @@ public class AgendaTeamService {
 				.filter(agendaTeamProfile -> agendaTeamProfile.getProfile().getUserId().equals(user.getId()))
 				.findFirst()
 				.map(agendaTeamProfile -> {
+					agendaTeam.leaveTeamMate();
 					agendaTeamProfile.leaveTeam();
 					agendaTeamProfileRepository.save(agendaTeamProfile);
 					return List.of(agendaTeamProfile.getProfile());
