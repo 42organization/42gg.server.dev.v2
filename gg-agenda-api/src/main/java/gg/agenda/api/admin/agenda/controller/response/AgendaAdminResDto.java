@@ -68,7 +68,7 @@ public class AgendaAdminResDto {
 
 		@Mapping(target = "agendaId", source = "id")
 		@Mapping(target = "agendaTitle", source = "title")
-		@Mapping(target = "agendaDeadLine", source = "deadLine")
+		@Mapping(target = "agendaDeadLine", source = "deadline")
 		@Mapping(target = "agendaStartTime", source = "startTime")
 		@Mapping(target = "agendaEndTime", source = "endTime")
 		@Mapping(target = "agendaCurrentTeam", source = "currentTeam")
@@ -76,8 +76,8 @@ public class AgendaAdminResDto {
 		@Mapping(target = "agendaMinPeople", source = "minPeople")
 		@Mapping(target = "agendaMaxPeople", source = "maxPeople")
 		@Mapping(target = "agendaLocation", source = "location")
-		@Mapping(target = "isRanking", source = "ranking")
-		@Mapping(target = "isOfficial", source = "official")
+		@Mapping(target = "isRanking", source = "isRanking")
+		@Mapping(target = "isOfficial", source = "isOfficial")
 		@Mapping(target = "agendaStatus", source = "status")
 		AgendaAdminResDto toAgendaAdminResDto(Agenda agenda);
 	}
