@@ -180,17 +180,6 @@ public class AgendaTeamService {
 	 */
 	@Transactional
 	public void agendaTeamLeave(UserDto user, UUID agendaKey, UUID teamKey) {
-		List<AgendaProfile> changedProfiles = agendaTeamProfileLeave(user, agendaKey, teamKey);
-		ticketService.refundTickets(changedProfiles, agendaKey);
-	}
-
-	/**
-	 * 아젠다 팀 나가기
-	 * @param user 사용자 정보, teamKeyReqDto 팀 KEY 요청 정보, agendaId 아젠다 아이디
-	 * @Annotation 트랜잭션의 원자성을 보장하기 위해 부모 트랜잭션이 없을경우 예외를 발생시키는 Propagation.MANDATORY로 설정
-	 */
-	@Transactional(propagation = Propagation.MANDATORY)
-	public List<AgendaProfile> agendaTeamProfileLeave(UserDto user, UUID agendaKey, UUID teamKey) {
 		Agenda agenda = agendaRepository.findByAgendaKey(agendaKey)
 			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
 
@@ -200,29 +189,33 @@ public class AgendaTeamService {
 
 		agenda.cancelTeam(LocalDateTime.now());
 
-		List<AgendaProfile> changedProfiles;
+		List<AgendaTeamProfile> profiles = agendaTeamProfileRepository.findByAgendaTeamAndIsExistTrue(agendaTeam);
+		List<AgendaProfile> changedProfiles = agendaTeamProfileLeave(user, agendaTeam, profiles);
+		ticketService.refundTickets(changedProfiles, agendaKey);
+	}
 
-		if (agendaTeam.getLeaderIntraId().equals(user.getIntraId())) { // 방장일 경우 팀원들 전부 leave 처리
-			changedProfiles = agendaTeamProfileRepository.findByAgendaTeamAndIsExistTrue(agendaTeam).stream()
-				.map(agendaTeamProfile -> {
-					agendaTeamProfile.leaveTeam();
-					agendaTeamProfileRepository.save(agendaTeamProfile);
-					return agendaTeamProfile.getProfile();
-				})
+	/**
+	 * 아젠다 팀 나가기
+	 * @param user 사용자 정보, teamKeyReqDto 팀 KEY 요청 정보, agendaId 아젠다 아이디
+	 * @Annotation 트랜잭션의 원자성을 보장하기 위해 부모 트랜잭션이 없을경우 예외를 발생시키는 Propagation.MANDATORY로 설정
+	 */
+	@Transactional(propagation = Propagation.MANDATORY)
+	public List<AgendaProfile> agendaTeamProfileLeave(UserDto user, AgendaTeam agendaTeam,
+		List<AgendaTeamProfile> profiles) {
+		if (agendaTeam.getLeaderIntraId().equals(user.getIntraId())) {
+			List<AgendaProfile> changedProfiles = profiles
+				.stream()
+				.peek(AgendaTeamProfile::leaveTeam)
+				.map(AgendaTeamProfile::getProfile)
 				.collect(Collectors.toList());
 			agendaTeam.leaveTeamLeader();
-		} else { // 방장이 아닐 경우 혼자만 나간다
-			changedProfiles = agendaTeamProfileRepository.findByAgendaTeamAndIsExistTrue(agendaTeam).stream()
-				.filter(agendaTeamProfile -> agendaTeamProfile.getProfile().getUserId().equals(user.getId()))
-				.findFirst()
-				.map(agendaTeamProfile -> {
-					agendaTeam.leaveTeamMate();
-					agendaTeamProfile.leaveTeam();
-					agendaTeamProfileRepository.save(agendaTeamProfile);
-					return List.of(agendaTeamProfile.getProfile());
-				})
-				.orElseThrow(() -> new ForbiddenException(NOT_TEAM_MATE));
+			return changedProfiles;
 		}
-		return changedProfiles;
+		AgendaTeamProfile teamMate = profiles.stream()
+			.filter(profile -> profile.getProfile().getUserId().equals(user.getId()))
+			.findFirst().orElseThrow(() -> new ForbiddenException(NOT_TEAM_MATE));
+		teamMate.leaveTeam();
+		agendaTeam.leaveTeamMate();
+		return List.of(teamMate.getProfile());
 	}
 }
