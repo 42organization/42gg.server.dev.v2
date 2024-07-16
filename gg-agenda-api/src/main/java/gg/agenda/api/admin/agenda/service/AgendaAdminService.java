@@ -16,6 +16,6 @@ public class AgendaAdminService {
 	private final AgendaRepository agendaRepository;
 
 	public List<Agenda> getAgendaRequestList(Pageable pageable) {
-		return agendaRepository.findAll(pageable).getContent();
+		return agendaRepository.findAllByOrderByIdDesc(pageable).getContent();
 	}
 }

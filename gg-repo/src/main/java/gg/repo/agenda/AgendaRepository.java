@@ -21,4 +21,6 @@ public interface AgendaRepository extends JpaRepository<Agenda, Long> {
 	List<Agenda> findAllByStatusIs(AgendaStatus status);
 
 	Page<Agenda> findAllByStatusIs(Pageable pageable, AgendaStatus status);
+
+	Page<Agenda> findAllByOrderByIdDesc(Pageable pageable);
 }
