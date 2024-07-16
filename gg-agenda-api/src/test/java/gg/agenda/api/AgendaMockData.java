@@ -1,7 +1,7 @@
 package gg.agenda.api;
 
-import static gg.data.agenda.type.AgendaStatus.*;
 import static gg.data.agenda.type.AgendaStatus.CONFIRM;
+import static gg.data.agenda.type.AgendaStatus.*;
 import static gg.data.agenda.type.AgendaTeamStatus.*;
 import static gg.data.agenda.type.Coalition.*;
 import static gg.data.agenda.type.Location.*;
@@ -346,7 +346,8 @@ public class AgendaMockData {
 		Ticket ticket = Ticket.builder()
 			.agendaProfile(agendaProfile)
 			.isApprove(true)
-			.isUsed(false)
+			.issuedFrom(randomUUID())
+			.usedTo(null)
 			.build();
 		return ticketRepository.save(ticket);
 	}

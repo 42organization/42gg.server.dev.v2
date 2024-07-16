@@ -5,10 +5,10 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
-public class TeamCreateResDto {
+public class TeamKeyResDto {
 	String teamKey;
 
-	public TeamCreateResDto(String teamKey) {
+	public TeamKeyResDto(String teamKey) {
 		this.teamKey = teamKey;
 	}
 }

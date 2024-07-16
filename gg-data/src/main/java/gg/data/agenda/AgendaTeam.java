@@ -1,5 +1,7 @@
 package gg.data.agenda;
 
+import static gg.utils.exception.ErrorCode.*;
+
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -15,6 +17,7 @@ import javax.persistence.ManyToOne;
 import gg.data.BaseTimeEntity;
 import gg.data.agenda.type.AgendaTeamStatus;
 import gg.data.agenda.type.Location;
+import gg.utils.exception.custom.BusinessException;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -84,5 +87,22 @@ public class AgendaTeam extends BaseTimeEntity {
 	public void acceptAward(String award, int awardPriority) {
 		this.award = award;
 		this.awardPriority = awardPriority;
+	}
+
+	public void confirm() {
+		if (this.status == AgendaTeamStatus.CANCEL) {
+			throw new BusinessException(AGENDA_TEAM_ALREADY_CANCEL);
+		}
+		if (this.status == AgendaTeamStatus.CONFIRM) {
+			throw new BusinessException(AGENDA_TEAM_ALREADY_CONFIRM);
+		}
+		this.status = AgendaTeamStatus.CONFIRM;
+	}
+
+	public void leaveTeam() {
+		if (this.status == AgendaTeamStatus.CANCEL) {
+			throw new BusinessException(AGENDA_TEAM_ALREADY_CANCEL);
+		}
+		this.status = AgendaTeamStatus.CANCEL;
 	}
 }

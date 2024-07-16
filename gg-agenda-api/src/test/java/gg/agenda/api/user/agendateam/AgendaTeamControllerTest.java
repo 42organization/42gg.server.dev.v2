@@ -21,9 +21,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.agenda.api.AgendaMockData;
 import gg.agenda.api.user.agendateam.controller.request.TeamCreateReqDto;
-import gg.agenda.api.user.agendateam.controller.request.TeamDetailsReqDto;
-import gg.agenda.api.user.agendateam.controller.response.TeamCreateResDto;
+import gg.agenda.api.user.agendateam.controller.request.TeamKeyReqDto;
 import gg.agenda.api.user.agendateam.controller.response.TeamDetailsResDto;
+import gg.agenda.api.user.agendateam.controller.response.TeamKeyResDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.AgendaTeam;
@@ -88,7 +88,7 @@ public class AgendaTeamControllerTest {
 						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isCreated())
 				.andReturn().getResponse().getContentAsString();
-			TeamCreateResDto result = objectMapper.readValue(res, TeamCreateResDto.class);
+			TeamKeyResDto result = objectMapper.readValue(res, TeamKeyResDto.class);
 			// then
 			AgendaTeam createdTeam = agendaTeamRepository.findByTeamKey(UUID.fromString(result.getTeamKey()))
 				.orElse(null);
@@ -116,7 +116,7 @@ public class AgendaTeamControllerTest {
 						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isCreated())
 				.andReturn().getResponse().getContentAsString();
-			TeamCreateResDto result = objectMapper.readValue(res, TeamCreateResDto.class);
+			TeamKeyResDto result = objectMapper.readValue(res, TeamKeyResDto.class);
 			// then
 			AgendaTeam createdTeam = agendaTeamRepository.findByTeamKey(UUID.fromString(result.getTeamKey()))
 				.orElse(null);
@@ -144,7 +144,7 @@ public class AgendaTeamControllerTest {
 						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isCreated())
 				.andReturn().getResponse().getContentAsString();
-			TeamCreateResDto result = objectMapper.readValue(res, TeamCreateResDto.class);
+			TeamKeyResDto result = objectMapper.readValue(res, TeamKeyResDto.class);
 			// then
 			AgendaTeam createdTeam = agendaTeamRepository.findByTeamKey(UUID.fromString(result.getTeamKey()))
 				.orElse(null);
@@ -172,7 +172,7 @@ public class AgendaTeamControllerTest {
 						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isCreated())
 				.andReturn().getResponse().getContentAsString();
-			TeamCreateResDto result = objectMapper.readValue(res, TeamCreateResDto.class);
+			TeamKeyResDto result = objectMapper.readValue(res, TeamKeyResDto.class);
 			// then
 			AgendaTeam createdTeam = agendaTeamRepository.findByTeamKey(UUID.fromString(result.getTeamKey()))
 				.orElse(null);
@@ -200,7 +200,7 @@ public class AgendaTeamControllerTest {
 						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isCreated())
 				.andReturn().getResponse().getContentAsString();
-			TeamCreateResDto result = objectMapper.readValue(res, TeamCreateResDto.class);
+			TeamKeyResDto result = objectMapper.readValue(res, TeamKeyResDto.class);
 			// then
 			AgendaTeam createdTeam = agendaTeamRepository.findByTeamKey(UUID.fromString(result.getTeamKey()))
 				.orElse(null);
@@ -228,7 +228,7 @@ public class AgendaTeamControllerTest {
 						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isCreated())
 				.andReturn().getResponse().getContentAsString();
-			TeamCreateResDto result = objectMapper.readValue(res, TeamCreateResDto.class);
+			TeamKeyResDto result = objectMapper.readValue(res, TeamKeyResDto.class);
 			// then
 			AgendaTeam createdTeam = agendaTeamRepository.findByTeamKey(UUID.fromString(result.getTeamKey()))
 				.orElse(null);
@@ -443,7 +443,7 @@ public class AgendaTeamControllerTest {
 			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser, MIX);
 			agendaMockData.createAgendaTeamProfile(team, seoulUserAgendaProfile);
 			agendaMockData.createAgendaTeamProfile(team, gyeongsanUserAgendaProfile);
-			TeamDetailsReqDto req = new TeamDetailsReqDto(team.getTeamKey());
+			TeamKeyReqDto req = new TeamKeyReqDto(team.getTeamKey());
 			String content = objectMapper.writeValueAsString(req);
 			// when
 			String res = mockMvc.perform(
@@ -472,7 +472,7 @@ public class AgendaTeamControllerTest {
 		@DisplayName("404 agenda가 없음으로 인한 팀 상세 정보 조회 실패")
 		public void teamDetailsGetFailByNoAgenda() throws Exception {
 			//given
-			TeamDetailsReqDto req = new TeamDetailsReqDto(UUID.randomUUID());
+			TeamKeyReqDto req = new TeamKeyReqDto(UUID.randomUUID());
 			String content = objectMapper.writeValueAsString(req);
 			// when && then
 			String res = mockMvc.perform(
@@ -490,7 +490,7 @@ public class AgendaTeamControllerTest {
 		public void teamDetailsGetFailByNoTeam() throws Exception {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(MIX);
-			TeamDetailsReqDto req = new TeamDetailsReqDto(UUID.randomUUID());
+			TeamKeyReqDto req = new TeamKeyReqDto(UUID.randomUUID());
 			String content = objectMapper.writeValueAsString(req);
 			// when && then
 			String res = mockMvc.perform(
@@ -509,7 +509,7 @@ public class AgendaTeamControllerTest {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(AgendaStatus.CONFIRM);
 			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser, MIX, AgendaTeamStatus.CONFIRM);
-			TeamDetailsReqDto req = new TeamDetailsReqDto(team.getTeamKey());
+			TeamKeyReqDto req = new TeamKeyReqDto(team.getTeamKey());
 			String content = objectMapper.writeValueAsString(req);
 			// when && then
 			String res = mockMvc.perform(
@@ -529,7 +529,7 @@ public class AgendaTeamControllerTest {
 			Agenda agenda = agendaMockData.createAgenda(AgendaStatus.CONFIRM);
 			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser, MIX, AgendaTeamStatus.CANCEL);
 			agendaMockData.createAgendaTeamProfile(team, seoulUserAgendaProfile);
-			TeamDetailsReqDto req = new TeamDetailsReqDto(team.getTeamKey());
+			TeamKeyReqDto req = new TeamKeyReqDto(team.getTeamKey());
 			String content = objectMapper.writeValueAsString(req);
 			// when && then
 			String res = mockMvc.perform(

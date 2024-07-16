@@ -9,7 +9,7 @@ import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.Ticket;
 
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
-	Optional<Ticket> findByAgendaProfileAndIsApproveTrueAndIsUsedFalse(AgendaProfile agendaProfile);
+	Optional<Ticket> findByAgendaProfileAndIsApproveTrueAndUsedToNull(AgendaProfile agendaProfile);
 
-	List<Ticket> findByAgendaProfileIdAndIsUsedFalseAndIsApproveTrue(Long agendaProfileId);
+	List<Ticket> findByAgendaProfileIdAndUsedToNullAndIsApproveTrue(Long agendaProfileId);
 }
