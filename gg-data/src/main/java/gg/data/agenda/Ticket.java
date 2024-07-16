@@ -49,12 +49,12 @@ public class Ticket extends BaseTimeEntity {
 	private LocalDateTime usedAt;
 
 	@Builder
-	public Ticket(AgendaProfile agendaProfile, UUID issuedFrom, UUID usedTo, Boolean isApprove,
+	public Ticket(AgendaProfile agendaProfile, UUID issuedFrom, UUID usedTo, Boolean isApproved,
 		LocalDateTime approvedAt, LocalDateTime usedAt) {
 		this.agendaProfile = agendaProfile;
 		this.issuedFrom = issuedFrom;
 		this.usedTo = usedTo;
-		this.isApprove = isApprove;
+		this.isApproved = isApproved;
 		this.approvedAt = approvedAt;
 		this.usedAt = usedAt;
 	}
@@ -64,7 +64,7 @@ public class Ticket extends BaseTimeEntity {
 			.agendaProfile(agendaProfile)
 			.issuedFrom(issuedFrom)
 			.usedTo(null)
-			.isApprove(true)
+			.isApproved(true)
 			.approvedAt(LocalDateTime.now())
 			.usedAt(null)
 			.build();
