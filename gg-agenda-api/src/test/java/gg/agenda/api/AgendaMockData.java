@@ -290,13 +290,13 @@ public class AgendaMockData {
 		return agendaRepository.save(agenda);
 	}
 
-	public Agenda createAgenda(LocalDateTime Deadline) {
+	public Agenda createAgenda(LocalDateTime deadline) {
 		Agenda agenda = Agenda.builder()
 			.title("title")
 			.content("content")
-			.deadline(Deadline)
-			.startTime(Deadline.plusDays(1))
-			.endTime(Deadline.plusDays(2))
+			.deadline(deadline)
+			.startTime(deadline.plusDays(1))
+			.endTime(deadline.plusDays(2))
 			.minTeam(1)
 			.maxTeam(5)
 			.currentTeam(0)

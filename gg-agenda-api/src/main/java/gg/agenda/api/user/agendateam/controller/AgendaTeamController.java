@@ -95,11 +95,4 @@ public class AgendaTeamController {
 		agendaTeamService.agendaTeamLeave(user, agendaKey, teamKeyReqDto.getTeamKey());
 		return ResponseEntity.noContent().build();
 	}
-
-	@PatchMapping("/confirm")
-	public ResponseEntity<Void> confirmTeam(@Parameter(hidden = true) @Login UserDto user,
-		@RequestBody @Valid TeamKeyReqDto teamKeyReqDto, @RequestParam("agenda_key") UUID agendaKey) {
-		agendaTeamService.confirmTeam(user, agendaKey, teamKeyReqDto);
-		return ResponseEntity.ok().build();
-	}
 }

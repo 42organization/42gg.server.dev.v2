@@ -225,24 +225,4 @@ public class AgendaTeamService {
 		}
 		return changedProfiles;
 	}
-
-	@Transactional
-	public void confirmTeam(UserDto user, UUID agendaKey, TeamKeyReqDto teamKeyReqDto) {
-		Agenda agenda = agendaRepository.findByAgendaKey(agendaKey)
-			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
-
-		AgendaTeam agendaTeam = agendaTeamRepository
-			.findByAgendaAndTeamKeyAndStatus(agenda, teamKeyReqDto.getTeamKey(), OPEN, CONFIRM)
-			.orElseThrow(() -> new NotExistException(AGENDA_TEAM_NOT_FOUND));
-
-		if (!agendaTeam.getLeaderIntraId().equals(user.getIntraId())) {
-			throw new ForbiddenException(TEAM_LEADER_FORBIDDEN);
-		}
-		if (agendaTeam.getMateCount() < agenda.getMinPeople()) {
-			throw new BusinessException(NOT_ENOUGH_TEAM_MEMBER);
-		}
-		agenda.checkAgenda(agendaTeam.getLocation(), LocalDateTime.now());
-		agendaTeam.confirm();
-		agendaTeamRepository.save(agendaTeam);
-	}
 }
