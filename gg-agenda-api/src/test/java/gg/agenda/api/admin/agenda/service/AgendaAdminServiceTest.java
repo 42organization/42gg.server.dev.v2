@@ -39,7 +39,7 @@ public class AgendaAdminServiceTest {
 		@Test
 		@DisplayName("Admin Agenda 상세 조회 성공")
 		void findAgendaByAgendaKeySuccessAdmin() {
-		    // given
+			// given
 			Pageable pageable = mock(Pageable.class);
 			List<Agenda> agendas = new ArrayList<>();
 			agendas.add(Agenda.builder().build());
@@ -49,7 +49,7 @@ public class AgendaAdminServiceTest {
 			// when
 			List<Agenda> result = agendaAdminService.getAgendaRequestList(pageable);
 
-		    // then
+			// then
 			verify(agendaRepository, times(1)).findAll(pageable);
 			assertThat(result).isNotEmpty();
 		}
