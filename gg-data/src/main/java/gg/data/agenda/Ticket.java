@@ -33,10 +33,10 @@ public class Ticket extends BaseTimeEntity {
 	@JoinColumn(name = "profile_id", nullable = false)
 	private AgendaProfile agendaProfile;
 
-	@Column(name = "issued_from", nullable = false, columnDefinition = "BINARY(16)")
+	@Column(name = "issued_from", columnDefinition = "BINARY(16)")
 	private UUID issuedFrom;
 
-	@Column(name = "used_to", nullable = false, columnDefinition = "BINARY(16)")
+	@Column(name = "used_to", columnDefinition = "BINARY(16)")
 	private UUID usedTo;
 
 	@Column(name = "is_approved", nullable = false, columnDefinition = "BIT(1)")
