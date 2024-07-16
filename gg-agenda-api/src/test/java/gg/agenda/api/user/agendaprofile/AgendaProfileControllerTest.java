@@ -13,11 +13,13 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.agenda.api.AgendaMockData;
+import gg.agenda.api.user.agendaprofile.controller.request.AgendaProfileChangeReqDto;
 import gg.agenda.api.user.agendaprofile.controller.response.AgendaProfileDetailsResDto;
 import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.Ticket;
@@ -97,4 +99,104 @@ public class AgendaProfileControllerTest {
 				.andExpect(status().isNotFound());
 		}
 	}
+
+	@Nested
+	@DisplayName("개인 프로필 정보 변경")
+	class UpdateAgendaProfile {
+
+		@BeforeEach
+		void beforeEach() {
+			user = testDataUtils.createNewUser();
+			accessToken = testDataUtils.getLoginAccessTokenFromUser(user);
+		}
+
+		@Test
+		@DisplayName("유효한 정보로 개인 프로필을 변경합니다.")
+		void updateProfileWithValidData() throws Exception {
+			// Given
+			AgendaProfile agendaProfile = agendaMockData.createAgendaProfile(user, SEOUL);
+			Ticket ticket = agendaMockData.createTicket(agendaProfile);
+			AgendaProfileChangeReqDto requestDto = new AgendaProfileChangeReqDto("Valid user content",
+				"https://github.com/validUser");
+
+			String content = objectMapper.writeValueAsString(requestDto);
+
+			// When & Then
+			mockMvc.perform(patch("/agenda/profile")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(content))
+				.andExpect(status().isNoContent())
+				.andReturn().getResponse().getContentAsString();
+		}
+
+		@Test
+		@DisplayName("userContent 없이 개인 프로필을 변경합니다.")
+		void updateProfileWithoutUserContent() throws Exception {
+			// Given
+			AgendaProfileChangeReqDto requestDto = new AgendaProfileChangeReqDto("", "https://github.com/validUser");
+
+			String content = objectMapper.writeValueAsString(requestDto);
+
+			// When & Then
+			mockMvc.perform(patch("/agenda/profile")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(content))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("잘못된 형식의 userGithub로 개인 프로필을 변경합니다.")
+		void updateProfileWithInvalidUserGithub() throws Exception {
+			// Given
+			AgendaProfileChangeReqDto requestDto = new AgendaProfileChangeReqDto("Valid user content",
+				"invalidGithubUrl");
+
+			String content = objectMapper.writeValueAsString(requestDto);
+
+			// When & Then
+			mockMvc.perform(patch("/agenda/profile")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(content))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("userContent가 허용된 길이를 초과하여 개인 프로필을 변경합니다.")
+		void updateProfileWithExceededUserContentLength() throws Exception {
+			// Given
+			String longContent = "a".repeat(1001); // Assuming the limit is 1000 characters
+			AgendaProfileChangeReqDto requestDto = new AgendaProfileChangeReqDto(longContent,
+				"https://github.com/validUser");
+
+			String content = objectMapper.writeValueAsString(requestDto);
+
+			// When & Then
+			mockMvc.perform(patch("/agenda/profile")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(content))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("userGithub가 허용된 길이를 초과하여 개인 프로필을 변경합니다.")
+		void updateProfileWithExceededUserGithubLength() throws Exception {
+			// Given
+			String longGithubUrl = "https://github.com/" + "a".repeat(256); // Assuming the limit is 255 characters
+			AgendaProfileChangeReqDto requestDto = new AgendaProfileChangeReqDto("Valid user content", longGithubUrl);
+
+			String content = objectMapper.writeValueAsString(requestDto);
+
+			// When & Then
+			mockMvc.perform(patch("/agenda/profile")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(content))
+				.andExpect(status().isBadRequest());
+		}
+	}
 }
+
