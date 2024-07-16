@@ -290,6 +290,28 @@ public class AgendaMockData {
 		return agendaRepository.save(agenda);
 	}
 
+	public Agenda createAgenda(LocalDateTime Deadline) {
+		Agenda agenda = Agenda.builder()
+			.title("title")
+			.content("content")
+			.deadline(Deadline)
+			.startTime(Deadline.plusDays(1))
+			.endTime(Deadline.plusDays(2))
+			.minTeam(1)
+			.maxTeam(5)
+			.currentTeam(0)
+			.minPeople(1)
+			.maxPeople(3)
+			.posterUri("posterUri")
+			.hostIntraId("hostIntraId")
+			.location(SEOUL)
+			.status(ON_GOING)
+			.isOfficial(true)
+			.isRanking(true)
+			.build();
+		return agendaRepository.save(agenda);
+	}
+
 	public Agenda createAgenda(Location location) {
 		Agenda agenda = Agenda.builder()
 			.title("title")
@@ -397,6 +419,7 @@ public class AgendaMockData {
 			.usedTo(null)
 			.isApproved(true)
 			.approvedAt(LocalDateTime.now().minusDays(1))
+			.isUsed(false)
 			.usedAt(null)
 			.build();
 		return ticketRepository.save(ticket);

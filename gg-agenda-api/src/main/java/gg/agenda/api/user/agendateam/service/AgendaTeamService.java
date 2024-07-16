@@ -131,7 +131,7 @@ public class AgendaTeamService {
 		});
 
 		if (agenda.getIsOfficial()) {
-			Ticket ticket = ticketRepository.findByAgendaProfileAndIsApprovedTrueAndUsedToNull(agendaProfile)
+			Ticket ticket = ticketRepository.findByAgendaProfileAndIsApprovedTrueAndIsUsedFalse(agendaProfile)
 				.orElseThrow(() -> new ForbiddenException(TICKET_NOT_EXIST));
 			ticket.useTicket(agenda.getAgendaKey());
 		}
@@ -168,7 +168,7 @@ public class AgendaTeamService {
 		if (agendaTeam.getMateCount() < agenda.getMinPeople()) {
 			throw new BusinessException(NOT_ENOUGH_TEAM_MEMBER);
 		}
-		agenda.checkAgenda(agendaTeam.getLocation(), LocalDateTime.now());
+		agenda.confirmTeam(agendaTeam.getLocation(), LocalDateTime.now());
 		agendaTeam.confirm();
 		agendaTeamRepository.save(agendaTeam);
 	}
@@ -179,8 +179,8 @@ public class AgendaTeamService {
 	 * 트랜잭션의 원자성을 보장하기 위해 팀 나가기와 티켓 환불을 한 메서드에서 처리
 	 */
 	@Transactional
-	public void agendaTeamLeave(UserDto user, UUID teamKey, UUID agendaKey) {
-		List<AgendaProfile> changedProfiles = agendaTeamProfileLeave(user, teamKey, agendaKey);
+	public void agendaTeamLeave(UserDto user, UUID agendaKey, UUID teamKey) {
+		List<AgendaProfile> changedProfiles = agendaTeamProfileLeave(user, agendaKey, teamKey);
 		ticketService.refundTickets(changedProfiles, agendaKey);
 	}
 
@@ -190,7 +190,7 @@ public class AgendaTeamService {
 	 * @Annotation 트랜잭션의 원자성을 보장하기 위해 부모 트랜잭션이 없을경우 예외를 발생시키는 Propagation.MANDATORY로 설정
 	 */
 	@Transactional(propagation = Propagation.MANDATORY)
-	public List<AgendaProfile> agendaTeamProfileLeave(UserDto user, UUID teamKey, UUID agendaKey) {
+	public List<AgendaProfile> agendaTeamProfileLeave(UserDto user, UUID agendaKey, UUID teamKey) {
 		Agenda agenda = agendaRepository.findByAgendaKey(agendaKey)
 			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
 
@@ -198,19 +198,19 @@ public class AgendaTeamService {
 			.findByAgendaAndTeamKeyAndStatus(agenda, teamKey, OPEN, CONFIRM)
 			.orElseThrow(() -> new NotExistException(AGENDA_TEAM_NOT_FOUND));
 
-		agenda.checkAgenda(agendaTeam.getLocation(), LocalDateTime.now());
+		agenda.cancelTeam(LocalDateTime.now());
 
 		List<AgendaProfile> changedProfiles;
 
 		if (agendaTeam.getLeaderIntraId().equals(user.getIntraId())) { // 방장일 경우 팀원들 전부 leave 처리
 			changedProfiles = agendaTeamProfileRepository.findByAgendaTeamAndIsExistTrue(agendaTeam).stream()
 				.map(agendaTeamProfile -> {
-					agendaTeam.leaveTeamLeader();
 					agendaTeamProfile.leaveTeam();
 					agendaTeamProfileRepository.save(agendaTeamProfile);
 					return agendaTeamProfile.getProfile();
 				})
 				.collect(Collectors.toList());
+			agendaTeam.leaveTeamLeader();
 		} else { // 방장이 아닐 경우 혼자만 나간다
 			changedProfiles = agendaTeamProfileRepository.findByAgendaTeamAndIsExistTrue(agendaTeam).stream()
 				.filter(agendaTeamProfile -> agendaTeamProfile.getProfile().getUserId().equals(user.getId()))

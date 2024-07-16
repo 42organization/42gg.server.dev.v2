@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -34,6 +35,7 @@ import gg.data.agenda.type.AgendaTeamStatus;
 import gg.data.user.User;
 import gg.repo.agenda.AgendaTeamProfileRepository;
 import gg.repo.agenda.AgendaTeamRepository;
+import gg.repo.agenda.TicketRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 
@@ -50,13 +52,14 @@ public class AgendaTeamControllerTest {
 	@Autowired
 	private AgendaMockData agendaMockData;
 	@Autowired
+	private TicketRepository ticketRepository;
+	@Autowired
 	private AgendaTeamRepository agendaTeamRepository;
 	@Autowired
 	private AgendaTeamProfileRepository agendaTeamProfileRepository;
 	User seoulUser;
 	User gyeongsanUser;
 	User anotherSeoulUser;
-
 	String seoulUserAccessToken;
 	String gyeongsanUserAccessToken;
 	String anotherSeoulUserAccessToken;
@@ -839,7 +842,7 @@ public class AgendaTeamControllerTest {
 
 		@Test
 		@DisplayName("200 팀원 팀 나가기 성공")
-		public void leaveTeamSuccess() throws Exception {
+		public void leaveTeamMateSuccess() throws Exception {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(SEOUL);
 			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser, 2);
@@ -849,17 +852,56 @@ public class AgendaTeamControllerTest {
 			String content = objectMapper.writeValueAsString(req);
 			// when
 			mockMvc.perform(
-					patch("/agenda/team/leave")
+					patch("/agenda/team/cancel")
 						.header("Authorization", "Bearer " + anotherSeoulUserAccessToken)
 						.param("agenda_key", agenda.getAgendaKey().toString())
 						.content(content)
 						.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk());
+				.andExpect(status().isNoContent());
 			// then
 			AgendaTeam updatedTeam = agendaTeamRepository.findByTeamKey(team.getTeamKey()).orElse(null);
 			assertThat(updatedTeam.getMateCount()).isEqualTo(1);
 			AgendaTeamProfile updatedAtp = agendaTeamProfileRepository.findById(atp.getId()).orElse(null);
 			assertThat(updatedAtp.getIsExist()).isFalse();
+			ticketRepository.findByAgendaProfileAndIsApprovedTrueAndIsUsedFalse(updatedAtp.getProfile())
+				.ifPresent(ticket -> {
+					assertThat(ticket.getUsedTo()).isNull();
+				});
+		}
+
+		@Test
+		@DisplayName("200 팀리더 팀 나가기 성공")
+		public void leaveTeamLeaderSuccess() throws Exception {
+			//given
+			Agenda agenda = agendaMockData.createAgenda(SEOUL);
+			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser, 2);
+			AgendaTeamProfile atpLeader = agendaMockData.createAgendaTeamProfile(team, seoulUserAgendaProfile);
+			AgendaTeamProfile atp = agendaMockData.createAgendaTeamProfile(team, anotherSeoulUserAgendaProfile);
+			TeamKeyReqDto req = new TeamKeyReqDto(team.getTeamKey());
+			String content = objectMapper.writeValueAsString(req);
+			// when
+			mockMvc.perform(
+					patch("/agenda/team/cancel")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNoContent());
+			// then
+			AgendaTeam updatedTeam = agendaTeamRepository.findByTeamKey(team.getTeamKey()).orElse(null);
+			assertThat(updatedTeam.getMateCount()).isEqualTo(0);
+			AgendaTeamProfile updatedAtp = agendaTeamProfileRepository.findById(atp.getId()).orElse(null);
+			assertThat(updatedAtp.getIsExist()).isFalse();
+			AgendaTeamProfile updatedAtpLeader = agendaTeamProfileRepository.findById(atpLeader.getId()).orElse(null);
+			assertThat(updatedAtpLeader.getIsExist()).isFalse();
+			ticketRepository.findByAgendaProfileAndIsApprovedTrueAndIsUsedFalse(updatedAtp.getProfile())
+				.ifPresent(ticket -> {
+					assertThat(ticket.getUsedTo()).isNull();
+				});
+			ticketRepository.findByAgendaProfileAndIsApprovedTrueAndIsUsedFalse(updatedAtpLeader.getProfile())
+				.ifPresent(ticket -> {
+					assertThat(ticket.getUsedTo()).isNull();
+				});
 		}
 
 		@Test
@@ -872,12 +914,86 @@ public class AgendaTeamControllerTest {
 			String content = objectMapper.writeValueAsString(req);
 			// when && then
 			mockMvc.perform(
-					patch("/agenda/team/leave")
+					patch("/agenda/team/cancel")
 						.header("Authorization", "Bearer " + seoulUserAccessToken)
 						.param("agenda_key", noAgendaKey.toString())
 						.content(content)
 						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound());
+		}
+
+		@Test
+		@DisplayName("404 team 없음으로 인한 실패")
+		public void noTeamFail() throws Exception {
+			//given
+			Agenda agenda = agendaMockData.createAgenda(SEOUL);
+			TeamKeyReqDto req = new TeamKeyReqDto(UUID.randomUUID());
+			String content = objectMapper.writeValueAsString(req);
+			// when && then
+			mockMvc.perform(
+					patch("/agenda/team/cancel")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+		}
+
+		@Test
+		@DisplayName("400 탈퇴 불가능한 Agenda 시간으로 인한 실패")
+		public void notValidAgendaDeadline() throws Exception {
+			//given
+			Agenda agenda = agendaMockData.createAgenda(LocalDateTime.now().minusHours(1));
+			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser, SEOUL);
+			agendaMockData.createAgendaTeamProfile(team, seoulUserAgendaProfile);
+			TeamKeyReqDto req = new TeamKeyReqDto(team.getTeamKey());
+			String content = objectMapper.writeValueAsString(req);
+			// when && then
+			mockMvc.perform(
+					patch("/agenda/team/cancel")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("403 참여 불가능한 Agenda Status 으로 인한 실패")
+		public void notValidAgendaStatus() throws Exception {
+			//given
+			Agenda agenda = agendaMockData.createAgenda(AgendaStatus.CONFIRM);
+			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser, SEOUL);
+			agendaMockData.createAgendaTeamProfile(team, seoulUserAgendaProfile);
+			TeamKeyReqDto req = new TeamKeyReqDto(team.getTeamKey());
+			String content = objectMapper.writeValueAsString(req);
+			// when && then
+			mockMvc.perform(
+					patch("/agenda/team/cancel")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("403 팀원이 아님으로 인한 실패")
+		public void notTeamMateFail() throws Exception {
+			//given
+			Agenda agenda = agendaMockData.createAgenda(SEOUL);
+			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser, 2);
+			agendaMockData.createAgendaTeamProfile(team, seoulUserAgendaProfile);
+			TeamKeyReqDto req = new TeamKeyReqDto(team.getTeamKey());
+			String content = objectMapper.writeValueAsString(req);
+			// when && then
+			mockMvc.perform(
+					patch("/agenda/team/cancel")
+						.header("Authorization", "Bearer " + gyeongsanUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isForbidden());
 		}
 	}
 }

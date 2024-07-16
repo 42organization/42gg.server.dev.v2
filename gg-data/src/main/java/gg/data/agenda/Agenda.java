@@ -123,11 +123,16 @@ public class Agenda extends BaseTimeEntity {
 		this.currentTeam++;
 	}
 
-	public void checkAgenda(Location location, LocalDateTime now) {
+	public void confirmTeam(Location location, LocalDateTime now) {
 		mustBeWithinLocation(location);
 		mustStatusOnGoing();
 		mustBeforeDeadline(now);
 		mustHaveCapacity();
+	}
+
+	public void cancelTeam(LocalDateTime now) {
+		mustStatusOnGoing();
+		mustBeforeDeadline(now);
 	}
 
 	public void confirm(LocalDateTime confirmTime) {

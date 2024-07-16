@@ -45,17 +45,21 @@ public class Ticket extends BaseTimeEntity {
 	@Column(name = "approved_at", columnDefinition = "DATETIME")
 	private LocalDateTime approvedAt;
 
+	@Column(name = "is_used", nullable = false, columnDefinition = "BIT(1)")
+	private Boolean isUsed;
+
 	@Column(name = "used_at", columnDefinition = "DATETIME")
 	private LocalDateTime usedAt;
 
 	@Builder
 	public Ticket(AgendaProfile agendaProfile, UUID issuedFrom, UUID usedTo, Boolean isApproved,
-		LocalDateTime approvedAt, LocalDateTime usedAt) {
+		LocalDateTime approvedAt, Boolean isUsed, LocalDateTime usedAt) {
 		this.agendaProfile = agendaProfile;
 		this.issuedFrom = issuedFrom;
 		this.usedTo = usedTo;
 		this.isApproved = isApproved;
 		this.approvedAt = approvedAt;
+		this.isUsed = isUsed;
 		this.usedAt = usedAt;
 	}
 
@@ -66,6 +70,7 @@ public class Ticket extends BaseTimeEntity {
 			.usedTo(null)
 			.isApproved(true)
 			.approvedAt(LocalDateTime.now())
+			.isUsed(false)
 			.usedAt(null)
 			.build();
 	}
@@ -73,5 +78,6 @@ public class Ticket extends BaseTimeEntity {
 	public void useTicket(UUID usedTo) {
 		this.usedTo = usedTo;
 		this.usedAt = LocalDateTime.now();
+		this.isUsed = true;
 	}
 }

@@ -37,7 +37,7 @@ public class AgendaProfileFindService {
 		AgendaProfile agendaProfile = agendaProfileRepository.findByUserId(loginUser.getId())
 			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
 
-		int ticketCount = ticketRepository.findByAgendaProfileIdAndUsedToNullAndIsApprovedTrue(agendaProfile.getId())
+		int ticketCount = ticketRepository.findByAgendaProfileIdAndIsUsedFalseAndIsApprovedTrue(agendaProfile.getId())
 			.size();
 
 		return new AgendaProfileDetailsResDto(loginUser, agendaProfile, ticketCount);
