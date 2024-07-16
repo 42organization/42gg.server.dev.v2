@@ -395,7 +395,7 @@ public class AgendaMockData {
 			.agendaProfile(agendaProfile)
 			.issuedFrom(null)
 			.usedTo(null)
-			.isApprove(true)
+			.isApproved(true)
 			.approvedAt(LocalDateTime.now().minusDays(1))
 			.usedAt(null)
 			.build();
