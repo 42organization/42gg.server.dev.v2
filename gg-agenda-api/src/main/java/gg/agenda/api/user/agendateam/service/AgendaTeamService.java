@@ -131,7 +131,7 @@ public class AgendaTeamService {
 		});
 
 		if (agenda.getIsOfficial()) {
-			Ticket ticket = ticketRepository.findByAgendaProfileAndIsApproveTrueAndUsedToNull(agendaProfile)
+			Ticket ticket = ticketRepository.findByAgendaProfileAndIsApprovedTrueAndUsedToNull(agendaProfile)
 				.orElseThrow(() -> new ForbiddenException(TICKET_NOT_EXIST));
 			ticket.useTicket(agenda.getAgendaKey());
 		}
