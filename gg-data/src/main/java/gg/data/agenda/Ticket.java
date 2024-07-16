@@ -39,8 +39,8 @@ public class Ticket extends BaseTimeEntity {
 	@Column(name = "used_to", nullable = false, columnDefinition = "BINARY(16)")
 	private UUID usedTo;
 
-	@Column(name = "is_approve", nullable = false, columnDefinition = "BIT(1)")
-	private Boolean isApprove;
+	@Column(name = "is_approved", nullable = false, columnDefinition = "BIT(1)")
+	private Boolean isApproved;
 
 	@Column(name = "approved_at", columnDefinition = "DATETIME")
 	private LocalDateTime approvedAt;
