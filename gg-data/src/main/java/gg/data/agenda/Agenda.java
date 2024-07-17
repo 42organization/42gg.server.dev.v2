@@ -3,6 +3,8 @@ package gg.data.agenda;
 import static gg.utils.exception.ErrorCode.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -146,6 +148,70 @@ public class Agenda extends BaseTimeEntity {
 			throw new InvalidParameterException(AGENDA_INVALID_PARAM);
 		}
 		this.status = AgendaStatus.CONFIRM;
+	}
+
+	public void updateInformation(String title, String content, String posterUri) {
+		this.title = title;
+		this.content = content;
+		this.posterUri = posterUri;
+	}
+
+	public void updateIsOfficial(boolean isOfficial) {
+		this.isOfficial = isOfficial;
+	}
+
+	public void updateAgendaStatus(AgendaStatus agendaStatus) {
+		this.status = agendaStatus;
+	}
+
+	public void updateSchedule(LocalDateTime deadline, LocalDateTime startTime, LocalDateTime endTime) {
+		this.deadline = deadline;
+		this.startTime = startTime;
+		this.endTime = endTime;
+	}
+
+	public void updateLocation(Location location, List<AgendaTeam> teams) {
+		if (this.location == location) {
+			return;
+		}
+		boolean everyTeamUnderLocation = teams.stream()
+			.map(AgendaTeam::getLocation)
+			.anyMatch(teamLocation -> teamLocation != location);
+		if (!everyTeamUnderLocation) {
+			throw new InvalidParameterException(AGENDA_INVALID_PARAM);
+		}
+		this.location = location;
+	}
+
+	public void updateTeamCapacity(Integer minTeam, Integer maxTeam, List<AgendaTeam> teams) {
+		if (minTeam == this.minTeam && maxTeam == this.maxTeam) {
+			return;
+		}
+		if (minTeam > maxTeam) {
+			throw new InvalidParameterException(AGENDA_INVALID_PARAM);
+		}
+		if (teams.size() < minTeam || teams.size() > maxTeam) {
+			throw new InvalidParameterException(AGENDA_INVALID_PARAM);
+		}
+		this.minTeam = minTeam;
+		this.maxTeam = maxTeam;
+	}
+
+	public void updatePeopleBound(Integer minPeople, Integer maxPeople, List<AgendaTeam> teams) {
+		if (minPeople == this.minPeople && maxPeople == this.maxPeople) {
+			return;
+		}
+		if (minPeople > maxPeople) {
+			throw new InvalidParameterException(AGENDA_INVALID_PARAM);
+		}
+		boolean everyTeamUnderPeopleBound = teams.stream()
+			.map(AgendaTeam::getMateCount)
+			.anyMatch(mateCount -> mateCount < minPeople || mateCount > maxPeople);
+		if (!everyTeamUnderPeopleBound) {
+			throw new InvalidParameterException(AGENDA_INVALID_PARAM);
+		}
+		this.minPeople = minPeople;
+		this.maxPeople = maxPeople;
 	}
 
 	private void mustBeWithinLocation(Location location) {

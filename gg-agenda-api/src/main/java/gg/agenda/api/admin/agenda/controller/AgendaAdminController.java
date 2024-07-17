@@ -1,6 +1,7 @@
 package gg.agenda.api.admin.agenda.controller;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -8,12 +9,16 @@ import javax.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import gg.agenda.api.admin.agenda.controller.request.AgendaAdminUpdateReqDto;
 import gg.agenda.api.admin.agenda.controller.response.AgendaAdminResDto;
 import gg.agenda.api.admin.agenda.service.AgendaAdminService;
 import gg.utils.dto.PageRequestDto;
@@ -32,7 +37,7 @@ public class AgendaAdminController {
 		@ApiResponse(responseCode = "200", description = "Agenda 요청 리스트 조회 성공")
 	})
 	@GetMapping("/request/list")
-	public ResponseEntity<List<AgendaAdminResDto>> getAgendaRequestList(
+	public ResponseEntity<List<AgendaAdminResDto>> agendaList(
 		@RequestBody @Valid PageRequestDto pageDto) {
 		int page = pageDto.getPage();
 		int size = pageDto.getSize();
@@ -41,5 +46,15 @@ public class AgendaAdminController {
 			.map(AgendaAdminResDto.MapStruct.INSTANCE::toAgendaAdminResDto)
 			.collect(Collectors.toList());
 		return ResponseEntity.ok(agendaDtos);
+	}
+
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "204", description = "Agenda 수정 성공")
+	})
+	@PatchMapping("/request")
+	public ResponseEntity<Void> agendaUpdate(@RequestParam("agenda_key") UUID agendaKey,
+		@RequestBody @Valid AgendaAdminUpdateReqDto agendaDto) {
+		agendaAdminService.updateAgenda(agendaKey, agendaDto);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 }
