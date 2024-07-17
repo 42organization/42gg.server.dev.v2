@@ -6,7 +6,6 @@ import static org.mockito.Mockito.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -16,9 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
-import gg.agenda.api.user.agenda.service.AgendaService;
+import gg.admin.repo.agenda.AgendaAdminRepository;
 import gg.data.agenda.Agenda;
-import gg.repo.agenda.AgendaRepository;
 import gg.utils.annotation.UnitTest;
 import lombok.extern.slf4j.Slf4j;
 
@@ -27,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AgendaAdminServiceTest {
 
 	@Mock
-	AgendaRepository agendaRepository;
+	AgendaAdminRepository agendaAdminRepository;
 
 	@InjectMocks
 	AgendaAdminService agendaAdminService;
@@ -44,13 +42,13 @@ public class AgendaAdminServiceTest {
 			List<Agenda> agendas = new ArrayList<>();
 			agendas.add(Agenda.builder().build());
 			Page<Agenda> page = new PageImpl<>(agendas);
-			when(agendaRepository.findAll(pageable)).thenReturn(page);
+			when(agendaAdminRepository.findAll(pageable)).thenReturn(page);
 
 			// when
 			List<Agenda> result = agendaAdminService.getAgendaRequestList(pageable);
 
 			// then
-			verify(agendaRepository, times(1)).findAll(pageable);
+			verify(agendaAdminRepository, times(1)).findAll(pageable);
 			assertThat(result).isNotEmpty();
 		}
 
@@ -60,13 +58,13 @@ public class AgendaAdminServiceTest {
 			// given
 			Pageable pageable = mock(Pageable.class);
 			Page<Agenda> page = new PageImpl<>(List.of());
-			when(agendaRepository.findAll(pageable)).thenReturn(page);
+			when(agendaAdminRepository.findAll(pageable)).thenReturn(page);
 
 			// when
 			List<Agenda> result = agendaAdminService.getAgendaRequestList(pageable);
 
 			// then
-			verify(agendaRepository, times(1)).findAll(pageable);
+			verify(agendaAdminRepository, times(1)).findAll(pageable);
 			assertThat(result).isEmpty();
 		}
 	}
