@@ -442,6 +442,25 @@ public class AgendaMockData {
 		return agendaTeamRepository.save(agendaTeam);
 	}
 
+	public List<AgendaTeam> createAgendaTeamList(Agenda agenda, int size, AgendaTeamStatus status) {
+		List<AgendaTeam> agendaTeams = IntStream.range(0, size).mapToObj(i -> AgendaTeam.builder()
+				.agenda(agenda)
+				.teamKey(randomUUID())
+				.name("name")
+				.content("content")
+				.leaderIntraId("leaderIntraId")
+				.status(status)
+				.location(SEOUL)
+				.mateCount(3)
+				.award("award")
+				.awardPriority(1)
+				.isPrivate(false)
+				.build()
+			)
+			.collect(Collectors.toList());
+		return agendaTeamRepository.saveAll(agendaTeams);
+	}
+
 	public AgendaTeam createAgendaTeam(Agenda agenda, String teamName) {
 		AgendaTeam agendaTeam = AgendaTeam.builder()
 			.agenda(agenda)
