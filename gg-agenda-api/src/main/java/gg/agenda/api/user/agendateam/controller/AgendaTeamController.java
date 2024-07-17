@@ -1,10 +1,14 @@
 package gg.agenda.api.user.agendateam.controller;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import javax.validation.Valid;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,12 +22,14 @@ import org.springframework.web.bind.annotation.RestController;
 import gg.agenda.api.user.agendateam.controller.request.TeamCreateReqDto;
 import gg.agenda.api.user.agendateam.controller.request.TeamKeyReqDto;
 import gg.agenda.api.user.agendateam.controller.response.MyTeamSimpleResDto;
+import gg.agenda.api.user.agendateam.controller.response.OpenTeamResDto;
 import gg.agenda.api.user.agendateam.controller.response.TeamDetailsResDto;
 import gg.agenda.api.user.agendateam.controller.response.TeamKeyResDto;
 import gg.agenda.api.user.agendateam.service.AgendaTeamService;
 import gg.agenda.api.user.ticket.service.TicketService;
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
+import gg.utils.dto.PageRequestDto;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 
@@ -94,5 +100,19 @@ public class AgendaTeamController {
 		@RequestBody @Valid TeamKeyReqDto teamKeyReqDto, @RequestParam("agenda_key") UUID agendaKey) {
 		agendaTeamService.agendaTeamLeave(user, agendaKey, teamKeyReqDto.getTeamKey());
 		return ResponseEntity.noContent().build();
+	}
+
+	/**
+	 * 아젠다 팀 공개 모집인 팀 목록 조회
+	 * @param user 사용자 정보, PageRequestDto 페이지네이션 요청 정보, agendaId 아젠다 아이디
+	 */
+	@GetMapping("/open")
+	public ResponseEntity<List<OpenTeamResDto>> openTeamList(@Parameter(hidden = true) @Login UserDto user,
+		@RequestBody @Valid PageRequestDto pageRequest, @RequestParam("agenda_key") UUID agendaKey) {
+		int page = pageRequest.getPage();
+		int size = pageRequest.getSize();
+		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());
+		List<OpenTeamResDto> openTeamResDtoList = agendaTeamService.listOpenTeam(user, agendaKey, pageable);
+		return ResponseEntity.ok(openTeamResDtoList);
 	}
 }

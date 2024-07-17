@@ -3,6 +3,8 @@ package gg.repo.agenda;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -26,4 +28,7 @@ public interface AgendaTeamRepository extends JpaRepository<AgendaTeam, Long> {
 
 	@Query("SELECT a FROM AgendaTeam a WHERE a.agenda = :agenda AND a.name = :name AND a.status = :status")
 	Optional<AgendaTeam> findByAgendaAndNameAndStatus(Agenda agenda, String name, AgendaTeamStatus status);
+
+	@Query("SELECT a FROM AgendaTeam a WHERE a.agenda = :agenda AND a.status = :status AND a.isPrivate = false")
+	Page<AgendaTeam> findByAgendaAndStatusAndIsPrivateFalse(Agenda agenda, AgendaTeamStatus status, Pageable pageable);
 }
