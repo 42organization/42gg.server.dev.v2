@@ -18,9 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 import gg.agenda.api.user.agendateam.controller.request.TeamCreateReqDto;
 import gg.agenda.api.user.agendateam.controller.request.TeamKeyReqDto;
 import gg.agenda.api.user.agendateam.controller.response.MyTeamSimpleResDto;
-import gg.agenda.api.user.agendateam.controller.response.TeamCreateResDto;
 import gg.agenda.api.user.agendateam.controller.response.TeamDetailsResDto;
+import gg.agenda.api.user.agendateam.controller.response.TeamKeyResDto;
 import gg.agenda.api.user.agendateam.service.AgendaTeamService;
+import gg.agenda.api.user.ticket.service.TicketService;
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -31,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/agenda/team")
 public class AgendaTeamController {
 	private final AgendaTeamService agendaTeamService;
+	private final TicketService ticketService;
 
 	/**
 	 * 내 팀 간단 정보 조회
@@ -66,16 +68,31 @@ public class AgendaTeamController {
 	 * @return 만들어진 팀 KEY
 	 */
 	@PostMapping
-	public ResponseEntity<TeamCreateResDto> agendaTeamAdd(@Parameter(hidden = true) @Login UserDto user,
+	public ResponseEntity<TeamKeyResDto> agendaTeamAdd(@Parameter(hidden = true) @Login UserDto user,
 		@RequestBody @Valid TeamCreateReqDto teamCreateReqDto, @RequestParam("agenda_key") UUID agendaKey) {
-		TeamCreateResDto teamCreateResDto = agendaTeamService.addAgendaTeam(user, teamCreateReqDto, agendaKey);
-		return ResponseEntity.status(HttpStatus.CREATED).body(teamCreateResDto);
+		TeamKeyResDto teamKeyReqDto = agendaTeamService.addAgendaTeam(user, teamCreateReqDto, agendaKey);
+		return ResponseEntity.status(HttpStatus.CREATED).body(teamKeyReqDto);
 	}
 
+	/**
+	 * 아젠다 팀 확정하기
+	 * @param user 사용자 정보, teamKeyReqDto 팀 KEY 요청 정보, agendaId 아젠다 아이디
+	 */
 	@PatchMapping("/confirm")
 	public ResponseEntity<Void> confirmTeam(@Parameter(hidden = true) @Login UserDto user,
 		@RequestBody @Valid TeamKeyReqDto teamKeyReqDto, @RequestParam("agenda_key") UUID agendaKey) {
-		agendaTeamService.confirmTeam(user, agendaKey, teamKeyReqDto);
+		agendaTeamService.confirmTeam(user, agendaKey, teamKeyReqDto.getTeamKey());
 		return ResponseEntity.ok().build();
+	}
+
+	/**
+	 * 아젠다 팀 나가기
+	 * @param user 사용자 정보, teamKeyReqDto 팀 KEY 요청 정보, agendaId 아젠다 아이디
+	 */
+	@PatchMapping("/cancel")
+	public ResponseEntity<Void> leaveAgendaTeam(@Parameter(hidden = true) @Login UserDto user,
+		@RequestBody @Valid TeamKeyReqDto teamKeyReqDto, @RequestParam("agenda_key") UUID agendaKey) {
+		agendaTeamService.agendaTeamLeave(user, agendaKey, teamKeyReqDto.getTeamKey());
+		return ResponseEntity.noContent().build();
 	}
 }

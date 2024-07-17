@@ -290,6 +290,28 @@ public class AgendaMockData {
 		return agendaRepository.save(agenda);
 	}
 
+	public Agenda createAgenda(LocalDateTime deadline) {
+		Agenda agenda = Agenda.builder()
+			.title("title")
+			.content("content")
+			.deadline(deadline)
+			.startTime(deadline.plusDays(1))
+			.endTime(deadline.plusDays(2))
+			.minTeam(1)
+			.maxTeam(5)
+			.currentTeam(0)
+			.minPeople(1)
+			.maxPeople(3)
+			.posterUri("posterUri")
+			.hostIntraId("hostIntraId")
+			.location(SEOUL)
+			.status(ON_GOING)
+			.isOfficial(true)
+			.isRanking(true)
+			.build();
+		return agendaRepository.save(agenda);
+	}
+
 	public Agenda createAgenda(Location location) {
 		Agenda agenda = Agenda.builder()
 			.title("title")
@@ -393,8 +415,12 @@ public class AgendaMockData {
 	public Ticket createTicket(AgendaProfile agendaProfile) {
 		Ticket ticket = Ticket.builder()
 			.agendaProfile(agendaProfile)
-			.isApprove(true)
+			.issuedFrom(null)
+			.usedTo(null)
+			.isApproved(true)
+			.approvedAt(LocalDateTime.now().minusDays(1))
 			.isUsed(false)
+			.usedAt(null)
 			.build();
 		return ticketRepository.save(ticket);
 	}
@@ -460,6 +486,23 @@ public class AgendaMockData {
 			.status(OPEN)
 			.location(SEOUL)
 			.mateCount(3)
+			.award("award")
+			.awardPriority(1)
+			.isPrivate(false)
+			.build();
+		return agendaTeamRepository.save(agendaTeam);
+	}
+
+	public AgendaTeam createAgendaTeam(Agenda agenda, User user, int mateCount) {
+		AgendaTeam agendaTeam = AgendaTeam.builder()
+			.agenda(agenda)
+			.teamKey(randomUUID())
+			.name("name")
+			.content("content")
+			.leaderIntraId(user.getIntraId())
+			.status(OPEN)
+			.location(SEOUL)
+			.mateCount(mateCount)
 			.award("award")
 			.awardPriority(1)
 			.isPrivate(false)

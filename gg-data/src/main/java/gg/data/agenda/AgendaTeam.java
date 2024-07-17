@@ -98,4 +98,19 @@ public class AgendaTeam extends BaseTimeEntity {
 		}
 		this.status = AgendaTeamStatus.CONFIRM;
 	}
+
+	public void leaveTeamLeader() {
+		if (this.status == AgendaTeamStatus.CANCEL) {
+			throw new BusinessException(AGENDA_TEAM_ALREADY_CANCEL);
+		}
+		this.status = AgendaTeamStatus.CANCEL;
+		this.mateCount = 0;
+	}
+
+	public void leaveTeamMate() {
+		if (this.status == AgendaTeamStatus.CANCEL) {
+			throw new BusinessException(AGENDA_TEAM_ALREADY_CANCEL);
+		}
+		this.mateCount--;
+	}
 }

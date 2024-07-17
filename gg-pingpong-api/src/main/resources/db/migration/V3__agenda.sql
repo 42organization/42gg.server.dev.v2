@@ -95,11 +95,15 @@ CREATE TABLE `ticket`
 (
     `id`          BIGINT   NOT NULL AUTO_INCREMENT,
     `profile_id`  BIGINT   NOT NULL,
-    `is_used`     BIT(1)   NOT NULL,
-    `is_approve`  BIT(1)   NOT NULL,
+    `issued_from` BINARY(16) NULL,
+    `used_to`     BINARY(16) NULL,
+	`is_approved` BOOLEAN NOT NULL,
+    `approved_at` DATETIME NULL,
+    `is_used`     BOOLEAN NOT NULL,
+    `used_at`     DATETIME NULL,
     `created_at`  DATETIME NOT NULL,
     `modified_at` DATETIME NOT NULL,
     PRIMARY KEY (`id`),
     KEY           `fk_ticket_profile_profile_id` (`profile_id`),
     CONSTRAINT `fk_ticket_profile_profile_id` FOREIGN KEY (`profile_id`) REFERENCES `agenda_profile` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
