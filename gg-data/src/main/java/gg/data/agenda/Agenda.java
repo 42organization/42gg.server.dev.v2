@@ -4,7 +4,6 @@ import static gg.utils.exception.ErrorCode.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -174,16 +173,16 @@ public class Agenda extends BaseTimeEntity {
 		if (this.location == location) {
 			return;
 		}
-		boolean everyTeamUnderLocation = teams.stream()
+		boolean conflictAgendaLocation = teams.stream()
 			.map(AgendaTeam::getLocation)
 			.anyMatch(teamLocation -> teamLocation != location);
-		if (!everyTeamUnderLocation) {
-			throw new InvalidParameterException(AGENDA_INVALID_PARAM);
+		if (!conflictAgendaLocation) {
+			throw new InvalidParameterException(AGENDA_UPDATE_LOCATION_CONFLICT);
 		}
 		this.location = location;
 	}
 
-	public void updateTeamCapacity(Integer minTeam, Integer maxTeam, List<AgendaTeam> teams) {
+	public void updateAgendaCapacity(Integer minTeam, Integer maxTeam, List<AgendaTeam> teams) {
 		if (minTeam == this.minTeam && maxTeam == this.maxTeam) {
 			return;
 		}
@@ -191,24 +190,24 @@ public class Agenda extends BaseTimeEntity {
 			throw new InvalidParameterException(AGENDA_INVALID_PARAM);
 		}
 		if (teams.size() < minTeam || teams.size() > maxTeam) {
-			throw new InvalidParameterException(AGENDA_INVALID_PARAM);
+			throw new InvalidParameterException(AGENDA_CAPACITY_CONFLICT);
 		}
 		this.minTeam = minTeam;
 		this.maxTeam = maxTeam;
 	}
 
-	public void updatePeopleBound(Integer minPeople, Integer maxPeople, List<AgendaTeam> teams) {
+	public void updateAgendaTeamCapacity(Integer minPeople, Integer maxPeople, List<AgendaTeam> teams) {
 		if (minPeople == this.minPeople && maxPeople == this.maxPeople) {
 			return;
 		}
 		if (minPeople > maxPeople) {
 			throw new InvalidParameterException(AGENDA_INVALID_PARAM);
 		}
-		boolean everyTeamUnderPeopleBound = teams.stream()
+		boolean conflictAgendaTeamCapacity = teams.stream()
 			.map(AgendaTeam::getMateCount)
 			.anyMatch(mateCount -> mateCount < minPeople || mateCount > maxPeople);
-		if (!everyTeamUnderPeopleBound) {
-			throw new InvalidParameterException(AGENDA_INVALID_PARAM);
+		if (conflictAgendaTeamCapacity) {
+			throw new InvalidParameterException(AGENDA_TEAM_CAPACITY_CONFLICT);
 		}
 		this.minPeople = minPeople;
 		this.maxPeople = maxPeople;

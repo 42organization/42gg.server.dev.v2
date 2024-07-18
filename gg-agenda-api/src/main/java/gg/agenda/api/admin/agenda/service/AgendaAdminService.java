@@ -43,7 +43,7 @@ public class AgendaAdminService {
 		agenda.updateSchedule(agendaDto.getAgendaDeadLine(), agendaDto.getAgendaStartTime(),
 			agendaDto.getAgendaEndTime());
 		agenda.updateLocation(agendaDto.getAgendaLocation(), teams);
-		agenda.updateTeamCapacity(agendaDto.getAgendaMinTeam(), agendaDto.getAgendaMaxTeam(), teams);
-		agenda.updatePeopleBound(agendaDto.getAgendaMinPeople(), agendaDto.getAgendaMaxPeople(), teams);
+		agenda.updateAgendaCapacity(agendaDto.getAgendaMinTeam(), agendaDto.getAgendaMaxTeam(), teams);
+		agenda.updateAgendaTeamCapacity(agendaDto.getAgendaMinPeople(), agendaDto.getAgendaMaxPeople(), teams);
 	}
 }
