@@ -4,6 +4,7 @@ import static gg.utils.exception.ErrorCode.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -151,31 +152,50 @@ public class Agenda extends BaseTimeEntity {
 	}
 
 	public void updateInformation(String title, String content, String posterUri) {
-		this.title = title;
-		this.content = content;
-		this.posterUri = posterUri;
+		if (Objects.nonNull(title)) {
+			this.title = title;
+		}
+		if (Objects.nonNull(content)) {
+			this.content = content;
+		}
+		if (Objects.nonNull(posterUri)) {
+			this.posterUri = posterUri;
+		}
 	}
 
-	public void updateIsOfficial(boolean isOfficial) {
-		this.isOfficial = isOfficial;
+	public void updateIsOfficial(Boolean isOfficial) {
+		if (Objects.nonNull(isOfficial)) {
+			this.isOfficial = isOfficial;
+		}
 	}
 
-	public void updateIsRanking(boolean isRanking) {
-		this.isRanking = isRanking;
+	public void updateIsRanking(Boolean isRanking) {
+		if (Objects.nonNull(isRanking)) {
+			this.isRanking = isRanking;
+		}
 	}
 
 	public void updateAgendaStatus(AgendaStatus agendaStatus) {
-		this.status = agendaStatus;
+		if (Objects.nonNull(agendaStatus)) {
+			this.status = agendaStatus;
+		}
 	}
 
 	public void updateSchedule(LocalDateTime deadline, LocalDateTime startTime, LocalDateTime endTime) {
-		this.deadline = deadline;
-		this.startTime = startTime;
-		this.endTime = endTime;
+		if (Objects.nonNull(deadline)) {
+			this.deadline = deadline;
+		}
+		if (Objects.nonNull(startTime)) {
+			this.startTime = startTime;
+		}
+		if (Objects.nonNull(endTime)) {
+			this.endTime = endTime;
+		}
+		mustHaveValidSchedule();
 	}
 
 	public void updateLocation(Location location, List<AgendaTeam> teams) {
-		if (this.location == location) {
+		if (location == null) {
 			return;
 		}
 		boolean conflictAgendaLocation = teams.stream()
@@ -188,7 +208,7 @@ public class Agenda extends BaseTimeEntity {
 	}
 
 	public void updateAgendaCapacity(Integer minTeam, Integer maxTeam, List<AgendaTeam> teams) {
-		if (minTeam == this.minTeam && maxTeam == this.maxTeam) {
+		if (minTeam == null || maxTeam == null) {
 			return;
 		}
 		if (minTeam > maxTeam) {
@@ -205,7 +225,7 @@ public class Agenda extends BaseTimeEntity {
 	}
 
 	public void updateAgendaTeamCapacity(Integer minPeople, Integer maxPeople, List<AgendaTeam> teams) {
-		if (minPeople == this.minPeople && maxPeople == this.maxPeople) {
+		if (minPeople == null || maxPeople == null) {
 			return;
 		}
 		if (minPeople > maxPeople) {
@@ -245,9 +265,19 @@ public class Agenda extends BaseTimeEntity {
 		}
 	}
 
-	public void mustModifiedByHost(String userIntraId) {
-		if (!this.hostIntraId.equals(userIntraId)) {
-			throw new ForbiddenException(AGENDA_MODIFICATION_FORBIDDEN);
+	private void mustHaveValidSchedule() {
+		if (this.deadline.isAfter(this.startTime)) {
+			throw new InvalidParameterException(AGENDA_INVALID_PARAM);
 		}
+		if (this.startTime.isAfter(this.endTime)) {
+			throw new InvalidParameterException(AGENDA_INVALID_PARAM);
+		}
+	}
+
+	public void mustModifiedByHost(String userIntraId) {
+		if (this.hostIntraId.equals(userIntraId)) {
+			return;
+		}
+		throw new ForbiddenException(AGENDA_MODIFICATION_FORBIDDEN);
 	}
 }
