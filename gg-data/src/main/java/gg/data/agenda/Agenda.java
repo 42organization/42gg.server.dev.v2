@@ -159,6 +159,10 @@ public class Agenda extends BaseTimeEntity {
 		this.isOfficial = isOfficial;
 	}
 
+	public void updateIsRanking(boolean isRanking) {
+		this.isRanking = isRanking;
+	}
+
 	public void updateAgendaStatus(AgendaStatus agendaStatus) {
 		this.status = agendaStatus;
 	}

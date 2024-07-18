@@ -31,6 +31,9 @@ public class AgendaAdminUpdateReqDto {
 	private Boolean isOfficial;
 
 	@NotNull
+	private Boolean isRanking;
+
+	@NotNull
 	private AgendaStatus agendaStatus;
 
 	@NotNull
@@ -63,13 +66,14 @@ public class AgendaAdminUpdateReqDto {
 
 	@Builder
 	public AgendaAdminUpdateReqDto(String agendaTitle, String agendaContents, String agendaPoster, Boolean isOfficial,
-		AgendaStatus agendaStatus, LocalDateTime agendaDeadLine, LocalDateTime agendaStartTime,
+		Boolean isRanking, AgendaStatus agendaStatus, LocalDateTime agendaDeadLine, LocalDateTime agendaStartTime,
 		LocalDateTime agendaEndTime, Location agendaLocation, int agendaMinTeam, int agendaMaxTeam,
 		int agendaMinPeople, int agendaMaxPeople) {
 		this.agendaTitle = agendaTitle;
 		this.agendaContents = agendaContents;
 		this.agendaPoster = agendaPoster;
 		this.isOfficial = isOfficial;
+		this.isRanking = isRanking;
 		this.agendaStatus = agendaStatus;
 		this.agendaDeadLine = agendaDeadLine;
 		this.agendaStartTime = agendaStartTime;

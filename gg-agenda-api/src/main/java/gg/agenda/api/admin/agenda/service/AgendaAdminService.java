@@ -39,6 +39,7 @@ public class AgendaAdminService {
 		agenda.updateInformation(agendaDto.getAgendaTitle(), agendaDto.getAgendaContents(),
 			agendaDto.getAgendaPoster());
 		agenda.updateIsOfficial(agendaDto.getIsOfficial());
+		agenda.updateIsRanking(agendaDto.getIsRanking());
 		agenda.updateAgendaStatus(agendaDto.getAgendaStatus());
 		agenda.updateSchedule(agendaDto.getAgendaDeadLine(), agendaDto.getAgendaStartTime(),
 			agendaDto.getAgendaEndTime());
