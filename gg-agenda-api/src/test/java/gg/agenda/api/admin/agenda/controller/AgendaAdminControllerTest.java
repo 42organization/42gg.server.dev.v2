@@ -129,4 +129,65 @@ public class AgendaAdminControllerTest {
 			assertThat(result).isEmpty();
 		}
 	}
+
+	@Nested
+	@DisplayName("Admin Agenda 수정 맟 삭제")
+	class UpdateAgendaAdmin {
+
+		@Test
+		@DisplayName("Admin Agenda 수정 맟 삭제 성공")
+		void updateAgendaAdminSuccess() {
+			// given
+			// when
+			// then
+		}
+
+		@Test
+		@DisplayName("Admin Agenda 수정 맟 삭제 실패 - 대회가 존재하지 않는 경우")
+		void updateAgendaAdminFailedWithNoAgenda() {
+			// given
+			// when
+			// then
+		}
+
+		@Test
+		@DisplayName("Admin Agenda 수정 맟 삭제 실패 - 이미 다른 Location이 존재하는 경우")
+		void updateAgendaAdminFailedWithLocation() {
+			// given
+			// when
+			// then
+		}
+
+		@Test
+		@DisplayName("Admin Agenda 수정 맟 삭제 실패 - 이미 maxTeam 이상의 팀이 존재하는 경우")
+		void updateAgendaAdminFailedWithMaxTeam() {
+			// given
+			// when
+			// then
+		}
+
+		@Test
+		@DisplayName("Admin Agenda 수정 맟 삭제 실패 - 이미 확정된 대회에 minTeam 이하의 팀이 참여한 경우")
+		void updateAgendaAdminFailedWithMinTeam() {
+			// given
+			// when
+			// then
+		}
+
+		@Test
+		@DisplayName("Admin Agenda 수정 맟 삭제 실패 - 이미 팀에 maxPeople 이상의 인원이 참여한 경우")
+		void updateAgendaAdminFailedWithMaxPeople() {
+			// given
+			// when
+			// then
+		}
+
+		@Test
+		@DisplayName("Admin Agenda 수정 맟 삭제 실패 - 이미 확정된 팀에 minPeople 이하의 인원이 참여한 경우")
+		void updateAgendaAdminFailedWithMinPeople() {
+			// given
+			// when
+			// then
+		}
+	}
 }
