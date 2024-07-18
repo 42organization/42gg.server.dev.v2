@@ -49,7 +49,12 @@ public class AgendaAdminController {
 	}
 
 	@ApiResponses(value = {
-		@ApiResponse(responseCode = "204", description = "Agenda 수정 성공")
+		@ApiResponse(responseCode = "204", description = "Agenda 수정 성공"),
+		@ApiResponse(responseCode = "400", description = "Agenda 수정 요청이 잘못됨"),
+		@ApiResponse(responseCode = "404", description = "Agenda를 찾을 수 없음"),
+		@ApiResponse(responseCode = "409", description = "Agenda 지역을 변경할 수 없음"),
+		@ApiResponse(responseCode = "409", description = "Agenda 팀 제한을 변경할 수 없음"),
+		@ApiResponse(responseCode = "409", description = "Agenda 팀 인원 제한을 변경할 수 없음")
 	})
 	@PatchMapping("/request")
 	public ResponseEntity<Void> agendaUpdate(@RequestParam("agenda_key") UUID agendaKey,
