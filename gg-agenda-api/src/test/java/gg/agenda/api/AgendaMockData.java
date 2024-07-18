@@ -319,11 +319,11 @@ public class AgendaMockData {
 			.deadline(LocalDateTime.now().plusDays(1))
 			.startTime(LocalDateTime.now().plusDays(2))
 			.endTime(LocalDateTime.now().plusDays(3))
-			.minTeam(1)
-			.maxTeam(5)
+			.minTeam(2)
+			.maxTeam(20)
 			.currentTeam(0)
 			.minPeople(1)
-			.maxPeople(3)
+			.maxPeople(20)
 			.posterUri("posterUri")
 			.hostIntraId("hostIntraId")
 			.location(location)
@@ -586,5 +586,14 @@ public class AgendaMockData {
 			.isExist(true)
 			.build();
 		return agendaTeamProfileRepository.save(agendaTeamProfile);
+	}
+
+	public Agenda createAgendaWithTeam(int teamCount) {
+		Agenda agenda = createAgenda(SEOUL);
+		for (int i = 0; i < teamCount; i++) {
+			AgendaTeam agendaTeam = createAgendaTeam(agenda);
+			agenda.addTeam(agendaTeam.getLocation(), LocalDateTime.now());
+		}
+		return agenda;
 	}
 }

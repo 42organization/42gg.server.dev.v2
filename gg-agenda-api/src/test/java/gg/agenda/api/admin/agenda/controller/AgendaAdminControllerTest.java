@@ -1,5 +1,6 @@
 package gg.agenda.api.admin.agenda.controller;
 
+import static gg.data.agenda.type.AgendaStatus.*;
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 import static org.springframework.test.web.servlet.MockMvcBuilder.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -27,9 +28,12 @@ import org.springframework.test.web.servlet.MockMvcBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.agenda.api.AgendaMockData;
+import gg.agenda.api.admin.agenda.controller.request.AgendaAdminUpdateReqDto;
 import gg.agenda.api.admin.agenda.controller.response.AgendaAdminResDto;
 import gg.data.agenda.Agenda;
+import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.type.AgendaStatus;
+import gg.data.agenda.type.Location;
 import gg.data.user.User;
 import gg.repo.agenda.AgendaRepository;
 import gg.utils.TestDataUtils;
@@ -136,9 +140,23 @@ public class AgendaAdminControllerTest {
 
 		@Test
 		@DisplayName("Admin Agenda 수정 맟 삭제 성공")
-		void updateAgendaAdminSuccess() {
+		void updateAgendaAdminSuccess() throws Exception {
 			// given
+			Agenda agenda = agendaMockData.createAgendaWithTeam(10);
+			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder()
+				.agendaTitle("updated title").agendaContents("updated content")
+				.agendaPoster("updated poster").agendaStatus(CONFIRM)
+				.isOfficial(!agenda.getIsOfficial()).isRanking(!agenda.getIsRanking()).build();
+			String request = objectMapper.writeValueAsString(agendaDto);
+
 			// when
+			mockMvc.perform(patch("/admin/request")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(request))
+				.andExpect(status().isNoContent());
+
 			// then
 		}
 
