@@ -18,6 +18,7 @@ import javax.persistence.UniqueConstraint;
 
 import gg.data.BaseTimeEntity;
 import gg.data.agenda.type.AgendaStatus;
+import gg.data.agenda.type.AgendaTeamStatus;
 import gg.data.agenda.type.Location;
 import gg.utils.exception.custom.ForbiddenException;
 import gg.utils.exception.custom.InvalidParameterException;
@@ -193,7 +194,10 @@ public class Agenda extends BaseTimeEntity {
 		if (minTeam > maxTeam) {
 			throw new InvalidParameterException(AGENDA_INVALID_PARAM);
 		}
-		if (teams.size() < minTeam || teams.size() > maxTeam) {
+		if (teams.size() > maxTeam) {
+			throw new InvalidParameterException(AGENDA_CAPACITY_CONFLICT);
+		}
+		if (this.status == AgendaStatus.CONFIRM && teams.size() < minTeam) {
 			throw new InvalidParameterException(AGENDA_CAPACITY_CONFLICT);
 		}
 		this.minTeam = minTeam;
@@ -208,6 +212,7 @@ public class Agenda extends BaseTimeEntity {
 			throw new InvalidParameterException(AGENDA_INVALID_PARAM);
 		}
 		boolean conflictAgendaTeamCapacity = teams.stream()
+			.filter(team -> team.getStatus() == AgendaTeamStatus.CONFIRM)
 			.map(AgendaTeam::getMateCount)
 			.anyMatch(mateCount -> mateCount < minPeople || mateCount > maxPeople);
 		if (conflictAgendaTeamCapacity) {
