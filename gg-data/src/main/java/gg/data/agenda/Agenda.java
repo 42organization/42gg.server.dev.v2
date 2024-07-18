@@ -180,8 +180,8 @@ public class Agenda extends BaseTimeEntity {
 		}
 		boolean conflictAgendaLocation = teams.stream()
 			.map(AgendaTeam::getLocation)
-			.anyMatch(teamLocation -> teamLocation != location);
-		if (!conflictAgendaLocation) {
+			.anyMatch(teamLocation -> !Location.isUnderLocation(location, teamLocation));
+		if (conflictAgendaLocation) {
 			throw new InvalidParameterException(AGENDA_UPDATE_LOCATION_CONFLICT);
 		}
 		this.location = location;
@@ -212,9 +212,8 @@ public class Agenda extends BaseTimeEntity {
 			throw new InvalidParameterException(AGENDA_INVALID_PARAM);
 		}
 		boolean conflictAgendaTeamCapacity = teams.stream()
-			.filter(team -> team.getStatus() == AgendaTeamStatus.CONFIRM)
-			.map(AgendaTeam::getMateCount)
-			.anyMatch(mateCount -> mateCount < minPeople || mateCount > maxPeople);
+			.anyMatch(team -> team.getMateCount() > maxPeople
+				|| (team.getStatus() == AgendaTeamStatus.CONFIRM && team.getMateCount() < minPeople));
 		if (conflictAgendaTeamCapacity) {
 			throw new InvalidParameterException(AGENDA_TEAM_CAPACITY_CONFLICT);
 		}
