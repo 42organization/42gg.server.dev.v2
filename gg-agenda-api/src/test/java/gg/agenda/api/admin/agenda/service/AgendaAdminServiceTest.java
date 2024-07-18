@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +23,6 @@ import gg.admin.repo.agenda.AgendaTeamAdminRepository;
 import gg.agenda.api.admin.agenda.controller.request.AgendaAdminUpdateReqDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaTeam;
-import gg.data.agenda.type.AgendaStatus;
 import gg.data.agenda.type.AgendaTeamStatus;
 import gg.data.agenda.type.Location;
 import gg.utils.annotation.UnitTest;
@@ -97,46 +95,8 @@ public class AgendaAdminServiceTest {
 			for (int i = 0; i < teamCount; i++) {
 				teams.add(AgendaTeam.builder().location(Location.SEOUL).mateCount(3).build());
 			}
-			Agenda agenda;
-			{
-				agenda = Agenda.builder()
-					.title("title")
-					.content("content")
-					.posterUri("posterUri")
-					.hostIntraId("hostIntraId")
-					.deadline(LocalDateTime.now().minusDays(3))
-					.startTime(LocalDateTime.now().plusDays(1))
-					.endTime(LocalDateTime.now().plusDays(3))
-					.isOfficial(true)
-					.isRanking(true)
-					.minTeam(5)
-					.maxTeam(10)
-					.currentTeam(teams.size())
-					.minPeople(1)
-					.maxPeople(10)
-					.location(Location.SEOUL)
-					.status(AgendaStatus.ON_GOING)
-					.build();
-			}
-			AgendaAdminUpdateReqDto agendaDto;
-			{
-				agendaDto = AgendaAdminUpdateReqDto.builder()
-					.agendaTitle("Updated title")
-					.agendaContents("Updated content")
-					.agendaPoster("Updated posterUri")
-					.isOfficial(false)
-					.isRanking(false)
-					.agendaStatus(AgendaStatus.CONFIRM)
-					.agendaDeadLine(LocalDateTime.now())
-					.agendaStartTime(LocalDateTime.now().plusDays(3))
-					.agendaEndTime(LocalDateTime.now().plusDays(5))
-					.agendaLocation(Location.MIX)
-					.agendaMinTeam(2)
-					.agendaMaxTeam(20)
-					.agendaMinPeople(2)
-					.agendaMaxPeople(20)
-					.build();
-			}
+			Agenda agenda = AgendaAdminUnitMockData.createMockAgenda(teams);
+			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUnitMockData.createMockAgendaUpdateReqDto();
 			when(agendaAdminRepository.findByAgendaKey(any())).thenReturn(Optional.of(agenda));
 			when(agendaTeamAdminRepository.findAllByAgenda(any())).thenReturn(teams);
 
@@ -146,22 +106,20 @@ public class AgendaAdminServiceTest {
 			// then
 			verify(agendaAdminRepository, times(1)).findByAgendaKey(any());
 			verify(agendaTeamAdminRepository, times(1)).findAllByAgenda(any());
-			{
-				assertThat(agenda.getTitle()).isEqualTo(agendaDto.getAgendaTitle());
-				assertThat(agenda.getContent()).isEqualTo(agendaDto.getAgendaContents());
-				assertThat(agenda.getPosterUri()).isEqualTo(agendaDto.getAgendaPoster());
-				assertThat(agenda.getIsOfficial()).isEqualTo(agendaDto.getIsOfficial());
-				assertThat(agenda.getIsRanking()).isEqualTo(agendaDto.getIsRanking());
-				assertThat(agenda.getStatus()).isEqualTo(agendaDto.getAgendaStatus());
-				assertThat(agenda.getDeadline()).isEqualTo(agendaDto.getAgendaDeadLine());
-				assertThat(agenda.getStartTime()).isEqualTo(agendaDto.getAgendaStartTime());
-				assertThat(agenda.getEndTime()).isEqualTo(agendaDto.getAgendaEndTime());
-				assertThat(agenda.getLocation()).isEqualTo(agendaDto.getAgendaLocation());
-				assertThat(agenda.getMinTeam()).isEqualTo(agendaDto.getAgendaMinTeam());
-				assertThat(agenda.getMaxTeam()).isEqualTo(agendaDto.getAgendaMaxTeam());
-				assertThat(agenda.getMinPeople()).isEqualTo(agendaDto.getAgendaMinPeople());
-				assertThat(agenda.getMaxPeople()).isEqualTo(agendaDto.getAgendaMaxPeople());
-			}
+			assertThat(agenda.getTitle()).isEqualTo(agendaDto.getAgendaTitle());
+			assertThat(agenda.getContent()).isEqualTo(agendaDto.getAgendaContents());
+			assertThat(agenda.getPosterUri()).isEqualTo(agendaDto.getAgendaPoster());
+			assertThat(agenda.getIsOfficial()).isEqualTo(agendaDto.getIsOfficial());
+			assertThat(agenda.getIsRanking()).isEqualTo(agendaDto.getIsRanking());
+			assertThat(agenda.getStatus()).isEqualTo(agendaDto.getAgendaStatus());
+			assertThat(agenda.getDeadline()).isEqualTo(agendaDto.getAgendaDeadLine());
+			assertThat(agenda.getStartTime()).isEqualTo(agendaDto.getAgendaStartTime());
+			assertThat(agenda.getEndTime()).isEqualTo(agendaDto.getAgendaEndTime());
+			assertThat(agenda.getLocation()).isEqualTo(agendaDto.getAgendaLocation());
+			assertThat(agenda.getMinTeam()).isEqualTo(agendaDto.getAgendaMinTeam());
+			assertThat(agenda.getMaxTeam()).isEqualTo(agendaDto.getAgendaMaxTeam());
+			assertThat(agenda.getMinPeople()).isEqualTo(agendaDto.getAgendaMinPeople());
+			assertThat(agenda.getMaxPeople()).isEqualTo(agendaDto.getAgendaMaxPeople());
 		}
 
 		@Test
@@ -186,46 +144,8 @@ public class AgendaAdminServiceTest {
 				teams.add(AgendaTeam.builder().location(Location.SEOUL).mateCount(3).build());
 			}    // SEOUL
 			teams.add(AgendaTeam.builder().location(Location.GYEONGSAN).mateCount(3).build());    // GYEONGSAN
-			Agenda agenda;    // MIX
-			{
-				agenda = Agenda.builder()
-					.title("title")
-					.content("content")
-					.posterUri("posterUri")
-					.hostIntraId("hostIntraId")
-					.deadline(LocalDateTime.now().minusDays(3))
-					.startTime(LocalDateTime.now().plusDays(1))
-					.endTime(LocalDateTime.now().plusDays(3))
-					.isOfficial(true)
-					.isRanking(true)
-					.minTeam(5)
-					.maxTeam(10)
-					.currentTeam(teams.size())
-					.minPeople(1)
-					.maxPeople(10)
-					.location(Location.MIX)
-					.status(AgendaStatus.ON_GOING)
-					.build();
-			}
-			AgendaAdminUpdateReqDto agendaDto;    // SEOUL 변경 불가능
-			{
-				agendaDto = AgendaAdminUpdateReqDto.builder()
-					.agendaTitle("Updated title")
-					.agendaContents("Updated content")
-					.agendaPoster("Updated posterUri")
-					.isOfficial(false)
-					.isRanking(false)
-					.agendaStatus(AgendaStatus.CONFIRM)
-					.agendaDeadLine(LocalDateTime.now())
-					.agendaStartTime(LocalDateTime.now().plusDays(3))
-					.agendaEndTime(LocalDateTime.now().plusDays(5))
-					.agendaLocation(Location.SEOUL)
-					.agendaMinTeam(2)
-					.agendaMaxTeam(20)
-					.agendaMinPeople(2)
-					.agendaMaxPeople(20)
-					.build();
-			}
+			Agenda agenda = AgendaAdminUnitMockData.createMockAgendaWithLocation(teams, Location.MIX);
+			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUnitMockData.createMockAgendaUpdateReqDtoWithLocation(Location.SEOUL);
 			when(agendaAdminRepository.findByAgendaKey(any())).thenReturn(Optional.of(agenda));
 			when(agendaTeamAdminRepository.findAllByAgenda(any())).thenReturn(teams);
 
@@ -243,46 +163,8 @@ public class AgendaAdminServiceTest {
 			for (int i = 0; i < teamCount; i++) {
 				teams.add(AgendaTeam.builder().location(Location.SEOUL).mateCount(3).build());
 			}    // 10개 팀
-			Agenda agenda;    // maxTeam = 10
-			{
-				agenda = Agenda.builder()
-					.title("title")
-					.content("content")
-					.posterUri("posterUri")
-					.hostIntraId("hostIntraId")
-					.deadline(LocalDateTime.now().minusDays(3))
-					.startTime(LocalDateTime.now().plusDays(1))
-					.endTime(LocalDateTime.now().plusDays(3))
-					.isOfficial(true)
-					.isRanking(true)
-					.minTeam(5)
-					.maxTeam(10)
-					.currentTeam(teams.size())
-					.minPeople(1)
-					.maxPeople(10)
-					.location(Location.MIX)
-					.status(AgendaStatus.ON_GOING)
-					.build();
-			}
-			AgendaAdminUpdateReqDto agendaDto;    // maxTeam 5로 변경 불가능
-			{
-				agendaDto = AgendaAdminUpdateReqDto.builder()
-					.agendaTitle("Updated title")
-					.agendaContents("Updated content")
-					.agendaPoster("Updated posterUri")
-					.isOfficial(false)
-					.isRanking(false)
-					.agendaStatus(AgendaStatus.CONFIRM)
-					.agendaDeadLine(LocalDateTime.now())
-					.agendaStartTime(LocalDateTime.now().plusDays(3))
-					.agendaEndTime(LocalDateTime.now().plusDays(5))
-					.agendaLocation(Location.SEOUL)
-					.agendaMinTeam(2)
-					.agendaMaxTeam(5)
-					.agendaMinPeople(2)
-					.agendaMaxPeople(20)
-					.build();
-			}
+			Agenda agenda = AgendaAdminUnitMockData.createMockAgendaWithAgendaCapacity(teams, 5, 10);
+			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUnitMockData.createMockAgendaUpdateReqDtoWithAgendaCapacity(2, 5);    // maxTeam 5로 변경 불가능
 			when(agendaAdminRepository.findByAgendaKey(any())).thenReturn(Optional.of(agenda));
 			when(agendaTeamAdminRepository.findAllByAgenda(any())).thenReturn(teams);
 
@@ -302,46 +184,8 @@ public class AgendaAdminServiceTest {
 			}
 			teams.add(AgendaTeam.builder().location(Location.SEOUL).mateCount(10)
 				.status(AgendaTeamStatus.CONFIRM).build());    // mateCount 10
-			Agenda agenda;    // maxPeople = 10
-			{
-				agenda = Agenda.builder()
-					.title("title")
-					.content("content")
-					.posterUri("posterUri")
-					.hostIntraId("hostIntraId")
-					.deadline(LocalDateTime.now().minusDays(3))
-					.startTime(LocalDateTime.now().plusDays(1))
-					.endTime(LocalDateTime.now().plusDays(3))
-					.isOfficial(true)
-					.isRanking(true)
-					.minTeam(5)
-					.maxTeam(10)
-					.currentTeam(teams.size())
-					.minPeople(1)
-					.maxPeople(10)
-					.location(Location.MIX)
-					.status(AgendaStatus.ON_GOING)
-					.build();
-			}
-			AgendaAdminUpdateReqDto agendaDto;    // maxPeople 5로 변경 불가능
-			{
-				agendaDto = AgendaAdminUpdateReqDto.builder()
-					.agendaTitle("Updated title")
-					.agendaContents("Updated content")
-					.agendaPoster("Updated posterUri")
-					.isOfficial(false)
-					.isRanking(false)
-					.agendaStatus(AgendaStatus.CONFIRM)
-					.agendaDeadLine(LocalDateTime.now())
-					.agendaStartTime(LocalDateTime.now().plusDays(3))
-					.agendaEndTime(LocalDateTime.now().plusDays(5))
-					.agendaLocation(Location.SEOUL)
-					.agendaMinTeam(2)
-					.agendaMaxTeam(20)
-					.agendaMinPeople(2)
-					.agendaMaxPeople(5)    // here
-					.build();
-			}
+			Agenda agenda = AgendaAdminUnitMockData.createMockAgendaWithAgendaTeamCapacity(teams, 1, 10);
+			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUnitMockData.createMockAgendaUpdateReqDtoWithAgendaTeamCapacity(2, 5);
 			when(agendaAdminRepository.findByAgendaKey(any())).thenReturn(Optional.of(agenda));
 			when(agendaTeamAdminRepository.findAllByAgenda(any())).thenReturn(teams);
 
@@ -361,46 +205,8 @@ public class AgendaAdminServiceTest {
 			}
 			teams.add(AgendaTeam.builder().location(Location.SEOUL).mateCount(3)
 				.status(AgendaTeamStatus.CONFIRM).build());    // mateCount 3 of CONFIRM Team
-			Agenda agenda;    // minPeople = 1
-			{
-				agenda = Agenda.builder()
-					.title("title")
-					.content("content")
-					.posterUri("posterUri")
-					.hostIntraId("hostIntraId")
-					.deadline(LocalDateTime.now().minusDays(3))
-					.startTime(LocalDateTime.now().plusDays(1))
-					.endTime(LocalDateTime.now().plusDays(3))
-					.isOfficial(true)
-					.isRanking(true)
-					.minTeam(5)
-					.maxTeam(10)
-					.currentTeam(teams.size())
-					.minPeople(1)
-					.maxPeople(10)
-					.location(Location.MIX)
-					.status(AgendaStatus.ON_GOING)
-					.build();
-			}
-			AgendaAdminUpdateReqDto agendaDto;    // minPeople 5로 변경 불가능
-			{
-				agendaDto = AgendaAdminUpdateReqDto.builder()
-					.agendaTitle("Updated title")
-					.agendaContents("Updated content")
-					.agendaPoster("Updated posterUri")
-					.isOfficial(false)
-					.isRanking(false)
-					.agendaStatus(AgendaStatus.CONFIRM)
-					.agendaDeadLine(LocalDateTime.now())
-					.agendaStartTime(LocalDateTime.now().plusDays(3))
-					.agendaEndTime(LocalDateTime.now().plusDays(5))
-					.agendaLocation(Location.SEOUL)
-					.agendaMinTeam(2)
-					.agendaMaxTeam(20)
-					.agendaMinPeople(5)    // here
-					.agendaMaxPeople(20)
-					.build();
-			}
+			Agenda agenda = AgendaAdminUnitMockData.createMockAgendaWithAgendaTeamCapacity(teams, 1, 10);
+			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUnitMockData.createMockAgendaUpdateReqDtoWithAgendaTeamCapacity(5, 20);
 			when(agendaAdminRepository.findByAgendaKey(any())).thenReturn(Optional.of(agenda));
 			when(agendaTeamAdminRepository.findAllByAgenda(any())).thenReturn(teams);
 
