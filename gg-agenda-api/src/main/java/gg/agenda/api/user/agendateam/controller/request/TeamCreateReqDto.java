@@ -51,7 +51,6 @@ public class TeamCreateReqDto {
 			.status(OPEN)
 			.location(Location.valueOf(teamCreateReqDto.getTeamLocation()))
 			.mateCount(1)
-			.award("award")
 			.awardPriority(1)
 			.isPrivate(teamCreateReqDto.getTeamIsPrivate())
 			.build();

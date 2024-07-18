@@ -435,7 +435,6 @@ public class AgendaMockData {
 			.status(OPEN)
 			.location(SEOUL)
 			.mateCount(3)
-			.award("award")
 			.awardPriority(1)
 			.isPrivate(false)
 			.build();
@@ -452,7 +451,6 @@ public class AgendaMockData {
 				.status(status)
 				.location(SEOUL)
 				.mateCount(3)
-				.award("award")
 				.awardPriority(1)
 				.isPrivate(false)
 				.build()
@@ -471,7 +469,6 @@ public class AgendaMockData {
 			.status(OPEN)
 			.location(SEOUL)
 			.mateCount(3)
-			.award("award")
 			.awardPriority(1)
 			.isPrivate(false)
 			.build();
@@ -488,7 +485,6 @@ public class AgendaMockData {
 			.status(status)
 			.location(SEOUL)
 			.mateCount(3)
-			.award("award")
 			.awardPriority(-1)
 			.isPrivate(false)
 			.build();
@@ -505,7 +501,6 @@ public class AgendaMockData {
 			.status(OPEN)
 			.location(SEOUL)
 			.mateCount(3)
-			.award("award")
 			.awardPriority(1)
 			.isPrivate(false)
 			.build();
@@ -522,7 +517,6 @@ public class AgendaMockData {
 			.status(OPEN)
 			.location(SEOUL)
 			.mateCount(mateCount)
-			.award("award")
 			.awardPriority(1)
 			.isPrivate(false)
 			.build();
@@ -539,7 +533,6 @@ public class AgendaMockData {
 			.status(OPEN)
 			.location(location)
 			.mateCount(3)
-			.award("award")
 			.awardPriority(1)
 			.isPrivate(false)
 			.build();
@@ -556,7 +549,6 @@ public class AgendaMockData {
 			.status(status)
 			.location(location)
 			.mateCount(3)
-			.award("award")
 			.awardPriority(1)
 			.isPrivate(false)
 			.build();
@@ -573,7 +565,6 @@ public class AgendaMockData {
 			.status(OPEN)
 			.location(location)
 			.mateCount(currentTeam)
-			.award("award")
 			.awardPriority(1)
 			.isPrivate(false)
 			.build();
@@ -591,7 +582,6 @@ public class AgendaMockData {
 			.status(status)
 			.location(location)
 			.mateCount(3)
-			.award("award")
 			.awardPriority(1)
 			.isPrivate(isPrivate)
 			.build();
