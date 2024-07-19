@@ -139,8 +139,8 @@ public class AgendaAdminControllerTest {
 	class UpdateAgendaAdmin {
 
 		@Test
-		@DisplayName("Admin Agenda 수정 맟 삭제 성공")
-		void updateAgendaAdminSuccess() throws Exception {
+		@DisplayName("Admin Agenda 수정 맟 삭제 성공 - 기본 정보")
+		void updateAgendaAdminSuccessWithInformation() throws Exception {
 			// given
 			Agenda agenda = agendaMockData.createAgendaWithTeam(10);
 			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder()
@@ -157,6 +157,38 @@ public class AgendaAdminControllerTest {
 					.content(request))
 				.andExpect(status().isNoContent());
 
+			// then
+		}
+
+		@Test
+		@DisplayName("Admin Agenda 수정 맟 삭제 성공 - 스케쥴 정보")
+		void updateAgendaAdminSuccessWithSchedule() throws Exception {
+			// given
+			// when
+			// then
+		}
+
+		@Test
+		@DisplayName("Admin Agenda 수정 맟 삭제 성공 - 지역 정보")
+		void updateAgendaAdminSuccessWithLocation() throws Exception {
+			// given
+			// when
+			// then
+		}
+
+		@Test
+		@DisplayName("Admin Agenda 수정 맟 삭제 성공 - Agenda 팀 제한 정보")
+		void updateAgendaAdminSuccessWithAgendaCapacity() throws Exception {
+			// given
+			// when
+			// then
+		}
+
+		@Test
+		@DisplayName("Admin Agenda 수정 맟 삭제 성공 - Agenda 팀 허용 인원 제한 정보")
+		void updateAgendaAdminSuccessWithAgendaTeamCapacity() throws Exception {
+			// given
+			// when
 			// then
 		}
 
