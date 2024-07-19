@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import gg.agenda.api.user.agendaprofile.controller.request.AgendaProfileChangeReqDto;
 import gg.agenda.api.user.agendaprofile.controller.response.AgendaProfileDetailsResDto;
 import gg.agenda.api.user.agendaprofile.service.AgendaProfileFindService;
-import gg.agenda.api.user.agendaprofile.service.AgendaProfileModifyService;
+import gg.agenda.api.user.agendaprofile.service.AgendaProfileService;
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
 import gg.utils.exception.user.UserNotFoundException;
@@ -27,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/agenda/profile")
 public class AgendaProfileController {
 	private final AgendaProfileFindService agendaProfileFindService;
-	private final AgendaProfileModifyService agendaProfileModifyService;
+	private final AgendaProfileService agendaProfileService;
 	private static final Logger log = LoggerFactory.getLogger(AgendaProfileController.class);
 
 	/**
@@ -54,7 +54,7 @@ public class AgendaProfileController {
 	public ResponseEntity<Void> modifyAgendaProfile(@Login @Parameter(hidden = true) UserDto user,
 		@RequestBody @Valid AgendaProfileChangeReqDto reqDto) throws UserNotFoundException {
 
-		agendaProfileModifyService.modifyAgendaProfile(user.getIntraId(), reqDto);
+		agendaProfileService.modifyAgendaProfile(user.getIntraId(), reqDto);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 }

@@ -121,13 +121,27 @@ public class AgendaProfileControllerTest {
 
 			String content = objectMapper.writeValueAsString(requestDto);
 
-			// When & Then
+			// When
 			mockMvc.perform(patch("/agenda/profile")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(content))
-				.andExpect(status().isNoContent())
+				.andExpect(status().isNoContent());
+
+			// Then
+			String response = mockMvc.perform(get("/agenda/profile")
+					.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
+
+			AgendaProfileDetailsResDto result = objectMapper.readValue(response, AgendaProfileDetailsResDto.class);
+
+			assertThat(result.getUserIntraId()).isEqualTo(user.getIntraId());
+			assertThat(result.getUserContent()).isEqualTo("Valid user content");
+			assertThat(result.getUserGithub()).isEqualTo("https://github.com/validUser");
+			assertThat(result.getUserCoalition()).isEqualTo(agendaProfile.getCoalition());
+			assertThat(result.getUserLocation()).isEqualTo(agendaProfile.getLocation());
+			assertThat(result.getTicketCount()).isEqualTo(1);
 		}
 
 		@Test

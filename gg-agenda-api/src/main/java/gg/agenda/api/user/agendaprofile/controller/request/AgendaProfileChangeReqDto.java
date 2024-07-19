@@ -1,7 +1,6 @@
 package gg.agenda.api.user.agendaprofile.controller.request;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.URL;
@@ -14,7 +13,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class AgendaProfileChangeReqDto {
 
-	@NotNull
 	@NotBlank
 	@Size(max = 50, message = "userContent의 길이가 허용된 범위를 초과합니다.")
 	private String userContent;

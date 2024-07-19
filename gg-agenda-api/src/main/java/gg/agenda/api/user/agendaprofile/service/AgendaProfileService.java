@@ -9,24 +9,21 @@ import gg.data.agenda.AgendaProfile;
 import gg.data.user.User;
 import gg.repo.agenda.AgendaProfileRepository;
 import gg.repo.user.UserRepository;
-import gg.utils.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class AgendaProfileModifyService {
+public class AgendaProfileService {
 
 	private final UserRepository userRepository;
 	private final AgendaProfileRepository agendaProfileRepository;
 
 	@Transactional
-	public void modifyAgendaProfile(String intraId, AgendaProfileChangeReqDto reqDto) throws UserNotFoundException {
+	public void modifyAgendaProfile(String intraId, AgendaProfileChangeReqDto reqDto) {
 		// User와 AgendaProfile을 조회
-		User user = userRepository.findByIntraId(intraId)
-			.orElseThrow(() -> new UserNotFoundException());
+		User user = userRepository.findByIntraId(intraId).get();
 
-		AgendaProfile agendaProfile = agendaProfileRepository.findByUserId(user.getId())
-			.orElseThrow(() -> new UserNotFoundException());
+		AgendaProfile agendaProfile = agendaProfileRepository.findByUserId(user.getId()).get();
 
 		// 변경된 값들로 업데이트
 		agendaProfile.updateProfile(reqDto.getUserContent(), reqDto.getUserGithub());
