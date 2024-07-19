@@ -182,20 +182,17 @@ public class Agenda extends BaseTimeEntity {
 	}
 
 	public void updateSchedule(LocalDateTime deadline, LocalDateTime startTime, LocalDateTime endTime) {
-		if (Objects.nonNull(deadline)) {
-			this.deadline = deadline;
-		}
-		if (Objects.nonNull(startTime)) {
-			this.startTime = startTime;
-		}
-		if (Objects.nonNull(endTime)) {
-			this.endTime = endTime;
+		if (Objects.isNull(deadline) || Objects.isNull(startTime) || Objects.isNull(endTime)) {
+			return;
 		}
 		mustHaveValidSchedule();
+		this.deadline = deadline;
+		this.startTime = startTime;
+		this.endTime = endTime;
 	}
 
 	public void updateLocation(Location location, List<AgendaTeam> teams) {
-		if (location == null) {
+		if (Objects.isNull(location)) {
 			return;
 		}
 		boolean conflictAgendaLocation = teams.stream()
@@ -207,14 +204,11 @@ public class Agenda extends BaseTimeEntity {
 		this.location = location;
 	}
 
-	public void updateAgendaCapacity(Integer minTeam, Integer maxTeam, List<AgendaTeam> teams) {
-		if (minTeam == null || maxTeam == null) {
+	public void updateAgendaCapacity(int minTeam, int maxTeam, List<AgendaTeam> teams) {
+		if (minTeam < 2 || maxTeam < 2) {
 			return;
 		}
-		if (minTeam > maxTeam) {
-			throw new InvalidParameterException(AGENDA_INVALID_PARAM);
-		}
-		if (teams.size() > maxTeam) {
+		if (minTeam > maxTeam || teams.size() > maxTeam) {
 			throw new InvalidParameterException(AGENDA_CAPACITY_CONFLICT);
 		}
 		if (this.status == AgendaStatus.CONFIRM && teams.size() < minTeam) {
@@ -224,8 +218,8 @@ public class Agenda extends BaseTimeEntity {
 		this.maxTeam = maxTeam;
 	}
 
-	public void updateAgendaTeamCapacity(Integer minPeople, Integer maxPeople, List<AgendaTeam> teams) {
-		if (minPeople == null || maxPeople == null) {
+	public void updateAgendaTeamCapacity(int minPeople, int maxPeople, List<AgendaTeam> teams) {
+		if (minPeople < 1 || maxPeople < 1) {
 			return;
 		}
 		if (minPeople > maxPeople) {
