@@ -417,6 +417,7 @@ public class AgendaAdminControllerTest {
 			// given
 			Agenda agenda = agendaMockData.createAgendaWithTeamAndAgendaCapacity(10, 2, 10);
 			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder()
+				.agendaMinTeam(agenda.getMinTeam())	// TODO : Null인 경우 허용
 				.agendaMaxTeam(agenda.getMaxTeam() - 5)
 				.build();
 			String request = objectMapper.writeValueAsString(agendaDto);
@@ -435,7 +436,7 @@ public class AgendaAdminControllerTest {
 		void updateAgendaAdminFailedWithMinTeam() throws Exception {
 			// given
 			Agenda agenda = agendaMockData.createAgendaWithTeamAndAgendaCapacity(5, 5, 10);
-			agenda.confirm(LocalDateTime.now());	// TODO
+			agenda.confirm(LocalDateTime.now());	// TODO : confirm 하고 em.flush();
 			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder()
 				.agendaMinTeam(agenda.getMinTeam() + 2)
 				.build();
