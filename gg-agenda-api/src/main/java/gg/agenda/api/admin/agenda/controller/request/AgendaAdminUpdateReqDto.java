@@ -18,49 +18,32 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AgendaAdminUpdateReqDto {
 
-	@NotBlank
 	private String agendaTitle;
 
-	@NotBlank
 	private String agendaContents;
 
 	private String agendaPoster;
 
-	@NotNull
 	private Boolean isOfficial;
 
-	@NotNull
 	private Boolean isRanking;
 
-	@NotNull
 	private AgendaStatus agendaStatus;
 
-	@NotNull
 	private LocalDateTime agendaDeadLine;
 
-	@NotNull
 	private LocalDateTime agendaStartTime;
 
-	@NotNull
 	private LocalDateTime agendaEndTime;
 
-	@NotNull
 	private Location agendaLocation;
 
-	@Min(2)
-	@Max(1000)
 	private int agendaMinTeam;
 
-	@Min(2)
-	@Max(1000)
 	private int agendaMaxTeam;
 
-	@Min(1)
-	@Max(100)
 	private int agendaMinPeople;
 
-	@Min(1)
-	@Max(100)
 	private int agendaMaxPeople;
 
 	@Builder

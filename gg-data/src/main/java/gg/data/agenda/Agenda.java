@@ -152,13 +152,13 @@ public class Agenda extends BaseTimeEntity {
 	}
 
 	public void updateInformation(String title, String content, String posterUri) {
-		if (Objects.nonNull(title)) {
+		if (Objects.nonNull(title) && !title.isBlank()) {
 			this.title = title;
 		}
-		if (Objects.nonNull(content)) {
+		if (Objects.nonNull(content) && !title.isBlank()) {
 			this.content = content;
 		}
-		if (Objects.nonNull(posterUri)) {
+		if (Objects.nonNull(posterUri) && !title.isBlank()) {
 			this.posterUri = posterUri;
 		}
 	}

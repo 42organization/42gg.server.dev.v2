@@ -2,13 +2,14 @@ package gg.agenda.api.admin.agenda.controller;
 
 import static gg.data.agenda.type.AgendaStatus.*;
 import static org.assertj.core.api.AssertionsForClassTypes.*;
-import static org.springframework.test.web.servlet.MockMvcBuilder.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import gg.admin.repo.agenda.AgendaAdminRepository;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
@@ -19,11 +20,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MockMvcBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -31,11 +30,8 @@ import gg.agenda.api.AgendaMockData;
 import gg.agenda.api.admin.agenda.controller.request.AgendaAdminUpdateReqDto;
 import gg.agenda.api.admin.agenda.controller.response.AgendaAdminResDto;
 import gg.data.agenda.Agenda;
-import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.type.AgendaStatus;
-import gg.data.agenda.type.Location;
 import gg.data.user.User;
-import gg.repo.agenda.AgendaRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import gg.utils.dto.PageRequestDto;
@@ -63,7 +59,7 @@ public class AgendaAdminControllerTest {
 	EntityManager em;
 
 	@Autowired
-	AgendaRepository agendaRepository;
+	AgendaAdminRepository agendaAdminRepository;
 
 	private User user;
 
@@ -71,7 +67,7 @@ public class AgendaAdminControllerTest {
 
 	@BeforeEach
 	void setUp() {
-		user = testDataUtils.createNewUser();
+		user = testDataUtils.createAdminUser();
 		accessToken = testDataUtils.getLoginAccessTokenFromUser(user);
 	}
 
@@ -150,14 +146,22 @@ public class AgendaAdminControllerTest {
 			String request = objectMapper.writeValueAsString(agendaDto);
 
 			// when
-			mockMvc.perform(patch("/admin/request")
+			mockMvc.perform(patch("/admin/agenda/request")
 					.param("agenda_key", agenda.getAgendaKey().toString())
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(request))
 				.andExpect(status().isNoContent());
+			Optional<Agenda> updated = agendaAdminRepository.findByAgendaKey(agenda.getAgendaKey());
 
 			// then
+			assert (updated.isPresent());
+			assertThat(updated.get().getTitle()).isEqualTo(agendaDto.getAgendaTitle());
+			assertThat(updated.get().getContent()).isEqualTo(agendaDto.getAgendaContents());
+			assertThat(updated.get().getPosterUri()).isEqualTo(agendaDto.getAgendaPoster());
+			assertThat(updated.get().getStatus()).isEqualTo(agendaDto.getAgendaStatus());
+			assertThat(updated.get().getIsOfficial()).isEqualTo(agendaDto.getIsOfficial());
+			assertThat(updated.get().getIsRanking()).isEqualTo(agendaDto.getIsRanking());
 		}
 
 		@Test
