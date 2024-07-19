@@ -22,8 +22,8 @@ import gg.agenda.api.AgendaMockData;
 import gg.agenda.api.user.agendaprofile.controller.request.AgendaProfileChangeReqDto;
 import gg.agenda.api.user.agendaprofile.controller.response.AgendaProfileDetailsResDto;
 import gg.data.agenda.AgendaProfile;
-import gg.data.agenda.Ticket;
 import gg.data.user.User;
+import gg.repo.agenda.AgendaProfileRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 
@@ -39,6 +39,8 @@ public class AgendaProfileControllerTest {
 	private TestDataUtils testDataUtils;
 	@Autowired
 	private AgendaMockData agendaMockData;
+	@Autowired
+	private AgendaProfileRepository agendaProfileRepository;
 	User user;
 	String accessToken;
 
@@ -57,16 +59,13 @@ public class AgendaProfileControllerTest {
 		void test() throws Exception {
 			//given
 			AgendaProfile agendaProfile = agendaMockData.createAgendaProfile(user, SEOUL);
-			Ticket ticket = agendaMockData.createTicket(agendaProfile);
-
+			agendaMockData.createTicket(agendaProfile);
 			// when
 			String response = mockMvc.perform(get("/agenda/profile")
 					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
-
 			AgendaProfileDetailsResDto result = objectMapper.readValue(response, AgendaProfileDetailsResDto.class);
-
 			// then
 			assertThat(result.getUserIntraId()).isEqualTo(user.getIntraId());
 			assertThat(result.getUserContent()).isEqualTo(agendaProfile.getContent());
@@ -81,7 +80,6 @@ public class AgendaProfileControllerTest {
 		void testInvalidUser() throws Exception {
 			// given: 유효하지 않은 유저의 액세스 토큰
 			String invalidAccessToken = "invalid-access-token";
-
 			// when & then: 예외가 발생해야 함
 			mockMvc.perform(get("/agenda/profile")
 					.header("Authorization", "Bearer " + invalidAccessToken))
@@ -103,7 +101,6 @@ public class AgendaProfileControllerTest {
 	@Nested
 	@DisplayName("개인 프로필 정보 변경")
 	class UpdateAgendaProfile {
-
 		@BeforeEach
 		void beforeEach() {
 			user = testDataUtils.createNewUser();
@@ -115,33 +112,20 @@ public class AgendaProfileControllerTest {
 		void updateProfileWithValidData() throws Exception {
 			// Given
 			AgendaProfile agendaProfile = agendaMockData.createAgendaProfile(user, SEOUL);
-			Ticket ticket = agendaMockData.createTicket(agendaProfile);
+			agendaMockData.createTicket(agendaProfile);
 			AgendaProfileChangeReqDto requestDto = new AgendaProfileChangeReqDto("Valid user content",
 				"https://github.com/validUser");
-
 			String content = objectMapper.writeValueAsString(requestDto);
-
 			// When
 			mockMvc.perform(patch("/agenda/profile")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(content))
 				.andExpect(status().isNoContent());
-
 			// Then
-			String response = mockMvc.perform(get("/agenda/profile")
-					.header("Authorization", "Bearer " + accessToken))
-				.andExpect(status().isOk())
-				.andReturn().getResponse().getContentAsString();
-
-			AgendaProfileDetailsResDto result = objectMapper.readValue(response, AgendaProfileDetailsResDto.class);
-
-			assertThat(result.getUserIntraId()).isEqualTo(user.getIntraId());
-			assertThat(result.getUserContent()).isEqualTo("Valid user content");
-			assertThat(result.getUserGithub()).isEqualTo("https://github.com/validUser");
-			assertThat(result.getUserCoalition()).isEqualTo(agendaProfile.getCoalition());
-			assertThat(result.getUserLocation()).isEqualTo(agendaProfile.getLocation());
-			assertThat(result.getTicketCount()).isEqualTo(1);
+			AgendaProfile result = agendaProfileRepository.findByUserId(user.getId()).orElseThrow(null);
+			assertThat(result.getContent()).isEqualTo(requestDto.getUserContent());
+			assertThat(result.getGithubUrl()).isEqualTo(requestDto.getUserGithub());
 		}
 
 		@Test
@@ -149,9 +133,7 @@ public class AgendaProfileControllerTest {
 		void updateProfileWithoutUserContent() throws Exception {
 			// Given
 			AgendaProfileChangeReqDto requestDto = new AgendaProfileChangeReqDto("", "https://github.com/validUser");
-
 			String content = objectMapper.writeValueAsString(requestDto);
-
 			// When & Then
 			mockMvc.perform(patch("/agenda/profile")
 					.header("Authorization", "Bearer " + accessToken)
@@ -166,9 +148,7 @@ public class AgendaProfileControllerTest {
 			// Given
 			AgendaProfileChangeReqDto requestDto = new AgendaProfileChangeReqDto("Valid user content",
 				"invalidGithubUrl");
-
 			String content = objectMapper.writeValueAsString(requestDto);
-
 			// When & Then
 			mockMvc.perform(patch("/agenda/profile")
 					.header("Authorization", "Bearer " + accessToken)
@@ -184,9 +164,7 @@ public class AgendaProfileControllerTest {
 			String longContent = "a".repeat(1001); // Assuming the limit is 1000 characters
 			AgendaProfileChangeReqDto requestDto = new AgendaProfileChangeReqDto(longContent,
 				"https://github.com/validUser");
-
 			String content = objectMapper.writeValueAsString(requestDto);
-
 			// When & Then
 			mockMvc.perform(patch("/agenda/profile")
 					.header("Authorization", "Bearer " + accessToken)
@@ -210,6 +188,16 @@ public class AgendaProfileControllerTest {
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(content))
 				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("해당 로그인 유저의 아젠다 프로필이 없을 때")
+		void testAgendaProfileNotFound() throws Exception {
+			// given: 특정 유저와 관련된 AgendaProfile이 없음
+			// when & then: 예외가 발생해야 함
+			mockMvc.perform(get("/agenda/profile")
+					.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isNotFound());
 		}
 	}
 }

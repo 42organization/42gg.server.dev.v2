@@ -50,7 +50,7 @@ public class AgendaProfileController {
 	@PatchMapping
 	public ResponseEntity<Void> agendaProfileModify(@Login @Parameter(hidden = true) UserDto user,
 		@RequestBody @Valid AgendaProfileChangeReqDto reqDto) {
-		agendaProfileService.modifyAgendaProfile(user.getIntraId(), reqDto);
+		agendaProfileService.modifyAgendaProfile(user.getId(), reqDto);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 }

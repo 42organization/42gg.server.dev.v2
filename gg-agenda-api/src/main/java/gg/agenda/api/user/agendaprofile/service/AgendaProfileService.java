@@ -1,5 +1,7 @@
 package gg.agenda.api.user.agendaprofile.service;
 
+import static gg.utils.exception.ErrorCode.*;
+
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
@@ -9,6 +11,7 @@ import gg.data.agenda.AgendaProfile;
 import gg.data.user.User;
 import gg.repo.agenda.AgendaProfileRepository;
 import gg.repo.user.UserRepository;
+import gg.utils.exception.custom.NotExistException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -18,17 +21,19 @@ public class AgendaProfileService {
 	private final UserRepository userRepository;
 	private final AgendaProfileRepository agendaProfileRepository;
 
+	/**
+	 * AgendaProfile 변경 메서드
+	 * @param userId 로그인한 유저의 id
+	 * @param reqDto 변경할 프로필 정보
+	 */
 	@Transactional
-	public void modifyAgendaProfile(String intraId, AgendaProfileChangeReqDto reqDto) {
-		// User와 AgendaProfile을 조회
-		User user = userRepository.findByIntraId(intraId).get();
+	public void modifyAgendaProfile(Long userId, AgendaProfileChangeReqDto reqDto) {
+		User user = userRepository.getById(userId);
 
-		AgendaProfile agendaProfile = agendaProfileRepository.findByUserId(user.getId()).get();
+		AgendaProfile agendaProfile = agendaProfileRepository.findByUserId(user.getId())
+			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
 
-		// 변경된 값들로 업데이트
 		agendaProfile.updateProfile(reqDto.getUserContent(), reqDto.getUserGithub());
-
-		// 변경사항을 저장
 		agendaProfileRepository.save(agendaProfile);
 	}
 }
