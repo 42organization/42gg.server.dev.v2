@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -28,12 +29,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AgendaCreateReqDto {
 
-	@NotNull
-	@NotEmpty
+	@NotBlank
 	private String agendaTitle;
 
-	@NotNull
-	@NotEmpty
+	@NotBlank
 	private String agendaContent;
 
 	@NotNull
