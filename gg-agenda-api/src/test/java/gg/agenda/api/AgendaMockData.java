@@ -435,11 +435,28 @@ public class AgendaMockData {
 			.status(OPEN)
 			.location(SEOUL)
 			.mateCount(3)
-			.award("award")
 			.awardPriority(1)
 			.isPrivate(false)
 			.build();
 		return agendaTeamRepository.save(agendaTeam);
+	}
+
+	public List<AgendaTeam> createAgendaTeamList(Agenda agenda, int size, AgendaTeamStatus status) {
+		List<AgendaTeam> agendaTeams = IntStream.range(0, size).mapToObj(i -> AgendaTeam.builder()
+				.agenda(agenda)
+				.teamKey(randomUUID())
+				.name("name")
+				.content("content")
+				.leaderIntraId("leaderIntraId")
+				.status(status)
+				.location(SEOUL)
+				.mateCount(3)
+				.awardPriority(1)
+				.isPrivate(false)
+				.build()
+			)
+			.collect(Collectors.toList());
+		return agendaTeamRepository.saveAll(agendaTeams);
 	}
 
 	public AgendaTeam createAgendaTeam(Agenda agenda, String teamName) {
@@ -452,7 +469,6 @@ public class AgendaMockData {
 			.status(OPEN)
 			.location(SEOUL)
 			.mateCount(3)
-			.award("award")
 			.awardPriority(1)
 			.isPrivate(false)
 			.build();
@@ -469,7 +485,6 @@ public class AgendaMockData {
 			.status(status)
 			.location(SEOUL)
 			.mateCount(3)
-			.award("award")
 			.awardPriority(-1)
 			.isPrivate(false)
 			.build();
@@ -486,7 +501,6 @@ public class AgendaMockData {
 			.status(OPEN)
 			.location(SEOUL)
 			.mateCount(3)
-			.award("award")
 			.awardPriority(1)
 			.isPrivate(false)
 			.build();
@@ -503,7 +517,6 @@ public class AgendaMockData {
 			.status(OPEN)
 			.location(SEOUL)
 			.mateCount(mateCount)
-			.award("award")
 			.awardPriority(1)
 			.isPrivate(false)
 			.build();
@@ -520,7 +533,6 @@ public class AgendaMockData {
 			.status(OPEN)
 			.location(location)
 			.mateCount(3)
-			.award("award")
 			.awardPriority(1)
 			.isPrivate(false)
 			.build();
@@ -537,7 +549,6 @@ public class AgendaMockData {
 			.status(status)
 			.location(location)
 			.mateCount(3)
-			.award("award")
 			.awardPriority(1)
 			.isPrivate(false)
 			.build();
@@ -554,7 +565,6 @@ public class AgendaMockData {
 			.status(OPEN)
 			.location(location)
 			.mateCount(currentTeam)
-			.award("award")
 			.awardPriority(1)
 			.isPrivate(false)
 			.build();
@@ -572,7 +582,6 @@ public class AgendaMockData {
 			.status(status)
 			.location(location)
 			.mateCount(3)
-			.award("award")
 			.awardPriority(1)
 			.isPrivate(isPrivate)
 			.build();

@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import gg.agenda.api.user.agendateam.controller.request.TeamCreateReqDto;
 import gg.agenda.api.user.agendateam.controller.request.TeamKeyReqDto;
 import gg.agenda.api.user.agendateam.controller.response.MyTeamSimpleResDto;
+import gg.agenda.api.user.agendateam.controller.response.OpenTeamResDto;
 import gg.agenda.api.user.agendateam.controller.response.TeamDetailsResDto;
 import gg.agenda.api.user.agendateam.controller.response.TeamKeyResDto;
 import gg.agenda.api.user.ticket.service.TicketService;
@@ -217,5 +219,20 @@ public class AgendaTeamService {
 		teamMate.leaveTeam();
 		agendaTeam.leaveTeamMate();
 		return List.of(teamMate.getProfile());
+	}
+
+	/**
+	 * 아젠다 팀 공개 모집인 팀 목록 조회
+	 * @param user 사용자 정보, PageRequestDto 페이지네이션 요청 정보, agendaId 아젠다 아이디
+	 */
+	public List<OpenTeamResDto> listOpenTeam(UserDto user, UUID agendaKey, Pageable pageable) {
+		Agenda agenda = agendaRepository.findByAgendaKey(agendaKey)
+			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
+
+		List<AgendaTeam> agendaTeams = agendaTeamRepository.findByAgendaAndStatusAndIsPrivateFalse(agenda, OPEN,
+			pageable).getContent();
+		return agendaTeams.stream()
+			.map(OpenTeamResDto::new)
+			.collect(Collectors.toList());
 	}
 }
