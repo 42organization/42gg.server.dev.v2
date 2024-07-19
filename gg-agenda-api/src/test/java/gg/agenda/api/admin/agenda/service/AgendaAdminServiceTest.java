@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import gg.data.agenda.type.AgendaStatus;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,14 +24,13 @@ import gg.admin.repo.agenda.AgendaTeamAdminRepository;
 import gg.agenda.api.admin.agenda.controller.request.AgendaAdminUpdateReqDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaTeam;
+import gg.data.agenda.type.AgendaStatus;
 import gg.data.agenda.type.AgendaTeamStatus;
 import gg.data.agenda.type.Location;
 import gg.utils.annotation.UnitTest;
 import gg.utils.exception.custom.InvalidParameterException;
 import gg.utils.exception.custom.NotExistException;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @UnitTest
 public class AgendaAdminServiceTest {
 
@@ -97,12 +95,12 @@ public class AgendaAdminServiceTest {
 			for (int i = 0; i < teamCount; i++) {
 				teams.add(AgendaTeam.builder().location(Location.SEOUL).mateCount(3).build());
 			}
-			Agenda agenda = Agenda.builder()
-				.title("title").content("content").posterUri("posterUri")
-				.isOfficial(false).isRanking(true).status(AgendaStatus.CONFIRM).build();
-			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder()
-				.agendaTitle("Updated title").agendaContents("Updated content").agendaPoster("Updated posterUri")
-				.isOfficial(true).isRanking(true).agendaStatus(AgendaStatus.CANCEL).build();
+			Agenda agenda = Agenda.builder().title("title").content("content").posterUri("posterUri").isOfficial(false)
+				.isRanking(true).status(AgendaStatus.CONFIRM).build();
+			AgendaAdminUpdateReqDto agendaDto =
+				AgendaAdminUpdateReqDto.builder().agendaTitle("Updated title").agendaContents("Updated content")
+					.agendaPoster("Updated posterUri").isOfficial(true).isRanking(true)
+					.agendaStatus(AgendaStatus.CANCEL).build();
 			when(agendaAdminRepository.findByAgendaKey(any())).thenReturn(Optional.of(agenda));
 			when(agendaTeamAdminRepository.findAllByAgenda(any())).thenReturn(teams);
 
@@ -129,15 +127,11 @@ public class AgendaAdminServiceTest {
 			for (int i = 0; i < teamCount; i++) {
 				teams.add(AgendaTeam.builder().location(Location.SEOUL).mateCount(3).build());
 			}
-			Agenda agenda = Agenda.builder()
-				.deadline(LocalDateTime.now().minusDays(3))
-				.startTime(LocalDateTime.now().plusDays(1))
-				.endTime(LocalDateTime.now().plusDays(3))
-				.build();
-			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder()
-				.agendaDeadLine(LocalDateTime.now())
-				.agendaStartTime(LocalDateTime.now().plusDays(3))
-				.agendaEndTime(LocalDateTime.now().plusDays(5))
+			Agenda agenda =
+				Agenda.builder().deadline(LocalDateTime.now().minusDays(3)).startTime(LocalDateTime.now().plusDays(1))
+					.endTime(LocalDateTime.now().plusDays(3)).build();
+			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder().agendaDeadLine(LocalDateTime.now())
+				.agendaStartTime(LocalDateTime.now().plusDays(3)).agendaEndTime(LocalDateTime.now().plusDays(5))
 				.build();
 			when(agendaAdminRepository.findByAgendaKey(any())).thenReturn(Optional.of(agenda));
 			when(agendaTeamAdminRepository.findAllByAgenda(any())).thenReturn(teams);
@@ -163,8 +157,7 @@ public class AgendaAdminServiceTest {
 				teams.add(AgendaTeam.builder().location(Location.SEOUL).mateCount(3).build());
 			}
 			Agenda agenda = Agenda.builder().location(Location.SEOUL).build();
-			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder()
-				.agendaLocation(Location.MIX).build();
+			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder().agendaLocation(Location.MIX).build();
 			when(agendaAdminRepository.findByAgendaKey(any())).thenReturn(Optional.of(agenda));
 			when(agendaTeamAdminRepository.findAllByAgenda(any())).thenReturn(teams);
 
@@ -187,8 +180,8 @@ public class AgendaAdminServiceTest {
 				teams.add(AgendaTeam.builder().location(Location.SEOUL).mateCount(3).build());
 			}
 			Agenda agenda = Agenda.builder().minTeam(5).maxTeam(10).build();
-			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder()
-				.agendaMinTeam(2).agendaMaxTeam(20).build();
+			AgendaAdminUpdateReqDto agendaDto =
+				AgendaAdminUpdateReqDto.builder().agendaMinTeam(2).agendaMaxTeam(20).build();
 			when(agendaAdminRepository.findByAgendaKey(any())).thenReturn(Optional.of(agenda));
 			when(agendaTeamAdminRepository.findAllByAgenda(any())).thenReturn(teams);
 
@@ -212,8 +205,8 @@ public class AgendaAdminServiceTest {
 				teams.add(AgendaTeam.builder().location(Location.SEOUL).mateCount(3).build());
 			}
 			Agenda agenda = Agenda.builder().minPeople(1).maxPeople(10).build();
-			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder()
-				.agendaMinPeople(2).agendaMaxPeople(20).build();
+			AgendaAdminUpdateReqDto agendaDto =
+				AgendaAdminUpdateReqDto.builder().agendaMinPeople(2).agendaMaxPeople(20).build();
 			when(agendaAdminRepository.findByAgendaKey(any())).thenReturn(Optional.of(agenda));
 			when(agendaTeamAdminRepository.findAllByAgenda(any())).thenReturn(teams);
 
@@ -235,8 +228,7 @@ public class AgendaAdminServiceTest {
 			when(agendaAdminRepository.findByAgendaKey(any())).thenReturn(Optional.empty());
 
 			// expected
-			assertThrows(NotExistException.class,
-				() -> agendaAdminService.updateAgenda(UUID.randomUUID(), agendaDto));
+			assertThrows(NotExistException.class, () -> agendaAdminService.updateAgenda(UUID.randomUUID(), agendaDto));
 		}
 
 		@Test
@@ -250,8 +242,8 @@ public class AgendaAdminServiceTest {
 			}    // SEOUL
 			teams.add(AgendaTeam.builder().location(Location.GYEONGSAN).mateCount(3).build());    // GYEONGSAN
 			Agenda agenda = Agenda.builder().currentTeam(teams.size()).location(Location.MIX).build();
-			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder()
-				.agendaLocation(Location.SEOUL).build();
+			AgendaAdminUpdateReqDto agendaDto =
+				AgendaAdminUpdateReqDto.builder().agendaLocation(Location.SEOUL).build();
 			when(agendaAdminRepository.findByAgendaKey(any())).thenReturn(Optional.of(agenda));
 			when(agendaTeamAdminRepository.findAllByAgenda(any())).thenReturn(teams);
 
@@ -269,11 +261,10 @@ public class AgendaAdminServiceTest {
 			for (int i = 0; i < teamCount; i++) {
 				teams.add(AgendaTeam.builder().location(Location.SEOUL).mateCount(3).build());
 			}    // 10개 팀
-			Agenda agenda = Agenda.builder()
-				.currentTeam(teams.size()).minTeam(5).maxTeam(10)
-				.status(AgendaStatus.CONFIRM).build();
-			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder()
-				.agendaMinTeam(10).agendaMaxTeam(20).build();
+			Agenda agenda =
+				Agenda.builder().currentTeam(teams.size()).minTeam(5).maxTeam(10).status(AgendaStatus.CONFIRM).build();
+			AgendaAdminUpdateReqDto agendaDto =
+				AgendaAdminUpdateReqDto.builder().agendaMinTeam(10).agendaMaxTeam(20).build();
 			when(agendaAdminRepository.findByAgendaKey(any())).thenReturn(Optional.of(agenda));
 			when(agendaTeamAdminRepository.findAllByAgenda(any())).thenReturn(teams);
 
@@ -291,10 +282,9 @@ public class AgendaAdminServiceTest {
 			for (int i = 0; i < teamCount; i++) {
 				teams.add(AgendaTeam.builder().location(Location.SEOUL).mateCount(3).build());
 			}    // 10개 팀
-			Agenda agenda = Agenda.builder()
-				.currentTeam(teams.size()).minTeam(5).maxTeam(10).build();
-			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder()
-				.agendaMinTeam(2).agendaMaxTeam(5).build();
+			Agenda agenda = Agenda.builder().currentTeam(teams.size()).minTeam(5).maxTeam(10).build();
+			AgendaAdminUpdateReqDto agendaDto =
+				AgendaAdminUpdateReqDto.builder().agendaMinTeam(2).agendaMaxTeam(5).build();
 			when(agendaAdminRepository.findByAgendaKey(any())).thenReturn(Optional.of(agenda));
 			when(agendaTeamAdminRepository.findAllByAgenda(any())).thenReturn(teams);
 
@@ -312,12 +302,11 @@ public class AgendaAdminServiceTest {
 			for (int i = 0; i < teamCount; i++) {
 				teams.add(AgendaTeam.builder().location(Location.SEOUL).mateCount(3).build());
 			}
-			teams.add(AgendaTeam.builder().location(Location.SEOUL).mateCount(10)
-				.status(AgendaTeamStatus.CONFIRM).build());    // mateCount 10
-			Agenda agenda = Agenda.builder()
-				.currentTeam(teams.size()).minPeople(1).maxPeople(10).build();
-			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder()
-				.agendaMinPeople(2).agendaMaxPeople(5).build();
+			teams.add(AgendaTeam.builder().location(Location.SEOUL).mateCount(10).status(AgendaTeamStatus.CONFIRM)
+				.build());    // mateCount 10
+			Agenda agenda = Agenda.builder().currentTeam(teams.size()).minPeople(1).maxPeople(10).build();
+			AgendaAdminUpdateReqDto agendaDto =
+				AgendaAdminUpdateReqDto.builder().agendaMinPeople(2).agendaMaxPeople(5).build();
 			when(agendaAdminRepository.findByAgendaKey(any())).thenReturn(Optional.of(agenda));
 			when(agendaTeamAdminRepository.findAllByAgenda(any())).thenReturn(teams);
 
@@ -335,12 +324,11 @@ public class AgendaAdminServiceTest {
 			for (int i = 0; i < teamCount; i++) {
 				teams.add(AgendaTeam.builder().location(Location.SEOUL).mateCount(3).build());
 			}
-			teams.add(AgendaTeam.builder().location(Location.SEOUL).mateCount(3)
-				.status(AgendaTeamStatus.CONFIRM).build());
-			Agenda agenda = Agenda.builder()
-				.currentTeam(teams.size()).minPeople(1).maxPeople(10).build();
-			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder()
-				.agendaMinPeople(5).agendaMaxPeople(20).build();
+			teams.add(
+				AgendaTeam.builder().location(Location.SEOUL).mateCount(3).status(AgendaTeamStatus.CONFIRM).build());
+			Agenda agenda = Agenda.builder().currentTeam(teams.size()).minPeople(1).maxPeople(10).build();
+			AgendaAdminUpdateReqDto agendaDto =
+				AgendaAdminUpdateReqDto.builder().agendaMinPeople(5).agendaMaxPeople(20).build();
 			when(agendaAdminRepository.findByAgendaKey(any())).thenReturn(Optional.of(agenda));
 			when(agendaTeamAdminRepository.findAllByAgenda(any())).thenReturn(teams);
 
