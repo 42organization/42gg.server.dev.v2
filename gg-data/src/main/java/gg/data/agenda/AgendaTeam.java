@@ -27,6 +27,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class AgendaTeam extends BaseTimeEntity {
+	public static final String DEFAULT_AWARD = "participant";
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false)
@@ -70,7 +71,7 @@ public class AgendaTeam extends BaseTimeEntity {
 
 	@Builder
 	public AgendaTeam(Agenda agenda, UUID teamKey, String name, String content, String leaderIntraId,
-		AgendaTeamStatus status, Location location, int mateCount, String award, int awardPriority, Boolean isPrivate) {
+		AgendaTeamStatus status, Location location, int mateCount, int awardPriority, Boolean isPrivate) {
 		this.agenda = agenda;
 		this.teamKey = teamKey;
 		this.name = name;
@@ -79,7 +80,7 @@ public class AgendaTeam extends BaseTimeEntity {
 		this.status = status;
 		this.location = location;
 		this.mateCount = mateCount;
-		this.award = award;
+		this.award = DEFAULT_AWARD;
 		this.awardPriority = awardPriority;
 		this.isPrivate = isPrivate;
 	}
@@ -97,5 +98,20 @@ public class AgendaTeam extends BaseTimeEntity {
 			throw new BusinessException(AGENDA_TEAM_ALREADY_CONFIRM);
 		}
 		this.status = AgendaTeamStatus.CONFIRM;
+	}
+
+	public void leaveTeamLeader() {
+		if (this.status == AgendaTeamStatus.CANCEL) {
+			throw new BusinessException(AGENDA_TEAM_ALREADY_CANCEL);
+		}
+		this.status = AgendaTeamStatus.CANCEL;
+		this.mateCount = 0;
+	}
+
+	public void leaveTeamMate() {
+		if (this.status == AgendaTeamStatus.CANCEL) {
+			throw new BusinessException(AGENDA_TEAM_ALREADY_CANCEL);
+		}
+		this.mateCount--;
 	}
 }

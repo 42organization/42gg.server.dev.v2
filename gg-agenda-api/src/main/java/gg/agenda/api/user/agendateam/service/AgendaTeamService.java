@@ -9,14 +9,18 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.agenda.api.user.agendateam.controller.request.TeamCreateReqDto;
 import gg.agenda.api.user.agendateam.controller.request.TeamKeyReqDto;
 import gg.agenda.api.user.agendateam.controller.response.MyTeamSimpleResDto;
-import gg.agenda.api.user.agendateam.controller.response.TeamCreateResDto;
+import gg.agenda.api.user.agendateam.controller.response.OpenTeamResDto;
 import gg.agenda.api.user.agendateam.controller.response.TeamDetailsResDto;
+import gg.agenda.api.user.agendateam.controller.response.TeamKeyResDto;
+import gg.agenda.api.user.ticket.service.TicketService;
 import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaProfile;
@@ -39,6 +43,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class AgendaTeamService {
+	private final TicketService ticketService;
 	private final AgendaRepository agendaRepository;
 	private final TicketRepository ticketRepository;
 	private final AgendaTeamRepository agendaTeamRepository;
@@ -106,7 +111,7 @@ public class AgendaTeamService {
 	 * @return 만들어진 팀 KEY
 	 */
 	@Transactional
-	public TeamCreateResDto addAgendaTeam(UserDto user, TeamCreateReqDto teamCreateReqDto, UUID agendaKey) {
+	public TeamKeyResDto addAgendaTeam(UserDto user, TeamCreateReqDto teamCreateReqDto, UUID agendaKey) {
 		AgendaProfile agendaProfile = agendaProfileRepository.findByUserId(user.getId())
 			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
 
@@ -128,9 +133,9 @@ public class AgendaTeamService {
 		});
 
 		if (agenda.getIsOfficial()) {
-			Ticket ticket = ticketRepository.findByAgendaProfileAndIsApproveTrueAndIsUsedFalse(agendaProfile)
+			Ticket ticket = ticketRepository.findByAgendaProfileAndIsApprovedTrueAndIsUsedFalse(agendaProfile)
 				.orElseThrow(() -> new ForbiddenException(TICKET_NOT_EXIST));
-			ticket.useTicket();
+			ticket.useTicket(agenda.getAgendaKey());
 		}
 
 		agendaTeamRepository.findByAgendaAndTeamNameAndStatus(agenda, teamCreateReqDto.getTeamName(), OPEN, CONFIRM)
@@ -143,16 +148,20 @@ public class AgendaTeamService {
 		agendaRepository.save(agenda);
 		agendaTeamRepository.save(agendaTeam);
 		agendaTeamProfileRepository.save(agendaTeamProfile);
-		return new TeamCreateResDto(agendaTeam.getTeamKey().toString());
+		return new TeamKeyResDto(agendaTeam.getTeamKey().toString());
 	}
 
+	/**
+	 * 아젠다 팀 확정하기
+	 * @param user 사용자 정보, teamKeyReqDto 팀 KEY 요청 정보, agendaId 아젠다 아이디
+	 */
 	@Transactional
-	public void confirmTeam(UserDto user, UUID agendaKey, TeamKeyReqDto teamKeyReqDto) {
+	public void confirmTeam(UserDto user, UUID agendaKey, UUID teamKey) {
 		Agenda agenda = agendaRepository.findByAgendaKey(agendaKey)
 			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
 
 		AgendaTeam agendaTeam = agendaTeamRepository
-			.findByAgendaAndTeamKeyAndStatus(agenda, teamKeyReqDto.getTeamKey(), OPEN, CONFIRM)
+			.findByAgendaAndTeamKeyAndStatus(agenda, teamKey, OPEN, CONFIRM)
 			.orElseThrow(() -> new NotExistException(AGENDA_TEAM_NOT_FOUND));
 
 		if (!agendaTeam.getLeaderIntraId().equals(user.getIntraId())) {
@@ -161,8 +170,69 @@ public class AgendaTeamService {
 		if (agendaTeam.getMateCount() < agenda.getMinPeople()) {
 			throw new BusinessException(NOT_ENOUGH_TEAM_MEMBER);
 		}
-		agenda.checkAgenda(agendaTeam.getLocation(), LocalDateTime.now());
+		agenda.confirmTeam(agendaTeam.getLocation(), LocalDateTime.now());
 		agendaTeam.confirm();
 		agendaTeamRepository.save(agendaTeam);
+	}
+
+	/**
+	 * 아젠다 팀 나가기
+	 * @param user 사용자 정보, teamKeyReqDto 팀 KEY 요청 정보, agendaId 아젠다 아이디
+	 * 트랜잭션의 원자성을 보장하기 위해 팀 나가기와 티켓 환불을 한 메서드에서 처리
+	 */
+	@Transactional
+	public void agendaTeamLeave(UserDto user, UUID agendaKey, UUID teamKey) {
+		Agenda agenda = agendaRepository.findByAgendaKey(agendaKey)
+			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
+
+		AgendaTeam agendaTeam = agendaTeamRepository
+			.findByAgendaAndTeamKeyAndStatus(agenda, teamKey, OPEN, CONFIRM)
+			.orElseThrow(() -> new NotExistException(AGENDA_TEAM_NOT_FOUND));
+
+		agenda.cancelTeam(LocalDateTime.now());
+
+		List<AgendaTeamProfile> profiles = agendaTeamProfileRepository.findByAgendaTeamAndIsExistTrue(agendaTeam);
+		List<AgendaProfile> changedProfiles = agendaTeamProfileLeave(user, agendaTeam, profiles);
+		ticketService.refundTickets(changedProfiles, agendaKey);
+	}
+
+	/**
+	 * 아젠다 팀 나가기
+	 * @param user 사용자 정보, teamKeyReqDto 팀 KEY 요청 정보, agendaId 아젠다 아이디
+	 * @Annotation 트랜잭션의 원자성을 보장하기 위해 부모 트랜잭션이 없을경우 예외를 발생시키는 Propagation.MANDATORY로 설정
+	 */
+	@Transactional(propagation = Propagation.MANDATORY)
+	public List<AgendaProfile> agendaTeamProfileLeave(UserDto user, AgendaTeam agendaTeam,
+		List<AgendaTeamProfile> profiles) {
+		if (agendaTeam.getLeaderIntraId().equals(user.getIntraId())) {
+			List<AgendaProfile> changedProfiles = profiles
+				.stream()
+				.peek(AgendaTeamProfile::leaveTeam)
+				.map(AgendaTeamProfile::getProfile)
+				.collect(Collectors.toList());
+			agendaTeam.leaveTeamLeader();
+			return changedProfiles;
+		}
+		AgendaTeamProfile teamMate = profiles.stream()
+			.filter(profile -> profile.getProfile().getUserId().equals(user.getId()))
+			.findFirst().orElseThrow(() -> new ForbiddenException(NOT_TEAM_MATE));
+		teamMate.leaveTeam();
+		agendaTeam.leaveTeamMate();
+		return List.of(teamMate.getProfile());
+	}
+
+	/**
+	 * 아젠다 팀 공개 모집인 팀 목록 조회
+	 * @param user 사용자 정보, PageRequestDto 페이지네이션 요청 정보, agendaId 아젠다 아이디
+	 */
+	public List<OpenTeamResDto> listOpenTeam(UserDto user, UUID agendaKey, Pageable pageable) {
+		Agenda agenda = agendaRepository.findByAgendaKey(agendaKey)
+			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
+
+		List<AgendaTeam> agendaTeams = agendaTeamRepository.findByAgendaAndStatusAndIsPrivateFalse(agenda, OPEN,
+			pageable).getContent();
+		return agendaTeams.stream()
+			.map(OpenTeamResDto::new)
+			.collect(Collectors.toList());
 	}
 }

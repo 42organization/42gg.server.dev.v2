@@ -13,8 +13,10 @@ import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.type.Location;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class TeamCreateReqDto {
 	@NotBlank
 	@Size(max = 30)
@@ -49,7 +51,6 @@ public class TeamCreateReqDto {
 			.status(OPEN)
 			.location(Location.valueOf(teamCreateReqDto.getTeamLocation()))
 			.mateCount(1)
-			.award("award")
 			.awardPriority(1)
 			.isPrivate(teamCreateReqDto.getTeamIsPrivate())
 			.build();
