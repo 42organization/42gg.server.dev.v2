@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import gg.agenda.api.user.agendateam.controller.request.TeamCreateReqDto;
 import gg.agenda.api.user.agendateam.controller.request.TeamKeyReqDto;
+import gg.agenda.api.user.agendateam.controller.response.ConfirmTeamResDto;
 import gg.agenda.api.user.agendateam.controller.response.MyTeamSimpleResDto;
 import gg.agenda.api.user.agendateam.controller.response.OpenTeamResDto;
 import gg.agenda.api.user.agendateam.controller.response.TeamDetailsResDto;
@@ -62,7 +63,8 @@ public class AgendaTeamService {
 		AgendaProfile agendaProfile = agendaProfileRepository.findByUserId(user.getId())
 			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
 
-		Optional<AgendaTeam> agendaTeam = agendaTeamProfileRepository.findByAgendaAndIsExistTrue(agenda, agendaProfile)
+		Optional<AgendaTeam> agendaTeam = agendaTeamProfileRepository.findByAgendaProfileAndIsExistTrue(agenda,
+				agendaProfile)
 			.map(AgendaTeamProfile::getAgendaTeam);
 		if (agendaTeam.isEmpty()) {
 			return Optional.empty();
@@ -128,7 +130,7 @@ public class AgendaTeamService {
 			throw new BusinessException(LOCATION_NOT_VALID);
 		}
 
-		agendaTeamProfileRepository.findByAgendaAndIsExistTrue(agenda, agendaProfile).ifPresent(teamProfile -> {
+		agendaTeamProfileRepository.findByAgendaProfileAndIsExistTrue(agenda, agendaProfile).ifPresent(teamProfile -> {
 			throw new DuplicationException(TEAM_FORBIDDEN);
 		});
 
@@ -234,5 +236,24 @@ public class AgendaTeamService {
 		return agendaTeams.stream()
 			.map(OpenTeamResDto::new)
 			.collect(Collectors.toList());
+	}
+
+	/**
+	 * 아젠다 팀 확정된 팀 목록 조회
+	 * @param user 사용자 정보, PageRequestDto 페이지네이션 요청 정보, agendaId 아젠다 아이디
+	 */
+	public List<ConfirmTeamResDto> listConfirmTeam(UserDto user, UUID agendaKey, Pageable pageable) {
+		Agenda agenda = agendaRepository.findByAgendaKey(agendaKey)
+			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
+
+		List<AgendaTeam> agendaTeams = agendaTeamRepository.findByAgendaAndStatus(agenda, CONFIRM, pageable)
+			.getContent();
+		return agendaTeams.stream().map(agendaTeam -> {
+			List<AgendaTeamProfile> agendaTeamProfiles = agendaTeamProfileRepository.findByAgendaTeamAndIsExistTrue(
+				agendaTeam);
+			return new ConfirmTeamResDto(agendaTeam, agendaTeamProfiles.stream()
+				.map(AgendaTeamProfile::getProfile)
+				.collect(Collectors.toList()));
+		}).collect(Collectors.toList());
 	}
 }

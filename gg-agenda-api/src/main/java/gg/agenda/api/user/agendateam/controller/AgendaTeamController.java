@@ -21,12 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import gg.agenda.api.user.agendateam.controller.request.TeamCreateReqDto;
 import gg.agenda.api.user.agendateam.controller.request.TeamKeyReqDto;
+import gg.agenda.api.user.agendateam.controller.response.ConfirmTeamResDto;
 import gg.agenda.api.user.agendateam.controller.response.MyTeamSimpleResDto;
 import gg.agenda.api.user.agendateam.controller.response.OpenTeamResDto;
 import gg.agenda.api.user.agendateam.controller.response.TeamDetailsResDto;
 import gg.agenda.api.user.agendateam.controller.response.TeamKeyResDto;
 import gg.agenda.api.user.agendateam.service.AgendaTeamService;
-import gg.agenda.api.user.ticket.service.TicketService;
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
 import gg.utils.dto.PageRequestDto;
@@ -38,7 +38,6 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/agenda/team")
 public class AgendaTeamController {
 	private final AgendaTeamService agendaTeamService;
-	private final TicketService ticketService;
 
 	/**
 	 * 내 팀 간단 정보 조회
@@ -114,5 +113,19 @@ public class AgendaTeamController {
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());
 		List<OpenTeamResDto> openTeamResDtoList = agendaTeamService.listOpenTeam(user, agendaKey, pageable);
 		return ResponseEntity.ok(openTeamResDtoList);
+	}
+
+	/**
+	 * 아젠다 팀 확정된 팀 목록 조회
+	 * @param user 사용자 정보, PageRequestDto 페이지네이션 요청 정보, agendaId 아젠다 아이디
+	 */
+	@GetMapping("/confirm")
+	public ResponseEntity<List<ConfirmTeamResDto>> confirmTeamList(@Parameter(hidden = true) @Login UserDto user,
+		@RequestBody @Valid PageRequestDto pageRequest, @RequestParam("agenda_key") UUID agendaKey) {
+		int page = pageRequest.getPage();
+		int size = pageRequest.getSize();
+		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());
+		List<ConfirmTeamResDto> confirmTeamResDto = agendaTeamService.listConfirmTeam(user, agendaKey, pageable);
+		return ResponseEntity.ok(confirmTeamResDto);
 	}
 }
