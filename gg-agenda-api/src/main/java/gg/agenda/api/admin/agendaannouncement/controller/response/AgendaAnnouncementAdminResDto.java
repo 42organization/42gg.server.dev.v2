@@ -1,6 +1,5 @@
 package gg.agenda.api.admin.agendaannouncement.controller.response;
 
-import gg.agenda.api.user.agendaannouncement.controller.response.AgendaAnnouncementResDto;
 import gg.data.agenda.AgendaAnnouncement;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
