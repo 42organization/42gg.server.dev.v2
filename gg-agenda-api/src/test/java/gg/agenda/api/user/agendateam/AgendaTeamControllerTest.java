@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gg.agenda.api.AgendaMockData;
 import gg.agenda.api.user.agendateam.controller.request.TeamCreateReqDto;
 import gg.agenda.api.user.agendateam.controller.request.TeamKeyReqDto;
+import gg.agenda.api.user.agendateam.controller.response.ConfirmTeamResDto;
 import gg.agenda.api.user.agendateam.controller.response.OpenTeamResDto;
 import gg.agenda.api.user.agendateam.controller.response.TeamDetailsResDto;
 import gg.agenda.api.user.agendateam.controller.response.TeamKeyResDto;
@@ -1005,7 +1006,7 @@ public class AgendaTeamControllerTest {
 
 	@Nested
 	@DisplayName("OPEN팀 조회 테스트")
-	class OpenTeamTest {
+	class OpenTeamListTest {
 		@BeforeEach
 		void beforeEach() {
 			seoulUser = testDataUtils.createNewUser();
@@ -1075,6 +1076,87 @@ public class AgendaTeamControllerTest {
 			// when && then
 			mockMvc.perform(
 					get("/agenda/team/open")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.param("agenda_key", noAgendaKey.toString())
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+		}
+	}
+
+	@Nested
+	@DisplayName("CONFIRM팀 조회 테스트")
+	class ConfirmTeamListTest {
+		@BeforeEach
+		void beforeEach() {
+			seoulUser = testDataUtils.createNewUser();
+			seoulUserAccessToken = testDataUtils.getLoginAccessTokenFromUser(seoulUser);
+			seoulUserAgendaProfile = agendaMockData.createAgendaProfile(seoulUser, SEOUL);
+			gyeongsanUser = testDataUtils.createNewUser();
+			gyeongsanUserAccessToken = testDataUtils.getLoginAccessTokenFromUser(gyeongsanUser);
+			gyeongsanUserAgendaProfile = agendaMockData.createAgendaProfile(gyeongsanUser, GYEONGSAN);
+
+		}
+
+		@ParameterizedTest
+		@ValueSource(ints = {1, 2, 3, 4, 5})
+		@DisplayName("200 CONFIRM팀 조회 성공")
+		public void confirmTeamGetSuccess(int page) throws Exception {
+			//given
+			Agenda agenda = agendaMockData.createAgenda(SEOUL);
+			List<AgendaTeam> teams = new ArrayList<>();
+			teams.addAll(agendaMockData.createAgendaTeamList(agenda, 23, AgendaTeamStatus.CONFIRM));
+			PageRequestDto req = new PageRequestDto(page, 5);
+			String content = objectMapper.writeValueAsString(req);
+			// when
+			String res = mockMvc.perform(
+					get("/agenda/team/confirm")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.param("page", String.valueOf(page))
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+			ConfirmTeamResDto[] result = objectMapper.readValue(res, ConfirmTeamResDto[].class);
+			// then
+			assertThat(result).hasSize(((page - 1) * 5) < teams.size()
+				? Math.min(5, teams.size() - (page - 1) * 5) : 0);
+			teams.sort((a, b) -> b.getId().compareTo(a.getId()));
+			for (int i = 0; i < result.length; i++) {
+				assertThat(result[i].getTeamName()).isEqualTo(teams.get((page - 1) * 5 + i).getName());
+			}
+		}
+
+		@Test
+		@DisplayName("200 CONFIRM팀 없을때 조회 성공")
+		public void confirmTeamGetSuccessNoTeam() throws Exception {
+			//given
+			Agenda agenda = agendaMockData.createAgenda(SEOUL);
+			PageRequestDto req = new PageRequestDto(1, 5);
+			String content = objectMapper.writeValueAsString(req);
+			// when
+			String res = mockMvc.perform(
+					get("/agenda/team/confirm")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+			ConfirmTeamResDto[] result = objectMapper.readValue(res, ConfirmTeamResDto[].class);
+			// then
+			assertThat(result).isEmpty();
+		}
+
+		@Test
+		@DisplayName("404 agenda 없음으로 인한 실패")
+		public void noAgendaFail() throws Exception {
+			//given
+			UUID noAgendaKey = UUID.randomUUID();
+			PageRequestDto req = new PageRequestDto(1, 5);
+			String content = objectMapper.writeValueAsString(req);
+			// when && then
+			mockMvc.perform(
+					get("/agenda/team/confirm")
 						.header("Authorization", "Bearer " + seoulUserAccessToken)
 						.param("agenda_key", noAgendaKey.toString())
 						.content(content)
