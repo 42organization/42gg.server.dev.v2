@@ -3,6 +3,8 @@ package gg.data.agenda;
 import static gg.utils.exception.ErrorCode.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -17,6 +19,7 @@ import javax.persistence.UniqueConstraint;
 
 import gg.data.BaseTimeEntity;
 import gg.data.agenda.type.AgendaStatus;
+import gg.data.agenda.type.AgendaTeamStatus;
 import gg.data.agenda.type.Location;
 import gg.utils.exception.custom.ForbiddenException;
 import gg.utils.exception.custom.InvalidParameterException;
@@ -148,6 +151,90 @@ public class Agenda extends BaseTimeEntity {
 		this.status = AgendaStatus.CONFIRM;
 	}
 
+	public void updateInformation(String title, String content, String posterUri) {
+		if (Objects.nonNull(title) && !title.isBlank()) {
+			this.title = title;
+		}
+		if (Objects.nonNull(content) && !title.isBlank()) {
+			this.content = content;
+		}
+		if (Objects.nonNull(posterUri) && !title.isBlank()) {
+			this.posterUri = posterUri;
+		}
+	}
+
+	public void updateIsOfficial(Boolean isOfficial) {
+		if (Objects.nonNull(isOfficial)) {
+			this.isOfficial = isOfficial;
+		}
+	}
+
+	public void updateIsRanking(Boolean isRanking) {
+		if (Objects.nonNull(isRanking)) {
+			this.isRanking = isRanking;
+		}
+	}
+
+	public void updateAgendaStatus(AgendaStatus agendaStatus) {
+		if (Objects.nonNull(agendaStatus)) {
+			this.status = agendaStatus;
+		}
+	}
+
+	public void updateSchedule(LocalDateTime deadline, LocalDateTime startTime, LocalDateTime endTime) {
+		if (Objects.isNull(deadline) || Objects.isNull(startTime) || Objects.isNull(endTime)) {
+			return;
+		}
+		mustHaveValidSchedule();
+		this.deadline = deadline;
+		this.startTime = startTime;
+		this.endTime = endTime;
+	}
+
+	public void updateLocation(Location location, List<AgendaTeam> teams) {
+		if (Objects.isNull(location)) {
+			return;
+		}
+		boolean conflictAgendaLocation = teams.stream()
+			.map(AgendaTeam::getLocation)
+			.anyMatch(teamLocation -> !Location.isUnderLocation(location, teamLocation));
+		if (conflictAgendaLocation) {
+			throw new InvalidParameterException(AGENDA_UPDATE_LOCATION_CONFLICT);
+		}
+		this.location = location;
+	}
+
+	public void updateAgendaCapacity(int minTeam, int maxTeam, List<AgendaTeam> teams) {
+		if (minTeam < 2 || maxTeam < 2) {
+			return;
+		}
+		if (minTeam > maxTeam || teams.size() > maxTeam) {
+			throw new InvalidParameterException(AGENDA_CAPACITY_CONFLICT);
+		}
+		if (this.status == AgendaStatus.CONFIRM && teams.size() < minTeam) {
+			throw new InvalidParameterException(AGENDA_CAPACITY_CONFLICT);
+		}
+		this.minTeam = minTeam;
+		this.maxTeam = maxTeam;
+	}
+
+	public void updateAgendaTeamCapacity(int minPeople, int maxPeople, List<AgendaTeam> teams) {
+		if (minPeople < 1 || maxPeople < 1) {
+			return;
+		}
+		if (minPeople > maxPeople) {
+			throw new InvalidParameterException(AGENDA_INVALID_PARAM);
+		}
+		boolean conflictAgendaTeamCapacity = teams.stream()
+			.anyMatch(team -> team.getMateCount() > maxPeople
+				|| (team.getStatus() == AgendaTeamStatus.CONFIRM && team.getMateCount() < minPeople));
+		if (conflictAgendaTeamCapacity) {
+			throw new InvalidParameterException(AGENDA_TEAM_CAPACITY_CONFLICT);
+		}
+		this.minPeople = minPeople;
+		this.maxPeople = maxPeople;
+	}
+
 	private void mustBeWithinLocation(Location location) {
 		if (this.location != Location.MIX && this.location != location) {
 			throw new InvalidParameterException(LOCATION_NOT_VALID);
@@ -172,9 +259,19 @@ public class Agenda extends BaseTimeEntity {
 		}
 	}
 
-	public void mustModifiedByHost(String userIntraId) {
-		if (!this.hostIntraId.equals(userIntraId)) {
-			throw new ForbiddenException(AGENDA_MODIFICATION_FORBIDDEN);
+	private void mustHaveValidSchedule() {
+		if (this.deadline.isAfter(this.startTime)) {
+			throw new InvalidParameterException(AGENDA_INVALID_PARAM);
 		}
+		if (this.startTime.isAfter(this.endTime)) {
+			throw new InvalidParameterException(AGENDA_INVALID_PARAM);
+		}
+	}
+
+	public void mustModifiedByHost(String userIntraId) {
+		if (this.hostIntraId.equals(userIntraId)) {
+			return;
+		}
+		throw new ForbiddenException(AGENDA_MODIFICATION_FORBIDDEN);
 	}
 }

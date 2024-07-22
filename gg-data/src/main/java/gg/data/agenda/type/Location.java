@@ -10,7 +10,7 @@ public enum Location {
 	GYEONGSAN("GYEONGSAN"),
 	MIX("MIX");
 
-	private String location;
+	private final String location;
 
 	public static Location valueOfLocation(String location) {
 		String locationToUpper = location.toUpperCase();
@@ -20,5 +20,12 @@ public enum Location {
 			}
 		}
 		return MIX;
+	}
+
+	public static boolean isUnderLocation(Location criteria, Location target) {
+		if (criteria == MIX) {
+			return true;
+		}
+		return criteria == target;
 	}
 }
