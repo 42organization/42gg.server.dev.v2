@@ -6,8 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.agenda.api.user.agendaprofile.controller.response.AgendaProfileDetailsResDto;
-import gg.auth.UserDto;
-import gg.auth.argumentresolver.Login;
 import gg.data.agenda.AgendaProfile;
 import gg.data.user.User;
 import gg.repo.agenda.AgendaProfileRepository;
@@ -26,13 +24,12 @@ public class AgendaProfileFindService {
 
 	/**
 	 * AgendaProfile 상세 정보를 조회하는 메서드
-	 *
-	 * @param user 로그인한 유저의 UserDto
+	 * @param userId 로그인한 유저의 id
 	 * @return AgendaProfileDetailsResDto 객체
 	 */
 	@Transactional(readOnly = true)
-	public AgendaProfileDetailsResDto getAgendaProfileDetails(@Login UserDto user) {
-		User loginUser = userRepository.getById(user.getId());
+	public AgendaProfileDetailsResDto detailsAgendaProfile(Long userId) {
+		User loginUser = userRepository.getById(userId);
 
 		AgendaProfile agendaProfile = agendaProfileRepository.findByUserId(loginUser.getId())
 			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));

@@ -57,4 +57,9 @@ public class AgendaProfile extends BaseTimeEntity {
 		this.intraId = intraId;
 		this.userId = userId;
 	}
+
+	public void updateProfile(String content, String githubUrl) {
+		this.content = content;
+		this.githubUrl = githubUrl;
+	}
 }
