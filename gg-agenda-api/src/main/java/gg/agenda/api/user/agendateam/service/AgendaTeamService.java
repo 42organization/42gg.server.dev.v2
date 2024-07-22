@@ -225,9 +225,9 @@ public class AgendaTeamService {
 
 	/**
 	 * 아젠다 팀 공개 모집인 팀 목록 조회
-	 * @param user 사용자 정보, PageRequestDto 페이지네이션 요청 정보, agendaId 아젠다 아이디
+	 * @param pageable 페이지네이션 요청 정보, agendaId 아젠다 아이디
 	 */
-	public List<OpenTeamResDto> listOpenTeam(UserDto user, UUID agendaKey, Pageable pageable) {
+	public List<OpenTeamResDto> listOpenTeam(UUID agendaKey, Pageable pageable) {
 		Agenda agenda = agendaRepository.findByAgendaKey(agendaKey)
 			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
 
@@ -240,20 +240,22 @@ public class AgendaTeamService {
 
 	/**
 	 * 아젠다 팀 확정된 팀 목록 조회
-	 * @param user 사용자 정보, PageRequestDto 페이지네이션 요청 정보, agendaId 아젠다 아이디
+	 * @param pageable 페이지네이션 요청 정보, agendaId 아젠다 아이디
 	 */
-	public List<ConfirmTeamResDto> listConfirmTeam(UserDto user, UUID agendaKey, Pageable pageable) {
+	public List<ConfirmTeamResDto> listConfirmTeam(UUID agendaKey, Pageable pageable) {
 		Agenda agenda = agendaRepository.findByAgendaKey(agendaKey)
 			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
 
 		List<AgendaTeam> agendaTeams = agendaTeamRepository.findByAgendaAndStatus(agenda, CONFIRM, pageable)
 			.getContent();
-		return agendaTeams.stream().map(agendaTeam -> {
-			List<AgendaTeamProfile> agendaTeamProfiles = agendaTeamProfileRepository.findByAgendaTeamAndIsExistTrue(
-				agendaTeam);
-			return new ConfirmTeamResDto(agendaTeam, agendaTeamProfiles.stream()
-				.map(AgendaTeamProfile::getProfile)
-				.collect(Collectors.toList()));
-		}).collect(Collectors.toList());
+		return agendaTeams.stream()
+			.map(agendaTeam -> {
+				List<Coalition> coalitions = agendaTeamProfileRepository
+					.findByAgendaTeamAndIsExistTrue(agendaTeam).stream()
+					.map(agendaTeamProfile -> agendaTeamProfile.getProfile().getCoalition())
+					.collect(Collectors.toList());
+				return new ConfirmTeamResDto(agendaTeam, coalitions);
+			})
+			.collect(Collectors.toList());
 	}
 }

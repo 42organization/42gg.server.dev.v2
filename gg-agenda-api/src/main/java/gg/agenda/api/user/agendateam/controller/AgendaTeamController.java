@@ -103,29 +103,29 @@ public class AgendaTeamController {
 
 	/**
 	 * 아젠다 팀 공개 모집인 팀 목록 조회
-	 * @param user 사용자 정보, PageRequestDto 페이지네이션 요청 정보, agendaId 아젠다 아이디
+	 * @param pageRequest 페이지네이션 요청 정보, agendaId 아젠다 아이디
 	 */
 	@GetMapping("/open")
-	public ResponseEntity<List<OpenTeamResDto>> openTeamList(@Parameter(hidden = true) @Login UserDto user,
-		@RequestBody @Valid PageRequestDto pageRequest, @RequestParam("agenda_key") UUID agendaKey) {
+	public ResponseEntity<List<OpenTeamResDto>> openTeamList(@RequestBody @Valid PageRequestDto pageRequest,
+		@RequestParam("agenda_key") UUID agendaKey) {
 		int page = pageRequest.getPage();
 		int size = pageRequest.getSize();
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());
-		List<OpenTeamResDto> openTeamResDtoList = agendaTeamService.listOpenTeam(user, agendaKey, pageable);
+		List<OpenTeamResDto> openTeamResDtoList = agendaTeamService.listOpenTeam(agendaKey, pageable);
 		return ResponseEntity.ok(openTeamResDtoList);
 	}
 
 	/**
 	 * 아젠다 팀 확정된 팀 목록 조회
-	 * @param user 사용자 정보, PageRequestDto 페이지네이션 요청 정보, agendaId 아젠다 아이디
+	 * @param pageRequest 페이지네이션 요청 정보, agendaId 아젠다 아이디
 	 */
 	@GetMapping("/confirm")
-	public ResponseEntity<List<ConfirmTeamResDto>> confirmTeamList(@Parameter(hidden = true) @Login UserDto user,
-		@RequestBody @Valid PageRequestDto pageRequest, @RequestParam("agenda_key") UUID agendaKey) {
+	public ResponseEntity<List<ConfirmTeamResDto>> confirmTeamList(@RequestBody @Valid PageRequestDto pageRequest,
+		@RequestParam("agenda_key") UUID agendaKey) {
 		int page = pageRequest.getPage();
 		int size = pageRequest.getSize();
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());
-		List<ConfirmTeamResDto> confirmTeamResDto = agendaTeamService.listConfirmTeam(user, agendaKey, pageable);
+		List<ConfirmTeamResDto> confirmTeamResDto = agendaTeamService.listConfirmTeam(agendaKey, pageable);
 		return ResponseEntity.ok(confirmTeamResDto);
 	}
 }
