@@ -35,7 +35,6 @@ import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.AgendaTeamProfile;
-import gg.data.agenda.Ticket;
 import gg.data.agenda.type.AgendaStatus;
 import gg.data.agenda.type.AgendaTeamStatus;
 import gg.data.user.User;
@@ -92,7 +91,7 @@ public class AgendaTeamControllerTest {
 		public void addNewTeamStatusSeoul() throws Exception {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(SEOUL);
-			Ticket ticket = agendaMockData.createTicket(seoulUserAgendaProfile);
+			agendaMockData.createTicket(seoulUserAgendaProfile);
 			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "SEOUL",
 				"teamContent");
 			String content = objectMapper.writeValueAsString(req);
@@ -120,7 +119,7 @@ public class AgendaTeamControllerTest {
 		public void addNewTeamStatusGyeongsan() throws Exception {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(GYEONGSAN);
-			Ticket ticket = agendaMockData.createTicket(gyeongsanUserAgendaProfile);
+			agendaMockData.createTicket(gyeongsanUserAgendaProfile);
 			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "GYEONGSAN",
 				"teamContent");
 			String content = objectMapper.writeValueAsString(req);
@@ -148,7 +147,7 @@ public class AgendaTeamControllerTest {
 		public void addNewTeamStatusMixFromSeoul() throws Exception {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(MIX);
-			Ticket ticket = agendaMockData.createTicket(seoulUserAgendaProfile);
+			agendaMockData.createTicket(seoulUserAgendaProfile);
 			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "SEOUL",
 				"teamContent");
 			String content = objectMapper.writeValueAsString(req);
@@ -176,7 +175,7 @@ public class AgendaTeamControllerTest {
 		public void addNewTeamStatusMixFromGyeongsan() throws Exception {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(MIX);
-			Ticket ticket = agendaMockData.createTicket(gyeongsanUserAgendaProfile);
+			agendaMockData.createTicket(gyeongsanUserAgendaProfile);
 			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "GYEONGSAN",
 				"teamContent");
 			String content = objectMapper.writeValueAsString(req);
@@ -204,7 +203,7 @@ public class AgendaTeamControllerTest {
 		public void addNewTeamStatusMixFromMixToSeoul() throws Exception {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(MIX);
-			Ticket ticket = agendaMockData.createTicket(seoulUserAgendaProfile);
+			agendaMockData.createTicket(seoulUserAgendaProfile);
 			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "MIX",
 				"teamContent");
 			String content = objectMapper.writeValueAsString(req);
@@ -232,7 +231,7 @@ public class AgendaTeamControllerTest {
 		public void addNewTeamStatusMixFromMixToGyeongsan() throws Exception {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(MIX);
-			Ticket ticket = agendaMockData.createTicket(gyeongsanUserAgendaProfile);
+			agendaMockData.createTicket(gyeongsanUserAgendaProfile);
 			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "MIX",
 				"teamContent");
 			String content = objectMapper.writeValueAsString(req);
@@ -260,7 +259,7 @@ public class AgendaTeamControllerTest {
 		public void noAgendaFail() throws Exception {
 			//given
 			UUID noAgendaKey = UUID.randomUUID();
-			Ticket ticket = agendaMockData.createTicket(seoulUserAgendaProfile);
+			agendaMockData.createTicket(seoulUserAgendaProfile);
 			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "SEOUL",
 				"teamContent");
 			String content = objectMapper.writeValueAsString(req);
@@ -279,7 +278,7 @@ public class AgendaTeamControllerTest {
 		public void notValidAgendaLocation() throws Exception {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(SEOUL);
-			Ticket ticket = agendaMockData.createTicket(gyeongsanUserAgendaProfile);
+			agendaMockData.createTicket(gyeongsanUserAgendaProfile);
 			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "GYEONGSAN",
 				"teamContent");
 			String content = objectMapper.writeValueAsString(req);
@@ -298,7 +297,7 @@ public class AgendaTeamControllerTest {
 		public void notValidAgendaStatus() throws Exception {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(AgendaStatus.CONFIRM);
-			Ticket ticket = agendaMockData.createTicket(seoulUserAgendaProfile);
+			agendaMockData.createTicket(seoulUserAgendaProfile);
 			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "SEOUL",
 				"teamContent");
 			String content = objectMapper.writeValueAsString(req);
@@ -317,7 +316,7 @@ public class AgendaTeamControllerTest {
 		public void notValidAgendaTeam() throws Exception {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(5);
-			Ticket ticket = agendaMockData.createTicket(seoulUserAgendaProfile);
+			agendaMockData.createTicket(seoulUserAgendaProfile);
 			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "SEOUL",
 				"teamContent");
 			String content = objectMapper.writeValueAsString(req);
@@ -336,7 +335,7 @@ public class AgendaTeamControllerTest {
 		public void notValidAgendaDeadline() throws Exception {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(SEOUL);
-			Ticket ticket = agendaMockData.createTicket(gyeongsanUserAgendaProfile);
+			agendaMockData.createTicket(gyeongsanUserAgendaProfile);
 			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "GYEONGSAN",
 				"teamContent");
 			String content = objectMapper.writeValueAsString(req);
@@ -355,7 +354,7 @@ public class AgendaTeamControllerTest {
 		public void agendaHostFail() throws Exception {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(seoulUser.getIntraId());
-			Ticket ticket = agendaMockData.createTicket(seoulUserAgendaProfile);
+			agendaMockData.createTicket(seoulUserAgendaProfile);
 			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "SEOUL",
 				"teamContent");
 			String content = objectMapper.writeValueAsString(req);
@@ -374,7 +373,7 @@ public class AgendaTeamControllerTest {
 		public void notValidUserLocation() throws Exception {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(SEOUL);
-			Ticket ticket = agendaMockData.createTicket(gyeongsanUserAgendaProfile);
+			agendaMockData.createTicket(gyeongsanUserAgendaProfile);
 			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "SEOUL",
 				"teamContent");
 			String content = objectMapper.writeValueAsString(req);
@@ -393,7 +392,7 @@ public class AgendaTeamControllerTest {
 		public void alreadyTeamNameExist() throws Exception {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(SEOUL);
-			Ticket ticket = agendaMockData.createTicket(seoulUserAgendaProfile);
+			agendaMockData.createTicket(seoulUserAgendaProfile);
 			AgendaTeam team = agendaMockData.createAgendaTeam(agenda);
 			TeamCreateReqDto req = new TeamCreateReqDto(team.getName(), true, "SEOUL",
 				"teamContent");
@@ -413,9 +412,9 @@ public class AgendaTeamControllerTest {
 		public void alreadyTeamExistForAgenda() throws Exception {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(SEOUL);
-			Ticket ticket = agendaMockData.createTicket(seoulUserAgendaProfile);
+			agendaMockData.createTicket(seoulUserAgendaProfile);
 			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser);
-			AgendaTeamProfile agendaTeamProfile = agendaMockData.createAgendaTeamProfile(team, seoulUserAgendaProfile);
+			agendaMockData.createAgendaTeamProfile(team, seoulUserAgendaProfile);
 			TeamCreateReqDto req = new TeamCreateReqDto("newName", true, "SEOUL",
 				"teamContent");
 			String content = objectMapper.writeValueAsString(req);
@@ -1104,8 +1103,7 @@ public class AgendaTeamControllerTest {
 		public void confirmTeamGetSuccess(int page) throws Exception {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(SEOUL);
-			List<AgendaTeam> teams = new ArrayList<>();
-			teams.addAll(agendaMockData.createAgendaTeamList(agenda, 23, AgendaTeamStatus.CONFIRM));
+			List<AgendaTeam> teams = agendaMockData.createAgendaTeamList(agenda, 23, AgendaTeamStatus.CONFIRM);
 			PageRequestDto req = new PageRequestDto(page, 5);
 			String content = objectMapper.writeValueAsString(req);
 			// when
