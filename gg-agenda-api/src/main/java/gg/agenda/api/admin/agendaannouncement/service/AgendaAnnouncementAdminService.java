@@ -11,6 +11,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +21,7 @@ public class AgendaAnnouncementAdminService {
 
 	private final AgendaAnnouncementAdminRepository agendaAnnouncementAdminRepository;
 
+	@Transactional(readOnly = true)
 	public List<AgendaAnnouncement> getAgendaAnnouncementList(UUID agendaKey, Pageable pageable) {
 		Agenda agenda = agendaAdminRepository.findByAgendaKey(agendaKey)
 			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
