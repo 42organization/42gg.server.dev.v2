@@ -274,10 +274,6 @@ public class AgendaTeamService {
 			.findByAgendaAndTeamKeyAndStatus(agenda, teamKeyReqDto.getTeamKey(), OPEN, CONFIRM)
 			.orElseThrow(() -> new NotExistException(AGENDA_TEAM_NOT_FOUND));
 
-		if (agenda.getLocation() != Location.MIX && agenda.getLocation() != agendaProfile.getLocation()) {
-			throw new BusinessException(LOCATION_NOT_VALID);
-		}
-
 		Ticket ticket = ticketRepository.findByAgendaProfileAndIsApprovedTrueAndIsUsedFalse(agendaProfile)
 			.orElseThrow(() -> new ForbiddenException(TICKET_NOT_EXIST));
 
@@ -286,6 +282,7 @@ public class AgendaTeamService {
 				throw new ForbiddenException(AGENDA_TEAM_FORBIDDEN);
 			});
 
+		agenda.attendTeam(agendaProfile.getLocation(), LocalDateTime.now());
 		agendaTeam.attendTeam(agenda);
 		ticket.useTicket(agenda.getAgendaKey());
 		agendaTeamProfileRepository.save(new AgendaTeamProfile(agendaTeam, agenda, agendaProfile));
