@@ -638,6 +638,7 @@ public class AgendaMockData {
 	public AgendaTeamProfile createAgendaTeamProfile(AgendaTeam agendaTeam, AgendaProfile agendaProfile) {
 		AgendaTeamProfile agendaTeamProfile = AgendaTeamProfile.builder()
 			.agendaTeam(agendaTeam)
+			.agenda(agendaTeam.getAgenda())
 			.profile(agendaProfile)
 			.isExist(true)
 			.build();

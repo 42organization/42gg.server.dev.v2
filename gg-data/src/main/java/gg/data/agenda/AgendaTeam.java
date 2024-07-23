@@ -114,4 +114,17 @@ public class AgendaTeam extends BaseTimeEntity {
 		}
 		this.mateCount--;
 	}
+
+	public void attendTeam(Agenda agenda) {
+		if (this.status == AgendaTeamStatus.CANCEL) {
+			throw new BusinessException(AGENDA_TEAM_ALREADY_CANCEL);
+		}
+		if (this.status == AgendaTeamStatus.CONFIRM) {
+			throw new BusinessException(AGENDA_TEAM_ALREADY_CONFIRM);
+		}
+		if (this.mateCount >= agenda.getMaxPeople()) {
+			throw new BusinessException(AGENDA_TEAM_FULL);
+		}
+		this.mateCount++;
+	}
 }

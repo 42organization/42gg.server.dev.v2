@@ -28,6 +28,10 @@ public class AgendaTeamProfile extends BaseTimeEntity {
 	private AgendaProfile profile;
 
 	@ManyToOne
+	@JoinColumn(name = "agenda_id", nullable = false)
+	private Agenda agenda;
+
+	@ManyToOne
 	@JoinColumn(name = "agenda_team_id", nullable = false)
 	private AgendaTeam agendaTeam;
 
@@ -35,14 +39,16 @@ public class AgendaTeamProfile extends BaseTimeEntity {
 	private Boolean isExist;
 
 	@Builder
-	public AgendaTeamProfile(AgendaProfile profile, AgendaTeam agendaTeam, Boolean isExist) {
+	public AgendaTeamProfile(AgendaProfile profile, Agenda agenda, AgendaTeam agendaTeam, Boolean isExist) {
 		this.profile = profile;
+		this.agenda = agenda;
 		this.agendaTeam = agendaTeam;
 		this.isExist = isExist;
 	}
 
-	public AgendaTeamProfile(AgendaTeam agendaTeam, AgendaProfile profile) {
+	public AgendaTeamProfile(AgendaTeam agendaTeam, Agenda agenda, AgendaProfile profile) {
 		this.agendaTeam = agendaTeam;
+		this.agenda = agenda;
 		this.profile = profile;
 		this.isExist = true;
 	}

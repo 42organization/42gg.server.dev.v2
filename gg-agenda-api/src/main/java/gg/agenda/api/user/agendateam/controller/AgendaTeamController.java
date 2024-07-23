@@ -128,4 +128,15 @@ public class AgendaTeamController {
 		List<ConfirmTeamResDto> confirmTeamResDto = agendaTeamService.listConfirmTeam(agendaKey, pageable);
 		return ResponseEntity.ok(confirmTeamResDto);
 	}
+
+	/**
+	 * 아젠다 팀 참여하기
+	 * @param user 사용자 정보, teamKeyReqDto 팀 KEY 요청 정보, agendaId 아젠다 아이디
+	 */
+	@PatchMapping
+	public ResponseEntity<Void> attendTeamModify(@Parameter(hidden = true) @Login UserDto user,
+		@RequestBody @Valid TeamKeyReqDto teamKeyReqDto, @RequestParam("agenda_key") UUID agendaKey) {
+		agendaTeamService.modifyAttendTeam(user, teamKeyReqDto, agendaKey);
+		return ResponseEntity.noContent().build();
+	}
 }

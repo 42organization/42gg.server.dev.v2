@@ -101,7 +101,7 @@ public class AgendaTeamService {
 		if (agendaTeam.getStatus().equals(CONFIRM)) {  // 팀이 확정 상태인 경우에
 			if (agendaTeamProfileList.stream() // 팀에 속한 유저가 아닌 경우
 				.noneMatch(profile -> profile.getProfile().getUserId().equals(user.getId()))) {
-				throw new ForbiddenException(TEAM_FORBIDDEN); // 조회 불가
+				throw new ForbiddenException(NOT_TEAM_MATE); // 조회 불가
 			}
 		}
 		return new TeamDetailsResDto(agendaTeam, agendaTeamProfileList);
@@ -131,7 +131,7 @@ public class AgendaTeamService {
 		}
 
 		agendaTeamProfileRepository.findByAgendaProfileAndIsExistTrue(agenda, agendaProfile).ifPresent(teamProfile -> {
-			throw new DuplicationException(TEAM_FORBIDDEN);
+			throw new DuplicationException(AGENDA_TEAM_FORBIDDEN);
 		});
 
 		if (agenda.getIsOfficial()) {
@@ -146,7 +146,7 @@ public class AgendaTeamService {
 			});
 
 		AgendaTeam agendaTeam = TeamCreateReqDto.toEntity(teamCreateReqDto, agenda, user.getIntraId());
-		AgendaTeamProfile agendaTeamProfile = new AgendaTeamProfile(agendaTeam, agendaProfile);
+		AgendaTeamProfile agendaTeamProfile = new AgendaTeamProfile(agendaTeam, agenda, agendaProfile);
 		agendaRepository.save(agenda);
 		agendaTeamRepository.save(agendaTeam);
 		agendaTeamProfileRepository.save(agendaTeamProfile);
@@ -257,5 +257,37 @@ public class AgendaTeamService {
 				return new ConfirmTeamResDto(agendaTeam, coalitions);
 			})
 			.collect(Collectors.toList());
+	}
+
+	/**
+	 * 아젠다 팀 참여하기
+	 * @param user 사용자 정보, teamKeyReqDto 팀 KEY 요청 정보, agendaId 아젠다 아이디
+	 */
+	public void modifyAttendTeam(UserDto user, TeamKeyReqDto teamKeyReqDto, UUID agendaKey) {
+		AgendaProfile agendaProfile = agendaProfileRepository.findByUserId(user.getId())
+			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
+
+		Agenda agenda = agendaRepository.findByAgendaKey(agendaKey)
+			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
+
+		AgendaTeam agendaTeam = agendaTeamRepository
+			.findByAgendaAndTeamKeyAndStatus(agenda, teamKeyReqDto.getTeamKey(), OPEN, CONFIRM)
+			.orElseThrow(() -> new NotExistException(AGENDA_TEAM_NOT_FOUND));
+
+		if (agenda.getLocation() != Location.MIX && agenda.getLocation() != agendaProfile.getLocation()) {
+			throw new BusinessException(LOCATION_NOT_VALID);
+		}
+
+		Ticket ticket = ticketRepository.findByAgendaProfileAndIsApprovedTrueAndIsUsedFalse(agendaProfile)
+			.orElseThrow(() -> new ForbiddenException(TICKET_NOT_EXIST));
+
+		agendaTeamProfileRepository.findByAgendaAndProfileAndIsExistTrue(agenda, agendaProfile)
+			.ifPresent(profile -> {
+				throw new ForbiddenException(AGENDA_TEAM_FORBIDDEN);
+			});
+
+		agendaTeam.attendTeam(agenda);
+		ticket.useTicket(agenda.getAgendaKey());
+		agendaTeamProfileRepository.save(new AgendaTeamProfile(agendaTeam, agenda, agendaProfile));
 	}
 }
