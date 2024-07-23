@@ -56,6 +56,7 @@ public class AgendaSimpleResDto {
 		this.agendaLocation = agendaLocation;
 		this.agendaKey = agendaKey;
 		this.isOfficial = isOfficial;
+		this.isRanking = isRanking;
 	}
 
 	@Mapper

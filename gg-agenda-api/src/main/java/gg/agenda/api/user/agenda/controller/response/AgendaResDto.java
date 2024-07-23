@@ -77,6 +77,7 @@ public class AgendaResDto {
 		this.createdAt = createdAt;
 		this.announcementTitle = announcementTitle;
 		this.isOfficial = isOfficial;
+		this.isRanking = isRanking;
 	}
 
 	@Mapper
