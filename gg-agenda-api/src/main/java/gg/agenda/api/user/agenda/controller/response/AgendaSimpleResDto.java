@@ -39,10 +39,12 @@ public class AgendaSimpleResDto {
 
 	private Boolean isOfficial;
 
+	private Boolean isRanking;
+
 	@Builder
 	public AgendaSimpleResDto(String agendaTitle, LocalDateTime agendaDeadLine, LocalDateTime agendaStartTime,
 		LocalDateTime agendaEndTime, int agendaCurrentTeam, int agendaMaxTeam, int agendaMinPeople,
-		int agendaMaxPeople, Location agendaLocation, UUID agendaKey, boolean isOfficial) {
+		int agendaMaxPeople, Location agendaLocation, UUID agendaKey, Boolean isOfficial, Boolean isRanking) {
 		this.agendaTitle = agendaTitle;
 		this.agendaDeadLine = agendaDeadLine;
 		this.agendaStartTime = agendaStartTime;
@@ -71,6 +73,7 @@ public class AgendaSimpleResDto {
 		@Mapping(target = "agendaLocation", source = "location")
 		@Mapping(target = "agendaKey", source = "agendaKey")
 		@Mapping(target = "isOfficial", source = "isOfficial")
+		@Mapping(target = "isRanking", source = "isRanking")
 		AgendaSimpleResDto toDto(Agenda agenda);
 	}
 }
