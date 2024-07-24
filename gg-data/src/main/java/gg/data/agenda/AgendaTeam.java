@@ -132,7 +132,8 @@ public class AgendaTeam extends BaseTimeEntity {
 		this.mateCount++;
 	}
 
-	public void updateTeam(String name, String content, Boolean isPrivate, Location location, List<AgendaTeam> teams) {
+	public void updateTeam(String name, String content, Boolean isPrivate, Location location,
+		List<AgendaTeamProfile> profiles) {
 		if (this.status == CANCEL) {
 			throw new BusinessException(AGENDA_TEAM_ALREADY_CANCEL);
 		}
@@ -142,18 +143,18 @@ public class AgendaTeam extends BaseTimeEntity {
 		this.name = name;
 		this.content = content;
 		this.isPrivate = isPrivate;
-		updateLocation(location, teams);
+		updateLocation(location, profiles);
 	}
 
-	public void updateLocation(Location location, List<AgendaTeam> teams) {
+	public void updateLocation(Location location, List<AgendaTeamProfile> profiles) {
 		if (Objects.isNull(location)) {
 			return;
 		}
-		boolean conflictAgendaLocation = teams.stream()
-			.map(AgendaTeam::getLocation)
-			.anyMatch(teamLocation -> !Location.isUnderLocation(location, teamLocation));
+		boolean conflictAgendaLocation = profiles.stream()
+			.map(AgendaTeamProfile::getProfile)
+			.anyMatch(profile -> !Location.isUnderLocation(location, profile.getLocation()));
 		if (conflictAgendaLocation) {
-			throw new InvalidParameterException(AGENDA_UPDATE_LOCATION_NOT_VALID);
+			throw new InvalidParameterException(UPDATE_LOCATION_NOT_VALID);
 		}
 		this.location = location;
 	}

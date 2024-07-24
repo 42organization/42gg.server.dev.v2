@@ -309,11 +309,12 @@ public class AgendaTeamService {
 			throw new ForbiddenException(TEAM_LEADER_FORBIDDEN);
 		}
 
-		List<AgendaTeam> teams = agendaTeamRepository.findAllByAgenda(agenda);
+		List<AgendaTeamProfile> profiles = agendaTeamProfileRepository.findAllByAgendaTeam(agendaTeam);
 
 		agenda.updateTeam(Location.valueOfLocation(teamUpdateReqDto.getTeamLocation()), LocalDateTime.now());
 		agendaTeam.updateTeam(teamUpdateReqDto.getTeamName(), teamUpdateReqDto.getTeamContent(),
-			teamUpdateReqDto.getTeamIsPrivate(), Location.valueOfLocation(teamUpdateReqDto.getTeamLocation()), teams);
+			teamUpdateReqDto.getTeamIsPrivate(), Location.valueOfLocation(teamUpdateReqDto.getTeamLocation()),
+			profiles);
 		agendaTeamRepository.save(agendaTeam);
 	}
 }

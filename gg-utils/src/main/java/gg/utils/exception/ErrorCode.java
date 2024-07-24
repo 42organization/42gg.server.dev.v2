@@ -201,7 +201,7 @@ public enum ErrorCode {
 	AGENDA_NO_CAPACITY(403, "AG", "해당 일정에 참여할 수 있는 팀이 꽉 찼습니다."),
 	AGENDA_INVALID_SCHEDULE(400, "AG", "유효하지 않은 일정입니다."),
 	AGENDA_INVALID_PARAM(400, "AG", "유효하지 않은 파라미터입니다."),
-	AGENDA_UPDATE_LOCATION_NOT_VALID(400, "AG", "지역을 변경할 수 없습니다."),
+	UPDATE_LOCATION_NOT_VALID(400, "AG", "지역을 변경할 수 없습니다."),
 	AGENDA_CAPACITY_CONFLICT(409, "AG", "팀 제한을 변경할 수 없습니다."),
 	AGENDA_TEAM_CAPACITY_CONFLICT(409, "AG", "팀 인원 제한을 변경할 수 없습니다."),
 	HOST_FORBIDDEN(403, "AG", "개최자는 팀을 생성할 수 없습니다."),
