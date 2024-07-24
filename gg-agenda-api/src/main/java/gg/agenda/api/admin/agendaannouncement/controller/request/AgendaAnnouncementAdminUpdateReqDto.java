@@ -18,4 +18,12 @@ public class AgendaAnnouncementAdminUpdateReqDto {
 	private String content;
 
 	private Boolean isShow;
+
+	@Builder
+	public AgendaAnnouncementAdminUpdateReqDto(Long id, String title, String content, Boolean isShow) {
+		this.id = id;
+		this.title = title;
+		this.content = content;
+		this.isShow = isShow;
+	}
 }
