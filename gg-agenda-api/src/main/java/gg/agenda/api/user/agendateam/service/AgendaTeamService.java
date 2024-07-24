@@ -121,7 +121,7 @@ public class AgendaTeamService {
 		Agenda agenda = agendaRepository.findByAgendaKey(agendaKey)
 			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
 
-		agenda.addTeam(Location.valueOf(teamCreateReqDto.getTeamLocation()), LocalDateTime.now());
+		agenda.addTeam(Location.valueOfLocation(teamCreateReqDto.getTeamLocation()), LocalDateTime.now());
 
 		if (agenda.getHostIntraId().equals(user.getIntraId())) {
 			throw new ForbiddenException(HOST_FORBIDDEN);
@@ -309,8 +309,9 @@ public class AgendaTeamService {
 			throw new ForbiddenException(TEAM_LEADER_FORBIDDEN);
 		}
 
+		agenda.updateTeam(Location.valueOfLocation(teamUpdateReqDto.getTeamLocation()), LocalDateTime.now();
 		agendaTeam.updateTeam(teamUpdateReqDto.getTeamName(), teamUpdateReqDto.getTeamContent(),
-			teamUpdateReqDto.getTeamIsPrivate(), Location.valueOf(teamUpdateReqDto.getTeamLocation()));
+			teamUpdateReqDto.getTeamIsPrivate(), Location.valueOfLocation(teamUpdateReqDto.getTeamLocation()));
 		agendaTeamRepository.save(agendaTeam);
 	}
 }

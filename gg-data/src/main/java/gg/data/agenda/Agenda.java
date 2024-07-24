@@ -139,6 +139,12 @@ public class Agenda extends BaseTimeEntity {
 		mustBeforeDeadline(now);
 	}
 
+	public void updateTeam(Location location, LocalDateTime now) {
+		mustBeWithinLocation(location);
+		mustStatusOnGoing();
+		mustBeforeDeadline(now);
+	}
+
 	public void cancelTeam(LocalDateTime now) {
 		mustStatusOnGoing();
 		mustBeforeDeadline(now);

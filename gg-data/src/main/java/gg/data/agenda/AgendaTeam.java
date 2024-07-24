@@ -130,8 +130,8 @@ public class AgendaTeam extends BaseTimeEntity {
 	}
 
 	public void updateTeam(String name, String content, Boolean isPrivate, Location location) {
-		this.content = content;
 		this.name = name;
+		this.content = content;
 		this.isPrivate = isPrivate;
 		this.location = location;
 	}
