@@ -50,6 +50,8 @@ public class AgendaResDto {
 
 	private Boolean isOfficial;
 
+	private Boolean isRanking;
+
 	private String announcementTitle;
 
 	@Builder
@@ -57,7 +59,7 @@ public class AgendaResDto {
 		LocalDateTime agendaStartTime, LocalDateTime agendaEndTime, int agendaMinTeam, int agendaMaxTeam,
 		int agendaCurrentTeam, int agendaMinPeople, int agendaMaxPeople, String agendaPoster, String agendaHost,
 		Location agendaLocation, AgendaStatus agendaStatus, LocalDateTime createdAt, String announcementTitle,
-		boolean isOfficial) {
+		Boolean isOfficial, Boolean isRanking) {
 		this.agendaTitle = agendaTitle;
 		this.agendaContents = agendaContents;
 		this.agendaDeadLine = agendaDeadLine;
@@ -75,6 +77,7 @@ public class AgendaResDto {
 		this.createdAt = createdAt;
 		this.announcementTitle = announcementTitle;
 		this.isOfficial = isOfficial;
+		this.isRanking = isRanking;
 	}
 
 	@Mapper
@@ -98,6 +101,7 @@ public class AgendaResDto {
 		@Mapping(target = "agendaStatus", source = "agenda.status")
 		@Mapping(target = "createdAt", source = "agenda.createdAt")
 		@Mapping(target = "isOfficial", source = "agenda.isOfficial")
+		@Mapping(target = "isRanking", source = "agenda.isRanking")
 		@Mapping(target = "announcementTitle", source = "announcementTitle")
 		AgendaResDto toDto(Agenda agenda, String announcementTitle);
 	}
