@@ -211,7 +211,7 @@ public class Agenda extends BaseTimeEntity {
 			.map(AgendaTeam::getLocation)
 			.anyMatch(teamLocation -> !Location.isUnderLocation(location, teamLocation));
 		if (conflictAgendaLocation) {
-			throw new InvalidParameterException(AGENDA_UPDATE_LOCATION_CONFLICT);
+			throw new InvalidParameterException(AGENDA_UPDATE_LOCATION_NOT_VALID);
 		}
 		this.location = location;
 	}
