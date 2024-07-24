@@ -49,7 +49,7 @@ public class AgendaAnnouncement extends BaseTimeEntity {
 		this.agenda = agenda;
 	}
 
-	public void update(String title, String content, Boolean isShow) {
+	public void updateIfNotNull(String title, String content, Boolean isShow) {
 		if (Objects.nonNull(title)) {
 			this.title = title;
 		}
