@@ -2,8 +2,6 @@ package gg.agenda.api.admin.agendaannouncement.service;
 
 import static gg.utils.exception.ErrorCode.*;
 
-import gg.agenda.api.admin.agendaannouncement.controller.request.AgendaAnnouncementAdminUpdateReqDto;
-import gg.agenda.api.user.agendaannouncement.controller.request.AgendaAnnouncementCreateReqDto;
 import java.util.List;
 import java.util.UUID;
 
@@ -13,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import gg.admin.repo.agenda.AgendaAdminRepository;
 import gg.admin.repo.agenda.AgendaAnnouncementAdminRepository;
+import gg.agenda.api.admin.agendaannouncement.controller.request.AgendaAnnouncementAdminUpdateReqDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaAnnouncement;
 import gg.utils.exception.custom.NotExistException;

@@ -4,7 +4,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import gg.agenda.api.admin.agendaannouncement.controller.request.AgendaAnnouncementAdminUpdateReqDto;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,6 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.admin.repo.agenda.AgendaAdminRepository;
 import gg.admin.repo.agenda.AgendaAnnouncementAdminRepository;
+import gg.agenda.api.admin.agendaannouncement.controller.request.AgendaAnnouncementAdminUpdateReqDto;
 import gg.agenda.api.user.agendaannouncement.controller.response.AgendaAnnouncementResDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaAnnouncement;

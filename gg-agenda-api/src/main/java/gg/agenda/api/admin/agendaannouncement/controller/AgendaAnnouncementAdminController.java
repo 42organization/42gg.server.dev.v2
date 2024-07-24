@@ -1,7 +1,5 @@
 package gg.agenda.api.admin.agendaannouncement.controller;
 
-import gg.agenda.api.admin.agendaannouncement.controller.request.AgendaAnnouncementAdminUpdateReqDto;
-import gg.agenda.api.user.agendaannouncement.controller.request.AgendaAnnouncementCreateReqDto;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -19,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import gg.agenda.api.admin.agendaannouncement.controller.request.AgendaAnnouncementAdminUpdateReqDto;
 import gg.agenda.api.admin.agendaannouncement.controller.response.AgendaAnnouncementAdminResDto;
 import gg.agenda.api.admin.agendaannouncement.service.AgendaAnnouncementAdminService;
 import gg.data.agenda.AgendaAnnouncement;
