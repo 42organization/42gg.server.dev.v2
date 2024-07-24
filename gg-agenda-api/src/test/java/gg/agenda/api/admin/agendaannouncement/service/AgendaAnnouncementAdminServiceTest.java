@@ -20,6 +20,7 @@ import org.springframework.data.domain.Sort;
 
 import gg.admin.repo.agenda.AgendaAdminRepository;
 import gg.admin.repo.agenda.AgendaAnnouncementAdminRepository;
+import gg.agenda.api.admin.agendaannouncement.controller.request.AgendaAnnouncementAdminUpdateReqDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaAnnouncement;
 import gg.utils.annotation.UnitTest;
@@ -94,6 +95,33 @@ public class AgendaAnnouncementAdminServiceTest {
 			// expected
 			assertThrows(NotExistException.class,
 				() -> agendaAnnouncementAdminService.getAgendaAnnouncementList(UUID.randomUUID(), pageable));
+		}
+	}
+
+	@Nested
+	@DisplayName("Admin AgendaAnnouncement 수정 및 삭제")
+	class UpdateAgendaAnnouncementAdmin {
+		@Test
+		@DisplayName("Admin AgendaAnnouncement 수정 성공")
+		void updateAgendaAnnouncementAdminSuccess() {
+			// given
+			AgendaAnnouncement announcement = AgendaAnnouncement.builder().build();
+			when(agendaAnnouncementAdminRepository.findById(any(Long.class))).thenReturn(Optional.of(announcement));
+
+			// expected
+			assertDoesNotThrow(() -> agendaAnnouncementAdminService.updateAgendaAnnouncement(
+					AgendaAnnouncementAdminUpdateReqDto.builder().id(1L).build()));
+		}
+
+		@Test
+		@DisplayName("Admin AgendaAnnouncement 수정 실패 - AgendaAnnouncement가 없는 경우")
+		void updateAgendaAnnouncementAdminFailed() {
+			// given
+			when(agendaAnnouncementAdminRepository.findById(any(Long.class))).thenReturn(Optional.empty());
+
+			// expected
+			assertThrows(NotExistException.class, () -> agendaAnnouncementAdminService.updateAgendaAnnouncement(
+					AgendaAnnouncementAdminUpdateReqDto.builder().id(1L).build()));
 		}
 	}
 }

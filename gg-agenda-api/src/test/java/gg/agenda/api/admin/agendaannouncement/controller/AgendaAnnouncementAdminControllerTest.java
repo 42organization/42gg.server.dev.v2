@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.admin.repo.agenda.AgendaAdminRepository;
 import gg.admin.repo.agenda.AgendaAnnouncementAdminRepository;
+import gg.agenda.api.admin.agendaannouncement.controller.request.AgendaAnnouncementAdminUpdateReqDto;
 import gg.agenda.api.user.agendaannouncement.controller.response.AgendaAnnouncementResDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaAnnouncement;
@@ -153,6 +154,108 @@ public class AgendaAnnouncementAdminControllerTest {
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(request))
 				.andExpect(status().isNotFound());
+		}
+	}
+
+	@Nested
+	@DisplayName("Admin AgendaAnnouncement 수정 및 삭제")
+	class UpdateAgendaAnnouncementAdmin {
+		@Test
+		@DisplayName("Admin AgendaAnnouncement 수정 성공")
+		void updateAgendaAnnouncementAdminSuccess() throws Exception {
+			// given
+			Agenda agenda = agendaFixture.createAgenda();
+			AgendaAnnouncement announcement = agendaAnnouncementFixture.createAgendaAnnouncement(agenda);
+			AgendaAnnouncementAdminUpdateReqDto updateReqDto = AgendaAnnouncementAdminUpdateReqDto.builder()
+				.id(announcement.getId()).isShow(!announcement.getIsShow())
+				.title("수정된 공지사항 제목").content("수정된 공지사항 내용").build();
+			String request = objectMapper.writeValueAsString(updateReqDto);
+
+			// when
+			mockMvc.perform(patch("/admin/agenda/announcement")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(request))
+				.andExpect(status().isNoContent());
+			AgendaAnnouncement result = agendaAnnouncementAdminRepository
+				.findById(announcement.getId()).orElseThrow();
+
+			// then
+			assertThat(result.getTitle()).isEqualTo(updateReqDto.getTitle());
+			assertThat(result.getContent()).isEqualTo(updateReqDto.getContent());
+			assertThat(result.getIsShow()).isEqualTo(updateReqDto.getIsShow());
+		}
+
+		@Test
+		@DisplayName("Admin AgendaAnnouncement 수정 실패 - 존재하지 않는 공지사항")
+		void updateAgendaAnnouncementAdminFailedWithNoAnnouncement() throws Exception {
+			// given
+			AgendaAnnouncementAdminUpdateReqDto updateReqDto = AgendaAnnouncementAdminUpdateReqDto.builder()
+				.id(1L).isShow(true).title("수정된 공지사항 제목").content("수정된 공지사항 내용").build();
+			String request = objectMapper.writeValueAsString(updateReqDto);
+
+			// expected
+			mockMvc.perform(patch("/admin/agenda/announcement")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(request))
+				.andExpect(status().isNotFound());
+		}
+
+		@Test
+		@DisplayName("Admin AgendaAnnouncement 수정 실패 - Update Dto에 id가 없는 경우")
+		void updateAgendaAnnouncementAdminFailedWithNoReqId() throws Exception {
+			// given
+			Agenda agenda = agendaFixture.createAgenda();
+			AgendaAnnouncement announcement = agendaAnnouncementFixture.createAgendaAnnouncement(agenda);
+			AgendaAnnouncementAdminUpdateReqDto updateReqDto = AgendaAnnouncementAdminUpdateReqDto.builder()
+				.isShow(!announcement.getIsShow()).title("수정된 공지사항 제목").content("수정된 공지사항 내용").build();
+			String request = objectMapper.writeValueAsString(updateReqDto);
+
+			// expected
+			mockMvc.perform(patch("/admin/agenda/announcement")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(request))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("Admin AgendaAnnouncement 수정 실패 - title이 너무 긴 경우")
+		void updateAgendaAnnouncementAdminFailedWithTooLongTitle() throws Exception {
+			// given
+			Agenda agenda = agendaFixture.createAgenda();
+			AgendaAnnouncement announcement = agendaAnnouncementFixture.createAgendaAnnouncement(agenda);
+			AgendaAnnouncementAdminUpdateReqDto updateReqDto = AgendaAnnouncementAdminUpdateReqDto.builder()
+				.id(announcement.getId()).isShow(!announcement.getIsShow())
+				.title("수정된 공지사항 제목".repeat(10)).content("수정된 공지사항 내용").build();
+			String request = objectMapper.writeValueAsString(updateReqDto);
+
+			// expected
+			mockMvc.perform(patch("/admin/agenda/announcement")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(request))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("Admin AgendaAnnouncement 수정 실패 - content이 너무 긴 경우")
+		void updateAgendaAnnouncementAdminFailedWithTooLongContent() throws Exception {
+			// given
+			Agenda agenda = agendaFixture.createAgenda();
+			AgendaAnnouncement announcement = agendaAnnouncementFixture.createAgendaAnnouncement(agenda);
+			AgendaAnnouncementAdminUpdateReqDto updateReqDto = AgendaAnnouncementAdminUpdateReqDto.builder()
+				.id(announcement.getId()).isShow(!announcement.getIsShow())
+				.title("수정된 공지사항 제목").content("수정된 공지사항 내용".repeat(100)).build();
+			String request = objectMapper.writeValueAsString(updateReqDto);
+
+			// expected
+			mockMvc.perform(patch("/admin/agenda/announcement")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(request))
+				.andExpect(status().isBadRequest());
 		}
 	}
 }

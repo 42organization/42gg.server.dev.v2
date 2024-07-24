@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import gg.admin.repo.agenda.AgendaAdminRepository;
 import gg.admin.repo.agenda.AgendaAnnouncementAdminRepository;
+import gg.agenda.api.admin.agendaannouncement.controller.request.AgendaAnnouncementAdminUpdateReqDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaAnnouncement;
 import gg.utils.exception.custom.NotExistException;
@@ -29,5 +30,12 @@ public class AgendaAnnouncementAdminService {
 		Agenda agenda = agendaAdminRepository.findByAgendaKey(agendaKey)
 			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
 		return agendaAnnouncementAdminRepository.findAllByAgenda(agenda, pageable).getContent();
+	}
+
+	@Transactional
+	public void updateAgendaAnnouncement(AgendaAnnouncementAdminUpdateReqDto updateReqDto) {
+		AgendaAnnouncement announcement = agendaAnnouncementAdminRepository.findById(updateReqDto.getId())
+			.orElseThrow(() -> new NotExistException(AGENDA_ANNOUNCEMENT_NOT_FOUND));
+		announcement.updateByAdmin(updateReqDto.getTitle(), updateReqDto.getContent(), updateReqDto.getIsShow());
 	}
 }

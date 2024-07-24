@@ -47,4 +47,10 @@ public class AgendaAnnouncement extends BaseTimeEntity {
 		this.isShow = isShow;
 		this.agenda = agenda;
 	}
+
+	public void updateByAdmin(String title, String content, Boolean isShow) {
+		this.title = title;
+		this.content = content;
+		this.isShow = isShow;
+	}
 }
