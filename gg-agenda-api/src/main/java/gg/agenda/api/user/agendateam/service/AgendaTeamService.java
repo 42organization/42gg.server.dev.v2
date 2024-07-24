@@ -309,7 +309,7 @@ public class AgendaTeamService {
 			throw new ForbiddenException(TEAM_LEADER_FORBIDDEN);
 		}
 
-		agenda.updateTeam(Location.valueOfLocation(teamUpdateReqDto.getTeamLocation()), LocalDateTime.now();
+		agenda.updateTeam(Location.valueOfLocation(teamUpdateReqDto.getTeamLocation()), LocalDateTime.now());
 		agendaTeam.updateTeam(teamUpdateReqDto.getTeamName(), teamUpdateReqDto.getTeamContent(),
 			teamUpdateReqDto.getTeamIsPrivate(), Location.valueOfLocation(teamUpdateReqDto.getTeamLocation()));
 		agendaTeamRepository.save(agendaTeam);
