@@ -137,6 +137,6 @@ public class AgendaTeamController {
 	public ResponseEntity<Void> attendTeamModify(@Parameter(hidden = true) @Login UserDto user,
 		@RequestBody @Valid TeamKeyReqDto teamKeyReqDto, @RequestParam("agenda_key") UUID agendaKey) {
 		agendaTeamService.modifyAttendTeam(user, teamKeyReqDto, agendaKey);
-		return ResponseEntity.noContent().build();
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 }

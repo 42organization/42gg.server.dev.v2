@@ -1192,7 +1192,7 @@ public class AgendaTeamControllerTest {
 		}
 
 		@Test
-		@DisplayName("204 팀 참가 신청 성공")
+		@DisplayName("201 팀 참가 신청 성공")
 		public void applyTeamSuccess() throws Exception {
 			//given
 			Agenda agenda = agendaFixture.createAgenda(SEOUL);
@@ -1207,7 +1207,7 @@ public class AgendaTeamControllerTest {
 						.param("agenda_key", agenda.getAgendaKey().toString())
 						.content(content)
 						.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isNoContent());
+				.andExpect(status().isCreated());
 			// then
 			AgendaTeam updatedTeam = agendaTeamRepository.findByTeamKey(team.getTeamKey()).orElse(null);
 			assert updatedTeam != null;
