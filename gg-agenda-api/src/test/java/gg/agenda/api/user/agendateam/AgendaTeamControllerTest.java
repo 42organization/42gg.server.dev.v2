@@ -1202,7 +1202,7 @@ public class AgendaTeamControllerTest {
 			String content = objectMapper.writeValueAsString(req);
 			// when
 			mockMvc.perform(
-					patch("/agenda/team/join")
+					post("/agenda/team/join")
 						.header("Authorization", "Bearer " + seoulUserAccessToken)
 						.param("agenda_key", agenda.getAgendaKey().toString())
 						.content(content)
@@ -1230,7 +1230,7 @@ public class AgendaTeamControllerTest {
 			String content = objectMapper.writeValueAsString(req);
 			// when && then
 			mockMvc.perform(
-					patch("/agenda/team/join")
+					post("/agenda/team/join")
 						.header("Authorization", "Bearer " + noProfileUserAccessToken)
 						.param("agenda_key", agenda.getAgendaKey().toString())
 						.content(content)
@@ -1248,7 +1248,7 @@ public class AgendaTeamControllerTest {
 			String content = objectMapper.writeValueAsString(req);
 			// when && then
 			mockMvc.perform(
-					patch("/agenda/team/join")
+					post("/agenda/team/join")
 						.header("Authorization", "Bearer " + gyeongsanUserAccessToken)
 						.param("agenda_key", noAgendaKey.toString())
 						.content(content)
@@ -1266,7 +1266,7 @@ public class AgendaTeamControllerTest {
 			String content = objectMapper.writeValueAsString(req);
 			// when && then
 			mockMvc.perform(
-					patch("/agenda/team/join")
+					post("/agenda/team/join")
 						.header("Authorization", "Bearer " + gyeongsanUserAccessToken)
 						.param("agenda_key", agenda.getAgendaKey().toString())
 						.content(content)
@@ -1285,7 +1285,7 @@ public class AgendaTeamControllerTest {
 			String content = objectMapper.writeValueAsString(req);
 			// when && then
 			mockMvc.perform(
-					patch("/agenda/team/join")
+					post("/agenda/team/join")
 						.header("Authorization", "Bearer " + gyeongsanUserAccessToken)
 						.param("agenda_key", agenda.getAgendaKey().toString())
 						.content(content)
@@ -1304,7 +1304,7 @@ public class AgendaTeamControllerTest {
 			String content = objectMapper.writeValueAsString(req);
 			// when && then
 			mockMvc.perform(
-					patch("/agenda/team/join")
+					post("/agenda/team/join")
 						.header("Authorization", "Bearer " + seoulUserAccessToken)
 						.param("agenda_key", agenda.getAgendaKey().toString())
 						.content(content)
@@ -1323,7 +1323,7 @@ public class AgendaTeamControllerTest {
 			String content = objectMapper.writeValueAsString(req);
 			// when && then
 			mockMvc.perform(
-					patch("/agenda/team/join")
+					post("/agenda/team/join")
 						.header("Authorization", "Bearer " + seoulUserAccessToken)
 						.param("agenda_key", agenda.getAgendaKey().toString())
 						.content(content)
@@ -1342,7 +1342,7 @@ public class AgendaTeamControllerTest {
 			String content = objectMapper.writeValueAsString(req);
 			// when && then
 			mockMvc.perform(
-					patch("/agenda/team/join")
+					post("/agenda/team/join")
 						.header("Authorization", "Bearer " + seoulUserAccessToken)
 						.param("agenda_key", agenda.getAgendaKey().toString())
 						.content(content)
@@ -1362,7 +1362,7 @@ public class AgendaTeamControllerTest {
 			String content = objectMapper.writeValueAsString(req);
 			// when && then
 			mockMvc.perform(
-					patch("/agenda/team/join")
+					post("/agenda/team/join")
 						.header("Authorization", "Bearer " + seoulUserAccessToken)
 						.param("agenda_key", agenda.getAgendaKey().toString())
 						.content(content)
@@ -1380,7 +1380,7 @@ public class AgendaTeamControllerTest {
 			String content = objectMapper.writeValueAsString(req);
 			// when && then
 			mockMvc.perform(
-					patch("/agenda/team/join")
+					post("/agenda/team/join")
 						.header("Authorization", "Bearer " + seoulUserAccessToken)
 						.param("agenda_key", agenda.getAgendaKey().toString())
 						.content(content)
@@ -1399,7 +1399,7 @@ public class AgendaTeamControllerTest {
 			String content = objectMapper.writeValueAsString(req);
 			// when && then
 			mockMvc.perform(
-					patch("/agenda/team/join")
+					post("/agenda/team/join")
 						.header("Authorization", "Bearer " + seoulUserAccessToken)
 						.param("agenda_key", agenda.getAgendaKey().toString())
 						.content(content)
@@ -1418,7 +1418,7 @@ public class AgendaTeamControllerTest {
 			String content = objectMapper.writeValueAsString(req);
 			// when && then
 			mockMvc.perform(
-					patch("/agenda/team/join")
+					post("/agenda/team/join")
 						.header("Authorization", "Bearer " + seoulUserAccessToken)
 						.param("agenda_key", agenda.getAgendaKey().toString())
 						.content(content)
