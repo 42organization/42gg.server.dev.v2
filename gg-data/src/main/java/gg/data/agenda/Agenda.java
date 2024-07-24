@@ -123,7 +123,6 @@ public class Agenda extends BaseTimeEntity {
 		mustStatusOnGoing();
 		mustBeforeDeadline(now);
 		mustHaveCapacity();
-		this.currentTeam++;
 	}
 
 	public void confirmTeam(Location location, LocalDateTime now) {
@@ -131,6 +130,7 @@ public class Agenda extends BaseTimeEntity {
 		mustStatusOnGoing();
 		mustBeforeDeadline(now);
 		mustHaveCapacity();
+		this.currentTeam++;
 	}
 
 	public void attendTeam(Location location, LocalDateTime now) {
