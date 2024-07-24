@@ -36,6 +36,6 @@ public class AgendaAnnouncementAdminService {
 	public void updateAgendaAnnouncement(AgendaAnnouncementAdminUpdateReqDto updateReqDto) {
 		AgendaAnnouncement announcement = agendaAnnouncementAdminRepository.findById(updateReqDto.getId())
 			.orElseThrow(() -> new NotExistException(AGENDA_ANNOUNCEMENT_NOT_FOUND));
-		announcement.updateIfNotNull(updateReqDto.getTitle(), updateReqDto.getContent(), updateReqDto.getIsShow());
+		announcement.updateByAdmin(updateReqDto.getTitle(), updateReqDto.getContent(), updateReqDto.getIsShow());
 	}
 }

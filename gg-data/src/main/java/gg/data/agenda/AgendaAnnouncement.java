@@ -1,7 +1,5 @@
 package gg.data.agenda;
 
-import java.util.Objects;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -50,15 +48,9 @@ public class AgendaAnnouncement extends BaseTimeEntity {
 		this.agenda = agenda;
 	}
 
-	public void updateIfNotNull(String title, String content, Boolean isShow) {
-		if (Objects.nonNull(title)) {
-			this.title = title;
-		}
-		if (Objects.nonNull(content)) {
-			this.content = content;
-		}
-		if (Objects.nonNull(isShow)) {
-			this.isShow = isShow;
-		}
+	public void updateByAdmin(String title, String content, Boolean isShow) {
+		this.title = title;
+		this.content = content;
+		this.isShow = isShow;
 	}
 }

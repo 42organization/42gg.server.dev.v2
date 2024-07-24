@@ -25,6 +25,7 @@ public class AgendaAnnouncementAdminUpdateReqDto {
 	@Length(max = 1000)
 	private String content;
 
+	@NotNull
 	private Boolean isShow;
 
 	@Builder
