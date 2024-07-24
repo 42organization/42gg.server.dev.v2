@@ -1,5 +1,6 @@
 package gg.data.agenda;
 
+import static gg.data.agenda.type.AgendaTeamStatus.*;
 import static gg.utils.exception.ErrorCode.*;
 
 import java.util.UUID;
@@ -91,27 +92,40 @@ public class AgendaTeam extends BaseTimeEntity {
 	}
 
 	public void confirm() {
-		if (this.status == AgendaTeamStatus.CANCEL) {
+		if (this.status == CANCEL) {
 			throw new BusinessException(AGENDA_TEAM_ALREADY_CANCEL);
 		}
-		if (this.status == AgendaTeamStatus.CONFIRM) {
+		if (this.status == CONFIRM) {
 			throw new BusinessException(AGENDA_TEAM_ALREADY_CONFIRM);
 		}
-		this.status = AgendaTeamStatus.CONFIRM;
+		this.status = CONFIRM;
 	}
 
 	public void leaveTeamLeader() {
-		if (this.status == AgendaTeamStatus.CANCEL) {
+		if (this.status == CANCEL) {
 			throw new BusinessException(AGENDA_TEAM_ALREADY_CANCEL);
 		}
-		this.status = AgendaTeamStatus.CANCEL;
+		this.status = CANCEL;
 		this.mateCount = 0;
 	}
 
 	public void leaveTeamMate() {
-		if (this.status == AgendaTeamStatus.CANCEL) {
+		if (this.status == CANCEL) {
 			throw new BusinessException(AGENDA_TEAM_ALREADY_CANCEL);
 		}
 		this.mateCount--;
+	}
+
+	public void attendTeam(Agenda agenda) {
+		if (this.status == CANCEL) {
+			throw new BusinessException(AGENDA_TEAM_ALREADY_CANCEL);
+		}
+		if (this.status == CONFIRM) {
+			throw new BusinessException(AGENDA_TEAM_ALREADY_CONFIRM);
+		}
+		if (this.mateCount >= agenda.getMaxPeople()) {
+			throw new BusinessException(AGENDA_TEAM_FULL);
+		}
+		this.mateCount++;
 	}
 }

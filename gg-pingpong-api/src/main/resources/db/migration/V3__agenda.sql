@@ -80,12 +80,14 @@ CREATE TABLE `agenda_team_profile`
 (
     `id`             BIGINT   NOT NULL AUTO_INCREMENT,
     `profile_id`     BIGINT   NOT NULL,
+    `agenda_id`      BIGINT   NOT NULL,
     `agenda_team_id` BIGINT   NOT NULL,
     `is_exist`       BIT(1)   NOT NULL,
     `created_at`     DATETIME NOT NULL,
     `modified_at`    DATETIME NOT NULL,
     PRIMARY KEY (`id`),
     KEY              `fk_agenda_team_profile_profile_profile_id` (`profile_id`),
+    KEY              `fk_agenda_team_profile_agenda_agenda_id` (`agenda_id`),
     KEY              `fk_agenda_team_profile_agenda_team_agenda_team_id` (`agenda_team_id`),
     CONSTRAINT `fk_agenda_team_profile_profile_profile_id` FOREIGN KEY (`profile_id`) REFERENCES `agenda_profile` (`id`),
     CONSTRAINT `fk_agenda_team_profile_agenda_team_agenda_team_id` FOREIGN KEY (`agenda_team_id`) REFERENCES `agenda_team` (`id`)
