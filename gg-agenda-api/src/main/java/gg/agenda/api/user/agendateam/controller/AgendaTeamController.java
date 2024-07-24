@@ -133,7 +133,7 @@ public class AgendaTeamController {
 	 * 아젠다 팀 참여하기
 	 * @param user 사용자 정보, teamKeyReqDto 팀 KEY 요청 정보, agendaId 아젠다 아이디
 	 */
-	@PatchMapping("/join")
+	@PostMapping("/join")
 	public ResponseEntity<Void> attendTeamModify(@Parameter(hidden = true) @Login UserDto user,
 		@RequestBody @Valid TeamKeyReqDto teamKeyReqDto, @RequestParam("agenda_key") UUID agendaKey) {
 		agendaTeamService.modifyAttendTeam(user, teamKeyReqDto, agendaKey);
