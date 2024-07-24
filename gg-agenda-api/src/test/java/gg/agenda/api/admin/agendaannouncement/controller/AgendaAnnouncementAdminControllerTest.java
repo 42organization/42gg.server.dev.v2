@@ -219,5 +219,43 @@ public class AgendaAnnouncementAdminControllerTest {
 					.content(request))
 				.andExpect(status().isBadRequest());
 		}
+
+		@Test
+		@DisplayName("Admin AgendaAnnouncement 수정 실패 - title이 너무 긴 경우")
+		void updateAgendaAnnouncementAdminFailedWithTooLongTitle() throws Exception {
+			// given
+			Agenda agenda = agendaFixture.createAgenda();
+			AgendaAnnouncement announcement = agendaAnnouncementFixture.createAgendaAnnouncement(agenda);
+			AgendaAnnouncementAdminUpdateReqDto updateReqDto = AgendaAnnouncementAdminUpdateReqDto.builder()
+				.id(announcement.getId()).isShow(!announcement.getIsShow())
+				.title("수정된 공지사항 제목".repeat(10)).content("수정된 공지사항 내용").build();
+			String request = objectMapper.writeValueAsString(updateReqDto);
+
+			// expected
+			mockMvc.perform(patch("/admin/agenda/announcement")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(request))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("Admin AgendaAnnouncement 수정 실패 - content이 너무 긴 경우")
+		void updateAgendaAnnouncementAdminFailedWithTooLongContent() throws Exception {
+			// given
+			Agenda agenda = agendaFixture.createAgenda();
+			AgendaAnnouncement announcement = agendaAnnouncementFixture.createAgendaAnnouncement(agenda);
+			AgendaAnnouncementAdminUpdateReqDto updateReqDto = AgendaAnnouncementAdminUpdateReqDto.builder()
+				.id(announcement.getId()).isShow(!announcement.getIsShow())
+				.title("수정된 공지사항 제목").content("수정된 공지사항 내용".repeat(100)).build();
+			String request = objectMapper.writeValueAsString(updateReqDto);
+
+			// expected
+			mockMvc.perform(patch("/admin/agenda/announcement")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(request))
+				.andExpect(status().isBadRequest());
+		}
 	}
 }
