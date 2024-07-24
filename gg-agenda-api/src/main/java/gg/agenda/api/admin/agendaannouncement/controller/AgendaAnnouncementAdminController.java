@@ -23,13 +23,13 @@ import gg.utils.dto.PageRequestDto;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/admin/agenda")
+@RequestMapping("/admin/agenda/announcement")
 @RequiredArgsConstructor
 public class AgendaAnnouncementAdminController {
 
 	private final AgendaAnnouncementAdminService agendaAnnouncementAdminService;
 
-	@GetMapping("/announcement")
+	@GetMapping()
 	public ResponseEntity<List<AgendaAnnouncementAdminResDto>> agendaAnnouncementList(
 		@RequestParam("agenda_key") UUID agendaKey, @RequestBody @Valid PageRequestDto pageRequest) {
 		int page = pageRequest.getPage();
