@@ -1,13 +1,17 @@
 package gg.utils.fixture.agenda;
 
-import gg.data.agenda.Agenda;
-import gg.data.agenda.type.Location;
-import gg.repo.agenda.AgendaRepository;
+import static gg.data.agenda.type.AgendaStatus.*;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
-import static gg.data.agenda.type.AgendaStatus.*;
+
+import gg.data.agenda.Agenda;
+import gg.data.agenda.type.AgendaStatus;
+import gg.data.agenda.type.Location;
+import gg.repo.agenda.AgendaRepository;
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
@@ -28,6 +32,72 @@ public class AgendaFixture {
 			.minPeople(1)
 			.maxPeople(5)
 			.status(ON_GOING)
+			.posterUri("posterUri")
+			.hostIntraId("hostIntraId")
+			.location(Location.MIX)
+			.isOfficial(true)
+			.isRanking(true)
+			.build();
+		return agendaRepository.save(agenda);
+	}
+
+	public Agenda createAgenda(Location location) {
+		Agenda agenda = Agenda.builder()
+			.title("title " + UUID.randomUUID())
+			.content("content " + UUID.randomUUID())
+			.deadline(LocalDateTime.now().plusDays(3))
+			.startTime(LocalDateTime.now().plusDays(5))
+			.endTime(LocalDateTime.now().plusDays(6))
+			.minTeam(2)
+			.maxTeam(5)
+			.currentTeam(0)
+			.minPeople(1)
+			.maxPeople(5)
+			.status(ON_GOING)
+			.posterUri("posterUri")
+			.hostIntraId("hostIntraId")
+			.location(location)
+			.isOfficial(true)
+			.isRanking(true)
+			.build();
+		return agendaRepository.save(agenda);
+	}
+
+	public Agenda createAgenda(LocalDateTime localDateTime) {
+		Agenda agenda = Agenda.builder()
+			.title("title " + UUID.randomUUID())
+			.content("content " + UUID.randomUUID())
+			.deadline(localDateTime)
+			.startTime(localDateTime.plusDays(2))
+			.endTime(localDateTime.plusDays(3))
+			.minTeam(2)
+			.maxTeam(5)
+			.currentTeam(0)
+			.minPeople(1)
+			.maxPeople(5)
+			.status(ON_GOING)
+			.posterUri("posterUri")
+			.hostIntraId("hostIntraId")
+			.location(Location.MIX)
+			.isOfficial(true)
+			.isRanking(true)
+			.build();
+		return agendaRepository.save(agenda);
+	}
+
+	public Agenda createAgenda(AgendaStatus agendaStatus) {
+		Agenda agenda = Agenda.builder()
+			.title("title " + UUID.randomUUID())
+			.content("content " + UUID.randomUUID())
+			.deadline(LocalDateTime.now().plusDays(3))
+			.startTime(LocalDateTime.now().plusDays(5))
+			.endTime(LocalDateTime.now().plusDays(6))
+			.minTeam(2)
+			.maxTeam(5)
+			.currentTeam(0)
+			.minPeople(1)
+			.maxPeople(5)
+			.status(agendaStatus)
 			.posterUri("posterUri")
 			.hostIntraId("hostIntraId")
 			.location(Location.MIX)
