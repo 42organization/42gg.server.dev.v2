@@ -50,6 +50,6 @@ public class AgendaAnnouncementAdminController {
 	public ResponseEntity<Void> updateAgendaAnnouncement(
 		@RequestBody @Valid AgendaAnnouncementAdminUpdateReqDto updateReqDto) {
 		agendaAnnouncementAdminService.updateAgendaAnnouncement(updateReqDto);
-		return ResponseEntity.ok().build();
+		return ResponseEntity.noContent().build();
 	}
 }
