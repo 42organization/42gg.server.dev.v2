@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import gg.agenda.api.user.agendateam.controller.request.TeamCreateReqDto;
 import gg.agenda.api.user.agendateam.controller.request.TeamKeyReqDto;
+import gg.agenda.api.user.agendateam.controller.request.TeamUpdateReqDto;
 import gg.agenda.api.user.agendateam.controller.response.ConfirmTeamResDto;
 import gg.agenda.api.user.agendateam.controller.response.MyTeamSimpleResDto;
 import gg.agenda.api.user.agendateam.controller.response.OpenTeamResDto;
@@ -138,5 +139,16 @@ public class AgendaTeamController {
 		@RequestBody @Valid TeamKeyReqDto teamKeyReqDto, @RequestParam("agenda_key") UUID agendaKey) {
 		agendaTeamService.modifyAttendTeam(user, teamKeyReqDto, agendaKey);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
+	}
+
+	/**
+	 * 아젠다 팀 수정하기
+	 * @param user 사용자 정보, teamUpdateReqDto 팀 update 요청 정보, agendaId 아젠다 아이디
+	 */
+	@PatchMapping
+	public ResponseEntity<Void> agendaTeamModify(@Parameter(hidden = true) @Login UserDto user,
+		@RequestBody @Valid TeamUpdateReqDto teamUpdateReqDto, @RequestParam("agenda_key") UUID agendaKey) {
+		agendaTeamService.modifyAgendaTeam(user, teamUpdateReqDto, agendaKey);
+		return ResponseEntity.ok().build();
 	}
 }

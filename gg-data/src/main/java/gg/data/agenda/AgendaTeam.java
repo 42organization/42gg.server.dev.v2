@@ -128,4 +128,11 @@ public class AgendaTeam extends BaseTimeEntity {
 		}
 		this.mateCount++;
 	}
+
+	public void updateTeam(String name, String content, Boolean isPrivate, Location location) {
+		this.content = content;
+		this.name = name;
+		this.isPrivate = isPrivate;
+		this.location = location;
+	}
 }

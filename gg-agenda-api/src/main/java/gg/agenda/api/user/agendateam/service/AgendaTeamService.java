@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import gg.agenda.api.user.agendateam.controller.request.TeamCreateReqDto;
 import gg.agenda.api.user.agendateam.controller.request.TeamKeyReqDto;
+import gg.agenda.api.user.agendateam.controller.request.TeamUpdateReqDto;
 import gg.agenda.api.user.agendateam.controller.response.ConfirmTeamResDto;
 import gg.agenda.api.user.agendateam.controller.response.MyTeamSimpleResDto;
 import gg.agenda.api.user.agendateam.controller.response.OpenTeamResDto;
@@ -227,6 +228,7 @@ public class AgendaTeamService {
 	 * 아젠다 팀 공개 모집인 팀 목록 조회
 	 * @param pageable 페이지네이션 요청 정보, agendaId 아젠다 아이디
 	 */
+	@Transactional(readOnly = true)
 	public List<OpenTeamResDto> listOpenTeam(UUID agendaKey, Pageable pageable) {
 		Agenda agenda = agendaRepository.findByAgendaKey(agendaKey)
 			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
@@ -242,6 +244,7 @@ public class AgendaTeamService {
 	 * 아젠다 팀 확정된 팀 목록 조회
 	 * @param pageable 페이지네이션 요청 정보, agendaId 아젠다 아이디
 	 */
+	@Transactional(readOnly = true)
 	public List<ConfirmTeamResDto> listConfirmTeam(UUID agendaKey, Pageable pageable) {
 		Agenda agenda = agendaRepository.findByAgendaKey(agendaKey)
 			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
@@ -263,6 +266,7 @@ public class AgendaTeamService {
 	 * 아젠다 팀 참여하기
 	 * @param user 사용자 정보, teamKeyReqDto 팀 KEY 요청 정보, agendaId 아젠다 아이디
 	 */
+	@Transactional
 	public void modifyAttendTeam(UserDto user, TeamKeyReqDto teamKeyReqDto, UUID agendaKey) {
 		AgendaProfile agendaProfile = agendaProfileRepository.findByUserId(user.getId())
 			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
@@ -286,5 +290,27 @@ public class AgendaTeamService {
 		agendaTeam.attendTeam(agenda);
 		ticket.useTicket(agenda.getAgendaKey());
 		agendaTeamProfileRepository.save(new AgendaTeamProfile(agendaTeam, agenda, agendaProfile));
+	}
+
+	/**
+	 * 아젠다 팀 수정하기
+	 * @param user 사용자 정보, teamUpdateReqDto 팀 수정 요청 정보, agendaId 아젠다 아이디
+	 */
+	@Transactional
+	public void modifyAgendaTeam(UserDto user, TeamUpdateReqDto teamUpdateReqDto, UUID agendaKey) {
+		Agenda agenda = agendaRepository.findByAgendaKey(agendaKey)
+			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
+
+		AgendaTeam agendaTeam = agendaTeamRepository
+			.findByAgendaAndTeamKeyAndStatus(agenda, teamUpdateReqDto.getTeamKey(), OPEN, CONFIRM)
+			.orElseThrow(() -> new NotExistException(AGENDA_TEAM_NOT_FOUND));
+
+		if (!agendaTeam.getLeaderIntraId().equals(user.getIntraId())) {
+			throw new ForbiddenException(TEAM_LEADER_FORBIDDEN);
+		}
+
+		agendaTeam.updateTeam(teamUpdateReqDto.getTeamName(), teamUpdateReqDto.getTeamContent(),
+			teamUpdateReqDto.getTeamIsPrivate(), Location.valueOf(teamUpdateReqDto.getTeamLocation()));
+		agendaTeamRepository.save(agendaTeam);
 	}
 }
