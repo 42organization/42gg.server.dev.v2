@@ -197,6 +197,7 @@ public enum ErrorCode {
 	AGENDA_TEAM_ALREADY_CONFIRM(409, "AG", "이미 확정된 팀입니다."),
 	AGENDA_TEAM_ALREADY_CANCEL(400, "AG", "이미 취소된 팀입니다."),
 	NOT_ENOUGH_TEAM_MEMBER(400, "AG", "팀원이 부족합니다."),
+	AGENDA_ANNOUNCEMENT_NOT_FOUND(404, "AG", "공지사항이 존재하지 않습니다."),
 	AGENDA_TEAM_FULL(400, "AG", "팀이 꽉 찼습니다."),
 	AGENDA_NO_CAPACITY(403, "AG", "해당 일정에 참여할 수 있는 팀이 꽉 찼습니다."),
 	AGENDA_INVALID_SCHEDULE(400, "AG", "유효하지 않은 일정입니다."),
