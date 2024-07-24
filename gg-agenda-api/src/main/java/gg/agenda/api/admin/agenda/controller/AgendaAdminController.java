@@ -33,12 +33,9 @@ public class AgendaAdminController {
 
 	private final AgendaAdminService agendaAdminService;
 
-	@ApiResponses(value = {
-		@ApiResponse(responseCode = "200", description = "Agenda 요청 리스트 조회 성공")
-	})
+	@ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Agenda 요청 리스트 조회 성공")})
 	@GetMapping("/request/list")
-	public ResponseEntity<List<AgendaAdminResDto>> agendaList(
-		@RequestBody @Valid PageRequestDto pageDto) {
+	public ResponseEntity<List<AgendaAdminResDto>> agendaList(@RequestBody @Valid PageRequestDto pageDto) {
 		int page = pageDto.getPage();
 		int size = pageDto.getSize();
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());
@@ -48,14 +45,12 @@ public class AgendaAdminController {
 		return ResponseEntity.ok(agendaDtos);
 	}
 
-	@ApiResponses(value = {
-		@ApiResponse(responseCode = "204", description = "Agenda 수정 성공"),
+	@ApiResponses(value = {@ApiResponse(responseCode = "204", description = "Agenda 수정 성공"),
 		@ApiResponse(responseCode = "400", description = "Agenda 수정 요청이 잘못됨"),
 		@ApiResponse(responseCode = "404", description = "Agenda를 찾을 수 없음"),
 		@ApiResponse(responseCode = "409", description = "Agenda 지역을 변경할 수 없음"),
 		@ApiResponse(responseCode = "409", description = "Agenda 팀 제한을 변경할 수 없음"),
-		@ApiResponse(responseCode = "409", description = "Agenda 팀 인원 제한을 변경할 수 없음")
-	})
+		@ApiResponse(responseCode = "409", description = "Agenda 팀 인원 제한을 변경할 수 없음")})
 	@PatchMapping("/request")
 	public ResponseEntity<Void> agendaUpdate(@RequestParam("agenda_key") UUID agendaKey,
 		@RequestBody @Valid AgendaAdminUpdateReqDto agendaDto) {

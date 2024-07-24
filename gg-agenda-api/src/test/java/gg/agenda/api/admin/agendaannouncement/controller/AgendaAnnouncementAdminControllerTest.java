@@ -1,0 +1,158 @@
+package gg.agenda.api.admin.agendaannouncement.controller;
+
+import static org.assertj.core.api.AssertionsForClassTypes.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.util.List;
+import java.util.UUID;
+
+import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import gg.admin.repo.agenda.AgendaAdminRepository;
+import gg.admin.repo.agenda.AgendaAnnouncementAdminRepository;
+import gg.agenda.api.user.agendaannouncement.controller.response.AgendaAnnouncementResDto;
+import gg.data.agenda.Agenda;
+import gg.data.agenda.AgendaAnnouncement;
+import gg.data.user.User;
+import gg.utils.AgendaTestDataUtils;
+import gg.utils.TestDataUtils;
+import gg.utils.annotation.IntegrationTest;
+import gg.utils.dto.PageRequestDto;
+import gg.utils.fixture.agenda.AgendaAnnouncementFixture;
+import gg.utils.fixture.agenda.AgendaFixture;
+
+@IntegrationTest
+@Transactional
+@AutoConfigureMockMvc
+public class AgendaAnnouncementAdminControllerTest {
+
+	@Autowired
+	private MockMvc mockMvc;
+
+	@Autowired
+	private ObjectMapper objectMapper;
+
+	@Autowired
+	private TestDataUtils testDataUtils;
+
+	@Autowired
+	private AgendaFixture agendaFixture;
+
+	@Autowired
+	private AgendaAnnouncementFixture agendaAnnouncementFixture;
+
+	@Autowired
+	private AgendaTestDataUtils agendaTestDataUtils;
+
+	@Autowired
+	EntityManager em;
+
+	@Autowired
+	AgendaAdminRepository agendaAdminRepository;
+
+	@Autowired
+	AgendaAnnouncementAdminRepository agendaAnnouncementAdminRepository;
+
+	private User user;
+
+	private String accessToken;
+
+	@BeforeEach
+	void setUp() {
+		user = testDataUtils.createAdminUser();
+		accessToken = testDataUtils.getLoginAccessTokenFromUser(user);
+	}
+
+	@Nested
+	@DisplayName("Admin AgendaAnnouncement 상세 조회")
+	class GetAgendaAnnouncementListAdmin {
+
+		@ParameterizedTest
+		@ValueSource(ints = {1, 2, 3, 4, 5, 6})
+		@DisplayName("Admin AgendaAnnouncement 상세 조회 성공")
+		void getAgendaAnnouncementAdminSuccess(int page) throws Exception {
+			// given
+			int size = 10;
+			Agenda agenda = agendaFixture.createAgenda();
+			List<AgendaAnnouncement> announcements =
+				agendaAnnouncementFixture.createAgendaAnnouncementList(agenda, 37);
+			PageRequestDto pageDto = new PageRequestDto(page, size);
+			String request = objectMapper.writeValueAsString(pageDto);
+
+			// when
+			String response = mockMvc.perform(get("/admin/agenda/announcement")
+					.header("Authorization", "Bearer " + accessToken)
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(request))
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+			AgendaAnnouncementResDto[] result =
+				objectMapper.readValue(response, AgendaAnnouncementResDto[].class);
+
+			// then
+			assertThat(result).hasSize(((page - 1) * size) < announcements.size()
+				? Math.min(size, announcements.size() - (page - 1) * size) : 0);
+			announcements.sort((a, b) -> b.getId().compareTo(a.getId()));
+			for (int i = 0; i < result.length; i++) {
+				assertThat(result[i].getId()).isEqualTo(announcements.get(i + (page - 1) * size).getId());
+			}
+		}
+
+		@Test
+		@DisplayName("Admin AgendaAnnouncement 상세 조회 성공 - 빈 리스트 반환")
+		void getAgendaAnnouncementAdminSuccessWithNoContent() throws Exception {
+			// given
+			int page = 1;
+			int size = 10;
+			Agenda agenda = agendaFixture.createAgenda();
+			PageRequestDto pageDto = new PageRequestDto(page, size);
+			String request = objectMapper.writeValueAsString(pageDto);
+
+			// when
+			String response = mockMvc.perform(get("/admin/agenda/announcement")
+					.header("Authorization", "Bearer " + accessToken)
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(request))
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+			AgendaAnnouncementResDto[] result =
+				objectMapper.readValue(response, AgendaAnnouncementResDto[].class);
+
+			// then
+			assertThat(result).isEmpty();
+		}
+
+		@Test
+		@DisplayName("Admin AgendaAnnouncement 상세 조회 실패 - Agenda가 없는 경우")
+		void getAgendaAnnouncementAdminFailedWithNoAgenda() throws Exception {
+			// given
+			int page = 1;
+			int size = 10;
+			PageRequestDto pageDto = new PageRequestDto(page, size);
+			String request = objectMapper.writeValueAsString(pageDto);
+
+			// expected
+			mockMvc.perform(get("/admin/agenda/announcement")
+					.header("Authorization", "Bearer " + accessToken)
+					.param("agenda_key", UUID.randomUUID().toString())
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(request))
+				.andExpect(status().isNotFound());
+		}
+	}
+}
