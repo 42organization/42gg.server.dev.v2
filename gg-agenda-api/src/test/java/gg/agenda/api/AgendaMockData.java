@@ -265,6 +265,28 @@ public class AgendaMockData {
 		return agendaRepository.save(agenda);
 	}
 
+	public Agenda createAgenda(String intraId, LocalDateTime startTime, boolean rank, AgendaStatus status) {
+		Agenda agenda = Agenda.builder()
+			.title("title")
+			.content("content")
+			.deadline(startTime.minusDays(1))
+			.startTime(startTime)
+			.endTime(startTime.plusDays(1))
+			.minTeam(1)
+			.maxTeam(5)
+			.currentTeam(0)
+			.minPeople(1)
+			.maxPeople(3)
+			.posterUri("posterUri")
+			.hostIntraId(intraId)
+			.location(SEOUL)
+			.status(status)
+			.isOfficial(true)
+			.isRanking(rank)
+			.build();
+		return agendaRepository.save(agenda);
+	}
+
 	public Agenda createAgenda(String intraId, LocalDateTime startTime, AgendaStatus status) {
 		Agenda agenda = Agenda.builder()
 			.title("title")
@@ -325,6 +347,28 @@ public class AgendaMockData {
 			.hostIntraId("hostIntraId")
 			.location(SEOUL)
 			.status(AgendaStatus.OPEN)
+			.isOfficial(true)
+			.isRanking(true)
+			.build();
+		return agendaRepository.save(agenda);
+	}
+
+	public Agenda createAgendaWithAgendaCapacityAndStatus(int min, int max, AgendaStatus status) {
+		Agenda agenda = Agenda.builder()
+			.title("title")
+			.content("content")
+			.deadline(LocalDateTime.now().plusDays(1))
+			.startTime(LocalDateTime.now().plusDays(2))
+			.endTime(LocalDateTime.now().plusDays(3))
+			.minTeam(min)
+			.maxTeam(max)
+			.currentTeam(0)
+			.minPeople(1)
+			.maxPeople(3)
+			.posterUri("posterUri")
+			.hostIntraId("hostIntraId")
+			.location(SEOUL)
+			.status(status)
 			.isOfficial(true)
 			.isRanking(true)
 			.build();
@@ -683,15 +727,15 @@ public class AgendaMockData {
 		return agenda;
 	}
 
-	public Agenda createAgendaWithTeamAndAgendaCapacityAndConfirm(int teamCount, int min, int max) {
+	public Agenda createAgendaWithTeamAndAgendaCapacityAndFinish(int teamCount, int min, int max) {
 		Agenda agenda = createAgendaWithAgendaCapacity(min, max);
 		for (int i = 0; i < teamCount; i++) {
 			AgendaTeam agendaTeam = createAgendaTeam(agenda);
 			agenda.addTeam(agendaTeam.getLocation(), LocalDateTime.now());
 		}
 		agenda.updateSchedule(LocalDateTime.now().minusDays(2),
-			LocalDateTime.now().minusDays(1),
-			LocalDateTime.now().plusDays(1));
+			LocalDateTime.now().minusDays(1), LocalDateTime.now().plusDays(1));
+		agenda.confirm();
 		agenda.finish();
 		em.persist(agenda);
 		em.flush();
@@ -709,8 +753,23 @@ public class AgendaMockData {
 		return agenda;
 	}
 
-	public Agenda createAgendaWithTeamAndAgendaTeamCapacityAndConfirm(int teamCount, int min, int max) {
-		Agenda agenda = createAgendaWithAgendaTeamCapacity(min, max);
+	public Agenda createAgendaWithTeamAndAgendaTeamCapacityAndFinish(int teamCount, int min, int max) {
+		Agenda agenda = createAgendaWithAgendaCapacityAndStatus(min, max, CONFIRM);
+		for (int i = 0; i < teamCount; i++) {
+			User user = testDataUtils.createNewUser();
+			AgendaTeam agendaTeam = createAgendaTeam(agenda, user, 3);
+			agendaTeam.confirm();
+			agenda.addTeam(agendaTeam.getLocation(), LocalDateTime.now());
+			em.persist(agendaTeam);
+			em.flush();
+			em.clear();
+		}
+		return agenda;
+	}
+
+	public Agenda createAgendaWithStatusAndTeamWithAgendaTeamCapacity(AgendaStatus status,
+		int teamCount, int min, int max) {
+		Agenda agenda = createAgendaWithAgendaCapacityAndStatus(min, max, status);
 		for (int i = 0; i < teamCount; i++) {
 			User user = testDataUtils.createNewUser();
 			AgendaTeam agendaTeam = createAgendaTeam(agenda, user, 3);

@@ -575,7 +575,8 @@ public class AgendaControllerTest {
 			// given
 			int teamSize = 10;
 			int awardSize = 3;
-			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), true);
+			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(),
+				LocalDateTime.now().minusDays(10), true, AgendaStatus.CONFIRM);
 			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
 					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
 					.collect(Collectors.toList());
@@ -615,7 +616,8 @@ public class AgendaControllerTest {
 		void finishAgendaSuccessWithNoRanking() throws Exception {
 			// given
 			int teamSize = 10;
-			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), false);
+			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(),
+				LocalDateTime.now().minusDays(10), false, AgendaStatus.CONFIRM);
 			IntStream.range(0, teamSize)
 				.forEach(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM));
 
@@ -637,7 +639,8 @@ public class AgendaControllerTest {
 			// given
 			int teamSize = 10;
 			int awardSize = 3;
-			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), false);
+			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(),
+				LocalDateTime.now().minusDays(10), false, AgendaStatus.CONFIRM);
 			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
 					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
 					.collect(Collectors.toList());
@@ -678,7 +681,8 @@ public class AgendaControllerTest {
 			// given
 			int teamSize = 10;
 			int awardSize = 3;
-			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), true);
+			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(),
+				LocalDateTime.now().minusDays(10), true, AgendaStatus.CONFIRM);
 			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
 					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
 					.collect(Collectors.toList());
@@ -693,7 +697,7 @@ public class AgendaControllerTest {
 
 			// expected
 			mockMvc.perform(patch("/agenda/finish")
-					.param("agenda_key", agenda.getAgendaKey().toString())
+					.param("agenda_key", UUID.randomUUID().toString())
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(response))
