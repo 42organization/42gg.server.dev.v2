@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.agenda.api.user.agendateam.controller.request.TeamCreateReqDto;
@@ -195,33 +194,26 @@ public class AgendaTeamService {
 		agenda.cancelTeam(LocalDateTime.now());
 
 		List<AgendaTeamProfile> profiles = agendaTeamProfileRepository.findByAgendaTeamAndIsExistTrue(agendaTeam);
-		List<AgendaProfile> changedProfiles = agendaTeamProfileLeave(user, agendaTeam, profiles);
-		ticketService.refundTickets(changedProfiles, agendaKey);
-	}
 
-	/**
-	 * 아젠다 팀 나가기
-	 * @param user 사용자 정보, teamKeyReqDto 팀 KEY 요청 정보, agendaId 아젠다 아이디
-	 * @Annotation 트랜잭션의 원자성을 보장하기 위해 부모 트랜잭션이 없을경우 예외를 발생시키는 Propagation.MANDATORY로 설정
-	 */
-	@Transactional(propagation = Propagation.MANDATORY)
-	public List<AgendaProfile> agendaTeamProfileLeave(UserDto user, AgendaTeam agendaTeam,
-		List<AgendaTeamProfile> profiles) {
+		List<AgendaProfile> changedProfiles;
+
 		if (agendaTeam.getLeaderIntraId().equals(user.getIntraId())) {
-			List<AgendaProfile> changedProfiles = profiles
+			changedProfiles = profiles
 				.stream()
 				.peek(AgendaTeamProfile::leaveTeam)
 				.map(AgendaTeamProfile::getProfile)
 				.collect(Collectors.toList());
 			agendaTeam.leaveTeamLeader();
-			return changedProfiles;
+			ticketService.refundTickets(changedProfiles, agendaKey);
+			return;
 		}
-		AgendaTeamProfile teamMate = profiles.stream()
+		AgendaTeamProfile teamMateProfile = profiles.stream()
 			.filter(profile -> profile.getProfile().getUserId().equals(user.getId()))
 			.findFirst().orElseThrow(() -> new ForbiddenException(NOT_TEAM_MATE));
-		teamMate.leaveTeam();
+		teamMateProfile.leaveTeam();
 		agendaTeam.leaveTeamMate();
-		return List.of(teamMate.getProfile());
+		changedProfiles = List.of(teamMateProfile.getProfile());
+		ticketService.refundTickets(changedProfiles, agendaKey);
 	}
 
 	/**
