@@ -2,15 +2,10 @@ package gg.agenda.api.user.agenda.service;
 
 import static gg.utils.exception.ErrorCode.*;
 
-import gg.agenda.api.user.agenda.controller.request.AgendaAward;
-import gg.agenda.api.user.agenda.controller.request.AgendaTeamAwardDto;
-import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -20,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import gg.agenda.api.user.agenda.controller.request.AgendaConfirmReqDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaCreateReqDto;
+import gg.agenda.api.user.agenda.controller.request.AgendaTeamAwardDto;
 import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaTeam;

@@ -354,8 +354,8 @@ public class AgendaAdminControllerTest {
 			// expected
 			mockMvc.perform(patch("/admin/agenda/request")
 					.param("agenda_key", agenda.getAgendaKey().toString())
-					.header("Authorization", "Bearer " + accessToken).
-					contentType(MediaType.APPLICATION_JSON)
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
 					.content(request))
 				.andExpect(status().isBadRequest());
 		}
