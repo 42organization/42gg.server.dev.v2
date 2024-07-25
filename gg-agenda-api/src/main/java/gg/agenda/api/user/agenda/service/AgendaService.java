@@ -3,10 +3,14 @@ package gg.agenda.api.user.agenda.service;
 import static gg.utils.exception.ErrorCode.*;
 
 import gg.agenda.api.user.agenda.controller.request.AgendaAward;
+import gg.agenda.api.user.agenda.controller.request.AgendaTeamAwardDto;
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -65,15 +69,15 @@ public class AgendaService {
 			agenda.finish();
 			return;
 		}
-		Map<String, AgendaAward> awards = AgendaConfirmReqDto.toMap(agendaConfirmReqDto.getAwards());
-		List<AgendaTeam> confirmedTeams = agendaTeamRepository
-			.findAllByAgendaAndStatus(agenda, AgendaTeamStatus.CONFIRM);
-		for (AgendaTeam agendaTeam : confirmedTeams) {
-			if (!awards.containsKey(agendaTeam.getName())) {
-				continue;
+		Map<String, AgendaTeam> teams = new HashMap<>();
+		agendaTeamRepository.findAllByAgendaAndStatus(agenda, AgendaTeamStatus.CONFIRM)
+			.forEach(team -> teams.put(team.getName(), team));
+		for (AgendaTeamAwardDto agendaTeamAward : agendaConfirmReqDto.getAwards()) {
+			if (!teams.containsKey(agendaTeamAward.getTeamName())) {
+				throw new NotExistException(TEAM_NOT_FOUND);
 			}
-			AgendaAward agendaAward = awards.get(agendaTeam.getName());
-			agendaTeam.acceptAward(agendaAward.getAwardName(), agendaAward.getAwardPriority());
+			teams.get(agendaTeamAward.getTeamName())
+				.acceptAward(agendaTeamAward.getAwardName(), agendaTeamAward.getAwardPriority());
 		}
 		agenda.finish();
 	}

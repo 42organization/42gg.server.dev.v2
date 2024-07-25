@@ -206,24 +206,22 @@ class AgendaServiceTest {
 			// given
 			Agenda agenda = Agenda.builder()
 				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
-				.status(AgendaStatus.OPEN).isRanking(true).build();
+				.status(AgendaStatus.CONFIRM).isRanking(true).build();
 			List<AgendaTeam> agendaTeams = new ArrayList<>();
 			IntStream.range(0, 10).forEach(i -> agendaTeams.add(AgendaTeam.builder().name("team" + i).build()));
 			AgendaTeamAwardDto awardDto = AgendaTeamAwardDto.builder()
 				.teamName("team1").awardName("award").awardPriority(1).build();
-			UserDto user = UserDto.builder().intraId(agenda.getHostIntraId()).build();
-			UUID agendaKey = agenda.getAgendaKey();
 			AgendaConfirmReqDto confirmDto = AgendaConfirmReqDto.builder()
 				.awards(List.of(awardDto)).build();
 
-			when(agendaTeamRepository.findByAgendaAndNameAndStatus(any(), any(), any()))
-				.thenReturn(Optional.of(agendaTeams.get(seq++)));
+			when(agendaTeamRepository.findAllByAgendaAndStatus(any(), any()))
+				.thenReturn(agendaTeams);
 
 			// when
 			agendaService.finishAgendaWithAwards(confirmDto, agenda);
 
 			// then
-			verify(agendaTeamRepository, times(1)).findByAgendaAndNameAndStatus(any(), any(), any());
+			verify(agendaTeamRepository, times(1)).findAllByAgendaAndStatus(any(), any());
 			assertThat(agenda.getStatus()).isEqualTo(AgendaStatus.FINISH);
 		}
 
@@ -233,9 +231,7 @@ class AgendaServiceTest {
 			// given
 			Agenda agenda = Agenda.builder()
 				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
-				.status(AgendaStatus.OPEN).isRanking(false).build();
-			UserDto user = UserDto.builder().intraId(agenda.getHostIntraId()).build();
-			UUID agendaKey = agenda.getAgendaKey();
+				.status(AgendaStatus.CONFIRM).isRanking(false).build();
 
 			// when
 			agendaService.finishAgendaWithAwards(null, agenda);
@@ -250,13 +246,11 @@ class AgendaServiceTest {
 			// given
 			Agenda agenda = Agenda.builder()
 				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
-				.status(AgendaStatus.OPEN).isRanking(false).build();
+				.status(AgendaStatus.CONFIRM).isRanking(false).build();
 			List<AgendaTeam> agendaTeams = new ArrayList<>();
 			IntStream.range(0, 10).forEach(i -> agendaTeams.add(AgendaTeam.builder().name("team" + i).build()));
 			AgendaTeamAwardDto awardDto = AgendaTeamAwardDto.builder()
 				.teamName("team1").awardName("award").awardPriority(1).build();
-			UserDto user = UserDto.builder().intraId(agenda.getHostIntraId()).build();
-			UUID agendaKey = agenda.getAgendaKey();
 			AgendaConfirmReqDto confirmDto = AgendaConfirmReqDto.builder()
 				.awards(List.of(awardDto)).build();
 
@@ -264,21 +258,17 @@ class AgendaServiceTest {
 			agendaService.finishAgendaWithAwards(confirmDto, agenda);
 
 			// then
-			verify(agendaTeamRepository, never()).findByAgendaAndNameAndStatus(any(), any(), any());
+			verify(agendaTeamRepository, never()).findAllByAgendaAndStatus(any(), any());
 			assertThat(agenda.getStatus()).isEqualTo(AgendaStatus.FINISH);
 		}
 
 		@Test
 		@DisplayName("Agenda 시상 및 확정 성공 - 시상하지 않는 대회에 시상 내역이 빈 리스트로 들어온 경우")
-		void confirmAgendaSuccessWithNoRankAndEmtpyAwards() {
+		void confirmAgendaSuccessWithNoRankAndEmptyAwards() {
 			// given
 			Agenda agenda = Agenda.builder()
 				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
-				.status(AgendaStatus.OPEN).isRanking(false).build();
-			List<AgendaTeam> agendaTeams = new ArrayList<>();
-			IntStream.range(0, 10).forEach(i -> agendaTeams.add(AgendaTeam.builder().name("team" + i).build()));
-			UserDto user = UserDto.builder().intraId(agenda.getHostIntraId()).build();
-			UUID agendaKey = agenda.getAgendaKey();
+				.status(AgendaStatus.CONFIRM).isRanking(false).build();
 			AgendaConfirmReqDto confirmDto = AgendaConfirmReqDto.builder()
 				.awards(List.of()).build();
 
@@ -286,7 +276,7 @@ class AgendaServiceTest {
 			agendaService.finishAgendaWithAwards(confirmDto, agenda);
 
 			// then
-			verify(agendaTeamRepository, never()).findByAgendaAndNameAndStatus(any(), any(), any());
+			verify(agendaTeamRepository, never()).findAllByAgendaAndStatus(any(), any());
 			assertThat(agenda.getStatus()).isEqualTo(AgendaStatus.FINISH);
 		}
 
@@ -296,18 +286,14 @@ class AgendaServiceTest {
 			// given
 			Agenda agenda = Agenda.builder()
 				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
-				.status(AgendaStatus.OPEN).isRanking(false).build();
-			List<AgendaTeam> agendaTeams = new ArrayList<>();
-			IntStream.range(0, 10).forEach(i -> agendaTeams.add(AgendaTeam.builder().name("team" + i).build()));
-			UserDto user = UserDto.builder().intraId(agenda.getHostIntraId()).build();
-			UUID agendaKey = agenda.getAgendaKey();
+				.status(AgendaStatus.CONFIRM).isRanking(false).build();
 			AgendaConfirmReqDto confirmDto = AgendaConfirmReqDto.builder().build();
 
 			// when
 			agendaService.finishAgendaWithAwards(confirmDto, agenda);
 
 			// then
-			verify(agendaTeamRepository, never()).findByAgendaAndNameAndStatus(any(), any(), any());
+			verify(agendaTeamRepository, never()).findAllByAgendaAndStatus(any(), any());
 			assertThat(agenda.getStatus()).isEqualTo(AgendaStatus.FINISH);
 		}
 
@@ -317,7 +303,7 @@ class AgendaServiceTest {
 			// given
 			Agenda agenda = Agenda.builder()
 				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
-				.status(AgendaStatus.OPEN).isRanking(true).build();
+				.status(AgendaStatus.CONFIRM).isRanking(true).build();
 
 			AgendaConfirmReqDto confirmDto = AgendaConfirmReqDto.builder().build();
 
@@ -332,7 +318,7 @@ class AgendaServiceTest {
 			// given
 			Agenda agenda = Agenda.builder()
 				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
-				.status(AgendaStatus.OPEN).isRanking(true).build();
+				.status(AgendaStatus.CONFIRM).isRanking(true).build();
 
 			// expected
 			assertThrows(NullPointerException.class,
@@ -345,14 +331,14 @@ class AgendaServiceTest {
 			// given
 			Agenda agenda = Agenda.builder()
 				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
-				.status(AgendaStatus.OPEN).isRanking(true).build();
+				.status(AgendaStatus.CONFIRM).isRanking(true).build();
 			AgendaTeamAwardDto awardDto = AgendaTeamAwardDto.builder()
 				.teamName("invalidTeam").awardName("award").awardPriority(1).build();
 			AgendaConfirmReqDto confirmDto = AgendaConfirmReqDto.builder()
 				.awards(List.of(awardDto)).build();
 
-			when(agendaTeamRepository.findByAgendaAndNameAndStatus(any(), any(), any()))
-				.thenReturn(Optional.empty());
+			when(agendaTeamRepository.findAllByAgendaAndStatus(any(), any()))
+				.thenReturn(List.of());
 
 			// expected
 			assertThrows(NotExistException.class,
