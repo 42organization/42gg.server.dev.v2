@@ -1,21 +1,9 @@
 package gg.agenda.api;
 
-import static gg.data.agenda.type.AgendaStatus.FINISH;
+import static gg.data.agenda.type.AgendaStatus.*;
 import static gg.data.agenda.type.Coalition.*;
 import static gg.data.agenda.type.Location.*;
 import static java.util.UUID.*;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import javax.persistence.EntityManager;
-
-import org.springframework.stereotype.Component;
-
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaAnnouncement;
 import gg.data.agenda.AgendaProfile;
@@ -33,7 +21,15 @@ import gg.repo.agenda.AgendaTeamProfileRepository;
 import gg.repo.agenda.AgendaTeamRepository;
 import gg.repo.agenda.TicketRepository;
 import gg.utils.TestDataUtils;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import javax.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
@@ -696,7 +692,7 @@ public class AgendaMockData {
 		agenda.updateSchedule(LocalDateTime.now().minusDays(2),
 			LocalDateTime.now().minusDays(1),
 			LocalDateTime.now().plusDays(1));
-		agenda.confirm(LocalDateTime.now());
+		agenda.finish();
 		em.persist(agenda);
 		em.flush();
 		em.clear();

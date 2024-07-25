@@ -393,7 +393,7 @@ public class AgendaAdminControllerTest {
 		}
 
 		@Test
-		@DisplayName("Admin Agenda 수정 및 삭제 실패 - 이미 확정된 대회에 minTeam 이하의 팀이 참여한 경우")
+		@DisplayName("Admin Agenda 수정 및 삭제 실패 - 이미 종료한 대회에 minTeam 이하의 팀이 참여한 경우")
 		void updateAgendaAdminFailedWithMinTeam() throws Exception {
 			// given
 			Agenda agenda = agendaMockData.createAgendaWithTeamAndAgendaCapacityAndConfirm(5, 5, 10);
