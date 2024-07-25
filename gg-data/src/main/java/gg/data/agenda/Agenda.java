@@ -150,15 +150,28 @@ public class Agenda extends BaseTimeEntity {
 		mustBeforeDeadline(now);
 	}
 
-	public void confirm(LocalDateTime confirmTime) {
+	public void confirm() {
 		if (this.status == AgendaStatus.FINISH) {
-			throw new InvalidParameterException(AGENDA_ALREADY_CONFIRMED);
+			throw new InvalidParameterException(AGENDA_ALREADY_FINISHED);
 		}
 		if (this.status == AgendaStatus.CANCEL) {
 			throw new InvalidParameterException(AGENDA_ALREADY_CANCELED);
 		}
-		if (this.startTime.isAfter(confirmTime)) {
-			throw new InvalidParameterException(AGENDA_INVALID_PARAM);
+		if (this.status == AgendaStatus.CONFIRM) {
+			throw new InvalidParameterException(AGENDA_ALREADY_CONFIRMED);
+		}
+		this.status = AgendaStatus.CONFIRM;
+	}
+
+	public void finish() {
+		if (this.status == AgendaStatus.OPEN) {
+			throw new InvalidParameterException(AGENDA_DOES_NOT_CONFIRM);
+		}
+		if (this.status == AgendaStatus.CANCEL) {
+			throw new InvalidParameterException(AGENDA_ALREADY_CANCELED);
+		}
+		if (this.status == AgendaStatus.FINISH) {
+			throw new InvalidParameterException(AGENDA_ALREADY_FINISHED);
 		}
 		this.status = AgendaStatus.FINISH;
 	}

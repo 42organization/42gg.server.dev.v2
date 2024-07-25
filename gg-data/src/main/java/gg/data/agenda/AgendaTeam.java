@@ -164,4 +164,11 @@ public class AgendaTeam extends BaseTimeEntity {
 		}
 		this.location = location;
 	}
+
+	public void cancelTeam() {
+		if (this.status == CONFIRM) {
+			throw new BusinessException(AGENDA_TEAM_ALREADY_CONFIRM);
+		}
+		this.status = CANCEL;
+	}
 }

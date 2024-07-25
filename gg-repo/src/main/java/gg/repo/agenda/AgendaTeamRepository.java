@@ -1,5 +1,6 @@
 package gg.repo.agenda;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,6 +29,8 @@ public interface AgendaTeamRepository extends JpaRepository<AgendaTeam, Long> {
 
 	@Query("SELECT a FROM AgendaTeam a WHERE a.agenda = :agenda AND a.name = :name AND a.status = :status")
 	Optional<AgendaTeam> findByAgendaAndNameAndStatus(Agenda agenda, String name, AgendaTeamStatus status);
+
+	List<AgendaTeam> findAllByAgendaAndStatus(Agenda agenda, AgendaTeamStatus status);
 
 	@Query("SELECT a FROM AgendaTeam a WHERE a.agenda = :agenda AND a.status = :status AND a.isPrivate = false")
 	Page<AgendaTeam> findByAgendaAndStatusAndIsPrivateFalse(Agenda agenda, AgendaTeamStatus status, Pageable pageable);
