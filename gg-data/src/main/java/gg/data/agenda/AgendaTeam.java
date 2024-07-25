@@ -108,6 +108,9 @@ public class AgendaTeam extends BaseTimeEntity {
 		if (this.status == CANCEL) {
 			throw new BusinessException(AGENDA_TEAM_ALREADY_CANCEL);
 		}
+		if (this.status == CONFIRM) {
+			throw new BusinessException(AGENDA_TEAM_ALREADY_CONFIRM);
+		}
 		this.status = CANCEL;
 		this.mateCount = 0;
 	}
@@ -115,6 +118,9 @@ public class AgendaTeam extends BaseTimeEntity {
 	public void leaveTeamMate() {
 		if (this.status == CANCEL) {
 			throw new BusinessException(AGENDA_TEAM_ALREADY_CANCEL);
+		}
+		if (this.status == CONFIRM) {
+			throw new BusinessException(AGENDA_TEAM_ALREADY_CONFIRM);
 		}
 		this.mateCount--;
 	}
