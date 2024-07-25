@@ -308,7 +308,7 @@ public class AgendaTeamControllerTest {
 		@DisplayName("400 참여 불가능한 Agenda Status 으로 인한 실패")
 		public void notValidAgendaStatus() throws Exception {
 			//given
-			Agenda agenda = agendaMockData.createAgenda(CONFIRM);
+			Agenda agenda = agendaMockData.createAgenda(FINISH);
 			agendaMockData.createTicket(seoulUserAgendaProfile);
 			TeamCreateReqDto req = new TeamCreateReqDto("teamName", true, "SEOUL",
 				"teamContent");
@@ -524,7 +524,7 @@ public class AgendaTeamControllerTest {
 		@DisplayName("403 조회 불가능한 team으로 인한 팀 상세 정보 조회 실패")
 		public void teamDetailsGetFailByConfirmTeam() throws Exception {
 			//given
-			Agenda agenda = agendaMockData.createAgenda(CONFIRM);
+			Agenda agenda = agendaMockData.createAgenda(FINISH);
 			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser, MIX, AgendaTeamStatus.CONFIRM);
 			TeamKeyReqDto req = new TeamKeyReqDto(team.getTeamKey());
 			String content = objectMapper.writeValueAsString(req);
@@ -542,7 +542,7 @@ public class AgendaTeamControllerTest {
 		@DisplayName("404 조회 불가능한 team으로 인한 팀 상세 정보 조회 실패")
 		public void teamDetailsGetFailByCancelTeam() throws Exception {
 			//given
-			Agenda agenda = agendaMockData.createAgenda(CONFIRM);
+			Agenda agenda = agendaMockData.createAgenda(FINISH);
 			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser, MIX, AgendaTeamStatus.CANCEL);
 			agendaMockData.createAgendaTeamProfile(team, seoulUserAgendaProfile);
 			TeamKeyReqDto req = new TeamKeyReqDto(team.getTeamKey());
@@ -786,7 +786,7 @@ public class AgendaTeamControllerTest {
 		@DisplayName("403 참여 불가능한 Agenda Status 으로 인한 실패")
 		public void notValidAgendaStatus() throws Exception {
 			//given
-			Agenda agenda = agendaMockData.createAgenda(CONFIRM);
+			Agenda agenda = agendaMockData.createAgenda(FINISH);
 			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser, SEOUL);
 			agendaMockData.createAgendaTeamProfile(team, seoulUserAgendaProfile);
 			TeamKeyReqDto req = new TeamKeyReqDto(team.getTeamKey());
@@ -1024,7 +1024,7 @@ public class AgendaTeamControllerTest {
 		@DisplayName("403 참여 불가능한 Agenda Status 으로 인한 실패")
 		public void notValidAgendaStatus() throws Exception {
 			//given
-			Agenda agenda = agendaMockData.createAgenda(CONFIRM);
+			Agenda agenda = agendaMockData.createAgenda(FINISH);
 			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser, SEOUL);
 			agendaMockData.createAgendaTeamProfile(team, seoulUserAgendaProfile);
 			TeamKeyReqDto req = new TeamKeyReqDto(team.getTeamKey());
@@ -1375,7 +1375,7 @@ public class AgendaTeamControllerTest {
 		@DisplayName("400 참가 불가능한 Agenda status 으로 인한 실패")
 		public void notValidAgendaDeadline() throws Exception {
 			//given
-			Agenda agenda = agendaFixture.createAgenda(CONFIRM);
+			Agenda agenda = agendaFixture.createAgenda(FINISH);
 			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda, SEOUL);
 			ticketFixture.createTicket(seoulUserAgendaProfile);
 			TeamKeyReqDto req = new TeamKeyReqDto(team.getTeamKey());
@@ -1622,7 +1622,7 @@ public class AgendaTeamControllerTest {
 		@DisplayName("400 수정 불가능한 Agenda status 으로 인한 실패")
 		public void notValidAgendaDeadline() throws Exception {
 			//given
-			Agenda agenda = agendaFixture.createAgenda(CONFIRM);
+			Agenda agenda = agendaFixture.createAgenda(FINISH);
 			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda, seoulUser, MIX);
 			agendaTeamProfileFixture.createAgendaTeamProfile(team, seoulUserAgendaProfile);
 			TeamUpdateReqDto req = new TeamUpdateReqDto(team.getTeamKey(), "newName", "newDesc", true, "MIX");

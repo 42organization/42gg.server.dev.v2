@@ -96,7 +96,7 @@ public class AgendaAdminServiceTest {
 				teams.add(AgendaTeam.builder().location(Location.SEOUL).mateCount(3).build());
 			}
 			Agenda agenda = Agenda.builder().title("title").content("content").posterUri("posterUri").isOfficial(false)
-				.isRanking(true).status(AgendaStatus.CONFIRM).build();
+				.isRanking(true).status(AgendaStatus.FINISH).build();
 			AgendaAdminUpdateReqDto agendaDto =
 				AgendaAdminUpdateReqDto.builder().agendaTitle("Updated title").agendaContents("Updated content")
 					.agendaPoster("Updated posterUri").isOfficial(true).isRanking(true)
@@ -262,7 +262,7 @@ public class AgendaAdminServiceTest {
 				teams.add(AgendaTeam.builder().location(Location.SEOUL).mateCount(3).build());
 			}    // 10개 팀
 			Agenda agenda =
-				Agenda.builder().currentTeam(teams.size()).minTeam(5).maxTeam(10).status(AgendaStatus.CONFIRM).build();
+				Agenda.builder().currentTeam(teams.size()).minTeam(5).maxTeam(10).status(AgendaStatus.FINISH).build();
 			AgendaAdminUpdateReqDto agendaDto =
 				AgendaAdminUpdateReqDto.builder().agendaMinTeam(10).agendaMaxTeam(20).build();
 			when(agendaAdminRepository.findByAgendaKey(any())).thenReturn(Optional.of(agenda));

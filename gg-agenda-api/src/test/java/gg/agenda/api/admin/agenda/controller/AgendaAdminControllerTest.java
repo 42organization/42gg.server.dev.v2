@@ -86,11 +86,11 @@ public class AgendaAdminControllerTest {
 			// given
 			int size = 10;
 			List<Agenda> agendas = new ArrayList<>();
-			agendas.addAll(agendaMockData.createOfficialAgendaList(5, AgendaStatus.ON_GOING));
-			agendas.addAll(agendaMockData.createOfficialAgendaList(5, AgendaStatus.CONFIRM));
+			agendas.addAll(agendaMockData.createOfficialAgendaList(5, AgendaStatus.OPEN));
+			agendas.addAll(agendaMockData.createOfficialAgendaList(5, AgendaStatus.FINISH));
 			agendas.addAll(agendaMockData.createOfficialAgendaList(5, AgendaStatus.CANCEL));
-			agendas.addAll(agendaMockData.createNonOfficialAgendaList(5, AgendaStatus.ON_GOING));
-			agendas.addAll(agendaMockData.createNonOfficialAgendaList(5, AgendaStatus.CONFIRM));
+			agendas.addAll(agendaMockData.createNonOfficialAgendaList(5, AgendaStatus.OPEN));
+			agendas.addAll(agendaMockData.createNonOfficialAgendaList(5, AgendaStatus.FINISH));
 			agendas.addAll(agendaMockData.createNonOfficialAgendaList(5, AgendaStatus.CANCEL));
 			PageRequestDto pageRequestDto = new PageRequestDto(page, size);
 			String request = objectMapper.writeValueAsString(pageRequestDto);
@@ -143,7 +143,7 @@ public class AgendaAdminControllerTest {
 			Agenda agenda = agendaMockData.createAgendaWithTeam(10);
 			AgendaAdminUpdateReqDto agendaDto =
 				AgendaAdminUpdateReqDto.builder().agendaTitle("updated title").agendaContents("updated content")
-					.agendaPoster("updated poster").agendaStatus(CONFIRM).isOfficial(!agenda.getIsOfficial())
+					.agendaPoster("updated poster").agendaStatus(FINISH).isOfficial(!agenda.getIsOfficial())
 					.isRanking(!agenda.getIsRanking()).build();
 			String request = objectMapper.writeValueAsString(agendaDto);
 

@@ -1,8 +1,6 @@
 package gg.agenda.api;
 
-import static gg.data.agenda.type.AgendaStatus.*;
-import static gg.data.agenda.type.AgendaStatus.CONFIRM;
-import static gg.data.agenda.type.AgendaTeamStatus.*;
+import static gg.data.agenda.type.AgendaStatus.FINISH;
 import static gg.data.agenda.type.Coalition.*;
 import static gg.data.agenda.type.Location.*;
 import static java.util.UUID.*;
@@ -62,7 +60,7 @@ public class AgendaMockData {
 			.currentTeam(0)
 			.minPeople(1)
 			.maxPeople(5)
-			.status(ON_GOING)
+			.status(AgendaStatus.OPEN)
 			.posterUri("posterUri")
 			.hostIntraId("hostIntraId")
 			.location(Location.MIX)
@@ -84,7 +82,7 @@ public class AgendaMockData {
 			.currentTeam(0)
 			.minPeople(1)
 			.maxPeople(5)
-			.status(ON_GOING)
+			.status(AgendaStatus.OPEN)
 			.posterUri("posterUri")
 			.hostIntraId("hostIntraId")
 			.location(Location.MIX)
@@ -193,7 +191,7 @@ public class AgendaMockData {
 				.currentTeam(0)
 				.minPeople(1)
 				.maxPeople(5)
-				.status(CONFIRM)
+				.status(FINISH)
 				.posterUri("posterUri")
 				.hostIntraId("hostIntraId")
 				.location(Location.MIX)
@@ -220,7 +218,7 @@ public class AgendaMockData {
 			.posterUri("posterUri")
 			.hostIntraId("hostIntraId")
 			.location(SEOUL)
-			.status(ON_GOING)
+			.status(AgendaStatus.OPEN)
 			.isOfficial(true)
 			.isRanking(true)
 			.build();
@@ -242,7 +240,7 @@ public class AgendaMockData {
 			.posterUri("posterUri")
 			.hostIntraId(intraId)
 			.location(SEOUL)
-			.status(ON_GOING)
+			.status(AgendaStatus.OPEN)
 			.isOfficial(true)
 			.isRanking(true)
 			.build();
@@ -264,7 +262,7 @@ public class AgendaMockData {
 			.posterUri("posterUri")
 			.hostIntraId(intraId)
 			.location(SEOUL)
-			.status(ON_GOING)
+			.status(AgendaStatus.OPEN)
 			.isOfficial(true)
 			.isRanking(rank)
 			.build();
@@ -308,7 +306,7 @@ public class AgendaMockData {
 			.posterUri("posterUri")
 			.hostIntraId("hostIntraId")
 			.location(SEOUL)
-			.status(ON_GOING)
+			.status(AgendaStatus.OPEN)
 			.isOfficial(true)
 			.isRanking(true)
 			.build();
@@ -330,7 +328,7 @@ public class AgendaMockData {
 			.posterUri("posterUri")
 			.hostIntraId("hostIntraId")
 			.location(SEOUL)
-			.status(ON_GOING)
+			.status(AgendaStatus.OPEN)
 			.isOfficial(true)
 			.isRanking(true)
 			.build();
@@ -352,7 +350,7 @@ public class AgendaMockData {
 			.posterUri("posterUri")
 			.hostIntraId("hostIntraId")
 			.location(SEOUL)
-			.status(ON_GOING)
+			.status(AgendaStatus.OPEN)
 			.isOfficial(true)
 			.isRanking(true)
 			.build();
@@ -374,7 +372,7 @@ public class AgendaMockData {
 			.posterUri("posterUri")
 			.hostIntraId("hostIntraId")
 			.location(location)
-			.status(ON_GOING)
+			.status(AgendaStatus.OPEN)
 			.isOfficial(true)
 			.isRanking(true)
 			.build();
@@ -396,7 +394,7 @@ public class AgendaMockData {
 			.posterUri("posterUri")
 			.hostIntraId("hostIntraId")
 			.location(SEOUL)
-			.status(ON_GOING)
+			.status(AgendaStatus.OPEN)
 			.isOfficial(true)
 			.isRanking(true)
 			.build();
@@ -418,7 +416,7 @@ public class AgendaMockData {
 			.posterUri("posterUri")
 			.hostIntraId("hostIntraId")
 			.location(SEOUL)
-			.status(ON_GOING)
+			.status(AgendaStatus.OPEN)
 			.isOfficial(true)
 			.isRanking(true)
 			.build();

@@ -5,7 +5,6 @@ import static gg.utils.exception.ErrorCode.*;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -17,11 +16,9 @@ import gg.agenda.api.user.agenda.controller.request.AgendaConfirmReqDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaCreateReqDto;
 import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
-import gg.data.agenda.AgendaAnnouncement;
 import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.type.AgendaStatus;
 import gg.data.agenda.type.AgendaTeamStatus;
-import gg.repo.agenda.AgendaAnnouncementRepository;
 import gg.repo.agenda.AgendaRepository;
 import gg.repo.agenda.AgendaTeamRepository;
 import gg.utils.exception.custom.NotExistException;
@@ -43,7 +40,7 @@ public class AgendaService {
 
 	@Transactional(readOnly = true)
 	public List<Agenda> findCurrentAgendaList() {
-		return agendaRepository.findAllByStatusIs(AgendaStatus.ON_GOING).stream()
+		return agendaRepository.findAllByStatusIs(AgendaStatus.OPEN).stream()
 			.sorted(Comparator.comparing(Agenda::getIsOfficial, Comparator.reverseOrder())
 				.thenComparing(Agenda::getDeadline, Comparator.reverseOrder()))
 			.collect(Collectors.toList());
@@ -57,7 +54,7 @@ public class AgendaService {
 
 	@Transactional(readOnly = true)
 	public List<Agenda> findHistoryAgendaList(Pageable pageable) {
-		return agendaRepository.findAllByStatusIs(pageable, AgendaStatus.CONFIRM).getContent();
+		return agendaRepository.findAllByStatusIs(pageable, AgendaStatus.FINISH).getContent();
 	}
 
 	@Transactional

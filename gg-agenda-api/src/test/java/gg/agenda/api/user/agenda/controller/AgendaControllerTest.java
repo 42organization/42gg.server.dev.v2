@@ -184,9 +184,9 @@ public class AgendaControllerTest {
 		@DisplayName("Official과 Deadline이 빠른 순으로 정렬하여 반환합니다.")
 		void getAgendaListSuccess() throws Exception {
 			// given
-			List<Agenda> officialAgendaList = agendaMockData.createOfficialAgendaList(3, AgendaStatus.ON_GOING);
+			List<Agenda> officialAgendaList = agendaMockData.createOfficialAgendaList(3, AgendaStatus.OPEN);
 			List<Agenda> nonOfficialAgendaList = agendaMockData
-				.createNonOfficialAgendaList(6, AgendaStatus.ON_GOING);
+				.createNonOfficialAgendaList(6, AgendaStatus.OPEN);
 
 			// when
 			String response = mockMvc.perform(get("/agenda/list")
@@ -210,7 +210,7 @@ public class AgendaControllerTest {
 		@DisplayName("진행 중인 Agenda가 없는 경우 빈 리스트를 반환합니다.")
 		void getAgendaListSuccessWithNoAgenda() throws Exception {
 			// given
-			agendaMockData.createOfficialAgendaList(3, AgendaStatus.CONFIRM);
+			agendaMockData.createOfficialAgendaList(3, AgendaStatus.FINISH);
 			agendaMockData.createNonOfficialAgendaList(6, AgendaStatus.CANCEL);
 
 			// when
@@ -597,7 +597,7 @@ public class AgendaControllerTest {
 				.setParameter("agendaKey", agenda.getAgendaKey()).getSingleResult();
 
 			// then
-			assertThat(result.getStatus()).isEqualTo(AgendaStatus.CONFIRM);
+			assertThat(result.getStatus()).isEqualTo(AgendaStatus.FINISH);
 			awards.forEach(award -> {
 				AgendaTeam agendaTeam = em.createQuery(
 						"select at from AgendaTeam at where at.agenda = :agenda and at.name = :teamName",
@@ -628,7 +628,7 @@ public class AgendaControllerTest {
 				.setParameter("agendaKey", agenda.getAgendaKey()).getSingleResult();
 
 			// then
-			assertThat(result.getStatus()).isEqualTo(AgendaStatus.CONFIRM);
+			assertThat(result.getStatus()).isEqualTo(AgendaStatus.FINISH);
 		}
 
 		@Test
@@ -659,7 +659,7 @@ public class AgendaControllerTest {
 				.setParameter("agendaKey", agenda.getAgendaKey()).getSingleResult();
 
 			// then
-			assertThat(result.getStatus()).isEqualTo(AgendaStatus.CONFIRM);
+			assertThat(result.getStatus()).isEqualTo(AgendaStatus.FINISH);
 			awards.forEach(award -> {
 				AgendaTeam agendaTeam = em.createQuery(
 						"select at from AgendaTeam at where at.agenda = :agenda and at.name = :teamName",
@@ -804,7 +804,7 @@ public class AgendaControllerTest {
 			int teamSize = 10;
 			int awardSize = 3;
 			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(),
-				LocalDateTime.now().minusDays(10), AgendaStatus.CONFIRM);
+				LocalDateTime.now().minusDays(10), AgendaStatus.FINISH);
 			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
 					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
 					.collect(Collectors.toList());
@@ -858,7 +858,7 @@ public class AgendaControllerTest {
 			int teamSize = 10;
 			int awardSize = 3;
 			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(),
-				LocalDateTime.now().plusDays(1), AgendaStatus.ON_GOING);
+				LocalDateTime.now().plusDays(1), AgendaStatus.OPEN);
 			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
 					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
 					.collect(Collectors.toList());
