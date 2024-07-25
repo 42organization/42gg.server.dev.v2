@@ -194,7 +194,7 @@ public enum ErrorCode {
 	// agenda
 	AGENDA_NOT_FOUND(404, "AG", "해당 일정이 존재하지 않습니다."),
 	AGENDA_NOT_OPEN(400, "AG", "마감된 일정에는 팀을 생성할 수 없습니다."),
-	AGENDA_TEAM_ALREADY_CONFIRM(409, "AG", "이미 확정된 팀입니다."),
+	AGENDA_TEAM_ALREADY_CONFIRM(400, "AG", "이미 확정된 팀입니다."),
 	AGENDA_TEAM_ALREADY_CANCEL(400, "AG", "이미 취소된 팀입니다."),
 	NOT_ENOUGH_TEAM_MEMBER(400, "AG", "팀원이 부족합니다."),
 	AGENDA_ANNOUNCEMENT_NOT_FOUND(404, "AG", "공지사항이 존재하지 않습니다."),
@@ -202,7 +202,7 @@ public enum ErrorCode {
 	AGENDA_NO_CAPACITY(403, "AG", "해당 일정에 참여할 수 있는 팀이 꽉 찼습니다."),
 	AGENDA_INVALID_SCHEDULE(400, "AG", "유효하지 않은 일정입니다."),
 	AGENDA_INVALID_PARAM(400, "AG", "유효하지 않은 파라미터입니다."),
-	AGENDA_UPDATE_LOCATION_CONFLICT(409, "AG", "지역을 변경할 수 없습니다."),
+	UPDATE_LOCATION_NOT_VALID(400, "AG", "지역을 변경할 수 없습니다."),
 	AGENDA_CAPACITY_CONFLICT(409, "AG", "팀 제한을 변경할 수 없습니다."),
 	AGENDA_TEAM_CAPACITY_CONFLICT(409, "AG", "팀 인원 제한을 변경할 수 없습니다."),
 	HOST_FORBIDDEN(403, "AG", "개최자는 팀을 생성할 수 없습니다."),

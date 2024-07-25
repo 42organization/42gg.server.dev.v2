@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gg.agenda.api.AgendaMockData;
 import gg.agenda.api.user.agendateam.controller.request.TeamCreateReqDto;
 import gg.agenda.api.user.agendateam.controller.request.TeamKeyReqDto;
+import gg.agenda.api.user.agendateam.controller.request.TeamUpdateReqDto;
 import gg.agenda.api.user.agendateam.controller.response.ConfirmTeamResDto;
 import gg.agenda.api.user.agendateam.controller.response.OpenTeamResDto;
 import gg.agenda.api.user.agendateam.controller.response.TeamDetailsResDto;
@@ -763,7 +764,7 @@ public class AgendaTeamControllerTest {
 		}
 
 		@Test
-		@DisplayName("409 이미 CONFIRM된 팀으로 인한 실패")
+		@DisplayName("400 이미 CONFIRM된 팀으로 인한 실패")
 		public void alreadyConfirmTeamFail() throws Exception {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(SEOUL);
@@ -778,7 +779,7 @@ public class AgendaTeamControllerTest {
 						.param("agenda_key", agenda.getAgendaKey().toString())
 						.content(content)
 						.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isConflict());
+				.andExpect(status().isBadRequest());
 		}
 
 		@Test
@@ -959,6 +960,45 @@ public class AgendaTeamControllerTest {
 						.content(content)
 						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound());
+		}
+
+		@Test
+		@DisplayName("400 탈퇴 불가능한 AgendaTeam Status로 인한 팀장의 나가기 실패")
+		public void notValidAgendaTeamStatusWhenTeamLeader() throws Exception {
+			//given
+			Agenda agenda = agendaMockData.createAgenda(SEOUL);
+			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser, SEOUL, AgendaTeamStatus.CONFIRM);
+			agendaMockData.createAgendaTeamProfile(team, seoulUserAgendaProfile);
+			TeamKeyReqDto req = new TeamKeyReqDto(team.getTeamKey());
+			String content = objectMapper.writeValueAsString(req);
+			// when && then
+			mockMvc.perform(
+					patch("/agenda/team/cancel")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("400 탈퇴 불가능한 AgendaTeam Status로 인한 팀원의 나가기 실패")
+		public void notValidAgendaTeamStatusWhenTeamMate() throws Exception {
+			//given
+			Agenda agenda = agendaMockData.createAgenda(SEOUL);
+			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser, SEOUL, AgendaTeamStatus.CONFIRM);
+			agendaMockData.createAgendaTeamProfile(team, seoulUserAgendaProfile);
+			AgendaTeamProfile atp = agendaMockData.createAgendaTeamProfile(team, anotherSeoulUserAgendaProfile);
+			TeamKeyReqDto req = new TeamKeyReqDto(team.getTeamKey());
+			String content = objectMapper.writeValueAsString(req);
+			// when && then
+			mockMvc.perform(
+					patch("/agenda/team/cancel")
+						.header("Authorization", "Bearer " + anotherSeoulUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isBadRequest());
 		}
 
 		@Test
@@ -1408,7 +1448,7 @@ public class AgendaTeamControllerTest {
 		}
 
 		@Test
-		@DisplayName("409 참가 불가능한 Team Status Confirm으로 인한 실패")
+		@DisplayName("400 참가 불가능한 Team Status Confirm으로 인한 실패")
 		public void notValidTeamStatusConfirm() throws Exception {
 			//given
 			Agenda agenda = agendaFixture.createAgenda(SEOUL);
@@ -1423,7 +1463,235 @@ public class AgendaTeamControllerTest {
 						.param("agenda_key", agenda.getAgendaKey().toString())
 						.content(content)
 						.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isConflict());
+				.andExpect(status().isBadRequest());
+		}
+	}
+
+	@Nested
+	@DisplayName("팀 수정 테스트")
+	class UpdateTeamTest {
+		@BeforeEach
+		void beforeEach() {
+			seoulUser = testDataUtils.createNewUser();
+			seoulUserAccessToken = testDataUtils.getLoginAccessTokenFromUser(seoulUser);
+			seoulUserAgendaProfile = agendaMockData.createAgendaProfile(seoulUser, SEOUL);
+			gyeongsanUser = testDataUtils.createNewUser();
+			gyeongsanUserAccessToken = testDataUtils.getLoginAccessTokenFromUser(gyeongsanUser);
+			gyeongsanUserAgendaProfile = agendaMockData.createAgendaProfile(gyeongsanUser, GYEONGSAN);
+		}
+
+		@Test
+		@DisplayName("204 팀장 팀 수정 성공")
+		public void updateTeamSuccess() throws Exception {
+			//given
+			Agenda agenda = agendaFixture.createAgenda(MIX);
+			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda, seoulUser, SEOUL);
+			AgendaTeamProfile atp = agendaTeamProfileFixture.createAgendaTeamProfile(team, seoulUserAgendaProfile);
+			TeamUpdateReqDto req = new TeamUpdateReqDto(team.getTeamKey(), "newName", "newDesc", true, "MIX");
+			String content = objectMapper.writeValueAsString(req);
+			// when
+			mockMvc.perform(
+					patch("/agenda/team")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNoContent());
+			// then
+			AgendaTeam updatedTeam = agendaTeamRepository.findByTeamKey(team.getTeamKey()).orElse(null);
+			assert updatedTeam != null;
+			assertThat(updatedTeam.getName()).isEqualTo("newName");
+			assertThat(updatedTeam.getContent()).isEqualTo("newDesc");
+			assertThat(updatedTeam.getIsPrivate()).isTrue();
+			assertThat(updatedTeam.getLocation()).isEqualTo(MIX);
+		}
+
+		@Test
+		@DisplayName("404 agenda 없음으로 인한 실패")
+		public void noAgendaFail() throws Exception {
+			//given
+			UUID noAgendaKey = UUID.randomUUID();
+			TeamUpdateReqDto req = new TeamUpdateReqDto(UUID.randomUUID(), "newName", "newDesc", true, "MIX");
+			String content = objectMapper.writeValueAsString(req);
+			// when && then
+			mockMvc.perform(
+					patch("/agenda/team")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.param("agenda_key", noAgendaKey.toString())
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+		}
+
+		@Test
+		@DisplayName("404 team 없음으로 인한 실패")
+		public void noTeamFail() throws Exception {
+			//given
+			Agenda agenda = agendaFixture.createAgenda(MIX);
+			TeamUpdateReqDto req = new TeamUpdateReqDto(UUID.randomUUID(), "newName", "newDesc", true, "MIX");
+			String content = objectMapper.writeValueAsString(req);
+			// when && then
+			mockMvc.perform(
+					patch("/agenda/team")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+		}
+
+		@Test
+		@DisplayName("403 팀원 팀 수정 실패")
+		public void notTeamLeaderFail() throws Exception {
+			//given
+			Agenda agenda = agendaFixture.createAgenda(MIX);
+			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda, seoulUser, MIX);
+			agendaTeamProfileFixture.createAgendaTeamProfile(team, seoulUserAgendaProfile);
+			agendaTeamProfileFixture.createAgendaTeamProfile(team, gyeongsanUserAgendaProfile);
+			TeamUpdateReqDto req = new TeamUpdateReqDto(team.getTeamKey(), "newName", "newDesc", true, "SEOUL");
+			String content = objectMapper.writeValueAsString(req);
+			// when && then
+			mockMvc.perform(
+					patch("/agenda/team")
+						.header("Authorization", "Bearer " + gyeongsanUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isForbidden());
+		}
+
+		@Test
+		@DisplayName("400 수정 불가능한 지역으로 인한 실패")
+		public void notValidAgendaLocation() throws Exception {
+			//given
+			Agenda agenda = agendaFixture.createAgenda(MIX);
+			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda, seoulUser, SEOUL);
+			agendaTeamProfileFixture.createAgendaTeamProfile(team, seoulUserAgendaProfile);
+			TeamUpdateReqDto req = new TeamUpdateReqDto(team.getTeamKey(), "newName", "newDesc", true, "GYEONGSAN");
+			String content = objectMapper.writeValueAsString(req);
+			// when && then
+			mockMvc.perform(
+					patch("/agenda/team")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("400 수정 불가능한 인원으로 인한 실패")
+		public void notValidAgendaTeam() throws Exception {
+			//given
+			Agenda agenda = agendaFixture.createAgenda(MIX);
+			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda.getMaxPeople(), agenda, seoulUser, MIX);
+			agendaTeamProfileFixture.createAgendaTeamProfile(team, seoulUserAgendaProfile);
+			agendaTeamProfileFixture.createAgendaTeamProfile(team, gyeongsanUserAgendaProfile);
+			TeamUpdateReqDto req = new TeamUpdateReqDto(team.getTeamKey(), "newName", "newDesc", true, "SEOUL");
+			String content = objectMapper.writeValueAsString(req);
+			// when && then
+			mockMvc.perform(
+					patch("/agenda/team")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("400 수정 불가능한 Agenda 시간으로 인한 실패")
+		public void notValidAgendaStatus() throws Exception {
+			//given
+			Agenda agenda = agendaFixture.createAgenda(LocalDateTime.now().minusHours(50));
+			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda, seoulUser, MIX);
+			agendaTeamProfileFixture.createAgendaTeamProfile(team, seoulUserAgendaProfile);
+			TeamUpdateReqDto req = new TeamUpdateReqDto(team.getTeamKey(), "newName", "newDesc", true, "MIX");
+			String content = objectMapper.writeValueAsString(req);
+			// when && then
+			mockMvc.perform(
+					patch("/agenda/team")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("400 수정 불가능한 Agenda status 으로 인한 실패")
+		public void notValidAgendaDeadline() throws Exception {
+			//given
+			Agenda agenda = agendaFixture.createAgenda(CONFIRM);
+			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda, seoulUser, MIX);
+			agendaTeamProfileFixture.createAgendaTeamProfile(team, seoulUserAgendaProfile);
+			TeamUpdateReqDto req = new TeamUpdateReqDto(team.getTeamKey(), "newName", "newDesc", true, "MIX");
+			String content = objectMapper.writeValueAsString(req);
+			// when && then
+			mockMvc.perform(
+					patch("/agenda/team")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("404 수정 불가능한 Team Status Cancel로 인한 실패")
+		public void notValidTeamStatus() throws Exception {
+			//given
+			Agenda agenda = agendaFixture.createAgenda(MIX);
+			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda, seoulUser, MIX, AgendaTeamStatus.CANCEL);
+			agendaTeamProfileFixture.createAgendaTeamProfile(team, seoulUserAgendaProfile);
+			TeamUpdateReqDto req = new TeamUpdateReqDto(team.getTeamKey(), "newName", "newDesc", true, "MIX");
+			String content = objectMapper.writeValueAsString(req);
+			// when && then
+			mockMvc.perform(
+					patch("/agenda/team")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+		}
+
+		@Test
+		@DisplayName("400 수정 불가능한 Team Status Confirm으로 인한 실패")
+		public void notValidTeamStatusConfirm() throws Exception {
+			//given
+			Agenda agenda = agendaFixture.createAgenda(MIX);
+			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda, seoulUser, MIX, AgendaTeamStatus.CONFIRM);
+			agendaTeamProfileFixture.createAgendaTeamProfile(team, seoulUserAgendaProfile);
+			TeamUpdateReqDto req = new TeamUpdateReqDto(team.getTeamKey(), "newName", "newDesc", true, "MIX");
+			String content = objectMapper.writeValueAsString(req);
+			// when && then
+			mockMvc.perform(
+					patch("/agenda/team")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("400 수정 불가능한 Team Status Cancel로 인한 실패")
+		public void notValidTeamStatusCancel() throws Exception {
+			//given
+			Agenda agenda = agendaFixture.createAgenda(MIX);
+			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda, seoulUser, MIX, AgendaTeamStatus.CANCEL);
+			agendaTeamProfileFixture.createAgendaTeamProfile(team, seoulUserAgendaProfile);
+			TeamUpdateReqDto req = new TeamUpdateReqDto(team.getTeamKey(), "newName", "newDesc", true, "MIX");
+			String content = objectMapper.writeValueAsString(req);
+			// when && then
+			mockMvc.perform(
+					patch("/agenda/team")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
 		}
 	}
 }

@@ -2,6 +2,7 @@ package gg.utils.fixture.agenda;
 
 import static gg.data.agenda.type.AgendaTeamStatus.*;
 import static gg.data.agenda.type.Location.*;
+import static java.util.UUID.*;
 
 import java.util.UUID;
 
@@ -76,6 +77,38 @@ public class AgendaTeamFixture {
 			.content("content")
 			.leaderIntraId("leaderIntraId")
 			.status(agendaTeamStatus)
+			.location(location)
+			.mateCount(3)
+			.awardPriority(1)
+			.isPrivate(false)
+			.build();
+		return agendaTeamRepository.save(agendaTeam);
+	}
+
+	public AgendaTeam createAgendaTeam(Agenda agenda, User user, Location location) {
+		AgendaTeam agendaTeam = AgendaTeam.builder()
+			.agenda(agenda)
+			.teamKey(randomUUID())
+			.name("name")
+			.content("content")
+			.leaderIntraId(user.getIntraId())
+			.status(OPEN)
+			.location(location)
+			.mateCount(3)
+			.awardPriority(1)
+			.isPrivate(false)
+			.build();
+		return agendaTeamRepository.save(agendaTeam);
+	}
+
+	public AgendaTeam createAgendaTeam(Agenda agenda, User user, Location location, AgendaTeamStatus status) {
+		AgendaTeam agendaTeam = AgendaTeam.builder()
+			.agenda(agenda)
+			.teamKey(randomUUID())
+			.name("name")
+			.content("content")
+			.leaderIntraId(user.getIntraId())
+			.status(status)
 			.location(location)
 			.mateCount(3)
 			.awardPriority(1)

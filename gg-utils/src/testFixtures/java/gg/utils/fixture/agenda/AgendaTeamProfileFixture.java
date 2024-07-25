@@ -24,4 +24,14 @@ public class AgendaTeamProfileFixture {
 			.build();
 		return agendaTeamProfileRepository.save(agendaTeamProfile);
 	}
+
+	public AgendaTeamProfile createAgendaTeamProfile(AgendaTeam team, AgendaProfile seoulUserAgendaProfile) {
+		AgendaTeamProfile agendaTeamProfile = AgendaTeamProfile.builder()
+			.agenda(team.getAgenda())
+			.agendaTeam(team)
+			.profile(seoulUserAgendaProfile)
+			.isExist(true)
+			.build();
+		return agendaTeamProfileRepository.save(agendaTeamProfile);
+	}
 }

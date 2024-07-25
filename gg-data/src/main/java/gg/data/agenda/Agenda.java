@@ -123,7 +123,6 @@ public class Agenda extends BaseTimeEntity {
 		mustStatusOnGoing();
 		mustBeforeDeadline(now);
 		mustHaveCapacity();
-		this.currentTeam++;
 	}
 
 	public void confirmTeam(Location location, LocalDateTime now) {
@@ -131,9 +130,16 @@ public class Agenda extends BaseTimeEntity {
 		mustStatusOnGoing();
 		mustBeforeDeadline(now);
 		mustHaveCapacity();
+		this.currentTeam++;
 	}
 
 	public void attendTeam(Location location, LocalDateTime now) {
+		mustBeWithinLocation(location);
+		mustStatusOnGoing();
+		mustBeforeDeadline(now);
+	}
+
+	public void updateTeam(Location location, LocalDateTime now) {
 		mustBeWithinLocation(location);
 		mustStatusOnGoing();
 		mustBeforeDeadline(now);
@@ -205,7 +211,7 @@ public class Agenda extends BaseTimeEntity {
 			.map(AgendaTeam::getLocation)
 			.anyMatch(teamLocation -> !Location.isUnderLocation(location, teamLocation));
 		if (conflictAgendaLocation) {
-			throw new InvalidParameterException(AGENDA_UPDATE_LOCATION_CONFLICT);
+			throw new InvalidParameterException(UPDATE_LOCATION_NOT_VALID);
 		}
 		this.location = location;
 	}

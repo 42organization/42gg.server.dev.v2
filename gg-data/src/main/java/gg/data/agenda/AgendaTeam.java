@@ -3,6 +3,8 @@ package gg.data.agenda;
 import static gg.data.agenda.type.AgendaTeamStatus.*;
 import static gg.utils.exception.ErrorCode.*;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -19,6 +21,7 @@ import gg.data.BaseTimeEntity;
 import gg.data.agenda.type.AgendaTeamStatus;
 import gg.data.agenda.type.Location;
 import gg.utils.exception.custom.BusinessException;
+import gg.utils.exception.custom.InvalidParameterException;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -105,6 +108,9 @@ public class AgendaTeam extends BaseTimeEntity {
 		if (this.status == CANCEL) {
 			throw new BusinessException(AGENDA_TEAM_ALREADY_CANCEL);
 		}
+		if (this.status == CONFIRM) {
+			throw new BusinessException(AGENDA_TEAM_ALREADY_CONFIRM);
+		}
 		this.status = CANCEL;
 		this.mateCount = 0;
 	}
@@ -112,6 +118,9 @@ public class AgendaTeam extends BaseTimeEntity {
 	public void leaveTeamMate() {
 		if (this.status == CANCEL) {
 			throw new BusinessException(AGENDA_TEAM_ALREADY_CANCEL);
+		}
+		if (this.status == CONFIRM) {
+			throw new BusinessException(AGENDA_TEAM_ALREADY_CONFIRM);
 		}
 		this.mateCount--;
 	}
@@ -127,5 +136,32 @@ public class AgendaTeam extends BaseTimeEntity {
 			throw new BusinessException(AGENDA_TEAM_FULL);
 		}
 		this.mateCount++;
+	}
+
+	public void updateTeam(String name, String content, Boolean isPrivate, Location location,
+		List<AgendaTeamProfile> profiles) {
+		if (this.status == CANCEL) {
+			throw new BusinessException(AGENDA_TEAM_ALREADY_CANCEL);
+		}
+		if (this.status == CONFIRM) {
+			throw new BusinessException(AGENDA_TEAM_ALREADY_CONFIRM);
+		}
+		this.name = name;
+		this.content = content;
+		this.isPrivate = isPrivate;
+		updateLocation(location, profiles);
+	}
+
+	public void updateLocation(Location location, List<AgendaTeamProfile> profiles) {
+		if (Objects.isNull(location)) {
+			return;
+		}
+		boolean conflictAgendaLocation = profiles.stream()
+			.map(AgendaTeamProfile::getProfile)
+			.anyMatch(profile -> !Location.isUnderLocation(location, profile.getLocation()));
+		if (conflictAgendaLocation) {
+			throw new InvalidParameterException(UPDATE_LOCATION_NOT_VALID);
+		}
+		this.location = location;
 	}
 }

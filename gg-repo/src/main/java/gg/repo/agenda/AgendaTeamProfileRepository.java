@@ -20,4 +20,6 @@ public interface AgendaTeamProfileRepository extends JpaRepository<AgendaTeamPro
 	List<AgendaTeamProfile> findByAgendaTeamAndIsExistTrue(AgendaTeam agendaTeam);
 
 	Optional<AgendaTeamProfile> findByAgendaAndProfileAndIsExistTrue(Agenda agenda, AgendaProfile agendaProfile);
+
+	List<AgendaTeamProfile> findAllByAgendaTeam(AgendaTeam agendaTeam);
 }
