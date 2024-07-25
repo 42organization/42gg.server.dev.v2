@@ -566,12 +566,12 @@ public class AgendaControllerTest {
 	}
 
 	@Nested
-	@DisplayName("Agenda 시상 및 확정")
-	class ConfirmAgenda {
+	@DisplayName("Agenda 종료 및 시상하기")
+	class FinishAgenda {
 
 		@Test
-		@DisplayName("Agenda 시상 및 확정 성공 - 시상 대회인 경우")
-		void confirmAgendaSuccess() throws Exception {
+		@DisplayName("Agenda 종료 및 시상하기 성공 - 시상 대회인 경우")
+		void finishAgendaSuccess() throws Exception {
 			// given
 			int teamSize = 10;
 			int awardSize = 3;
@@ -587,7 +587,7 @@ public class AgendaControllerTest {
 			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
 
 			// when
-			mockMvc.perform(patch("/agenda/confirm")
+			mockMvc.perform(patch("/agenda/finish")
 					.param("agenda_key", agenda.getAgendaKey().toString())
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
@@ -611,8 +611,8 @@ public class AgendaControllerTest {
 		}
 
 		@Test
-		@DisplayName("Agenda 시상 및 확정 성공 - 시상하지 않는 대회인 경우")
-		void confirmAgendaSuccessWithNoRanking() throws Exception {
+		@DisplayName("Agenda 종료 및 시상하기 성공 - 시상하지 않는 대회인 경우")
+		void finishAgendaSuccessWithNoRanking() throws Exception {
 			// given
 			int teamSize = 10;
 			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), false);
@@ -620,7 +620,7 @@ public class AgendaControllerTest {
 				.forEach(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM));
 
 			// when
-			mockMvc.perform(patch("/agenda/confirm")
+			mockMvc.perform(patch("/agenda/finish")
 					.param("agenda_key", agenda.getAgendaKey().toString())
 					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isNoContent());
@@ -632,8 +632,8 @@ public class AgendaControllerTest {
 		}
 
 		@Test
-		@DisplayName("Agenda 시상 및 확정 성공 - 시상하지 않는 대회에 시상 내역이 들어온 경우")
-		void confirmAgendaSuccessWithNoRankAndAwards() throws Exception {
+		@DisplayName("Agenda 종료 및 시상하기 성공 - 시상하지 않는 대회에 시상 내역이 들어온 경우")
+		void finishAgendaSuccessWithNoRankAndAwards() throws Exception {
 			// given
 			int teamSize = 10;
 			int awardSize = 3;
@@ -649,7 +649,7 @@ public class AgendaControllerTest {
 			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
 
 			// when
-			mockMvc.perform(patch("/agenda/confirm")
+			mockMvc.perform(patch("/agenda/finish")
 					.param("agenda_key", agenda.getAgendaKey().toString())
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
@@ -673,8 +673,8 @@ public class AgendaControllerTest {
 		}
 
 		@Test
-		@DisplayName("Agenda 시상 및 확정 실패 - 존재하지 않는 팀에 대한 시상인 경우")
-		void confirmAgendaFailedWithInvalidTeam() throws Exception {
+		@DisplayName("Agenda 종료 및 시상하기 실패 - 존재하지 않는 팀에 대한 시상인 경우")
+		void finishAgendaFailedWithInvalidTeam() throws Exception {
 			// given
 			int teamSize = 10;
 			int awardSize = 3;
@@ -692,7 +692,7 @@ public class AgendaControllerTest {
 			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
 
 			// expected
-			mockMvc.perform(patch("/agenda/confirm")
+			mockMvc.perform(patch("/agenda/finish")
 					.param("agenda_key", agenda.getAgendaKey().toString())
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
@@ -701,8 +701,8 @@ public class AgendaControllerTest {
 		}
 
 		@Test
-		@DisplayName("Agenda 시상 및 확정 실패 - Agenda가 없는 경우")
-		void confirmAgendaFailedWithNoAgenda() throws Exception {
+		@DisplayName("Agenda 종료 및 시상하기 실패 - Agenda가 없는 경우")
+		void finishAgendaFailedWithNoAgenda() throws Exception {
 			// given
 			int teamSize = 10;
 			int awardSize = 3;
@@ -720,7 +720,7 @@ public class AgendaControllerTest {
 			UUID invalidAgendaKey = UUID.randomUUID();    // invalid agenda key
 
 			// expected
-			mockMvc.perform(patch("/agenda/confirm")
+			mockMvc.perform(patch("/agenda/finish")
 					.param("agenda_key", invalidAgendaKey.toString())
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
@@ -729,8 +729,8 @@ public class AgendaControllerTest {
 		}
 
 		@Test
-		@DisplayName("Agenda 시상 및 확정 실패 - 시상 내역이 없는 경우")
-		void confirmAgendaFailedWithoutAwards() throws Exception {
+		@DisplayName("Agenda 종료 및 시상하기 실패 - 시상 내역이 없는 경우")
+		void finishAgendaFailedWithoutAwards() throws Exception {
 			// given
 			int teamSize = 10;
 			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), true);
@@ -740,7 +740,7 @@ public class AgendaControllerTest {
 			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
 
 			// when
-			mockMvc.perform(patch("/agenda/confirm")
+			mockMvc.perform(patch("/agenda/finish")
 					.param("agenda_key", agenda.getAgendaKey().toString())
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
@@ -749,8 +749,8 @@ public class AgendaControllerTest {
 		}
 
 		@Test
-		@DisplayName("Agenda 시상 및 확정 실패 - 시상 내역이 빈 리스트인 경우")
-		void confirmAgendaFailedWithEmptyAwards() throws Exception {
+		@DisplayName("Agenda 종료 및 시상하기 실패 - 시상 내역이 빈 리스트인 경우")
+		void finishAgendaFailedWithEmptyAwards() throws Exception {
 			// given
 			int teamSize = 10;
 			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), true);
@@ -762,7 +762,7 @@ public class AgendaControllerTest {
 			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
 
 			// when
-			mockMvc.perform(patch("/agenda/confirm")
+			mockMvc.perform(patch("/agenda/finish")
 					.param("agenda_key", agenda.getAgendaKey().toString())
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
@@ -771,8 +771,8 @@ public class AgendaControllerTest {
 		}
 
 		@Test
-		@DisplayName("Agenda 시상 및 확정 실패 - 개최자가 아닌 경우")
-		void confirmAgendaFailedNotHost() throws Exception {
+		@DisplayName("Agenda 종료 및 시상하기 실패 - 개최자가 아닌 경우")
+		void finishAgendaFailedNotHost() throws Exception {
 			// given
 			int teamSize = 10;
 			int awardSize = 3;
@@ -789,7 +789,7 @@ public class AgendaControllerTest {
 			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
 
 			// when
-			mockMvc.perform(patch("/agenda/confirm")
+			mockMvc.perform(patch("/agenda/finish")
 					.param("agenda_key", agenda.getAgendaKey().toString())
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
@@ -798,8 +798,8 @@ public class AgendaControllerTest {
 		}
 
 		@Test
-		@DisplayName("Agenda 시상 및 확정 실패 - 이미 확정된 경우")
-		void confirmAgendaFailedAlreadyConfirm() throws Exception {
+		@DisplayName("Agenda 종료 및 시상하기 실패 - 이미 확정된 경우")
+		void finishAgendaFailedAlreadyConfirm() throws Exception {
 			// given
 			int teamSize = 10;
 			int awardSize = 3;
@@ -816,7 +816,7 @@ public class AgendaControllerTest {
 			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
 
 			// expected
-			mockMvc.perform(patch("/agenda/confirm")
+			mockMvc.perform(patch("/agenda/finish")
 					.param("agenda_key", agenda.getAgendaKey().toString())
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
@@ -825,8 +825,8 @@ public class AgendaControllerTest {
 		}
 
 		@Test
-		@DisplayName("Agenda 시상 및 확정 실패 - 이미 취소된 경우")
-		void confirmAgendaFailedAlreadyCancel() throws Exception {
+		@DisplayName("Agenda 종료 및 시상하기 실패 - 이미 취소된 경우")
+		void finishAgendaFailedAlreadyCancel() throws Exception {
 			// given
 			int teamSize = 10;
 			int awardSize = 3;
@@ -843,7 +843,7 @@ public class AgendaControllerTest {
 			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
 
 			// expected
-			mockMvc.perform(patch("/agenda/confirm")
+			mockMvc.perform(patch("/agenda/finish")
 					.param("agenda_key", agenda.getAgendaKey().toString())
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
@@ -852,8 +852,8 @@ public class AgendaControllerTest {
 		}
 
 		@Test
-		@DisplayName("Agenda 시상 및 확정 실패 - 아직 시작하지 않은 경우")
-		void confirmAgendaFailedBeforeStartTime() throws Exception {
+		@DisplayName("Agenda 종료 및 시상하기 실패 - 아직 시작하지 않은 경우")
+		void finishAgendaFailedBeforeStartTime() throws Exception {
 			// given
 			int teamSize = 10;
 			int awardSize = 3;
@@ -870,7 +870,7 @@ public class AgendaControllerTest {
 			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
 
 			// expected
-			mockMvc.perform(patch("/agenda/confirm")
+			mockMvc.perform(patch("/agenda/finish")
 					.param("agenda_key", agenda.getAgendaKey().toString())
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
@@ -879,8 +879,8 @@ public class AgendaControllerTest {
 		}
 
 		@Test
-		@DisplayName("Agenda 시상 및 확정 실패 - empty awardName")
-		void confirmAgendaFailedWithEmptyAwardName() throws Exception {
+		@DisplayName("Agenda 종료 및 시상하기 실패 - empty awardName")
+		void finishAgendaFailedWithEmptyAwardName() throws Exception {
 			// given
 			int teamSize = 10;
 			int awardSize = 3;
@@ -898,7 +898,7 @@ public class AgendaControllerTest {
 			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
 
 			// expected
-			mockMvc.perform(patch("/agenda/confirm")
+			mockMvc.perform(patch("/agenda/finish")
 					.param("agenda_key", agenda.getAgendaKey().toString())
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
@@ -907,8 +907,8 @@ public class AgendaControllerTest {
 		}
 
 		@Test
-		@DisplayName("Agenda 시상 및 확정 실패 - null awardName")
-		void confirmAgendaFailedWithNullAwardName() throws Exception {
+		@DisplayName("Agenda 종료 및 시상하기 실패 - null awardName")
+		void finishAgendaFailedWithNullAwardName() throws Exception {
 			// given
 			int teamSize = 10;
 			int awardSize = 3;
@@ -926,7 +926,7 @@ public class AgendaControllerTest {
 			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
 
 			// expected
-			mockMvc.perform(patch("/agenda/confirm")
+			mockMvc.perform(patch("/agenda/finish")
 					.param("agenda_key", agenda.getAgendaKey().toString())
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
@@ -935,8 +935,8 @@ public class AgendaControllerTest {
 		}
 
 		@Test
-		@DisplayName("Agenda 시상 및 확정 실패 - empty teamName")
-		void confirmAgendaFailedWithEmptyTeamName() throws Exception {
+		@DisplayName("Agenda 종료 및 시상하기 실패 - empty teamName")
+		void finishAgendaFailedWithEmptyTeamName() throws Exception {
 			// given
 			int teamSize = 10;
 			int awardSize = 3;
@@ -954,7 +954,7 @@ public class AgendaControllerTest {
 			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
 
 			// expected
-			mockMvc.perform(patch("/agenda/confirm")
+			mockMvc.perform(patch("/agenda/finish")
 					.param("agenda_key", agenda.getAgendaKey().toString())
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
@@ -963,8 +963,8 @@ public class AgendaControllerTest {
 		}
 
 		@Test
-		@DisplayName("Agenda 시상 및 확정 실패 - null teamName")
-		void confirmAgendaFailedWithNullTeamName() throws Exception {
+		@DisplayName("Agenda 종료 및 시상하기 실패 - null teamName")
+		void finishAgendaFailedWithNullTeamName() throws Exception {
 			// given
 			int teamSize = 10;
 			int awardSize = 3;
@@ -982,7 +982,7 @@ public class AgendaControllerTest {
 			String response = objectMapper.writeValueAsString(agendaConfirmReqDto);
 
 			// expected
-			mockMvc.perform(patch("/agenda/confirm")
+			mockMvc.perform(patch("/agenda/finish")
 					.param("agenda_key", agenda.getAgendaKey().toString())
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
