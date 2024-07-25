@@ -994,4 +994,49 @@ public class AgendaControllerTest {
 				.andExpect(status().isBadRequest());
 		}
 	}
+
+	@Nested
+	@DisplayName("Agenda 확정하기")
+	class ConfirmAgenda {
+
+		@Test
+		@DisplayName("Agenda 확정하기 성공")
+		void confirmAgendaSuccess() {
+			// given
+			// when
+			// then
+		}
+
+		@Test
+		@DisplayName("Agenda 확정하기 실패 - 존재하지 않는 Agenda인 경우")
+		void confirmAgendaFailedWithNoAgenda() {
+			// given
+			// when
+			// then
+		}
+
+		@Test
+		@DisplayName("Agenda 확정하기 실패 - 이미 확정된 경우")
+		void confirmAgendaFailedWithAlreadyConfirm() {
+			// given
+			// when
+			// then
+		}
+
+		@Test
+		@DisplayName("Agenda 확정하기 실패 - 이미 취소된 경우")
+		void confirmAgendaFailedWithAlreadyCancel() {
+			// given
+			// when
+			// then
+		}
+
+		@Test
+		@DisplayName("Agenda 확정하기 실패 - 이미 종료된 경우")
+		void confirmAgendaFailedWithAlreadyFinished() {
+			// given
+			// when
+			// then
+		}
+	}
 }

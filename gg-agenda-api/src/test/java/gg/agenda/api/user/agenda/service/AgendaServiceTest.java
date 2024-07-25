@@ -191,7 +191,7 @@ class AgendaServiceTest {
 
 	@Nested
 	@DisplayName("Agenda 시상 및 확정")
-	class ConfirmAgenda {
+	class FinishAgenda {
 
 		int seq;
 
@@ -202,7 +202,7 @@ class AgendaServiceTest {
 
 		@Test
 		@DisplayName("Agenda 시상 및 확정 성공")
-		void confirmAgendaSuccess() {
+		void finishAgendaSuccess() {
 			// given
 			Agenda agenda = Agenda.builder()
 				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
@@ -227,7 +227,7 @@ class AgendaServiceTest {
 
 		@Test
 		@DisplayName("Agenda 시상 및 확정 성공 - 시상하지 않는 대회인 경우")
-		void confirmAgendaSuccessWithNoRank() {
+		void finishAgendaSuccessWithNoRank() {
 			// given
 			Agenda agenda = Agenda.builder()
 				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
@@ -242,7 +242,7 @@ class AgendaServiceTest {
 
 		@Test
 		@DisplayName("Agenda 시상 및 확정 성공 - 시상하지 않는 대회에 시상 내역이 들어온 경우")
-		void confirmAgendaSuccessWithNoRankAndAwards() {
+		void finishAgendaSuccessWithNoRankAndAwards() {
 			// given
 			Agenda agenda = Agenda.builder()
 				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
@@ -264,7 +264,7 @@ class AgendaServiceTest {
 
 		@Test
 		@DisplayName("Agenda 시상 및 확정 성공 - 시상하지 않는 대회에 시상 내역이 빈 리스트로 들어온 경우")
-		void confirmAgendaSuccessWithNoRankAndEmptyAwards() {
+		void finishAgendaSuccessWithNoRankAndEmptyAwards() {
 			// given
 			Agenda agenda = Agenda.builder()
 				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
@@ -282,7 +282,7 @@ class AgendaServiceTest {
 
 		@Test
 		@DisplayName("Agenda 시상 및 확정 성공 - 시상하지 않는 대회에 시상 내역이 null로 들어온 경우")
-		void confirmAgendaSuccessWithNoRankAndNullAwards() {
+		void finishAgendaSuccessWithNoRankAndNullAwards() {
 			// given
 			Agenda agenda = Agenda.builder()
 				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
@@ -299,7 +299,7 @@ class AgendaServiceTest {
 
 		@Test
 		@DisplayName("Agenda 시상 및 확정 실패 - 시상 내역이 null인 경우")
-		void confirmAgendaFailedWithoutAwards() {
+		void finishAgendaFailedWithoutAwards() {
 			// given
 			Agenda agenda = Agenda.builder()
 				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
@@ -314,7 +314,7 @@ class AgendaServiceTest {
 
 		@Test
 		@DisplayName("Agenda 시상 및 확정 실패 - 매개변수가 null인 경우")
-		void confirmAgendaFailedWithNullDto() {
+		void finishAgendaFailedWithNullDto() {
 			// given
 			Agenda agenda = Agenda.builder()
 				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
@@ -327,7 +327,7 @@ class AgendaServiceTest {
 
 		@Test
 		@DisplayName("Agenda 시상 및 확정 실패 - 존재하지 않는 팀에 대한 시상인 경우")
-		void confirmAgendaFailedWithInvalidTeam() {
+		void finishAgendaFailedWithInvalidTeam() {
 			// given
 			Agenda agenda = Agenda.builder()
 				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
@@ -343,6 +343,51 @@ class AgendaServiceTest {
 			// expected
 			assertThrows(NotExistException.class,
 				() -> agendaService.finishAgendaWithAwards(confirmDto, agenda));
+		}
+	}
+
+	@Nested
+	@DisplayName("Agenda 확정하기")
+	class ConfirmAgenda {
+
+		@Test
+		@DisplayName("Agenda 확정하기 성공")
+		void confirmAgendaSuccess() {
+			// given
+			// when
+			// then
+		}
+
+		@Test
+		@DisplayName("Agenda 확정하기 실패 - 존재하지 않는 Agenda인 경우")
+		void confirmAgendaFailedWithNoAgenda() {
+			// given
+			// when
+			// then
+		}
+
+		@Test
+		@DisplayName("Agenda 확정하기 실패 - 이미 확정된 경우")
+		void confirmAgendaFailedWithAlreadyConfirm() {
+			// given
+			// when
+			// then
+		}
+
+		@Test
+		@DisplayName("Agenda 확정하기 실패 - 이미 취소된 경우")
+		void confirmAgendaFailedWithAlreadyCancel() {
+			// given
+			// when
+			// then
+		}
+
+		@Test
+		@DisplayName("Agenda 확정하기 실패 - 이미 종료된 경우")
+		void confirmAgendaFailedWithAlreadyFinished() {
+			// given
+			// when
+			// then
 		}
 	}
 }
