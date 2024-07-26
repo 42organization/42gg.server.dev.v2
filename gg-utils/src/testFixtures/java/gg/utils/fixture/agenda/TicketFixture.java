@@ -26,4 +26,17 @@ public class TicketFixture {
 			.build();
 		return ticketRepository.save(ticket);
 	}
+
+	public void createNotApporveTicket(AgendaProfile seoulUserAgendaProfile) {
+		Ticket ticket = Ticket.builder()
+			.agendaProfile(seoulUserAgendaProfile)
+			.issuedFrom(null)
+			.usedTo(null)
+			.isApproved(false)
+			.approvedAt(null)
+			.isUsed(false)
+			.usedAt(null)
+			.build();
+		ticketRepository.save(ticket);
+	}
 }

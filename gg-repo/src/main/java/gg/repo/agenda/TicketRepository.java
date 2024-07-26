@@ -12,4 +12,8 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
 	Optional<Ticket> findByAgendaProfileAndIsApprovedTrueAndIsUsedFalse(AgendaProfile agendaProfile);
 
 	List<Ticket> findByAgendaProfileIdAndIsUsedFalseAndIsApprovedTrue(Long agendaProfileId);
+
+	Optional<Ticket> findByAgendaProfileAndIsApprovedFalse(AgendaProfile agendaProfile);
+
+	Optional<Ticket> findByAgendaProfileId(Long agendaProfileId);
 }

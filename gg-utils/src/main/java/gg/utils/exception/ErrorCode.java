@@ -216,6 +216,7 @@ public enum ErrorCode {
 	TICKET_NOT_EXIST(403, "AG", "보유한 티켓이 부족합니다."),
 	AGENDA_TEAM_NOT_FOUND(404, "AG", "팀이 존재하지 않습니다."),
 	AGENDA_PROFILE_NOT_FOUND(404, "AG", "프로필이 존재하지 않습니다."),
+	ALREADY_TICKET_SETUP(409, "AG", "이미 티켓 신청이 되어있습니다."),
 	AGENDA_ALREADY_FINISHED(409, "AG", "이미 종료된 일정입니다."),
 	AGENDA_ALREADY_CONFIRMED(409, "AG", "이미 확정된 일정입니다."),
 	AGENDA_ALREADY_CANCELED(409, "AG", "이미 취소된 일정입니다."),
