@@ -216,8 +216,10 @@ public enum ErrorCode {
 	TICKET_NOT_EXIST(403, "AG", "보유한 티켓이 부족합니다."),
 	AGENDA_TEAM_NOT_FOUND(404, "AG", "팀이 존재하지 않습니다."),
 	AGENDA_PROFILE_NOT_FOUND(404, "AG", "프로필이 존재하지 않습니다."),
-	AGENDA_ALREADY_CONFIRMED(409, "AG", "이미 종료된 일정입니다."),
+	AGENDA_ALREADY_FINISHED(409, "AG", "이미 종료된 일정입니다."),
+	AGENDA_ALREADY_CONFIRMED(409, "AG", "이미 확정된 일정입니다."),
 	AGENDA_ALREADY_CANCELED(409, "AG", "이미 취소된 일정입니다."),
+	AGENDA_DOES_NOT_CONFIRM(409, "AG", "확정되지 않은 일정입니다."),
 	AGENDA_AWARD_EMPTY(400, "AG", "시상 정보가 없습니다."),
 	AGENDA_AWARD_PRIORITY_DUPLICATE(400, "AG", "시상 우선순위가 중복됩니다.");
 

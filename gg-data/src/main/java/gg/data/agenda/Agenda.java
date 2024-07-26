@@ -150,17 +150,30 @@ public class Agenda extends BaseTimeEntity {
 		mustBeforeDeadline(now);
 	}
 
-	public void confirm(LocalDateTime confirmTime) {
-		if (this.status == AgendaStatus.CONFIRM) {
-			throw new InvalidParameterException(AGENDA_ALREADY_CONFIRMED);
+	public void confirm() {
+		if (this.status == AgendaStatus.FINISH) {
+			throw new InvalidParameterException(AGENDA_ALREADY_FINISHED);
 		}
 		if (this.status == AgendaStatus.CANCEL) {
 			throw new InvalidParameterException(AGENDA_ALREADY_CANCELED);
 		}
-		if (this.startTime.isAfter(confirmTime)) {
-			throw new InvalidParameterException(AGENDA_INVALID_PARAM);
+		if (this.status == AgendaStatus.CONFIRM) {
+			throw new InvalidParameterException(AGENDA_ALREADY_CONFIRMED);
 		}
 		this.status = AgendaStatus.CONFIRM;
+	}
+
+	public void finish() {
+		if (this.status == AgendaStatus.OPEN) {
+			throw new InvalidParameterException(AGENDA_DOES_NOT_CONFIRM);
+		}
+		if (this.status == AgendaStatus.CANCEL) {
+			throw new InvalidParameterException(AGENDA_ALREADY_CANCELED);
+		}
+		if (this.status == AgendaStatus.FINISH) {
+			throw new InvalidParameterException(AGENDA_ALREADY_FINISHED);
+		}
+		this.status = AgendaStatus.FINISH;
 	}
 
 	public void updateInformation(String title, String content, String posterUri) {
@@ -223,7 +236,7 @@ public class Agenda extends BaseTimeEntity {
 		if (minTeam > maxTeam || teams.size() > maxTeam) {
 			throw new InvalidParameterException(AGENDA_CAPACITY_CONFLICT);
 		}
-		if (this.status == AgendaStatus.CONFIRM && teams.size() < minTeam) {
+		if (this.status == AgendaStatus.FINISH && teams.size() < minTeam) {
 			throw new InvalidParameterException(AGENDA_CAPACITY_CONFLICT);
 		}
 		this.minTeam = minTeam;
@@ -254,7 +267,7 @@ public class Agenda extends BaseTimeEntity {
 	}
 
 	private void mustStatusOnGoing() {
-		if (this.status != AgendaStatus.ON_GOING) {
+		if (this.status != AgendaStatus.OPEN) {
 			throw new InvalidParameterException(AGENDA_NOT_OPEN);
 		}
 	}

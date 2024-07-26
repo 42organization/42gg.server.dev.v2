@@ -7,8 +7,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum AgendaStatus {
 	CANCEL("CANCEL"),
-	ON_GOING("ON_GOING"),
-	CONFIRM("CONFIRM");
+	OPEN("OPEN"),
+	CONFIRM("CONFIRM"),
+	FINISH("FINISH");
 
 	private final String status;
 }

@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import gg.agenda.api.user.agenda.controller.request.AgendaConfirmReqDto;
+import gg.agenda.api.user.agenda.controller.request.AgendaAwardsReqDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaCreateReqDto;
 import gg.agenda.api.user.agenda.controller.response.AgendaKeyResDto;
 import gg.agenda.api.user.agenda.controller.response.AgendaResDto;
@@ -98,21 +98,23 @@ public class AgendaController {
 		return ResponseEntity.ok(agendaSimpleResDtoList);
 	}
 
-	@ApiResponses(value = {
-		@ApiResponse(responseCode = "204", description = "Agenda 참가 신청 성공"),
-		@ApiResponse(responseCode = "400", description = "Agenda 참가 신청 요청이 잘못됨"),
-		@ApiResponse(responseCode = "404", description = "Agenda를 찾을 수 없음"),
-		@ApiResponse(responseCode = "409", description = "Agenda 참가 신청이 이미 완료됨")
-	})
-	@PatchMapping("/confirm")
-	public ResponseEntity<Void> agendaConfirm(@RequestParam("agenda_key") UUID agendaKey, @Login UserDto user,
-		@RequestBody(required = false) @Valid AgendaConfirmReqDto agendaConfirmReqDto) {
+	@PatchMapping("/finish")
+	public ResponseEntity<Void> agendaEndWithAwards(@RequestParam("agenda_key") UUID agendaKey, @Login UserDto user,
+		@RequestBody(required = false) @Valid AgendaAwardsReqDto agendaAwardsReqDto) {
 		Agenda agenda = agendaService.findAgendaByAgendaKey(agendaKey);
 		agenda.mustModifiedByHost(user.getIntraId());
-		if (agenda.getIsRanking() && agendaConfirmReqDto == null) {
+		if (agenda.getIsRanking() && agendaAwardsReqDto == null) {
 			throw new InvalidParameterException(AGENDA_INVALID_PARAM);
 		}
-		agendaService.confirmAgenda(agendaConfirmReqDto, agenda);
+		agendaService.finishAgendaWithAwards(agendaAwardsReqDto, agenda);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	}
+
+	@PatchMapping("/confirm")
+	public ResponseEntity<Void> agendaConfirm(@RequestParam("agenda_key") UUID agendaKey, @Login UserDto user) {
+		Agenda agenda = agendaService.findAgendaByAgendaKey(agendaKey);
+		agenda.mustModifiedByHost(user.getIntraId());
+		agendaService.confirmAgenda(agenda);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 }

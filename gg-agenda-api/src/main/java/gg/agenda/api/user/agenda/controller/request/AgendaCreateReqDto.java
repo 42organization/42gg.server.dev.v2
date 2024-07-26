@@ -112,7 +112,7 @@ public class AgendaCreateReqDto {
 		@Mapping(target = "posterUri", source = "dto.agendaPoster")
 		@Mapping(target = "hostIntraId", source = "user.intraId")
 		@Mapping(target = "location", source = "dto.agendaLocation")
-		@Mapping(target = "status", constant = "ON_GOING")
+		@Mapping(target = "status", constant = "OPEN")
 		@Mapping(target = "isOfficial", source = "dto.agendaIsOfficial")
 		@Mapping(target = "isRanking", source = "dto.agendaIsRanking")
 		Agenda toEntity(AgendaCreateReqDto dto, UserDto user);

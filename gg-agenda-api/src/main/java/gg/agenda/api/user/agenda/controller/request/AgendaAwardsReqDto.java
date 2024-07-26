@@ -13,15 +13,15 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AgendaConfirmReqDto {
+public class AgendaAwardsReqDto {
 
 	@Valid
 	@NotNull
 	@NotEmpty
-	private List<AgendaTeamAwardDto> awards;
+	private List<AgendaTeamAward> awards;
 
 	@Builder
-	public AgendaConfirmReqDto(List<AgendaTeamAwardDto> awards) {
+	public AgendaAwardsReqDto(List<AgendaTeamAward> awards) {
 		this.awards = awards;
 	}
 }
