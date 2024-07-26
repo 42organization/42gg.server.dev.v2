@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AgendaTeamAwardDto {
+public class AgendaTeamAward {
 
 	@NotNull
 	@NotEmpty
@@ -27,7 +27,7 @@ public class AgendaTeamAwardDto {
 	private int awardPriority;
 
 	@Builder
-	public AgendaTeamAwardDto(String teamName, String awardName, int awardPriority) {
+	public AgendaTeamAward(String teamName, String awardName, int awardPriority) {
 		this.teamName = teamName;
 		this.awardName = awardName;
 		this.awardPriority = awardPriority;
