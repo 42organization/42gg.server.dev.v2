@@ -4,10 +4,6 @@ import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import gg.repo.agenda.AgendaTeamRepository;
-import gg.utils.AgendaTestDataUtils;
-import gg.utils.fixture.agenda.AgendaFixture;
-import gg.utils.fixture.agenda.AgendaTeamFixture;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -47,9 +43,13 @@ import gg.data.agenda.type.AgendaTeamStatus;
 import gg.data.agenda.type.Location;
 import gg.data.user.User;
 import gg.repo.agenda.AgendaRepository;
+import gg.repo.agenda.AgendaTeamRepository;
+import gg.utils.AgendaTestDataUtils;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import gg.utils.dto.PageRequestDto;
+import gg.utils.fixture.agenda.AgendaFixture;
+import gg.utils.fixture.agenda.AgendaTeamFixture;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

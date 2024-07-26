@@ -2,10 +2,6 @@ package gg.agenda.api.user.agenda.service;
 
 import static gg.utils.exception.ErrorCode.*;
 
-import gg.agenda.api.user.ticket.service.TicketService;
-import gg.data.agenda.AgendaProfile;
-import gg.data.agenda.AgendaTeamProfile;
-import gg.repo.agenda.AgendaTeamProfileRepository;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -17,15 +13,20 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
 import gg.agenda.api.user.agenda.controller.request.AgendaAwardsReqDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaCreateReqDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaTeamAward;
+import gg.agenda.api.user.ticket.service.TicketService;
 import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
+import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.AgendaTeam;
+import gg.data.agenda.AgendaTeamProfile;
 import gg.data.agenda.type.AgendaStatus;
 import gg.data.agenda.type.AgendaTeamStatus;
 import gg.repo.agenda.AgendaRepository;
+import gg.repo.agenda.AgendaTeamProfileRepository;
 import gg.repo.agenda.AgendaTeamRepository;
 import gg.utils.exception.custom.NotExistException;
 import lombok.RequiredArgsConstructor;
@@ -91,7 +92,7 @@ public class AgendaService {
 		List<AgendaTeam> openTeams = agendaTeamRepository.findAllByAgendaAndStatus(agenda, AgendaTeamStatus.OPEN);
 		for (AgendaTeam openTeam : openTeams) {
 			openTeam.cancelTeam();
-			List<AgendaProfile> participants =agendaTeamProfileRepository.findAllByAgendaTeam(openTeam).stream()
+			List<AgendaProfile> participants = agendaTeamProfileRepository.findAllByAgendaTeam(openTeam).stream()
 				.map(AgendaTeamProfile::getProfile)
 				.collect(Collectors.toList());
 			ticketService.refundTickets(participants, agenda.getAgendaKey());
