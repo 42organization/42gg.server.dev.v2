@@ -1,5 +1,7 @@
 package gg.utils;
 
+import org.springframework.stereotype.Component;
+
 import gg.data.agenda.Agenda;
 import gg.data.agenda.type.AgendaStatus;
 import gg.data.agenda.type.AgendaTeamStatus;
@@ -7,7 +9,6 @@ import gg.utils.fixture.agenda.AgendaAnnouncementFixture;
 import gg.utils.fixture.agenda.AgendaFixture;
 import gg.utils.fixture.agenda.AgendaTeamFixture;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
@@ -26,9 +27,9 @@ public class AgendaTestDataUtils {
 		return agenda;
 	}
 
-	public Agenda createAgendaAndAgendaTeams(String intraId, int i, AgendaStatus status) {
+	public Agenda createAgendaAndAgendaTeams(String intraId, int size, AgendaStatus status) {
 		Agenda agenda = agendaFixture.createAgenda(intraId, status);
-		agendaTeamFixture.createAgendaTeamList(agenda, AgendaTeamStatus.CONFIRM, i);
+		agendaTeamFixture.createAgendaTeamList(agenda, AgendaTeamStatus.CONFIRM, size);
 		return agenda;
 	}
 }

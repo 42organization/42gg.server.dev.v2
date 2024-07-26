@@ -4,7 +4,6 @@ import static gg.data.agenda.type.AgendaTeamStatus.*;
 import static gg.data.agenda.type.Location.*;
 import static java.util.UUID.*;
 
-import gg.data.agenda.type.AgendaStatus;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
