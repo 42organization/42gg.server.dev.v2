@@ -1,14 +1,17 @@
 package gg.utils.fixture.agenda;
 
-import gg.data.agenda.Agenda;
-import gg.data.agenda.AgendaAnnouncement;
-import gg.repo.agenda.AgendaAnnouncementRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
 import javax.persistence.EntityManager;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
+
+import gg.data.agenda.Agenda;
+import gg.data.agenda.AgendaAnnouncement;
+import gg.repo.agenda.AgendaAnnouncementRepository;
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
