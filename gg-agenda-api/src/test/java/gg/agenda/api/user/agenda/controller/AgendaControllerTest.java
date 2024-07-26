@@ -637,12 +637,12 @@ public class AgendaControllerTest {
 			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(),
 				LocalDateTime.now().minusDays(10), true, AgendaStatus.CONFIRM);
 			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
-				.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
-				.collect(Collectors.toList());
+					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
+					.collect(Collectors.toList());
 			List<AgendaTeamAward> awards = IntStream.range(0, awardSize)
-				.mapToObj(i -> AgendaTeamAward.builder().teamName(agendaTeams.get(i).getName())
-					.awardName("prize" + i).awardPriority(i + 1).build())
-				.collect(Collectors.toList());
+					.mapToObj(i -> AgendaTeamAward.builder().teamName(agendaTeams.get(i).getName())
+						.awardName("prize" + i).awardPriority(i + 1).build())
+					.collect(Collectors.toList());
 
 			// expected
 			mockMvc.perform(patch("/agenda/finish")
@@ -737,7 +737,7 @@ public class AgendaControllerTest {
 
 			// expected
 			mockMvc.perform(patch("/agenda/finish")
-					.param("agenda_key", UUID.randomUUID().toString())
+					.param("agenda_key", agenda.getAgendaKey().toString())
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(response))
