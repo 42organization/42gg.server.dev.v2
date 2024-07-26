@@ -8,4 +8,6 @@ import gg.data.agenda.AgendaProfile;
 
 public interface AgendaProfileRepository extends JpaRepository<AgendaProfile, Long> {
 	Optional<AgendaProfile> findByUserId(Long userId);
+
+	Optional<AgendaProfile> findByIntraId(String intraId);
 }

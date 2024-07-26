@@ -21,8 +21,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gg.agenda.api.AgendaMockData;
 import gg.agenda.api.user.agendaprofile.controller.request.AgendaProfileChangeReqDto;
 import gg.agenda.api.user.agendaprofile.controller.response.AgendaProfileDetailsResDto;
+import gg.agenda.api.user.agendaprofile.controller.response.AgendaProfileInfoDetailsResDto;
 import gg.data.agenda.AgendaProfile;
 import gg.data.user.User;
+import gg.data.user.type.RoleType;
 import gg.repo.agenda.AgendaProfileRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
@@ -198,6 +200,34 @@ public class AgendaProfileControllerTest {
 			mockMvc.perform(get("/agenda/profile")
 					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isNotFound());
+		}
+	}
+
+	@Nested
+	@DisplayName("개인 프로필 admin 여부 조회")
+	class GetAgendaProfileInfo {
+
+		@BeforeEach
+		void beforeEach() {
+			user = testDataUtils.createNewUser();
+			accessToken = testDataUtils.getLoginAccessTokenFromUser(user);
+		}
+
+		@Test
+		@DisplayName("로그인된 유저에 해당하는 Admin 여부를 조회합니다.")
+		void test() throws Exception {
+			//given
+			// when
+			String response = mockMvc.perform(get("/agenda/profile/info")
+					.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+			AgendaProfileInfoDetailsResDto result = objectMapper.readValue(response,
+				AgendaProfileInfoDetailsResDto.class);
+			// then
+			Boolean isAdmin = user.getRoleType() == RoleType.ADMIN;
+			assertThat(result.getIntraId()).isEqualTo(user.getIntraId());
+			assertThat(result.getIsAdmin()).isEqualTo(isAdmin);
 		}
 	}
 }
