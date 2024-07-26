@@ -629,6 +629,29 @@ public class AgendaControllerTest {
 		}
 
 		@Test
+		@DisplayName("Agenda 종료 및 시상하기 실패 - 시상 대회에 시상 내역이 없는 경우")
+		void finishAgendaFailedWithNoAwards() throws Exception {
+			// given
+			int teamSize = 10;
+			int awardSize = 3;
+			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(),
+				LocalDateTime.now().minusDays(10), true, AgendaStatus.CONFIRM);
+			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
+				.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
+				.collect(Collectors.toList());
+			List<AgendaTeamAward> awards = IntStream.range(0, awardSize)
+				.mapToObj(i -> AgendaTeamAward.builder().teamName(agendaTeams.get(i).getName())
+					.awardName("prize" + i).awardPriority(i + 1).build())
+				.collect(Collectors.toList());
+
+			// expected
+			mockMvc.perform(patch("/agenda/finish")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
 		@DisplayName("Agenda 종료 및 시상하기 성공 - 시상하지 않는 대회인 경우")
 		void finishAgendaSuccessWithNoRanking() throws Exception {
 			// given
