@@ -1030,9 +1030,9 @@ public class AgendaControllerTest {
 				.andExpect(status().isNoContent());
 			Optional<Agenda> confirmedAgenda = agendaRepository.findById(agenda.getId());
 			List<AgendaTeam> openedTeams = agendaTeamRepository
-					.findAllByAgendaAndStatus(agenda, AgendaTeamStatus.OPEN);
+				.findAllByAgendaAndStatus(agenda, AgendaTeamStatus.OPEN);
 			List<AgendaTeam> canceledTeams = agendaTeamRepository
-					.findAllByAgendaAndStatus(agenda, AgendaTeamStatus.CANCEL);
+				.findAllByAgendaAndStatus(agenda, AgendaTeamStatus.CANCEL);
 
 			// then
 			assert (confirmedAgenda.isPresent());
@@ -1043,19 +1043,41 @@ public class AgendaControllerTest {
 
 		@Test
 		@DisplayName("Agenda 확정하기 실패 - 존재하지 않는 Agenda인 경우")
-		void confirmAgendaFailedWithNoAgenda() {
+		void confirmAgendaFailedWithNoAgenda() throws Exception {
 			// given
+			// expected
+			mockMvc.perform(patch("/agenda/confirm")
+					.param("agenda_key", UUID.randomUUID().toString())
+					.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isNotFound());
+		}
+
+		@Test
+		@DisplayName("Agenda 확정하기 실패 - 개최자가 아닌 경우")
+		void confirmAgendaFailedWithNotHost() throws Exception {
+			// given
+			Agenda agenda = agendaTestDataUtils.createAgendaAndAgendaTeams("not host", 10, AgendaStatus.OPEN);
+
 			// when
-			// then
+			mockMvc.perform(patch("/agenda/confirm")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isForbidden());
 		}
 
 		@ParameterizedTest
-		@EnumSource(value = AgendaStatus.class, names = {"OPEN", "CONFIRM", "FINISH"})
+		@EnumSource(value = AgendaStatus.class, names = {"CANCEL", "CONFIRM", "FINISH"})
 		@DisplayName("Agenda 확정하기 실패 - 대회의 상태가 OPEN이 아닌 경우")
-		void confirmAgendaFailedWithNotOpenAgenda(AgendaStatus status) {
+		void confirmAgendaFailedWithNotOpenAgenda(AgendaStatus status) throws Exception {
 			// given
-			// when
-			// then
+			Agenda agenda = agendaTestDataUtils.createAgendaAndAgendaTeams(user.getIntraId(), 10, status);
+			agendaTeamFixture.createAgendaTeamList(agenda, AgendaTeamStatus.OPEN, 3);
+
+			// expected
+			mockMvc.perform(patch("/agenda/confirm")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isBadRequest());
 		}
 	}
 }
