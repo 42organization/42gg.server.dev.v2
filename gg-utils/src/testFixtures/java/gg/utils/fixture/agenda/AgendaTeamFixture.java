@@ -4,6 +4,9 @@ import static gg.data.agenda.type.AgendaTeamStatus.*;
 import static gg.data.agenda.type.Location.*;
 import static java.util.UUID.*;
 
+import gg.data.agenda.type.AgendaStatus;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Component;
@@ -115,5 +118,25 @@ public class AgendaTeamFixture {
 			.isPrivate(false)
 			.build();
 		return agendaTeamRepository.save(agendaTeam);
+	}
+
+	public List<AgendaTeam> createAgendaTeamList(Agenda agenda, AgendaTeamStatus status, int size) {
+		List<AgendaTeam> teams = new ArrayList<>();
+		for (int i = 0; i < size; i++) {
+			AgendaTeam agendaTeam = AgendaTeam.builder()
+				.agenda(agenda)
+				.teamKey(randomUUID())
+				.name("name")
+				.content("content")
+				.leaderIntraId("intraId" + i)
+				.status(status)
+				.location(SEOUL)
+				.mateCount(3)
+				.awardPriority(1)
+				.isPrivate(false)
+				.build();
+			teams.add(agendaTeam);
+		}
+		return agendaTeamRepository.saveAll(teams);
 	}
 }

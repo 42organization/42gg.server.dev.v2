@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import gg.agenda.api.user.agenda.controller.request.AgendaConfirmReqDto;
+import gg.agenda.api.user.agenda.controller.request.AgendaAwardsReqDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaCreateReqDto;
 import gg.agenda.api.user.agenda.controller.response.AgendaKeyResDto;
 import gg.agenda.api.user.agenda.controller.response.AgendaResDto;
@@ -100,13 +100,13 @@ public class AgendaController {
 
 	@PatchMapping("/finish")
 	public ResponseEntity<Void> agendaEndWithAwards(@RequestParam("agenda_key") UUID agendaKey, @Login UserDto user,
-		@RequestBody(required = false) @Valid AgendaConfirmReqDto agendaConfirmReqDto) {
+		@RequestBody(required = false) @Valid AgendaAwardsReqDto agendaAwardsReqDto) {
 		Agenda agenda = agendaService.findAgendaByAgendaKey(agendaKey);
 		agenda.mustModifiedByHost(user.getIntraId());
-		if (agenda.getIsRanking() && agendaConfirmReqDto == null) {
+		if (agenda.getIsRanking() && agendaAwardsReqDto == null) {
 			throw new InvalidParameterException(AGENDA_INVALID_PARAM);
 		}
-		agendaService.finishAgendaWithAwards(agendaConfirmReqDto, agenda);
+		agendaService.finishAgendaWithAwards(agendaAwardsReqDto, agenda);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 

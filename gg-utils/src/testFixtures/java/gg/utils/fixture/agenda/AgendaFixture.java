@@ -41,6 +41,28 @@ public class AgendaFixture {
 		return agendaRepository.save(agenda);
 	}
 
+	public Agenda createAgenda(String intraId, AgendaStatus status) {
+		Agenda agenda = Agenda.builder()
+			.title("title " + UUID.randomUUID())
+			.content("content " + UUID.randomUUID())
+			.deadline(LocalDateTime.now().plusDays(3))
+			.startTime(LocalDateTime.now().plusDays(5))
+			.endTime(LocalDateTime.now().plusDays(6))
+			.minTeam(2)
+			.maxTeam(5)
+			.currentTeam(0)
+			.minPeople(1)
+			.maxPeople(5)
+			.status(status)
+			.posterUri("posterUri")
+			.hostIntraId(intraId)
+			.location(Location.MIX)
+			.isOfficial(true)
+			.isRanking(true)
+			.build();
+		return agendaRepository.save(agenda);
+	}
+
 	public Agenda createAgenda(Location location) {
 		Agenda agenda = Agenda.builder()
 			.title("title " + UUID.randomUUID())
