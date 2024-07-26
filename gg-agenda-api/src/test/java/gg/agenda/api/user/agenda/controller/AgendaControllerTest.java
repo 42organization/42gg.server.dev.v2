@@ -1029,10 +1029,10 @@ public class AgendaControllerTest {
 					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isNoContent());
 			Optional<Agenda> confirmedAgenda = agendaRepository.findById(agenda.getId());
-			List<AgendaTeam> openedTeams =
-				agendaTeamRepository.findAllByAgendaAndStatus(agenda, AgendaTeamStatus.OPEN);
-			List<AgendaTeam> canceledTeams =
-				agendaTeamRepository.findAllByAgendaAndStatus(agenda, AgendaTeamStatus.CANCEL);
+			List<AgendaTeam> openedTeams = agendaTeamRepository
+					.findAllByAgendaAndStatus(agenda, AgendaTeamStatus.OPEN);
+			List<AgendaTeam> canceledTeams = agendaTeamRepository
+					.findAllByAgendaAndStatus(agenda, AgendaTeamStatus.CANCEL);
 
 			// then
 			assert (confirmedAgenda.isPresent());
