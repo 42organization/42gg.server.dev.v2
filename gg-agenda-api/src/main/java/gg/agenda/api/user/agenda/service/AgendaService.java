@@ -81,7 +81,7 @@ public class AgendaService {
 	@Transactional
 	public void confirmAgenda(Agenda agenda) {
 		agendaTeamRepository.findAllByAgendaAndStatus(agenda, AgendaTeamStatus.OPEN)
-			.forEach(AgendaTeam::confirm);
+			.forEach(AgendaTeam::cancelTeam);
 		agenda.confirm();
 	}
 }

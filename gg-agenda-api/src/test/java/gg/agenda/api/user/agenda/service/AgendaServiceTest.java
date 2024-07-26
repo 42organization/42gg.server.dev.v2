@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import gg.data.agenda.type.AgendaTeamStatus;
+import gg.utils.exception.custom.InvalidParameterException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.data.domain.Page;
@@ -354,40 +358,50 @@ class AgendaServiceTest {
 		@DisplayName("Agenda 확정하기 성공")
 		void confirmAgendaSuccess() {
 			// given
+			Agenda agenda = Agenda.builder().hostIntraId("intraId").status(AgendaStatus.OPEN).build();
+			AgendaTeam agendaTeam = AgendaTeam.builder().status(AgendaTeamStatus.OPEN).build();
+			when(agendaTeamRepository.findAllByAgendaAndStatus(agenda, AgendaTeamStatus.OPEN))
+				.thenReturn(List.of(agendaTeam));
+
 			// when
+			agendaService.confirmAgenda(agenda);
+
 			// then
+			verify(agendaTeamRepository, times(1)).findAllByAgendaAndStatus(agenda, AgendaTeamStatus.OPEN);
+			assertThat(agenda.getStatus()).isEqualTo(AgendaStatus.CONFIRM);
+			assertThat(agendaTeam.getStatus()).isEqualTo(AgendaTeamStatus.CANCEL);
 		}
 
 		@Test
-		@DisplayName("Agenda 확정하기 실패 - 존재하지 않는 Agenda인 경우")
+		@DisplayName("Agenda 확정하기 실패 - AgendaTeam이 없는 경우")
 		void confirmAgendaFailedWithNoAgenda() {
 			// given
+			Agenda agenda = Agenda.builder().hostIntraId("intraId").status(AgendaStatus.OPEN).build();
+			when(agendaTeamRepository.findAllByAgendaAndStatus(agenda, AgendaTeamStatus.OPEN))
+				.thenReturn(List.of());
+
 			// when
+			agendaService.confirmAgenda(agenda);
+
 			// then
+			verify(agendaTeamRepository, times(1)).findAllByAgendaAndStatus(agenda, AgendaTeamStatus.OPEN);
+			assertThat(agenda.getStatus()).isEqualTo(AgendaStatus.CONFIRM);
 		}
 
-		@Test
-		@DisplayName("Agenda 확정하기 실패 - 이미 확정된 경우")
-		void confirmAgendaFailedWithAlreadyConfirm() {
+		@ParameterizedTest
+		@EnumSource(value = AgendaStatus.class, names = {"CONFIRM", "FINISH", "CANCEL"})
+		@DisplayName("Agenda 확정하기 실패 - 대회의 상태가 OPEN이 아닌 경우")
+		void confirmAgendaFailedWithAlreadyConfirm(AgendaStatus status) {
 			// given
-			// when
-			// then
-		}
+			Agenda agenda = Agenda.builder().hostIntraId("intraId").status(status).build();
+			AgendaTeam agendaTeam = AgendaTeam.builder().status(AgendaTeamStatus.OPEN).build();
+			when(agendaTeamRepository.findAllByAgendaAndStatus(agenda, AgendaTeamStatus.OPEN))
+				.thenReturn(List.of(agendaTeam));
 
-		@Test
-		@DisplayName("Agenda 확정하기 실패 - 이미 취소된 경우")
-		void confirmAgendaFailedWithAlreadyCancel() {
-			// given
-			// when
-			// then
-		}
-
-		@Test
-		@DisplayName("Agenda 확정하기 실패 - 이미 종료된 경우")
-		void confirmAgendaFailedWithAlreadyFinished() {
-			// given
-			// when
-			// then
+			// expected
+			assertThrows(InvalidParameterException.class,
+				() -> agendaService.confirmAgenda(agenda));
+			verify(agendaTeamRepository, times(1)).findAllByAgendaAndStatus(agenda, AgendaTeamStatus.OPEN);
 		}
 	}
 }
