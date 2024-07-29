@@ -181,24 +181,47 @@ public class AgendaTeamAdminControllerTest {
 		@DisplayName("Admin AgendaTeam 상세 조회 실패 - Team Key 없음")
 		void getAgendaTeamDetailAdminFailedWithNoTeamKey() throws Exception {
 			// given
-			// when
-			// then
+			// expected
+			mockMvc.perform(get("/admin/agenda/team")
+					.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isBadRequest());
 		}
 
 		@Test
 		@DisplayName("Admin AgendaTeam 상세 조회 실패 - 존재하지 않는 Team")
 		void getAgendaTeamDetailAdminFailedWithNotFoundTeam() throws Exception {
 			// given
-			// when
-			// then
+			String request = objectMapper.writeValueAsString(new AgendaTeamKeyReqDto(UUID.randomUUID()));
+
+			// expected
+			mockMvc.perform(get("/admin/agenda/team")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(request))
+				.andExpect(status().isNotFound());
 		}
 
 		@Test
 		@DisplayName("Admin AgendaTeam 상세 조회 성공 - teamMate 없는 경우 빈 리스트")
 		void getAgendaTeamDetailAdminSuccessWithNoTeamMates() throws Exception {
 			// given
+			Agenda agenda = agendaFixture.createAgenda();
+			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda);
+			String request = objectMapper.writeValueAsString(new AgendaTeamKeyReqDto(team.getTeamKey()));
+
 			// when
+			String response = mockMvc.perform(get("/admin/agenda/team")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(request))
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+			AgendaTeamDetailResDto result = objectMapper.readValue(response, AgendaTeamDetailResDto.class);
+
 			// then
+			assertThat(result).isNotNull();
+			assertThat(result.getTeamName()).isEqualTo(team.getName());
+			assertThat(result.getTeamMates()).isNotNull();
+			assertThat(result.getTeamMates().size()).isEqualTo(0);
 		}
 	}
 }
