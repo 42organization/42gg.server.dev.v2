@@ -3,10 +3,13 @@ package gg.agenda.api.user.ticket.controller.response;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import gg.data.agenda.Agenda;
 import gg.data.agenda.Ticket;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class TicketHistoryResDto {
 	private LocalDateTime createdAt;
 	private String issuedFrom;
@@ -22,7 +25,11 @@ public class TicketHistoryResDto {
 		this.createdAt = ticket.getCreatedAt();
 		this.issuedFrom = "42Intra";
 		this.issuedFromKey = ticket.getIssuedFrom();
-		this.usedTo = "NotUsed";
+		if (ticket.getIsApproved()) {
+			this.usedTo = "NotUsed";
+		} else {
+			this.usedTo = "NotApproved";
+		}
 		this.usedToKey = ticket.getUsedTo();
 		this.isApproved = ticket.getIsApproved();
 		this.approvedAt = ticket.getApprovedAt();
@@ -30,11 +37,23 @@ public class TicketHistoryResDto {
 		this.usedAt = ticket.getUsedAt();
 	}
 
-	public void changeIssuedFrom(String issuedFrom) {
-		this.issuedFrom = issuedFrom;
+	public void changeIssuedFrom(Agenda agenda) {
+		if (agenda == null) {
+			this.issuedFrom = "42Intra";
+			return;
+		}
+		this.issuedFrom = agenda.getTitle();
 	}
 
-	public void changeUsedTo(String usedTo) {
-		this.usedTo = usedTo;
+	public void changeUsedTo(Agenda agenda) {
+		if (agenda == null && !this.isApproved) {
+			this.usedTo = "NotApproved";
+			return;
+		}
+		if (agenda == null) {
+			this.usedTo = "NotUsed";
+			return;
+		}
+		this.usedTo = agenda.getTitle();
 	}
 }

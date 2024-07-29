@@ -1,6 +1,7 @@
 package gg.utils.fixture.agenda;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
@@ -38,5 +39,20 @@ public class TicketFixture {
 			.usedAt(null)
 			.build();
 		ticketRepository.save(ticket);
+	}
+
+	public Ticket createTicket(AgendaProfile agendaProfile, boolean isApproved, boolean isUsed, UUID issuedFrom,
+		UUID usedTo) {
+		Ticket ticket = Ticket.builder()
+			.agendaProfile(agendaProfile)
+			.issuedFrom(issuedFrom)
+			.usedTo(usedTo)
+			.isApproved(isApproved)
+			.approvedAt(LocalDateTime.now().minusDays(1))
+			.isUsed(isUsed)
+			.usedAt(null)
+			.build();
+		ticketRepository.save(ticket);
+		return ticket;
 	}
 }

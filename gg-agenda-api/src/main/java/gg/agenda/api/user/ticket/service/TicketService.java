@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import gg.agenda.api.user.ticket.controller.response.TicketHistoryResDto;
 import gg.auth.UserDto;
+import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.Ticket;
 import gg.repo.agenda.AgendaProfileRepository;
@@ -93,14 +94,14 @@ public class TicketService {
 			.map(TicketHistoryResDto::new)
 			.peek(dto -> {
 				if (dto.getIssuedFromKey() != null) {
-					dto.changeIssuedFrom(
-						agendaRepository.findAgendaNameByAgendaKey(dto.getIssuedFromKey()).orElse("42Intra"));
+					Agenda agenda = agendaRepository.findAgendaByAgendaKey(dto.getIssuedFromKey()).orElse(null);
+					dto.changeIssuedFrom(agenda);
 				}
 			})
 			.peek(dto -> {
 				if (dto.getUsedToKey() != null) {
-					dto.changeUsedTo(
-						agendaRepository.findAgendaNameByAgendaKey(dto.getUsedToKey()).orElse("NotUsed"));
+					Agenda agenda = agendaRepository.findAgendaByAgendaKey(dto.getUsedToKey()).orElse(null);
+					dto.changeUsedTo(agenda);
 				}
 			})
 			.collect(Collectors.toList());
