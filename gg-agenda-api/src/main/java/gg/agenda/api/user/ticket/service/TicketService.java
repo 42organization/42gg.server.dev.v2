@@ -37,7 +37,7 @@ public class TicketService {
 		List<Ticket> tickets = new ArrayList<>();
 		for (
 			AgendaProfile profile : changedProfiles) {
-			Ticket ticket = Ticket.refundTicket(profile, agendaKey);
+			Ticket ticket = Ticket.createRefundedTicket(profile, agendaKey);
 			tickets.add(ticket);
 		}
 		ticketRepository.saveAll(tickets);
