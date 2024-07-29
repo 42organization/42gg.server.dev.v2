@@ -56,4 +56,16 @@ public class TicketService {
 		}
 		ticketRepository.save(Ticket.createNotApporveTicket(profile));
 	}
+
+	/**
+	 * 티켓 수 조회
+	 * @param user 사용자 정보
+	 * @return 티켓 수
+	 */
+	public int findTicketCount(UserDto user) {
+		AgendaProfile profile = agendaProfileRepository.findByUserId(user.getId())
+			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
+		List<Ticket> tickets = ticketRepository.findByAgendaProfileIdAndIsUsedFalseAndIsApprovedTrue(profile.getId());
+		return tickets.size();
+	}
 }

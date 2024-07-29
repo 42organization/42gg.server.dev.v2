@@ -2,10 +2,12 @@ package gg.agenda.api.user.ticket.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import gg.agenda.api.user.ticket.controller.response.TicketCountResDto;
 import gg.agenda.api.user.ticket.service.TicketService;
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
@@ -26,5 +28,15 @@ public class TicketController {
 	public ResponseEntity<Void> ticketSetupAdd(@Parameter(hidden = true) @Login UserDto user) {
 		ticketService.addTicketSetup(user);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
+	}
+
+	/**
+	 * 티켓 수 조회
+	 * @param user 사용자 정보
+	 */
+	@GetMapping
+	public ResponseEntity<TicketCountResDto> ticketCountFind(@Parameter(hidden = true) @Login UserDto user) {
+		int ticketCount = ticketService.findTicketCount(user);
+		return ResponseEntity.ok().body(new TicketCountResDto(ticketCount));
 	}
 }
