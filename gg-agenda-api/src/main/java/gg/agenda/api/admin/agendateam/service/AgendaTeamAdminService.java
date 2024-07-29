@@ -2,6 +2,7 @@ package gg.agenda.api.admin.agendateam.service;
 
 import static gg.utils.exception.ErrorCode.*;
 
+import gg.admin.repo.agenda.AgendaTeamProfileAdminRepository;
 import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.AgendaTeamProfile;
 import gg.repo.agenda.AgendaTeamProfileRepository;
@@ -28,7 +29,7 @@ public class AgendaTeamAdminService {
 
 	private final AgendaTeamAdminRepository agendaTeamAdminRepository;
 
-	private final AgendaTeamProfileRepository agendaTeamProfileRepository;
+	private final AgendaTeamProfileAdminRepository agendaTeamProfileAdminRepository;
 
 	@Transactional(readOnly = true)
 	public List<AgendaTeam> getAgendaTeamList(UUID agendaKey, Pageable pageable) {
@@ -38,14 +39,14 @@ public class AgendaTeamAdminService {
 	}
 
 	@Transactional(readOnly = true)
-	public AgendaTeam getAgendaTeamDetail(UUID teamKey) {
+	public AgendaTeam getAgendaTeamByTeamKey(UUID teamKey) {
 		return agendaTeamAdminRepository.findByTeamKey(teamKey)
 			.orElseThrow(() -> new NotExistException(AGENDA_TEAM_NOT_FOUND));
 	}
 
 	@Transactional(readOnly = true)
-	public List<AgendaProfile> getAgendaTeamProfileList(AgendaTeam agendaTeam) {
-		return agendaTeamProfileRepository.findAllByAgendaTeam(agendaTeam).stream()
+	public List<AgendaProfile> getAgendaProfileListByAgendaTeam(AgendaTeam agendaTeam) {
+		return agendaTeamProfileAdminRepository.findAllByAgendaTeamAndIsExistIsTrue(agendaTeam).stream()
 			.map(AgendaTeamProfile::getProfile).collect(Collectors.toList());
 	}
 }

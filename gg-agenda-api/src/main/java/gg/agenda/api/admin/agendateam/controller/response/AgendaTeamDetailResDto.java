@@ -23,19 +23,22 @@ public class AgendaTeamDetailResDto {
 
 	private String teamStatus;
 
-	private int teamScore;
+	private String teamAward;
+
+	private int teamAwardPriority;
 
 	private boolean teamIsPrivate;
 
 	private List<AgendaProfileResDto> teamMates;
 
 	@Builder
-	public AgendaTeamDetailResDto(String teamName, String teamLeaderIntraId, String teamStatus, int teamScore,
-		boolean teamIsPrivate, List<AgendaProfileResDto> teamMates) {
+	public AgendaTeamDetailResDto(String teamName, String teamLeaderIntraId, String teamStatus, String teamAward,
+		int teamAwardPriority, boolean teamIsPrivate, List<AgendaProfileResDto> teamMates) {
 		this.teamName = teamName;
 		this.teamLeaderIntraId = teamLeaderIntraId;
 		this.teamStatus = teamStatus;
-		this.teamScore = teamScore;
+		this.teamAward = teamAward;
+		this.teamAwardPriority = teamAwardPriority;
 		this.teamIsPrivate = teamIsPrivate;
 		this.teamMates = teamMates;
 	}
@@ -48,7 +51,8 @@ public class AgendaTeamDetailResDto {
 		@Mapping(target = "teamName", source = "team.name")
 		@Mapping(target = "teamLeaderIntraId", source = "team.leaderIntraId")
 		@Mapping(target = "teamStatus", source = "team.status")
-		@Mapping(target = "teamScore", source = "team.score")
+		@Mapping(target = "teamAward", source = "team.award")
+		@Mapping(target = "teamAwardPriority", source = "team.awardPriority")
 		@Mapping(target = "teamIsPrivate", source = "team.isPrivate")
 		@Mapping(target = "teamMates", source = "teamMates", qualifiedByName = "toAgendaProfileResDtoList")
 		AgendaTeamDetailResDto toDto(AgendaTeam team, List<AgendaProfile> teamMates);

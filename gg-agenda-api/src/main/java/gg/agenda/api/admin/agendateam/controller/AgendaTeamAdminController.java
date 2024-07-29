@@ -48,8 +48,8 @@ public class AgendaTeamAdminController {
 	@GetMapping()
 	public ResponseEntity<AgendaTeamDetailResDto> getAgendaTeamDetail(
 		@RequestBody AgendaTeamKeyReqDto agendaTeamKeyReqDto) {
-		AgendaTeam agendaTeam = agendaTeamAdminService.getAgendaTeamDetail(agendaTeamKeyReqDto.getTeamKey());
-		List<AgendaProfile> participants = agendaTeamAdminService.getAgendaTeamProfileList(agendaTeam);
+		AgendaTeam agendaTeam = agendaTeamAdminService.getAgendaTeamByTeamKey(agendaTeamKeyReqDto.getTeamKey());
+		List<AgendaProfile> participants = agendaTeamAdminService.getAgendaProfileListByAgendaTeam(agendaTeam);
 		AgendaTeamDetailResDto agendaTeamDetailResDto = AgendaTeamDetailResDto.MapStruct.INSTANCE
 			.toDto(agendaTeam, participants);
 		return ResponseEntity.ok(agendaTeamDetailResDto);
