@@ -36,7 +36,7 @@ public class TicketController {
 	 */
 	@GetMapping
 	public ResponseEntity<TicketCountResDto> ticketCountFind(@Parameter(hidden = true) @Login UserDto user) {
-		TicketCountResDto ticketCountResDto = new TicketCountResDto(ticketService.findTicketCount(user));
-		return ResponseEntity.ok().body(ticketCountResDto);
+		int ticketCount = ticketService.findTicketCount(user);
+		return ResponseEntity.ok().body(new TicketCountResDto(ticketCount));
 	}
 }
