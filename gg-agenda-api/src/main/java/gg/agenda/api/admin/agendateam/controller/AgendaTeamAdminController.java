@@ -1,8 +1,5 @@
 package gg.agenda.api.admin.agendateam.controller;
 
-import gg.agenda.api.admin.agendateam.controller.request.AgendaTeamKeyReqDto;
-import gg.agenda.api.admin.agendateam.controller.response.AgendaTeamDetailResDto;
-import gg.data.agenda.AgendaProfile;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -19,8 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import gg.agenda.api.admin.agendateam.controller.request.AgendaTeamKeyReqDto;
+import gg.agenda.api.admin.agendateam.controller.response.AgendaTeamDetailResDto;
 import gg.agenda.api.admin.agendateam.controller.response.AgendaTeamResDto;
 import gg.agenda.api.admin.agendateam.service.AgendaTeamAdminService;
+import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.AgendaTeam;
 import gg.utils.dto.PageRequestDto;
 import lombok.RequiredArgsConstructor;

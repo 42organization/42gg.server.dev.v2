@@ -2,24 +2,23 @@ package gg.agenda.api.admin.agendateam.service;
 
 import static gg.utils.exception.ErrorCode.*;
 
-import gg.admin.repo.agenda.AgendaTeamProfileAdminRepository;
-import gg.data.agenda.AgendaProfile;
-import gg.data.agenda.AgendaTeamProfile;
-import gg.repo.agenda.AgendaTeamProfileRepository;
 import java.util.List;
 import java.util.UUID;
-
 import java.util.stream.Collectors;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import gg.admin.repo.agenda.AgendaAdminRepository;
 import gg.admin.repo.agenda.AgendaTeamAdminRepository;
+import gg.admin.repo.agenda.AgendaTeamProfileAdminRepository;
 import gg.data.agenda.Agenda;
+import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.AgendaTeam;
+import gg.data.agenda.AgendaTeamProfile;
 import gg.utils.exception.custom.NotExistException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor

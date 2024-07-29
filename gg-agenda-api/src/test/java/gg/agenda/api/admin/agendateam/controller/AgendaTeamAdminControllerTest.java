@@ -4,12 +4,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import gg.agenda.api.admin.agendateam.controller.request.AgendaTeamKeyReqDto;
-import gg.agenda.api.admin.agendateam.controller.response.AgendaProfileResDto;
-import gg.agenda.api.admin.agendateam.controller.response.AgendaTeamDetailResDto;
-import gg.data.agenda.AgendaProfile;
-import gg.utils.fixture.agenda.AgendaProfileFixture;
-import gg.utils.fixture.agenda.AgendaTeamProfileFixture;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,8 +25,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.admin.repo.agenda.AgendaAdminRepository;
 import gg.admin.repo.agenda.AgendaTeamAdminRepository;
+import gg.agenda.api.admin.agendateam.controller.request.AgendaTeamKeyReqDto;
+import gg.agenda.api.admin.agendateam.controller.response.AgendaProfileResDto;
+import gg.agenda.api.admin.agendateam.controller.response.AgendaTeamDetailResDto;
 import gg.agenda.api.admin.agendateam.controller.response.AgendaTeamResDto;
 import gg.data.agenda.Agenda;
+import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.type.AgendaTeamStatus;
 import gg.data.user.User;
@@ -41,7 +39,9 @@ import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import gg.utils.dto.PageRequestDto;
 import gg.utils.fixture.agenda.AgendaFixture;
+import gg.utils.fixture.agenda.AgendaProfileFixture;
 import gg.utils.fixture.agenda.AgendaTeamFixture;
+import gg.utils.fixture.agenda.AgendaTeamProfileFixture;
 
 @IntegrationTest
 @Transactional
@@ -155,7 +155,7 @@ public class AgendaTeamAdminControllerTest {
 			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda);
 			List<AgendaProfile> profiles = agendaProfileFixture.createAgendaProfileList(10);
 			profiles.forEach(profile -> agendaTeamProfileFixture
-					.createAgendaTeamProfile(agenda, team, profile));
+				.createAgendaTeamProfile(agenda, team, profile));
 			String request = objectMapper.writeValueAsString(new AgendaTeamKeyReqDto(team.getTeamKey()));
 
 			// when
