@@ -63,13 +63,25 @@ public class Ticket extends BaseTimeEntity {
 		this.usedAt = usedAt;
 	}
 
-	public static Ticket refundTicket(AgendaProfile agendaProfile, UUID issuedFrom) {
+	public static Ticket createRefundedTicket(AgendaProfile agendaProfile, UUID issuedFrom) {
 		return Ticket.builder()
 			.agendaProfile(agendaProfile)
 			.issuedFrom(issuedFrom)
 			.usedTo(null)
 			.isApproved(true)
 			.approvedAt(LocalDateTime.now())
+			.isUsed(false)
+			.usedAt(null)
+			.build();
+	}
+
+	public static Ticket createNotApporveTicket(AgendaProfile agendaProfile) {
+		return Ticket.builder()
+			.agendaProfile(agendaProfile)
+			.issuedFrom(null)
+			.usedTo(null)
+			.isApproved(false)
+			.approvedAt(null)
 			.isUsed(false)
 			.usedAt(null)
 			.build();

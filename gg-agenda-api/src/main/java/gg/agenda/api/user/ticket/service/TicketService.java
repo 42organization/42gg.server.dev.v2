@@ -1,22 +1,30 @@
 package gg.agenda.api.user.ticket.service;
 
+import static gg.utils.exception.ErrorCode.*;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import gg.auth.UserDto;
 import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.Ticket;
+import gg.repo.agenda.AgendaProfileRepository;
 import gg.repo.agenda.TicketRepository;
+import gg.utils.exception.custom.DuplicationException;
+import gg.utils.exception.custom.NotExistException;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class TicketService {
 	private final TicketRepository ticketRepository;
+	private final AgendaProfileRepository agendaProfileRepository;
 
 	/**
 	 * 티켓 환불
@@ -29,9 +37,23 @@ public class TicketService {
 		List<Ticket> tickets = new ArrayList<>();
 		for (
 			AgendaProfile profile : changedProfiles) {
-			Ticket ticket = Ticket.refundTicket(profile, agendaKey);
+			Ticket ticket = Ticket.createRefundedTicket(profile, agendaKey);
 			tickets.add(ticket);
 		}
 		ticketRepository.saveAll(tickets);
+	}
+
+	/**
+	 * 티켓 설정 추가
+	 * @param user 사용자 정보
+	 */
+	public void addTicketSetup(UserDto user) {
+		AgendaProfile profile = agendaProfileRepository.findByUserId(user.getId())
+			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
+		Optional<Ticket> optionalTicket = ticketRepository.findByAgendaProfileAndIsApprovedFalse(profile);
+		if (optionalTicket.isPresent()) {
+			throw new DuplicationException(ALREADY_TICKET_SETUP);
+		}
+		ticketRepository.save(Ticket.createNotApporveTicket(profile));
 	}
 }
