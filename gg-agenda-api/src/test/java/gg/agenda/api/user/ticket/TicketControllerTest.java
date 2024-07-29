@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gg.agenda.api.user.ticket.controller.response.TicketCountResDto;
 import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.Ticket;
 import gg.data.user.User;
@@ -119,6 +120,68 @@ public class TicketControllerTest {
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isConflict());
+		}
+	}
+
+	@Nested
+	@DisplayName("티켓 개수 확인 테스트")
+	class FindTicketCountTest {
+		@BeforeEach
+		void beforeEach() {
+			seoulUser = testDataUtils.createNewUser();
+			seoulUserAccessToken = testDataUtils.getLoginAccessTokenFromUser(seoulUser);
+			seoulUserAgendaProfile = agendaProfileFixture.createAgendaProfile(seoulUser, SEOUL);
+			gyeongsanUser = testDataUtils.createNewUser();
+			gyeongsanUserAccessToken = testDataUtils.getLoginAccessTokenFromUser(gyeongsanUser);
+			gyeongsanUserAgendaProfile = agendaProfileFixture.createAgendaProfile(gyeongsanUser, GYEONGSAN);
+		}
+
+		@Test
+		@DisplayName("200 티켓 개수 확인 성공")
+		void findTicketCountSuccess() throws Exception {
+			//given
+			ticketFixture.createTicket(seoulUserAgendaProfile);
+			ticketFixture.createTicket(seoulUserAgendaProfile);
+			//when
+			String res = mockMvc.perform(
+					get("/agenda/ticket")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+			TicketCountResDto result = objectMapper.readValue(res, TicketCountResDto.class);
+			//then
+			assertThat(result.getTicketCount()).isEqualTo(2);
+		}
+
+		@Test
+		@DisplayName("200 티켓 개수 확인 성공 - 티켓이 없는 경우")
+		void findTicketCountSuccessToEmptyTicket() throws Exception {
+			//when
+			String res = mockMvc.perform(
+					get("/agenda/ticket")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+			TicketCountResDto result = objectMapper.readValue(res, TicketCountResDto.class);
+			//then
+			assertThat(result.getTicketCount()).isEqualTo(0);
+		}
+
+		@Test
+		@DisplayName("404 티켓 개수 확인 실패 - 프로필이 존재하지 않는 경우")
+		void findTicketCountFailToNotFoundProfile() throws Exception {
+			//given
+			User notExistUser = testDataUtils.createNewUser();
+			String notExistUserAccessToken = testDataUtils.getLoginAccessTokenFromUser(notExistUser);
+			//when
+			mockMvc.perform(
+					get("/agenda/ticket")
+						.header("Authorization", "Bearer " + notExistUserAccessToken)
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
 		}
 	}
 }
