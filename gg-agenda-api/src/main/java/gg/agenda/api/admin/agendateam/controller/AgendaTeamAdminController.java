@@ -1,5 +1,8 @@
 package gg.agenda.api.admin.agendateam.controller;
 
+import gg.agenda.api.admin.agendateam.controller.request.AgendaTeamKeyReqDto;
+import gg.agenda.api.admin.agendateam.controller.response.AgendaTeamDetailResDto;
+import gg.data.agenda.AgendaProfile;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -40,5 +43,15 @@ public class AgendaTeamAdminController {
 			.map(AgendaTeamResDto.MapStruct.INSTANCE::toDto)
 			.collect(Collectors.toList());
 		return ResponseEntity.ok(agendaTeamResDtoList);
+	}
+
+	@GetMapping()
+	public ResponseEntity<AgendaTeamDetailResDto> getAgendaTeamDetail(
+		@RequestBody AgendaTeamKeyReqDto agendaTeamKeyReqDto) {
+		AgendaTeam agendaTeam = agendaTeamAdminService.getAgendaTeamDetail(agendaTeamKeyReqDto.getTeamKey());
+		List<AgendaProfile> participants = agendaTeamAdminService.getAgendaTeamProfileList(agendaTeam);
+		AgendaTeamDetailResDto agendaTeamDetailResDto = AgendaTeamDetailResDto.MapStruct.INSTANCE
+			.toDto(agendaTeam, participants);
+		return ResponseEntity.ok(agendaTeamDetailResDto);
 	}
 }
