@@ -31,7 +31,6 @@ public class AgendaTeamUpdateDto {
 	private String teamContent;
 
 	@NotNull
-	@Size(max = 500)
 	private AgendaTeamStatus teamStatus;
 
 	@NotNull

@@ -33,6 +33,19 @@ public class AgendaProfileFixture {
 		return agendaProfileRepository.save(agendaProfile);
 	}
 
+	public AgendaProfile createAgendaProfile() {
+		User user = testDataUtils.createNewUser();
+		AgendaProfile agendaProfile = AgendaProfile.builder()
+			.content("content")
+			.githubUrl("githubUrl")
+			.coalition(LEE)
+			.location(Location.SEOUL)
+			.intraId(user.getIntraId())
+			.userId(user.getId())
+			.build();
+		return agendaProfileRepository.save(agendaProfile);
+	}
+
 	public List<AgendaProfile> createAgendaProfileList(int size) {
 		List<AgendaProfile> agendaProfileList = new ArrayList<>();
 		for (int i = 0; i < size; i++) {
