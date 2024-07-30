@@ -9,6 +9,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
@@ -18,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.agenda.api.user.ticket.controller.response.TicketCountResDto;
+import gg.agenda.api.user.ticket.controller.response.TicketHistoryResDto;
+import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.Ticket;
 import gg.data.user.User;
@@ -25,6 +29,7 @@ import gg.repo.agenda.AgendaTeamRepository;
 import gg.repo.agenda.TicketRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
+import gg.utils.dto.PageRequestDto;
 import gg.utils.fixture.agenda.AgendaFixture;
 import gg.utils.fixture.agenda.AgendaProfileFixture;
 import gg.utils.fixture.agenda.AgendaTeamFixture;
@@ -179,6 +184,179 @@ public class TicketControllerTest {
 			mockMvc.perform(
 					get("/agenda/ticket")
 						.header("Authorization", "Bearer " + notExistUserAccessToken)
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+		}
+	}
+
+	@Nested
+	@DisplayName("티켓 히스토리 조회 테스트")
+	class FindTicketHistoryTest {
+		@BeforeEach
+		void beforeEach() {
+			seoulUser = testDataUtils.createNewUser();
+			seoulUserAccessToken = testDataUtils.getLoginAccessTokenFromUser(seoulUser);
+			seoulUserAgendaProfile = agendaProfileFixture.createAgendaProfile(seoulUser, SEOUL);
+			gyeongsanUser = testDataUtils.createNewUser();
+			gyeongsanUserAccessToken = testDataUtils.getLoginAccessTokenFromUser(gyeongsanUser);
+			gyeongsanUserAgendaProfile = agendaProfileFixture.createAgendaProfile(gyeongsanUser, GYEONGSAN);
+		}
+
+		@ParameterizedTest
+		@ValueSource(ints = {1, 2, 3, 4, 5})
+		@DisplayName("200 티켓 히스토리 조회 성공")
+		void findTicketHistorySuccess(int page) throws Exception {
+			//given
+			for (int i = 0; i < 23; i++) {
+				ticketFixture.createTicket(seoulUserAgendaProfile);
+			}
+			PageRequestDto req = new PageRequestDto(page, 5);
+			String content = objectMapper.writeValueAsString(req);
+			//when
+			String res = mockMvc.perform(
+					get("/agenda/ticket/history")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.param("page", String.valueOf(page))
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+			TicketHistoryResDto[] result = objectMapper.readValue(res, TicketHistoryResDto[].class);
+			//then
+			assertThat(result).hasSize(((page - 1) * 5) < 23
+				? Math.min(5, 23 - (page - 1) * 5) : 0);
+		}
+
+		@Test
+		@DisplayName("200 티켓 히스토리 조회 성공 - approve 되어있지 않은 경우")
+		void findTicketHistorySuccessToNotApprove() throws Exception {
+			//given
+			ticketFixture.createTicket(seoulUserAgendaProfile, false, false, null, null);
+			PageRequestDto req = new PageRequestDto(1, 5);
+			String content = objectMapper.writeValueAsString(req);
+			//when
+			String res = mockMvc.perform(
+					get("/agenda/ticket/history")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+			TicketHistoryResDto[] result = objectMapper.readValue(res, TicketHistoryResDto[].class);
+			//then
+			assertThat(result).hasSize(1);
+			assertThat(result[0].getIssuedFrom()).isEqualTo("42Intra");
+			assertThat(result[0].getUsedTo()).isEqualTo("NotApproved");
+		}
+
+		@Test
+		@DisplayName("200 티켓 히스토리 조회 성공 - approve 되어있고 used 되어있는 경우")
+		void findTicketHistorySuccessToUsed() throws Exception {
+			//given
+			Agenda seoulAgenda = agendaFixture.createAgenda(SEOUL);
+			Ticket ticket = ticketFixture.createTicket(seoulUserAgendaProfile, true, true, null,
+				seoulAgenda.getAgendaKey());
+			ticketRepository.save(ticket);
+			PageRequestDto req = new PageRequestDto(1, 5);
+			String content = objectMapper.writeValueAsString(req);
+			//when
+			String res = mockMvc.perform(
+					get("/agenda/ticket/history")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+			TicketHistoryResDto[] result = objectMapper.readValue(res, TicketHistoryResDto[].class);
+			//then
+			assertThat(result).hasSize(1);
+			assertThat(result[0].getIssuedFrom()).isEqualTo("42Intra");
+			assertThat(result[0].getUsedTo()).isEqualTo(seoulAgenda.getTitle());
+		}
+
+		@Test
+		@DisplayName("200 티켓 히스토리 조회 성공 - approve 되어있고 used 되어있지 않은 경우")
+		void findTicketHistorySuccessToNotUsed() throws Exception {
+			//given
+			Agenda seoulAgenda = agendaFixture.createAgenda(SEOUL);
+			Ticket ticket = ticketFixture.createTicket(seoulUserAgendaProfile, true, false, null,
+				null);
+			ticketRepository.save(ticket);
+			PageRequestDto req = new PageRequestDto(1, 5);
+			String content = objectMapper.writeValueAsString(req);
+			//when
+			String res = mockMvc.perform(
+					get("/agenda/ticket/history")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+			TicketHistoryResDto[] result = objectMapper.readValue(res, TicketHistoryResDto[].class);
+			//then
+			assertThat(result).hasSize(1);
+			assertThat(result[0].getIssuedFrom()).isEqualTo("42Intra");
+			assertThat(result[0].getUsedTo()).isEqualTo("NotUsed");
+		}
+
+		@Test
+		@DisplayName("200 티켓 히스토리 조회 성공 - refund 되어있고 used 되어있지 않은 경우")
+		void findTicketHistorySuccessToRefund() throws Exception {
+			//given
+			Agenda seoulAgenda = agendaFixture.createAgenda(SEOUL);
+			Ticket ticket = ticketFixture.createTicket(seoulUserAgendaProfile, true, false, seoulAgenda.getAgendaKey(),
+				null);
+			ticketRepository.save(ticket);
+			PageRequestDto req = new PageRequestDto(1, 5);
+			String content = objectMapper.writeValueAsString(req);
+			//when
+			String res = mockMvc.perform(
+					get("/agenda/ticket/history")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+			TicketHistoryResDto[] result = objectMapper.readValue(res, TicketHistoryResDto[].class);
+			//then
+			assertThat(result).hasSize(1);
+			assertThat(result[0].getIssuedFrom()).isEqualTo(seoulAgenda.getTitle());
+			assertThat(result[0].getUsedTo()).isEqualTo("NotUsed");
+		}
+
+		@Test
+		@DisplayName("200 티켓 히스토리 조회 성공 - 티켓이 없는 경우")
+		void findTicketHistorySuccessToEmptyTicket() throws Exception {
+			//given
+			PageRequestDto req = new PageRequestDto(1, 5);
+			String content = objectMapper.writeValueAsString(req);
+			//when
+			String res = mockMvc.perform(
+					get("/agenda/ticket/history")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+			TicketHistoryResDto[] result = objectMapper.readValue(res, TicketHistoryResDto[].class);
+			//then
+			assertThat(result).isEmpty();
+		}
+
+		@Test
+		@DisplayName("404 티켓 히스토리 조회 실패 - 프로필이 존재하지 않는 경우")
+		void findTicketHistoryFailToNotFoundProfile() throws Exception {
+			//given
+			User notExistUser = testDataUtils.createNewUser();
+			String notExistUserAccessToken = testDataUtils.getLoginAccessTokenFromUser(notExistUser);
+			PageRequestDto req = new PageRequestDto(1, 5);
+			String content = objectMapper.writeValueAsString(req);
+			//when
+			mockMvc.perform(
+					get("/agenda/ticket/history")
+						.header("Authorization", "Bearer " + notExistUserAccessToken)
+						.content(content)
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound());
