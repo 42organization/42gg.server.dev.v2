@@ -2,6 +2,7 @@ package gg.agenda.api.user.ticket.service;
 
 import static gg.utils.exception.ErrorCode.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +24,7 @@ import gg.repo.agenda.AgendaProfileRepository;
 import gg.repo.agenda.AgendaRepository;
 import gg.repo.agenda.TicketRepository;
 import gg.utils.exception.custom.DuplicationException;
+import gg.utils.exception.custom.ForbiddenException;
 import gg.utils.exception.custom.NotExistException;
 import lombok.RequiredArgsConstructor;
 
@@ -76,6 +78,24 @@ public class TicketService {
 			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
 		List<Ticket> tickets = ticketRepository.findByAgendaProfileIdAndIsUsedFalseAndIsApprovedTrue(profile.getId());
 		return tickets.size();
+	}
+
+	/**
+	 * 티켓 승인/거절
+	 * @param user 사용자 정보
+	 */
+	@Transactional
+	public void modifyTicketApprove(UserDto user) {
+		AgendaProfile profile = agendaProfileRepository.findByUserId(user.getId())
+			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
+		Ticket ticket = ticketRepository.findByAgendaProfileAndIsApprovedFalse(profile)
+			.orElseThrow(() -> new NotExistException(NOT_SETUP_TICKET));
+		if (ticket.getModifiedAt().isAfter(LocalDateTime.now().minusMinutes(1))) {
+			throw new ForbiddenException(TICKET_FORBIDDEN);
+		}
+
+		ticket.changeIsApproved();
+		ticketRepository.save(ticket);
 	}
 
 	/**

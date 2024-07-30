@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,6 +51,20 @@ public class TicketController {
 		return ResponseEntity.ok().body(new TicketCountResDto(ticketCount));
 	}
 
+	/**
+	 * 티켓 승인/거절
+	 * @param user 사용자 정보
+	 */
+	@PatchMapping
+	public ResponseEntity<Void> ticketApproveModify(@Parameter(hidden = true) @Login UserDto user) {
+		return ResponseEntity.noContent().build();
+	}
+
+	/**
+	 * 티켓 이력 조회
+	 * @param user 사용자 정보
+	 * @param pageRequest 페이지 정보
+	 */
 	@GetMapping("/history")
 	public ResponseEntity<List<TicketHistoryResDto>> ticketHistoryList(@Parameter(hidden = true) @Login UserDto user,
 		@RequestBody @Valid PageRequestDto pageRequest) {

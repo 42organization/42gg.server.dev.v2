@@ -92,4 +92,9 @@ public class Ticket extends BaseTimeEntity {
 		this.usedAt = LocalDateTime.now();
 		this.isUsed = true;
 	}
+
+	public void changeIsApproved() {
+		this.isApproved = true;
+		this.approvedAt = LocalDateTime.now();
+	}
 }

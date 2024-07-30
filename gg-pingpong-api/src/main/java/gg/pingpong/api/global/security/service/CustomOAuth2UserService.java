@@ -18,7 +18,6 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.type.Coalition;
@@ -61,8 +60,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 	private String defaultImageUrl;
 	@Value("https://api.intra.42.fr/v2/users/{id}/coalitions")
 	private String coalitionUrl;
-
-	private RestTemplate restTemplate;
 
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
