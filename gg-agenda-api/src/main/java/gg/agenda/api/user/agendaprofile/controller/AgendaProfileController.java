@@ -1,5 +1,7 @@
 package gg.agenda.api.user.agendaprofile.controller;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import gg.agenda.api.user.agendaprofile.controller.request.AgendaProfileChangeReqDto;
 import gg.agenda.api.user.agendaprofile.controller.response.AgendaProfileDetailsResDto;
 import gg.agenda.api.user.agendaprofile.controller.response.AgendaProfileInfoDetailsResDto;
+import gg.agenda.api.user.agendaprofile.controller.response.CurrentAttendAgendaListResDto;
 import gg.agenda.api.user.agendaprofile.service.AgendaProfileFindService;
 import gg.agenda.api.user.agendaprofile.service.AgendaProfileService;
 import gg.auth.UserDto;
@@ -75,18 +78,19 @@ public class AgendaProfileController {
 		return ResponseEntity.ok(agendaProfileInfoDetails);
 	}
 
-	// /**
-	//  * 현재 참여중인 Agenda 목록 조회하는 메서드
-	//  * @param user 로그인한 유저의 id
-	//  * @return List<CurrentAttendAgendaListResDto> 객체
-	//  */
-	// @GetMapping("/current/list")
-	// public ResponseEntity<List<CurrentAttendAgendaListResDto>> getCurrentAttendAgendaList(
-	// 	@Login @Parameter(hidden = true) UserDto user) {
-	//
-	// 	List<CurrentAttendAgendaListResDto> currentAttendAgendaList = agendaProfileFindService.findCurrentAttendAgenda(
-	// 		user.getId());
-	// 	return ResponseEntity.ok(currentAttendAgendaList);
-	// }
+	/**
+	 * 현재 참여중인 Agenda 목록 조회하는 메서드
+	 * @param user 로그인한 유저의 id
+	 * @return List<CurrentAttendAgendaListResDto> 객체
+	 */
+	@GetMapping("/current/list")
+	public ResponseEntity<List<CurrentAttendAgendaListResDto>> getCurrentAttendAgendaList(
+		@Login @Parameter(hidden = true) UserDto user) {
+		String intraId = user.getIntraId();
+
+		List<CurrentAttendAgendaListResDto> currentAttendAgendaList = agendaProfileFindService.findCurrentAttendAgenda(
+			intraId);
+		return ResponseEntity.ok(currentAttendAgendaList);
+	}
 }
 
