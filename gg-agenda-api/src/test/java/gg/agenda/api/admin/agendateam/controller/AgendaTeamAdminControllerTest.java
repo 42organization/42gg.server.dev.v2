@@ -4,12 +4,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import gg.admin.repo.agenda.AgendaTeamProfileAdminRepository;
-import gg.agenda.api.admin.agendateam.controller.request.AgendaTeamMateReqDto;
-import gg.agenda.api.admin.agendateam.controller.request.AgendaTeamUpdateDto;
-import gg.agenda.api.admin.agendateam.controller.response.AgendaTeamMateResDto;
-import gg.data.agenda.AgendaTeamProfile;
-import gg.data.agenda.type.Location;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,7 +11,6 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -33,13 +26,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.admin.repo.agenda.AgendaAdminRepository;
 import gg.admin.repo.agenda.AgendaTeamAdminRepository;
+import gg.admin.repo.agenda.AgendaTeamProfileAdminRepository;
 import gg.agenda.api.admin.agendateam.controller.request.AgendaTeamKeyReqDto;
 import gg.agenda.api.admin.agendateam.controller.response.AgendaTeamDetailResDto;
+import gg.agenda.api.admin.agendateam.controller.request.AgendaTeamMateReqDto;
+import gg.agenda.api.admin.agendateam.controller.response.AgendaTeamMateResDto;
 import gg.agenda.api.admin.agendateam.controller.response.AgendaTeamResDto;
+import gg.agenda.api.admin.agendateam.controller.request.AgendaTeamUpdateDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaProfile;
+import gg.data.agenda.AgendaTeamProfile;
 import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.type.AgendaTeamStatus;
+import gg.data.agenda.type.Location;
 import gg.data.user.User;
 import gg.utils.AgendaTestDataUtils;
 import gg.utils.TestDataUtils;
