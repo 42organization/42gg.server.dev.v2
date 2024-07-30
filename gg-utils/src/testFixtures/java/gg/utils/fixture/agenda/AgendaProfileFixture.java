@@ -39,13 +39,13 @@ public class AgendaProfileFixture {
 		for (int i = 0; i < size; i++) {
 			User user = testDataUtils.createNewUser();
 			AgendaProfile agendaProfile = AgendaProfile.builder()
-			.content("content")
-			.githubUrl("githubUrl")
-			.coalition(LEE)
-			.location(Location.SEOUL)
-			.intraId(user.getIntraId())
-			.userId(user.getId())
-			.build();
+				.content("content")
+				.githubUrl("githubUrl")
+				.coalition(LEE)
+				.location(Location.SEOUL)
+				.intraId(user.getIntraId())
+				.userId(user.getId())
+				.build();
 			agendaProfileList.add(agendaProfile);
 		}
 		return agendaProfileRepository.saveAll(agendaProfileList);
