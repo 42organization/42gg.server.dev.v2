@@ -4,6 +4,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import gg.agenda.api.admin.agendateam.controller.response.AgendaTeamMateResDto;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,7 +27,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gg.admin.repo.agenda.AgendaAdminRepository;
 import gg.admin.repo.agenda.AgendaTeamAdminRepository;
 import gg.agenda.api.admin.agendateam.controller.request.AgendaTeamKeyReqDto;
-import gg.agenda.api.admin.agendateam.controller.response.AgendaProfileResDto;
 import gg.agenda.api.admin.agendateam.controller.response.AgendaTeamDetailResDto;
 import gg.agenda.api.admin.agendateam.controller.response.AgendaTeamResDto;
 import gg.data.agenda.Agenda;
@@ -172,7 +172,7 @@ public class AgendaTeamAdminControllerTest {
 			assertThat(result.getTeamMates()).isNotNull();
 			assertThat(result.getTeamMates().size()).isEqualTo(profiles.size());
 			for (int i = 0; i < profiles.size(); i++) {
-				AgendaProfileResDto profile = result.getTeamMates().get(i);
+				AgendaTeamMateResDto profile = result.getTeamMates().get(i);
 				assertThat(profile.getIntraId()).isEqualTo(profiles.get(i).getIntraId());
 			}
 		}

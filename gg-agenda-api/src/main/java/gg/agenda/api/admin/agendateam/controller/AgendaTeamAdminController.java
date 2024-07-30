@@ -1,5 +1,6 @@
 package gg.agenda.api.admin.agendateam.controller;
 
+import gg.agenda.api.admin.agendateam.controller.request.AgendaTeamUpdateDto;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -34,7 +35,7 @@ public class AgendaTeamAdminController {
 	private final AgendaTeamAdminService agendaTeamAdminService;
 
 	@GetMapping("/list")
-	public ResponseEntity<List<AgendaTeamResDto>> getAgendaTeamList(@RequestParam("agenda_key") UUID agendaKey,
+	public ResponseEntity<List<AgendaTeamResDto>> agendaTeamList(@RequestParam("agenda_key") UUID agendaKey,
 		@RequestBody @Valid PageRequestDto pageRequestDto) {
 		int page = pageRequestDto.getPage();
 		int size = pageRequestDto.getSize();
@@ -47,7 +48,7 @@ public class AgendaTeamAdminController {
 	}
 
 	@GetMapping
-	public ResponseEntity<AgendaTeamDetailResDto> getAgendaTeamDetail(
+	public ResponseEntity<AgendaTeamDetailResDto> agendaTeamDetail(
 		@RequestBody @Valid AgendaTeamKeyReqDto agendaTeamKeyReqDto) {
 		AgendaTeam agendaTeam = agendaTeamAdminService.getAgendaTeamByTeamKey(agendaTeamKeyReqDto.getTeamKey());
 		List<AgendaProfile> participants = agendaTeamAdminService.getAgendaProfileListByAgendaTeam(agendaTeam);
@@ -57,8 +58,8 @@ public class AgendaTeamAdminController {
 	}
 
 	@PatchMapping
-	public ResponseEntity<Void> updateAgendaTeam(@RequestBody @Valid AgendaTeamDetailResDto agendaTeamDetailResDto) {
-		agendaTeamAdminService.updateAgendaTeam(agendaTeamDetailResDto);
+	public ResponseEntity<Void> agendaTeamUpdate(@RequestBody @Valid AgendaTeamUpdateDto agendaTeamUpdateDto) {
+		agendaTeamAdminService.updateAgendaTeam(agendaTeamUpdateDto);
 		return ResponseEntity.ok().build();
 	}
 }
