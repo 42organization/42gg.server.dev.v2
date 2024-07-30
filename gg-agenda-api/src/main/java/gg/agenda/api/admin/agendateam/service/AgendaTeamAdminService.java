@@ -62,19 +62,23 @@ public class AgendaTeamAdminService {
 			.orElseThrow(() -> new NotExistException(AGENDA_TEAM_NOT_FOUND));
 		List<AgendaTeamProfile> profiles = agendaTeamProfileAdminRepository
 			.findAllByAgendaTeamAndIsExistIsTrue(team);
+		List<String> updatedTeamMates = agendaTeamUpdateDto.getTeamMates().stream()
+			.map(AgendaTeamMateReqDto::getIntraId)
+			.collect(Collectors.toList());
+		List<String> currentTeamMates = profiles.stream()
+			.map(profile -> profile.getProfile().getIntraId()).collect(Collectors.toList());
+
+		// AgendaTeam 정보 변경
 		team.updateTeam(agendaTeamUpdateDto.getTeamName(), agendaTeamUpdateDto.getTeamContent(),
 			agendaTeamUpdateDto.getTeamIsPrivate(), agendaTeamUpdateDto.getTeamLocation(), profiles);
 		team.updateStatus(agendaTeamUpdateDto.getTeamStatus());
 		team.updateAward(agendaTeamUpdateDto.getTeamAward(), agendaTeamUpdateDto.getTeamAwardPriority());
 
-		List<String> updatedTeamMates = agendaTeamUpdateDto.getTeamMates().stream()
-			.map(AgendaTeamMateReqDto::getIntraId)
-			.collect(Collectors.toList());
-		List<String> currentTeamMates = profiles.stream()
-				.map(profile -> profile.getProfile().getIntraId()).collect(Collectors.toList());
-
+		// AgendaTeam 팀원 내보내기
 		profiles.stream().filter(profile -> !updatedTeamMates.contains(profile.getProfile().getIntraId()))
 			.forEach(AgendaTeamProfile::leaveTeam);
+
+		// AgendaTeam 팀원 추가하기
 		updatedTeamMates.stream().filter(intraId -> !currentTeamMates.contains(intraId))
 			.forEach(intraId -> {
 				AgendaProfile profile = agendaProfileAdminRepository.findByIntraId(intraId)
