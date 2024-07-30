@@ -2,22 +2,20 @@ package gg.agenda.api.admin.agendateam.service;
 
 import static gg.utils.exception.ErrorCode.*;
 
-import gg.admin.repo.agenda.AgendaProfileAdminRepository;
-import gg.agenda.api.admin.agendateam.controller.request.AgendaTeamMateReqDto;
-import gg.agenda.api.admin.agendateam.controller.request.AgendaTeamUpdateDto;
-import gg.agenda.api.admin.agendateam.controller.response.AgendaTeamDetailResDto;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import java.util.stream.Stream;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.admin.repo.agenda.AgendaAdminRepository;
+import gg.admin.repo.agenda.AgendaProfileAdminRepository;
 import gg.admin.repo.agenda.AgendaTeamAdminRepository;
 import gg.admin.repo.agenda.AgendaTeamProfileAdminRepository;
+import gg.agenda.api.admin.agendateam.controller.request.AgendaTeamMateReqDto;
+import gg.agenda.api.admin.agendateam.controller.request.AgendaTeamUpdateDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.AgendaTeam;
