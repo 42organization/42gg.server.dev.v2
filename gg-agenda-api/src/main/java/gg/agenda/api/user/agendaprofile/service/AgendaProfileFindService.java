@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import gg.agenda.api.user.agendaprofile.controller.response.AgendaProfileDetailsResDto;
 import gg.agenda.api.user.agendaprofile.controller.response.CurrentAttendAgendaListResDto;
 import gg.data.agenda.AgendaProfile;
-import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.AgendaTeamProfile;
 import gg.data.agenda.type.AgendaStatus;
 import gg.repo.agenda.AgendaProfileRepository;
@@ -66,11 +65,7 @@ public class AgendaProfileFindService {
 				AgendaStatus status = agendaTeamProfile.getAgenda().getStatus();
 				return status == AgendaStatus.OPEN || status == AgendaStatus.CONFIRM;
 			})
-			.map(agendaTeamProfile -> {
-				AgendaTeam agendaTeam = agendaTeamRepository.findById(agendaTeamProfile.getAgendaTeam().getId())
-					.orElseThrow(() -> new NotExistException(AGENDA_TEAM_NOT_FOUND));
-				return new CurrentAttendAgendaListResDto(agendaTeamProfile, agendaTeam);
-			})
+			.map(CurrentAttendAgendaListResDto::new)
 			.collect(Collectors.toList());
 	}
 }
