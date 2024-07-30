@@ -207,7 +207,7 @@ public class AgendaTeamAdminServiceTest {
 		@DisplayName("Admin AgendaTeam 수정 성공 - 팀원 추가하기")
 		void updateAgendaTeamAdminSuccessWithAddTeammate() {
 			// given
-			Agenda agenda = Agenda.builder().build();
+			Agenda agenda = Agenda.builder().maxPeople(10).build();
 			AgendaTeam team = AgendaTeam.builder().teamKey(UUID.randomUUID()).agenda(agenda).build();
 			AgendaProfile profile = AgendaProfile.builder().intraId("intra").build();
 			AgendaTeamProfile participant = AgendaTeamProfile.builder()
