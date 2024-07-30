@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -32,6 +31,7 @@ import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.AgendaTeamProfile;
 import gg.utils.annotation.UnitTest;
 import gg.utils.exception.custom.NotExistException;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @UnitTest
