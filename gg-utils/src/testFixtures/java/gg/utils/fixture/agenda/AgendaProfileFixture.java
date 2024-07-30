@@ -2,15 +2,16 @@ package gg.utils.fixture.agenda;
 
 import static gg.data.agenda.type.Coalition.*;
 
-import gg.utils.TestDataUtils;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.type.Location;
 import gg.data.user.User;
 import gg.repo.agenda.AgendaProfileRepository;
+import gg.utils.TestDataUtils;
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -38,13 +39,13 @@ public class AgendaProfileFixture {
 		for (int i = 0; i < size; i++) {
 			User user = testDataUtils.createNewUser();
 			AgendaProfile agendaProfile = AgendaProfile.builder()
-			.content("content")
-			.githubUrl("githubUrl")
-			.coalition(LEE)
-			.location(Location.SEOUL)
-			.intraId(user.getIntraId())
-			.userId(user.getId())
-			.build();
+				.content("content")
+				.githubUrl("githubUrl")
+				.coalition(LEE)
+				.location(Location.SEOUL)
+				.intraId(user.getIntraId())
+				.userId(user.getId())
+				.build();
 			agendaProfileList.add(agendaProfile);
 		}
 		return agendaProfileRepository.saveAll(agendaProfileList);
