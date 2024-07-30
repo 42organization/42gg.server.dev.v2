@@ -307,12 +307,12 @@ public class AgendaTeamAdminControllerTest {
 
 			// then
 			assertThat(result.getLocation()).isEqualTo(team.getLocation());
-			assertThat(result.getLocation()).isEqualTo(team.getName());
-			assertThat(result.getLocation()).isEqualTo(team.getContent());
-			assertThat(result.getLocation()).isEqualTo(team.getIsPrivate());
-			assertThat(result.getLocation()).isEqualTo(team.getStatus());
-			assertThat(result.getLocation()).isEqualTo(team.getAward());
-			assertThat(result.getLocation()).isEqualTo(team.getAwardPriority());
+			assertThat(result.getName()).isEqualTo(team.getName());
+			assertThat(result.getContent()).isEqualTo(team.getContent());
+			assertThat(result.getIsPrivate()).isEqualTo(team.getIsPrivate());
+			assertThat(result.getStatus()).isEqualTo(team.getStatus());
+			assertThat(result.getAward()).isEqualTo(team.getAward());
+			assertThat(result.getAwardPriority()).isEqualTo(team.getAwardPriority());
 		}
 
 		@Test
