@@ -4,11 +4,15 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import gg.admin.repo.agenda.AgendaProfileAdminRepository;
+import gg.agenda.api.admin.agendateam.controller.request.AgendaTeamMateReqDto;
+import gg.agenda.api.admin.agendateam.controller.request.AgendaTeamUpdateDto;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -29,6 +33,7 @@ import gg.data.agenda.AgendaTeamProfile;
 import gg.utils.annotation.UnitTest;
 import gg.utils.exception.custom.NotExistException;
 
+@Slf4j
 @UnitTest
 public class AgendaTeamAdminServiceTest {
 
@@ -37,6 +42,9 @@ public class AgendaTeamAdminServiceTest {
 
 	@Mock
 	private AgendaTeamAdminRepository agendaTeamAdminRepository;
+
+	@Mock
+	private AgendaProfileAdminRepository agendaProfileAdminRepository;
 
 	@Mock
 	private AgendaTeamProfileAdminRepository agendaTeamProfileAdminRepository;
@@ -172,24 +180,141 @@ public class AgendaTeamAdminServiceTest {
 		@DisplayName("Admin AgendaTeam 수정 성공")
 		void updateAgendaTeamAdminSuccess() {
 			// given
+			Agenda agenda = Agenda.builder().build();
+			AgendaTeam team = AgendaTeam.builder().teamKey(UUID.randomUUID()).agenda(agenda).build();
+			AgendaProfile profile = AgendaProfile.builder().intraId("intra").build();
+			AgendaTeamProfile participant = AgendaTeamProfile.builder()
+				.agendaTeam(team).agenda(agenda).profile(profile).build();
+			AgendaTeamMateReqDto agendaTeamMateReqDto = AgendaTeamMateReqDto.builder()
+				.intraId("intra").build();
+			AgendaTeamUpdateDto agendaTeamUpdateDto = AgendaTeamUpdateDto.builder()
+				.teamKey(team.getTeamKey()).teamMates(List.of(agendaTeamMateReqDto)).build();
+			when(agendaTeamAdminRepository.findByTeamKey(any(UUID.class))).thenReturn(Optional.of(team));
+			when(agendaTeamProfileAdminRepository.findAllByAgendaTeamAndIsExistIsTrue(any(AgendaTeam.class)))
+				.thenReturn(List.of(participant));
+
 			// when
+			agendaTeamAdminService.updateAgendaTeam(agendaTeamUpdateDto);
+
 			// then
+			verify(agendaTeamAdminRepository, times(1))
+				.findByTeamKey(any(UUID.class));
+			verify(agendaTeamProfileAdminRepository, times(1))
+				.findAllByAgendaTeamAndIsExistIsTrue(any(AgendaTeam.class));
+		}
+
+		@Test
+		@DisplayName("Admin AgendaTeam 수정 성공 - 팀원 추가하기")
+		void updateAgendaTeamAdminSuccessWithAddTeammate() {
+			// given
+			Agenda agenda = Agenda.builder().build();
+			AgendaTeam team = AgendaTeam.builder().teamKey(UUID.randomUUID()).agenda(agenda).build();
+			AgendaProfile profile = AgendaProfile.builder().intraId("intra").build();
+			AgendaTeamProfile participant = AgendaTeamProfile.builder()
+				.agendaTeam(team).agenda(agenda).profile(profile).build();
+
+			AgendaProfile newProfile = AgendaProfile.builder().intraId("newIntra").build();
+			List<AgendaTeamMateReqDto> updateTeamMates = new ArrayList<>();
+			updateTeamMates.add(AgendaTeamMateReqDto.builder()
+				.intraId(profile.getIntraId()).build());
+			updateTeamMates.add(AgendaTeamMateReqDto.builder()
+				.intraId(newProfile.getIntraId()).build());
+
+			AgendaTeamUpdateDto agendaTeamUpdateDto = AgendaTeamUpdateDto.builder()
+				.teamKey(team.getTeamKey()).teamMates(updateTeamMates).build();
+
+			when(agendaTeamAdminRepository.findByTeamKey(any(UUID.class))).thenReturn(Optional.of(team));
+			when(agendaTeamProfileAdminRepository.findAllByAgendaTeamAndIsExistIsTrue(any(AgendaTeam.class)))
+				.thenReturn(List.of(participant));
+			when(agendaProfileAdminRepository.findByIntraId("newIntra"))
+				.thenReturn(Optional.of(newProfile));
+			when(agendaTeamProfileAdminRepository.save(any(AgendaTeamProfile.class)))
+				.thenReturn(mock(AgendaTeamProfile.class));
+
+			// when
+			agendaTeamAdminService.updateAgendaTeam(agendaTeamUpdateDto);
+
+			// then
+			verify(agendaTeamAdminRepository, times(1))
+				.findByTeamKey(any(UUID.class));
+			verify(agendaTeamProfileAdminRepository, times(1))
+				.findAllByAgendaTeamAndIsExistIsTrue(any(AgendaTeam.class));
+			verify(agendaProfileAdminRepository, times(1))
+				.findByIntraId("newIntra");
+			verify(agendaTeamProfileAdminRepository, times(1))
+				.save(any(AgendaTeamProfile.class));
+		}
+
+		@Test
+		@DisplayName("Admin AgendaTeam 수정 성공 - 팀원 삭제하기")
+		void updateAgendaTeamAdminSuccessWithRemoveTeammate() {
+			// given
+			Agenda agenda = Agenda.builder().build();
+			AgendaTeam team = AgendaTeam.builder().teamKey(UUID.randomUUID()).agenda(agenda).build();
+			AgendaProfile profile = AgendaProfile.builder().intraId("intra").build();
+			AgendaTeamProfile participant = AgendaTeamProfile.builder()
+				.agendaTeam(team).agenda(agenda).profile(profile).build();
+
+			AgendaTeamUpdateDto agendaTeamUpdateDto = AgendaTeamUpdateDto.builder()
+				.teamKey(team.getTeamKey()).teamMates(List.of()).build();
+
+			when(agendaTeamAdminRepository.findByTeamKey(any(UUID.class))).thenReturn(Optional.of(team));
+			when(agendaTeamProfileAdminRepository.findAllByAgendaTeamAndIsExistIsTrue(any(AgendaTeam.class)))
+				.thenReturn(List.of(participant));
+
+			// when
+			agendaTeamAdminService.updateAgendaTeam(agendaTeamUpdateDto);
+
+			// then
+			verify(agendaTeamAdminRepository, times(1))
+				.findByTeamKey(any(UUID.class));
+			verify(agendaTeamProfileAdminRepository, times(1))
+				.findAllByAgendaTeamAndIsExistIsTrue(any(AgendaTeam.class));
+			assertThat(participant.getIsExist()).isFalse();	// leaveTeam() 호출 확인
 		}
 
 		@Test
 		@DisplayName("Admin AgendaTeam 수정 실패 - 존재하지 않는 Team Key")
 		void updateAgendaTeamAdminFailedWithInvalidTeamKey() {
 			// given
-			// when
-			// then
+			AgendaTeamUpdateDto agendaTeamUpdateDto = AgendaTeamUpdateDto.builder()
+				.teamKey(UUID.randomUUID()).teamMates(List.of()).build();
+			when(agendaTeamAdminRepository.findByTeamKey(any(UUID.class))).thenReturn(Optional.empty());
+
+			// expected
+			assertThrows(NotExistException.class,
+				() -> agendaTeamAdminService.updateAgendaTeam(agendaTeamUpdateDto));
 		}
 
 		@Test
 		@DisplayName("Admin AgendaTeam 수정 실패 - 존재하지 않는 Intra ID")
 		void updateAgendaTeamAdminFailedWithInvalidIntraId() {
 			// given
-			// when
-			// then
+			Agenda agenda = Agenda.builder().build();
+			AgendaTeam team = AgendaTeam.builder().teamKey(UUID.randomUUID()).agenda(agenda).build();
+			AgendaProfile profile = AgendaProfile.builder().intraId("intra").build();
+			AgendaTeamProfile participant = AgendaTeamProfile.builder()
+				.agendaTeam(team).agenda(agenda).profile(profile).build();
+
+			AgendaProfile newProfile = AgendaProfile.builder().intraId("newIntra").build();
+			List<AgendaTeamMateReqDto> updateTeamMates = new ArrayList<>();
+			updateTeamMates.add(AgendaTeamMateReqDto.builder()
+				.intraId(profile.getIntraId()).build());
+			updateTeamMates.add(AgendaTeamMateReqDto.builder()
+				.intraId(newProfile.getIntraId()).build());
+
+			AgendaTeamUpdateDto agendaTeamUpdateDto = AgendaTeamUpdateDto.builder()
+				.teamKey(team.getTeamKey()).teamMates(updateTeamMates).build();
+
+			when(agendaTeamAdminRepository.findByTeamKey(any(UUID.class))).thenReturn(Optional.of(team));
+			when(agendaTeamProfileAdminRepository.findAllByAgendaTeamAndIsExistIsTrue(any(AgendaTeam.class)))
+				.thenReturn(List.of(participant));
+			when(agendaProfileAdminRepository.findByIntraId("newIntra"))
+				.thenReturn(Optional.empty());
+
+			// expected
+			assertThrows(NotExistException.class,
+				() -> agendaTeamAdminService.updateAgendaTeam(agendaTeamUpdateDto));
 		}
 	}
 }
