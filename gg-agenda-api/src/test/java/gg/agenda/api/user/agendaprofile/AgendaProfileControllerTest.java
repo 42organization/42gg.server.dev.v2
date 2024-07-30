@@ -35,7 +35,6 @@ import gg.data.agenda.type.Location;
 import gg.data.user.User;
 import gg.data.user.type.RoleType;
 import gg.repo.agenda.AgendaProfileRepository;
-import gg.utils.AgendaTestDataUtils;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 
@@ -53,8 +52,6 @@ public class AgendaProfileControllerTest {
 	private AgendaMockData agendaMockData;
 	@Autowired
 	private AgendaProfileRepository agendaProfileRepository;
-	@Autowired
-	private AgendaTestDataUtils agendaTestDataUtils;
 	User user;
 	String accessToken;
 	AgendaProfile agendaProfile;
