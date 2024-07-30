@@ -58,13 +58,13 @@ public class AgendaTeamAdminService {
 	public void updateAgendaTeam(AgendaTeamUpdateDto agendaTeamUpdateDto) {
 		AgendaTeam team = agendaTeamAdminRepository.findByTeamKey(agendaTeamUpdateDto.getTeamKey())
 			.orElseThrow(() -> new NotExistException(AGENDA_TEAM_NOT_FOUND));
-		List<AgendaTeamProfile> profiles = agendaTeamProfileAdminRepository
-			.findAllByAgendaTeamAndIsExistIsTrue(team);
+		List<AgendaTeamProfile> profiles = agendaTeamProfileAdminRepository.findAllByAgendaTeamAndIsExistIsTrue(team);
 		List<String> updatedTeamMates = agendaTeamUpdateDto.getTeamMates().stream()
 			.map(AgendaTeamMateReqDto::getIntraId)
 			.collect(Collectors.toList());
 		List<String> currentTeamMates = profiles.stream()
-			.map(profile -> profile.getProfile().getIntraId()).collect(Collectors.toList());
+			.map(profile -> profile.getProfile().getIntraId())
+			.collect(Collectors.toList());
 
 		// AgendaTeam 정보 변경
 		team.updateTeam(agendaTeamUpdateDto.getTeamName(), agendaTeamUpdateDto.getTeamContent(),
