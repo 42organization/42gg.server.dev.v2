@@ -237,6 +237,22 @@ public class AgendaTeamAdminControllerTest {
 		}
 
 		@Test
+		@DisplayName("Admin AgendaTeam 수정 성공 - 팀원 추가하기")
+		void updateAgendaTeamAdminSuccessWithAddTeammate() throws Exception {
+			// given
+			// when
+			// then
+		}
+
+		@Test
+		@DisplayName("Admin AgendaTeam 수정 성공 - 팀원 삭제하기")
+		void updateAgendaTeamAdminSuccessWithRemoveTeammate() throws Exception {
+			// given
+			// when
+			// then
+		}
+
+		@Test
 		@DisplayName("Admin AgendaTeam 수정 실패 - 존재하지 않는 Team Key")
 		void updateAgendaTeamAdminFailedWithInvalidTeamKey() throws Exception {
 			// given
