@@ -81,12 +81,7 @@ public class AgendaTeamAdminService {
 			.forEach(intraId -> {
 				AgendaProfile profile = agendaProfileAdminRepository.findByIntraId(intraId)
 					.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
-				AgendaTeamProfile agendaTeamProfile = AgendaTeamProfile.builder()
-					.agendaTeam(team)
-					.agenda(team.getAgenda())
-					.profile(profile)
-					.isExist(true)
-					.build();
+				AgendaTeamProfile agendaTeamProfile = new AgendaTeamProfile(team, team.getAgenda(), profile);
 				agendaTeamProfileAdminRepository.save(agendaTeamProfile);
 			});
 	}
