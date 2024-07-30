@@ -257,10 +257,10 @@ public class AgendaProfileControllerTest {
 			agendaProfile = agendaMockData.createAgendaProfile(user, SEOUL);
 			List<AgendaTeam> agendaTeamList = new ArrayList<>();
 			for (int i = 0; i < 5; i++) {
-				User AgendaCreateUser = testDataUtils.createNewUser();
+				User agendaCreateUser = testDataUtils.createNewUser();
 				User otherUser = testDataUtils.createNewUser();
 				LocalDateTime startTime = LocalDateTime.now().plusDays(i);
-				Agenda agenda = agendaMockData.createAgenda(AgendaCreateUser.getIntraId(), startTime,
+				Agenda agenda = agendaMockData.createAgenda(agendaCreateUser.getIntraId(), startTime,
 					i % 2 == 0 ? AgendaStatus.OPEN : AgendaStatus.CONFIRM);
 				AgendaTeam agendaTeam = agendaMockData.createAgendaTeam(agenda, otherUser, Location.SEOUL);
 				agendaMockData.createAgendaTeamProfile(agendaTeam, agendaProfile);
