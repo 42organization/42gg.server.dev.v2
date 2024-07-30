@@ -4,9 +4,6 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import gg.admin.repo.agenda.AgendaProfileAdminRepository;
-import gg.agenda.api.admin.agendateam.controller.request.AgendaTeamMateReqDto;
-import gg.agenda.api.admin.agendateam.controller.request.AgendaTeamUpdateDto;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,8 +21,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import gg.admin.repo.agenda.AgendaAdminRepository;
+import gg.admin.repo.agenda.AgendaProfileAdminRepository;
 import gg.admin.repo.agenda.AgendaTeamAdminRepository;
 import gg.admin.repo.agenda.AgendaTeamProfileAdminRepository;
+import gg.agenda.api.admin.agendateam.controller.request.AgendaTeamMateReqDto;
+import gg.agenda.api.admin.agendateam.controller.request.AgendaTeamUpdateDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.AgendaTeam;
@@ -270,7 +270,7 @@ public class AgendaTeamAdminServiceTest {
 				.findByTeamKey(any(UUID.class));
 			verify(agendaTeamProfileAdminRepository, times(1))
 				.findAllByAgendaTeamAndIsExistIsTrue(any(AgendaTeam.class));
-			assertThat(participant.getIsExist()).isFalse();	// leaveTeam() 호출 확인
+			assertThat(participant.getIsExist()).isFalse();    // leaveTeam() 호출 확인
 		}
 
 		@Test
