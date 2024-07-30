@@ -31,11 +31,11 @@ public class AgendaTeamDetailResDto {
 
 	private boolean teamIsPrivate;
 
-	private List<AgendaProfileResDto> teamMates;
+	private List<AgendaTeamMateResDto> teamMates;
 
 	@Builder
 	public AgendaTeamDetailResDto(String teamName, String teamLeaderIntraId, String teamStatus, String teamAward,
-		int teamAwardPriority, boolean teamIsPrivate, List<AgendaProfileResDto> teamMates) {
+		int teamAwardPriority, boolean teamIsPrivate, List<AgendaTeamMateResDto> teamMates) {
 		this.teamName = teamName;
 		this.teamLeaderIntraId = teamLeaderIntraId;
 		this.teamStatus = teamStatus;
@@ -60,9 +60,9 @@ public class AgendaTeamDetailResDto {
 		AgendaTeamDetailResDto toDto(AgendaTeam team, List<AgendaProfile> teamMates);
 
 		@Named("toAgendaProfileResDtoList")
-		default List<AgendaProfileResDto> toAgendaProfileResDtoList(List<AgendaProfile> teamMates) {
+		default List<AgendaTeamMateResDto> toAgendaProfileResDtoList(List<AgendaProfile> teamMates) {
 			return teamMates.stream()
-				.map(AgendaProfileResDto.MapStruct.INSTANCE::toDto)
+				.map(AgendaTeamMateResDto.MapStruct.INSTANCE::toDto)
 				.collect(Collectors.toList());
 		}
 	}

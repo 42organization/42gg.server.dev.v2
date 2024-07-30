@@ -11,8 +11,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.admin.repo.agenda.AgendaAdminRepository;
+import gg.admin.repo.agenda.AgendaProfileAdminRepository;
 import gg.admin.repo.agenda.AgendaTeamAdminRepository;
 import gg.admin.repo.agenda.AgendaTeamProfileAdminRepository;
+import gg.agenda.api.admin.agendateam.controller.request.AgendaTeamMateReqDto;
+import gg.agenda.api.admin.agendateam.controller.request.AgendaTeamUpdateDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.AgendaTeam;
@@ -27,6 +30,8 @@ public class AgendaTeamAdminService {
 	private final AgendaAdminRepository agendaAdminRepository;
 
 	private final AgendaTeamAdminRepository agendaTeamAdminRepository;
+
+	private final AgendaProfileAdminRepository agendaProfileAdminRepository;
 
 	private final AgendaTeamProfileAdminRepository agendaTeamProfileAdminRepository;
 
@@ -47,5 +52,42 @@ public class AgendaTeamAdminService {
 	public List<AgendaProfile> getAgendaProfileListByAgendaTeam(AgendaTeam agendaTeam) {
 		return agendaTeamProfileAdminRepository.findAllByAgendaTeamAndIsExistIsTrue(agendaTeam).stream()
 			.map(AgendaTeamProfile::getProfile).collect(Collectors.toList());
+	}
+
+	@Transactional
+	public void updateAgendaTeam(AgendaTeamUpdateDto agendaTeamUpdateDto) {
+		AgendaTeam team = agendaTeamAdminRepository.findByTeamKey(agendaTeamUpdateDto.getTeamKey())
+			.orElseThrow(() -> new NotExistException(AGENDA_TEAM_NOT_FOUND));
+		List<AgendaTeamProfile> profiles = agendaTeamProfileAdminRepository.findAllByAgendaTeamAndIsExistIsTrue(team);
+		List<String> updatedTeamMates = agendaTeamUpdateDto.getTeamMates().stream()
+			.map(AgendaTeamMateReqDto::getIntraId)
+			.collect(Collectors.toList());
+		List<String> currentTeamMates = profiles.stream()
+			.map(profile -> profile.getProfile().getIntraId())
+			.collect(Collectors.toList());
+
+		// AgendaTeam 정보 변경
+		team.updateTeamAdmin(agendaTeamUpdateDto.getTeamName(), agendaTeamUpdateDto.getTeamContent(),
+			agendaTeamUpdateDto.getTeamIsPrivate(), agendaTeamUpdateDto.getTeamStatus());
+		team.updateLocation(agendaTeamUpdateDto.getTeamLocation(), profiles);
+		team.acceptAward(agendaTeamUpdateDto.getTeamAward(), agendaTeamUpdateDto.getTeamAwardPriority());
+
+		// AgendaTeam 팀원 내보내기
+		profiles.stream().filter(profile -> !updatedTeamMates.contains(profile.getProfile().getIntraId()))
+			.forEach(agentTeamProfile -> {
+				String intraId = agentTeamProfile.getProfile().getIntraId();
+				agentTeamProfile.getAgendaTeam().leaveTeamMateAdmin(intraId);
+				agentTeamProfile.leaveTeam();
+			});
+
+		// AgendaTeam 팀원 추가하기
+		updatedTeamMates.stream().filter(intraId -> !currentTeamMates.contains(intraId))
+			.forEach(intraId -> {
+				AgendaProfile profile = agendaProfileAdminRepository.findByIntraId(intraId)
+					.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
+				team.attendTeamAdmin(team.getAgenda());
+				AgendaTeamProfile agendaTeamProfile = new AgendaTeamProfile(team, team.getAgenda(), profile);
+				agendaTeamProfileAdminRepository.save(agendaTeamProfile);
+			});
 	}
 }
