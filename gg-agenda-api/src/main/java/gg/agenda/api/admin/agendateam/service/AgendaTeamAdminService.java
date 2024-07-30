@@ -74,13 +74,18 @@ public class AgendaTeamAdminService {
 
 		// AgendaTeam 팀원 내보내기
 		profiles.stream().filter(profile -> !updatedTeamMates.contains(profile.getProfile().getIntraId()))
-			.forEach(AgendaTeamProfile::leaveTeam);
+			.forEach(agentTeamProfile -> {
+				String intraId = agentTeamProfile.getProfile().getIntraId();
+				agentTeamProfile.getAgendaTeam().leaveTeamMateAdmin(intraId);
+				agentTeamProfile.leaveTeam();
+			});
 
 		// AgendaTeam 팀원 추가하기
 		updatedTeamMates.stream().filter(intraId -> !currentTeamMates.contains(intraId))
 			.forEach(intraId -> {
 				AgendaProfile profile = agendaProfileAdminRepository.findByIntraId(intraId)
 					.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
+				team.attendTeamAdmin(team.getAgenda());
 				AgendaTeamProfile agendaTeamProfile = new AgendaTeamProfile(team, team.getAgenda(), profile);
 				agendaTeamProfileAdminRepository.save(agendaTeamProfile);
 			});
