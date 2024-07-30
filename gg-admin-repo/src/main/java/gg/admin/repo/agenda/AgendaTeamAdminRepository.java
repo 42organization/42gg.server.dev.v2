@@ -1,6 +1,8 @@
 package gg.admin.repo.agenda;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,4 +21,7 @@ public interface AgendaTeamAdminRepository extends JpaRepository<AgendaTeam, Lon
 
 	@Query("SELECT at FROM AgendaTeam at WHERE at.agenda = :agenda")
 	Page<AgendaTeam> findAllByAgenda(Agenda agenda, Pageable pageable);
+
+	@Query("SELECT at FROM AgendaTeam at WHERE at.teamKey = :teamKey")
+	Optional<AgendaTeam> findByTeamKey(UUID teamKey);
 }

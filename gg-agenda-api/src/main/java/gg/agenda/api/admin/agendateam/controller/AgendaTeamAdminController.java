@@ -16,8 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import gg.agenda.api.admin.agendateam.controller.request.AgendaTeamKeyReqDto;
+import gg.agenda.api.admin.agendateam.controller.response.AgendaTeamDetailResDto;
 import gg.agenda.api.admin.agendateam.controller.response.AgendaTeamResDto;
 import gg.agenda.api.admin.agendateam.service.AgendaTeamAdminService;
+import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.AgendaTeam;
 import gg.utils.dto.PageRequestDto;
 import lombok.RequiredArgsConstructor;
@@ -40,5 +43,15 @@ public class AgendaTeamAdminController {
 			.map(AgendaTeamResDto.MapStruct.INSTANCE::toDto)
 			.collect(Collectors.toList());
 		return ResponseEntity.ok(agendaTeamResDtoList);
+	}
+
+	@GetMapping
+	public ResponseEntity<AgendaTeamDetailResDto> getAgendaTeamDetail(
+		@RequestBody @Valid AgendaTeamKeyReqDto agendaTeamKeyReqDto) {
+		AgendaTeam agendaTeam = agendaTeamAdminService.getAgendaTeamByTeamKey(agendaTeamKeyReqDto.getTeamKey());
+		List<AgendaProfile> participants = agendaTeamAdminService.getAgendaProfileListByAgendaTeam(agendaTeam);
+		AgendaTeamDetailResDto agendaTeamDetailResDto = AgendaTeamDetailResDto.MapStruct.INSTANCE
+			.toDto(agendaTeam, participants);
+		return ResponseEntity.ok(agendaTeamDetailResDto);
 	}
 }

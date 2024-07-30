@@ -25,8 +25,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.admin.repo.agenda.AgendaAdminRepository;
 import gg.admin.repo.agenda.AgendaTeamAdminRepository;
+import gg.agenda.api.admin.agendateam.controller.request.AgendaTeamKeyReqDto;
+import gg.agenda.api.admin.agendateam.controller.response.AgendaProfileResDto;
+import gg.agenda.api.admin.agendateam.controller.response.AgendaTeamDetailResDto;
 import gg.agenda.api.admin.agendateam.controller.response.AgendaTeamResDto;
 import gg.data.agenda.Agenda;
+import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.type.AgendaTeamStatus;
 import gg.data.user.User;
@@ -35,7 +39,9 @@ import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import gg.utils.dto.PageRequestDto;
 import gg.utils.fixture.agenda.AgendaFixture;
+import gg.utils.fixture.agenda.AgendaProfileFixture;
 import gg.utils.fixture.agenda.AgendaTeamFixture;
+import gg.utils.fixture.agenda.AgendaTeamProfileFixture;
 
 @IntegrationTest
 @Transactional
@@ -56,6 +62,12 @@ public class AgendaTeamAdminControllerTest {
 
 	@Autowired
 	private AgendaTeamFixture agendaTeamFixture;
+
+	@Autowired
+	private AgendaProfileFixture agendaProfileFixture;
+
+	@Autowired
+	private AgendaTeamProfileFixture agendaTeamProfileFixture;
 
 	@Autowired
 	private AgendaTestDataUtils agendaTestDataUtils;
@@ -129,6 +141,87 @@ public class AgendaTeamAdminControllerTest {
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(request))
 				.andExpect(status().isNotFound());
+		}
+	}
+
+	@Nested
+	@DisplayName("Admin AgendaTeam 상세 조회")
+	class GetAgendaTeamDetailAdmin {
+		@Test
+		@DisplayName("Admin AgendaTeam 상세 조회 성공")
+		void getAgendaTeamDetailAdminSuccess() throws Exception {
+			// given
+			Agenda agenda = agendaFixture.createAgenda();
+			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda);
+			List<AgendaProfile> profiles = agendaProfileFixture.createAgendaProfileList(10);
+			profiles.forEach(profile -> agendaTeamProfileFixture
+				.createAgendaTeamProfile(agenda, team, profile));
+			String request = objectMapper.writeValueAsString(new AgendaTeamKeyReqDto(team.getTeamKey()));
+
+			// when
+			String response = mockMvc.perform(get("/admin/agenda/team")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(request))
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+			AgendaTeamDetailResDto result = objectMapper.readValue(response, AgendaTeamDetailResDto.class);
+
+			// then
+			assertThat(result).isNotNull();
+			assertThat(result.getTeamName()).isEqualTo(team.getName());
+			assertThat(result.getTeamMates()).isNotNull();
+			assertThat(result.getTeamMates().size()).isEqualTo(profiles.size());
+			for (int i = 0; i < profiles.size(); i++) {
+				AgendaProfileResDto profile = result.getTeamMates().get(i);
+				assertThat(profile.getIntraId()).isEqualTo(profiles.get(i).getIntraId());
+			}
+		}
+
+		@Test
+		@DisplayName("Admin AgendaTeam 상세 조회 실패 - Team Key 없음")
+		void getAgendaTeamDetailAdminFailedWithNoTeamKey() throws Exception {
+			// given
+			// expected
+			mockMvc.perform(get("/admin/agenda/team")
+					.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("Admin AgendaTeam 상세 조회 실패 - 존재하지 않는 Team")
+		void getAgendaTeamDetailAdminFailedWithNotFoundTeam() throws Exception {
+			// given
+			String request = objectMapper.writeValueAsString(new AgendaTeamKeyReqDto(UUID.randomUUID()));
+
+			// expected
+			mockMvc.perform(get("/admin/agenda/team")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(request))
+				.andExpect(status().isNotFound());
+		}
+
+		@Test
+		@DisplayName("Admin AgendaTeam 상세 조회 성공 - teamMate 없는 경우 빈 리스트")
+		void getAgendaTeamDetailAdminSuccessWithNoTeamMates() throws Exception {
+			// given
+			Agenda agenda = agendaFixture.createAgenda();
+			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda);
+			String request = objectMapper.writeValueAsString(new AgendaTeamKeyReqDto(team.getTeamKey()));
+
+			// when
+			String response = mockMvc.perform(get("/admin/agenda/team")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(request))
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+			AgendaTeamDetailResDto result = objectMapper.readValue(response, AgendaTeamDetailResDto.class);
+
+			// then
+			assertThat(result).isNotNull();
+			assertThat(result.getTeamName()).isEqualTo(team.getName());
+			assertThat(result.getTeamMates()).isNotNull();
+			assertThat(result.getTeamMates().size()).isEqualTo(0);
 		}
 	}
 }
