@@ -70,7 +70,7 @@ public class AgendaTeamAdminService {
 		team.updateTeamAdmin(agendaTeamUpdateDto.getTeamName(), agendaTeamUpdateDto.getTeamContent(),
 			agendaTeamUpdateDto.getTeamIsPrivate(), agendaTeamUpdateDto.getTeamStatus());
 		team.updateLocation(agendaTeamUpdateDto.getTeamLocation(), profiles);
-		team.updateAward(agendaTeamUpdateDto.getTeamAward(), agendaTeamUpdateDto.getTeamAwardPriority());
+		team.acceptAward(agendaTeamUpdateDto.getTeamAward(), agendaTeamUpdateDto.getTeamAwardPriority());
 
 		// AgendaTeam 팀원 내보내기
 		profiles.stream().filter(profile -> !updatedTeamMates.contains(profile.getProfile().getIntraId()))

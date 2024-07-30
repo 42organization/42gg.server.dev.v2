@@ -178,12 +178,4 @@ public class AgendaTeam extends BaseTimeEntity {
 		}
 		this.status = CANCEL;
 	}
-
-	public void updateAward(String teamAward, Integer teamAwardPriority) {
-		if (Objects.isNull(teamAward) || Objects.isNull(teamAwardPriority)) {
-			return;
-		}
-		this.award = teamAward;
-		this.awardPriority = teamAwardPriority;
-	}
 }
