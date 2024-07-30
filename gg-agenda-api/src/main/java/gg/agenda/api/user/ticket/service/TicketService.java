@@ -88,22 +88,23 @@ public class TicketService {
 	public List<TicketHistoryResDto> listTicketHistory(UserDto user, Pageable pageable) {
 		AgendaProfile profile = agendaProfileRepository.findByUserId(user.getId())
 			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
+
 		Page<Ticket> tickets = ticketRepository.findByAgendaProfileId(profile.getId(), pageable);
 
-		return tickets.getContent().stream()
+		List<TicketHistoryResDto> ticketHistoryResDtos = tickets.getContent().stream()
 			.map(TicketHistoryResDto::new)
-			.peek(dto -> {
-				if (dto.getIssuedFromKey() != null) {
-					Agenda agenda = agendaRepository.findAgendaByAgendaKey(dto.getIssuedFromKey()).orElse(null);
-					dto.changeIssuedFrom(agenda);
-				}
-			})
-			.peek(dto -> {
-				if (dto.getUsedToKey() != null) {
-					Agenda agenda = agendaRepository.findAgendaByAgendaKey(dto.getUsedToKey()).orElse(null);
-					dto.changeUsedTo(agenda);
-				}
-			})
 			.collect(Collectors.toList());
+
+		for (TicketHistoryResDto dto : ticketHistoryResDtos) {
+			if (dto.getIssuedFromKey() != null) {
+				Agenda agenda = agendaRepository.findAgendaByAgendaKey(dto.getIssuedFromKey()).orElse(null);
+				dto.changeIssuedFrom(agenda);
+			}
+			if (dto.getUsedToKey() != null) {
+				Agenda agenda = agendaRepository.findAgendaByAgendaKey(dto.getUsedToKey()).orElse(null);
+				dto.changeUsedTo(agenda);
+			}
+		}
+		return ticketHistoryResDtos;
 	}
 }
