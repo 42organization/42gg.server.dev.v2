@@ -1,9 +1,16 @@
 package gg.agenda.api.admin.agendateam.controller.request;
 
-import gg.data.agenda.type.AgendaTeamStatus;
-import gg.data.agenda.type.Location;
 import java.util.List;
 import java.util.UUID;
+
+import gg.data.agenda.type.AgendaTeamStatus;
+import gg.data.agenda.type.Location;
+import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,14 +20,35 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AgendaTeamUpdateDto {
 
+	@NotNull
 	private UUID teamKey;
+
+	@NotBlank
+	@Size(max = 30)
 	private String teamName;
+
+	@NotBlank
 	private String teamContent;
+
+	@NotNull
+	@Size(max = 500)
 	private AgendaTeamStatus teamStatus;
+
+	@NotNull
 	private Boolean teamIsPrivate;
+
+	@NotNull
 	private Location teamLocation;
+
+	@NotNull
 	private String teamAward;
+
+	@Min(1)
+	@Max(1000)
 	private Integer teamAwardPriority;
+
+	@Valid
+	@NotNull
 	private List<AgendaTeamMateReqDto> teamMates;
 
 	@Builder
