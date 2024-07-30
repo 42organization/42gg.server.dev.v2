@@ -153,18 +153,10 @@ public class AgendaTeam extends BaseTimeEntity {
 	}
 
 	public void updateTeamAdmin(String name, String content, Boolean isPrivate, AgendaTeamStatus status) {
-		if (Objects.nonNull(name) && !name.isEmpty() && name.length() <= 30) {
-			this.name = name;
-		}
-		if (Objects.nonNull(content) && !content.isEmpty() && content.length() <= 500) {
-			this.content = content;
-		}
-		if (Objects.nonNull(isPrivate)) {
-			this.isPrivate = isPrivate;
-		}
-		if (Objects.nonNull(status)) {
-			this.status = status;
-		}
+		this.name = name;
+		this.content = content;
+		this.isPrivate = isPrivate;
+		this.status = status;
 	}
 
 	public void updateLocation(Location location, List<AgendaTeamProfile> profiles) {
