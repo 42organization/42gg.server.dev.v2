@@ -11,13 +11,12 @@ import java.util.UUID;
 import org.springframework.stereotype.Component;
 
 import gg.data.agenda.Agenda;
-import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.type.AgendaTeamStatus;
 import gg.data.agenda.type.Location;
 import gg.data.user.User;
-import gg.utils.TestDataUtils;
 import gg.repo.agenda.AgendaTeamRepository;
+import gg.utils.TestDataUtils;
 import lombok.RequiredArgsConstructor;
 
 @Component
