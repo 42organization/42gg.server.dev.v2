@@ -152,6 +152,21 @@ public class AgendaTeam extends BaseTimeEntity {
 		updateLocation(location, profiles);
 	}
 
+	public void updateTeamAdmin(String name, String content, Boolean isPrivate, AgendaTeamStatus status) {
+		if (Objects.nonNull(name) && !name.isEmpty() && name.length() <= 30) {
+			this.name = name;
+		}
+		if (Objects.nonNull(content) && !content.isEmpty() && content.length() <= 500) {
+			this.content = content;
+		}
+		if (Objects.nonNull(isPrivate)) {
+			this.isPrivate = isPrivate;
+		}
+		if (Objects.nonNull(status)) {
+			this.status = status;
+		}
+	}
+
 	public void updateLocation(Location location, List<AgendaTeamProfile> profiles) {
 		if (Objects.isNull(location)) {
 			return;
@@ -170,13 +185,6 @@ public class AgendaTeam extends BaseTimeEntity {
 			throw new BusinessException(AGENDA_TEAM_ALREADY_CONFIRM);
 		}
 		this.status = CANCEL;
-	}
-
-	public void updateStatus(AgendaTeamStatus status) {
-		if (Objects.isNull(status)) {
-			return;
-		}
-		this.status = status;
 	}
 
 	public void updateAward(String teamAward, Integer teamAwardPriority) {

@@ -67,9 +67,9 @@ public class AgendaTeamAdminService {
 			.collect(Collectors.toList());
 
 		// AgendaTeam 정보 변경
-		team.updateTeam(agendaTeamUpdateDto.getTeamName(), agendaTeamUpdateDto.getTeamContent(),
-			agendaTeamUpdateDto.getTeamIsPrivate(), agendaTeamUpdateDto.getTeamLocation(), profiles);
-		team.updateStatus(agendaTeamUpdateDto.getTeamStatus());
+		team.updateTeamAdmin(agendaTeamUpdateDto.getTeamName(), agendaTeamUpdateDto.getTeamContent(),
+			agendaTeamUpdateDto.getTeamIsPrivate(), agendaTeamUpdateDto.getTeamStatus());
+		team.updateLocation(agendaTeamUpdateDto.getTeamLocation(), profiles);
 		team.updateAward(agendaTeamUpdateDto.getTeamAward(), agendaTeamUpdateDto.getTeamAwardPriority());
 
 		// AgendaTeam 팀원 내보내기

@@ -224,4 +224,32 @@ public class AgendaTeamAdminControllerTest {
 			assertThat(result.getTeamMates().size()).isEqualTo(0);
 		}
 	}
+
+	@Nested
+	@DisplayName("Admin AgendaTeam 수정")
+	class UpdateAgendaTeamAdmin {
+		@Test
+		@DisplayName("Admin AgendaTeam 수정 성공")
+		void updateAgendaTeamAdminSuccess() throws Exception {
+			// given
+			// when
+			// then
+		}
+
+		@Test
+		@DisplayName("Admin AgendaTeam 수정 실패 - 존재하지 않는 Team Key")
+		void updateAgendaTeamAdminFailedWithInvalidTeamKey() throws Exception {
+			// given
+			// when
+			// then
+		}
+
+		@Test
+		@DisplayName("Admin AgendaTeam 수정 실패 - 존재하지 않는 Intra ID")
+		void updateAgendaTeamAdminFailedWithInvalidIntraId() throws Exception {
+			// given
+			// when
+			// then
+		}
+	}
 }
