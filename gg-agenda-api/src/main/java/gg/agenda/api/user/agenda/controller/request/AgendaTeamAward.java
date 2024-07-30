@@ -10,6 +10,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -20,7 +21,7 @@ public class AgendaTeamAward {
 	private String teamName;
 
 	@NotBlank
-	@Max(30)
+	@Length(max = 30)
 	private String awardName;
 
 	@Min(1)
