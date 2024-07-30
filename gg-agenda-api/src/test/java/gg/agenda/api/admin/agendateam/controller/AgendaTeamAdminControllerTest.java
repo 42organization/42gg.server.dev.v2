@@ -162,7 +162,7 @@ public class AgendaTeamAdminControllerTest {
 			// given
 			Agenda agenda = agendaFixture.createAgenda();
 			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda);
-			List<AgendaProfile> profiles = agendaProfileFixture.createAgendaProfileList(10);
+			List<AgendaProfile> profiles = agendaProfileFixture.createAgendaProfileList(5);
 			profiles.forEach(profile -> agendaTeamProfileFixture
 				.createAgendaTeamProfile(agenda, team, profile));
 			String request = objectMapper.writeValueAsString(new AgendaTeamKeyReqDto(team.getTeamKey()));
@@ -321,7 +321,7 @@ public class AgendaTeamAdminControllerTest {
 			// given
 			Agenda agenda = agendaFixture.createAgenda();
 			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda);
-			List<AgendaProfile> profiles = agendaProfileFixture.createAgendaProfileList(5);
+			List<AgendaProfile> profiles = agendaProfileFixture.createAgendaProfileList(3);
 			profiles.forEach(profile -> agendaTeamProfileFixture
 				.createAgendaTeamProfile(agenda, team, profile));
 			AgendaProfile newProfile = agendaProfileFixture.createAgendaProfile();
@@ -364,12 +364,42 @@ public class AgendaTeamAdminControllerTest {
 		}
 
 		@Test
+		@DisplayName("Admin AgendaTeam 수정 실패 - 이미 꽉 찬 팀에 팀원 추가하기")
+		void updateAgendaTeamAdminFailedWithMaxPeople() throws Exception {
+			// given
+			Agenda agenda = agendaFixture.createAgenda();
+			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda);
+			List<AgendaProfile> profiles = agendaProfileFixture.createAgendaProfileList(5);
+			profiles.forEach(profile -> agendaTeamProfileFixture
+				.createAgendaTeamProfile(agenda, team, profile));
+			AgendaProfile newProfile = agendaProfileFixture.createAgendaProfile();
+
+			List<AgendaTeamMateReqDto> updateTeamMates = profiles.stream()
+				.map(profile -> new AgendaTeamMateReqDto(profile.getIntraId()))
+				.collect(Collectors.toList());
+			updateTeamMates.add(new AgendaTeamMateReqDto(newProfile.getIntraId()));
+			AgendaTeamUpdateDto updateDto = AgendaTeamUpdateDto.builder()
+				.teamKey(team.getTeamKey()).teamMates(updateTeamMates)
+				.teamStatus(AgendaTeamStatus.CANCEL).teamLocation(Location.MIX)
+				.teamName("newName").teamContent("newContent").teamIsPrivate(true)
+				.teamAward("newAward").teamAwardPriority(team.getAwardPriority() + 1).build();
+			String request = objectMapper.writeValueAsString(updateDto);
+
+			// when
+			mockMvc.perform(patch("/admin/agenda/team")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(request))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
 		@DisplayName("Admin AgendaTeam 수정 성공 - 팀원 삭제하기")
 		void updateAgendaTeamAdminSuccessWithRemoveTeammate() throws Exception {
 			// given
 			Agenda agenda = agendaFixture.createAgenda();
 			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda);
-			List<AgendaProfile> profiles = agendaProfileFixture.createAgendaProfileList(5);
+			List<AgendaProfile> profiles = agendaProfileFixture.createAgendaProfileList(3);
 			profiles.forEach(profile -> agendaTeamProfileFixture
 				.createAgendaTeamProfile(agenda, team, profile));
 			AgendaProfile wrongProfile = agendaProfileFixture.createAgendaProfile();
@@ -409,6 +439,37 @@ public class AgendaTeamAdminControllerTest {
 			assertThat(participants.stream()
 				.noneMatch(participant -> participant.getProfile().getIntraId().equals(wrongProfile.getIntraId())))
 				.isTrue();
+		}
+
+		@Test
+		@DisplayName("Admin AgendaTeam 수정 실패 - 리더를 삭제하는 경우")
+		void updateAgendaTeamAdminFailedWithRemoveLeader() throws Exception {
+			// given
+			Agenda agenda = agendaFixture.createAgenda();
+			User user = testDataUtils.createNewUser();
+			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda, user);
+			AgendaProfile leaderProfile = agendaProfileFixture.createAgendaProfile(user, Location.SEOUL);
+			agendaTeamProfileFixture.createAgendaTeamProfile(agenda, team, leaderProfile);
+			List<AgendaProfile> profiles = agendaProfileFixture.createAgendaProfileList(3);
+			profiles.forEach(profile -> agendaTeamProfileFixture
+				.createAgendaTeamProfile(agenda, team, profile));
+
+			List<AgendaTeamMateReqDto> updateTeamMates = profiles.stream()
+				.map(profile -> new AgendaTeamMateReqDto(profile.getIntraId()))
+				.collect(Collectors.toList());
+			AgendaTeamUpdateDto updateDto = AgendaTeamUpdateDto.builder()
+				.teamKey(team.getTeamKey()).teamMates(updateTeamMates)
+				.teamStatus(AgendaTeamStatus.CANCEL).teamLocation(Location.MIX)
+				.teamName("newName").teamContent("newContent").teamIsPrivate(true)
+				.teamAward("newAward").teamAwardPriority(team.getAwardPriority() + 1).build();
+			String request = objectMapper.writeValueAsString(updateDto);
+
+			// when
+			mockMvc.perform(patch("/admin/agenda/team")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(request))
+				.andExpect(status().isForbidden());
 		}
 
 		@Test

@@ -11,16 +11,25 @@ import java.util.UUID;
 import org.springframework.stereotype.Component;
 
 import gg.data.agenda.Agenda;
+import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.type.AgendaTeamStatus;
 import gg.data.agenda.type.Location;
 import gg.data.user.User;
+import gg.utils.TestDataUtils;
 import gg.repo.agenda.AgendaTeamRepository;
 import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
 public class AgendaTeamFixture {
+
+	private final TestDataUtils testDataUtils;
+
+	private final AgendaProfileFixture agendaProfileFixture;
+
+	private final AgendaTeamProfileFixture agendaTeamProfileFixture;
+
 	private final AgendaTeamRepository agendaTeamRepository;
 
 	public AgendaTeam createAgendaTeam(Agenda agenda) {
@@ -32,7 +41,23 @@ public class AgendaTeamFixture {
 			.leaderIntraId("leaderIntraId")
 			.status(OPEN)
 			.location(MIX)
-			.mateCount(3)
+			.mateCount(1)
+			.awardPriority(1)
+			.isPrivate(false)
+			.build();
+		return agendaTeamRepository.save(agendaTeam);
+	}
+
+	public AgendaTeam createAgendaTeam(Agenda agenda, User user) {
+		AgendaTeam agendaTeam = AgendaTeam.builder()
+			.agenda(agenda)
+			.teamKey(UUID.randomUUID())
+			.name("name")
+			.content("content")
+			.leaderIntraId(user.getIntraId())
+			.status(OPEN)
+			.location(MIX)
+			.mateCount(1)
 			.awardPriority(1)
 			.isPrivate(false)
 			.build();
