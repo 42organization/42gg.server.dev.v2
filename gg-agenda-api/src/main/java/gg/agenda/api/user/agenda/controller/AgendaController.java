@@ -33,8 +33,6 @@ import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaAnnouncement;
 import gg.utils.dto.PageRequestDto;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -47,11 +45,6 @@ public class AgendaController {
 	private final AgendaAnnouncementService agendaAnnouncementService;
 
 	@GetMapping
-	@ApiResponses(value = {
-		@ApiResponse(responseCode = "200", description = "Agenda 상세 조회 성공"),
-		@ApiResponse(responseCode = "400", description = "Agenda 조회 요청이 잘못됨"),
-		@ApiResponse(responseCode = "404", description = "Agenda를 찾을 수 없음")
-	})
 	public ResponseEntity<AgendaResDto> agendaDetails(@RequestParam("agenda_key") UUID agendaKey) {
 		Agenda agenda = agendaService.findAgendaByAgendaKey(agendaKey);
 		Optional<AgendaAnnouncement> announcement = agendaAnnouncementService.findAgendaWithLatestAnnouncement(agenda);
@@ -60,7 +53,6 @@ public class AgendaController {
 		return ResponseEntity.ok(agendaResDto);
 	}
 
-	@ApiResponse(responseCode = "200", description = "현재 진행중인 Agenda 목록 조회 성공")
 	@GetMapping("/list")
 	public ResponseEntity<List<AgendaSimpleResDto>> agendaListCurrent() {
 		List<Agenda> agendaList = agendaService.findCurrentAgendaList();
@@ -70,22 +62,16 @@ public class AgendaController {
 		return ResponseEntity.ok(agendaSimpleResDtoList);
 	}
 
-	@ApiResponses(value = {
-		@ApiResponse(responseCode = "201", description = "Agenda 생성 성공"),
-		@ApiResponse(responseCode = "400", description = "Agenda 생성 요청 파라미터가 잘못됨")
-	})
 	@PostMapping("/create")
-	public ResponseEntity<AgendaKeyResDto> agendaAdd(@Login UserDto user,
+	public ResponseEntity<AgendaKeyResDto> agendaAdd(@Login @Parameter(hidden = true) UserDto user,
 		@RequestBody @Valid AgendaCreateReqDto agendaCreateReqDto) {
 		UUID agendaKey = agendaService.addAgenda(agendaCreateReqDto, user).getAgendaKey();
 		AgendaKeyResDto responseDto = AgendaKeyResDto.builder().agendaKey(agendaKey).build();
 		return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
 	}
 
-	@ApiResponse(responseCode = "200", description = "지난 Agenda 목록 조회 성공")
 	@GetMapping("/history")
-	public ResponseEntity<List<AgendaSimpleResDto>> agendaListHistory(
-		@RequestBody @Valid PageRequestDto pageRequest) {
+	public ResponseEntity<List<AgendaSimpleResDto>> agendaListHistory(@RequestBody @Valid PageRequestDto pageRequest) {
 		int page = pageRequest.getPage();
 		int size = pageRequest.getSize();
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("startTime").descending());
