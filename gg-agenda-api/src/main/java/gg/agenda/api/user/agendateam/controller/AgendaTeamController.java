@@ -120,7 +120,7 @@ public class AgendaTeamController {
 	 * 아젠다 팀 확정된 팀 목록 조회
 	 * @param pageRequest 페이지네이션 요청 정보, agendaId 아젠다 아이디
 	 */
-	@GetMapping("/confirm")
+	@GetMapping("/confirm/list")
 	public ResponseEntity<List<ConfirmTeamResDto>> confirmTeamList(@RequestBody @Valid PageRequestDto pageRequest,
 		@RequestParam("agenda_key") UUID agendaKey) {
 		int page = pageRequest.getPage();
