@@ -29,7 +29,7 @@ import gg.utils.dto.PageRequestDto;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/admin/agenda/team")
+@RequestMapping("/agenda/admin/team")
 @RequiredArgsConstructor
 public class AgendaTeamAdminController {
 

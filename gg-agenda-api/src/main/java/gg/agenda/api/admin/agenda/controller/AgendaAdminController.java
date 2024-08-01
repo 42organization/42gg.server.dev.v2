@@ -27,7 +27,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/admin/agenda")
+@RequestMapping("/agenda/admin")
 @RequiredArgsConstructor
 public class AgendaAdminController {
 

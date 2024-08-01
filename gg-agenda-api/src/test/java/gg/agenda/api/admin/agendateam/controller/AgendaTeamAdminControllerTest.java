@@ -118,7 +118,7 @@ public class AgendaTeamAdminControllerTest {
 			String request = objectMapper.writeValueAsString(pageRequestDto);
 
 			// when
-			String response = mockMvc.perform(get("/admin/agenda/team/list")
+			String response = mockMvc.perform(get("/agenda/admin/team/list")
 					.header("Authorization", "Bearer " + accessToken)
 					.param("agenda_key", agenda.getAgendaKey().toString())
 					.contentType(MediaType.APPLICATION_JSON)
@@ -144,7 +144,7 @@ public class AgendaTeamAdminControllerTest {
 			String request = objectMapper.writeValueAsString(pageRequestDto);
 
 			// expected
-			mockMvc.perform(get("/admin/agenda/team/list")
+			mockMvc.perform(get("/agenda/admin/team/list")
 					.header("Authorization", "Bearer " + accessToken)
 					.param("agenda_key", UUID.randomUUID().toString())
 					.contentType(MediaType.APPLICATION_JSON)
@@ -168,7 +168,7 @@ public class AgendaTeamAdminControllerTest {
 			String request = objectMapper.writeValueAsString(new AgendaTeamKeyReqDto(team.getTeamKey()));
 
 			// when
-			String response = mockMvc.perform(get("/admin/agenda/team")
+			String response = mockMvc.perform(get("/agenda/admin/team")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(request))
@@ -191,7 +191,7 @@ public class AgendaTeamAdminControllerTest {
 		void getAgendaTeamDetailAdminFailedWithNoTeamKey() throws Exception {
 			// given
 			// expected
-			mockMvc.perform(get("/admin/agenda/team")
+			mockMvc.perform(get("/agenda/admin/team")
 					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isBadRequest());
 		}
@@ -203,7 +203,7 @@ public class AgendaTeamAdminControllerTest {
 			String request = objectMapper.writeValueAsString(new AgendaTeamKeyReqDto(UUID.randomUUID()));
 
 			// expected
-			mockMvc.perform(get("/admin/agenda/team")
+			mockMvc.perform(get("/agenda/admin/team")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(request))
@@ -219,7 +219,7 @@ public class AgendaTeamAdminControllerTest {
 			String request = objectMapper.writeValueAsString(new AgendaTeamKeyReqDto(team.getTeamKey()));
 
 			// when
-			String response = mockMvc.perform(get("/admin/agenda/team")
+			String response = mockMvc.perform(get("/agenda/admin/team")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(request))
@@ -258,7 +258,7 @@ public class AgendaTeamAdminControllerTest {
 			String request = objectMapper.writeValueAsString(updateDto);
 
 			// when
-			mockMvc.perform(patch("/admin/agenda/team")
+			mockMvc.perform(patch("/agenda/admin/team")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(request))
@@ -297,7 +297,7 @@ public class AgendaTeamAdminControllerTest {
 			String request = objectMapper.writeValueAsString(updateDto);
 
 			// when
-			mockMvc.perform(patch("/admin/agenda/team")
+			mockMvc.perform(patch("/agenda/admin/team")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(request))
@@ -338,7 +338,7 @@ public class AgendaTeamAdminControllerTest {
 			String request = objectMapper.writeValueAsString(updateDto);
 
 			// when
-			mockMvc.perform(patch("/admin/agenda/team")
+			mockMvc.perform(patch("/agenda/admin/team")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(request))
@@ -386,7 +386,7 @@ public class AgendaTeamAdminControllerTest {
 			String request = objectMapper.writeValueAsString(updateDto);
 
 			// when
-			mockMvc.perform(patch("/admin/agenda/team")
+			mockMvc.perform(patch("/agenda/admin/team")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(request))
@@ -416,7 +416,7 @@ public class AgendaTeamAdminControllerTest {
 			String request = objectMapper.writeValueAsString(updateDto);
 
 			// when
-			mockMvc.perform(patch("/admin/agenda/team")
+			mockMvc.perform(patch("/agenda/admin/team")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(request))
@@ -465,7 +465,7 @@ public class AgendaTeamAdminControllerTest {
 			String request = objectMapper.writeValueAsString(updateDto);
 
 			// when
-			mockMvc.perform(patch("/admin/agenda/team")
+			mockMvc.perform(patch("/agenda/admin/team")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(request))
@@ -493,7 +493,7 @@ public class AgendaTeamAdminControllerTest {
 			String request = objectMapper.writeValueAsString(updateDto);
 
 			// when
-			mockMvc.perform(patch("/admin/agenda/team")
+			mockMvc.perform(patch("/agenda/admin/team")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(request))
@@ -522,7 +522,7 @@ public class AgendaTeamAdminControllerTest {
 			String request = objectMapper.writeValueAsString(updateDto);
 
 			// when
-			mockMvc.perform(patch("/admin/agenda/team")
+			mockMvc.perform(patch("/agenda/admin/team")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(request))

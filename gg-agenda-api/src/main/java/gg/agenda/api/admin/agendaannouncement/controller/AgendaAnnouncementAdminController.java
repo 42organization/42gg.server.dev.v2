@@ -25,7 +25,7 @@ import gg.utils.dto.PageRequestDto;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/admin/agenda/announcement")
+@RequestMapping("/agenda/admin/announcement")
 @RequiredArgsConstructor
 public class AgendaAnnouncementAdminController {
 
