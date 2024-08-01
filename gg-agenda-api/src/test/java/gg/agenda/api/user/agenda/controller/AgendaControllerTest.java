@@ -260,7 +260,7 @@ public class AgendaControllerTest {
 			String request = objectMapper.writeValueAsString(dto);
 
 			// when
-			String response = mockMvc.perform(post("/agenda/create")
+			String response = mockMvc.perform(post("/agenda/request")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType("application/json")
 					.content(request))
@@ -289,7 +289,7 @@ public class AgendaControllerTest {
 			String request = objectMapper.writeValueAsString(dto);
 
 			// expected
-			mockMvc.perform(post("/agenda/create")
+			mockMvc.perform(post("/agenda/request")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType("application/json")
 					.content(request))
@@ -310,7 +310,7 @@ public class AgendaControllerTest {
 			String request = objectMapper.writeValueAsString(dto);
 
 			// expected
-			mockMvc.perform(post("/agenda/create")
+			mockMvc.perform(post("/agenda/request")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType("application/json")
 					.content(request))
@@ -331,7 +331,7 @@ public class AgendaControllerTest {
 			String request = objectMapper.writeValueAsString(dto);
 
 			// expected
-			mockMvc.perform(post("/agenda/create")
+			mockMvc.perform(post("/agenda/request")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType("application/json")
 					.content(request))
@@ -352,7 +352,7 @@ public class AgendaControllerTest {
 			String request = objectMapper.writeValueAsString(dto);
 
 			// expected
-			mockMvc.perform(post("/agenda/create")
+			mockMvc.perform(post("/agenda/request")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType("application/json")
 					.content(request))
@@ -373,7 +373,7 @@ public class AgendaControllerTest {
 			String request = objectMapper.writeValueAsString(dto);
 
 			// expected
-			mockMvc.perform(post("/agenda/create")
+			mockMvc.perform(post("/agenda/request")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType("application/json")
 					.content(request))
@@ -395,7 +395,7 @@ public class AgendaControllerTest {
 			String request = objectMapper.writeValueAsString(dto);
 
 			// expected
-			mockMvc.perform(post("/agenda/create")
+			mockMvc.perform(post("/agenda/request")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType("application/json")
 					.content(request))
@@ -417,7 +417,7 @@ public class AgendaControllerTest {
 			String request = objectMapper.writeValueAsString(dto);
 
 			// expected
-			mockMvc.perform(post("/agenda/create")
+			mockMvc.perform(post("/agenda/request")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType("application/json")
 					.content(request))

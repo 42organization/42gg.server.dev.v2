@@ -1,6 +1,5 @@
 package gg.agenda.api.user.agenda.controller.request;
 
-import static gg.utils.exception.ErrorCode.*;
 
 import java.time.LocalDateTime;
 
@@ -8,10 +7,8 @@ import javax.validation.constraints.Future;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-import org.mapstruct.BeforeMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -19,13 +16,13 @@ import org.mapstruct.factory.Mappers;
 import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.type.Location;
-import gg.utils.exception.custom.InvalidParameterException;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
+@AgendaCreateValid
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AgendaCreateReqDto {
 
@@ -116,28 +113,5 @@ public class AgendaCreateReqDto {
 		@Mapping(target = "isOfficial", source = "dto.agendaIsOfficial")
 		@Mapping(target = "isRanking", source = "dto.agendaIsRanking")
 		Agenda toEntity(AgendaCreateReqDto dto, UserDto user);
-
-		@BeforeMapping
-		default void mustHaveValidAgendaSchedule(AgendaCreateReqDto dto, UserDto user) {
-			if (!dto.getAgendaDeadLine().isBefore(dto.getAgendaStartTime())) {
-				throw new InvalidParameterException(AGENDA_INVALID_SCHEDULE);
-			}
-			if (!dto.getAgendaDeadLine().isBefore(dto.getAgendaEndTime())) {
-				throw new InvalidParameterException(AGENDA_INVALID_SCHEDULE);
-			}
-			if (!dto.getAgendaStartTime().isBefore(dto.getAgendaEndTime())) {
-				throw new InvalidParameterException(AGENDA_INVALID_SCHEDULE);
-			}
-		}
-
-		@BeforeMapping
-		default void mustHaveValidParam(AgendaCreateReqDto dto, UserDto user) {
-			if (dto.getAgendaMinTeam() > dto.getAgendaMaxTeam()) {
-				throw new InvalidParameterException(AGENDA_INVALID_PARAM);
-			}
-			if (dto.getAgendaMinPeople() > dto.getAgendaMaxPeople()) {
-				throw new InvalidParameterException(AGENDA_INVALID_PARAM);
-			}
-		}
 	}
 }

@@ -60,7 +60,7 @@ public class AgendaController {
 		return ResponseEntity.ok(agendaSimpleResDtoList);
 	}
 
-	@PostMapping("/create")
+	@PostMapping("/request")
 	public ResponseEntity<AgendaKeyResDto> agendaAdd(@Login @Parameter(hidden = true) UserDto user,
 		@RequestBody @Valid AgendaCreateReqDto agendaCreateReqDto) {
 		UUID agendaKey = agendaService.addAgenda(agendaCreateReqDto, user).getAgendaKey();
