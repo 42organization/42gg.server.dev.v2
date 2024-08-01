@@ -739,8 +739,8 @@ public class AgendaMockData {
 		}
 		agenda.updateSchedule(LocalDateTime.now().minusDays(2),
 			LocalDateTime.now().minusDays(1), LocalDateTime.now().plusDays(1));
-		agenda.confirm();
-		agenda.finish();
+		agenda.confirmAgenda();
+		agenda.finishAgenda();
 		em.persist(agenda);
 		em.flush();
 		em.clear();

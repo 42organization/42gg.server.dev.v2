@@ -71,7 +71,7 @@ public class AgendaService {
 	@Transactional
 	public void finishAgendaWithAwards(AgendaAwardsReqDto agendaAwardsReqDto, Agenda agenda) {
 		if (!agenda.getIsRanking()) {
-			agenda.finish();
+			agenda.finishAgenda();
 			return;
 		}
 		Map<String, AgendaTeam> teams = new HashMap<>();
@@ -84,7 +84,7 @@ public class AgendaService {
 			teams.get(agendaTeamAward.getTeamName())
 				.acceptAward(agendaTeamAward.getAwardName(), agendaTeamAward.getAwardPriority());
 		}
-		agenda.finish();
+		agenda.finishAgenda();
 	}
 
 	@Transactional
@@ -97,6 +97,6 @@ public class AgendaService {
 				.collect(Collectors.toList());
 			ticketService.refundTickets(participants, agenda.getAgendaKey());
 		}
-		agenda.confirm();
+		agenda.confirmAgenda();
 	}
 }
