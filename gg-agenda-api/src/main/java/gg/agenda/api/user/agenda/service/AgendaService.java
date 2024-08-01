@@ -89,12 +89,12 @@ public class AgendaService {
 	public void confirmAgenda(Agenda agenda) {
 		List<AgendaTeam> openTeams = agendaTeamRepository.findAllByAgendaAndStatus(agenda, AgendaTeamStatus.OPEN);
 		for (AgendaTeam openTeam : openTeams) {
-			openTeam.cancelTeam();
 			List<AgendaProfile> participants = agendaTeamProfileRepository
 				.findAllByAgendaTeamWithFetchProfile(openTeam).stream()
 				.map(AgendaTeamProfile::getProfile)
 				.collect(Collectors.toList());
 			ticketService.refundTickets(participants, agenda.getAgendaKey());
+			openTeam.cancelTeam();
 		}
 		agenda.confirmAgenda();
 	}
