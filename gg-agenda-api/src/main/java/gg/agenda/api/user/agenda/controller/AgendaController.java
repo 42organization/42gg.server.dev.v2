@@ -1,7 +1,5 @@
 package gg.agenda.api.user.agenda.controller;
 
-import io.swagger.v3.oas.annotations.Parameter;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -34,6 +32,7 @@ import gg.auth.argumentresolver.Login;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaAnnouncement;
 import gg.utils.dto.PageRequestDto;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
