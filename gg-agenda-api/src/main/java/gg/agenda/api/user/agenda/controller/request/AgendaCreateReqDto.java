@@ -1,6 +1,5 @@
 package gg.agenda.api.user.agenda.controller.request;
 
-
 import java.time.LocalDateTime;
 
 import javax.validation.constraints.Future;
@@ -13,6 +12,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
+import gg.agenda.api.user.agenda.controller.request.validator.AgendaCapacityValid;
+import gg.agenda.api.user.agenda.controller.request.validator.AgendaScheduleValid;
 import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.type.Location;
@@ -22,7 +23,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@AgendaCreateValid
+@AgendaCapacityValid
+@AgendaScheduleValid
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AgendaCreateReqDto {
 

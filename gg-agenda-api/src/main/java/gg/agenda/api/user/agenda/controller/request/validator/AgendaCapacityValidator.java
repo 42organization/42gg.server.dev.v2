@@ -1,14 +1,16 @@
-package gg.agenda.api.user.agenda.controller.request;
+package gg.agenda.api.user.agenda.controller.request.validator;
 
 import java.util.Objects;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class AgendaCreateValidator implements ConstraintValidator<AgendaCreateValid, AgendaCreateReqDto> {
+import gg.agenda.api.user.agenda.controller.request.AgendaCreateReqDto;
+
+public class AgendaCapacityValidator implements ConstraintValidator<AgendaCapacityValid, AgendaCreateReqDto> {
 
 	@Override
-	public void initialize(AgendaCreateValid constraintAnnotation) {
+	public void initialize(AgendaCapacityValid constraintAnnotation) {
 		ConstraintValidator.super.initialize(constraintAnnotation);
 	}
 
@@ -17,12 +19,7 @@ public class AgendaCreateValidator implements ConstraintValidator<AgendaCreateVa
 		if (Objects.isNull(value)) {
 			return true;
 		}
-		return mustHaveValidSchedule(value) && mustHaveValidTeam(value);
-	}
-
-	private boolean mustHaveValidSchedule(AgendaCreateReqDto value) {
-		return value.getAgendaDeadLine().isBefore(value.getAgendaStartTime())
-			&& value.getAgendaStartTime().isBefore(value.getAgendaEndTime());
+		return mustHaveValidTeam(value);
 	}
 
 	private boolean mustHaveValidTeam(AgendaCreateReqDto value) {
