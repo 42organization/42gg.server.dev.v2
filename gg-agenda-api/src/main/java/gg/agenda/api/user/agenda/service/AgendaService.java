@@ -90,7 +90,8 @@ public class AgendaService {
 		List<AgendaTeam> openTeams = agendaTeamRepository.findAllByAgendaAndStatus(agenda, AgendaTeamStatus.OPEN);
 		for (AgendaTeam openTeam : openTeams) {
 			openTeam.cancelTeam();
-			List<AgendaProfile> participants = agendaTeamProfileRepository.findAllByAgendaTeam(openTeam).stream()
+			List<AgendaProfile> participants = agendaTeamProfileRepository
+				.findAllByAgendaTeamWithFetchProfile(openTeam).stream()
 				.map(AgendaTeamProfile::getProfile)
 				.collect(Collectors.toList());
 			ticketService.refundTickets(participants, agenda.getAgendaKey());
