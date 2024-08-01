@@ -119,6 +119,7 @@ public class AgendaControllerTest {
 
 			// then
 			assertThat(result.getAgendaTitle()).isEqualTo(agenda.getTitle());
+			assertThat(result.getAgendaMinPeople()).isEqualTo(agenda.getMinPeople());
 			assertThat(result.getAnnouncementTitle()).isEqualTo(announcement.getTitle());
 		}
 
@@ -273,6 +274,7 @@ public class AgendaControllerTest {
 			assertThat(agenda.isPresent()).isTrue();
 			assertThat(agenda.get().getTitle()).isEqualTo(dto.getAgendaTitle());
 			assertThat(agenda.get().getContent()).isEqualTo(dto.getAgendaContent());
+			assertThat(agenda.get().getMinPeople()).isEqualTo(dto.getAgendaMinPeople());
 		}
 
 		@Test

@@ -236,44 +236,7 @@ class AgendaServiceTest {
 
 			// then
 			verify(agendaTeamRepository, times(1)).findAllByAgendaAndStatus(any(), any());
-			assertThat(agenda.getStatus()).isEqualTo(AgendaStatus.FINISH);
-		}
-
-		@Test
-		@DisplayName("Agenda 시상 및 확정 성공 - 시상하지 않는 대회인 경우")
-		void finishAgendaSuccessWithNoRank() {
-			// given
-			Agenda agenda = Agenda.builder()
-				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
-				.status(AgendaStatus.CONFIRM).isRanking(false).build();
-
-			// when
-			agendaService.awardAgenda(null, agenda);
-
-			// then
-			assertThat(agenda.getStatus()).isEqualTo(AgendaStatus.FINISH);
-		}
-
-		@Test
-		@DisplayName("Agenda 시상 및 확정 성공 - 시상하지 않는 대회에 시상 내역이 들어온 경우")
-		void finishAgendaSuccessWithNoRankAndAwards() {
-			// given
-			Agenda agenda = Agenda.builder()
-				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
-				.status(AgendaStatus.CONFIRM).isRanking(false).build();
-			List<AgendaTeam> agendaTeams = new ArrayList<>();
-			IntStream.range(0, 10).forEach(i -> agendaTeams.add(AgendaTeam.builder().name("team" + i).build()));
-			AgendaTeamAward awardDto = AgendaTeamAward.builder()
-				.teamName("team1").awardName("award").awardPriority(1).build();
-			AgendaAwardsReqDto confirmDto = AgendaAwardsReqDto.builder()
-				.awards(List.of(awardDto)).build();
-
-			// when
-			agendaService.awardAgenda(confirmDto, agenda);
-
-			// then
-			verify(agendaTeamRepository, never()).findAllByAgendaAndStatus(any(), any());
-			assertThat(agenda.getStatus()).isEqualTo(AgendaStatus.FINISH);
+			assertThat(agenda.getStatus()).isEqualTo(AgendaStatus.CONFIRM);
 		}
 
 		@Test
@@ -285,30 +248,15 @@ class AgendaServiceTest {
 				.status(AgendaStatus.CONFIRM).isRanking(false).build();
 			AgendaAwardsReqDto confirmDto = AgendaAwardsReqDto.builder()
 				.awards(List.of()).build();
+			when(agendaTeamRepository.findAllByAgendaAndStatus(any(), any()))
+				.thenReturn(List.of());
 
 			// when
 			agendaService.awardAgenda(confirmDto, agenda);
 
 			// then
-			verify(agendaTeamRepository, never()).findAllByAgendaAndStatus(any(), any());
-			assertThat(agenda.getStatus()).isEqualTo(AgendaStatus.FINISH);
-		}
-
-		@Test
-		@DisplayName("Agenda 시상 및 확정 성공 - 시상하지 않는 대회에 시상 내역이 null로 들어온 경우")
-		void finishAgendaSuccessWithNoRankAndNullAwards() {
-			// given
-			Agenda agenda = Agenda.builder()
-				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
-				.status(AgendaStatus.CONFIRM).isRanking(false).build();
-			AgendaAwardsReqDto confirmDto = AgendaAwardsReqDto.builder().build();
-
-			// when
-			agendaService.awardAgenda(confirmDto, agenda);
-
-			// then
-			verify(agendaTeamRepository, never()).findAllByAgendaAndStatus(any(), any());
-			assertThat(agenda.getStatus()).isEqualTo(AgendaStatus.FINISH);
+			verify(agendaTeamRepository, times(1)).findAllByAgendaAndStatus(any(), any());
+			assertThat(agenda.getStatus()).isEqualTo(AgendaStatus.CONFIRM);
 		}
 
 		@Test
@@ -374,17 +322,15 @@ class AgendaServiceTest {
 				.profile(AgendaProfile.builder().build()).build();
 			when(agendaTeamRepository.findAllByAgendaAndStatus(agenda, AgendaTeamStatus.OPEN))
 				.thenReturn(List.of(agendaTeam));
-			when(agendaTeamProfileRepository.findAllByAgendaTeam(agendaTeam)).thenReturn(List.of(participant));
+			when(agendaTeamProfileRepository.findAllByAgendaTeamWithFetchProfile(agendaTeam)).thenReturn(List.of(participant));
 			doNothing().when(ticketService).refundTickets(any(), any());
-
-
 
 			// when
 			agendaService.confirmAgendaAndRefundTicketForOpenTeam(agenda);
 
 			// then
 			verify(agendaTeamRepository, times(1)).findAllByAgendaAndStatus(agenda, AgendaTeamStatus.OPEN);
-			verify(agendaTeamProfileRepository, times(1)).findAllByAgendaTeam(agendaTeam);
+			verify(agendaTeamProfileRepository, times(1)).findAllByAgendaTeamWithFetchProfile(agendaTeam);
 			verify(ticketService, times(1)).refundTickets(any(), any());
 			assertThat(agenda.getStatus()).isEqualTo(AgendaStatus.CONFIRM);
 			assertThat(agendaTeam.getStatus()).isEqualTo(AgendaTeamStatus.CANCEL);
