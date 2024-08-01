@@ -322,7 +322,8 @@ class AgendaServiceTest {
 				.profile(AgendaProfile.builder().build()).build();
 			when(agendaTeamRepository.findAllByAgendaAndStatus(agenda, AgendaTeamStatus.OPEN))
 				.thenReturn(List.of(agendaTeam));
-			when(agendaTeamProfileRepository.findAllByAgendaTeamWithFetchProfile(agendaTeam)).thenReturn(List.of(participant));
+			when(agendaTeamProfileRepository.findAllByAgendaTeamWithFetchProfile(agendaTeam))
+				.thenReturn(List.of(participant));
 			doNothing().when(ticketService).refundTickets(any(), any());
 
 			// when
