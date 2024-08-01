@@ -50,9 +50,13 @@ public class AgendaService {
 	@Transactional(readOnly = true)
 	public List<Agenda> findCurrentAgendaList() {
 		return agendaRepository.findAllByStatusIs(AgendaStatus.OPEN).stream()
-			.sorted(Comparator.comparing(Agenda::getIsOfficial, Comparator.reverseOrder())
-				.thenComparing(Agenda::getDeadline, Comparator.reverseOrder()))
+			.sorted(agendaComparatorWithIsOfficialThenDeadline())
 			.collect(Collectors.toList());
+	}
+
+	private Comparator<Agenda> agendaComparatorWithIsOfficialThenDeadline() {
+		return Comparator.comparing(Agenda::getIsOfficial, Comparator.reverseOrder())
+			.thenComparing(Agenda::getDeadline, Comparator.reverseOrder());
 	}
 
 	@Transactional
@@ -63,7 +67,7 @@ public class AgendaService {
 
 	@Transactional(readOnly = true)
 	public List<Agenda> findHistoryAgendaList(Pageable pageable) {
-		return agendaRepository.findAllByStatusIs(pageable, AgendaStatus.FINISH).getContent();
+		return agendaRepository.findAllByStatusIs(AgendaStatus.FINISH, pageable).getContent();
 	}
 
 	@Transactional
