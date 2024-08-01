@@ -1,8 +1,7 @@
 package gg.agenda.api.user.agenda.controller;
 
-import static gg.utils.exception.ErrorCode.*;
-
 import io.swagger.v3.oas.annotations.Parameter;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -35,7 +34,6 @@ import gg.auth.argumentresolver.Login;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaAnnouncement;
 import gg.utils.dto.PageRequestDto;
-import gg.utils.exception.custom.InvalidParameterException;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -116,7 +114,7 @@ public class AgendaController {
 		@Login @Parameter(hidden = true) UserDto user) {
 		Agenda agenda = agendaService.findAgendaByAgendaKey(agendaKey);
 		agenda.mustModifiedByHost(user.getIntraId());
-		agendaService.confirmAgenda(agenda);
+		agendaService.confirmAgendaAndRefundTicketForOpenTeam(agenda);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 }

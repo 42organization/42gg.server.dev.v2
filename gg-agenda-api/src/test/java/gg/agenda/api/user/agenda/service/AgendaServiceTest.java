@@ -380,7 +380,7 @@ class AgendaServiceTest {
 
 
 			// when
-			agendaService.confirmAgenda(agenda);
+			agendaService.confirmAgendaAndRefundTicketForOpenTeam(agenda);
 
 			// then
 			verify(agendaTeamRepository, times(1)).findAllByAgendaAndStatus(agenda, AgendaTeamStatus.OPEN);
@@ -399,7 +399,7 @@ class AgendaServiceTest {
 				.thenReturn(List.of());
 
 			// when
-			agendaService.confirmAgenda(agenda);
+			agendaService.confirmAgendaAndRefundTicketForOpenTeam(agenda);
 
 			// then
 			verify(agendaTeamRepository, times(1)).findAllByAgendaAndStatus(agenda, AgendaTeamStatus.OPEN);
@@ -418,7 +418,7 @@ class AgendaServiceTest {
 
 			// expected
 			assertThrows(InvalidParameterException.class,
-				() -> agendaService.confirmAgenda(agenda));
+				() -> agendaService.confirmAgendaAndRefundTicketForOpenTeam(agenda));
 			verify(agendaTeamRepository, times(1)).findAllByAgendaAndStatus(agenda, AgendaTeamStatus.OPEN);
 		}
 	}

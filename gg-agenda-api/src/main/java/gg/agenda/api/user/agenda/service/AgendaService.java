@@ -3,9 +3,7 @@ package gg.agenda.api.user.agenda.service;
 import static gg.utils.exception.ErrorCode.*;
 
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -86,9 +84,10 @@ public class AgendaService {
 	}
 
 	@Transactional
-	public void confirmAgenda(Agenda agenda) {
+	public void confirmAgendaAndRefundTicketForOpenTeam(Agenda agenda) {
 		List<AgendaTeam> openTeams = agendaTeamRepository.findAllByAgendaAndStatus(agenda, AgendaTeamStatus.OPEN);
 		for (AgendaTeam openTeam : openTeams) {
+			// TODO: AgendaTeamService의 cancelTeam 메서드를 호출하는 것이 더 좋을 수도 있음
 			List<AgendaProfile> participants = agendaTeamProfileRepository
 				.findAllByAgendaTeamWithFetchProfile(openTeam).stream()
 				.map(AgendaTeamProfile::getProfile)
