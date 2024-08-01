@@ -32,7 +32,11 @@ public class AgendaAnnouncementService {
 	}
 
 	@Transactional(readOnly = true)
-	public Optional<AgendaAnnouncement> findAgendaWithLatestAnnouncement(Agenda agenda) {
-		return agendaAnnouncementRepository.findLatestByAgenda(agenda);
+	public String findLatestAnnounceTitleByAgendaOrDefault(Agenda agenda, String defaultTitle) {
+		Optional<AgendaAnnouncement> latestAnnounce = agendaAnnouncementRepository.findLatestByAgenda(agenda);
+		if (latestAnnounce.isEmpty()) {
+			return defaultTitle;
+		}
+		return latestAnnounce.get().getTitle();
 	}
 }

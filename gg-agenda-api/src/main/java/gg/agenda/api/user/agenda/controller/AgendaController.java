@@ -1,7 +1,6 @@
 package gg.agenda.api.user.agenda.controller;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -30,7 +29,6 @@ import gg.agenda.api.user.agendaannouncement.service.AgendaAnnouncementService;
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
 import gg.data.agenda.Agenda;
-import gg.data.agenda.AgendaAnnouncement;
 import gg.utils.dto.PageRequestDto;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
@@ -47,8 +45,8 @@ public class AgendaController {
 	@GetMapping
 	public ResponseEntity<AgendaResDto> agendaDetails(@RequestParam("agenda_key") UUID agendaKey) {
 		Agenda agenda = agendaService.findAgendaByAgendaKey(agendaKey);
-		Optional<AgendaAnnouncement> announcement = agendaAnnouncementService.findAgendaWithLatestAnnouncement(agenda);
-		String announcementTitle = announcement.map(AgendaAnnouncement::getTitle).orElse("");
+		String announcementTitle = agendaAnnouncementService
+			.findLatestAnnounceTitleByAgendaOrDefault(agenda, "");
 		AgendaResDto agendaResDto = AgendaResDto.MapStruct.INSTANCE.toDto(agenda,  announcementTitle);
 		return ResponseEntity.ok(agendaResDto);
 	}
