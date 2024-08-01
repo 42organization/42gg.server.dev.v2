@@ -658,13 +658,19 @@ public class AgendaControllerTest {
 			int teamSize = 10;
 			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(),
 				LocalDateTime.now().minusDays(10), false, AgendaStatus.CONFIRM);
+			AgendaAwardsReqDto agendaAwardsReqDto = AgendaAwardsReqDto.builder()
+				.awards(List.of())	// 시상하지 않는 대회도 빈 리스트를 전송해야합니다.
+				.build();
 			IntStream.range(0, teamSize)
 				.forEach(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM));
+			String request = objectMapper.writeValueAsString(agendaAwardsReqDto);
 
 			// when
 			mockMvc.perform(patch("/agenda/finish")
 					.param("agenda_key", agenda.getAgendaKey().toString())
-					.header("Authorization", "Bearer " + accessToken))
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(request))
 				.andExpect(status().isNoContent());
 			Agenda result = em.createQuery("select a from Agenda a where a.agendaKey = :agendaKey", Agenda.class)
 				.setParameter("agendaKey", agenda.getAgendaKey()).getSingleResult();

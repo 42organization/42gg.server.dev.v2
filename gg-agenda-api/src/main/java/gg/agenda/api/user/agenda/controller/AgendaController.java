@@ -112,7 +112,8 @@ public class AgendaController {
 	}
 
 	@PatchMapping("/confirm")
-	public ResponseEntity<Void> agendaConfirm(@RequestParam("agenda_key") UUID agendaKey, @Login UserDto user) {
+	public ResponseEntity<Void> agendaConfirm(@RequestParam("agenda_key") UUID agendaKey,
+		@Login @Parameter(hidden = true) UserDto user) {
 		Agenda agenda = agendaService.findAgendaByAgendaKey(agendaKey);
 		agenda.mustModifiedByHost(user.getIntraId());
 		agendaService.confirmAgenda(agenda);
