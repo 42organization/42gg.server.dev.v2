@@ -102,7 +102,7 @@ public class AgendaTeamAdminControllerTest {
 
 	@Nested
 	@DisplayName("Admin AgendaTeam 전체 조회")
-	class GetAgencyTeamListAdmin {
+	class GetAgendaTeamListAdmin {
 
 		@ParameterizedTest
 		@ValueSource(ints = {1, 2, 3, 4, 5})

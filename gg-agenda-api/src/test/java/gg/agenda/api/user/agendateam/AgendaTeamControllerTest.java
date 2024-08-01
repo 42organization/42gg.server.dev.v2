@@ -1163,7 +1163,7 @@ public class AgendaTeamControllerTest {
 			String content = objectMapper.writeValueAsString(req);
 			// when
 			String res = mockMvc.perform(
-					get("/agenda/team/confirm")
+					get("/agenda/team/confirm/list")
 						.header("Authorization", "Bearer " + seoulUserAccessToken)
 						.param("agenda_key", agenda.getAgendaKey().toString())
 						.param("page", String.valueOf(page))
@@ -1189,7 +1189,7 @@ public class AgendaTeamControllerTest {
 			String content = objectMapper.writeValueAsString(req);
 			// when
 			String res = mockMvc.perform(
-					get("/agenda/team/confirm")
+					get("/agenda/team/confirm/list")
 						.header("Authorization", "Bearer " + seoulUserAccessToken)
 						.param("agenda_key", agenda.getAgendaKey().toString())
 						.content(content)
@@ -1209,7 +1209,7 @@ public class AgendaTeamControllerTest {
 			String content = objectMapper.writeValueAsString(req);
 			// when && then
 			mockMvc.perform(
-					get("/agenda/team/confirm")
+					get("/agenda/team/confirm/list")
 						.header("Authorization", "Bearer " + seoulUserAccessToken)
 						.param("agenda_key", noAgendaKey.toString())
 						.content(content)
