@@ -2,6 +2,7 @@ package gg.agenda.api.user.agenda.controller;
 
 import static gg.utils.exception.ErrorCode.*;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -99,14 +100,14 @@ public class AgendaController {
 	}
 
 	@PatchMapping("/finish")
-	public ResponseEntity<Void> agendaEndWithAwards(@RequestParam("agenda_key") UUID agendaKey, @Login UserDto user,
-		@RequestBody(required = false) @Valid AgendaAwardsReqDto agendaAwardsReqDto) {
+	public ResponseEntity<Void> agendaEndWithAwards(@RequestParam("agenda_key") UUID agendaKey,
+		@RequestBody @Valid AgendaAwardsReqDto agendaAwardsReqDto, @Login @Parameter(hidden = true) UserDto user) {
 		Agenda agenda = agendaService.findAgendaByAgendaKey(agendaKey);
 		agenda.mustModifiedByHost(user.getIntraId());
-		if (agenda.getIsRanking() && agendaAwardsReqDto == null) {
-			throw new InvalidParameterException(AGENDA_INVALID_PARAM);
+		if (agenda.getIsRanking()) {
+			agendaService.awardAgenda(agendaAwardsReqDto, agenda);
 		}
-		agendaService.finishAgendaWithAwards(agendaAwardsReqDto, agenda);
+		agendaService.finishAgenda(agenda);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 

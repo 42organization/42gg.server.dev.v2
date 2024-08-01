@@ -232,7 +232,7 @@ class AgendaServiceTest {
 				.thenReturn(agendaTeams);
 
 			// when
-			agendaService.finishAgendaWithAwards(confirmDto, agenda);
+			agendaService.awardAgenda(confirmDto, agenda);
 
 			// then
 			verify(agendaTeamRepository, times(1)).findAllByAgendaAndStatus(any(), any());
@@ -248,7 +248,7 @@ class AgendaServiceTest {
 				.status(AgendaStatus.CONFIRM).isRanking(false).build();
 
 			// when
-			agendaService.finishAgendaWithAwards(null, agenda);
+			agendaService.awardAgenda(null, agenda);
 
 			// then
 			assertThat(agenda.getStatus()).isEqualTo(AgendaStatus.FINISH);
@@ -269,7 +269,7 @@ class AgendaServiceTest {
 				.awards(List.of(awardDto)).build();
 
 			// when
-			agendaService.finishAgendaWithAwards(confirmDto, agenda);
+			agendaService.awardAgenda(confirmDto, agenda);
 
 			// then
 			verify(agendaTeamRepository, never()).findAllByAgendaAndStatus(any(), any());
@@ -287,7 +287,7 @@ class AgendaServiceTest {
 				.awards(List.of()).build();
 
 			// when
-			agendaService.finishAgendaWithAwards(confirmDto, agenda);
+			agendaService.awardAgenda(confirmDto, agenda);
 
 			// then
 			verify(agendaTeamRepository, never()).findAllByAgendaAndStatus(any(), any());
@@ -304,7 +304,7 @@ class AgendaServiceTest {
 			AgendaAwardsReqDto confirmDto = AgendaAwardsReqDto.builder().build();
 
 			// when
-			agendaService.finishAgendaWithAwards(confirmDto, agenda);
+			agendaService.awardAgenda(confirmDto, agenda);
 
 			// then
 			verify(agendaTeamRepository, never()).findAllByAgendaAndStatus(any(), any());
@@ -323,7 +323,7 @@ class AgendaServiceTest {
 
 			// expected
 			assertThrows(NullPointerException.class,
-				() -> agendaService.finishAgendaWithAwards(confirmDto, agenda));
+				() -> agendaService.awardAgenda(confirmDto, agenda));
 		}
 
 		@Test
@@ -336,7 +336,7 @@ class AgendaServiceTest {
 
 			// expected
 			assertThrows(NullPointerException.class,
-				() -> agendaService.finishAgendaWithAwards(null, agenda));
+				() -> agendaService.awardAgenda(null, agenda));
 		}
 
 		@Test
@@ -356,7 +356,7 @@ class AgendaServiceTest {
 
 			// expected
 			assertThrows(NotExistException.class,
-				() -> agendaService.finishAgendaWithAwards(confirmDto, agenda));
+				() -> agendaService.awardAgenda(confirmDto, agenda));
 		}
 	}
 

@@ -69,22 +69,20 @@ public class AgendaService {
 	}
 
 	@Transactional
-	public void finishAgendaWithAwards(AgendaAwardsReqDto agendaAwardsReqDto, Agenda agenda) {
-		if (!agenda.getIsRanking()) {
-			agenda.finishAgenda();
-			return;
-		}
-		Map<String, AgendaTeam> teams = new HashMap<>();
-		agendaTeamRepository.findAllByAgendaAndStatus(agenda, AgendaTeamStatus.CONFIRM)
-			.forEach(team -> teams.put(team.getName(), team));
-		for (AgendaTeamAward agendaTeamAward : agendaAwardsReqDto.getAwards()) {
-			if (!teams.containsKey(agendaTeamAward.getTeamName())) {
-				throw new NotExistException(TEAM_NOT_FOUND);
-			}
-			teams.get(agendaTeamAward.getTeamName())
-				.acceptAward(agendaTeamAward.getAwardName(), agendaTeamAward.getAwardPriority());
-		}
+	public void finishAgenda(Agenda agenda) {
 		agenda.finishAgenda();
+	}
+
+	@Transactional
+	public void awardAgenda(AgendaAwardsReqDto agendaAwardsReqDto, Agenda agenda) {
+		List<AgendaTeam> teams = agendaTeamRepository.findAllByAgendaAndStatus(agenda, AgendaTeamStatus.CONFIRM);
+		for (AgendaTeamAward agendaTeamAward : agendaAwardsReqDto.getAwards()) {
+			AgendaTeam matchedTeam = teams.stream()
+				.filter(team -> team.getName().equals(agendaTeamAward.getTeamName()))
+				.findFirst()
+				.orElseThrow(() -> new NotExistException(AGENDA_TEAM_NOT_FOUND));
+			matchedTeam.acceptAward(agendaTeamAward.getAwardName(), agendaTeamAward.getAwardPriority());
+		}
 	}
 
 	@Transactional
