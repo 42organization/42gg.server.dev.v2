@@ -12,6 +12,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import gg.agenda.api.user.agenda.controller.request.validator.AgendaCapacityValid;
 import gg.agenda.api.user.agenda.controller.request.validator.AgendaScheduleValid;
 import gg.auth.UserDto;
@@ -34,15 +36,15 @@ public class AgendaCreateReqDto {
 	@NotBlank
 	private String agendaContent;
 
-	@NotNull
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
 	@Future(message = "마감일은 현재 시간 이후여야 합니다.")
 	private LocalDateTime agendaDeadLine;
 
-	@NotNull
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
 	@Future(message = "시작 시간은 현재 시간 이후여야 합니다.")
 	private LocalDateTime agendaStartTime;
 
-	@NotNull
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
 	@Future(message = "종료 시간은 현재 시간 이후여야 합니다.")
 	private LocalDateTime agendaEndTime;
 
