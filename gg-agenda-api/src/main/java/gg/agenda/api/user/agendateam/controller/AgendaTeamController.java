@@ -49,8 +49,7 @@ public class AgendaTeamController {
 	 */
 	@GetMapping("/my")
 	public ResponseEntity<Optional<MyTeamSimpleResDto>> myTeamSimpleDetails(
-		@Parameter(hidden = true) @Login UserDto user,
-		@RequestParam("agenda_key") UUID agendaKey) {
+		@Parameter(hidden = true) @Login UserDto user, @RequestParam("agenda_key") UUID agendaKey) {
 		Optional<MyTeamSimpleResDto> myTeamSimpleResDto = agendaTeamService.detailsMyTeamSimple(user, agendaKey);
 		if (myTeamSimpleResDto.isEmpty()) {
 			return ResponseEntity.noContent().build();
@@ -65,7 +64,7 @@ public class AgendaTeamController {
 	 */
 	@GetMapping
 	public ResponseEntity<TeamDetailsResDto> agendaTeamDetails(@Parameter(hidden = true) @Login UserDto user,
-		@RequestBody @Valid TeamKeyReqDto teamKeyReqDto, @RequestParam("agenda_key") UUID agendaKey) {
+		@RequestParam @Valid TeamKeyReqDto teamKeyReqDto, @RequestParam("agenda_key") UUID agendaKey) {
 		TeamDetailsResDto teamDetailsResDto = agendaTeamService.detailsAgendaTeam(user, agendaKey, teamKeyReqDto);
 		return ResponseEntity.ok(teamDetailsResDto);
 	}
@@ -117,7 +116,7 @@ public class AgendaTeamController {
 	 * @param pageRequest 페이지네이션 요청 정보, agendaId 아젠다 아이디
 	 */
 	@GetMapping("/open/list")
-	public ResponseEntity<List<OpenTeamResDto>> openTeamList(@RequestBody @Valid PageRequestDto pageRequest,
+	public ResponseEntity<List<OpenTeamResDto>> openTeamList(@RequestParam @Valid PageRequestDto pageRequest,
 		@RequestParam("agenda_key") UUID agendaKey) {
 		int page = pageRequest.getPage();
 		int size = pageRequest.getSize();
@@ -131,7 +130,7 @@ public class AgendaTeamController {
 	 * @param pageRequest 페이지네이션 요청 정보, agendaId 아젠다 아이디
 	 */
 	@GetMapping("/confirm/list")
-	public ResponseEntity<List<ConfirmTeamResDto>> confirmTeamList(@RequestBody @Valid PageRequestDto pageRequest,
+	public ResponseEntity<List<ConfirmTeamResDto>> confirmTeamList(@RequestParam @Valid PageRequestDto pageRequest,
 		@RequestParam("agenda_key") UUID agendaKey) {
 		int page = pageRequest.getPage();
 		int size = pageRequest.getSize();
