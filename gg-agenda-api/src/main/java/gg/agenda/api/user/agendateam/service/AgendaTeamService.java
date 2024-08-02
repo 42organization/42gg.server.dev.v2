@@ -130,9 +130,10 @@ public class AgendaTeamService {
 			throw new BusinessException(LOCATION_NOT_VALID);
 		}
 
-		agendaTeamProfileRepository.findByAgendaProfileAndIsExistTrue(agenda, agendaProfile).ifPresent(teamProfile -> {
-			throw new DuplicationException(AGENDA_TEAM_FORBIDDEN);
-		});
+		agendaTeamProfileRepository.findByAgendaAndProfileAndIsExistTrue(agenda, agendaProfile)
+			.ifPresent(teamProfile -> {
+				throw new DuplicationException(AGENDA_TEAM_FORBIDDEN);
+			});
 
 		if (agenda.getIsOfficial()) {
 			Ticket ticket = ticketRepository.findByAgendaProfileAndIsApprovedTrueAndIsUsedFalse(agendaProfile)
