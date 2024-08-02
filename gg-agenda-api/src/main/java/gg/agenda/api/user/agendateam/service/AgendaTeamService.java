@@ -4,6 +4,7 @@ import static gg.data.agenda.type.AgendaTeamStatus.*;
 import static gg.utils.exception.ErrorCode.*;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -136,7 +137,8 @@ public class AgendaTeamService {
 			});
 
 		if (agenda.getIsOfficial()) {
-			Ticket ticket = ticketRepository.findByAgendaProfileAndIsApprovedTrueAndIsUsedFalse(agendaProfile)
+			Ticket ticket = ticketRepository.findFirstByAgendaProfileAndIsApprovedTrueAndIsUsedFalseOrderByCreatedAtAsc(
+					agendaProfile)
 				.orElseThrow(() -> new ForbiddenException(TICKET_NOT_EXIST));
 			ticket.useTicket(agenda.getAgendaKey());
 		}
@@ -193,28 +195,27 @@ public class AgendaTeamService {
 			.orElseThrow(() -> new NotExistException(AGENDA_TEAM_NOT_FOUND));
 
 		agenda.cancelTeam(LocalDateTime.now());
-
 		List<AgendaTeamProfile> profiles = agendaTeamProfileRepository.findByAgendaTeamAndIsExistTrue(agendaTeam);
 
 		List<AgendaProfile> changedProfiles;
-
+		// 팀장일 때
 		if (agendaTeam.getLeaderIntraId().equals(user.getIntraId())) {
-			changedProfiles = profiles
-				.stream()
+			changedProfiles = profiles.stream()
 				.peek(AgendaTeamProfile::leaveTeam)
 				.map(AgendaTeamProfile::getProfile)
 				.collect(Collectors.toList());
 			agendaTeam.leaveTeamLeader();
-			ticketService.refundTickets(changedProfiles, agendaKey);
-			return;
-		}
+		} // 팀원일 때
 		AgendaTeamProfile teamMateProfile = profiles.stream()
 			.filter(profile -> profile.getProfile().getUserId().equals(user.getId()))
 			.findFirst().orElseThrow(() -> new ForbiddenException(NOT_TEAM_MATE));
 		teamMateProfile.leaveTeam();
 		agendaTeam.leaveTeamMate();
-		changedProfiles = List.of(teamMateProfile.getProfile());
-		ticketService.refundTickets(changedProfiles, agendaKey);
+		changedProfiles = Collections.singletonList(teamMateProfile.getProfile());
+
+		if (agenda.getIsOfficial()) {
+			ticketService.refundTickets(changedProfiles, agendaKey);
+		}
 	}
 
 	/**
@@ -276,17 +277,19 @@ public class AgendaTeamService {
 			.findByAgendaAndTeamKeyAndStatus(agenda, teamKeyReqDto.getTeamKey(), OPEN, CONFIRM)
 			.orElseThrow(() -> new NotExistException(AGENDA_TEAM_NOT_FOUND));
 
-		Ticket ticket = ticketRepository.findByAgendaProfileAndIsApprovedTrueAndIsUsedFalse(agendaProfile)
-			.orElseThrow(() -> new ForbiddenException(TICKET_NOT_EXIST));
-
 		agendaTeamProfileRepository.findByAgendaAndProfileAndIsExistTrue(agenda, agendaProfile)
 			.ifPresent(profile -> {
 				throw new ForbiddenException(AGENDA_TEAM_FORBIDDEN);
 			});
 
+		if (agenda.getIsOfficial()) {
+			Ticket ticket = ticketRepository
+				.findFirstByAgendaProfileAndIsApprovedTrueAndIsUsedFalseOrderByCreatedAtAsc(agendaProfile)
+				.orElseThrow(() -> new ForbiddenException(TICKET_NOT_EXIST));
+			ticket.useTicket(agenda.getAgendaKey());
+		}
 		agenda.attendTeam(agendaProfile.getLocation(), LocalDateTime.now());
 		agendaTeam.attendTeam(agenda);
-		ticket.useTicket(agenda.getAgendaKey());
 		agendaTeamProfileRepository.save(new AgendaTeamProfile(agendaTeam, agenda, agendaProfile));
 	}
 

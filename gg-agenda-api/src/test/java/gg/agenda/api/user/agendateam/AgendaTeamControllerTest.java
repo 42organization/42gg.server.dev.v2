@@ -883,7 +883,7 @@ public class AgendaTeamControllerTest {
 			AgendaTeamProfile updatedAtp = agendaTeamProfileRepository.findById(atp.getId()).orElse(null);
 			assert updatedAtp != null;
 			assertThat(updatedAtp.getIsExist()).isFalse();
-			ticketRepository.findFirstByAgendaProfileAndIsApprovedTrueAndIsUsedFalseOrderByCreatedAtDesc(
+			ticketRepository.findFirstByAgendaProfileAndIsApprovedTrueAndIsUsedFalseOrderByCreatedAtAsc(
 					updatedAtp.getProfile())
 				.ifPresent(ticket -> {
 					assertThat(ticket.getUsedTo()).isNull();
@@ -918,12 +918,12 @@ public class AgendaTeamControllerTest {
 			AgendaTeamProfile updatedAtpLeader = agendaTeamProfileRepository.findById(atpLeader.getId()).orElse(null);
 			assert updatedAtpLeader != null;
 			assertThat(updatedAtpLeader.getIsExist()).isFalse();
-			ticketRepository.findFirstByAgendaProfileAndIsApprovedTrueAndIsUsedFalseOrderByCreatedAtDesc(
+			ticketRepository.findFirstByAgendaProfileAndIsApprovedTrueAndIsUsedFalseOrderByCreatedAtAsc(
 					updatedAtp.getProfile())
 				.ifPresent(ticket -> {
 					assertThat(ticket.getUsedTo()).isNull();
 				});
-			ticketRepository.findFirstByAgendaProfileAndIsApprovedTrueAndIsUsedFalseOrderByCreatedAtDesc(
+			ticketRepository.findFirstByAgendaProfileAndIsApprovedTrueAndIsUsedFalseOrderByCreatedAtAsc(
 					updatedAtpLeader.getProfile())
 				.ifPresent(ticket -> {
 					assertThat(ticket.getUsedTo()).isNull();
