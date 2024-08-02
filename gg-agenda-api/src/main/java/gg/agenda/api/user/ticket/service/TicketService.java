@@ -19,9 +19,11 @@ import gg.agenda.api.user.ticket.controller.response.TicketHistoryResDto;
 import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaProfile;
+import gg.data.agenda.Auth42Token;
 import gg.data.agenda.Ticket;
 import gg.repo.agenda.AgendaProfileRepository;
 import gg.repo.agenda.AgendaRepository;
+import gg.repo.agenda.Auth42TokenRedisRepository;
 import gg.repo.agenda.TicketRepository;
 import gg.utils.exception.custom.DuplicationException;
 import gg.utils.exception.custom.ForbiddenException;
@@ -34,6 +36,7 @@ public class TicketService {
 	private final TicketRepository ticketRepository;
 	private final AgendaRepository agendaRepository;
 	private final AgendaProfileRepository agendaProfileRepository;
+	private final Auth42TokenRedisRepository auth42TokenRedisRepository;
 
 	/**
 	 * 티켓 환불
@@ -93,7 +96,10 @@ public class TicketService {
 		if (ticket.getModifiedAt().isAfter(LocalDateTime.now().minusMinutes(1))) {
 			throw new ForbiddenException(TICKET_FORBIDDEN);
 		}
-
+		Optional<Auth42Token> auth42Token = auth42TokenRedisRepository.findByIntraId(user.getIntraId());
+		if (auth42Token.isPresent()) {
+			throw new NotExistException(AUTH_NOT_FOUND);
+		}
 		ticket.changeIsApproved();
 		ticketRepository.save(ticket);
 	}

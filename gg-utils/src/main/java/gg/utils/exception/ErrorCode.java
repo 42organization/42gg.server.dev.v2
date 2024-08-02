@@ -192,6 +192,8 @@ public enum ErrorCode {
 	INVALID_CHECKLIST(400, "RE001", "잘못된 요청 데이터입니다."),
 
 	// agenda
+	AUTH_NOT_FOUND(404, "AG", "42 정보가 만료되었습니다."),
+
 	AGENDA_NOT_FOUND(404, "AG", "해당 일정이 존재하지 않습니다."),
 	AGENDA_NOT_OPEN(400, "AG", "마감된 일정에는 팀을 생성할 수 없습니다."),
 	AGENDA_TEAM_ALREADY_CONFIRM(400, "AG", "이미 확정된 팀입니다."),

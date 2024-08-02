@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.data.agenda.AgendaProfile;
+import gg.data.agenda.Auth42Token;
 import gg.data.agenda.type.Coalition;
 import gg.data.pingpong.rank.Rank;
 import gg.data.pingpong.rank.Tier;
@@ -34,6 +35,7 @@ import gg.pingpong.api.global.security.info.ProviderType;
 import gg.pingpong.api.global.utils.aws.AsyncNewUserImageUploader;
 import gg.pingpong.api.global.utils.external.ApiUtil;
 import gg.repo.agenda.AgendaProfileRepository;
+import gg.repo.agenda.Auth42TokenRedisRepository;
 import gg.repo.rank.RankRepository;
 import gg.repo.rank.TierRepository;
 import gg.repo.rank.redis.RankRedisRepository;
@@ -55,6 +57,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 	private final RankRedisRepository rankRedisRepository;
 	private final TierRepository tierRepository;
 	private final AgendaProfileRepository agendaProfileRepository;
+	private final Auth42TokenRedisRepository auth42TokenRedisRepository;
 
 	@Value("${info.image.defaultUrl}")
 	private String defaultImageUrl;
@@ -100,6 +103,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 			String token = userRequest.getAccessToken().getTokenValue();
 			createProfile(userInfo, savedUser, token);
 		}
+		Auth42Token auth42Token = new Auth42Token(userInfo.getUserId(), userRequest.getAccessToken().toString());
+		auth42TokenRedisRepository.save42Token(savedUser.getIntraId(), auth42Token);
 		return UserPrincipal.create(savedUser, user.getAttributes());
 	}
 
