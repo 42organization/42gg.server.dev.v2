@@ -2,11 +2,16 @@ package gg.agenda.api.user.agenda.service;
 
 import static gg.utils.exception.ErrorCode.*;
 
+import gg.utils.exception.custom.BusinessException;
+import gg.utils.file.handler.ImageHandler;
+import java.net.URL;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +34,7 @@ import gg.utils.exception.custom.ForbiddenException;
 import gg.utils.exception.custom.NotExistException;
 import lombok.RequiredArgsConstructor;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AgendaService {
@@ -40,6 +46,8 @@ public class AgendaService {
 	private final AgendaTeamProfileRepository agendaTeamProfileRepository;
 
 	private final TicketService ticketService;
+
+	private final ImageHandler imageHandler;
 
 	@Transactional(readOnly = true)
 	public Agenda findAgendaByAgendaKey(UUID agendaKey) {
@@ -61,8 +69,18 @@ public class AgendaService {
 
 	@Transactional
 	public Agenda addAgenda(AgendaCreateReqDto agendaCreateReqDto, UserDto user) {
-		Agenda newAgenda = AgendaCreateReqDto.MapStruct.INSTANCE.toEntity(agendaCreateReqDto, user);
-		return agendaRepository.save(newAgenda);
+		try {
+			URL savedUrl = null;
+			if (Objects.nonNull(agendaCreateReqDto.getAgendaPoster())) {
+				savedUrl = imageHandler.uploadImage(agendaCreateReqDto.getAgendaPoster(), user.getIntraId());
+			}
+			Agenda newAgenda = AgendaCreateReqDto.MapStruct.INSTANCE.toEntity(
+				agendaCreateReqDto, user.toString(), savedUrl == null ? "" : savedUrl.toString());
+			return agendaRepository.save(newAgenda);
+		} catch (Exception e) {
+			log.debug("Agenda add failed: {}", e.getMessage());
+			throw new BusinessException(AGENDA_CREATE_FAILED);
+		}
 	}
 
 	@Transactional(readOnly = true)

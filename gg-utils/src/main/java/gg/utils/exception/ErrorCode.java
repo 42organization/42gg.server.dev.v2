@@ -193,6 +193,7 @@ public enum ErrorCode {
 
 	// agenda
 	AGENDA_NOT_FOUND(404, "AG", "해당 일정이 존재하지 않습니다."),
+	AGENDA_CREATE_FAILED(400, "AG", "일정 생성에 실패했습니다."),
 	AGENDA_NOT_OPEN(400, "AG", "마감된 일정에는 팀을 생성할 수 없습니다."),
 	AGENDA_TEAM_ALREADY_CONFIRM(400, "AG", "이미 확정된 팀입니다."),
 	AGENDA_TEAM_ALREADY_CANCEL(400, "AG", "이미 취소된 팀입니다."),

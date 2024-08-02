@@ -1,5 +1,6 @@
 package gg.agenda.api.user.agenda.controller.request;
 
+import java.net.URL;
 import java.time.LocalDateTime;
 
 import javax.validation.constraints.Future;
@@ -22,6 +23,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @AgendaCapacityValid
@@ -66,7 +68,7 @@ public class AgendaCreateReqDto {
 	@Max(100)
 	private int agendaMaxPeople;
 
-	private String agendaPoster;
+	private MultipartFile agendaPoster;
 
 	@NotNull
 	private Location agendaLocation;
@@ -77,7 +79,7 @@ public class AgendaCreateReqDto {
 	@Builder
 	public AgendaCreateReqDto(String agendaTitle, String agendaContent, LocalDateTime agendaDeadLine,
 		LocalDateTime agendaStartTime, LocalDateTime agendaEndTime, int agendaMinTeam, int agendaMaxTeam,
-		int agendaMinPeople, int agendaMaxPeople, String agendaPoster, Location agendaLocation,
+		int agendaMinPeople, int agendaMaxPeople, MultipartFile agendaPoster, Location agendaLocation,
 		Boolean agendaIsRanking) {
 		this.agendaTitle = agendaTitle;
 		this.agendaContent = agendaContent;
@@ -110,11 +112,12 @@ public class AgendaCreateReqDto {
 		@Mapping(target = "minPeople", source = "dto.agendaMinPeople")
 		@Mapping(target = "maxPeople", source = "dto.agendaMaxPeople")
 		@Mapping(target = "posterUri", source = "dto.agendaPoster")
-		@Mapping(target = "hostIntraId", source = "user.intraId")
+		@Mapping(target = "hostIntraId", source = "userIntraId")
 		@Mapping(target = "location", source = "dto.agendaLocation")
 		@Mapping(target = "isRanking", source = "dto.agendaIsRanking")
 		@Mapping(target = "status", constant = "OPEN")
 		@Mapping(target = "isOfficial", constant = "false")
-		Agenda toEntity(AgendaCreateReqDto dto, UserDto user);
+		@Mapping(target = "posterUri", source = "posterUri")
+		Agenda toEntity(AgendaCreateReqDto dto, String userIntraId, String posterUri);
 	}
 }
