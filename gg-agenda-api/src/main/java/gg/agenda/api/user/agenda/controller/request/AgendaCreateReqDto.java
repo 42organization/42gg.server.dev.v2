@@ -75,12 +75,12 @@ public class AgendaCreateReqDto {
 	private Boolean agendaIsRanking;
 
 	@Builder
-	public AgendaCreateReqDto(String agendaTitle, String agendaContents, LocalDateTime agendaDeadLine,
+	public AgendaCreateReqDto(String agendaTitle, String agendaContent, LocalDateTime agendaDeadLine,
 		LocalDateTime agendaStartTime, LocalDateTime agendaEndTime, int agendaMinTeam, int agendaMaxTeam,
 		int agendaMinPeople, int agendaMaxPeople, String agendaPoster, Location agendaLocation,
 		Boolean agendaIsRanking) {
 		this.agendaTitle = agendaTitle;
-		this.agendaContent = agendaContents;
+		this.agendaContent = agendaContent;
 		this.agendaDeadLine = agendaDeadLine;
 		this.agendaStartTime = agendaStartTime;
 		this.agendaEndTime = agendaEndTime;

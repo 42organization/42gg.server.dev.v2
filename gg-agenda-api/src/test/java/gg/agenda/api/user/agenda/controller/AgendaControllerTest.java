@@ -252,7 +252,7 @@ public class AgendaControllerTest {
 		void createAgendaSuccess() throws Exception {
 			// given
 			AgendaCreateReqDto dto = AgendaCreateReqDto.builder()
-				.agendaTitle("title").agendaContents("content")
+				.agendaTitle("title").agendaContent("content")
 				.agendaDeadLine(LocalDateTime.now().plusDays(3))
 				.agendaStartTime(LocalDateTime.now().plusDays(5))
 				.agendaEndTime(LocalDateTime.now().plusDays(7))
@@ -282,7 +282,7 @@ public class AgendaControllerTest {
 		void createAgendaFailedWhenDeadlineIsAfterStartTime() throws Exception {
 			// given
 			AgendaCreateReqDto dto = AgendaCreateReqDto.builder()
-				.agendaTitle("title").agendaContents("content")
+				.agendaTitle("title").agendaContent("content")
 				.agendaDeadLine(LocalDateTime.now().plusDays(6))
 				.agendaStartTime(LocalDateTime.now().plusDays(5))
 				.agendaEndTime(LocalDateTime.now().plusDays(7))
@@ -303,7 +303,7 @@ public class AgendaControllerTest {
 		void createAgendaFailedWhenDeadlineIsAfterEndTime() throws Exception {
 			// given
 			AgendaCreateReqDto dto = AgendaCreateReqDto.builder()
-				.agendaTitle("title").agendaContents("content")
+				.agendaTitle("title").agendaContent("content")
 				.agendaDeadLine(LocalDateTime.now().plusDays(3))
 				.agendaStartTime(LocalDateTime.now().plusDays(5))
 				.agendaEndTime(LocalDateTime.now().plusDays(4))
@@ -324,7 +324,7 @@ public class AgendaControllerTest {
 		void createAgendaFailedWhenStartTimeIsAfterEndTime() throws Exception {
 			// given
 			AgendaCreateReqDto dto = AgendaCreateReqDto.builder()
-				.agendaTitle("title").agendaContents("content")
+				.agendaTitle("title").agendaContent("content")
 				.agendaDeadLine(LocalDateTime.now().plusDays(3))
 				.agendaStartTime(LocalDateTime.now().plusDays(7))
 				.agendaEndTime(LocalDateTime.now().plusDays(5))
@@ -345,7 +345,7 @@ public class AgendaControllerTest {
 		void createAgendaFailedWhenMinTeamGreaterThanMaxTeam() throws Exception {
 			// given
 			AgendaCreateReqDto dto = AgendaCreateReqDto.builder()
-				.agendaTitle("title").agendaContents("content")
+				.agendaTitle("title").agendaContent("content")
 				.agendaDeadLine(LocalDateTime.now().plusDays(3))
 				.agendaStartTime(LocalDateTime.now().plusDays(5))
 				.agendaEndTime(LocalDateTime.now().plusDays(7))
@@ -366,7 +366,7 @@ public class AgendaControllerTest {
 		void createAgendaFailedWhenMinPeopleGreaterThanMaxPeople() throws Exception {
 			// given
 			AgendaCreateReqDto dto = AgendaCreateReqDto.builder()
-				.agendaTitle("title").agendaContents("content")
+				.agendaTitle("title").agendaContent("content")
 				.agendaDeadLine(LocalDateTime.now().plusDays(3))
 				.agendaStartTime(LocalDateTime.now().plusDays(5))
 				.agendaEndTime(LocalDateTime.now().plusDays(7))
@@ -388,7 +388,7 @@ public class AgendaControllerTest {
 		void createAgendaFailedWhenNegativeMinTeam(int value) throws Exception {
 			// given
 			AgendaCreateReqDto dto = AgendaCreateReqDto.builder()
-				.agendaTitle("title").agendaContents("content")
+				.agendaTitle("title").agendaContent("content")
 				.agendaDeadLine(LocalDateTime.now().plusDays(3))
 				.agendaStartTime(LocalDateTime.now().plusDays(5))
 				.agendaEndTime(LocalDateTime.now().plusDays(7))
@@ -410,7 +410,7 @@ public class AgendaControllerTest {
 		void createAgendaFailedWhenNegativeMinPeople(int value) throws Exception {
 			// given
 			AgendaCreateReqDto dto = AgendaCreateReqDto.builder()
-				.agendaTitle("title").agendaContents("content")
+				.agendaTitle("title").agendaContent("content")
 				.agendaDeadLine(LocalDateTime.now().plusDays(3))
 				.agendaStartTime(LocalDateTime.now().plusDays(5))
 				.agendaEndTime(LocalDateTime.now().plusDays(7))
