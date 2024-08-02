@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -64,7 +65,7 @@ public class AgendaTeamController {
 	 */
 	@GetMapping
 	public ResponseEntity<TeamDetailsResDto> agendaTeamDetails(@Parameter(hidden = true) @Login UserDto user,
-		@RequestParam @Valid TeamKeyReqDto teamKeyReqDto, @RequestParam("agenda_key") UUID agendaKey) {
+		@RequestBody @Valid TeamKeyReqDto teamKeyReqDto, @RequestParam("agenda_key") UUID agendaKey) {
 		TeamDetailsResDto teamDetailsResDto = agendaTeamService.detailsAgendaTeam(user, agendaKey, teamKeyReqDto);
 		return ResponseEntity.ok(teamDetailsResDto);
 	}
@@ -116,7 +117,7 @@ public class AgendaTeamController {
 	 * @param pageRequest 페이지네이션 요청 정보, agendaId 아젠다 아이디
 	 */
 	@GetMapping("/open/list")
-	public ResponseEntity<List<OpenTeamResDto>> openTeamList(@RequestParam @Valid PageRequestDto pageRequest,
+	public ResponseEntity<List<OpenTeamResDto>> openTeamList(@ModelAttribute @Valid PageRequestDto pageRequest,
 		@RequestParam("agenda_key") UUID agendaKey) {
 		int page = pageRequest.getPage();
 		int size = pageRequest.getSize();
@@ -130,7 +131,7 @@ public class AgendaTeamController {
 	 * @param pageRequest 페이지네이션 요청 정보, agendaId 아젠다 아이디
 	 */
 	@GetMapping("/confirm/list")
-	public ResponseEntity<List<ConfirmTeamResDto>> confirmTeamList(@RequestParam @Valid PageRequestDto pageRequest,
+	public ResponseEntity<List<ConfirmTeamResDto>> confirmTeamList(@ModelAttribute @Valid PageRequestDto pageRequest,
 		@RequestParam("agenda_key") UUID agendaKey) {
 		int page = pageRequest.getPage();
 		int size = pageRequest.getSize();

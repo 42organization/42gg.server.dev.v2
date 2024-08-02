@@ -1083,15 +1083,13 @@ public class AgendaTeamControllerTest {
 			Agenda agenda = agendaMockData.createAgenda(SEOUL);
 			List<AgendaTeam> teams = agendaMockData.createAgendaTeamList(agenda, 23, AgendaTeamStatus.OPEN);
 			PageRequestDto req = new PageRequestDto(page, 5);
-			String content = objectMapper.writeValueAsString(req);
 			// when
 			String res = mockMvc.perform(
 					get("/agenda/team/open/list")
 						.header("Authorization", "Bearer " + seoulUserAccessToken)
 						.param("agenda_key", agenda.getAgendaKey().toString())
-						.param("page", String.valueOf(page))
-						.content(content)
-						.contentType(MediaType.APPLICATION_JSON))
+						.param("page", String.valueOf(req.getPage()))
+						.param("size", String.valueOf(req.getSize())))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			OpenTeamResDto[] result = objectMapper.readValue(res, OpenTeamResDto[].class);
 			// then
@@ -1109,14 +1107,13 @@ public class AgendaTeamControllerTest {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(SEOUL);
 			PageRequestDto req = new PageRequestDto(1, 5);
-			String content = objectMapper.writeValueAsString(req);
 			// when
 			String res = mockMvc.perform(
 					get("/agenda/team/open/list")
 						.header("Authorization", "Bearer " + seoulUserAccessToken)
 						.param("agenda_key", agenda.getAgendaKey().toString())
-						.content(content)
-						.contentType(MediaType.APPLICATION_JSON))
+						.param("page", String.valueOf(req.getPage()))
+						.param("size", String.valueOf(req.getSize())))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			OpenTeamResDto[] result = objectMapper.readValue(res, OpenTeamResDto[].class);
 			// then
@@ -1129,14 +1126,13 @@ public class AgendaTeamControllerTest {
 			//given
 			UUID noAgendaKey = UUID.randomUUID();
 			PageRequestDto req = new PageRequestDto(1, 5);
-			String content = objectMapper.writeValueAsString(req);
 			// when && then
 			mockMvc.perform(
 					get("/agenda/team/open/list")
 						.header("Authorization", "Bearer " + seoulUserAccessToken)
 						.param("agenda_key", noAgendaKey.toString())
-						.content(content)
-						.contentType(MediaType.APPLICATION_JSON))
+						.param("page", String.valueOf(req.getPage()))
+						.param("size", String.valueOf(req.getSize())))
 				.andExpect(status().isNotFound());
 		}
 	}
@@ -1163,15 +1159,13 @@ public class AgendaTeamControllerTest {
 			Agenda agenda = agendaMockData.createAgenda(SEOUL);
 			List<AgendaTeam> teams = agendaMockData.createAgendaTeamList(agenda, 23, AgendaTeamStatus.CONFIRM);
 			PageRequestDto req = new PageRequestDto(page, 5);
-			String content = objectMapper.writeValueAsString(req);
 			// when
 			String res = mockMvc.perform(
 					get("/agenda/team/confirm/list")
 						.header("Authorization", "Bearer " + seoulUserAccessToken)
 						.param("agenda_key", agenda.getAgendaKey().toString())
-						.param("page", String.valueOf(page))
-						.content(content)
-						.contentType(MediaType.APPLICATION_JSON))
+						.param("page", String.valueOf(req.getPage()))
+						.param("size", String.valueOf(req.getSize())))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			ConfirmTeamResDto[] result = objectMapper.readValue(res, ConfirmTeamResDto[].class);
 			// then
@@ -1195,8 +1189,8 @@ public class AgendaTeamControllerTest {
 					get("/agenda/team/confirm/list")
 						.header("Authorization", "Bearer " + seoulUserAccessToken)
 						.param("agenda_key", agenda.getAgendaKey().toString())
-						.content(content)
-						.contentType(MediaType.APPLICATION_JSON))
+						.param("page", String.valueOf(req.getPage()))
+						.param("size", String.valueOf(req.getSize())))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			ConfirmTeamResDto[] result = objectMapper.readValue(res, ConfirmTeamResDto[].class);
 			// then
@@ -1209,14 +1203,13 @@ public class AgendaTeamControllerTest {
 			//given
 			UUID noAgendaKey = UUID.randomUUID();
 			PageRequestDto req = new PageRequestDto(1, 5);
-			String content = objectMapper.writeValueAsString(req);
 			// when && then
 			mockMvc.perform(
 					get("/agenda/team/confirm/list")
 						.header("Authorization", "Bearer " + seoulUserAccessToken)
 						.param("agenda_key", noAgendaKey.toString())
-						.content(content)
-						.contentType(MediaType.APPLICATION_JSON))
+						.param("page", String.valueOf(req.getPage()))
+						.param("size", String.valueOf(req.getSize())))
 				.andExpect(status().isNotFound());
 		}
 	}

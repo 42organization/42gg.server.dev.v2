@@ -203,7 +203,7 @@ public class AgendaTeamService {
 			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
 		AgendaTeamProfile agendaTeamProfile = agendaTeamProfileRepository
 			.findByAgendaAndProfileAndIsExistTrue(agendaTeam.getAgenda(), agendaProfile)
-			.orElseThrow(() -> new NotExistException(NOT_TEAM_MATE));
+			.orElseThrow(() -> new ForbiddenException(NOT_TEAM_MATE));
 		leaveTeam(agendaTeamProfile);
 	}
 
