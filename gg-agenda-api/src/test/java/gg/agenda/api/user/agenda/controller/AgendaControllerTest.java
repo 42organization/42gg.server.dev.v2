@@ -257,7 +257,7 @@ public class AgendaControllerTest {
 				.agendaStartTime(LocalDateTime.now().plusDays(5))
 				.agendaEndTime(LocalDateTime.now().plusDays(7))
 				.agendaMinTeam(2).agendaMaxTeam(5).agendaMinPeople(1).agendaMaxPeople(5)
-				.agendaIsRanking(true).agendaIsOfficial(true).agendaLocation(Location.SEOUL).build();
+				.agendaIsRanking(true).agendaLocation(Location.SEOUL).build();
 			String request = objectMapper.writeValueAsString(dto);
 
 			// when
@@ -287,7 +287,7 @@ public class AgendaControllerTest {
 				.agendaStartTime(LocalDateTime.now().plusDays(5))
 				.agendaEndTime(LocalDateTime.now().plusDays(7))
 				.agendaMinTeam(2).agendaMaxTeam(5).agendaMinPeople(1).agendaMaxPeople(5)
-				.agendaIsRanking(true).agendaIsOfficial(true).agendaLocation(Location.SEOUL).build();
+				.agendaIsRanking(true).agendaLocation(Location.SEOUL).build();
 			String request = objectMapper.writeValueAsString(dto);
 
 			// expected
@@ -308,7 +308,7 @@ public class AgendaControllerTest {
 				.agendaStartTime(LocalDateTime.now().plusDays(5))
 				.agendaEndTime(LocalDateTime.now().plusDays(4))
 				.agendaMinTeam(2).agendaMaxTeam(5).agendaMinPeople(1).agendaMaxPeople(5)
-				.agendaIsRanking(true).agendaIsOfficial(true).agendaLocation(Location.SEOUL).build();
+				.agendaIsRanking(true).agendaLocation(Location.SEOUL).build();
 			String request = objectMapper.writeValueAsString(dto);
 
 			// expected
@@ -329,7 +329,7 @@ public class AgendaControllerTest {
 				.agendaStartTime(LocalDateTime.now().plusDays(7))
 				.agendaEndTime(LocalDateTime.now().plusDays(5))
 				.agendaMinTeam(2).agendaMaxTeam(5).agendaMinPeople(1).agendaMaxPeople(5)
-				.agendaIsRanking(true).agendaIsOfficial(true).agendaLocation(Location.SEOUL).build();
+				.agendaIsRanking(true).agendaLocation(Location.SEOUL).build();
 			String request = objectMapper.writeValueAsString(dto);
 
 			// expected
@@ -350,7 +350,7 @@ public class AgendaControllerTest {
 				.agendaStartTime(LocalDateTime.now().plusDays(5))
 				.agendaEndTime(LocalDateTime.now().plusDays(7))
 				.agendaMinTeam(7).agendaMaxTeam(5).agendaMinPeople(1).agendaMaxPeople(5)
-				.agendaIsRanking(true).agendaIsOfficial(true).agendaLocation(Location.SEOUL).build();
+				.agendaIsRanking(true).agendaLocation(Location.SEOUL).build();
 			String request = objectMapper.writeValueAsString(dto);
 
 			// expected
@@ -371,7 +371,7 @@ public class AgendaControllerTest {
 				.agendaStartTime(LocalDateTime.now().plusDays(5))
 				.agendaEndTime(LocalDateTime.now().plusDays(7))
 				.agendaMinTeam(2).agendaMaxTeam(5).agendaMinPeople(6).agendaMaxPeople(5)
-				.agendaIsRanking(true).agendaIsOfficial(true).agendaLocation(Location.SEOUL).build();
+				.agendaIsRanking(true).agendaLocation(Location.SEOUL).build();
 			String request = objectMapper.writeValueAsString(dto);
 
 			// expected
@@ -393,7 +393,7 @@ public class AgendaControllerTest {
 				.agendaStartTime(LocalDateTime.now().plusDays(5))
 				.agendaEndTime(LocalDateTime.now().plusDays(7))
 				.agendaMinTeam(value).agendaMaxTeam(5).agendaMinPeople(1).agendaMaxPeople(5)
-				.agendaIsRanking(true).agendaIsOfficial(true).agendaLocation(Location.SEOUL).build();
+				.agendaIsRanking(true).agendaLocation(Location.SEOUL).build();
 			String request = objectMapper.writeValueAsString(dto);
 
 			// expected
@@ -415,7 +415,7 @@ public class AgendaControllerTest {
 				.agendaStartTime(LocalDateTime.now().plusDays(5))
 				.agendaEndTime(LocalDateTime.now().plusDays(7))
 				.agendaMinTeam(2).agendaMaxTeam(5).agendaMinPeople(value).agendaMaxPeople(5)
-				.agendaIsRanking(true).agendaIsOfficial(true).agendaLocation(Location.SEOUL).build();
+				.agendaIsRanking(true).agendaLocation(Location.SEOUL).build();
 			String request = objectMapper.writeValueAsString(dto);
 
 			// expected

@@ -70,14 +70,11 @@ public class AgendaCreateReqDto {
 	@NotNull
 	private Boolean agendaIsRanking;
 
-	@NotNull
-	private Boolean agendaIsOfficial;
-
 	@Builder
 	public AgendaCreateReqDto(String agendaTitle, String agendaContents, LocalDateTime agendaDeadLine,
 		LocalDateTime agendaStartTime, LocalDateTime agendaEndTime, int agendaMinTeam, int agendaMaxTeam,
 		int agendaMinPeople, int agendaMaxPeople, String agendaPoster, Location agendaLocation,
-		Boolean agendaIsRanking, Boolean agendaIsOfficial) {
+		Boolean agendaIsRanking) {
 		this.agendaTitle = agendaTitle;
 		this.agendaContent = agendaContents;
 		this.agendaDeadLine = agendaDeadLine;
@@ -90,11 +87,11 @@ public class AgendaCreateReqDto {
 		this.agendaPoster = agendaPoster;
 		this.agendaLocation = agendaLocation;
 		this.agendaIsRanking = agendaIsRanking;
-		this.agendaIsOfficial = agendaIsOfficial;
 	}
 
 	@Mapper
 	public interface MapStruct {
+
 		AgendaCreateReqDto.MapStruct INSTANCE = Mappers.getMapper(AgendaCreateReqDto.MapStruct.class);
 
 		@Mapping(target = "id", ignore = true)
@@ -111,9 +108,9 @@ public class AgendaCreateReqDto {
 		@Mapping(target = "posterUri", source = "dto.agendaPoster")
 		@Mapping(target = "hostIntraId", source = "user.intraId")
 		@Mapping(target = "location", source = "dto.agendaLocation")
-		@Mapping(target = "status", constant = "OPEN")
-		@Mapping(target = "isOfficial", source = "dto.agendaIsOfficial")
 		@Mapping(target = "isRanking", source = "dto.agendaIsRanking")
+		@Mapping(target = "status", constant = "OPEN")
+		@Mapping(target = "isOfficial", constant = "false")
 		Agenda toEntity(AgendaCreateReqDto dto, UserDto user);
 	}
 }
