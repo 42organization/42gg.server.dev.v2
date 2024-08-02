@@ -1,4 +1,4 @@
-package gg.pingpong.api.global.utils;
+package gg.pingpong.api.global.utils.aws;
 
 import java.io.IOException;
 import java.io.InputStream;

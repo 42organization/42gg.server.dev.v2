@@ -46,7 +46,7 @@ import gg.data.user.type.RacketType;
 import gg.data.user.type.RoleType;
 import gg.data.user.type.SnsType;
 import gg.pingpong.api.admin.store.controller.request.ItemUpdateRequestDto;
-import gg.pingpong.api.global.utils.UserImageHandler;
+import gg.pingpong.api.global.utils.aws.UserImageHandler;
 import gg.pingpong.api.user.game.controller.request.RankResultReqDto;
 import gg.pingpong.api.user.game.service.GameService;
 import gg.pingpong.api.user.store.service.CoinHistoryService;

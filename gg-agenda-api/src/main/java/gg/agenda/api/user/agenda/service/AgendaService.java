@@ -11,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import gg.agenda.api.user.agenda.controller.request.AgendaAwardsReqDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaCreateReqDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaTeamAward;
@@ -26,6 +25,7 @@ import gg.data.agenda.type.AgendaTeamStatus;
 import gg.repo.agenda.AgendaRepository;
 import gg.repo.agenda.AgendaTeamProfileRepository;
 import gg.repo.agenda.AgendaTeamRepository;
+import gg.utils.exception.custom.ForbiddenException;
 import gg.utils.exception.custom.NotExistException;
 import lombok.RequiredArgsConstructor;
 
@@ -89,6 +89,10 @@ public class AgendaService {
 
 	@Transactional
 	public void confirmAgendaAndRefundTicketForOpenTeam(Agenda agenda) {
+		if (agenda.getCurrentTeam() < agenda.getMinTeam()) {
+			throw new ForbiddenException("팀이 모두 구성되지 않았습니다.");
+		}
+
 		List<AgendaTeam> openTeams = agendaTeamRepository.findAllByAgendaAndStatus(agenda, AgendaTeamStatus.OPEN);
 		for (AgendaTeam openTeam : openTeams) {
 			// TODO: AgendaTeamService의 cancelTeam 메서드를 호출하는 것이 더 좋을 수도 있음

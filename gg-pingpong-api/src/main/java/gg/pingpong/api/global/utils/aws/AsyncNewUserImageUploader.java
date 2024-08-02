@@ -14,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import gg.data.user.User;
 import gg.data.user.UserImage;
-import gg.pingpong.api.global.utils.UserImageHandler;
 import gg.repo.user.UserImageRepository;
 import gg.repo.user.UserRepository;
 import lombok.extern.slf4j.Slf4j;

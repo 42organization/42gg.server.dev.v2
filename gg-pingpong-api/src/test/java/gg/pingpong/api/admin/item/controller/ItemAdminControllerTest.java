@@ -31,7 +31,7 @@ import gg.data.pingpong.store.type.ItemType;
 import gg.pingpong.api.admin.store.controller.request.ItemUpdateRequestDto;
 import gg.pingpong.api.admin.store.controller.response.ItemListResponseDto;
 import gg.pingpong.api.admin.store.service.ItemAdminService;
-import gg.pingpong.api.global.utils.ItemImageHandler;
+import gg.pingpong.api.global.utils.aws.ItemImageHandler;
 import gg.repo.user.UserRepository;
 import gg.utils.ItemTestUtils;
 import gg.utils.TestDataUtils;
