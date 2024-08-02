@@ -21,6 +21,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Getter
 @AgendaCapacityValid
@@ -35,14 +36,17 @@ public class AgendaCreateReqDto {
 	private String agendaContent;
 
 	@NotNull
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
 	@Future(message = "마감일은 현재 시간 이후여야 합니다.")
 	private LocalDateTime agendaDeadLine;
 
 	@NotNull
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
 	@Future(message = "시작 시간은 현재 시간 이후여야 합니다.")
 	private LocalDateTime agendaStartTime;
 
 	@NotNull
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
 	@Future(message = "종료 시간은 현재 시간 이후여야 합니다.")
 	private LocalDateTime agendaEndTime;
 
