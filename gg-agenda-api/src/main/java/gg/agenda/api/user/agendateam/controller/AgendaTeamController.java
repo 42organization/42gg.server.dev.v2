@@ -106,7 +106,7 @@ public class AgendaTeamController {
 	 * 아젠다 팀 공개 모집인 팀 목록 조회
 	 * @param pageRequest 페이지네이션 요청 정보, agendaId 아젠다 아이디
 	 */
-	@GetMapping("/open")
+	@GetMapping("/open/list")
 	public ResponseEntity<List<OpenTeamResDto>> openTeamList(@RequestBody @Valid PageRequestDto pageRequest,
 		@RequestParam("agenda_key") UUID agendaKey) {
 		int page = pageRequest.getPage();

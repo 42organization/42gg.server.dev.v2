@@ -883,7 +883,8 @@ public class AgendaTeamControllerTest {
 			AgendaTeamProfile updatedAtp = agendaTeamProfileRepository.findById(atp.getId()).orElse(null);
 			assert updatedAtp != null;
 			assertThat(updatedAtp.getIsExist()).isFalse();
-			ticketRepository.findByAgendaProfileAndIsApprovedTrueAndIsUsedFalse(updatedAtp.getProfile())
+			ticketRepository.findFirstByAgendaProfileAndIsApprovedTrueAndIsUsedFalseOrderByCreatedAtDesc(
+					updatedAtp.getProfile())
 				.ifPresent(ticket -> {
 					assertThat(ticket.getUsedTo()).isNull();
 				});
@@ -917,11 +918,13 @@ public class AgendaTeamControllerTest {
 			AgendaTeamProfile updatedAtpLeader = agendaTeamProfileRepository.findById(atpLeader.getId()).orElse(null);
 			assert updatedAtpLeader != null;
 			assertThat(updatedAtpLeader.getIsExist()).isFalse();
-			ticketRepository.findByAgendaProfileAndIsApprovedTrueAndIsUsedFalse(updatedAtp.getProfile())
+			ticketRepository.findFirstByAgendaProfileAndIsApprovedTrueAndIsUsedFalseOrderByCreatedAtDesc(
+					updatedAtp.getProfile())
 				.ifPresent(ticket -> {
 					assertThat(ticket.getUsedTo()).isNull();
 				});
-			ticketRepository.findByAgendaProfileAndIsApprovedTrueAndIsUsedFalse(updatedAtpLeader.getProfile())
+			ticketRepository.findFirstByAgendaProfileAndIsApprovedTrueAndIsUsedFalseOrderByCreatedAtDesc(
+					updatedAtpLeader.getProfile())
 				.ifPresent(ticket -> {
 					assertThat(ticket.getUsedTo()).isNull();
 				});
@@ -1083,7 +1086,7 @@ public class AgendaTeamControllerTest {
 			String content = objectMapper.writeValueAsString(req);
 			// when
 			String res = mockMvc.perform(
-					get("/agenda/team/open")
+					get("/agenda/team/open/list")
 						.header("Authorization", "Bearer " + seoulUserAccessToken)
 						.param("agenda_key", agenda.getAgendaKey().toString())
 						.param("page", String.valueOf(page))
@@ -1109,7 +1112,7 @@ public class AgendaTeamControllerTest {
 			String content = objectMapper.writeValueAsString(req);
 			// when
 			String res = mockMvc.perform(
-					get("/agenda/team/open")
+					get("/agenda/team/open/list")
 						.header("Authorization", "Bearer " + seoulUserAccessToken)
 						.param("agenda_key", agenda.getAgendaKey().toString())
 						.content(content)
@@ -1129,7 +1132,7 @@ public class AgendaTeamControllerTest {
 			String content = objectMapper.writeValueAsString(req);
 			// when && then
 			mockMvc.perform(
-					get("/agenda/team/open")
+					get("/agenda/team/open/list")
 						.header("Authorization", "Bearer " + seoulUserAccessToken)
 						.param("agenda_key", noAgendaKey.toString())
 						.content(content)
