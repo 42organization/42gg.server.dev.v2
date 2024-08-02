@@ -230,14 +230,14 @@ public class Agenda extends BaseTimeEntity {
 
 	public void addTeam(Location location, LocalDateTime now) {
 		mustBeWithinLocation(location);
-		mustStatusOnGoing();
+		mustStatusOpen();
 		mustBeforeDeadline(now);
 		mustHaveCapacity();
 	}
 
 	public void confirmTeam(Location location, LocalDateTime now) {
 		mustBeWithinLocation(location);
-		mustStatusOnGoing();
+		mustStatusOpen();
 		mustBeforeDeadline(now);
 		mustHaveCapacity();
 		this.currentTeam++;
@@ -245,18 +245,18 @@ public class Agenda extends BaseTimeEntity {
 
 	public void attendTeam(Location location, LocalDateTime now) {
 		mustBeWithinLocation(location);
-		mustStatusOnGoing();
+		mustStatusOpen();
 		mustBeforeDeadline(now);
 	}
 
 	public void updateTeam(Location location, LocalDateTime now) {
 		mustBeWithinLocation(location);
-		mustStatusOnGoing();
+		mustStatusOpen();
 		mustBeforeDeadline(now);
 	}
 
-	public void cancelTeam(LocalDateTime now) {
-		mustStatusOnGoing();
+	public void leaveTeam(LocalDateTime now) {
+		mustStatusOpen();
 		mustBeforeDeadline(now);
 	}
 
@@ -266,7 +266,7 @@ public class Agenda extends BaseTimeEntity {
 		}
 	}
 
-	private void mustStatusOnGoing() {
+	private void mustStatusOpen() {
 		if (this.status != AgendaStatus.OPEN) {
 			throw new InvalidParameterException(AGENDA_NOT_OPEN);
 		}
