@@ -25,8 +25,11 @@ public interface AgendaTeamProfileRepository extends JpaRepository<AgendaTeamPro
 
 	Optional<AgendaTeamProfile> findByAgendaAndProfileAndIsExistTrue(Agenda agenda, AgendaProfile agendaProfile);
 
+	/**
+	 * 해당 메서드는 N+1 문제가 발생할 수 있습니다.
+	 */
 	List<AgendaTeamProfile> findAllByAgendaTeam(AgendaTeam agendaTeam);
-
+	
 	@Query("SELECT atp FROM AgendaTeamProfile atp WHERE atp.profile = :agendaProfile AND atp.isExist = true")
 	List<AgendaTeamProfile> findByProfileAndIsExistTrue(@Param("agendaProfile") AgendaProfile agendaProfile);
 

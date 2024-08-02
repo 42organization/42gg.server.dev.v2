@@ -118,39 +118,7 @@ public class Agenda extends BaseTimeEntity {
 		this.isRanking = isRanking;
 	}
 
-	public void addTeam(Location location, LocalDateTime now) {
-		mustBeWithinLocation(location);
-		mustStatusOnGoing();
-		mustBeforeDeadline(now);
-		mustHaveCapacity();
-	}
-
-	public void confirmTeam(Location location, LocalDateTime now) {
-		mustBeWithinLocation(location);
-		mustStatusOnGoing();
-		mustBeforeDeadline(now);
-		mustHaveCapacity();
-		this.currentTeam++;
-	}
-
-	public void attendTeam(Location location, LocalDateTime now) {
-		mustBeWithinLocation(location);
-		mustStatusOnGoing();
-		mustBeforeDeadline(now);
-	}
-
-	public void updateTeam(Location location, LocalDateTime now) {
-		mustBeWithinLocation(location);
-		mustStatusOnGoing();
-		mustBeforeDeadline(now);
-	}
-
-	public void cancelTeam(LocalDateTime now) {
-		mustStatusOnGoing();
-		mustBeforeDeadline(now);
-	}
-
-	public void confirm() {
+	public void confirmAgenda() {
 		if (this.status == AgendaStatus.FINISH) {
 			throw new InvalidParameterException(AGENDA_ALREADY_FINISHED);
 		}
@@ -163,7 +131,7 @@ public class Agenda extends BaseTimeEntity {
 		this.status = AgendaStatus.CONFIRM;
 	}
 
-	public void finish() {
+	public void finishAgenda() {
 		if (this.status == AgendaStatus.OPEN) {
 			throw new InvalidParameterException(AGENDA_DOES_NOT_CONFIRM);
 		}
@@ -258,6 +226,38 @@ public class Agenda extends BaseTimeEntity {
 		}
 		this.minPeople = minPeople;
 		this.maxPeople = maxPeople;
+	}
+
+	public void addTeam(Location location, LocalDateTime now) {
+		mustBeWithinLocation(location);
+		mustStatusOnGoing();
+		mustBeforeDeadline(now);
+		mustHaveCapacity();
+	}
+
+	public void confirmTeam(Location location, LocalDateTime now) {
+		mustBeWithinLocation(location);
+		mustStatusOnGoing();
+		mustBeforeDeadline(now);
+		mustHaveCapacity();
+		this.currentTeam++;
+	}
+
+	public void attendTeam(Location location, LocalDateTime now) {
+		mustBeWithinLocation(location);
+		mustStatusOnGoing();
+		mustBeforeDeadline(now);
+	}
+
+	public void updateTeam(Location location, LocalDateTime now) {
+		mustBeWithinLocation(location);
+		mustStatusOnGoing();
+		mustBeforeDeadline(now);
+	}
+
+	public void cancelTeam(LocalDateTime now) {
+		mustStatusOnGoing();
+		mustBeforeDeadline(now);
 	}
 
 	private void mustBeWithinLocation(Location location) {

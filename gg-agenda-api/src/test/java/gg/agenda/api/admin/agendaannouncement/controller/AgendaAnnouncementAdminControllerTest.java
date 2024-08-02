@@ -96,7 +96,7 @@ public class AgendaAnnouncementAdminControllerTest {
 			String request = objectMapper.writeValueAsString(pageDto);
 
 			// when
-			String response = mockMvc.perform(get("/admin/agenda/announcement")
+			String response = mockMvc.perform(get("/agenda/admin/announcement")
 					.header("Authorization", "Bearer " + accessToken)
 					.param("agenda_key", agenda.getAgendaKey().toString())
 					.contentType(MediaType.APPLICATION_JSON)
@@ -125,7 +125,7 @@ public class AgendaAnnouncementAdminControllerTest {
 			String request = objectMapper.writeValueAsString(pageDto);
 
 			// when
-			String response = mockMvc.perform(get("/admin/agenda/announcement")
+			String response = mockMvc.perform(get("/agenda/admin/announcement")
 					.header("Authorization", "Bearer " + accessToken)
 					.param("agenda_key", agenda.getAgendaKey().toString())
 					.contentType(MediaType.APPLICATION_JSON)
@@ -148,7 +148,7 @@ public class AgendaAnnouncementAdminControllerTest {
 			String request = objectMapper.writeValueAsString(pageDto);
 
 			// expected
-			mockMvc.perform(get("/admin/agenda/announcement")
+			mockMvc.perform(get("/agenda/admin/announcement")
 					.header("Authorization", "Bearer " + accessToken)
 					.param("agenda_key", UUID.randomUUID().toString())
 					.contentType(MediaType.APPLICATION_JSON)
@@ -172,7 +172,7 @@ public class AgendaAnnouncementAdminControllerTest {
 			String request = objectMapper.writeValueAsString(updateReqDto);
 
 			// when
-			mockMvc.perform(patch("/admin/agenda/announcement")
+			mockMvc.perform(patch("/agenda/admin/announcement")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(request))
@@ -195,7 +195,7 @@ public class AgendaAnnouncementAdminControllerTest {
 			String request = objectMapper.writeValueAsString(updateReqDto);
 
 			// expected
-			mockMvc.perform(patch("/admin/agenda/announcement")
+			mockMvc.perform(patch("/agenda/admin/announcement")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(request))
@@ -213,7 +213,7 @@ public class AgendaAnnouncementAdminControllerTest {
 			String request = objectMapper.writeValueAsString(updateReqDto);
 
 			// expected
-			mockMvc.perform(patch("/admin/agenda/announcement")
+			mockMvc.perform(patch("/agenda/admin/announcement")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(request))
@@ -232,7 +232,7 @@ public class AgendaAnnouncementAdminControllerTest {
 			String request = objectMapper.writeValueAsString(updateReqDto);
 
 			// expected
-			mockMvc.perform(patch("/admin/agenda/announcement")
+			mockMvc.perform(patch("/agenda/admin/announcement")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(request))
@@ -251,7 +251,7 @@ public class AgendaAnnouncementAdminControllerTest {
 			String request = objectMapper.writeValueAsString(updateReqDto);
 
 			// expected
-			mockMvc.perform(patch("/admin/agenda/announcement")
+			mockMvc.perform(patch("/agenda/admin/announcement")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(request))
