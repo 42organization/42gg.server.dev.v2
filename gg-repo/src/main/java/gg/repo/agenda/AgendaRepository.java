@@ -19,7 +19,7 @@ public interface AgendaRepository extends JpaRepository<Agenda, Long> {
 	@Query("SELECT a FROM Agenda a WHERE a.status = :status")
 	List<Agenda> findAllByStatusIs(AgendaStatus status);
 
-	Page<Agenda> findAllByStatusIs(Pageable pageable, AgendaStatus status);
+	Page<Agenda> findAllByStatusIs(AgendaStatus status, Pageable pageable);
 
 	Optional<Agenda> findAgendaByAgendaKey(UUID usedTo);
 }

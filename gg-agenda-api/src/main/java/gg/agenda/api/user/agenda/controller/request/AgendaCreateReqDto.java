@@ -1,31 +1,30 @@
 package gg.agenda.api.user.agenda.controller.request;
 
-import static gg.utils.exception.ErrorCode.*;
-
 import java.time.LocalDateTime;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-import org.mapstruct.BeforeMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
+import gg.agenda.api.user.agenda.controller.request.validator.AgendaCapacityValid;
+import gg.agenda.api.user.agenda.controller.request.validator.AgendaScheduleValid;
 import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.type.Location;
-import gg.utils.exception.custom.InvalidParameterException;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
+@AgendaCapacityValid
+@AgendaScheduleValid
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AgendaCreateReqDto {
 
@@ -71,14 +70,11 @@ public class AgendaCreateReqDto {
 	@NotNull
 	private Boolean agendaIsRanking;
 
-	@NotNull
-	private Boolean agendaIsOfficial;
-
 	@Builder
 	public AgendaCreateReqDto(String agendaTitle, String agendaContents, LocalDateTime agendaDeadLine,
 		LocalDateTime agendaStartTime, LocalDateTime agendaEndTime, int agendaMinTeam, int agendaMaxTeam,
 		int agendaMinPeople, int agendaMaxPeople, String agendaPoster, Location agendaLocation,
-		Boolean agendaIsRanking, Boolean agendaIsOfficial) {
+		Boolean agendaIsRanking) {
 		this.agendaTitle = agendaTitle;
 		this.agendaContent = agendaContents;
 		this.agendaDeadLine = agendaDeadLine;
@@ -91,11 +87,11 @@ public class AgendaCreateReqDto {
 		this.agendaPoster = agendaPoster;
 		this.agendaLocation = agendaLocation;
 		this.agendaIsRanking = agendaIsRanking;
-		this.agendaIsOfficial = agendaIsOfficial;
 	}
 
 	@Mapper
 	public interface MapStruct {
+
 		AgendaCreateReqDto.MapStruct INSTANCE = Mappers.getMapper(AgendaCreateReqDto.MapStruct.class);
 
 		@Mapping(target = "id", ignore = true)
@@ -112,32 +108,9 @@ public class AgendaCreateReqDto {
 		@Mapping(target = "posterUri", source = "dto.agendaPoster")
 		@Mapping(target = "hostIntraId", source = "user.intraId")
 		@Mapping(target = "location", source = "dto.agendaLocation")
-		@Mapping(target = "status", constant = "OPEN")
-		@Mapping(target = "isOfficial", source = "dto.agendaIsOfficial")
 		@Mapping(target = "isRanking", source = "dto.agendaIsRanking")
+		@Mapping(target = "status", constant = "OPEN")
+		@Mapping(target = "isOfficial", constant = "false")
 		Agenda toEntity(AgendaCreateReqDto dto, UserDto user);
-
-		@BeforeMapping
-		default void mustHaveValidAgendaSchedule(AgendaCreateReqDto dto, UserDto user) {
-			if (!dto.getAgendaDeadLine().isBefore(dto.getAgendaStartTime())) {
-				throw new InvalidParameterException(AGENDA_INVALID_SCHEDULE);
-			}
-			if (!dto.getAgendaDeadLine().isBefore(dto.getAgendaEndTime())) {
-				throw new InvalidParameterException(AGENDA_INVALID_SCHEDULE);
-			}
-			if (!dto.getAgendaStartTime().isBefore(dto.getAgendaEndTime())) {
-				throw new InvalidParameterException(AGENDA_INVALID_SCHEDULE);
-			}
-		}
-
-		@BeforeMapping
-		default void mustHaveValidParam(AgendaCreateReqDto dto, UserDto user) {
-			if (dto.getAgendaMinTeam() > dto.getAgendaMaxTeam()) {
-				throw new InvalidParameterException(AGENDA_INVALID_PARAM);
-			}
-			if (dto.getAgendaMinPeople() > dto.getAgendaMaxPeople()) {
-				throw new InvalidParameterException(AGENDA_INVALID_PARAM);
-			}
-		}
 	}
 }

@@ -119,6 +119,7 @@ public class AgendaControllerTest {
 
 			// then
 			assertThat(result.getAgendaTitle()).isEqualTo(agenda.getTitle());
+			assertThat(result.getAgendaMinPeople()).isEqualTo(agenda.getMinPeople());
 			assertThat(result.getAnnouncementTitle()).isEqualTo(announcement.getTitle());
 		}
 
@@ -256,11 +257,11 @@ public class AgendaControllerTest {
 				.agendaStartTime(LocalDateTime.now().plusDays(5))
 				.agendaEndTime(LocalDateTime.now().plusDays(7))
 				.agendaMinTeam(2).agendaMaxTeam(5).agendaMinPeople(1).agendaMaxPeople(5)
-				.agendaIsRanking(true).agendaIsOfficial(true).agendaLocation(Location.SEOUL).build();
+				.agendaIsRanking(true).agendaLocation(Location.SEOUL).build();
 			String request = objectMapper.writeValueAsString(dto);
 
 			// when
-			String response = mockMvc.perform(post("/agenda/create")
+			String response = mockMvc.perform(post("/agenda/request")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType("application/json")
 					.content(request))
@@ -273,6 +274,7 @@ public class AgendaControllerTest {
 			assertThat(agenda.isPresent()).isTrue();
 			assertThat(agenda.get().getTitle()).isEqualTo(dto.getAgendaTitle());
 			assertThat(agenda.get().getContent()).isEqualTo(dto.getAgendaContent());
+			assertThat(agenda.get().getMinPeople()).isEqualTo(dto.getAgendaMinPeople());
 		}
 
 		@Test
@@ -285,11 +287,11 @@ public class AgendaControllerTest {
 				.agendaStartTime(LocalDateTime.now().plusDays(5))
 				.agendaEndTime(LocalDateTime.now().plusDays(7))
 				.agendaMinTeam(2).agendaMaxTeam(5).agendaMinPeople(1).agendaMaxPeople(5)
-				.agendaIsRanking(true).agendaIsOfficial(true).agendaLocation(Location.SEOUL).build();
+				.agendaIsRanking(true).agendaLocation(Location.SEOUL).build();
 			String request = objectMapper.writeValueAsString(dto);
 
 			// expected
-			mockMvc.perform(post("/agenda/create")
+			mockMvc.perform(post("/agenda/request")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType("application/json")
 					.content(request))
@@ -306,11 +308,11 @@ public class AgendaControllerTest {
 				.agendaStartTime(LocalDateTime.now().plusDays(5))
 				.agendaEndTime(LocalDateTime.now().plusDays(4))
 				.agendaMinTeam(2).agendaMaxTeam(5).agendaMinPeople(1).agendaMaxPeople(5)
-				.agendaIsRanking(true).agendaIsOfficial(true).agendaLocation(Location.SEOUL).build();
+				.agendaIsRanking(true).agendaLocation(Location.SEOUL).build();
 			String request = objectMapper.writeValueAsString(dto);
 
 			// expected
-			mockMvc.perform(post("/agenda/create")
+			mockMvc.perform(post("/agenda/request")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType("application/json")
 					.content(request))
@@ -327,11 +329,11 @@ public class AgendaControllerTest {
 				.agendaStartTime(LocalDateTime.now().plusDays(7))
 				.agendaEndTime(LocalDateTime.now().plusDays(5))
 				.agendaMinTeam(2).agendaMaxTeam(5).agendaMinPeople(1).agendaMaxPeople(5)
-				.agendaIsRanking(true).agendaIsOfficial(true).agendaLocation(Location.SEOUL).build();
+				.agendaIsRanking(true).agendaLocation(Location.SEOUL).build();
 			String request = objectMapper.writeValueAsString(dto);
 
 			// expected
-			mockMvc.perform(post("/agenda/create")
+			mockMvc.perform(post("/agenda/request")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType("application/json")
 					.content(request))
@@ -348,11 +350,11 @@ public class AgendaControllerTest {
 				.agendaStartTime(LocalDateTime.now().plusDays(5))
 				.agendaEndTime(LocalDateTime.now().plusDays(7))
 				.agendaMinTeam(7).agendaMaxTeam(5).agendaMinPeople(1).agendaMaxPeople(5)
-				.agendaIsRanking(true).agendaIsOfficial(true).agendaLocation(Location.SEOUL).build();
+				.agendaIsRanking(true).agendaLocation(Location.SEOUL).build();
 			String request = objectMapper.writeValueAsString(dto);
 
 			// expected
-			mockMvc.perform(post("/agenda/create")
+			mockMvc.perform(post("/agenda/request")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType("application/json")
 					.content(request))
@@ -369,11 +371,11 @@ public class AgendaControllerTest {
 				.agendaStartTime(LocalDateTime.now().plusDays(5))
 				.agendaEndTime(LocalDateTime.now().plusDays(7))
 				.agendaMinTeam(2).agendaMaxTeam(5).agendaMinPeople(6).agendaMaxPeople(5)
-				.agendaIsRanking(true).agendaIsOfficial(true).agendaLocation(Location.SEOUL).build();
+				.agendaIsRanking(true).agendaLocation(Location.SEOUL).build();
 			String request = objectMapper.writeValueAsString(dto);
 
 			// expected
-			mockMvc.perform(post("/agenda/create")
+			mockMvc.perform(post("/agenda/request")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType("application/json")
 					.content(request))
@@ -391,11 +393,11 @@ public class AgendaControllerTest {
 				.agendaStartTime(LocalDateTime.now().plusDays(5))
 				.agendaEndTime(LocalDateTime.now().plusDays(7))
 				.agendaMinTeam(value).agendaMaxTeam(5).agendaMinPeople(1).agendaMaxPeople(5)
-				.agendaIsRanking(true).agendaIsOfficial(true).agendaLocation(Location.SEOUL).build();
+				.agendaIsRanking(true).agendaLocation(Location.SEOUL).build();
 			String request = objectMapper.writeValueAsString(dto);
 
 			// expected
-			mockMvc.perform(post("/agenda/create")
+			mockMvc.perform(post("/agenda/request")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType("application/json")
 					.content(request))
@@ -413,11 +415,11 @@ public class AgendaControllerTest {
 				.agendaStartTime(LocalDateTime.now().plusDays(5))
 				.agendaEndTime(LocalDateTime.now().plusDays(7))
 				.agendaMinTeam(2).agendaMaxTeam(5).agendaMinPeople(value).agendaMaxPeople(5)
-				.agendaIsRanking(true).agendaIsOfficial(true).agendaLocation(Location.SEOUL).build();
+				.agendaIsRanking(true).agendaLocation(Location.SEOUL).build();
 			String request = objectMapper.writeValueAsString(dto);
 
 			// expected
-			mockMvc.perform(post("/agenda/create")
+			mockMvc.perform(post("/agenda/request")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType("application/json")
 					.content(request))
@@ -658,13 +660,19 @@ public class AgendaControllerTest {
 			int teamSize = 10;
 			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(),
 				LocalDateTime.now().minusDays(10), false, AgendaStatus.CONFIRM);
+			AgendaAwardsReqDto agendaAwardsReqDto = AgendaAwardsReqDto.builder()
+				.awards(List.of())	// 시상하지 않는 대회도 빈 리스트를 전송해야합니다.
+				.build();
 			IntStream.range(0, teamSize)
 				.forEach(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM));
+			String request = objectMapper.writeValueAsString(agendaAwardsReqDto);
 
 			// when
 			mockMvc.perform(patch("/agenda/finish")
 					.param("agenda_key", agenda.getAgendaKey().toString())
-					.header("Authorization", "Bearer " + accessToken))
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(request))
 				.andExpect(status().isNoContent());
 			Agenda result = em.createQuery("select a from Agenda a where a.agendaKey = :agendaKey", Agenda.class)
 				.setParameter("agendaKey", agenda.getAgendaKey()).getSingleResult();

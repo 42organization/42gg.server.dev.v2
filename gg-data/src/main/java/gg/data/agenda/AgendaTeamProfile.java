@@ -2,6 +2,7 @@ package gg.data.agenda;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,15 +24,15 @@ public class AgendaTeamProfile extends BaseTimeEntity {
 	@Column(name = "id", nullable = false)
 	private Long id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "profile_id", nullable = false)
 	private AgendaProfile profile;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "agenda_id", nullable = false)
 	private Agenda agenda;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "agenda_team_id", nullable = false)
 	private AgendaTeam agendaTeam;
 
