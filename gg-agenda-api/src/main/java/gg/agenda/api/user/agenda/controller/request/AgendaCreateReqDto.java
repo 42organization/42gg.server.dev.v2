@@ -1,5 +1,6 @@
 package gg.agenda.api.user.agenda.controller.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 
 import javax.validation.constraints.Future;
@@ -21,6 +22,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Getter
 @AgendaCapacityValid
@@ -34,15 +36,15 @@ public class AgendaCreateReqDto {
 	@NotBlank
 	private String agendaContent;
 
-	@NotNull
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
 	@Future(message = "마감일은 현재 시간 이후여야 합니다.")
 	private LocalDateTime agendaDeadLine;
 
-	@NotNull
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
 	@Future(message = "시작 시간은 현재 시간 이후여야 합니다.")
 	private LocalDateTime agendaStartTime;
 
-	@NotNull
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
 	@Future(message = "종료 시간은 현재 시간 이후여야 합니다.")
 	private LocalDateTime agendaEndTime;
 
