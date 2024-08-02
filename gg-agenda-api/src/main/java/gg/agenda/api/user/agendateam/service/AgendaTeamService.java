@@ -205,13 +205,14 @@ public class AgendaTeamService {
 				.map(AgendaTeamProfile::getProfile)
 				.collect(Collectors.toList());
 			agendaTeam.leaveTeamLeader();
-		} // 팀원일 때
-		AgendaTeamProfile teamMateProfile = profiles.stream()
-			.filter(profile -> profile.getProfile().getUserId().equals(user.getId()))
-			.findFirst().orElseThrow(() -> new ForbiddenException(NOT_TEAM_MATE));
-		teamMateProfile.leaveTeam();
-		agendaTeam.leaveTeamMate();
-		changedProfiles = Collections.singletonList(teamMateProfile.getProfile());
+		} else { // 팀원일 때
+			AgendaTeamProfile teamMateProfile = profiles.stream()
+				.filter(profile -> profile.getProfile().getUserId().equals(user.getId()))
+				.findFirst().orElseThrow(() -> new ForbiddenException(NOT_TEAM_MATE));
+			teamMateProfile.leaveTeam();
+			agendaTeam.leaveTeamMate();
+			changedProfiles = Collections.singletonList(teamMateProfile.getProfile());
+		}
 
 		if (agenda.getIsOfficial()) {
 			ticketService.refundTickets(changedProfiles, agendaKey);
