@@ -33,6 +33,7 @@ import gg.data.agenda.Agenda;
 import gg.utils.dto.PageRequestDto;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -63,8 +64,8 @@ public class AgendaController {
 
 	@PostMapping("/request")
 	public ResponseEntity<AgendaKeyResDto> agendaAdd(@Login @Parameter(hidden = true) UserDto user,
-		@ModelAttribute @Valid AgendaCreateReqDto agendaCreateReqDto) {
-		UUID agendaKey = agendaService.addAgenda(agendaCreateReqDto, user).getAgendaKey();
+		@ModelAttribute @Valid AgendaCreateReqDto agendaCreateReqDto, @RequestParam MultipartFile file) {
+		UUID agendaKey = agendaService.addAgenda(agendaCreateReqDto, file, user).getAgendaKey();
 		AgendaKeyResDto responseDto = AgendaKeyResDto.builder().agendaKey(agendaKey).build();
 		return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
 	}

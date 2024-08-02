@@ -33,6 +33,7 @@ import gg.repo.agenda.AgendaTeamRepository;
 import gg.utils.exception.custom.ForbiddenException;
 import gg.utils.exception.custom.NotExistException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
@@ -68,14 +69,13 @@ public class AgendaService {
 	}
 
 	@Transactional
-	public Agenda addAgenda(AgendaCreateReqDto agendaCreateReqDto, UserDto user) {
+	public Agenda addAgenda(AgendaCreateReqDto createDto, MultipartFile file, UserDto user) {
 		try {
-			URL savedUrl = null;
-			if (Objects.nonNull(agendaCreateReqDto.getAgendaPoster())) {
-				savedUrl = imageHandler.uploadImage(agendaCreateReqDto.getAgendaPoster(), user.getIntraId());
+			if (Objects.nonNull(createDto.getAgendaPoster())) {
+				URL savedUrl = imageHandler.uploadImage(file, user.getIntraId());
+				createDto.setAgendaPoster(savedUrl);
 			}
-			Agenda newAgenda = AgendaCreateReqDto.MapStruct.INSTANCE.toEntity(
-				agendaCreateReqDto, user.toString(), savedUrl == null ? "" : savedUrl.toString());
+			Agenda newAgenda = AgendaCreateReqDto.MapStruct.INSTANCE.toEntity(createDto, user.toString());
 			return agendaRepository.save(newAgenda);
 		} catch (Exception e) {
 			log.debug("Agenda add failed: {}", e.getMessage());

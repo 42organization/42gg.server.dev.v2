@@ -68,7 +68,7 @@ public class AgendaCreateReqDto {
 	@Max(100)
 	private int agendaMaxPeople;
 
-	private MultipartFile agendaPoster;
+	private URL agendaPoster;
 
 	@NotNull
 	private Location agendaLocation;
@@ -79,7 +79,7 @@ public class AgendaCreateReqDto {
 	@Builder
 	public AgendaCreateReqDto(String agendaTitle, String agendaContent, LocalDateTime agendaDeadLine,
 		LocalDateTime agendaStartTime, LocalDateTime agendaEndTime, int agendaMinTeam, int agendaMaxTeam,
-		int agendaMinPeople, int agendaMaxPeople, MultipartFile agendaPoster, Location agendaLocation,
+		int agendaMinPeople, int agendaMaxPeople, URL agendaPoster, Location agendaLocation,
 		Boolean agendaIsRanking) {
 		this.agendaTitle = agendaTitle;
 		this.agendaContent = agendaContent;
@@ -93,6 +93,10 @@ public class AgendaCreateReqDto {
 		this.agendaPoster = agendaPoster;
 		this.agendaLocation = agendaLocation;
 		this.agendaIsRanking = agendaIsRanking;
+	}
+
+	public void setAgendaPoster(URL agendaPoster) {
+		this.agendaPoster = agendaPoster;
 	}
 
 	@Mapper
@@ -117,7 +121,7 @@ public class AgendaCreateReqDto {
 		@Mapping(target = "isRanking", source = "dto.agendaIsRanking")
 		@Mapping(target = "status", constant = "OPEN")
 		@Mapping(target = "isOfficial", constant = "false")
-		@Mapping(target = "posterUri", source = "posterUri")
-		Agenda toEntity(AgendaCreateReqDto dto, String userIntraId, String posterUri);
+		@Mapping(target = "posterUri", source = "dto.agendaPoster.toString()")
+		Agenda toEntity(AgendaCreateReqDto dto, String userIntraId);
 	}
 }
