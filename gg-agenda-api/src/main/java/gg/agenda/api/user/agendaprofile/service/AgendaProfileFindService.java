@@ -81,8 +81,9 @@ public class AgendaProfileFindService {
 		AgendaProfile agendaProfile = agendaProfileRepository.findByIntraId(intraId)
 			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
 
-		Page<AgendaTeamProfile> agendaTeamProfilePage = agendaTeamProfileRepository.findByProfileAndIsExistTrueAndAgendaStatus(
-			agendaProfile, AgendaStatus.FINISH, pageable);
+		Page<AgendaTeamProfile> agendaTeamProfilePage =
+			agendaTeamProfileRepository.findByProfileAndIsExistTrueAndAgendaStatus(
+				agendaProfile, AgendaStatus.FINISH, pageable);
 
 		return agendaTeamProfilePage.getContent().stream()
 			.map(agendaTeamProfile -> {

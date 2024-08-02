@@ -20,7 +20,7 @@ public class AttendedAgendaListResDto {
 	private int agendaCurrentTeam;
 	private String agendaLocation;
 	private UUID teamKey;
-	private boolean isOfficial;
+	private Boolean isOfficial;
 	private int agendaMaxPeople;
 	private String teamName;
 	private List<TeamMateDto> teamMates;
