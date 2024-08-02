@@ -4,8 +4,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -28,7 +26,6 @@ import gg.agenda.api.user.agendaprofile.service.AgendaProfileService;
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
 import gg.data.user.type.RoleType;
-import gg.repo.user.UserRepository;
 import gg.utils.dto.PageRequestDto;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
@@ -39,8 +36,6 @@ import lombok.RequiredArgsConstructor;
 public class AgendaProfileController {
 	private final AgendaProfileFindService agendaProfileFindService;
 	private final AgendaProfileService agendaProfileService;
-	private final UserRepository userRepository;
-	private static final Logger log = LoggerFactory.getLogger(AgendaProfileController.class);
 
 	/**
 	 * AgendaProfile 상세 조회 API
