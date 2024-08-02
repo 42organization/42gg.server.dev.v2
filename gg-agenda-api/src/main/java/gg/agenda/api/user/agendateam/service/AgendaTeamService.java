@@ -130,9 +130,10 @@ public class AgendaTeamService {
 			throw new BusinessException(LOCATION_NOT_VALID);
 		}
 
-		agendaTeamProfileRepository.findByAgendaProfileAndIsExistTrue(agenda, agendaProfile).ifPresent(teamProfile -> {
-			throw new DuplicationException(AGENDA_TEAM_FORBIDDEN);
-		});
+		agendaTeamProfileRepository.findByAgendaAndProfileAndIsExistTrue(agenda, agendaProfile)
+			.ifPresent(teamProfile -> {
+				throw new DuplicationException(AGENDA_TEAM_FORBIDDEN);
+			});
 
 		if (agenda.getIsOfficial()) {
 			Ticket ticket = ticketRepository.findByAgendaProfileAndIsApprovedTrueAndIsUsedFalse(agendaProfile)
@@ -224,11 +225,16 @@ public class AgendaTeamService {
 	public List<OpenTeamResDto> listOpenTeam(UUID agendaKey, Pageable pageable) {
 		Agenda agenda = agendaRepository.findByAgendaKey(agendaKey)
 			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
-
 		List<AgendaTeam> agendaTeams = agendaTeamRepository.findByAgendaAndStatusAndIsPrivateFalse(agenda, OPEN,
 			pageable).getContent();
 		return agendaTeams.stream()
-			.map(OpenTeamResDto::new)
+			.map(agendaTeam -> {
+				List<Coalition> coalitions = agendaTeamProfileRepository
+					.findByAgendaTeamAndIsExistTrue(agendaTeam).stream()
+					.map(agendaTeamProfile -> agendaTeamProfile.getProfile().getCoalition())
+					.collect(Collectors.toList());
+				return new OpenTeamResDto(agendaTeam, coalitions);
+			})
 			.collect(Collectors.toList());
 	}
 
