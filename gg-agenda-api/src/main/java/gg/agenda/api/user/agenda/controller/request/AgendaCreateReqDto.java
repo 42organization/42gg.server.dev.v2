@@ -16,14 +16,12 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import gg.agenda.api.user.agenda.controller.request.validator.AgendaCapacityValid;
 import gg.agenda.api.user.agenda.controller.request.validator.AgendaScheduleValid;
-import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.type.Location;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @AgendaCapacityValid
@@ -68,7 +66,7 @@ public class AgendaCreateReqDto {
 	@Max(100)
 	private int agendaMaxPeople;
 
-	private URL agendaPoster;
+	private URL agendaPosterUri;
 
 	@NotNull
 	private Location agendaLocation;
@@ -79,7 +77,7 @@ public class AgendaCreateReqDto {
 	@Builder
 	public AgendaCreateReqDto(String agendaTitle, String agendaContent, LocalDateTime agendaDeadLine,
 		LocalDateTime agendaStartTime, LocalDateTime agendaEndTime, int agendaMinTeam, int agendaMaxTeam,
-		int agendaMinPeople, int agendaMaxPeople, URL agendaPoster, Location agendaLocation,
+		int agendaMinPeople, int agendaMaxPeople, URL agendaPosterUri, Location agendaLocation,
 		Boolean agendaIsRanking) {
 		this.agendaTitle = agendaTitle;
 		this.agendaContent = agendaContent;
@@ -90,13 +88,13 @@ public class AgendaCreateReqDto {
 		this.agendaMaxTeam = agendaMaxTeam;
 		this.agendaMinPeople = agendaMinPeople;
 		this.agendaMaxPeople = agendaMaxPeople;
-		this.agendaPoster = agendaPoster;
+		this.agendaPosterUri = agendaPosterUri;
 		this.agendaLocation = agendaLocation;
 		this.agendaIsRanking = agendaIsRanking;
 	}
 
-	public void setAgendaPoster(URL agendaPoster) {
-		this.agendaPoster = agendaPoster;
+	public void updateAgendaPosterUri(URL posterUri) {
+		this.agendaPosterUri = posterUri;
 	}
 
 	@Mapper
@@ -121,7 +119,7 @@ public class AgendaCreateReqDto {
 		@Mapping(target = "isRanking", source = "dto.agendaIsRanking")
 		@Mapping(target = "status", constant = "OPEN")
 		@Mapping(target = "isOfficial", constant = "false")
-		@Mapping(target = "posterUri", source = "dto.agendaPoster.toString()")
+		@Mapping(target = "posterUri", source = "dto.agendaPosterUri.toString()")
 		Agenda toEntity(AgendaCreateReqDto dto, String userIntraId);
 	}
 }

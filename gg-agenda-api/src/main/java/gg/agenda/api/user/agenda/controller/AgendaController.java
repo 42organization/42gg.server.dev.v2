@@ -64,7 +64,8 @@ public class AgendaController {
 
 	@PostMapping("/request")
 	public ResponseEntity<AgendaKeyResDto> agendaAdd(@Login @Parameter(hidden = true) UserDto user,
-		@ModelAttribute @Valid AgendaCreateReqDto agendaCreateReqDto, @RequestParam MultipartFile file) {
+		@ModelAttribute @Valid AgendaCreateReqDto agendaCreateReqDto,
+		@RequestParam(required = false) MultipartFile file) {
 		UUID agendaKey = agendaService.addAgenda(agendaCreateReqDto, file, user).getAgendaKey();
 		AgendaKeyResDto responseDto = AgendaKeyResDto.builder().agendaKey(agendaKey).build();
 		return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
