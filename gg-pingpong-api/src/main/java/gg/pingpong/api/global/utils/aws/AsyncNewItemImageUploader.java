@@ -11,9 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import gg.data.pingpong.store.Item;
 import gg.utils.file.handler.ImageHandler;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class AsyncNewItemImageUploader {
