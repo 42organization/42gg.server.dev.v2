@@ -15,7 +15,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import gg.data.pingpong.store.Item;
 
 /**
- * This Module has been replaced with gg.utils.file.handler.AwsImageHandler
+ * This Module has been replaced by gg.utils.file.handler.AwsImageHandler
  */
 @Deprecated
 public class ItemImageHandler {

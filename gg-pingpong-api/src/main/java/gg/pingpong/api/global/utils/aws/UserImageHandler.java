@@ -20,7 +20,7 @@ import gg.utils.file.ImageResizingUtil;
 import gg.utils.file.JpegMultipartFile;
 
 /**
- * This Module has been replaced with gg.utils.file.handler.AwsImageHandler
+ * This Module has been replaced by gg.utils.file.handler.AwsImageHandler
  */
 @Deprecated
 public class UserImageHandler {
