@@ -3,9 +3,11 @@ package gg.utils.file.handler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.support.ResourcePatternUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,14 +40,27 @@ public class AwsImageHandler implements ImageHandler {
 
 	@Override
 	public URL uploadImage(MultipartFile multipartFile, String filename) throws IOException {
+		if (filename.isBlank() || isDefaultImage(multipartFile)) {
+			return new URL(defaultImageUrl);
+		}
 		String originalFilename = multipartFile.getOriginalFilename();
 		String storeFileName = createStoredFileName(originalFilename, filename);
 		return uploadToS3(multipartFile, storeFileName);
 	}
 
+	private static boolean isDefaultImage(MultipartFile multipartFile) {
+		if (Objects.isNull(multipartFile.getOriginalFilename())) {
+			return false;
+		}
+		return multipartFile.getOriginalFilename().equals("small_default.jpeg");
+	}
+
 	@Override
-	public URL uploadImageFromUrl(URL imageUrl, String filename) throws IOException {
-		byte[] downloadedImageBytes = fileDownloader.downloadFromUrl(imageUrl.toString());
+	public URL uploadImageFromUrl(String imageUrl, String filename) throws IOException {
+		if (filename.isBlank() || ResourcePatternUtils.isUrl(imageUrl)) {
+			return new URL(defaultImageUrl);
+		}
+		byte[] downloadedImageBytes = fileDownloader.downloadFromUrl(imageUrl);
 		byte[] resizedImageBytes = ImageResizingUtil.resizeImageBytes(downloadedImageBytes, 0.5);
 		MultipartFile multipartFile = new JpegMultipartFile(resizedImageBytes, filename);
 		return uploadToS3(multipartFile, multipartFile.getOriginalFilename());
@@ -69,7 +84,7 @@ public class AwsImageHandler implements ImageHandler {
 		return uploadFileName.substring(pos + 1);
 	}
 
-	URL uploadToS3(MultipartFile multipartFile, String fileName) throws IOException {
+	public URL uploadToS3(MultipartFile multipartFile, String fileName) throws IOException {
 		String s3FileName = this.dir + fileName;
 		InputStream inputStream = multipartFile.getInputStream();
 

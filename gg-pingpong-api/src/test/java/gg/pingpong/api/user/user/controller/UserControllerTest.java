@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Optional;
@@ -46,7 +47,6 @@ import gg.data.user.type.RacketType;
 import gg.data.user.type.RoleType;
 import gg.data.user.type.SnsType;
 import gg.pingpong.api.admin.store.controller.request.ItemUpdateRequestDto;
-import gg.pingpong.api.global.utils.aws.UserImageHandler;
 import gg.pingpong.api.user.game.controller.request.RankResultReqDto;
 import gg.pingpong.api.user.game.service.GameService;
 import gg.pingpong.api.user.store.service.CoinHistoryService;
@@ -77,6 +77,7 @@ import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import gg.utils.dto.GameInfoDto;
 import gg.utils.exception.user.UserNotFoundException;
+import gg.utils.file.handler.AwsImageHandler;
 import lombok.extern.slf4j.Slf4j;
 
 @IntegrationTest
@@ -116,7 +117,7 @@ class UserControllerTest {
 	@Autowired
 	ItemTestUtils itemTestUtils;
 	@MockBean
-	UserImageHandler userImageHandler;
+	AwsImageHandler imageHandler;
 	User admin;
 	@Autowired
 	private MockMvc mockMvc;
@@ -570,8 +571,8 @@ class UserControllerTest {
 	@Test
 	@DisplayName("[post]/pingpong/users/profile-image")
 	public void getUserImage() throws Exception {
-		String mockS3Path = "mockS3Path";
-		Mockito.when(userImageHandler
+		URL mockS3Path = new URL("mockS3Path");
+		Mockito.when(imageHandler
 				.uploadToS3(Mockito.any(MultipartFile.class), Mockito.any(String.class)))
 			.thenReturn(mockS3Path);
 		//        String accessToken = testDataUtils.getLoginAccessToken();

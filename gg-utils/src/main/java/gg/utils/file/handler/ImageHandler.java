@@ -8,5 +8,5 @@ public interface ImageHandler {
 
 	URL uploadImage(MultipartFile multipartFile, String filename) throws IOException;
 
-	URL uploadImageFromUrl(URL imageUrl, String filename) throws IOException;
+	URL uploadImageFromUrl(String imageUrl, String filename) throws IOException;
 }

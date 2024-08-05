@@ -31,11 +31,11 @@ import gg.data.pingpong.store.type.ItemType;
 import gg.pingpong.api.admin.store.controller.request.ItemUpdateRequestDto;
 import gg.pingpong.api.admin.store.controller.response.ItemListResponseDto;
 import gg.pingpong.api.admin.store.service.ItemAdminService;
-import gg.pingpong.api.global.utils.aws.ItemImageHandler;
 import gg.repo.user.UserRepository;
 import gg.utils.ItemTestUtils;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
+import gg.utils.file.handler.AwsImageHandler;
 
 @IntegrationTest
 @AutoConfigureMockMvc
@@ -58,7 +58,7 @@ class ItemAdminControllerTest {
 	@Autowired
 	ItemTestUtils itemTestUtils;
 	@MockBean
-	ItemImageHandler itemImageHandler;
+	AwsImageHandler imageHandler;
 
 	Item item;
 
@@ -99,7 +99,7 @@ class ItemAdminControllerTest {
 	@Test
 	@DisplayName("POST /pingpong/admin/items/history/{itemId}")
 	public void updateItemTest() throws Exception {
-		Mockito.when(itemImageHandler.uploadToS3(Mockito.any(), Mockito.anyString()))
+		Mockito.when(imageHandler.uploadToS3(Mockito.any(), Mockito.anyString()))
 			.thenAnswer(invocation -> invocation.getArgument(1, String.class));
 
 		String accessToken = testDataUtils.getAdminLoginAccessToken();

@@ -19,7 +19,10 @@ import gg.utils.file.FileDownloader;
 import gg.utils.file.ImageResizingUtil;
 import gg.utils.file.JpegMultipartFile;
 
-@Component
+/**
+ * This Module has been replaced with gg.utils.file.handler.AwsImageHandler
+ */
+@Deprecated
 public class UserImageHandler {
 	private final AmazonS3 amazonS3;
 	private final FileDownloader fileDownloader;
