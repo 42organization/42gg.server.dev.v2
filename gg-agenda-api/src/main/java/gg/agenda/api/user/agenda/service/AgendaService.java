@@ -2,19 +2,17 @@ package gg.agenda.api.user.agenda.service;
 
 import static gg.utils.exception.ErrorCode.*;
 
-import gg.utils.exception.custom.BusinessException;
-import gg.utils.file.handler.ImageHandler;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import gg.agenda.api.user.agenda.controller.request.AgendaAwardsReqDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaCreateReqDto;
@@ -30,10 +28,12 @@ import gg.data.agenda.type.AgendaTeamStatus;
 import gg.repo.agenda.AgendaRepository;
 import gg.repo.agenda.AgendaTeamProfileRepository;
 import gg.repo.agenda.AgendaTeamRepository;
+import gg.utils.exception.custom.BusinessException;
 import gg.utils.exception.custom.ForbiddenException;
 import gg.utils.exception.custom.NotExistException;
+import gg.utils.file.handler.ImageHandler;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -69,16 +69,17 @@ public class AgendaService {
 	}
 
 	@Transactional
-	public Agenda addAgenda(AgendaCreateReqDto createDto, MultipartFile file, UserDto user) {
+	public Agenda addAgenda(AgendaCreateReqDto createDto, MultipartFile agendaPoster, UserDto user) {
 		try {
-			if (Objects.nonNull(file)) {
-				URL savedUrl = imageHandler.uploadImage(file, user.getIntraId());
-				createDto.updateAgendaPosterUri(savedUrl);
-			}
 			Agenda newAgenda = AgendaCreateReqDto.MapStruct.INSTANCE.toEntity(createDto, user.toString());
-			return agendaRepository.save(newAgenda);
-		} catch (Exception e) {
-			log.debug("Agenda add failed: {}", e.getMessage());
+			Agenda savedAgenda = agendaRepository.save(newAgenda);
+
+			URL savedUrl = imageHandler.uploadImage(agendaPoster, savedAgenda.getAgendaKey().toString());
+			savedAgenda.updatePosterUri(savedUrl.toString());
+
+			return savedAgenda;
+		} catch (IOException e) {
+			log.error("Failed to upload image for agenda poster", e);
 			throw new BusinessException(AGENDA_CREATE_FAILED);
 		}
 	}
