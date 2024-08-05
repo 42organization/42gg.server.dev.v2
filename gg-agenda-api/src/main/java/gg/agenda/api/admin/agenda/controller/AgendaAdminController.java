@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,7 +56,7 @@ public class AgendaAdminController {
 		@ApiResponse(responseCode = "409", description = "Agenda 팀 인원 제한을 변경할 수 없음")})
 	@PatchMapping("/request")
 	public ResponseEntity<Void> agendaUpdate(@RequestParam("agenda_key") UUID agendaKey,
-		@RequestBody @Valid AgendaAdminUpdateReqDto agendaDto,
+		@ModelAttribute @Valid AgendaAdminUpdateReqDto agendaDto,
 		@RequestParam(required = false) MultipartFile agendaPoster) {
 		agendaAdminService.updateAgenda(agendaKey, agendaDto, agendaPoster);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

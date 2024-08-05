@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.util.MultiValueMap;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -40,6 +41,7 @@ import gg.data.agenda.type.Location;
 import gg.data.user.User;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
+import gg.utils.converter.MultiValueMapConverter;
 import gg.utils.dto.PageRequestDto;
 import lombok.extern.slf4j.Slf4j;
 
@@ -150,14 +152,13 @@ public class AgendaAdminControllerTest {
 				AgendaAdminUpdateReqDto.builder().agendaTitle("updated title").agendaContents("updated content")
 					.agendaStatus(FINISH).isOfficial(!agenda.getIsOfficial())
 					.isRanking(!agenda.getIsRanking()).build();
-			String request = objectMapper.writeValueAsString(agendaDto);
+			MultiValueMap<String, String> params = MultiValueMapConverter.convert(objectMapper, agendaDto);
 
 			// when
-			mockMvc.perform(patch("/agenda/admin/request")
+			mockMvc.perform(multipart("/agenda/admin/request")
 					.param("agenda_key", agenda.getAgendaKey().toString())
-					.header("Authorization", "Bearer " + accessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(request))
+					.params(params)
+					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isNoContent());
 			Optional<Agenda> updated = agendaAdminRepository.findByAgendaKey(agenda.getAgendaKey());
 
@@ -179,14 +180,13 @@ public class AgendaAdminControllerTest {
 				AgendaAdminUpdateReqDto.builder().agendaDeadLine(agenda.getDeadline().plusDays(1))
 					.agendaStartTime(agenda.getStartTime().plusDays(1)).agendaEndTime(agenda.getEndTime().plusDays(1))
 					.build();
-			String request = objectMapper.writeValueAsString(agendaDto);
+			MultiValueMap<String, String> params = MultiValueMapConverter.convert(objectMapper, agendaDto);
 
 			// when
-			mockMvc.perform(patch("/agenda/admin/request")
+			mockMvc.perform(multipart("/agenda/admin/request")
 					.param("agenda_key", agenda.getAgendaKey().toString())
-					.header("Authorization", "Bearer " + accessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(request))
+					.params(params)
+					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isNoContent());
 			Optional<Agenda> updated = agendaAdminRepository.findByAgendaKey(agenda.getAgendaKey());
 
@@ -203,14 +203,13 @@ public class AgendaAdminControllerTest {
 			// given
 			Agenda agenda = agendaMockData.createAgendaWithTeam(10);    // SEOUL
 			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder().agendaLocation(MIX).build();
-			String request = objectMapper.writeValueAsString(agendaDto);
+			MultiValueMap<String, String> params = MultiValueMapConverter.convert(objectMapper, agendaDto);
 
 			// when
-			mockMvc.perform(patch("/agenda/admin/request")
+			mockMvc.perform(multipart("/agenda/admin/request")
 					.param("agenda_key", agenda.getAgendaKey().toString())
-					.header("Authorization", "Bearer " + accessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(request))
+					.params(params)
+					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isNoContent());
 			Optional<Agenda> updated = agendaAdminRepository.findByAgendaKey(agenda.getAgendaKey());
 
@@ -225,14 +224,13 @@ public class AgendaAdminControllerTest {
 			// given
 			Agenda agenda = agendaMockData.createAgenda();
 			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder().agendaLocation(GYEONGSAN).build();
-			String request = objectMapper.writeValueAsString(agendaDto);
+			MultiValueMap<String, String> params = MultiValueMapConverter.convert(objectMapper, agendaDto);
 
 			// when
-			mockMvc.perform(patch("/agenda/admin/request")
+			mockMvc.perform(multipart("/agenda/admin/request")
 					.param("agenda_key", agenda.getAgendaKey().toString())
-					.header("Authorization", "Bearer " + accessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(request))
+					.params(params)
+					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isNoContent());
 			Optional<Agenda> updated = agendaAdminRepository.findByAgendaKey(agenda.getAgendaKey());
 
@@ -247,12 +245,14 @@ public class AgendaAdminControllerTest {
 			// given
 			Agenda agenda = agendaMockData.createAgenda(GYEONGSAN);
 			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder().agendaLocation(GYEONGSAN).build();
-			String request = objectMapper.writeValueAsString(agendaDto);
+			MultiValueMap<String, String> params = MultiValueMapConverter.convert(objectMapper, agendaDto);
 
 			// when
-			mockMvc.perform(patch("/agenda/admin/request").param("agenda_key", agenda.getAgendaKey().toString())
-				.header("Authorization", "Bearer " + accessToken).contentType(MediaType.APPLICATION_JSON)
-				.content(request)).andExpect(status().isNoContent());
+			mockMvc.perform(multipart("/agenda/admin/request")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.params(params)
+					.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isNoContent());
 			Optional<Agenda> updated = agendaAdminRepository.findByAgendaKey(agenda.getAgendaKey());
 
 			// then
@@ -266,14 +266,13 @@ public class AgendaAdminControllerTest {
 			// given
 			Agenda agenda = agendaMockData.createAgendaWithTeamGyeongsan(10);    // SEOUL
 			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder().agendaLocation(MIX).build();
-			String request = objectMapper.writeValueAsString(agendaDto);
+			MultiValueMap<String, String> params = MultiValueMapConverter.convert(objectMapper, agendaDto);
 
 			// when
-			mockMvc.perform(patch("/agenda/admin/request")
+			mockMvc.perform(multipart("/agenda/admin/request")
 					.param("agenda_key", agenda.getAgendaKey().toString())
-					.header("Authorization", "Bearer " + accessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(request))
+					.params(params)
+					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isNoContent());
 			Optional<Agenda> updated = agendaAdminRepository.findByAgendaKey(agenda.getAgendaKey());
 
@@ -289,14 +288,13 @@ public class AgendaAdminControllerTest {
 			Agenda agenda = agendaMockData.createAgendaWithTeam(10);
 			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder().agendaMinTeam(agenda.getMinTeam() + 1)
 				.agendaMaxTeam(agenda.getMaxTeam() + 1).build();
-			String request = objectMapper.writeValueAsString(agendaDto);
+			MultiValueMap<String, String> params = MultiValueMapConverter.convert(objectMapper, agendaDto);
 
 			// when
-			mockMvc.perform(patch("/agenda/admin/request")
+			mockMvc.perform(multipart("/agenda/admin/request")
 					.param("agenda_key", agenda.getAgendaKey().toString())
-					.header("Authorization", "Bearer " + accessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(request))
+					.params(params)
+					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isNoContent());
 			Optional<Agenda> updated = agendaAdminRepository.findByAgendaKey(agenda.getAgendaKey());
 
@@ -314,14 +312,13 @@ public class AgendaAdminControllerTest {
 			AgendaAdminUpdateReqDto agendaDto =
 				AgendaAdminUpdateReqDto.builder().agendaMinPeople(agenda.getMinPeople() + 1)
 					.agendaMaxPeople(agenda.getMaxPeople() + 1).build();
-			String request = objectMapper.writeValueAsString(agendaDto);
+			MultiValueMap<String, String> params = MultiValueMapConverter.convert(objectMapper, agendaDto);
 
 			// when
-			mockMvc.perform(patch("/agenda/admin/request")
+			mockMvc.perform(multipart("/agenda/admin/request")
 					.param("agenda_key", agenda.getAgendaKey().toString())
-					.header("Authorization", "Bearer " + accessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(request))
+					.params(params)
+					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isNoContent());
 			Optional<Agenda> updated = agendaAdminRepository.findByAgendaKey(agenda.getAgendaKey());
 
@@ -336,14 +333,13 @@ public class AgendaAdminControllerTest {
 		void updateAgendaAdminFailedWithNoAgenda() throws Exception {
 			// given
 			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder().build();
-			String request = objectMapper.writeValueAsString(agendaDto);
+			MultiValueMap<String, String> params = MultiValueMapConverter.convert(objectMapper, agendaDto);
 
 			// expected
-			mockMvc.perform(patch("/agenda/admin/request")
+			mockMvc.perform(multipart("/agenda/admin/request")
 					.param("agenda_key", UUID.randomUUID().toString())
-					.header("Authorization", "Bearer " + accessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(request))
+					.params(params)
+					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isNotFound());
 		}
 
@@ -353,14 +349,13 @@ public class AgendaAdminControllerTest {
 			// given
 			Agenda agenda = agendaMockData.createAgendaWithTeam(10);
 			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder().agendaLocation(GYEONGSAN).build();
-			String request = objectMapper.writeValueAsString(agendaDto);
+			MultiValueMap<String, String> params = MultiValueMapConverter.convert(objectMapper, agendaDto);
 
 			// expected
-			mockMvc.perform(patch("/agenda/admin/request")
+			mockMvc.perform(multipart("/agenda/admin/request")
 					.param("agenda_key", agenda.getAgendaKey().toString())
-					.header("Authorization", "Bearer " + accessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(request))
+					.params(params)
+					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isBadRequest());
 		}
 
@@ -370,14 +365,13 @@ public class AgendaAdminControllerTest {
 			// given
 			Agenda agenda = agendaMockData.createAgendaWithTeamGyeongsan(10);
 			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder().agendaLocation(SEOUL).build();
-			String request = objectMapper.writeValueAsString(agendaDto);
+			MultiValueMap<String, String> params = MultiValueMapConverter.convert(objectMapper, agendaDto);
 
 			// expected
-			mockMvc.perform(patch("/agenda/admin/request")
+			mockMvc.perform(multipart("/agenda/admin/request")
 					.param("agenda_key", agenda.getAgendaKey().toString())
-					.header("Authorization", "Bearer " + accessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(request))
+					.params(params)
+					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isBadRequest());
 		}
 
@@ -388,14 +382,13 @@ public class AgendaAdminControllerTest {
 			// given
 			Agenda agenda = agendaMockData.createAgendaWithTeamMix(10);
 			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder().agendaLocation(SEOUL).build();
-			String request = objectMapper.writeValueAsString(agendaDto);
+			MultiValueMap<String, String> params = MultiValueMapConverter.convert(objectMapper, agendaDto);
 
 			// expected
-			mockMvc.perform(patch("/agenda/admin/request")
+			mockMvc.perform(multipart("/agenda/admin/request")
+					.params(params)
 					.param("agenda_key", agenda.getAgendaKey().toString())
-					.header("Authorization", "Bearer " + accessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(request))
+					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isBadRequest());
 		}
 
@@ -406,14 +399,13 @@ public class AgendaAdminControllerTest {
 			Agenda agenda = agendaMockData.createAgendaWithTeamAndAgendaCapacity(10, 2, 10);
 			AgendaAdminUpdateReqDto agendaDto =
 				AgendaAdminUpdateReqDto.builder().agendaMinTeam(10).agendaMaxTeam(2).build();
-			String request = objectMapper.writeValueAsString(agendaDto);
+			MultiValueMap<String, String> params = MultiValueMapConverter.convert(objectMapper, agendaDto);
 
 			// expected
-			mockMvc.perform(patch("/agenda/admin/request")
+			mockMvc.perform(multipart("/agenda/admin/request")
 					.param("agenda_key", agenda.getAgendaKey().toString())
-					.header("Authorization", "Bearer " + accessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(request))
+					.params(params)
+					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isBadRequest());
 		}
 
@@ -424,14 +416,13 @@ public class AgendaAdminControllerTest {
 			Agenda agenda = agendaMockData.createAgendaWithTeamAndAgendaCapacity(10, 2, 10);
 			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder().agendaMinTeam(agenda.getMinTeam())
 				.agendaMaxTeam(agenda.getMaxTeam() - 5).build();
-			String request = objectMapper.writeValueAsString(agendaDto);
+			MultiValueMap<String, String> params = MultiValueMapConverter.convert(objectMapper, agendaDto);
 
 			// expected
-			mockMvc.perform(patch("/agenda/admin/request")
+			mockMvc.perform(multipart("/agenda/admin/request")
 					.param("agenda_key", agenda.getAgendaKey().toString())
-					.header("Authorization", "Bearer " + accessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(request))
+					.params(params)
+					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isBadRequest());
 		}
 
@@ -442,14 +433,13 @@ public class AgendaAdminControllerTest {
 			Agenda agenda = agendaMockData.createAgendaWithTeamAndAgendaCapacityAndFinish(5, 5, 10);
 			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder().agendaMinTeam(agenda.getMinTeam() + 2)
 				.agendaMaxTeam((agenda.getMaxTeam())).build();
-			String request = objectMapper.writeValueAsString(agendaDto);
+			MultiValueMap<String, String> params = MultiValueMapConverter.convert(objectMapper, agendaDto);
 
 			// expected
-			mockMvc.perform(patch("/agenda/admin/request")
+			mockMvc.perform(multipart("/agenda/admin/request")
 					.param("agenda_key", agenda.getAgendaKey().toString())
-					.header("Authorization", "Bearer " + accessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(request))
+					.params(params)
+					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isBadRequest());
 		}
 
@@ -460,14 +450,13 @@ public class AgendaAdminControllerTest {
 			Agenda agenda = agendaMockData.createAgendaWithTeamAndAgendaTeamCapacity(10, 2, 10);
 			AgendaAdminUpdateReqDto agendaDto =
 				AgendaAdminUpdateReqDto.builder().agendaMinPeople(10).agendaMaxPeople(2).build();
-			String request = objectMapper.writeValueAsString(agendaDto);
+			MultiValueMap<String, String> params = MultiValueMapConverter.convert(objectMapper, agendaDto);
 
 			// expected
-			mockMvc.perform(patch("/agenda/admin/request")
+			mockMvc.perform(multipart("/agenda/admin/request")
 					.param("agenda_key", agenda.getAgendaKey().toString())
-					.header("Authorization", "Bearer " + accessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(request))
+					.params(params)
+					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isBadRequest());
 		}
 
@@ -478,14 +467,13 @@ public class AgendaAdminControllerTest {
 			Agenda agenda = agendaMockData.createAgendaWithTeamAndAgendaTeamCapacity(10, 2, 10);
 			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder().agendaMinPeople(agenda.getMinPeople())
 				.agendaMaxPeople(agenda.getMaxPeople() - 5).build();
-			String request = objectMapper.writeValueAsString(agendaDto);
+			MultiValueMap<String, String> params = MultiValueMapConverter.convert(objectMapper, agendaDto);
 
 			// expected
-			mockMvc.perform(patch("/agenda/admin/request")
+			mockMvc.perform(multipart("/agenda/admin/request")
 					.param("agenda_key", agenda.getAgendaKey().toString())
-					.header("Authorization", "Bearer " + accessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(request))
+					.params(params)
+					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isBadRequest());
 		}
 
@@ -497,12 +485,14 @@ public class AgendaAdminControllerTest {
 				10, 3, 10);
 			AgendaAdminUpdateReqDto agendaDto =
 				AgendaAdminUpdateReqDto.builder().agendaMinPeople(5).agendaMaxPeople(agenda.getMaxPeople()).build();
-			String request = objectMapper.writeValueAsString(agendaDto);
+			MultiValueMap<String, String> params = MultiValueMapConverter.convert(objectMapper, agendaDto);
 
 			// expected
-			mockMvc.perform(patch("/agenda/admin/request").param("agenda_key", agenda.getAgendaKey().toString())
-				.header("Authorization", "Bearer " + accessToken).contentType(MediaType.APPLICATION_JSON)
-				.content(request)).andExpect(status().isBadRequest());
+			mockMvc.perform(multipart("/agenda/admin/request")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.params(params)
+					.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isBadRequest());
 		}
 	}
 }
