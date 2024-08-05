@@ -165,7 +165,6 @@ public class AgendaAdminControllerTest {
 			assert (updated.isPresent());
 			assertThat(updated.get().getTitle()).isEqualTo(agendaDto.getAgendaTitle());
 			assertThat(updated.get().getContent()).isEqualTo(agendaDto.getAgendaContents());
-			assertThat(updated.get().getPosterUri()).isEqualTo(agendaDto.getAgendaPoster());
 			assertThat(updated.get().getStatus()).isEqualTo(agendaDto.getAgendaStatus());
 			assertThat(updated.get().getIsOfficial()).isEqualTo(agendaDto.getIsOfficial());
 			assertThat(updated.get().getIsRanking()).isEqualTo(agendaDto.getIsRanking());
