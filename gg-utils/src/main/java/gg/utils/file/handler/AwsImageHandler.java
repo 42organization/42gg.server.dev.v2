@@ -49,8 +49,11 @@ public class AwsImageHandler implements ImageHandler {
 	}
 
 	private static boolean isDefaultImage(MultipartFile multipartFile) {
+		if (Objects.isNull(multipartFile)) {
+			return true;
+		}
 		if (Objects.isNull(multipartFile.getOriginalFilename())) {
-			return false;
+			return true;
 		}
 		return multipartFile.getOriginalFilename().equals("small_default.jpeg");
 	}
