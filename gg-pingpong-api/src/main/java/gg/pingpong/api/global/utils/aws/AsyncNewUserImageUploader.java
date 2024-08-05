@@ -35,7 +35,7 @@ public class AsyncNewUserImageUploader {
 	@Async("asyncExecutor")
 	@Transactional
 	public void upload(String intraId, String imageUrl) throws IOException {
-		URL s3ImageUrl = imageHandler.uploadImageFromUrl(imageUrl, intraId);
+		URL s3ImageUrl = imageHandler.uploadImageFromUrlOrDefault(imageUrl, intraId);
 		if (defaultImageUrl.equals(s3ImageUrl.toString())) {
 			return;
 		}
@@ -50,7 +50,7 @@ public class AsyncNewUserImageUploader {
 	@Transactional
 	public void update(String intraId, MultipartFile multipartFile) throws IOException {
 		User user = userRepository.findByIntraId(intraId).get();
-		String s3ImageUrl = imageHandler.uploadImage(multipartFile, user.getIntraId()).toString();
+		String s3ImageUrl = imageHandler.uploadImageOrDefault(multipartFile, user.getIntraId()).toString();
 		UserImage userImage = new UserImage(user, s3ImageUrl, LocalDateTime.now(), null, true);
 		userImageRepository.saveAndFlush(userImage);
 		user.updateImageUri(s3ImageUrl);

@@ -1,5 +1,6 @@
 package gg.agenda.api.admin.agenda.controller;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import gg.agenda.api.admin.agenda.controller.request.AgendaAdminUpdateReqDto;
 import gg.agenda.api.admin.agenda.controller.response.AgendaAdminResDto;
@@ -53,8 +55,9 @@ public class AgendaAdminController {
 		@ApiResponse(responseCode = "409", description = "Agenda 팀 인원 제한을 변경할 수 없음")})
 	@PatchMapping("/request")
 	public ResponseEntity<Void> agendaUpdate(@RequestParam("agenda_key") UUID agendaKey,
-		@RequestBody @Valid AgendaAdminUpdateReqDto agendaDto) {
-		agendaAdminService.updateAgenda(agendaKey, agendaDto);
+		@RequestBody @Valid AgendaAdminUpdateReqDto agendaDto,
+		@RequestParam(required = false) MultipartFile agendaPoster) {
+		agendaAdminService.updateAgenda(agendaKey, agendaDto, agendaPoster);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 }

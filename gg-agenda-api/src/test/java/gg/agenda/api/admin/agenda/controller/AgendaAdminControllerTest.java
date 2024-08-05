@@ -6,6 +6,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +23,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -64,6 +66,9 @@ public class AgendaAdminControllerTest {
 
 	@Autowired
 	AgendaAdminRepository agendaAdminRepository;
+
+	@Value("${info.image.defaultUrl}")
+	private String defaultUri;
 
 	private User user;
 
@@ -143,7 +148,7 @@ public class AgendaAdminControllerTest {
 			Agenda agenda = agendaMockData.createAgendaWithTeam(10);
 			AgendaAdminUpdateReqDto agendaDto =
 				AgendaAdminUpdateReqDto.builder().agendaTitle("updated title").agendaContents("updated content")
-					.agendaPoster("updated poster").agendaStatus(FINISH).isOfficial(!agenda.getIsOfficial())
+					.agendaStatus(FINISH).isOfficial(!agenda.getIsOfficial())
 					.isRanking(!agenda.getIsRanking()).build();
 			String request = objectMapper.writeValueAsString(agendaDto);
 

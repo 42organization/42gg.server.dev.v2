@@ -25,7 +25,6 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -576,7 +575,7 @@ class UserControllerTest {
 	@DisplayName("[post]/pingpong/users/profile-image")
 	public void getUserImage() throws Exception {
 		URL mockS3Path = new URL(defaultUrl);
-		Mockito.when(imageHandler.uploadImage(Mockito.any(), Mockito.any(String.class)))
+		Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.any(String.class)))
 			.thenReturn(mockS3Path);
 		//        String accessToken = testDataUtils.getLoginAccessToken();
 		ItemUpdateRequestDto dto = new ItemUpdateRequestDto("name", "mainContent",

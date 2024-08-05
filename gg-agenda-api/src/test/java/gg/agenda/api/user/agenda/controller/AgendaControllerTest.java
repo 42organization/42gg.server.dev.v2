@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.core.io.support.ResourcePatternUtils;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
@@ -269,7 +268,7 @@ public class AgendaControllerTest {
 		void createAgendaSuccess() throws Exception {
 			// given
 			URL mockS3Path = new URL(defaultUri);
-			Mockito.when(imageHandler.uploadImage(Mockito.any(), Mockito.anyString()))
+			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString()))
 				.thenReturn(mockS3Path);
 			AgendaCreateReqDto dto = AgendaCreateReqDto.builder()
 				.agendaTitle("title").agendaContent("content")
@@ -302,7 +301,7 @@ public class AgendaControllerTest {
 		void createAgendaSuccessWithPosterImage() throws Exception {
 			// given
 			URL mockS3Path = new URL("https://test.com/test.jpeg");
-			Mockito.when(imageHandler.uploadImage(Mockito.any(MultipartFile.class), Mockito.anyString()))
+			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(MultipartFile.class), Mockito.anyString()))
 				.thenReturn(mockS3Path);
 
 			AgendaCreateReqDto dto = AgendaCreateReqDto.builder()

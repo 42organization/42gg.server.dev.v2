@@ -17,6 +17,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.springframework.core.io.support.ResourcePatternUtils;
+
 import gg.data.BaseTimeEntity;
 import gg.data.agenda.type.AgendaStatus;
 import gg.data.agenda.type.AgendaTeamStatus;
@@ -148,13 +150,13 @@ public class Agenda extends BaseTimeEntity {
 		if (Objects.nonNull(title) && !title.isBlank()) {
 			this.title = title;
 		}
-		if (Objects.nonNull(content) && !title.isBlank()) {
+		if (Objects.nonNull(content) && !content.isBlank()) {
 			this.content = content;
 		}
 	}
 
 	public void updatePosterUri(String posterUri) {
-		if (Objects.nonNull(posterUri) && !title.isBlank()) {
+		if (Objects.nonNull(posterUri) && ResourcePatternUtils.isUrl(posterUri)) {
 			this.posterUri = posterUri;
 		}
 	}

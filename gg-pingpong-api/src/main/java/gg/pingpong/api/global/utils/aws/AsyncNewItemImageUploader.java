@@ -19,7 +19,7 @@ public class AsyncNewItemImageUploader {
 
 	@Transactional
 	public void upload(Item item, MultipartFile multipartFile) throws IOException {
-		URL s3ImageUrl = imageHandler.uploadImage(multipartFile, item.getName());
+		URL s3ImageUrl = imageHandler.uploadImageOrDefault(multipartFile, item.getName());
 		item.imageUpdate(s3ImageUrl.toString());
 	}
 }

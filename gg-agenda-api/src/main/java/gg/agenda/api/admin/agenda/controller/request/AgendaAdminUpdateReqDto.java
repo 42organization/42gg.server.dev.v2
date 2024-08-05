@@ -1,5 +1,6 @@
 package gg.agenda.api.admin.agenda.controller.request;
 
+import java.net.URL;
 import java.time.LocalDateTime;
 
 import javax.validation.constraints.Max;
@@ -22,7 +23,7 @@ public class AgendaAdminUpdateReqDto {
 
 	private String agendaContents;
 
-	private String agendaPoster;
+	private URL agendaPoster;
 
 	private Boolean isOfficial;
 
@@ -47,13 +48,13 @@ public class AgendaAdminUpdateReqDto {
 	private int agendaMaxPeople;
 
 	@Builder
-	public AgendaAdminUpdateReqDto(String agendaTitle, String agendaContents, String agendaPoster, Boolean isOfficial,
+	public AgendaAdminUpdateReqDto(String agendaTitle, String agendaContents, URL agendaPosterUri, Boolean isOfficial,
 		Boolean isRanking, AgendaStatus agendaStatus, LocalDateTime agendaDeadLine, LocalDateTime agendaStartTime,
 		LocalDateTime agendaEndTime, Location agendaLocation, int agendaMinTeam, int agendaMaxTeam,
 		int agendaMinPeople, int agendaMaxPeople) {
 		this.agendaTitle = agendaTitle;
 		this.agendaContents = agendaContents;
-		this.agendaPoster = agendaPoster;
+		this.agendaPoster = agendaPosterUri;
 		this.isOfficial = isOfficial;
 		this.isRanking = isRanking;
 		this.agendaStatus = agendaStatus;

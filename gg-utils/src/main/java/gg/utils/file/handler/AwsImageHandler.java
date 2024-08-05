@@ -39,7 +39,7 @@ public class AwsImageHandler implements ImageHandler {
 	private String defaultImageUrl;
 
 	@Override
-	public URL uploadImage(MultipartFile multipartFile, String filename) throws IOException {
+	public URL uploadImageOrDefault(MultipartFile multipartFile, String filename) throws IOException {
 		if (filename.isBlank() || isDefaultImage(multipartFile)) {
 			return new URL(defaultImageUrl);
 		}
@@ -59,7 +59,7 @@ public class AwsImageHandler implements ImageHandler {
 	}
 
 	@Override
-	public URL uploadImageFromUrl(String imageUrl, String filename) throws IOException {
+	public URL uploadImageFromUrlOrDefault(String imageUrl, String filename) throws IOException {
 		if (filename.isBlank() || ResourcePatternUtils.isUrl(imageUrl)) {
 			return new URL(defaultImageUrl);
 		}

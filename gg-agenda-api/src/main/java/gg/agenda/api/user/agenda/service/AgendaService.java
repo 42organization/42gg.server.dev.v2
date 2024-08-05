@@ -71,7 +71,7 @@ public class AgendaService {
 	@Transactional
 	public Agenda addAgenda(AgendaCreateReqDto createDto, MultipartFile agendaPoster, UserDto user) {
 		try {
-			URL storedUrl = imageHandler.uploadImage(agendaPoster, createDto.getAgendaTitle());
+			URL storedUrl = imageHandler.uploadImageOrDefault(agendaPoster, createDto.getAgendaTitle());
 			createDto.updatePosterUri(storedUrl);
 			Agenda newAgenda = AgendaCreateReqDto.MapStruct.INSTANCE.toEntity(createDto, user.getIntraId());
 			return agendaRepository.save(newAgenda);

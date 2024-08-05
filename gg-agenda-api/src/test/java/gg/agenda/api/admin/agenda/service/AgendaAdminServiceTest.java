@@ -18,6 +18,7 @@ import org.mockito.Mock;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.mock.web.MockMultipartFile;
 
 import gg.admin.repo.agenda.AgendaAdminRepository;
 import gg.admin.repo.agenda.AgendaTeamAdminRepository;
@@ -90,6 +91,8 @@ public class AgendaAdminServiceTest {
 		@DisplayName("Admin Agenda 수정 성공 - 기본 정보")
 		void updateAgendaSuccessWithInformation() {
 			// given
+			MockMultipartFile file = new MockMultipartFile("file", "test.jpg",
+				"image/jpeg", "test".getBytes());
 			int teamCount = 3;
 			List<AgendaTeam> teams = new ArrayList<>();
 			for (int i = 0; i < teamCount; i++) {
@@ -99,13 +102,13 @@ public class AgendaAdminServiceTest {
 				.isRanking(true).status(AgendaStatus.FINISH).build();
 			AgendaAdminUpdateReqDto agendaDto =
 				AgendaAdminUpdateReqDto.builder().agendaTitle("Updated title").agendaContents("Updated content")
-					.agendaPoster("Updated posterUri").isOfficial(true).isRanking(true)
+					.isOfficial(true).isRanking(true)
 					.agendaStatus(AgendaStatus.CANCEL).build();
 			when(agendaAdminRepository.findByAgendaKey(any())).thenReturn(Optional.of(agenda));
 			when(agendaTeamAdminRepository.findAllByAgenda(any())).thenReturn(teams);
 
 			// when
-			agendaAdminService.updateAgenda(agenda.getAgendaKey(), agendaDto);
+			agendaAdminService.updateAgenda(agenda.getAgendaKey(), agendaDto, file);
 
 			// then
 			verify(agendaAdminRepository, times(1)).findByAgendaKey(any());
@@ -122,6 +125,8 @@ public class AgendaAdminServiceTest {
 		@DisplayName("Admin Agenda 수정 성공 - 스케줄 정보")
 		void updateAgendaSuccessWithSchedule() {
 			// given
+			MockMultipartFile file = new MockMultipartFile("file", "test.jpg",
+				"image/jpeg", "test".getBytes());
 			int teamCount = 3;
 			List<AgendaTeam> teams = new ArrayList<>();
 			for (int i = 0; i < teamCount; i++) {
@@ -137,7 +142,7 @@ public class AgendaAdminServiceTest {
 			when(agendaTeamAdminRepository.findAllByAgenda(any())).thenReturn(teams);
 
 			// when
-			agendaAdminService.updateAgenda(agenda.getAgendaKey(), agendaDto);
+			agendaAdminService.updateAgenda(agenda.getAgendaKey(), agendaDto, file);
 
 			// then
 			verify(agendaAdminRepository, times(1)).findByAgendaKey(any());
@@ -151,6 +156,8 @@ public class AgendaAdminServiceTest {
 		@DisplayName("Admin Agenda 수정 성공 - 지역 정보")
 		void updateAgendaSuccessWithLocation() {
 			// given
+			MockMultipartFile file = new MockMultipartFile("file", "test.jpg",
+				"image/jpeg", "test".getBytes());
 			int teamCount = 3;
 			List<AgendaTeam> teams = new ArrayList<>();
 			for (int i = 0; i < teamCount; i++) {
@@ -162,7 +169,7 @@ public class AgendaAdminServiceTest {
 			when(agendaTeamAdminRepository.findAllByAgenda(any())).thenReturn(teams);
 
 			// when
-			agendaAdminService.updateAgenda(agenda.getAgendaKey(), agendaDto);
+			agendaAdminService.updateAgenda(agenda.getAgendaKey(), agendaDto, file);
 
 			// then
 			verify(agendaAdminRepository, times(1)).findByAgendaKey(any());
@@ -174,6 +181,8 @@ public class AgendaAdminServiceTest {
 		@DisplayName("Admin Agenda 수정 성공 - Agenda 팀 제한 정보")
 		void updateAgendaSuccessWithAgendaCapacity() {
 			// given
+			MockMultipartFile file = new MockMultipartFile("file", "test.jpg",
+				"image/jpeg", "test".getBytes());
 			int teamCount = 3;
 			List<AgendaTeam> teams = new ArrayList<>();
 			for (int i = 0; i < teamCount; i++) {
@@ -186,7 +195,7 @@ public class AgendaAdminServiceTest {
 			when(agendaTeamAdminRepository.findAllByAgenda(any())).thenReturn(teams);
 
 			// when
-			agendaAdminService.updateAgenda(agenda.getAgendaKey(), agendaDto);
+			agendaAdminService.updateAgenda(agenda.getAgendaKey(), agendaDto, file);
 
 			// then
 			verify(agendaAdminRepository, times(1)).findByAgendaKey(any());
@@ -199,6 +208,8 @@ public class AgendaAdminServiceTest {
 		@DisplayName("Admin Agenda 수정 성공 - Agenda 팀 인원 제한 정보")
 		void updateAgendaSuccessWithAgendaTeamCapacity() {
 			// given
+			MockMultipartFile file = new MockMultipartFile("file", "test.jpg",
+				"image/jpeg", "test".getBytes());
 			int teamCount = 3;
 			List<AgendaTeam> teams = new ArrayList<>();
 			for (int i = 0; i < teamCount; i++) {
@@ -211,7 +222,7 @@ public class AgendaAdminServiceTest {
 			when(agendaTeamAdminRepository.findAllByAgenda(any())).thenReturn(teams);
 
 			// when
-			agendaAdminService.updateAgenda(agenda.getAgendaKey(), agendaDto);
+			agendaAdminService.updateAgenda(agenda.getAgendaKey(), agendaDto, file);
 
 			// then
 			verify(agendaAdminRepository, times(1)).findByAgendaKey(any());
@@ -224,17 +235,22 @@ public class AgendaAdminServiceTest {
 		@DisplayName("Admin Agenda 수정 실패 - Agenda를 찾을 수 없음")
 		void updateAgendaFailAdminWithNotExistAgenda() {
 			// given
+			MockMultipartFile file = new MockMultipartFile("file", "test.jpg",
+				"image/jpeg", "test".getBytes());
 			AgendaAdminUpdateReqDto agendaDto = mock(AgendaAdminUpdateReqDto.class);
 			when(agendaAdminRepository.findByAgendaKey(any())).thenReturn(Optional.empty());
 
 			// expected
-			assertThrows(NotExistException.class, () -> agendaAdminService.updateAgenda(UUID.randomUUID(), agendaDto));
+			assertThrows(NotExistException.class,
+				() -> agendaAdminService.updateAgenda(UUID.randomUUID(), agendaDto, file));
 		}
 
 		@Test
 		@DisplayName("Admin Agenda 수정 실패 - Agenda 지역을 변경할 수 없음")
 		void updateAgendaFailAdminWithCannotChangeLocation() {
 			// given
+			MockMultipartFile file = new MockMultipartFile("file", "test.jpg",
+				"image/jpeg", "test".getBytes());
 			int teamCount = 3;
 			List<AgendaTeam> teams = new ArrayList<>();
 			for (int i = 0; i < teamCount; i++) {
@@ -249,13 +265,15 @@ public class AgendaAdminServiceTest {
 
 			// expected
 			assertThrows(InvalidParameterException.class,
-				() -> agendaAdminService.updateAgenda(agenda.getAgendaKey(), agendaDto));
+				() -> agendaAdminService.updateAgenda(agenda.getAgendaKey(), agendaDto, file));
 		}
 
 		@Test
 		@DisplayName("Admin Agenda 수정 실패 - Agenda 팀 제한을 변경할 수 없음")
 		void updateAgendaFailAdminWithCannotChangeMinTeam() {
 			// given
+			MockMultipartFile file = new MockMultipartFile("file", "test.jpg",
+				"image/jpeg", "test".getBytes());
 			int teamCount = 5;
 			List<AgendaTeam> teams = new ArrayList<>();
 			for (int i = 0; i < teamCount; i++) {
@@ -270,13 +288,15 @@ public class AgendaAdminServiceTest {
 
 			// expected
 			assertThrows(InvalidParameterException.class,
-				() -> agendaAdminService.updateAgenda(agenda.getAgendaKey(), agendaDto));
+				() -> agendaAdminService.updateAgenda(agenda.getAgendaKey(), agendaDto, file));
 		}
 
 		@Test
 		@DisplayName("Admin Agenda 수정 실패 - Agenda 팀 제한을 변경할 수 없음")
 		void updateAgendaFailAdminWithCannotChangeMaxTeam() {
 			// given
+			MockMultipartFile file = new MockMultipartFile("file", "test.jpg",
+				"image/jpeg", "test".getBytes());
 			int teamCount = 10;
 			List<AgendaTeam> teams = new ArrayList<>();
 			for (int i = 0; i < teamCount; i++) {
@@ -290,13 +310,15 @@ public class AgendaAdminServiceTest {
 
 			// expected
 			assertThrows(InvalidParameterException.class,
-				() -> agendaAdminService.updateAgenda(agenda.getAgendaKey(), agendaDto));
+				() -> agendaAdminService.updateAgenda(agenda.getAgendaKey(), agendaDto, file));
 		}
 
 		@Test
 		@DisplayName("Admin Agenda 수정 실패 - Agenda 팀 인원 제한을 변경할 수 없음")
 		void updateAgendaFailAdminWithCannotChangeMaxPeople() {
 			// given
+			MockMultipartFile file = new MockMultipartFile("file", "test.jpg",
+				"image/jpeg", "test".getBytes());
 			int teamCount = 3;
 			List<AgendaTeam> teams = new ArrayList<>();
 			for (int i = 0; i < teamCount; i++) {
@@ -312,13 +334,15 @@ public class AgendaAdminServiceTest {
 
 			// expected
 			assertThrows(InvalidParameterException.class,
-				() -> agendaAdminService.updateAgenda(agenda.getAgendaKey(), agendaDto));
+				() -> agendaAdminService.updateAgenda(agenda.getAgendaKey(), agendaDto, file));
 		}
 
 		@Test
 		@DisplayName("Admin Agenda 수정 실패 - Agenda 팀 인원 제한을 변경할 수 없음")
 		void updateAgendaFailAdminWithCannotChangeMinPeople() {
 			// given
+			MockMultipartFile file = new MockMultipartFile("file", "test.jpg",
+				"image/jpeg", "test".getBytes());
 			int teamCount = 3;
 			List<AgendaTeam> teams = new ArrayList<>();
 			for (int i = 0; i < teamCount; i++) {
@@ -334,7 +358,7 @@ public class AgendaAdminServiceTest {
 
 			// expected
 			assertThrows(InvalidParameterException.class,
-				() -> agendaAdminService.updateAgenda(agenda.getAgendaKey(), agendaDto));
+				() -> agendaAdminService.updateAgenda(agenda.getAgendaKey(), agendaDto, file));
 		}
 	}
 }
