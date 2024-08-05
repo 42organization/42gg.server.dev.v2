@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.util.MultiValueMap;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -47,6 +48,7 @@ import gg.repo.agenda.AgendaTeamRepository;
 import gg.utils.AgendaTestDataUtils;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
+import gg.utils.converter.MultiValueMapConverter;
 import gg.utils.dto.PageRequestDto;
 import gg.utils.fixture.agenda.AgendaFixture;
 import gg.utils.fixture.agenda.AgendaTeamFixture;
@@ -258,13 +260,12 @@ public class AgendaControllerTest {
 				.agendaEndTime(LocalDateTime.now().plusDays(7))
 				.agendaMinTeam(2).agendaMaxTeam(5).agendaMinPeople(1).agendaMaxPeople(5)
 				.agendaIsRanking(true).agendaLocation(Location.SEOUL).build();
-			String request = objectMapper.writeValueAsString(dto);
+			MultiValueMap<String, String> params = MultiValueMapConverter.convert(objectMapper, dto);
 
 			// when
 			String response = mockMvc.perform(post("/agenda/request")
 					.header("Authorization", "Bearer " + accessToken)
-					.contentType("application/json")
-					.content(request))
+					.params(params))
 				.andExpect(status().isCreated())
 				.andReturn().getResponse().getContentAsString();
 			AgendaKeyResDto result = objectMapper.readValue(response, AgendaKeyResDto.class);
