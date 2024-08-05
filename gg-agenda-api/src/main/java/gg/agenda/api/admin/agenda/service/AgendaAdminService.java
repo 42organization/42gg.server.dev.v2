@@ -36,8 +36,8 @@ public class AgendaAdminService {
 			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
 		List<AgendaTeam> teams = agendaTeamAdminRepository.findAllByAgenda(agenda);
 
-		agenda.updateInformation(agendaDto.getAgendaTitle(), agendaDto.getAgendaContents(),
-			agendaDto.getAgendaPoster());
+		agenda.updateInformation(agendaDto.getAgendaTitle(), agendaDto.getAgendaContents());
+		agenda.updatePosterUri(agendaDto.getAgendaPoster());
 		agenda.updateIsOfficial(agendaDto.getIsOfficial());
 		agenda.updateIsRanking(agendaDto.getIsRanking());
 		agenda.updateAgendaStatus(agendaDto.getAgendaStatus());
