@@ -71,13 +71,10 @@ public class AgendaService {
 	@Transactional
 	public Agenda addAgenda(AgendaCreateReqDto createDto, MultipartFile agendaPoster, UserDto user) {
 		try {
+			URL storedUrl = imageHandler.uploadImage(agendaPoster, createDto.getAgendaTitle());
+			createDto.updatePosterUri(storedUrl);
 			Agenda newAgenda = AgendaCreateReqDto.MapStruct.INSTANCE.toEntity(createDto, user.getIntraId());
-			Agenda savedAgenda = agendaRepository.save(newAgenda);
-
-			URL savedUrl = imageHandler.uploadImage(agendaPoster, savedAgenda.getAgendaKey().toString());
-			savedAgenda.updatePosterUri(savedUrl.toString());
-
-			return savedAgenda;
+			return agendaRepository.save(newAgenda);
 		} catch (IOException e) {
 			log.error("Failed to upload image for agenda poster", e);
 			throw new BusinessException(AGENDA_CREATE_FAILED);

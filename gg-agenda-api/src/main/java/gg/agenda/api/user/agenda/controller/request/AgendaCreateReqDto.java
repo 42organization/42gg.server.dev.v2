@@ -93,6 +93,10 @@ public class AgendaCreateReqDto {
 		this.agendaIsRanking = agendaIsRanking;
 	}
 
+	public void updatePosterUri(URL storedUrl) {
+		this.agendaPosterUri = storedUrl;
+	}
+
 	@Mapper
 	public interface MapStruct {
 
