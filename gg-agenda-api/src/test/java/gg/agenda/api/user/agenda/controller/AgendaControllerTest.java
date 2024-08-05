@@ -1051,7 +1051,7 @@ public class AgendaControllerTest {
 		@DisplayName("Agenda 확정하기 성공")
 		void confirmAgendaSuccess() throws Exception {
 			// given
-			Agenda agenda = agendaTestDataUtils.createAgendaAndAgendaTeams(user.getIntraId(), 10, AgendaStatus.OPEN);
+			Agenda agenda = agendaTestDataUtils.createAgendaAndAgendaTeams(user.getIntraId(), 5, AgendaStatus.OPEN);
 			List<AgendaTeam> openTeams = agendaTeamFixture.createAgendaTeamList(agenda, AgendaTeamStatus.OPEN, 3);
 
 			// when
@@ -1087,7 +1087,7 @@ public class AgendaControllerTest {
 		@DisplayName("Agenda 확정하기 실패 - 개최자가 아닌 경우")
 		void confirmAgendaFailedWithNotHost() throws Exception {
 			// given
-			Agenda agenda = agendaTestDataUtils.createAgendaAndAgendaTeams("not host", 10, AgendaStatus.OPEN);
+			Agenda agenda = agendaTestDataUtils.createAgendaAndAgendaTeams("not host", 5, AgendaStatus.OPEN);
 
 			// when
 			mockMvc.perform(patch("/agenda/confirm")
@@ -1101,8 +1101,9 @@ public class AgendaControllerTest {
 		@DisplayName("Agenda 확정하기 실패 - 대회의 상태가 OPEN이 아닌 경우")
 		void confirmAgendaFailedWithNotOpenAgenda(AgendaStatus status) throws Exception {
 			// given
-			Agenda agenda = agendaTestDataUtils.createAgendaAndAgendaTeams(user.getIntraId(), 10, status);
-			agendaTeamFixture.createAgendaTeamList(agenda, AgendaTeamStatus.OPEN, 3);
+			Agenda agenda = agendaFixture.createAgenda(user.getIntraId(), AgendaStatus.OPEN);
+			agendaTeamFixture.createAgendaTeamList(agenda, AgendaTeamStatus.CONFIRM, 5);
+			agenda.updateAgendaStatus(status);
 
 			// expected
 			mockMvc.perform(patch("/agenda/confirm")
