@@ -19,6 +19,11 @@ public class AgendaScheduleValidator implements ConstraintValidator<AgendaSchedu
 		if (Objects.isNull(value)) {
 			return true;
 		}
+		if (Objects.isNull(value.getAgendaDeadLine())
+			|| Objects.isNull(value.getAgendaStartTime())
+			|| Objects.isNull(value.getAgendaEndTime())) {
+			return false;
+		}
 		return mustHaveValidSchedule(value);
 	}
 
