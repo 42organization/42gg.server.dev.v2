@@ -18,6 +18,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -121,6 +122,9 @@ class UserControllerTest {
 	User admin;
 	@Autowired
 	private MockMvc mockMvc;
+
+	@Value("${info.image.defaultUrl}")
+	private String defaultUrl;
 
 	@BeforeEach
 	public void setUp() {
@@ -571,9 +575,8 @@ class UserControllerTest {
 	@Test
 	@DisplayName("[post]/pingpong/users/profile-image")
 	public void getUserImage() throws Exception {
-		URL mockS3Path = new URL("mockS3Path");
-		Mockito.when(imageHandler
-				.uploadToS3(Mockito.any(MultipartFile.class), Mockito.any(String.class)))
+		URL mockS3Path = new URL(defaultUrl);
+		Mockito.when(imageHandler.uploadImage(Mockito.any(), Mockito.any(String.class)))
 			.thenReturn(mockS3Path);
 		//        String accessToken = testDataUtils.getLoginAccessToken();
 		ItemUpdateRequestDto dto = new ItemUpdateRequestDto("name", "mainContent",

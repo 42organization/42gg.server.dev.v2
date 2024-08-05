@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.net.URL;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
@@ -60,6 +62,9 @@ class ItemAdminControllerTest {
 	@MockBean
 	AwsImageHandler imageHandler;
 
+	@Value("${info.image.defaultUrl}")
+	private String defaultImageUrl;
+
 	Item item;
 
 	@BeforeEach
@@ -99,8 +104,9 @@ class ItemAdminControllerTest {
 	@Test
 	@DisplayName("POST /pingpong/admin/items/history/{itemId}")
 	public void updateItemTest() throws Exception {
-		Mockito.when(imageHandler.uploadToS3(Mockito.any(), Mockito.anyString()))
-			.thenAnswer(invocation -> invocation.getArgument(1, String.class));
+		URL mockUrl = new URL(defaultImageUrl);
+		Mockito.when(imageHandler.uploadImage(Mockito.any(), Mockito.anyString()))
+			.thenReturn(mockUrl);
 
 		String accessToken = testDataUtils.getAdminLoginAccessToken();
 		Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
