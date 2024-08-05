@@ -30,7 +30,7 @@ class AgendaCreateReqDtoTest {
 			.build();
 
 		// when
-		Agenda agenda = AgendaCreateReqDto.MapStruct.INSTANCE.toEntity(dto, user);
+		Agenda agenda = AgendaCreateReqDto.MapStruct.INSTANCE.toEntity(dto, user.getIntraId());
 
 		// then
 		assertNotNull(agenda);

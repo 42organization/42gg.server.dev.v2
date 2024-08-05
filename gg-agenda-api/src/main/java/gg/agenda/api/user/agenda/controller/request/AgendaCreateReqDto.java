@@ -113,13 +113,12 @@ public class AgendaCreateReqDto {
 		@Mapping(target = "currentTeam", constant = "0")
 		@Mapping(target = "minPeople", source = "dto.agendaMinPeople")
 		@Mapping(target = "maxPeople", source = "dto.agendaMaxPeople")
-		@Mapping(target = "posterUri", source = "dto.agendaPoster")
 		@Mapping(target = "hostIntraId", source = "userIntraId")
 		@Mapping(target = "location", source = "dto.agendaLocation")
 		@Mapping(target = "isRanking", source = "dto.agendaIsRanking")
 		@Mapping(target = "status", constant = "OPEN")
 		@Mapping(target = "isOfficial", constant = "false")
-		@Mapping(target = "posterUri", source = "dto.agendaPosterUri.toString()")
+		@Mapping(target = "posterUri", source = "dto.agendaPosterUri")
 		Agenda toEntity(AgendaCreateReqDto dto, String userIntraId);
 	}
 }
