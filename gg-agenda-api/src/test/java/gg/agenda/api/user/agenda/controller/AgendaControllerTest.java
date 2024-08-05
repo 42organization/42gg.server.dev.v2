@@ -268,6 +268,9 @@ public class AgendaControllerTest {
 		@DisplayName("Agenda 생성하기 성공 - 포스터가 없는 경우 기본 이미지로 생성합니다.")
 		void createAgendaSuccess() throws Exception {
 			// given
+			URL mockS3Path = new URL(defaultUri);
+			Mockito.when(imageHandler.uploadImage(Mockito.any(), Mockito.anyString()))
+				.thenReturn(mockS3Path);
 			AgendaCreateReqDto dto = AgendaCreateReqDto.builder()
 				.agendaTitle("title").agendaContent("content")
 				.agendaDeadLine(LocalDateTime.now().plusDays(3))
