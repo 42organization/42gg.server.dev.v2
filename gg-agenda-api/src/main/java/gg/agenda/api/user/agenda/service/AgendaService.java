@@ -48,7 +48,7 @@ public class AgendaService {
 
 	private final TicketService ticketService;
 
-  private final AgendaTeamService agendaTeamService;
+	private final AgendaTeamService agendaTeamService;
 
 	private final ImageHandler imageHandler;
 
