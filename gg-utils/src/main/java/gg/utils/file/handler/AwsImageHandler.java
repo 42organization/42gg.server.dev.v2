@@ -35,17 +35,18 @@ public class AwsImageHandler implements ImageHandler {
 	@Value("${cloud.aws.s3.dir}")
 	private String dir;
 
-	@Value("${info.image.defaultUrl}")
-	private String defaultImageUrl;
-
 	@Override
-	public URL uploadImageOrDefault(MultipartFile multipartFile, String filename) throws IOException {
+	public URL uploadImageOrDefault(MultipartFile multipartFile, String filename, String defaultUrl) throws IOException {
 		if (filename.isBlank() || isDefaultImage(multipartFile)) {
-			return new URL(defaultImageUrl);
+			return new URL(defaultUrl);
 		}
 		String originalFilename = multipartFile.getOriginalFilename();
 		String storeFileName = createStoredFileName(originalFilename, filename);
-		return uploadToS3(multipartFile, storeFileName);
+		URL storedUrl = uploadToS3(multipartFile, storeFileName);
+		if (Objects.isNull(storedUrl)) {
+			return new URL(defaultUrl);
+		}
+		return storedUrl;
 	}
 
 	private static boolean isDefaultImage(MultipartFile multipartFile) {
@@ -59,14 +60,18 @@ public class AwsImageHandler implements ImageHandler {
 	}
 
 	@Override
-	public URL uploadImageFromUrlOrDefault(String imageUrl, String filename) throws IOException {
+	public URL uploadImageFromUrlOrDefault(String imageUrl, String filename, String defaultUrl) throws IOException {
 		if (filename.isBlank() || ResourcePatternUtils.isUrl(imageUrl)) {
-			return new URL(defaultImageUrl);
+			return new URL(defaultUrl);
 		}
 		byte[] downloadedImageBytes = fileDownloader.downloadFromUrl(imageUrl);
 		byte[] resizedImageBytes = ImageResizingUtil.resizeImageBytes(downloadedImageBytes, 0.5);
 		MultipartFile multipartFile = new JpegMultipartFile(resizedImageBytes, filename);
-		return uploadToS3(multipartFile, multipartFile.getOriginalFilename());
+		URL storedUrl = uploadToS3(multipartFile, multipartFile.getOriginalFilename());
+		if (Objects.isNull(storedUrl)) {
+			return new URL(defaultUrl);
+		}
+		return storedUrl;
 	}
 
 	private String createStoredFileName(String originalFilename, String filename) {

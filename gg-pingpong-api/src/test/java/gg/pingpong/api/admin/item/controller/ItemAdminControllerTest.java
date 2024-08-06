@@ -105,7 +105,7 @@ class ItemAdminControllerTest {
 	@DisplayName("POST /pingpong/admin/items/history/{itemId}")
 	public void updateItemTest() throws Exception {
 		URL mockUrl = new URL(defaultImageUrl);
-		Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString()))
+		Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString(), defaultImageUrl))
 			.thenReturn(mockUrl);
 
 		String accessToken = testDataUtils.getAdminLoginAccessToken();

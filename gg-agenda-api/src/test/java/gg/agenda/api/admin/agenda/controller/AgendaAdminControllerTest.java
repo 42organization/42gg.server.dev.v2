@@ -154,7 +154,7 @@ public class AgendaAdminControllerTest {
 		void updateAgendaAdminSuccessWithInformation() throws Exception {
 			// given
 			URL mockUrl = new URL(defaultUri);
-			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString()))
+			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString(), defaultUri))
 				.thenReturn(mockUrl);
 			Agenda agenda = agendaMockData.createAgendaWithTeam(10);
 			AgendaAdminUpdateReqDto agendaDto =
@@ -185,7 +185,7 @@ public class AgendaAdminControllerTest {
 		void updateAgendaAdminSuccessWithSchedule() throws Exception {
 			// given
 			URL mockUrl = new URL(defaultUri);
-			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString()))
+			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString(), defaultUri))
 				.thenReturn(mockUrl);
 			Agenda agenda = agendaMockData.createAgendaWithTeam(10);
 			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder()
@@ -215,7 +215,7 @@ public class AgendaAdminControllerTest {
 		void updateAgendaAdminSuccessWithLocationSeoulToMix() throws Exception {
 			// given
 			URL mockUrl = new URL(defaultUri);
-			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString()))
+			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString(), defaultUri))
 				.thenReturn(mockUrl);
 			Agenda agenda = agendaMockData.createAgendaWithTeam(10);    // SEOUL
 			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder().agendaLocation(MIX).build();
@@ -239,7 +239,7 @@ public class AgendaAdminControllerTest {
 		void updateAgendaAdminSuccessWithLocationSeoulToGyeongsan() throws Exception {
 			// given
 			URL mockUrl = new URL(defaultUri);
-			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString()))
+			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString(), defaultUri))
 				.thenReturn(mockUrl);
 			Agenda agenda = agendaMockData.createAgenda();
 			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder().agendaLocation(GYEONGSAN).build();
@@ -263,7 +263,7 @@ public class AgendaAdminControllerTest {
 		void updateAgendaAdminSuccessWithLocationGyeongsanToSeoul() throws Exception {
 			// given
 			URL mockUrl = new URL(defaultUri);
-			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString()))
+			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString(), defaultUri))
 				.thenReturn(mockUrl);
 			Agenda agenda = agendaMockData.createAgenda(GYEONGSAN);
 			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder().agendaLocation(GYEONGSAN).build();
@@ -287,7 +287,7 @@ public class AgendaAdminControllerTest {
 		void updateAgendaAdminSuccessWithLocationGyeongsanToMix() throws Exception {
 			// given
 			URL mockUrl = new URL(defaultUri);
-			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString()))
+			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString(), defaultUri))
 				.thenReturn(mockUrl);
 			Agenda agenda = agendaMockData.createAgendaWithTeamGyeongsan(10);    // SEOUL
 			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder().agendaLocation(MIX).build();
@@ -311,7 +311,7 @@ public class AgendaAdminControllerTest {
 		void updateAgendaAdminSuccessWithAgendaCapacity() throws Exception {
 			// given
 			URL mockUrl = new URL(defaultUri);
-			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString()))
+			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString(), defaultUri))
 				.thenReturn(mockUrl);
 			Agenda agenda = agendaMockData.createAgendaWithTeam(10);
 			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder().agendaMinTeam(agenda.getMinTeam() + 1)
@@ -337,7 +337,7 @@ public class AgendaAdminControllerTest {
 		void updateAgendaAdminSuccessWithAgendaTeamCapacity() throws Exception {
 			// given
 			URL mockUrl = new URL(defaultUri);
-			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString()))
+			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString(), defaultUri))
 				.thenReturn(mockUrl);
 			Agenda agenda = agendaMockData.createAgendaWithTeam(10);
 			AgendaAdminUpdateReqDto agendaDto =
@@ -364,7 +364,7 @@ public class AgendaAdminControllerTest {
 		void updateAgendaAdminFailedWithNoAgenda() throws Exception {
 			// given
 			URL mockUrl = new URL(defaultUri);
-			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString()))
+			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString(), defaultUri))
 				.thenReturn(mockUrl);
 			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder().build();
 			MultiValueMap<String, String> params = MultiValueMapConverter.convert(objectMapper, agendaDto);
@@ -382,7 +382,7 @@ public class AgendaAdminControllerTest {
 		void updateAgendaAdminFailedWithLocationSeoulToGyeongSan() throws Exception {
 			// given
 			URL mockUrl = new URL(defaultUri);
-			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString()))
+			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString(), defaultUri))
 				.thenReturn(mockUrl);
 			Agenda agenda = agendaMockData.createAgendaWithTeam(10);
 			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder().agendaLocation(GYEONGSAN).build();
@@ -401,7 +401,7 @@ public class AgendaAdminControllerTest {
 		void updateAgendaAdminFailedWithLocationGyeongSanToSeoul() throws Exception {
 			// given
 			URL mockUrl = new URL(defaultUri);
-			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString()))
+			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString(), defaultUri))
 				.thenReturn(mockUrl);
 			Agenda agenda = agendaMockData.createAgendaWithTeamGyeongsan(10);
 			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder().agendaLocation(SEOUL).build();
@@ -421,7 +421,7 @@ public class AgendaAdminControllerTest {
 		void updateAgendaAdminFailedWithLocationMixToSeoul() throws Exception {
 			// given
 			URL mockUrl = new URL(defaultUri);
-			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString()))
+			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString(), defaultUri))
 				.thenReturn(mockUrl);
 			Agenda agenda = agendaMockData.createAgendaWithTeamMix(10);
 			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder().agendaLocation(SEOUL).build();
@@ -440,7 +440,7 @@ public class AgendaAdminControllerTest {
 		void updateAgendaAdminFailedWithAgendaInvalidCapacity() throws Exception {
 			// given
 			URL mockUrl = new URL(defaultUri);
-			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString()))
+			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString(), defaultUri))
 				.thenReturn(mockUrl);
 			Agenda agenda = agendaMockData.createAgendaWithTeamAndAgendaCapacity(10, 2, 10);
 			AgendaAdminUpdateReqDto agendaDto =
@@ -460,7 +460,7 @@ public class AgendaAdminControllerTest {
 		void updateAgendaAdminFailedWithMaxTeam() throws Exception {
 			// given
 			URL mockUrl = new URL(defaultUri);
-			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString()))
+			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString(), defaultUri))
 				.thenReturn(mockUrl);
 			Agenda agenda = agendaMockData.createAgendaWithTeamAndAgendaCapacity(10, 2, 10);
 			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder().agendaMinTeam(agenda.getMinTeam())
@@ -480,7 +480,7 @@ public class AgendaAdminControllerTest {
 		void updateAgendaAdminFailedWithMinTeam() throws Exception {
 			// given
 			URL mockUrl = new URL(defaultUri);
-			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString()))
+			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString(), defaultUri))
 				.thenReturn(mockUrl);
 			Agenda agenda = agendaMockData.createAgendaWithTeamAndAgendaCapacityAndFinish(5, 5, 10);
 			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder().agendaMinTeam(agenda.getMinTeam() + 2)
@@ -500,7 +500,7 @@ public class AgendaAdminControllerTest {
 		void updateAgendaAdminFailedWithAgendaTeamInvalidCapacity() throws Exception {
 			// given
 			URL mockUrl = new URL(defaultUri);
-			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString()))
+			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString(), defaultUri))
 				.thenReturn(mockUrl);
 			Agenda agenda = agendaMockData.createAgendaWithTeamAndAgendaTeamCapacity(10, 2, 10);
 			AgendaAdminUpdateReqDto agendaDto =
@@ -520,7 +520,7 @@ public class AgendaAdminControllerTest {
 		void updateAgendaAdminFailedWithMaxPeople() throws Exception {
 			// given
 			URL mockUrl = new URL(defaultUri);
-			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString()))
+			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString(), defaultUri))
 				.thenReturn(mockUrl);
 			Agenda agenda = agendaMockData.createAgendaWithTeamAndAgendaTeamCapacity(10, 2, 10);
 			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder().agendaMinPeople(agenda.getMinPeople())
@@ -540,7 +540,7 @@ public class AgendaAdminControllerTest {
 		void updateAgendaAdminFailedWithMinPeople() throws Exception {
 			// given
 			URL mockUrl = new URL(defaultUri);
-			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString()))
+			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString(), defaultUri))
 				.thenReturn(mockUrl);
 			Agenda agenda = agendaMockData.createAgendaWithStatusAndTeamWithAgendaTeamCapacity(OPEN,
 				10, 3, 10);

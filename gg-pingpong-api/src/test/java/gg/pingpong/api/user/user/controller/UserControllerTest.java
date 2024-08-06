@@ -575,7 +575,7 @@ class UserControllerTest {
 	@DisplayName("[post]/pingpong/users/profile-image")
 	public void getUserImage() throws Exception {
 		URL mockS3Path = new URL(defaultUrl);
-		Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.any(String.class)))
+		Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.any(String.class), defaultUrl))
 			.thenReturn(mockS3Path);
 		//        String accessToken = testDataUtils.getLoginAccessToken();
 		ItemUpdateRequestDto dto = new ItemUpdateRequestDto("name", "mainContent",

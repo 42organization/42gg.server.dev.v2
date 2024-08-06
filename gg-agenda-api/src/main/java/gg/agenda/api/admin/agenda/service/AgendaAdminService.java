@@ -52,7 +52,7 @@ public class AgendaAdminService {
 
 		try {
 			if (Objects.nonNull(agendaPoster)) {
-				URL storedUrl = imageHandler.uploadImageOrDefault(agendaPoster, agenda.getTitle());
+				URL storedUrl = imageHandler.uploadImageOrDefault(agendaPoster, agenda.getTitle(), defaultUri);
 				agenda.updatePosterUri(storedUrl.toString());
 			}
 		} catch (IOException e) {

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,6 +51,9 @@ public class AgendaService {
 
 	private final ImageHandler imageHandler;
 
+	@Value("${info.image.defaultUrl}")
+	private String defaultUri;
+
 	@Transactional(readOnly = true)
 	public Agenda findAgendaByAgendaKey(UUID agendaKey) {
 		return agendaRepository.findByAgendaKey(agendaKey)
@@ -71,7 +75,7 @@ public class AgendaService {
 	@Transactional
 	public Agenda addAgenda(AgendaCreateReqDto createDto, MultipartFile agendaPoster, UserDto user) {
 		try {
-			URL storedUrl = imageHandler.uploadImageOrDefault(agendaPoster, createDto.getAgendaTitle());
+			URL storedUrl = imageHandler.uploadImageOrDefault(agendaPoster, createDto.getAgendaTitle(), defaultUri);
 			createDto.updatePosterUri(storedUrl);
 			Agenda newAgenda = AgendaCreateReqDto.MapStruct.INSTANCE.toEntity(createDto, user.getIntraId());
 			return agendaRepository.save(newAgenda);
