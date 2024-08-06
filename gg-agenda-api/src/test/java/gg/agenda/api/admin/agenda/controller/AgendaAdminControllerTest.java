@@ -158,7 +158,7 @@ public class AgendaAdminControllerTest {
 				.thenReturn(mockUrl);
 			Agenda agenda = agendaMockData.createAgendaWithTeam(10);
 			AgendaAdminUpdateReqDto agendaDto =
-				AgendaAdminUpdateReqDto.builder().agendaTitle("updated title").agendaContents("updated content")
+				AgendaAdminUpdateReqDto.builder().agendaTitle("updated title").agendaContent("updated content")
 					.agendaStatus(FINISH).isOfficial(!agenda.getIsOfficial())
 					.isRanking(!agenda.getIsRanking()).build();
 			MultiValueMap<String, String> params = MultiValueMapConverter.convert(objectMapper, agendaDto);
@@ -174,7 +174,7 @@ public class AgendaAdminControllerTest {
 			// then
 			assert (updated.isPresent());
 			assertThat(updated.get().getTitle()).isEqualTo(agendaDto.getAgendaTitle());
-			assertThat(updated.get().getContent()).isEqualTo(agendaDto.getAgendaContents());
+			assertThat(updated.get().getContent()).isEqualTo(agendaDto.getAgendaContent());
 			assertThat(updated.get().getStatus()).isEqualTo(agendaDto.getAgendaStatus());
 			assertThat(updated.get().getIsOfficial()).isEqualTo(agendaDto.getIsOfficial());
 			assertThat(updated.get().getIsRanking()).isEqualTo(agendaDto.getIsRanking());

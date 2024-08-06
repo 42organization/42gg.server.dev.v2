@@ -59,7 +59,7 @@ public class AgendaAdminController {
 		@ApiResponse(responseCode = "409", description = "Agenda 팀 인원 제한을 변경할 수 없음")})
 	@PostMapping("/request")
 	public ResponseEntity<Void> agendaUpdate(@RequestParam("agenda_key") UUID agendaKey,
-		@ModelAttribute AgendaAdminUpdateReqDto agendaDto,
+		@ModelAttribute @Valid AgendaAdminUpdateReqDto agendaDto,
 		@RequestParam(required = false) MultipartFile agendaPoster) {
 		if (Objects.nonNull(agendaPoster) && agendaPoster.getSize() > 1024 * 1024 * 2) {	// 2MB
 			throw new InvalidParameterException(AGENDA_POSTER_SIZE_TOO_LARGE);

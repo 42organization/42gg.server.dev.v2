@@ -18,7 +18,7 @@ public class AgendaAdminUpdateReqDto {
 
 	private String agendaTitle;
 
-	private String agendaContents;
+	private String agendaContent;
 
 	private URL agendaPosterUri;
 
@@ -28,13 +28,13 @@ public class AgendaAdminUpdateReqDto {
 
 	private AgendaStatus agendaStatus;
 
-	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	private LocalDateTime agendaDeadLine;
 
-	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	private LocalDateTime agendaStartTime;
 
-	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	private LocalDateTime agendaEndTime;
 
 	private Location agendaLocation;
@@ -48,12 +48,12 @@ public class AgendaAdminUpdateReqDto {
 	private int agendaMaxPeople;
 
 	@Builder
-	public AgendaAdminUpdateReqDto(String agendaTitle, String agendaContents, URL agendaPosterUri, Boolean isOfficial,
+	public AgendaAdminUpdateReqDto(String agendaTitle, String agendaContent, URL agendaPosterUri, Boolean isOfficial,
 		Boolean isRanking, AgendaStatus agendaStatus, LocalDateTime agendaDeadLine, LocalDateTime agendaStartTime,
 		LocalDateTime agendaEndTime, Location agendaLocation, int agendaMinTeam, int agendaMaxTeam,
 		int agendaMinPeople, int agendaMaxPeople) {
 		this.agendaTitle = agendaTitle;
-		this.agendaContents = agendaContents;
+		this.agendaContent = agendaContent;
 		this.agendaPosterUri = agendaPosterUri;
 		this.isOfficial = isOfficial;
 		this.isRanking = isRanking;

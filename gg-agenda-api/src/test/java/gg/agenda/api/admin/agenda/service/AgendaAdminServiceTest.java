@@ -101,7 +101,7 @@ public class AgendaAdminServiceTest {
 			Agenda agenda = Agenda.builder().title("title").content("content").posterUri("posterUri").isOfficial(false)
 				.isRanking(true).status(AgendaStatus.FINISH).build();
 			AgendaAdminUpdateReqDto agendaDto =
-				AgendaAdminUpdateReqDto.builder().agendaTitle("Updated title").agendaContents("Updated content")
+				AgendaAdminUpdateReqDto.builder().agendaTitle("Updated title").agendaContent("Updated content")
 					.isOfficial(true).isRanking(true)
 					.agendaStatus(AgendaStatus.CANCEL).build();
 			when(agendaAdminRepository.findByAgendaKey(any())).thenReturn(Optional.of(agenda));
@@ -114,7 +114,7 @@ public class AgendaAdminServiceTest {
 			verify(agendaAdminRepository, times(1)).findByAgendaKey(any());
 			verify(agendaTeamAdminRepository, times(1)).findAllByAgenda(any());
 			assertThat(agenda.getTitle()).isEqualTo(agendaDto.getAgendaTitle());
-			assertThat(agenda.getContent()).isEqualTo(agendaDto.getAgendaContents());
+			assertThat(agenda.getContent()).isEqualTo(agendaDto.getAgendaContent());
 			assertThat(agenda.getPosterUri()).isEqualTo(agendaDto.getAgendaPosterUri());
 			assertThat(agenda.getIsOfficial()).isEqualTo(agendaDto.getIsOfficial());
 			assertThat(agenda.getIsRanking()).isEqualTo(agendaDto.getIsRanking());

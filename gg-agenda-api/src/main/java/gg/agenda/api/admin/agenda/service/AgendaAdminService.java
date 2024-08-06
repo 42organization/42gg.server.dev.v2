@@ -60,7 +60,7 @@ public class AgendaAdminService {
 			throw new BusinessException(AGENDA_CREATE_FAILED);
 		}
 
-		agenda.updateInformation(agendaDto.getAgendaTitle(), agendaDto.getAgendaContents());
+		agenda.updateInformation(agendaDto.getAgendaTitle(), agendaDto.getAgendaContent());
 		agenda.updateIsOfficial(agendaDto.getIsOfficial());
 		agenda.updateIsRanking(agendaDto.getIsRanking());
 		agenda.updateAgendaStatus(agendaDto.getAgendaStatus());
