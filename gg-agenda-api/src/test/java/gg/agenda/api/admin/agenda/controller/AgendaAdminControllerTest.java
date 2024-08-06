@@ -194,6 +194,12 @@ public class AgendaAdminControllerTest {
 				.agendaEndTime(agenda.getEndTime().plusDays(1))
 				.build();
 			MultiValueMap<String, String> params = MultiValueMapConverter.convert(objectMapper, agendaDto);
+			params.get("agendaDeadLine").remove(0);
+			params.get("agendaDeadLine").add(agendaDto.getAgendaDeadLine().toString().substring(0, 19));
+			params.get("agendaStartTime").remove(0);
+			params.get("agendaStartTime").add(agendaDto.getAgendaStartTime().toString().substring(0, 19));
+			params.get("agendaEndTime").remove(0);
+			params.get("agendaEndTime").add(agendaDto.getAgendaEndTime().toString().substring(0, 19));
 
 			// when
 			mockMvc.perform(multipart("/agenda/admin/request")
@@ -205,9 +211,12 @@ public class AgendaAdminControllerTest {
 
 			// then
 			assert (updated.isPresent());
-			assertThat(updated.get().getDeadline()).isEqualTo(agendaDto.getAgendaDeadLine());
-			assertThat(updated.get().getStartTime()).isEqualTo(agendaDto.getAgendaStartTime());
-			assertThat(updated.get().getEndTime()).isEqualTo(agendaDto.getAgendaEndTime());
+			assertThat(updated.get().getDeadline())
+				.isEqualTo(agendaDto.getAgendaDeadLine().toString().substring(0, 19));
+			assertThat(updated.get().getStartTime())
+				.isEqualTo(agendaDto.getAgendaStartTime().toString().substring(0, 19));
+			assertThat(updated.get().getEndTime())
+				.isEqualTo(agendaDto.getAgendaEndTime().toString().substring(0, 19));
 		}
 
 		@Test

@@ -43,7 +43,8 @@ public class AsyncNewUserImageUploader {
 			return;
 		}
 		userRepository.findByIntraId(intraId).ifPresent(user -> {
-			UserImage userImage = new UserImage(user, (s3ImageUrl.toString() != null) ? s3ImageUrl.toString() : defaultImageUrl,
+			UserImage userImage = new UserImage(user,
+				(s3ImageUrl.toString() != null) ? s3ImageUrl.toString() : defaultImageUrl,
 				LocalDateTime.now(), null, true);
 			userImageRepository.save(userImage);
 			userRepository.updateUserImage(user.getId(), userImage.getImageUri());

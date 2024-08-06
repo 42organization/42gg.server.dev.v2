@@ -36,7 +36,8 @@ public class AwsImageHandler implements ImageHandler {
 	private String dir;
 
 	@Override
-	public URL uploadImageOrDefault(MultipartFile multipartFile, String filename, String defaultUrl) throws IOException {
+	public URL uploadImageOrDefault(MultipartFile multipartFile,
+		String filename, String defaultUrl) throws IOException {
 		if (filename.isBlank() || isDefaultImage(multipartFile)) {
 			return new URL(defaultUrl);
 		}
