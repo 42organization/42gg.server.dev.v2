@@ -57,6 +57,7 @@ public class TicketController {
 	 */
 	@PatchMapping
 	public ResponseEntity<Void> ticketApproveModify(@Parameter(hidden = true) @Login UserDto user) {
+		ticketService.modifyTicketApprove(user);
 		return ResponseEntity.noContent().build();
 	}
 

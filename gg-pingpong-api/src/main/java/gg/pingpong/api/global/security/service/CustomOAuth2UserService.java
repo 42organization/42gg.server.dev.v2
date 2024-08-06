@@ -103,7 +103,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 			String token = userRequest.getAccessToken().getTokenValue();
 			createProfile(userInfo, savedUser, token);
 		}
-		Auth42Token auth42Token = new Auth42Token(userInfo.getUserId(), userRequest.getAccessToken().toString());
+		Auth42Token auth42Token = new Auth42Token(userInfo.getUserId(), userRequest.getAccessToken().getTokenValue());
 		auth42TokenRedisRepository.save42Token(savedUser.getIntraId(), auth42Token);
 		return UserPrincipal.create(savedUser, user.getAttributes());
 	}

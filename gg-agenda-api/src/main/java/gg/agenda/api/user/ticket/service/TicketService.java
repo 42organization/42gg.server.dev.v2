@@ -3,14 +3,22 @@ package gg.agenda.api.user.ticket.service;
 import static gg.utils.exception.ErrorCode.*;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,15 +36,20 @@ import gg.repo.agenda.TicketRepository;
 import gg.utils.exception.custom.DuplicationException;
 import gg.utils.exception.custom.ForbiddenException;
 import gg.utils.exception.custom.NotExistException;
+import gg.utils.external.ApiUtil;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class TicketService {
+	private final ApiUtil apiUtil;
 	private final TicketRepository ticketRepository;
 	private final AgendaRepository agendaRepository;
 	private final AgendaProfileRepository agendaProfileRepository;
 	private final Auth42TokenRedisRepository auth42TokenRedisRepository;
+
+	@Value("https://api.intra.42.fr/v2/users/{id}/correction_point_historics?sort=-id")
+	private String pointHistoryUrl;
 
 	/**
 	 * 티켓 환불
@@ -91,17 +104,57 @@ public class TicketService {
 	public void modifyTicketApprove(UserDto user) {
 		AgendaProfile profile = agendaProfileRepository.findByUserId(user.getId())
 			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
-		Ticket ticket = ticketRepository.findByAgendaProfileAndIsApprovedFalse(profile)
+		Ticket setUpTicket = ticketRepository.findByAgendaProfileAndIsApprovedFalse(profile)
 			.orElseThrow(() -> new NotExistException(NOT_SETUP_TICKET));
-		if (ticket.getModifiedAt().isAfter(LocalDateTime.now().minusMinutes(1))) {
+		if (setUpTicket.getModifiedAt().isAfter(LocalDateTime.now().minusMinutes(1))) {
 			throw new ForbiddenException(TICKET_FORBIDDEN);
 		}
-		Optional<Auth42Token> auth42Token = auth42TokenRedisRepository.findByIntraId(user.getIntraId());
-		if (auth42Token.isPresent()) {
-			throw new NotExistException(AUTH_NOT_FOUND);
+		Auth42Token auth42Token = auth42TokenRedisRepository.findByIntraId(user.getIntraId())
+			.orElseThrow(() -> new NotExistException(AUTH_NOT_FOUND));
+
+		String url = pointHistoryUrl.replace("{id}", auth42Token.getIntra42Id());
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", "Bearer " + auth42Token.getAccessToken());
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		List<Map<String, Object>> response = apiUtil.apiCall(url, List.class, headers, HttpMethod.GET);
+		if (response == null) {
+			throw new NotExistException("POINT_HISTORY_NOT_FOUND");
 		}
-		ticket.changeIsApproved();
-		ticketRepository.save(ticket);
+
+		DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+		ZoneId seoulZoneId = ZoneId.of("Asia/Seoul");
+		LocalDateTime cutoffTime = setUpTicket.getCreatedAt();
+
+		String targetReason1 = "Provided points to the pool";
+		String targetReason2 = "correction points trimming weekly";
+		int ticketSum = 0;
+
+		for (Map<String, Object> item : response) {
+			ZonedDateTime createdAtUtc = ZonedDateTime.parse((String)item.get("created_at"), formatter)
+				.withZoneSameInstant(ZoneId.of("UTC"));
+			LocalDateTime createdAtSeoul = createdAtUtc.withZoneSameInstant(seoulZoneId).toLocalDateTime();
+
+			if (createdAtSeoul.isAfter(cutoffTime)) {
+				String reason = (String)item.get("reason");
+				if (reason.contains(targetReason1) || reason.contains(targetReason2)) {
+					int sum = ((Number)item.get("sum")).intValue();
+					ticketSum += sum * (-1);
+				}
+			} else {
+				break;
+			}
+		}
+
+		if (ticketSum == 0) {
+			throw new NotExistException("POINT_HISTORY_NOT_FOUND");
+		} else if (ticketSum >= 2) {
+			Ticket ticket = Ticket.createRefundedTicket(profile, null);
+			ticketRepository.save(ticket);
+		}
+
+		setUpTicket.changeIsApproved();
+		ticketRepository.save(setUpTicket);
 	}
 
 	/**

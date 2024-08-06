@@ -220,6 +220,7 @@ public enum ErrorCode {
 	AGENDA_PROFILE_NOT_FOUND(404, "AG", "프로필이 존재하지 않습니다."),
 	ALREADY_TICKET_SETUP(409, "AG", "이미 티켓 신청이 되어있습니다."),
 	NOT_SETUP_TICKET(404, "AG", "티켓 신청이 되어있지 않습니다."),
+	POINT_HISTORY_NOT_FOUND(404, "AG", "기부 내역이 존재하지 않습니다."),
 	TICKET_FORBIDDEN(403, "AG", "티켓 신청은 1분의 대기시간이 있습니다."),
 	AGENDA_ALREADY_FINISHED(409, "AG", "이미 종료된 일정입니다."),
 	AGENDA_ALREADY_CONFIRMED(409, "AG", "이미 확정된 일정입니다."),
