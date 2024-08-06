@@ -57,7 +57,7 @@ public class TicketService {
 	 * @param user 사용자 정보
 	 * @return 티켓 수
 	 */
-	@Transactional(readOnly = true)`
+	@Transactional(readOnly = true)
 	public int findTicketCount(UserDto user) {
 		AgendaProfile profile = agendaProfileRepository.findByUserId(user.getId())
 			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
