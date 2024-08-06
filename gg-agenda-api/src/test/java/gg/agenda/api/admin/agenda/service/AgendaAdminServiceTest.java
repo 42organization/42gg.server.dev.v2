@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.io.IOException;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +34,7 @@ import gg.data.agenda.type.Location;
 import gg.utils.annotation.UnitTest;
 import gg.utils.exception.custom.InvalidParameterException;
 import gg.utils.exception.custom.NotExistException;
+import gg.utils.file.handler.AwsImageHandler;
 
 @UnitTest
 public class AgendaAdminServiceTest {
@@ -40,6 +44,9 @@ public class AgendaAdminServiceTest {
 
 	@Mock
 	AgendaTeamAdminRepository agendaTeamAdminRepository;
+
+	@Mock
+	AwsImageHandler imageHandler;
 
 	@InjectMocks
 	AgendaAdminService agendaAdminService;
@@ -87,9 +94,11 @@ public class AgendaAdminServiceTest {
 	@DisplayName("Admin Agenda 수정")
 	class UpdateAgenda {
 
+		private final String defaultUrl = "http://localhost:8080/images/image.jpeg";
+
 		@Test
 		@DisplayName("Admin Agenda 수정 성공 - 기본 정보")
-		void updateAgendaSuccessWithInformation() {
+		void updateAgendaSuccessWithInformation() throws IOException {
 			// given
 			MockMultipartFile file = new MockMultipartFile("file", "test.jpg",
 				"image/jpeg", "test".getBytes());
@@ -106,6 +115,7 @@ public class AgendaAdminServiceTest {
 					.agendaStatus(AgendaStatus.CANCEL).build();
 			when(agendaAdminRepository.findByAgendaKey(any())).thenReturn(Optional.of(agenda));
 			when(agendaTeamAdminRepository.findAllByAgenda(any())).thenReturn(teams);
+			when(imageHandler.uploadImageOrDefault(any(), any(), any())).thenReturn(new URL(defaultUrl));
 
 			// when
 			agendaAdminService.updateAgenda(agenda.getAgendaKey(), agendaDto, file);
@@ -115,7 +125,7 @@ public class AgendaAdminServiceTest {
 			verify(agendaTeamAdminRepository, times(1)).findAllByAgenda(any());
 			assertThat(agenda.getTitle()).isEqualTo(agendaDto.getAgendaTitle());
 			assertThat(agenda.getContent()).isEqualTo(agendaDto.getAgendaContent());
-			assertThat(agenda.getPosterUri()).isEqualTo(agendaDto.getAgendaPosterUri());
+			assertThat(agenda.getPosterUri()).isEqualTo(defaultUrl);
 			assertThat(agenda.getIsOfficial()).isEqualTo(agendaDto.getIsOfficial());
 			assertThat(agenda.getIsRanking()).isEqualTo(agendaDto.getIsRanking());
 			assertThat(agenda.getStatus()).isEqualTo(agendaDto.getAgendaStatus());
@@ -123,7 +133,7 @@ public class AgendaAdminServiceTest {
 
 		@Test
 		@DisplayName("Admin Agenda 수정 성공 - 스케줄 정보")
-		void updateAgendaSuccessWithSchedule() {
+		void updateAgendaSuccessWithSchedule() throws IOException {
 			// given
 			MockMultipartFile file = new MockMultipartFile("file", "test.jpg",
 				"image/jpeg", "test".getBytes());
@@ -140,6 +150,7 @@ public class AgendaAdminServiceTest {
 				.build();
 			when(agendaAdminRepository.findByAgendaKey(any())).thenReturn(Optional.of(agenda));
 			when(agendaTeamAdminRepository.findAllByAgenda(any())).thenReturn(teams);
+			when(imageHandler.uploadImageOrDefault(any(), any(), any())).thenReturn(new URL(defaultUrl));
 
 			// when
 			agendaAdminService.updateAgenda(agenda.getAgendaKey(), agendaDto, file);
@@ -154,7 +165,7 @@ public class AgendaAdminServiceTest {
 
 		@Test
 		@DisplayName("Admin Agenda 수정 성공 - 지역 정보")
-		void updateAgendaSuccessWithLocation() {
+		void updateAgendaSuccessWithLocation() throws IOException {
 			// given
 			MockMultipartFile file = new MockMultipartFile("file", "test.jpg",
 				"image/jpeg", "test".getBytes());
@@ -167,6 +178,7 @@ public class AgendaAdminServiceTest {
 			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder().agendaLocation(Location.MIX).build();
 			when(agendaAdminRepository.findByAgendaKey(any())).thenReturn(Optional.of(agenda));
 			when(agendaTeamAdminRepository.findAllByAgenda(any())).thenReturn(teams);
+			when(imageHandler.uploadImageOrDefault(any(), any(), any())).thenReturn(new URL(defaultUrl));
 
 			// when
 			agendaAdminService.updateAgenda(agenda.getAgendaKey(), agendaDto, file);
@@ -179,7 +191,7 @@ public class AgendaAdminServiceTest {
 
 		@Test
 		@DisplayName("Admin Agenda 수정 성공 - Agenda 팀 제한 정보")
-		void updateAgendaSuccessWithAgendaCapacity() {
+		void updateAgendaSuccessWithAgendaCapacity() throws IOException {
 			// given
 			MockMultipartFile file = new MockMultipartFile("file", "test.jpg",
 				"image/jpeg", "test".getBytes());
@@ -193,6 +205,7 @@ public class AgendaAdminServiceTest {
 				AgendaAdminUpdateReqDto.builder().agendaMinTeam(2).agendaMaxTeam(20).build();
 			when(agendaAdminRepository.findByAgendaKey(any())).thenReturn(Optional.of(agenda));
 			when(agendaTeamAdminRepository.findAllByAgenda(any())).thenReturn(teams);
+			when(imageHandler.uploadImageOrDefault(any(), any(), any())).thenReturn(new URL(defaultUrl));
 
 			// when
 			agendaAdminService.updateAgenda(agenda.getAgendaKey(), agendaDto, file);
@@ -206,7 +219,7 @@ public class AgendaAdminServiceTest {
 
 		@Test
 		@DisplayName("Admin Agenda 수정 성공 - Agenda 팀 인원 제한 정보")
-		void updateAgendaSuccessWithAgendaTeamCapacity() {
+		void updateAgendaSuccessWithAgendaTeamCapacity() throws IOException {
 			// given
 			MockMultipartFile file = new MockMultipartFile("file", "test.jpg",
 				"image/jpeg", "test".getBytes());
@@ -220,6 +233,7 @@ public class AgendaAdminServiceTest {
 				AgendaAdminUpdateReqDto.builder().agendaMinPeople(2).agendaMaxPeople(20).build();
 			when(agendaAdminRepository.findByAgendaKey(any())).thenReturn(Optional.of(agenda));
 			when(agendaTeamAdminRepository.findAllByAgenda(any())).thenReturn(teams);
+			when(imageHandler.uploadImageOrDefault(any(), any(), any())).thenReturn(new URL(defaultUrl));
 
 			// when
 			agendaAdminService.updateAgenda(agenda.getAgendaKey(), agendaDto, file);
@@ -247,7 +261,7 @@ public class AgendaAdminServiceTest {
 
 		@Test
 		@DisplayName("Admin Agenda 수정 실패 - Agenda 지역을 변경할 수 없음")
-		void updateAgendaFailAdminWithCannotChangeLocation() {
+		void updateAgendaFailAdminWithCannotChangeLocation() throws IOException {
 			// given
 			MockMultipartFile file = new MockMultipartFile("file", "test.jpg",
 				"image/jpeg", "test".getBytes());
@@ -262,6 +276,7 @@ public class AgendaAdminServiceTest {
 				AgendaAdminUpdateReqDto.builder().agendaLocation(Location.SEOUL).build();
 			when(agendaAdminRepository.findByAgendaKey(any())).thenReturn(Optional.of(agenda));
 			when(agendaTeamAdminRepository.findAllByAgenda(any())).thenReturn(teams);
+			when(imageHandler.uploadImageOrDefault(any(), any(), any())).thenReturn(new URL(defaultUrl));
 
 			// expected
 			assertThrows(InvalidParameterException.class,
@@ -270,7 +285,7 @@ public class AgendaAdminServiceTest {
 
 		@Test
 		@DisplayName("Admin Agenda 수정 실패 - Agenda 팀 제한을 변경할 수 없음")
-		void updateAgendaFailAdminWithCannotChangeMinTeam() {
+		void updateAgendaFailAdminWithCannotChangeMinTeam() throws IOException {
 			// given
 			MockMultipartFile file = new MockMultipartFile("file", "test.jpg",
 				"image/jpeg", "test".getBytes());
@@ -285,6 +300,7 @@ public class AgendaAdminServiceTest {
 				AgendaAdminUpdateReqDto.builder().agendaMinTeam(10).agendaMaxTeam(20).build();
 			when(agendaAdminRepository.findByAgendaKey(any())).thenReturn(Optional.of(agenda));
 			when(agendaTeamAdminRepository.findAllByAgenda(any())).thenReturn(teams);
+			when(imageHandler.uploadImageOrDefault(any(), any(), any())).thenReturn(new URL(defaultUrl));
 
 			// expected
 			assertThrows(InvalidParameterException.class,
@@ -293,7 +309,7 @@ public class AgendaAdminServiceTest {
 
 		@Test
 		@DisplayName("Admin Agenda 수정 실패 - Agenda 팀 제한을 변경할 수 없음")
-		void updateAgendaFailAdminWithCannotChangeMaxTeam() {
+		void updateAgendaFailAdminWithCannotChangeMaxTeam() throws IOException {
 			// given
 			MockMultipartFile file = new MockMultipartFile("file", "test.jpg",
 				"image/jpeg", "test".getBytes());
@@ -307,6 +323,7 @@ public class AgendaAdminServiceTest {
 				AgendaAdminUpdateReqDto.builder().agendaMinTeam(2).agendaMaxTeam(5).build();
 			when(agendaAdminRepository.findByAgendaKey(any())).thenReturn(Optional.of(agenda));
 			when(agendaTeamAdminRepository.findAllByAgenda(any())).thenReturn(teams);
+			when(imageHandler.uploadImageOrDefault(any(), any(), any())).thenReturn(new URL(defaultUrl));
 
 			// expected
 			assertThrows(InvalidParameterException.class,
@@ -315,7 +332,7 @@ public class AgendaAdminServiceTest {
 
 		@Test
 		@DisplayName("Admin Agenda 수정 실패 - Agenda 팀 인원 제한을 변경할 수 없음")
-		void updateAgendaFailAdminWithCannotChangeMaxPeople() {
+		void updateAgendaFailAdminWithCannotChangeMaxPeople() throws IOException {
 			// given
 			MockMultipartFile file = new MockMultipartFile("file", "test.jpg",
 				"image/jpeg", "test".getBytes());
@@ -331,6 +348,7 @@ public class AgendaAdminServiceTest {
 				AgendaAdminUpdateReqDto.builder().agendaMinPeople(2).agendaMaxPeople(5).build();
 			when(agendaAdminRepository.findByAgendaKey(any())).thenReturn(Optional.of(agenda));
 			when(agendaTeamAdminRepository.findAllByAgenda(any())).thenReturn(teams);
+			when(imageHandler.uploadImageOrDefault(any(), any(), any())).thenReturn(new URL(defaultUrl));
 
 			// expected
 			assertThrows(InvalidParameterException.class,
@@ -339,7 +357,7 @@ public class AgendaAdminServiceTest {
 
 		@Test
 		@DisplayName("Admin Agenda 수정 실패 - Agenda 팀 인원 제한을 변경할 수 없음")
-		void updateAgendaFailAdminWithCannotChangeMinPeople() {
+		void updateAgendaFailAdminWithCannotChangeMinPeople() throws IOException {
 			// given
 			MockMultipartFile file = new MockMultipartFile("file", "test.jpg",
 				"image/jpeg", "test".getBytes());
@@ -355,6 +373,7 @@ public class AgendaAdminServiceTest {
 				AgendaAdminUpdateReqDto.builder().agendaMinPeople(5).agendaMaxPeople(20).build();
 			when(agendaAdminRepository.findByAgendaKey(any())).thenReturn(Optional.of(agenda));
 			when(agendaTeamAdminRepository.findAllByAgenda(any())).thenReturn(teams);
+			when(imageHandler.uploadImageOrDefault(any(), any(), any())).thenReturn(new URL(defaultUrl));
 
 			// expected
 			assertThrows(InvalidParameterException.class,
