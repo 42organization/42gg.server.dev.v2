@@ -3,10 +3,7 @@ package gg.agenda.api.admin.agenda.controller.request;
 import java.net.URL;
 import java.time.LocalDateTime;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import gg.data.agenda.type.AgendaStatus;
 import gg.data.agenda.type.Location;
@@ -23,7 +20,7 @@ public class AgendaAdminUpdateReqDto {
 
 	private String agendaContents;
 
-	private URL agendaPoster;
+	private URL agendaPosterUri;
 
 	private Boolean isOfficial;
 
@@ -31,10 +28,13 @@ public class AgendaAdminUpdateReqDto {
 
 	private AgendaStatus agendaStatus;
 
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
 	private LocalDateTime agendaDeadLine;
 
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
 	private LocalDateTime agendaStartTime;
 
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
 	private LocalDateTime agendaEndTime;
 
 	private Location agendaLocation;
@@ -54,7 +54,7 @@ public class AgendaAdminUpdateReqDto {
 		int agendaMinPeople, int agendaMaxPeople) {
 		this.agendaTitle = agendaTitle;
 		this.agendaContents = agendaContents;
-		this.agendaPoster = agendaPosterUri;
+		this.agendaPosterUri = agendaPosterUri;
 		this.isOfficial = isOfficial;
 		this.isRanking = isRanking;
 		this.agendaStatus = agendaStatus;
