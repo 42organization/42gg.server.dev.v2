@@ -1,6 +1,9 @@
 package gg.agenda.api.admin.agenda.controller;
 
+import static gg.utils.exception.ErrorCode.*;
+
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -24,6 +27,7 @@ import gg.agenda.api.admin.agenda.controller.request.AgendaAdminUpdateReqDto;
 import gg.agenda.api.admin.agenda.controller.response.AgendaAdminResDto;
 import gg.agenda.api.admin.agenda.service.AgendaAdminService;
 import gg.utils.dto.PageRequestDto;
+import gg.utils.exception.custom.InvalidParameterException;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -57,6 +61,9 @@ public class AgendaAdminController {
 	public ResponseEntity<Void> agendaUpdate(@RequestParam("agenda_key") UUID agendaKey,
 		@ModelAttribute AgendaAdminUpdateReqDto agendaDto,
 		@RequestParam(required = false) MultipartFile agendaPoster) {
+		if (Objects.nonNull(agendaPoster) && agendaPoster.getSize() > 1024 * 1024 * 2) {	// 2MB
+			throw new InvalidParameterException(AGENDA_POSTER_SIZE_TOO_LARGE);
+		}
 		agendaAdminService.updateAgenda(agendaKey, agendaDto, agendaPoster);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
