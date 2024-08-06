@@ -202,6 +202,7 @@ public enum ErrorCode {
 	AGENDA_ANNOUNCEMENT_NOT_FOUND(404, "AG", "공지사항이 존재하지 않습니다."),
 	AGENDA_TEAM_FULL(400, "AG", "팀이 꽉 찼습니다."),
 	AGENDA_NO_CAPACITY(403, "AG", "해당 일정에 참여할 수 있는 팀이 꽉 찼습니다."),
+	AGENDA_POSTER_SIZE_TOO_LARGE(400, "AG", "포스터 사이즈가 너무 큽니다."),
 	AGENDA_INVALID_SCHEDULE(400, "AG", "유효하지 않은 일정입니다."),
 	AGENDA_INVALID_PARAM(400, "AG", "유효하지 않은 파라미터입니다."),
 	UPDATE_LOCATION_NOT_VALID(400, "AG", "지역을 변경할 수 없습니다."),
