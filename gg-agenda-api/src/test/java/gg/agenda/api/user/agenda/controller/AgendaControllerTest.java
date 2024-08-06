@@ -268,7 +268,7 @@ public class AgendaControllerTest {
 		void createAgendaSuccess() throws Exception {
 			// given
 			URL mockS3Path = new URL(defaultUri);
-			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString(), defaultUri))
+			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString(), Mockito.anyString()))
 				.thenReturn(mockS3Path);
 			AgendaCreateReqDto dto = AgendaCreateReqDto.builder()
 				.agendaTitle("title").agendaContent("content")
@@ -302,7 +302,7 @@ public class AgendaControllerTest {
 			// given
 			URL mockS3Path = new URL("https://test.com/test.jpeg");
 			Mockito.when(imageHandler.uploadImageOrDefault(
-					Mockito.any(MultipartFile.class), Mockito.anyString(), defaultUri))
+					Mockito.any(MultipartFile.class), Mockito.anyString(), Mockito.anyString()))
 				.thenReturn(mockS3Path);
 
 			AgendaCreateReqDto dto = AgendaCreateReqDto.builder()
