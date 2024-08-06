@@ -1,6 +1,5 @@
 package gg.agenda.api.admin.agenda.controller;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -14,7 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -54,9 +53,9 @@ public class AgendaAdminController {
 		@ApiResponse(responseCode = "409", description = "Agenda 지역을 변경할 수 없음"),
 		@ApiResponse(responseCode = "409", description = "Agenda 팀 제한을 변경할 수 없음"),
 		@ApiResponse(responseCode = "409", description = "Agenda 팀 인원 제한을 변경할 수 없음")})
-	@PatchMapping("/request")
+	@PostMapping("/request")
 	public ResponseEntity<Void> agendaUpdate(@RequestParam("agenda_key") UUID agendaKey,
-		@ModelAttribute @Valid AgendaAdminUpdateReqDto agendaDto,
+		@ModelAttribute AgendaAdminUpdateReqDto agendaDto,
 		@RequestParam(required = false) MultipartFile agendaPoster) {
 		agendaAdminService.updateAgenda(agendaKey, agendaDto, agendaPoster);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

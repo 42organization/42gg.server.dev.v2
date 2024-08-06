@@ -115,7 +115,7 @@ public class AgendaAdminServiceTest {
 			verify(agendaTeamAdminRepository, times(1)).findAllByAgenda(any());
 			assertThat(agenda.getTitle()).isEqualTo(agendaDto.getAgendaTitle());
 			assertThat(agenda.getContent()).isEqualTo(agendaDto.getAgendaContents());
-			assertThat(agenda.getPosterUri()).isEqualTo(agendaDto.getAgendaPoster());
+			assertThat(agenda.getPosterUri()).isEqualTo(agendaDto.getAgendaPosterUri());
 			assertThat(agenda.getIsOfficial()).isEqualTo(agendaDto.getIsOfficial());
 			assertThat(agenda.getIsRanking()).isEqualTo(agendaDto.getIsRanking());
 			assertThat(agenda.getStatus()).isEqualTo(agendaDto.getAgendaStatus());
