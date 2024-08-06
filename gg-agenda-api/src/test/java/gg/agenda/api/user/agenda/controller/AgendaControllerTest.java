@@ -439,14 +439,12 @@ public class AgendaControllerTest {
 			int totalCount = 35;
 			int size = 10;
 			List<Agenda> agendaHistory = agendaMockData.createAgendaHistory(totalCount);
-			PageRequestDto pageRequestDto = new PageRequestDto(page, size);
-			String req = objectMapper.writeValueAsString(pageRequestDto);
 
 			// when
 			String response = mockMvc.perform(get("/agenda/history")
 					.header("Authorization", "Bearer " + accessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(req))
+					.param("page", String.valueOf(page))
+					.param("size", String.valueOf(size)))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			AgendaSimpleResDto[] result = objectMapper.readValue(response, AgendaSimpleResDto[].class);
 
@@ -467,14 +465,12 @@ public class AgendaControllerTest {
 			// given
 			int page = 1;
 			int size = 10;
-			PageRequestDto pageRequestDto = new PageRequestDto(page, size);
-			String req = objectMapper.writeValueAsString(pageRequestDto);
 
 			// when
 			String response = mockMvc.perform(get("/agenda/history")
 					.header("Authorization", "Bearer " + accessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(req))
+					.param("page", String.valueOf(page))
+					.param("size", String.valueOf(size)))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			AgendaSimpleResDto[] result = objectMapper.readValue(response, AgendaSimpleResDto[].class);
 
@@ -523,14 +519,12 @@ public class AgendaControllerTest {
 			int totalCount = 35;
 			int size = 10;
 			List<Agenda> agendaHistory = agendaMockData.createAgendaHistory(totalCount);
-			PageRequestDto pageRequestDto = new PageRequestDto(page, size);
-			String req = objectMapper.writeValueAsString(pageRequestDto);
 
 			// when
 			String response = mockMvc.perform(get("/agenda/history")
 					.header("Authorization", "Bearer " + accessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(req))
+					.param("page", String.valueOf(page))
+					.param("size", String.valueOf(size)))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			AgendaSimpleResDto[] result = objectMapper.readValue(response, AgendaSimpleResDto[].class);
 
@@ -561,14 +555,11 @@ public class AgendaControllerTest {
 			// given
 			int page = 1;
 			List<Agenda> agendaHistory = agendaMockData.createAgendaHistory(30);
-			PageRequestDto pageRequestDto = new PageRequestDto(page, null);
-			String req = objectMapper.writeValueAsString(pageRequestDto);
 
 			// when
 			String response = mockMvc.perform(get("/agenda/history")
 					.header("Authorization", "Bearer " + accessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(req))
+					.param("page", String.valueOf(page)))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			AgendaSimpleResDto[] result = objectMapper.readValue(response, AgendaSimpleResDto[].class);
 
@@ -596,13 +587,13 @@ public class AgendaControllerTest {
 			int awardSize = 3;
 			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(),
 				LocalDateTime.now().minusDays(10), true, AgendaStatus.CONFIRM);
-			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
-					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
-					.collect(Collectors.toList());
-			List<AgendaTeamAward> awards = IntStream.range(0, awardSize)
-					.mapToObj(i -> AgendaTeamAward.builder().teamName(agendaTeams.get(i).getName())
-						.awardName("prize" + i).awardPriority(i + 1).build())
-					.collect(Collectors.toList());
+			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize).mapToObj(i -> agendaMockData
+					.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
+				.collect(Collectors.toList());
+			List<AgendaTeamAward> awards = IntStream.range(0, awardSize).mapToObj(i -> AgendaTeamAward.builder()
+					.teamName(agendaTeams.get(i).getName())
+					.awardName("prize" + i).awardPriority(i + 1).build())
+				.collect(Collectors.toList());
 			AgendaAwardsReqDto agendaAwardsReqDto = AgendaAwardsReqDto.builder().awards(awards).build();
 			String response = objectMapper.writeValueAsString(agendaAwardsReqDto);
 
@@ -638,13 +629,13 @@ public class AgendaControllerTest {
 			int awardSize = 3;
 			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(),
 				LocalDateTime.now().minusDays(10), true, AgendaStatus.CONFIRM);
-			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
-					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
-					.collect(Collectors.toList());
-			List<AgendaTeamAward> awards = IntStream.range(0, awardSize)
-					.mapToObj(i -> AgendaTeamAward.builder().teamName(agendaTeams.get(i).getName())
-						.awardName("prize" + i).awardPriority(i + 1).build())
-					.collect(Collectors.toList());
+			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize).mapToObj(i -> agendaMockData
+					.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
+				.collect(Collectors.toList());
+			List<AgendaTeamAward> awards = IntStream.range(0, awardSize).mapToObj(i -> AgendaTeamAward.builder()
+					.teamName(agendaTeams.get(i).getName()).awardName("prize" + i)
+					.awardPriority(i + 1).build())
+				.collect(Collectors.toList());
 
 			// expected
 			mockMvc.perform(patch("/agenda/finish")
@@ -661,7 +652,7 @@ public class AgendaControllerTest {
 			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(),
 				LocalDateTime.now().minusDays(10), false, AgendaStatus.CONFIRM);
 			AgendaAwardsReqDto agendaAwardsReqDto = AgendaAwardsReqDto.builder()
-				.awards(List.of())	// 시상하지 않는 대회도 빈 리스트를 전송해야합니다.
+				.awards(List.of())    // 시상하지 않는 대회도 빈 리스트를 전송해야합니다.
 				.build();
 			IntStream.range(0, teamSize)
 				.forEach(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM));
@@ -689,13 +680,13 @@ public class AgendaControllerTest {
 			int awardSize = 3;
 			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(),
 				LocalDateTime.now().minusDays(10), false, AgendaStatus.CONFIRM);
-			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
-					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
-					.collect(Collectors.toList());
-			List<AgendaTeamAward> awards = IntStream.range(0, awardSize)
-					.mapToObj(i -> AgendaTeamAward.builder().teamName(agendaTeams.get(i).getName())
-					.awardName("prize" + i).awardPriority(i + 1).build())
-					.collect(Collectors.toList());
+			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize).mapToObj(i -> agendaMockData
+					.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
+				.collect(Collectors.toList());
+			List<AgendaTeamAward> awards = IntStream.range(0, awardSize).mapToObj(i -> AgendaTeamAward.builder()
+					.teamName(agendaTeams.get(i).getName()).awardName("prize" + i)
+					.awardPriority(i + 1).build())
+				.collect(Collectors.toList());
 			AgendaAwardsReqDto agendaAwardsReqDto = AgendaAwardsReqDto.builder().awards(awards).build();
 			String response = objectMapper.writeValueAsString(agendaAwardsReqDto);
 
@@ -731,13 +722,11 @@ public class AgendaControllerTest {
 			int awardSize = 3;
 			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(),
 				LocalDateTime.now().minusDays(10), true, AgendaStatus.CONFIRM);
-			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
-					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
-					.collect(Collectors.toList());
-			List<AgendaTeamAward> awards = IntStream.range(0, awardSize)
-					.mapToObj(i -> AgendaTeamAward.builder().teamName(agendaTeams.get(i).getName())
-					.awardName("prize" + i).awardPriority(i + 1).build())
-					.collect(Collectors.toList());
+			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize).mapToObj(i -> agendaMockData
+				.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM)).collect(Collectors.toList());
+			List<AgendaTeamAward> awards = IntStream.range(0, awardSize).mapToObj(i -> AgendaTeamAward.builder()
+					.teamName(agendaTeams.get(i).getName()).awardName("prize" + i).awardPriority(i + 1).build())
+				.collect(Collectors.toList());
 			AgendaAwardsReqDto agendaAwardsReqDto = AgendaAwardsReqDto.builder().awards(awards).build();
 			awards.add(AgendaTeamAward.builder()
 				.teamName("invalid_team").awardName("prize").awardPriority(1).build());    // invalid team
@@ -759,13 +748,12 @@ public class AgendaControllerTest {
 			int teamSize = 10;
 			int awardSize = 3;
 			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), true);
-			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
-					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
-					.collect(Collectors.toList());
-			List<AgendaTeamAward> awards = IntStream.range(0, awardSize)
-					.mapToObj(i -> AgendaTeamAward.builder().teamName(agendaTeams.get(i).getName())
-					.awardName("prize" + i).awardPriority(i + 1).build())
-					.collect(Collectors.toList());
+			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize).mapToObj(i -> agendaMockData
+				.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM)).collect(Collectors.toList());
+			List<AgendaTeamAward> awards = IntStream.range(0, awardSize).mapToObj(i -> AgendaTeamAward.builder()
+					.teamName(agendaTeams.get(i).getName()).awardName("prize" + i)
+					.awardPriority(i + 1).build())
+				.collect(Collectors.toList());
 			AgendaAwardsReqDto agendaAwardsReqDto = AgendaAwardsReqDto.builder().awards(awards).build();
 			String response = objectMapper.writeValueAsString(agendaAwardsReqDto);
 
@@ -830,13 +818,11 @@ public class AgendaControllerTest {
 			int awardSize = 3;
 			User another = testDataUtils.createNewUser();
 			Agenda agenda = agendaMockData.createAgenda(another.getIntraId(), LocalDateTime.now().minusDays(10), true);
-			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
-					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
-					.collect(Collectors.toList());
-			List<AgendaTeamAward> awards = IntStream.range(0, awardSize)
-					.mapToObj(i -> AgendaTeamAward.builder().teamName(agendaTeams.get(i).getName())
-					.awardName("prize" + i).awardPriority(i + 1).build())
-					.collect(Collectors.toList());
+			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize).mapToObj(i -> agendaMockData
+				.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM)).collect(Collectors.toList());
+			List<AgendaTeamAward> awards = IntStream.range(0, awardSize).mapToObj(i -> AgendaTeamAward.builder()
+					.teamName(agendaTeams.get(i).getName()).awardName("prize" + i).awardPriority(i + 1).build())
+				.collect(Collectors.toList());
 			AgendaAwardsReqDto agendaAwardsReqDto = AgendaAwardsReqDto.builder().awards(awards).build();
 			String response = objectMapper.writeValueAsString(agendaAwardsReqDto);
 
@@ -857,13 +843,11 @@ public class AgendaControllerTest {
 			int awardSize = 3;
 			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(),
 				LocalDateTime.now().minusDays(10), AgendaStatus.FINISH);
-			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
-					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
-					.collect(Collectors.toList());
-			List<AgendaTeamAward> awards = IntStream.range(0, awardSize)
-					.mapToObj(i -> AgendaTeamAward.builder().teamName(agendaTeams.get(i).getName())
-						.awardName("prize" + i).awardPriority(i + 1).build())
-					.collect(Collectors.toList());
+			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize).mapToObj(i -> agendaMockData
+				.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM)).collect(Collectors.toList());
+			List<AgendaTeamAward> awards = IntStream.range(0, awardSize).mapToObj(i -> AgendaTeamAward.builder()
+					.teamName(agendaTeams.get(i).getName()).awardName("prize" + i).awardPriority(i + 1).build())
+				.collect(Collectors.toList());
 			AgendaAwardsReqDto agendaAwardsReqDto = AgendaAwardsReqDto.builder().awards(awards).build();
 			String response = objectMapper.writeValueAsString(agendaAwardsReqDto);
 
@@ -884,13 +868,11 @@ public class AgendaControllerTest {
 			int awardSize = 3;
 			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(),
 				LocalDateTime.now().minusDays(10), AgendaStatus.CANCEL);
-			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
-					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
-					.collect(Collectors.toList());
-			List<AgendaTeamAward> awards = IntStream.range(0, awardSize)
-					.mapToObj(i -> AgendaTeamAward.builder().teamName(agendaTeams.get(i).getName())
-					.awardName("prize" + i).awardPriority(i + 1).build())
-					.collect(Collectors.toList());
+			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize).mapToObj(i -> agendaMockData
+				.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM)).collect(Collectors.toList());
+			List<AgendaTeamAward> awards = IntStream.range(0, awardSize).mapToObj(i -> AgendaTeamAward.builder()
+					.teamName(agendaTeams.get(i).getName()).awardName("prize" + i).awardPriority(i + 1).build())
+				.collect(Collectors.toList());
 			AgendaAwardsReqDto agendaAwardsReqDto = AgendaAwardsReqDto.builder().awards(awards).build();
 			String response = objectMapper.writeValueAsString(agendaAwardsReqDto);
 
@@ -911,13 +893,11 @@ public class AgendaControllerTest {
 			int awardSize = 3;
 			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(),
 				LocalDateTime.now().plusDays(1), AgendaStatus.OPEN);
-			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
-					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
-					.collect(Collectors.toList());
-			List<AgendaTeamAward> awards = IntStream.range(0, awardSize)
-					.mapToObj(i -> AgendaTeamAward.builder().teamName(agendaTeams.get(i).getName())
-						.awardName("prize" + i).awardPriority(i + 1).build())
-					.collect(Collectors.toList());
+			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize).mapToObj(i -> agendaMockData
+				.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM)).collect(Collectors.toList());
+			List<AgendaTeamAward> awards = IntStream.range(0, awardSize).mapToObj(i -> AgendaTeamAward.builder()
+					.teamName(agendaTeams.get(i).getName()).awardName("prize" + i).awardPriority(i + 1).build())
+				.collect(Collectors.toList());
 			AgendaAwardsReqDto agendaAwardsReqDto = AgendaAwardsReqDto.builder().awards(awards).build();
 			String response = objectMapper.writeValueAsString(agendaAwardsReqDto);
 
@@ -937,13 +917,11 @@ public class AgendaControllerTest {
 			int teamSize = 10;
 			int awardSize = 3;
 			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), true);
-			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
-					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
-					.collect(Collectors.toList());
-			List<AgendaTeamAward> awards = IntStream.range(0, awardSize)
-					.mapToObj(i -> AgendaTeamAward.builder().teamName(agendaTeams.get(i).getName())
-						.awardName("prize" + i).awardPriority(i + 1).build())
-					.collect(Collectors.toList());
+			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize).mapToObj(i -> agendaMockData
+				.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM)).collect(Collectors.toList());
+			List<AgendaTeamAward> awards = IntStream.range(0, awardSize).mapToObj(i -> AgendaTeamAward.builder()
+					.teamName(agendaTeams.get(i).getName()).awardName("prize" + i).awardPriority(i + 1).build())
+				.collect(Collectors.toList());
 			awards.add(AgendaTeamAward.builder().teamName(agendaTeams.get(awardSize).getName())
 				.awardName("").awardPriority(awardSize).build());    // empty award name
 			AgendaAwardsReqDto agendaAwardsReqDto = AgendaAwardsReqDto.builder().awards(awards).build();
@@ -965,13 +943,11 @@ public class AgendaControllerTest {
 			int teamSize = 10;
 			int awardSize = 3;
 			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), true);
-			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
-					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
-					.collect(Collectors.toList());
-			List<AgendaTeamAward> awards = IntStream.range(0, awardSize)
-					.mapToObj(i -> AgendaTeamAward.builder().teamName(agendaTeams.get(i).getName())
-						.awardName("prize" + i).awardPriority(i + 1).build())
-					.collect(Collectors.toList());
+			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize).mapToObj(i -> agendaMockData
+				.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM)).collect(Collectors.toList());
+			List<AgendaTeamAward> awards = IntStream.range(0, awardSize).mapToObj(i -> AgendaTeamAward.builder()
+					.teamName(agendaTeams.get(i).getName()).awardName("prize" + i).awardPriority(i + 1).build())
+				.collect(Collectors.toList());
 			awards.add(AgendaTeamAward.builder().teamName(agendaTeams.get(awardSize).getName())
 				.awardPriority(awardSize).build());    // null award name
 			AgendaAwardsReqDto agendaAwardsReqDto = AgendaAwardsReqDto.builder().awards(awards).build();
@@ -993,13 +969,11 @@ public class AgendaControllerTest {
 			int teamSize = 10;
 			int awardSize = 3;
 			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), true);
-			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
-					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
-					.collect(Collectors.toList());
-			List<AgendaTeamAward> awards = IntStream.range(0, awardSize)
-					.mapToObj(i -> AgendaTeamAward.builder().teamName(agendaTeams.get(i).getName())
-						.awardName("prize" + i).awardPriority(i + 1).build())
-					.collect(Collectors.toList());
+			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize).mapToObj(i -> agendaMockData
+				.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM)).collect(Collectors.toList());
+			List<AgendaTeamAward> awards = IntStream.range(0, awardSize).mapToObj(i -> AgendaTeamAward.builder()
+					.teamName(agendaTeams.get(i).getName()).awardName("prize" + i).awardPriority(i + 1).build())
+				.collect(Collectors.toList());
 			awards.add(AgendaTeamAward.builder().awardName("prize" + awardSize)
 				.teamName("").awardPriority(awardSize).build());    // empty award name
 			AgendaAwardsReqDto agendaAwardsReqDto = AgendaAwardsReqDto.builder().awards(awards).build();
@@ -1021,13 +995,11 @@ public class AgendaControllerTest {
 			int teamSize = 10;
 			int awardSize = 3;
 			Agenda agenda = agendaMockData.createAgenda(user.getIntraId(), LocalDateTime.now().minusDays(10), true);
-			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize)
-					.mapToObj(i -> agendaMockData.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM))
-					.collect(Collectors.toList());
-			List<AgendaTeamAward> awards = IntStream.range(0, awardSize)
-					.mapToObj(i -> AgendaTeamAward.builder().teamName(agendaTeams.get(i).getName())
-						.awardName("prize" + i).awardPriority(i + 1).build())
-					.collect(Collectors.toList());
+			List<AgendaTeam> agendaTeams = IntStream.range(0, teamSize).mapToObj(i -> agendaMockData
+				.createAgendaTeam(agenda, "team" + i, AgendaTeamStatus.CONFIRM)).collect(Collectors.toList());
+			List<AgendaTeamAward> awards = IntStream.range(0, awardSize).mapToObj(i -> AgendaTeamAward.builder()
+					.teamName(agendaTeams.get(i).getName()).awardName("prize" + i).awardPriority(i + 1).build())
+				.collect(Collectors.toList());
 			awards.add(AgendaTeamAward.builder().awardName("prize" + awardSize)
 				.awardPriority(awardSize).build());    // null award name
 			AgendaAwardsReqDto agendaAwardsReqDto = AgendaAwardsReqDto.builder().awards(awards).build();
