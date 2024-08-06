@@ -1,4 +1,4 @@
-package gg.pingpong.api.global.utils.external;
+package gg.utils.external;
 
 import java.util.Map;
 

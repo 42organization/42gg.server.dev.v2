@@ -16,10 +16,10 @@ import org.springframework.util.MultiValueMap;
 
 import gg.auth.UserDto;
 import gg.data.noti.Noti;
-import gg.pingpong.api.global.utils.external.ApiUtil;
 import gg.pingpong.api.user.noti.dto.UserNotiDto;
 import gg.pingpong.api.user.noti.service.NotiService;
 import gg.utils.exception.noti.SlackSendException;
+import gg.utils.external.ApiUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
