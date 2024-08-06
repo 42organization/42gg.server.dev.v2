@@ -12,6 +12,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import gg.agenda.api.user.agenda.controller.request.validator.AgendaCapacityValid;
 import gg.agenda.api.user.agenda.controller.request.validator.AgendaScheduleValid;
 import gg.auth.UserDto;
