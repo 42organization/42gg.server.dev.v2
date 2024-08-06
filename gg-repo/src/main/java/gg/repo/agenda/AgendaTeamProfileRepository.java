@@ -32,8 +32,6 @@ public interface AgendaTeamProfileRepository extends JpaRepository<AgendaTeamPro
 	 */
 	List<AgendaTeamProfile> findAllByAgendaTeam(AgendaTeam agendaTeam);
 
-	List<AgendaTeamProfile> findByProfile(AgendaProfile agendaProfile);
-  
 	@Query("SELECT atp FROM AgendaTeamProfile atp JOIN FETCH atp.profile WHERE atp.agendaTeam = :agendaTeam")
 	List<AgendaTeamProfile> findAllByAgendaTeamWithFetchProfile(AgendaTeam agendaTeam);
 
