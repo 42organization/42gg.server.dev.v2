@@ -18,12 +18,11 @@ import org.springframework.web.multipart.MultipartFile;
 import gg.agenda.api.user.agenda.controller.request.AgendaAwardsReqDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaCreateReqDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaTeamAward;
+import gg.agenda.api.user.agendateam.service.AgendaTeamService;
 import gg.agenda.api.user.ticket.service.TicketService;
 import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
-import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.AgendaTeam;
-import gg.data.agenda.AgendaTeamProfile;
 import gg.data.agenda.type.AgendaStatus;
 import gg.data.agenda.type.AgendaTeamStatus;
 import gg.repo.agenda.AgendaRepository;
@@ -48,6 +47,8 @@ public class AgendaService {
 	private final AgendaTeamProfileRepository agendaTeamProfileRepository;
 
 	private final TicketService ticketService;
+
+  private final AgendaTeamService agendaTeamService;
 
 	private final ImageHandler imageHandler;
 
@@ -115,13 +116,7 @@ public class AgendaService {
 
 		List<AgendaTeam> openTeams = agendaTeamRepository.findAllByAgendaAndStatus(agenda, AgendaTeamStatus.OPEN);
 		for (AgendaTeam openTeam : openTeams) {
-			// TODO: AgendaTeamService의 cancelTeam 메서드를 호출하는 것이 더 좋을 수도 있음
-			List<AgendaProfile> participants = agendaTeamProfileRepository
-				.findAllByAgendaTeamWithFetchProfile(openTeam).stream()
-				.map(AgendaTeamProfile::getProfile)
-				.collect(Collectors.toList());
-			ticketService.refundTickets(participants, agenda.getAgendaKey());
-			openTeam.cancelTeam();
+			agendaTeamService.leaveTeamAll(openTeam);
 		}
 		agenda.confirmAgenda();
 	}

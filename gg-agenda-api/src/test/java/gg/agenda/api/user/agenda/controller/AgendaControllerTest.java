@@ -501,14 +501,12 @@ public class AgendaControllerTest {
 			int totalCount = 35;
 			int size = 10;
 			List<Agenda> agendaHistory = agendaMockData.createAgendaHistory(totalCount);
-			PageRequestDto pageRequestDto = new PageRequestDto(page, size);
-			String req = objectMapper.writeValueAsString(pageRequestDto);
 
 			// when
 			String response = mockMvc.perform(get("/agenda/history")
 					.header("Authorization", "Bearer " + accessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(req))
+					.param("page", String.valueOf(page))
+					.param("size", String.valueOf(size)))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			AgendaSimpleResDto[] result = objectMapper.readValue(response, AgendaSimpleResDto[].class);
 
@@ -529,14 +527,12 @@ public class AgendaControllerTest {
 			// given
 			int page = 1;
 			int size = 10;
-			PageRequestDto pageRequestDto = new PageRequestDto(page, size);
-			String req = objectMapper.writeValueAsString(pageRequestDto);
 
 			// when
 			String response = mockMvc.perform(get("/agenda/history")
 					.header("Authorization", "Bearer " + accessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(req))
+					.param("page", String.valueOf(page))
+					.param("size", String.valueOf(size)))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			AgendaSimpleResDto[] result = objectMapper.readValue(response, AgendaSimpleResDto[].class);
 
@@ -585,14 +581,12 @@ public class AgendaControllerTest {
 			int totalCount = 35;
 			int size = 10;
 			List<Agenda> agendaHistory = agendaMockData.createAgendaHistory(totalCount);
-			PageRequestDto pageRequestDto = new PageRequestDto(page, size);
-			String req = objectMapper.writeValueAsString(pageRequestDto);
 
 			// when
 			String response = mockMvc.perform(get("/agenda/history")
 					.header("Authorization", "Bearer " + accessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(req))
+					.param("page", String.valueOf(page))
+					.param("size", String.valueOf(size)))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			AgendaSimpleResDto[] result = objectMapper.readValue(response, AgendaSimpleResDto[].class);
 
@@ -623,14 +617,11 @@ public class AgendaControllerTest {
 			// given
 			int page = 1;
 			List<Agenda> agendaHistory = agendaMockData.createAgendaHistory(30);
-			PageRequestDto pageRequestDto = new PageRequestDto(page, null);
-			String req = objectMapper.writeValueAsString(pageRequestDto);
 
 			// when
 			String response = mockMvc.perform(get("/agenda/history")
 					.header("Authorization", "Bearer " + accessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(req))
+					.param("page", String.valueOf(page)))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			AgendaSimpleResDto[] result = objectMapper.readValue(response, AgendaSimpleResDto[].class);
 
@@ -709,7 +700,6 @@ public class AgendaControllerTest {
 			IntStream.range(0, awardSize).mapToObj(i -> AgendaTeamAward.builder().teamName(agendaTeams.get(i).getName())
 					.awardName("prize" + i).awardPriority(i + 1).build())
 				.collect(Collectors.toList());
-
 			// expected
 			mockMvc.perform(patch("/agenda/finish")
 					.param("agenda_key", agenda.getAgendaKey().toString())

@@ -54,7 +54,7 @@ public class AgendaController {
 		Agenda agenda = agendaService.findAgendaByAgendaKey(agendaKey);
 		String announcementTitle = agendaAnnouncementService
 			.findLatestAnnounceTitleByAgendaOrDefault(agenda, "");
-		AgendaResDto agendaResDto = AgendaResDto.MapStruct.INSTANCE.toDto(agenda,  announcementTitle);
+		AgendaResDto agendaResDto = AgendaResDto.MapStruct.INSTANCE.toDto(agenda, announcementTitle);
 		return ResponseEntity.ok(agendaResDto);
 	}
 
@@ -80,7 +80,8 @@ public class AgendaController {
 	}
 
 	@GetMapping("/history")
-	public ResponseEntity<List<AgendaSimpleResDto>> agendaListHistory(@RequestBody @Valid PageRequestDto pageRequest) {
+	public ResponseEntity<List<AgendaSimpleResDto>> agendaListHistory(
+		@ModelAttribute @Valid PageRequestDto pageRequest) {
 		int page = pageRequest.getPage();
 		int size = pageRequest.getSize();
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("startTime").descending());

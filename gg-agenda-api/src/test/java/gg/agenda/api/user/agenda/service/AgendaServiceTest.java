@@ -28,6 +28,7 @@ import org.springframework.data.domain.Sort;
 import gg.agenda.api.user.agenda.controller.request.AgendaAwardsReqDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaCreateReqDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaTeamAward;
+import gg.agenda.api.user.agendateam.service.AgendaTeamService;
 import gg.agenda.api.user.ticket.service.TicketService;
 import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
@@ -56,6 +57,9 @@ class AgendaServiceTest {
 
 	@Mock
 	AgendaTeamProfileRepository agendaTeamProfileRepository;
+
+	@Mock
+	AgendaTeamService agendaTeamService;
 
 	@Mock
 	TicketService ticketService;
@@ -305,19 +309,14 @@ class AgendaServiceTest {
 				.profile(AgendaProfile.builder().build()).build();
 			when(agendaTeamRepository.findAllByAgendaAndStatus(agenda, AgendaTeamStatus.OPEN))
 				.thenReturn(List.of(agendaTeam));
-			when(agendaTeamProfileRepository.findAllByAgendaTeamWithFetchProfile(agendaTeam))
-				.thenReturn(List.of(participant));
-			doNothing().when(ticketService).refundTickets(any(), any());
+			doNothing().when(agendaTeamService).leaveTeamAll(any());
 
 			// when
 			agendaService.confirmAgendaAndRefundTicketForOpenTeam(agenda);
 
 			// then
 			verify(agendaTeamRepository, times(1)).findAllByAgendaAndStatus(agenda, AgendaTeamStatus.OPEN);
-			verify(agendaTeamProfileRepository, times(1)).findAllByAgendaTeamWithFetchProfile(agendaTeam);
-			verify(ticketService, times(1)).refundTickets(any(), any());
 			assertThat(agenda.getStatus()).isEqualTo(AgendaStatus.CONFIRM);
-			assertThat(agendaTeam.getStatus()).isEqualTo(AgendaTeamStatus.CANCEL);
 		}
 
 		@Test
