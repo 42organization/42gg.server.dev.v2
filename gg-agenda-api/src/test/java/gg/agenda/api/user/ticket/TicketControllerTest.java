@@ -1,9 +1,22 @@
 package gg.agenda.api.user.ticket;
 
 import static gg.data.agenda.type.Location.*;
-import static org.assertj.core.api.AssertionsForClassTypes.*;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +26,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,13 +39,16 @@ import gg.agenda.api.user.ticket.controller.response.TicketCountResDto;
 import gg.agenda.api.user.ticket.controller.response.TicketHistoryResDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaProfile;
+import gg.data.agenda.Auth42Token;
 import gg.data.agenda.Ticket;
 import gg.data.user.User;
 import gg.repo.agenda.AgendaTeamRepository;
+import gg.repo.agenda.Auth42TokenRedisRepository;
 import gg.repo.agenda.TicketRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import gg.utils.dto.PageRequestDto;
+import gg.utils.external.ApiUtil;
 import gg.utils.fixture.agenda.AgendaFixture;
 import gg.utils.fixture.agenda.AgendaProfileFixture;
 import gg.utils.fixture.agenda.AgendaTeamFixture;
@@ -60,6 +79,10 @@ public class TicketControllerTest {
 	private AgendaTeamProfileFixture agendaTeamProfileFixture;
 	@Autowired
 	private TicketFixture ticketFixture;
+	@Autowired
+	private Auth42TokenRedisRepository auth42TokenRedisRepository;
+	@MockBean
+	private ApiUtil apiUtil;
 	User seoulUser;
 	User gyeongsanUser;
 	String seoulUserAccessToken;
@@ -360,6 +383,206 @@ public class TicketControllerTest {
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound());
+		}
+	}
+
+	@Nested
+	class ApproveTicketTest {
+		@BeforeEach
+		void beforeEach() {
+			seoulUser = testDataUtils.createNewUser();
+			seoulUserAccessToken = testDataUtils.getLoginAccessTokenFromUser(seoulUser);
+			seoulUserAgendaProfile = agendaProfileFixture.createAgendaProfile(seoulUser, SEOUL);
+			gyeongsanUser = testDataUtils.createNewUser();
+			gyeongsanUserAccessToken = testDataUtils.getLoginAccessTokenFromUser(gyeongsanUser);
+			gyeongsanUserAgendaProfile = agendaProfileFixture.createAgendaProfile(gyeongsanUser, GYEONGSAN);
+		}
+
+		@Test
+		@DisplayName("setup 된 티켓 approve 성공")
+		@Transactional
+		public void testTicketSetupAndRefund() throws Exception {
+			// given
+			Ticket setUpTicket = ticketFixture.createNotApporveTicket(seoulUserAgendaProfile);
+
+			Auth42Token auth42Token = new Auth42Token(seoulUser.getIntraId(), "test_token");
+			auth42TokenRedisRepository.save42Token(seoulUser.getIntraId(), auth42Token);
+
+			LocalDateTime a = setUpTicket.getCreatedAt().plusHours(1);
+			List<Map<String, Object>> apiResponse = new ArrayList<>();
+			Map<String, Object> item1 = new HashMap<>();
+			item1.put("created_at", DateTimeFormatter.ISO_DATE_TIME.format(ZonedDateTime.of(a, ZoneId.of("UTC"))));
+			item1.put("reason", "Provided points to the pool");
+			item1.put("sum", -1);
+			apiResponse.add(item1);
+
+			when(apiUtil.apiCall(anyString(), eq(List.class), any(HttpHeaders.class), eq(HttpMethod.GET)))
+				.thenReturn(apiResponse);
+			// when
+			mockMvc.perform(patch("/agenda/ticket")
+					.header("Authorization", "Bearer " + seoulUserAccessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNoContent());
+			// then
+			verify(apiUtil).apiCall(anyString(), eq(List.class), any(HttpHeaders.class), eq(HttpMethod.GET));
+			Ticket updatedTicket = ticketRepository.findById(setUpTicket.getId()).orElseThrow();
+			assertTrue(updatedTicket.getIsApproved());
+			Optional<Ticket> updateTicketCheck = ticketRepository.findByAgendaProfileAndIsApprovedFalse(
+				seoulUserAgendaProfile);
+			assertFalse(updateTicketCheck.isPresent());
+		}
+
+		@Test
+		@DisplayName("setup 된 티켓 approve 성공 - 42API 호출 결과에 기부내역이 2 이상인 경우")
+		@Transactional
+		public void testTicketSetupAndRefundToSum2() throws Exception {
+			// given
+			Ticket setUpTicket = ticketFixture.createNotApporveTicket(seoulUserAgendaProfile);
+
+			Auth42Token auth42Token = new Auth42Token(seoulUser.getIntraId(), "test_token");
+			auth42TokenRedisRepository.save42Token(seoulUser.getIntraId(), auth42Token);
+
+			LocalDateTime a = setUpTicket.getCreatedAt().plusHours(1);
+			List<Map<String, Object>> apiResponse = new ArrayList<>();
+			Map<String, Object> item1 = new HashMap<>();
+			item1.put("created_at", DateTimeFormatter.ISO_DATE_TIME.format(ZonedDateTime.of(a, ZoneId.of("UTC"))));
+			item1.put("reason", "Provided points to the pool");
+			item1.put("sum", -1);
+			apiResponse.add(item1);
+			Map<String, Object> item2 = new HashMap<>();
+			item2.put("created_at", DateTimeFormatter.ISO_DATE_TIME.format(ZonedDateTime.of(a, ZoneId.of("UTC"))));
+			item2.put("reason", "Provided points to the pool");
+			item2.put("sum", -1);
+			apiResponse.add(item2);
+
+			when(apiUtil.apiCall(anyString(), eq(List.class), any(HttpHeaders.class), eq(HttpMethod.GET)))
+				.thenReturn(apiResponse);
+			// when
+			mockMvc.perform(patch("/agenda/ticket")
+					.header("Authorization", "Bearer " + seoulUserAccessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNoContent());
+			// then
+			verify(apiUtil).apiCall(anyString(), eq(List.class), any(HttpHeaders.class), eq(HttpMethod.GET));
+			Ticket updatedTicket = ticketRepository.findById(setUpTicket.getId()).orElseThrow();
+			assertTrue(updatedTicket.getIsApproved());
+			Optional<Ticket> updateTicketCheck = ticketRepository.findByAgendaProfileAndIsApprovedFalse(
+				seoulUserAgendaProfile);
+			assertFalse(updateTicketCheck.isPresent());
+		}
+
+		@Test
+		@DisplayName("setup 된 티켓 approve 실패 - 프로필이 없는 경우")
+		@Transactional
+		public void testTicketSetupAndRefundFailToNotFoundProfile() throws Exception {
+			User notExistUser = testDataUtils.createNewUser();
+			String notExistUserAccessToken = testDataUtils.getLoginAccessTokenFromUser(notExistUser);
+			// when
+			mockMvc.perform(patch("/agenda/ticket")
+					.header("Authorization", "Bearer " + notExistUserAccessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+		}
+
+		@Test
+		@DisplayName("setup 된 티켓 approve 실패 - 티켓이 없는 경우")
+		@Transactional
+		public void testTicketSetupAndRefundFailToNotFoundTicket() throws Exception {
+			// when
+			mockMvc.perform(patch("/agenda/ticket")
+					.header("Authorization", "Bearer " + seoulUserAccessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+		}
+
+		@Test
+		@DisplayName("setup 된 티켓 approve 실패 - auth42Token이 없는 경우")
+		@Transactional
+		public void testTicketSetupAndRefundFailToNotFoundAuth42Token() throws Exception {
+			// given
+			Ticket setUpTicket = ticketFixture.createNotApporveTicket(seoulUserAgendaProfile);
+			// when
+			mockMvc.perform(patch("/agenda/ticket")
+					.header("Authorization", "Bearer " + seoulUserAccessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+			// then
+			Ticket updatedTicket = ticketRepository.findById(setUpTicket.getId()).orElseThrow();
+			assertFalse(updatedTicket.getIsApproved());
+		}
+
+		@Test
+		@DisplayName("setup 된 티켓 approve 실패 - 42API 호출 실패")
+		@Transactional
+		public void testTicketSetupAndRefundFailToApiCallFail() throws Exception {
+			// given
+			Ticket setUpTicket = ticketFixture.createNotApporveTicket(seoulUserAgendaProfile);
+			Auth42Token auth42Token = new Auth42Token(seoulUser.getIntraId(), "test_token");
+			auth42TokenRedisRepository.save42Token(seoulUser.getIntraId(), auth42Token);
+			when(apiUtil.apiCall(anyString(), eq(List.class), any(HttpHeaders.class), eq(HttpMethod.GET)))
+				.thenReturn(null);
+			// when
+			mockMvc.perform(patch("/agenda/ticket")
+					.header("Authorization", "Bearer " + seoulUserAccessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+			// then
+			Ticket updatedTicket = ticketRepository.findById(setUpTicket.getId()).orElseThrow();
+			assertFalse(updatedTicket.getIsApproved());
+		}
+
+		@Test
+		@DisplayName("setup 된 티켓 approve 실패 - 42API 호출 결과가 없는 경우")
+		@Transactional
+		public void testTicketSetupAndRefundFailToApiCallEmpty() throws Exception {
+			// given
+			Ticket setUpTicket = ticketFixture.createNotApporveTicket(seoulUserAgendaProfile);
+			Auth42Token auth42Token = new Auth42Token(seoulUser.getIntraId(), "test_token");
+			auth42TokenRedisRepository.save42Token(seoulUser.getIntraId(), auth42Token);
+			when(apiUtil.apiCall(anyString(), eq(List.class), any(HttpHeaders.class), eq(HttpMethod.GET)))
+				.thenReturn(new ArrayList<>());
+			// when
+			mockMvc.perform(patch("/agenda/ticket")
+					.header("Authorization", "Bearer " + seoulUserAccessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+			// then
+			Ticket updatedTicket = ticketRepository.findById(setUpTicket.getId()).orElseThrow();
+			assertFalse(updatedTicket.getIsApproved());
+		}
+
+		@Test
+		@DisplayName("setup 된 티켓 approve 실패 - 42API 호출 결과에 기부내역이 없는 경우")
+		@Transactional
+		public void testTicketSetupAndRefundFailToApiCallNoSum() throws Exception {
+			// given
+			Ticket setUpTicket = ticketFixture.createNotApporveTicket(seoulUserAgendaProfile);
+			Auth42Token auth42Token = new Auth42Token(seoulUser.getIntraId(), "test_token");
+			auth42TokenRedisRepository.save42Token(seoulUser.getIntraId(), auth42Token);
+			List<Map<String, Object>> apiResponse = new ArrayList<>();
+			Map<String, Object> item1 = new HashMap<>();
+			item1.put("created_at", DateTimeFormatter.ISO_DATE_TIME.format(ZonedDateTime.now()));
+			item1.put("reason", "No Donate Pool");
+			item1.put("sum", 0);
+			apiResponse.add(item1);
+			when(apiUtil.apiCall(anyString(), eq(List.class), any(HttpHeaders.class), eq(HttpMethod.GET)))
+				.thenReturn(apiResponse);
+			// when
+			mockMvc.perform(patch("/agenda/ticket")
+					.header("Authorization", "Bearer " + seoulUserAccessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+			// then
+			Ticket updatedTicket = ticketRepository.findById(setUpTicket.getId()).orElseThrow();
+			assertFalse(updatedTicket.getIsApproved());
 		}
 	}
 }

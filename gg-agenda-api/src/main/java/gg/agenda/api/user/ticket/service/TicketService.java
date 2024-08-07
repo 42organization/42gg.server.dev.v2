@@ -3,9 +3,6 @@ package gg.agenda.api.user.ticket.service;
 import static gg.utils.exception.ErrorCode.*;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +30,7 @@ import gg.repo.agenda.AgendaProfileRepository;
 import gg.repo.agenda.AgendaRepository;
 import gg.repo.agenda.Auth42TokenRedisRepository;
 import gg.repo.agenda.TicketRepository;
+import gg.utils.DateTimeUtil;
 import gg.utils.exception.custom.DuplicationException;
 import gg.utils.exception.custom.NotExistException;
 import gg.utils.external.ApiUtil;
@@ -49,6 +47,9 @@ public class TicketService {
 
 	@Value("https://api.intra.42.fr/v2/users/{id}/correction_point_historics?sort=-id")
 	private String pointHistoryUrl;
+
+	private static final String selfDonation = "Provided points to the pool";
+	private static final String autoDonation = "correction points trimming weekly";
 
 	/**
 	 * 티켓 환불
@@ -120,28 +121,22 @@ public class TicketService {
 			throw new NotExistException("POINT_HISTORY_NOT_FOUND");
 		}
 
-		ZoneId seoulZoneId = ZoneId.of("Asia/Seoul");
 		LocalDateTime cutoffTime = setUpTicket.getCreatedAt();
-		String selfDonation = "Provided points to the pool";
-		String autoDonation = "correction points trimming weekly";
 
 		int ticketSum = response.stream()
-			.takeWhile(item -> ZonedDateTime.parse((String)item.get("created_at"), DateTimeFormatter.ISO_DATE_TIME)
-				.withZoneSameInstant(ZoneId.of("UTC"))
-				.withZoneSameInstant(seoulZoneId)
-				.toLocalDateTime()
+			.takeWhile(histories -> DateTimeUtil.convertToSeoulDateTime((String)histories.get("created_at"))
 				.isAfter(cutoffTime))
-			.filter(item -> {
-				String reason = (String)item.get("reason");
+			.filter(histories -> {
+				String reason = (String)histories.get("reason");
 				return reason.contains(selfDonation) || reason.contains(autoDonation);
 			})
-			.mapToInt(item -> ((Number)item.get("sum")).intValue() * (-1))
+			.mapToInt(histories -> ((Number)histories.get("sum")).intValue() * (-1))
 			.sum();
 
 		if (ticketSum == 0) {
 			throw new NotExistException("POINT_HISTORY_NOT_FOUND");
 		} else if (ticketSum >= 2) {
-			ticketRepository.save(Ticket.createRefundedTicket(profile, null));
+			ticketRepository.save(Ticket.createApproveTicket(profile));
 		}
 		setUpTicket.changeIsApproved();
 		ticketRepository.save(setUpTicket);
