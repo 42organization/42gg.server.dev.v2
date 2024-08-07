@@ -10,8 +10,6 @@ import gg.data.agenda.AgendaProfile;
 
 @Repository
 public interface AgendaProfileAdminRepository extends JpaRepository<AgendaProfile, Long> {
-
-
 	@Query("SELECT a FROM AgendaProfile a WHERE a.intraId = :intraId")
 	Optional<AgendaProfile> findByIntraId(String intraId);
 }
