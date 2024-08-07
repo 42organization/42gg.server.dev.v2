@@ -34,7 +34,6 @@ import gg.repo.agenda.AgendaRepository;
 import gg.repo.agenda.Auth42TokenRedisRepository;
 import gg.repo.agenda.TicketRepository;
 import gg.utils.exception.custom.DuplicationException;
-import gg.utils.exception.custom.ForbiddenException;
 import gg.utils.exception.custom.NotExistException;
 import gg.utils.external.ApiUtil;
 import lombok.RequiredArgsConstructor;
@@ -104,11 +103,10 @@ public class TicketService {
 	public void modifyTicketApprove(UserDto user) {
 		AgendaProfile profile = agendaProfileRepository.findByUserId(user.getId())
 			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
+
 		Ticket setUpTicket = ticketRepository.findByAgendaProfileAndIsApprovedFalse(profile)
 			.orElseThrow(() -> new NotExistException(NOT_SETUP_TICKET));
-		if (setUpTicket.getModifiedAt().isAfter(LocalDateTime.now().minusMinutes(1))) {
-			throw new ForbiddenException(TICKET_FORBIDDEN);
-		}
+
 		Auth42Token auth42Token = auth42TokenRedisRepository.findByIntraId(user.getIntraId())
 			.orElseThrow(() -> new NotExistException(AUTH_NOT_FOUND));
 
@@ -118,41 +116,33 @@ public class TicketService {
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
 		List<Map<String, Object>> response = apiUtil.apiCall(url, List.class, headers, HttpMethod.GET);
-		if (response == null) {
+		if (response == null || response.isEmpty()) {
 			throw new NotExistException("POINT_HISTORY_NOT_FOUND");
 		}
 
-		DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
 		ZoneId seoulZoneId = ZoneId.of("Asia/Seoul");
 		LocalDateTime cutoffTime = setUpTicket.getCreatedAt();
+		String selfDonation = "Provided points to the pool";
+		String autoDonation = "correction points trimming weekly";
 
-		String targetReason1 = "Provided points to the pool";
-		String targetReason2 = "correction points trimming weekly";
-		int ticketSum = 0;
-
-		for (Map<String, Object> item : response) {
-			ZonedDateTime createdAtUtc = ZonedDateTime.parse((String)item.get("created_at"), formatter)
-				.withZoneSameInstant(ZoneId.of("UTC"));
-			LocalDateTime createdAtSeoul = createdAtUtc.withZoneSameInstant(seoulZoneId).toLocalDateTime();
-
-			if (createdAtSeoul.isAfter(cutoffTime)) {
+		int ticketSum = response.stream()
+			.takeWhile(item -> ZonedDateTime.parse((String)item.get("created_at"), DateTimeFormatter.ISO_DATE_TIME)
+				.withZoneSameInstant(ZoneId.of("UTC"))
+				.withZoneSameInstant(seoulZoneId)
+				.toLocalDateTime()
+				.isAfter(cutoffTime))
+			.filter(item -> {
 				String reason = (String)item.get("reason");
-				if (reason.contains(targetReason1) || reason.contains(targetReason2)) {
-					int sum = ((Number)item.get("sum")).intValue();
-					ticketSum += sum * (-1);
-				}
-			} else {
-				break;
-			}
-		}
+				return reason.contains(selfDonation) || reason.contains(autoDonation);
+			})
+			.mapToInt(item -> ((Number)item.get("sum")).intValue() * (-1))
+			.sum();
 
 		if (ticketSum == 0) {
 			throw new NotExistException("POINT_HISTORY_NOT_FOUND");
 		} else if (ticketSum >= 2) {
-			Ticket ticket = Ticket.createRefundedTicket(profile, null);
-			ticketRepository.save(ticket);
+			ticketRepository.save(Ticket.createRefundedTicket(profile, null));
 		}
-
 		setUpTicket.changeIsApproved();
 		ticketRepository.save(setUpTicket);
 	}
