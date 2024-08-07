@@ -17,6 +17,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.springframework.core.io.support.ResourcePatternUtils;
+
 import gg.data.BaseTimeEntity;
 import gg.data.agenda.type.AgendaStatus;
 import gg.data.agenda.type.AgendaTeamStatus;
@@ -144,14 +146,17 @@ public class Agenda extends BaseTimeEntity {
 		this.status = AgendaStatus.FINISH;
 	}
 
-	public void updateInformation(String title, String content, String posterUri) {
+	public void updateInformation(String title, String content) {
 		if (Objects.nonNull(title) && !title.isBlank()) {
 			this.title = title;
 		}
-		if (Objects.nonNull(content) && !title.isBlank()) {
+		if (Objects.nonNull(content) && !content.isBlank()) {
 			this.content = content;
 		}
-		if (Objects.nonNull(posterUri) && !title.isBlank()) {
+	}
+
+	public void updatePosterUri(String posterUri) {
+		if (Objects.nonNull(posterUri) && ResourcePatternUtils.isUrl(posterUri)) {
 			this.posterUri = posterUri;
 		}
 	}
@@ -230,14 +235,14 @@ public class Agenda extends BaseTimeEntity {
 
 	public void addTeam(Location location, LocalDateTime now) {
 		mustBeWithinLocation(location);
-		mustStatusOnGoing();
+		mustStatusOpen();
 		mustBeforeDeadline(now);
 		mustHaveCapacity();
 	}
 
 	public void confirmTeam(Location location, LocalDateTime now) {
 		mustBeWithinLocation(location);
-		mustStatusOnGoing();
+		mustStatusOpen();
 		mustBeforeDeadline(now);
 		mustHaveCapacity();
 		this.currentTeam++;
@@ -245,18 +250,18 @@ public class Agenda extends BaseTimeEntity {
 
 	public void attendTeam(Location location, LocalDateTime now) {
 		mustBeWithinLocation(location);
-		mustStatusOnGoing();
+		mustStatusOpen();
 		mustBeforeDeadline(now);
 	}
 
 	public void updateTeam(Location location, LocalDateTime now) {
 		mustBeWithinLocation(location);
-		mustStatusOnGoing();
+		mustStatusOpen();
 		mustBeforeDeadline(now);
 	}
 
-	public void cancelTeam(LocalDateTime now) {
-		mustStatusOnGoing();
+	public void leaveTeam(LocalDateTime now) {
+		mustStatusOpen();
 		mustBeforeDeadline(now);
 	}
 
@@ -266,7 +271,7 @@ public class Agenda extends BaseTimeEntity {
 		}
 	}
 
-	private void mustStatusOnGoing() {
+	private void mustStatusOpen() {
 		if (this.status != AgendaStatus.OPEN) {
 			throw new InvalidParameterException(AGENDA_NOT_OPEN);
 		}

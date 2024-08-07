@@ -4,6 +4,9 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +31,7 @@ import org.springframework.data.domain.Sort;
 import gg.agenda.api.user.agenda.controller.request.AgendaAwardsReqDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaCreateReqDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaTeamAward;
+import gg.agenda.api.user.agendateam.service.AgendaTeamService;
 import gg.agenda.api.user.ticket.service.TicketService;
 import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
@@ -42,6 +46,7 @@ import gg.repo.agenda.AgendaTeamRepository;
 import gg.utils.annotation.UnitTest;
 import gg.utils.exception.custom.InvalidParameterException;
 import gg.utils.exception.custom.NotExistException;
+import gg.utils.file.handler.ImageHandler;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -58,7 +63,13 @@ class AgendaServiceTest {
 	AgendaTeamProfileRepository agendaTeamProfileRepository;
 
 	@Mock
+	AgendaTeamService agendaTeamService;
+
+	@Mock
 	TicketService ticketService;
+
+	@Mock
+	ImageHandler imageHandler;
 
 	@InjectMocks
 	AgendaService agendaService;
@@ -147,25 +158,21 @@ class AgendaServiceTest {
 
 		@Test
 		@DisplayName("Agenda 생성 성공")
-		void createAgendaSuccess() {
+		void createAgendaSuccess() throws IOException {
 			// given
+			AgendaCreateReqDto agendaCreateReqDto = AgendaCreateReqDto.builder().build();
 			UserDto user = UserDto.builder().intraId("intraId").build();
-			AgendaCreateReqDto agendaCreateReqDto = AgendaCreateReqDto.builder()
-				.agendaDeadLine(LocalDateTime.now().plusDays(5))
-				.agendaStartTime(LocalDateTime.now().plusDays(8))
-				.agendaEndTime(LocalDateTime.now().plusDays(10))
-				.agendaMinTeam(2).agendaMaxTeam(5)
-				.agendaMinPeople(1).agendaMaxPeople(5)
-				.build();
 			Agenda agenda = Agenda.builder().build();
-			when(agendaRepository.save(any(Agenda.class))).thenReturn(agenda);
+			when(agendaRepository.save(any())).thenReturn(agenda);
+			when(imageHandler.uploadImageOrDefault(any(), any(), any())).thenReturn(new URL("http://localhost"));
 
 			// when
-			Agenda result = agendaService.addAgenda(agendaCreateReqDto, user);
+			Agenda result = agendaService.addAgenda(agendaCreateReqDto, null, user);
 
 			// then
-			verify(agendaRepository, times(1)).save(any(Agenda.class));
-			assertThat(result.getAgendaKey()).isEqualTo(agenda.getAgendaKey());
+			verify(agendaRepository, times(1)).save(any());
+			verify(imageHandler, times(1)).uploadImageOrDefault(any(), any(), any());
+			assertThat(result).isEqualTo(agenda);
 		}
 	}
 
@@ -322,19 +329,14 @@ class AgendaServiceTest {
 				.profile(AgendaProfile.builder().build()).build();
 			when(agendaTeamRepository.findAllByAgendaAndStatus(agenda, AgendaTeamStatus.OPEN))
 				.thenReturn(List.of(agendaTeam));
-			when(agendaTeamProfileRepository.findAllByAgendaTeamWithFetchProfile(agendaTeam))
-				.thenReturn(List.of(participant));
-			doNothing().when(ticketService).refundTickets(any(), any());
+			doNothing().when(agendaTeamService).leaveTeamAll(any());
 
 			// when
 			agendaService.confirmAgendaAndRefundTicketForOpenTeam(agenda);
 
 			// then
 			verify(agendaTeamRepository, times(1)).findAllByAgendaAndStatus(agenda, AgendaTeamStatus.OPEN);
-			verify(agendaTeamProfileRepository, times(1)).findAllByAgendaTeamWithFetchProfile(agendaTeam);
-			verify(ticketService, times(1)).refundTickets(any(), any());
 			assertThat(agenda.getStatus()).isEqualTo(AgendaStatus.CONFIRM);
-			assertThat(agendaTeam.getStatus()).isEqualTo(AgendaTeamStatus.CANCEL);
 		}
 
 		@Test

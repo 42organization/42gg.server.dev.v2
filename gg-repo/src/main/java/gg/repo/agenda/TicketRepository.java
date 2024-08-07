@@ -11,7 +11,8 @@ import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.Ticket;
 
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
-	Optional<Ticket> findByAgendaProfileAndIsApprovedTrueAndIsUsedFalse(AgendaProfile agendaProfile);
+	Optional<Ticket> findFirstByAgendaProfileAndIsApprovedTrueAndIsUsedFalseOrderByCreatedAtAsc(
+		AgendaProfile agendaProfile);
 
 	List<Ticket> findByAgendaProfileIdAndIsUsedFalseAndIsApprovedTrue(Long agendaProfileId);
 

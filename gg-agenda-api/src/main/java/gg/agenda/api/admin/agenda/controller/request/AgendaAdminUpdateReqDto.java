@@ -1,11 +1,9 @@
 package gg.agenda.api.admin.agenda.controller.request;
 
+import java.net.URL;
 import java.time.LocalDateTime;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import gg.data.agenda.type.AgendaStatus;
 import gg.data.agenda.type.Location;
@@ -20,9 +18,9 @@ public class AgendaAdminUpdateReqDto {
 
 	private String agendaTitle;
 
-	private String agendaContents;
+	private String agendaContent;
 
-	private String agendaPoster;
+	private URL agendaPosterUri;
 
 	private Boolean isOfficial;
 
@@ -30,10 +28,13 @@ public class AgendaAdminUpdateReqDto {
 
 	private AgendaStatus agendaStatus;
 
+	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	private LocalDateTime agendaDeadLine;
 
+	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	private LocalDateTime agendaStartTime;
 
+	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	private LocalDateTime agendaEndTime;
 
 	private Location agendaLocation;
@@ -47,13 +48,13 @@ public class AgendaAdminUpdateReqDto {
 	private int agendaMaxPeople;
 
 	@Builder
-	public AgendaAdminUpdateReqDto(String agendaTitle, String agendaContents, String agendaPoster, Boolean isOfficial,
+	public AgendaAdminUpdateReqDto(String agendaTitle, String agendaContent, URL agendaPosterUri, Boolean isOfficial,
 		Boolean isRanking, AgendaStatus agendaStatus, LocalDateTime agendaDeadLine, LocalDateTime agendaStartTime,
 		LocalDateTime agendaEndTime, Location agendaLocation, int agendaMinTeam, int agendaMaxTeam,
 		int agendaMinPeople, int agendaMaxPeople) {
 		this.agendaTitle = agendaTitle;
-		this.agendaContents = agendaContents;
-		this.agendaPoster = agendaPoster;
+		this.agendaContent = agendaContent;
+		this.agendaPosterUri = agendaPosterUri;
 		this.isOfficial = isOfficial;
 		this.isRanking = isRanking;
 		this.agendaStatus = agendaStatus;

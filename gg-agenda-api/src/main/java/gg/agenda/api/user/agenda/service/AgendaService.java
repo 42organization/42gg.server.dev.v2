@@ -2,33 +2,40 @@ package gg.agenda.api.user.agenda.service;
 
 import static gg.utils.exception.ErrorCode.*;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.springframework.web.multipart.MultipartFile;
 
 import gg.agenda.api.user.agenda.controller.request.AgendaAwardsReqDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaCreateReqDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaTeamAward;
+import gg.agenda.api.user.agendateam.service.AgendaTeamService;
 import gg.agenda.api.user.ticket.service.TicketService;
 import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
-import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.AgendaTeam;
-import gg.data.agenda.AgendaTeamProfile;
 import gg.data.agenda.type.AgendaStatus;
 import gg.data.agenda.type.AgendaTeamStatus;
 import gg.repo.agenda.AgendaRepository;
 import gg.repo.agenda.AgendaTeamProfileRepository;
 import gg.repo.agenda.AgendaTeamRepository;
+import gg.utils.exception.custom.BusinessException;
+import gg.utils.exception.custom.ForbiddenException;
 import gg.utils.exception.custom.NotExistException;
+import gg.utils.file.handler.ImageHandler;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AgendaService {
@@ -40,6 +47,13 @@ public class AgendaService {
 	private final AgendaTeamProfileRepository agendaTeamProfileRepository;
 
 	private final TicketService ticketService;
+
+	private final AgendaTeamService agendaTeamService;
+
+	private final ImageHandler imageHandler;
+
+	@Value("${info.image.defaultUrl}")
+	private String defaultUri;
 
 	@Transactional(readOnly = true)
 	public Agenda findAgendaByAgendaKey(UUID agendaKey) {
@@ -60,9 +74,16 @@ public class AgendaService {
 	}
 
 	@Transactional
-	public Agenda addAgenda(AgendaCreateReqDto agendaCreateReqDto, UserDto user) {
-		Agenda newAgenda = AgendaCreateReqDto.MapStruct.INSTANCE.toEntity(agendaCreateReqDto, user);
-		return agendaRepository.save(newAgenda);
+	public Agenda addAgenda(AgendaCreateReqDto createDto, MultipartFile agendaPoster, UserDto user) {
+		try {
+			URL storedUrl = imageHandler.uploadImageOrDefault(agendaPoster, createDto.getAgendaTitle(), defaultUri);
+			createDto.updatePosterUri(storedUrl);
+			Agenda newAgenda = AgendaCreateReqDto.MapStruct.INSTANCE.toEntity(createDto, user.getIntraId());
+			return agendaRepository.save(newAgenda);
+		} catch (IOException e) {
+			log.error("Failed to upload image for agenda poster", e);
+			throw new BusinessException(AGENDA_CREATE_FAILED);
+		}
 	}
 
 	@Transactional(readOnly = true)
@@ -89,15 +110,13 @@ public class AgendaService {
 
 	@Transactional
 	public void confirmAgendaAndRefundTicketForOpenTeam(Agenda agenda) {
+		if (agenda.getCurrentTeam() < agenda.getMinTeam()) {
+			throw new ForbiddenException("팀이 모두 구성되지 않았습니다.");
+		}
+
 		List<AgendaTeam> openTeams = agendaTeamRepository.findAllByAgendaAndStatus(agenda, AgendaTeamStatus.OPEN);
 		for (AgendaTeam openTeam : openTeams) {
-			// TODO: AgendaTeamService의 cancelTeam 메서드를 호출하는 것이 더 좋을 수도 있음
-			List<AgendaProfile> participants = agendaTeamProfileRepository
-				.findAllByAgendaTeamWithFetchProfile(openTeam).stream()
-				.map(AgendaTeamProfile::getProfile)
-				.collect(Collectors.toList());
-			ticketService.refundTickets(participants, agenda.getAgendaKey());
-			openTeam.cancelTeam();
+			agendaTeamService.leaveTeamAll(openTeam);
 		}
 		agenda.confirmAgenda();
 	}

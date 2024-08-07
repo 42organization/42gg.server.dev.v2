@@ -1,6 +1,9 @@
 package gg.agenda.api.user.agenda.controller;
 
+import static gg.utils.exception.ErrorCode.*;
+
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -12,12 +15,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import gg.agenda.api.user.agenda.controller.request.AgendaAwardsReqDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaCreateReqDto;
@@ -30,6 +35,8 @@ import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
 import gg.data.agenda.Agenda;
 import gg.utils.dto.PageRequestDto;
+import gg.utils.exception.custom.InvalidParameterException;
+import gg.utils.exception.user.UserImageLargeException;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 
@@ -47,7 +54,7 @@ public class AgendaController {
 		Agenda agenda = agendaService.findAgendaByAgendaKey(agendaKey);
 		String announcementTitle = agendaAnnouncementService
 			.findLatestAnnounceTitleByAgendaOrDefault(agenda, "");
-		AgendaResDto agendaResDto = AgendaResDto.MapStruct.INSTANCE.toDto(agenda,  announcementTitle);
+		AgendaResDto agendaResDto = AgendaResDto.MapStruct.INSTANCE.toDto(agenda, announcementTitle);
 		return ResponseEntity.ok(agendaResDto);
 	}
 
@@ -62,14 +69,19 @@ public class AgendaController {
 
 	@PostMapping("/request")
 	public ResponseEntity<AgendaKeyResDto> agendaAdd(@Login @Parameter(hidden = true) UserDto user,
-		@RequestBody @Valid AgendaCreateReqDto agendaCreateReqDto) {
-		UUID agendaKey = agendaService.addAgenda(agendaCreateReqDto, user).getAgendaKey();
+		@ModelAttribute @Valid AgendaCreateReqDto agendaCreateReqDto,
+		@RequestParam(required = false) MultipartFile agendaPoster) {
+		if (Objects.nonNull(agendaPoster) && agendaPoster.getSize() > 1024 * 1024 * 2) {	// 2MB
+			throw new InvalidParameterException(AGENDA_POSTER_SIZE_TOO_LARGE);
+		}
+		UUID agendaKey = agendaService.addAgenda(agendaCreateReqDto, agendaPoster, user).getAgendaKey();
 		AgendaKeyResDto responseDto = AgendaKeyResDto.builder().agendaKey(agendaKey).build();
 		return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
 	}
 
 	@GetMapping("/history")
-	public ResponseEntity<List<AgendaSimpleResDto>> agendaListHistory(@RequestBody @Valid PageRequestDto pageRequest) {
+	public ResponseEntity<List<AgendaSimpleResDto>> agendaListHistory(
+		@ModelAttribute @Valid PageRequestDto pageRequest) {
 		int page = pageRequest.getPage();
 		int size = pageRequest.getSize();
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("startTime").descending());

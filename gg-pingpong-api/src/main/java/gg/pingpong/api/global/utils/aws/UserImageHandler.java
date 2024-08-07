@@ -1,4 +1,4 @@
-package gg.pingpong.api.global.utils;
+package gg.pingpong.api.global.utils.aws;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,8 +15,14 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 
 import gg.data.user.User;
 import gg.repo.user.UserImageRepository;
+import gg.utils.file.FileDownloader;
+import gg.utils.file.ImageResizingUtil;
+import gg.utils.file.JpegMultipartFile;
 
-@Component
+/**
+ * This Module has been replaced by gg.utils.file.handler.AwsImageHandler
+ */
+@Deprecated
 public class UserImageHandler {
 	private final AmazonS3 amazonS3;
 	private final FileDownloader fileDownloader;

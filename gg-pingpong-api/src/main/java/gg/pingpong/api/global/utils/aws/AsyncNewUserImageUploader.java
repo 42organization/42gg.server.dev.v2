@@ -1,10 +1,10 @@
 package gg.pingpong.api.global.utils.aws;
 
-import java.io.IOException;
-import java.time.LocalDateTime;
+import static gg.utils.exception.ErrorCode.*;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import java.io.IOException;
+import java.net.URL;
+import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -14,39 +14,37 @@ import org.springframework.web.multipart.MultipartFile;
 
 import gg.data.user.User;
 import gg.data.user.UserImage;
-import gg.pingpong.api.global.utils.UserImageHandler;
 import gg.repo.user.UserImageRepository;
 import gg.repo.user.UserRepository;
+import gg.utils.exception.custom.NotExistException;
+import gg.utils.file.handler.ImageHandler;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class AsyncNewUserImageUploader {
-	private final UserImageHandler userImageHandler;
+
+	private final ImageHandler imageHandler;
+
 	private final UserRepository userRepository;
-	@PersistenceContext
-	private EntityManager entityManager;
+
+	private final UserImageRepository userImageRepository;
 
 	@Value("${info.image.defaultUrl}")
 	private String defaultImageUrl;
-	private final UserImageRepository userImageRepository;
-
-	public AsyncNewUserImageUploader(UserImageHandler userImageHandler, UserRepository userRepository,
-		UserImageRepository userImageRepository) {
-		this.userImageHandler = userImageHandler;
-		this.userRepository = userRepository;
-		this.userImageRepository = userImageRepository;
-	}
 
 	@Async("asyncExecutor")
 	@Transactional
-	public void upload(String intraId, String imageUrl) {
-		String s3ImageUrl = userImageHandler.uploadAndGetS3ImageUri(intraId, imageUrl);
-		if (defaultImageUrl.equals(s3ImageUrl)) {
+	public void upload(String intraId, String imageUrl) throws IOException {
+		URL s3ImageUrl = imageHandler.uploadImageFromUrlOrDefault(imageUrl, intraId, defaultImageUrl);
+		if (defaultImageUrl.equals(s3ImageUrl.toString())) {
 			return;
 		}
 		userRepository.findByIntraId(intraId).ifPresent(user -> {
-			UserImage userImage = new UserImage(user, (s3ImageUrl != null) ? s3ImageUrl : defaultImageUrl,
+			UserImage userImage = new UserImage(user,
+				(s3ImageUrl.toString() != null) ? s3ImageUrl.toString() : defaultImageUrl,
 				LocalDateTime.now(), null, true);
 			userImageRepository.save(userImage);
 			userRepository.updateUserImage(user.getId(), userImage.getImageUri());
@@ -55,9 +53,10 @@ public class AsyncNewUserImageUploader {
 
 	@Transactional
 	public void update(String intraId, MultipartFile multipartFile) throws IOException {
-		User user = userRepository.findByIntraId(intraId).get();
-		String s3ImageUrl = userImageHandler.updateAndGetS3ImageUri(multipartFile, user);
-		s3ImageUrl = s3ImageUrl == null ? defaultImageUrl : s3ImageUrl;
+		User user = userRepository.findByIntraId(intraId)
+			.orElseThrow(() -> new NotExistException(USER_NOT_FOUND));
+		URL storedUrl = imageHandler.uploadImageOrDefault(multipartFile, user.getIntraId(), defaultImageUrl);
+		String s3ImageUrl = storedUrl.toString();
 		UserImage userImage = new UserImage(user, s3ImageUrl, LocalDateTime.now(), null, true);
 		userImageRepository.saveAndFlush(userImage);
 		user.updateImageUri(s3ImageUrl);

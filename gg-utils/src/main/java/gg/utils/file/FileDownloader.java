@@ -1,4 +1,4 @@
-package gg.pingpong.api.global.utils;
+package gg.utils.file;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -10,7 +10,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Component
 public class FileDownloader {
-	private RestTemplate restTemplate;
+
+	private final RestTemplate restTemplate;
 
 	public FileDownloader() {
 		HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();

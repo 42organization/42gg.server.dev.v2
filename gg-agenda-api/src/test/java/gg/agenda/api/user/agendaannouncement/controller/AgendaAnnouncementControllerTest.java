@@ -1,13 +1,9 @@
 package gg.agenda.api.user.agendaannouncement.controller;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.awt.print.Pageable;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,7 +22,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.agenda.api.AgendaMockData;
@@ -38,7 +33,6 @@ import gg.data.user.User;
 import gg.repo.agenda.AgendaAnnouncementRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
-import gg.utils.dto.PageRequestDto;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -226,15 +220,13 @@ public class AgendaAnnouncementControllerTest {
 			agendaMockData.createAgendaAnnouncementList(agenda, 30, false);
 			List<AgendaAnnouncement> announcements = agendaMockData
 				.createAgendaAnnouncementList(agenda, total, true);
-			PageRequestDto pageRequest = new PageRequestDto(page, size);
-			String request = objectMapper.writeValueAsString(pageRequest);
 
 			// when
 			String response = mockMvc.perform(get("/agenda/announcement")
 					.param("agenda_key", agenda.getAgendaKey().toString())
 					.header("Authorization", "Bearer " + accessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(request))
+					.param("page", String.valueOf(page))
+					.param("size", String.valueOf(size)))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			AgendaAnnouncementResDto[] result = objectMapper.readValue(response, AgendaAnnouncementResDto[].class);
 
@@ -260,15 +252,13 @@ public class AgendaAnnouncementControllerTest {
 			int size = 10;
 			Agenda agenda = agendaMockData.createAgenda(user.getIntraId());
 			agendaMockData.createAgendaAnnouncementList(agenda, 30, false);
-			PageRequestDto pageRequest = new PageRequestDto(page, size);
-			String request = objectMapper.writeValueAsString(pageRequest);
 
 			// when
 			String response = mockMvc.perform(get("/agenda/announcement")
 					.param("agenda_key", agenda.getAgendaKey().toString())
 					.header("Authorization", "Bearer " + accessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(request))
+					.param("page", String.valueOf(page))
+					.param("size", String.valueOf(size)))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			AgendaAnnouncementResDto[] result = objectMapper.readValue(response, AgendaAnnouncementResDto[].class);
 
@@ -285,15 +275,13 @@ public class AgendaAnnouncementControllerTest {
 			Agenda agenda = agendaMockData.createAgenda(user.getIntraId());
 			agendaMockData.createAgendaAnnouncementList(agenda, 30, false);
 			agendaMockData.createAgendaAnnouncementList(agenda, 30, true);
-			PageRequestDto pageRequest = new PageRequestDto(page, size);
-			String request = objectMapper.writeValueAsString(pageRequest);
 
 			// when
 			mockMvc.perform(get("/agenda/announcement")
 					.param("agenda_key", UUID.randomUUID().toString())
 					.header("Authorization", "Bearer " + accessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(request))
+					.param("page", String.valueOf(page))
+					.param("size", String.valueOf(size)))
 				.andExpect(status().isNotFound());
 		}
 	}
