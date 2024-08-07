@@ -205,6 +205,20 @@ public class TestDataUtils {
 		return user;
 	}
 
+	public User createNewAdminUser(RoleType roleType) {
+		String randomId = UUID.randomUUID().toString().substring(0, 30);
+		User user = User.builder()
+			.eMail("email")
+			.intraId(randomId)
+			.racketType(RacketType.PENHOLDER)
+			.snsNotiOpt(SnsType.NONE)
+			.roleType(roleType)
+			.totalExp(1000)
+			.build();
+		userRepository.save(user);
+		return user;
+	}
+
 	public User createNewUser(String intraId) {
 		User user = User.builder()
 			.eMail("email")
