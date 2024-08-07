@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.net.URL;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
@@ -31,11 +33,11 @@ import gg.data.pingpong.store.type.ItemType;
 import gg.pingpong.api.admin.store.controller.request.ItemUpdateRequestDto;
 import gg.pingpong.api.admin.store.controller.response.ItemListResponseDto;
 import gg.pingpong.api.admin.store.service.ItemAdminService;
-import gg.pingpong.api.global.utils.ItemImageHandler;
 import gg.repo.user.UserRepository;
 import gg.utils.ItemTestUtils;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
+import gg.utils.file.handler.AwsImageHandler;
 
 @IntegrationTest
 @AutoConfigureMockMvc
@@ -58,7 +60,10 @@ class ItemAdminControllerTest {
 	@Autowired
 	ItemTestUtils itemTestUtils;
 	@MockBean
-	ItemImageHandler itemImageHandler;
+	AwsImageHandler imageHandler;
+
+	@Value("${info.image.defaultUrl}")
+	private String defaultImageUrl;
 
 	Item item;
 
@@ -99,8 +104,9 @@ class ItemAdminControllerTest {
 	@Test
 	@DisplayName("POST /pingpong/admin/items/history/{itemId}")
 	public void updateItemTest() throws Exception {
-		Mockito.when(itemImageHandler.uploadToS3(Mockito.any(), Mockito.anyString()))
-			.thenAnswer(invocation -> invocation.getArgument(1, String.class));
+		URL mockUrl = new URL(defaultImageUrl);
+		Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString(), Mockito.anyString()))
+			.thenReturn(mockUrl);
 
 		String accessToken = testDataUtils.getAdminLoginAccessToken();
 		Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);

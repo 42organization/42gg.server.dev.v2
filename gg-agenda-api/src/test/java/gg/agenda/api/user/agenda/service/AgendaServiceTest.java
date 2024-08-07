@@ -4,6 +4,9 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +46,7 @@ import gg.repo.agenda.AgendaTeamRepository;
 import gg.utils.annotation.UnitTest;
 import gg.utils.exception.custom.InvalidParameterException;
 import gg.utils.exception.custom.NotExistException;
+import gg.utils.file.handler.ImageHandler;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -63,6 +67,9 @@ class AgendaServiceTest {
 
 	@Mock
 	TicketService ticketService;
+
+	@Mock
+	ImageHandler imageHandler;
 
 	@InjectMocks
 	AgendaService agendaService;
@@ -151,25 +158,21 @@ class AgendaServiceTest {
 
 		@Test
 		@DisplayName("Agenda 생성 성공")
-		void createAgendaSuccess() {
+		void createAgendaSuccess() throws IOException {
 			// given
+			AgendaCreateReqDto agendaCreateReqDto = AgendaCreateReqDto.builder().build();
 			UserDto user = UserDto.builder().intraId("intraId").build();
-			AgendaCreateReqDto agendaCreateReqDto = AgendaCreateReqDto.builder()
-				.agendaDeadLine(LocalDateTime.now().plusDays(5))
-				.agendaStartTime(LocalDateTime.now().plusDays(8))
-				.agendaEndTime(LocalDateTime.now().plusDays(10))
-				.agendaMinTeam(2).agendaMaxTeam(5)
-				.agendaMinPeople(1).agendaMaxPeople(5)
-				.build();
 			Agenda agenda = Agenda.builder().build();
-			when(agendaRepository.save(any(Agenda.class))).thenReturn(agenda);
+			when(agendaRepository.save(any())).thenReturn(agenda);
+			when(imageHandler.uploadImageOrDefault(any(), any(), any())).thenReturn(new URL("http://localhost"));
 
 			// when
-			Agenda result = agendaService.addAgenda(agendaCreateReqDto, user);
+			Agenda result = agendaService.addAgenda(agendaCreateReqDto, null, user);
 
 			// then
-			verify(agendaRepository, times(1)).save(any(Agenda.class));
-			assertThat(result.getAgendaKey()).isEqualTo(agenda.getAgendaKey());
+			verify(agendaRepository, times(1)).save(any());
+			verify(imageHandler, times(1)).uploadImageOrDefault(any(), any(), any());
+			assertThat(result).isEqualTo(agenda);
 		}
 	}
 

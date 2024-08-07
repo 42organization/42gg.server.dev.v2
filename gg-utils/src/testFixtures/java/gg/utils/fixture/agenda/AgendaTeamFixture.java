@@ -4,6 +4,7 @@ import static gg.data.agenda.type.AgendaTeamStatus.*;
 import static gg.data.agenda.type.Location.*;
 import static java.util.UUID.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -159,6 +160,9 @@ public class AgendaTeamFixture {
 				.isPrivate(false)
 				.build();
 			teams.add(agendaTeam);
+			if (status == CONFIRM) {
+				agenda.confirmTeam(agendaTeam.getLocation(), LocalDateTime.now());
+			}
 		}
 		return agendaTeamRepository.saveAll(teams);
 	}

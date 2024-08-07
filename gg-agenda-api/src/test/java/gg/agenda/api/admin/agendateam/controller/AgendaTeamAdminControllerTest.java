@@ -111,7 +111,7 @@ public class AgendaTeamAdminControllerTest {
 			// given
 			int size = 10;
 			int total = 37;
-			Agenda agenda = agendaFixture.createAgenda();
+			Agenda agenda = agendaFixture.createAgenda(2, 50, 1, 10);
 			List<AgendaTeam> teams = agendaTeamFixture
 				.createAgendaTeamList(agenda, AgendaTeamStatus.CONFIRM, total);
 			PageRequestDto pageRequestDto = new PageRequestDto(page, size);
