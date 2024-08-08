@@ -371,4 +371,59 @@ class AgendaServiceTest {
 			verify(agendaTeamRepository, times(1)).findAllByAgendaAndStatus(agenda, AgendaTeamStatus.OPEN);
 		}
 	}
+
+	@Nested
+	@DisplayName("Agenda 취소하기")
+	class CancelAgenda {
+		@Test
+		@DisplayName("Agenda 취소하기 성공")
+		void cancelAgendaSuccess() {
+			// given
+			Agenda agenda = Agenda.builder().status(AgendaStatus.OPEN).build();
+			List<AgendaTeam> agendaTeams = List.of(mock(AgendaTeam.class));
+			when(agendaTeamRepository.findAllByAgendaAndStatus(any(), any(), any()))
+				.thenReturn(agendaTeams);
+			doNothing().when(agendaTeamService).leaveTeamAll(any());
+
+			// when
+			agendaService.cancelAgenda(agenda);
+
+			// then
+			verify(agendaTeamRepository, times(1)).findAllByAgendaAndStatus(any(), any(), any());
+			verify(agendaTeamService, times(agendaTeams.size())).leaveTeamAll(any());
+			assertThat(agenda.getStatus()).isEqualTo(AgendaStatus.CANCEL);
+		}
+
+		@ParameterizedTest
+		@EnumSource(value = AgendaStatus.class, names = {"CONFIRM", "FINISH", "CANCEL"})
+		@DisplayName("Agenda 취소하기 실패 - AgendaStatus가 OPEN이 아닌 경우")
+		void cancelAgendaFailedWithNotOpen(AgendaStatus status) {
+			// given
+			Agenda agenda = Agenda.builder().status(status).build();
+			List<AgendaTeam> agendaTeam = List.of(mock(AgendaTeam.class));
+			when(agendaTeamRepository.findAllByAgendaAndStatus(any(), any(), any()))
+				.thenReturn(agendaTeam);
+			doNothing().when(agendaTeamService).leaveTeamAll(any());
+
+			// expected
+			assertThrows(InvalidParameterException.class,
+				() -> agendaService.cancelAgenda(agenda));
+		}
+
+		@Test
+		@DisplayName("Agenda 취소하기 성공 - AgendaTeam이 없는 경우")
+		void cancelAgendaSuccessWithNoAgendaTeam() {
+			// given
+			Agenda agenda = Agenda.builder().status(AgendaStatus.OPEN).build();
+			when(agendaTeamRepository.findAllByAgendaAndStatus(any(), any(), any()))
+				.thenReturn(List.of());
+
+			// when
+			agendaService.cancelAgenda(agenda);
+
+			verify(agendaTeamRepository, times(1)).findAllByAgendaAndStatus(any(), any(), any());
+			verify(agendaTeamService, never()).leaveTeamAll(any());
+			assertThat(agenda.getStatus()).isEqualTo(AgendaStatus.CANCEL);
+		}
+	}
 }
