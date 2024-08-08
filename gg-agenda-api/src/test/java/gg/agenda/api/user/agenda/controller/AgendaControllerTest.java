@@ -1241,12 +1241,13 @@ public class AgendaControllerTest {
 		@DisplayName("Agenda 취소하기 실패 - 개최자가 아닌 경우")
 		void cancelAgendaFailedWithNotHost() throws Exception {
 			// given
-			agendaTestDataUtils.createAgendaTeamProfiles(user, AgendaStatus.OPEN);
-
+			Agenda agenda = agendaTestDataUtils.createAgendaTeamProfiles(user, AgendaStatus.OPEN);
+			User other = testDataUtils.createNewUser();
+			String otherAccessToken = testDataUtils.getLoginAccessTokenFromUser(other);
 			// expected
 			mockMvc.perform(patch("/agenda/cancel")
-					.param("agenda_key", UUID.randomUUID().toString())
-					.header("Authorization", "Bearer " + accessToken))
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.header("Authorization", "Bearer " + otherAccessToken))
 				.andExpect(status().isForbidden());
 		}
 
@@ -1283,7 +1284,7 @@ public class AgendaControllerTest {
 		void cancelAgendaFailedWithAlreadyFinish() throws Exception {
 			// given
 			Agenda agenda = agendaTestDataUtils.createAgendaTeamProfiles(user, AgendaStatus.OPEN);
-			agenda.cancelAgenda();
+			agenda.confirmAgenda();
 			agenda.finishAgenda();
 
 			// expected
@@ -1297,7 +1298,7 @@ public class AgendaControllerTest {
 		@DisplayName("Agenda 취소하기 성공 - 참여한 팀이 없는 경우")
 		void cancelAgendaSuccessWithNoTeams() throws Exception {
 			// given
-			Agenda agenda = agendaFixture.createAgenda();
+			Agenda agenda = agendaFixture.createAgenda(user.getIntraId(), AgendaStatus.OPEN);
 
 			// when
 			mockMvc.perform(patch("/agenda/cancel")
