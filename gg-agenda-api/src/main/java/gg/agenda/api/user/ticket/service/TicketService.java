@@ -3,7 +3,6 @@ package gg.agenda.api.user.ticket.service;
 import static gg.utils.exception.ErrorCode.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -24,8 +23,8 @@ import gg.auth.UserDto;
 import gg.auth.utils.RefreshTokenUtil;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaProfile;
-import gg.data.agenda.Auth42Token;
 import gg.data.agenda.AgendaTeamProfile;
+import gg.data.agenda.Auth42Token;
 import gg.data.agenda.Ticket;
 import gg.repo.agenda.AgendaProfileRepository;
 import gg.repo.agenda.AgendaRepository;
