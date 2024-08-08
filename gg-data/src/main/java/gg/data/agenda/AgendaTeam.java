@@ -109,16 +109,12 @@ public class AgendaTeam extends BaseTimeEntity {
 	}
 
 	public void cancelTeam() {
-		agendaTeamStatusMustBeOpen();
-		this.agenda.agendaStatusMustBeOpen();
 		this.status = CANCEL;
 		this.mateCount = 0;
 		this.agenda.leaveTeam(LocalDateTime.now());
 	}
 
 	public void leaveTeamMate() {
-		agendaTeamStatusMustBeOpen();
-		this.agenda.agendaStatusMustBeOpen();
 		this.mateCount--;
 	}
 
