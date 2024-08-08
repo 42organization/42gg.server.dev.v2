@@ -22,14 +22,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import gg.agenda.api.user.ticket.controller.response.TicketHistoryResDto;
 import gg.auth.UserDto;
+import gg.auth.utils.RefreshTokenUtil;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.Auth42Token;
 import gg.data.agenda.Ticket;
 import gg.repo.agenda.AgendaProfileRepository;
 import gg.repo.agenda.AgendaRepository;
-import gg.repo.agenda.Auth42TokenRedisRepository;
 import gg.repo.agenda.TicketRepository;
+import gg.repo.user.Auth42TokenRedisRepository;
 import gg.utils.DateTimeUtil;
 import gg.utils.exception.custom.DuplicationException;
 import gg.utils.exception.custom.NotExistException;
@@ -40,6 +41,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TicketService {
 	private final ApiUtil apiUtil;
+	private final RefreshTokenUtil refreshTokenUtil;
 	private final TicketRepository ticketRepository;
 	private final AgendaRepository agendaRepository;
 	private final AgendaProfileRepository agendaProfileRepository;
@@ -118,9 +120,11 @@ public class TicketService {
 
 		List<Map<String, Object>> response = apiUtil.apiCall(url, List.class, headers, HttpMethod.GET);
 		if (response == null || response.isEmpty()) {
-			throw new NotExistException("POINT_HISTORY_NOT_FOUND");
+			Auth42Token refreshedToken = refreshTokenUtil.refreshAuth42Token(auth42Token);
+			auth42TokenRedisRepository.expire42Token(auth42Token.getIntra42Id());
+			auth42TokenRedisRepository.save42Token(refreshedToken.getIntra42Id(), refreshedToken);
+			response = apiUtil.apiCall(url, List.class, headers, HttpMethod.GET);
 		}
-
 		LocalDateTime cutoffTime = setUpTicket.getCreatedAt();
 
 		int ticketSum = response.stream()

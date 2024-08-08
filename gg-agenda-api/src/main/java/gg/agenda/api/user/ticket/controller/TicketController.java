@@ -2,6 +2,7 @@ package gg.agenda.api.user.ticket.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.data.domain.PageRequest;
@@ -21,6 +22,7 @@ import gg.agenda.api.user.ticket.controller.response.TicketHistoryResDto;
 import gg.agenda.api.user.ticket.service.TicketService;
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
+import gg.utils.cookie.CookieUtil;
 import gg.utils.dto.PageRequestDto;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/agenda/ticket")
 public class TicketController {
+	private final CookieUtil cookieUtil;
 	private final TicketService ticketService;
 
 	/**
@@ -56,8 +59,13 @@ public class TicketController {
 	 * @param user 사용자 정보
 	 */
 	@PatchMapping
-	public ResponseEntity<Void> ticketApproveModify(@Parameter(hidden = true) @Login UserDto user) {
-		ticketService.modifyTicketApprove(user);
+	public ResponseEntity<Void> ticketApproveModify(@Parameter(hidden = true) @Login UserDto user,
+		HttpServletResponse response) {
+		try {
+			ticketService.modifyTicketApprove(user);
+		} catch (RuntimeException e) {
+			cookieUtil.deleteCookie(response, "refresh_token");
+		}
 		return ResponseEntity.noContent().build();
 	}
 
