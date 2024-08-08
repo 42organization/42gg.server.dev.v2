@@ -1,4 +1,4 @@
-package gg.pingpong.api.global.security.jwt.utils;
+package gg.pingpong.api.global.jwt.utils;
 
 import static org.apache.commons.lang3.StringUtils.*;
 

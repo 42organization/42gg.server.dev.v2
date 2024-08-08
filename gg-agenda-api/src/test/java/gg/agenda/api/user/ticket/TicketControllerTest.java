@@ -43,8 +43,8 @@ import gg.data.agenda.Auth42Token;
 import gg.data.agenda.Ticket;
 import gg.data.user.User;
 import gg.repo.agenda.AgendaTeamRepository;
-import gg.repo.agenda.Auth42TokenRedisRepository;
 import gg.repo.agenda.TicketRepository;
+import gg.repo.user.Auth42TokenRedisRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import gg.utils.dto.PageRequestDto;
@@ -405,13 +405,14 @@ public class TicketControllerTest {
 			// given
 			Ticket setUpTicket = ticketFixture.createNotApporveTicket(seoulUserAgendaProfile);
 
-			Auth42Token auth42Token = new Auth42Token(seoulUser.getIntraId(), "test_token");
+			Auth42Token auth42Token = new Auth42Token(seoulUser.getIntraId(), "test_token", "test_refresh_token");
 			auth42TokenRedisRepository.save42Token(seoulUser.getIntraId(), auth42Token);
 
-			LocalDateTime a = setUpTicket.getCreatedAt().plusHours(1);
+			LocalDateTime datetime = setUpTicket.getCreatedAt().plusHours(1);
 			List<Map<String, Object>> apiResponse = new ArrayList<>();
 			Map<String, Object> item1 = new HashMap<>();
-			item1.put("created_at", DateTimeFormatter.ISO_DATE_TIME.format(ZonedDateTime.of(a, ZoneId.of("UTC"))));
+			item1.put("created_at",
+				DateTimeFormatter.ISO_DATE_TIME.format(ZonedDateTime.of(datetime, ZoneId.of("UTC"))));
 			item1.put("reason", "Provided points to the pool");
 			item1.put("sum", -1);
 			apiResponse.add(item1);
@@ -440,18 +441,20 @@ public class TicketControllerTest {
 			// given
 			Ticket setUpTicket = ticketFixture.createNotApporveTicket(seoulUserAgendaProfile);
 
-			Auth42Token auth42Token = new Auth42Token(seoulUser.getIntraId(), "test_token");
+			Auth42Token auth42Token = new Auth42Token(seoulUser.getIntraId(), "test_token", "test_refresh_token");
 			auth42TokenRedisRepository.save42Token(seoulUser.getIntraId(), auth42Token);
 
-			LocalDateTime a = setUpTicket.getCreatedAt().plusHours(1);
+			LocalDateTime datetime = setUpTicket.getCreatedAt().plusHours(1);
 			List<Map<String, Object>> apiResponse = new ArrayList<>();
 			Map<String, Object> item1 = new HashMap<>();
-			item1.put("created_at", DateTimeFormatter.ISO_DATE_TIME.format(ZonedDateTime.of(a, ZoneId.of("UTC"))));
+			item1.put("created_at",
+				DateTimeFormatter.ISO_DATE_TIME.format(ZonedDateTime.of(datetime, ZoneId.of("UTC"))));
 			item1.put("reason", "Provided points to the pool");
 			item1.put("sum", -1);
 			apiResponse.add(item1);
 			Map<String, Object> item2 = new HashMap<>();
-			item2.put("created_at", DateTimeFormatter.ISO_DATE_TIME.format(ZonedDateTime.of(a, ZoneId.of("UTC"))));
+			item2.put("created_at",
+				DateTimeFormatter.ISO_DATE_TIME.format(ZonedDateTime.of(datetime, ZoneId.of("UTC"))));
 			item2.put("reason", "Provided points to the pool");
 			item2.put("sum", -1);
 			apiResponse.add(item2);
@@ -522,7 +525,7 @@ public class TicketControllerTest {
 		public void testTicketSetupAndRefundFailToApiCallFail() throws Exception {
 			// given
 			Ticket setUpTicket = ticketFixture.createNotApporveTicket(seoulUserAgendaProfile);
-			Auth42Token auth42Token = new Auth42Token(seoulUser.getIntraId(), "test_token");
+			Auth42Token auth42Token = new Auth42Token(seoulUser.getIntraId(), "test_token", "test_refresh_token");
 			auth42TokenRedisRepository.save42Token(seoulUser.getIntraId(), auth42Token);
 			when(apiUtil.apiCall(anyString(), eq(List.class), any(HttpHeaders.class), eq(HttpMethod.GET)))
 				.thenReturn(null);
@@ -543,7 +546,7 @@ public class TicketControllerTest {
 		public void testTicketSetupAndRefundFailToApiCallEmpty() throws Exception {
 			// given
 			Ticket setUpTicket = ticketFixture.createNotApporveTicket(seoulUserAgendaProfile);
-			Auth42Token auth42Token = new Auth42Token(seoulUser.getIntraId(), "test_token");
+			Auth42Token auth42Token = new Auth42Token(seoulUser.getIntraId(), "test_token", "test_refresh_token");
 			auth42TokenRedisRepository.save42Token(seoulUser.getIntraId(), auth42Token);
 			when(apiUtil.apiCall(anyString(), eq(List.class), any(HttpHeaders.class), eq(HttpMethod.GET)))
 				.thenReturn(new ArrayList<>());
@@ -564,7 +567,7 @@ public class TicketControllerTest {
 		public void testTicketSetupAndRefundFailToApiCallNoSum() throws Exception {
 			// given
 			Ticket setUpTicket = ticketFixture.createNotApporveTicket(seoulUserAgendaProfile);
-			Auth42Token auth42Token = new Auth42Token(seoulUser.getIntraId(), "test_token");
+			Auth42Token auth42Token = new Auth42Token(seoulUser.getIntraId(), "test_token", "test_refresh_token");
 			auth42TokenRedisRepository.save42Token(seoulUser.getIntraId(), auth42Token);
 			List<Map<String, Object>> apiResponse = new ArrayList<>();
 			Map<String, Object> item1 = new HashMap<>();
