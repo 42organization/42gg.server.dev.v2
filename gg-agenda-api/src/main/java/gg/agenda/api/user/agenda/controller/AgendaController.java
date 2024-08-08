@@ -71,7 +71,7 @@ public class AgendaController {
 	public ResponseEntity<AgendaKeyResDto> agendaAdd(@Login @Parameter(hidden = true) UserDto user,
 		@ModelAttribute @Valid AgendaCreateReqDto agendaCreateReqDto,
 		@RequestParam(required = false) MultipartFile agendaPoster) {
-		if (Objects.nonNull(agendaPoster) && agendaPoster.getSize() > 1024 * 1024 * 2) {	// 2MB
+		if (Objects.nonNull(agendaPoster) && agendaPoster.getSize() > 1024 * 1024) {	// 1MB
 			throw new InvalidParameterException(AGENDA_POSTER_SIZE_TOO_LARGE);
 		}
 		UUID agendaKey = agendaService.addAgenda(agendaCreateReqDto, agendaPoster, user).getAgendaKey();
