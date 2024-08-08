@@ -12,10 +12,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import gg.pingpong.api.global.jwt.utils.TokenAuthenticationFilter;
 import gg.pingpong.api.global.security.config.properties.CorsProperties;
 import gg.pingpong.api.global.security.handler.OAuthAuthenticationSuccessHandler;
 import gg.pingpong.api.global.security.handler.OauthAuthenticationFailureHandler;
-import gg.pingpong.api.global.security.jwt.utils.TokenAuthenticationFilter;
 import gg.pingpong.api.global.security.repository.OAuthAuthorizationRequestBasedOnCookieRepository;
 import lombok.RequiredArgsConstructor;
 

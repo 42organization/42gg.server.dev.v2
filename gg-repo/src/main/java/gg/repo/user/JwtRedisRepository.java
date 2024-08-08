@@ -1,4 +1,4 @@
-package gg.pingpong.api.global.security.jwt.repository;
+package gg.repo.user;
 
 import java.util.concurrent.TimeUnit;
 
