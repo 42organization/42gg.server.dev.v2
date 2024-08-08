@@ -12,6 +12,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Component;
 
 import gg.data.agenda.Agenda;
+import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.type.AgendaTeamStatus;
 import gg.data.agenda.type.Location;
@@ -40,6 +41,38 @@ public class AgendaTeamFixture {
 			.content("content")
 			.leaderIntraId("leaderIntraId")
 			.status(OPEN)
+			.location(MIX)
+			.mateCount(1)
+			.awardPriority(1)
+			.isPrivate(false)
+			.build();
+		return agendaTeamRepository.save(agendaTeam);
+	}
+
+	public AgendaTeam createAgendaTeam(Agenda agenda, AgendaProfile profile) {
+		AgendaTeam agendaTeam = AgendaTeam.builder()
+			.agenda(agenda)
+			.teamKey(UUID.randomUUID())
+			.name("name")
+			.content("content")
+			.leaderIntraId(profile.getIntraId())
+			.status(OPEN)
+			.location(MIX)
+			.mateCount(1)
+			.awardPriority(1)
+			.isPrivate(false)
+			.build();
+		return agendaTeamRepository.save(agendaTeam);
+	}
+
+	public AgendaTeam createAgendaTeam(Agenda agenda, AgendaProfile profile, AgendaTeamStatus status) {
+		AgendaTeam agendaTeam = AgendaTeam.builder()
+			.agenda(agenda)
+			.teamKey(UUID.randomUUID())
+			.name("name")
+			.content("content")
+			.leaderIntraId(profile.getIntraId())
+			.status(status)
 			.location(MIX)
 			.mateCount(1)
 			.awardPriority(1)
