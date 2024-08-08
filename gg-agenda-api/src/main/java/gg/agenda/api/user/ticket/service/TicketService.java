@@ -121,8 +121,7 @@ public class TicketService {
 		List<Map<String, Object>> response = apiUtil.apiCall(url, List.class, headers, HttpMethod.GET);
 		if (response == null || response.isEmpty()) {
 			Auth42Token refreshedToken = refreshTokenUtil.refreshAuth42Token(auth42Token);
-			auth42TokenRedisRepository.expire42Token(auth42Token.getIntra42Id());
-			auth42TokenRedisRepository.save42Token(refreshedToken.getIntra42Id(), refreshedToken);
+			auth42TokenRedisRepository.update42Token(user.getIntraId(), refreshedToken);
 			response = apiUtil.apiCall(url, List.class, headers, HttpMethod.GET);
 		}
 		LocalDateTime cutoffTime = setUpTicket.getCreatedAt();
