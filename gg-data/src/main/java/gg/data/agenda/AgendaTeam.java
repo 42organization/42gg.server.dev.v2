@@ -3,6 +3,7 @@ package gg.data.agenda;
 import static gg.data.agenda.type.AgendaTeamStatus.*;
 import static gg.utils.exception.ErrorCode.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -116,6 +117,7 @@ public class AgendaTeam extends BaseTimeEntity {
 		}
 		this.status = CANCEL;
 		this.mateCount = 0;
+		this.agenda.leaveTeam(LocalDateTime.now());
 	}
 
 	public void leaveTeamMate() {

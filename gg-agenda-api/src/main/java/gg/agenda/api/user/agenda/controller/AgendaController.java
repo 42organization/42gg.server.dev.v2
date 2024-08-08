@@ -112,4 +112,13 @@ public class AgendaController {
 		agendaService.confirmAgendaAndRefundTicketForOpenTeam(agenda);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
+
+	@PatchMapping("/cancel")
+	public ResponseEntity<Void> agendaCancel(@RequestParam("agenda_key") UUID agendaKey,
+		@Login @Parameter(hidden = true) UserDto user) {
+		Agenda agenda = agendaService.findAgendaByAgendaKey(agendaKey);
+		agenda.mustModifiedByHost(user.getIntraId());
+		agendaService.cancelAgenda(agenda);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	}
 }

@@ -121,28 +121,17 @@ public class Agenda extends BaseTimeEntity {
 	}
 
 	public void confirmAgenda() {
-		if (this.status == AgendaStatus.FINISH) {
-			throw new InvalidParameterException(AGENDA_ALREADY_FINISHED);
-		}
-		if (this.status == AgendaStatus.CANCEL) {
-			throw new InvalidParameterException(AGENDA_ALREADY_CANCELED);
-		}
-		if (this.status == AgendaStatus.CONFIRM) {
-			throw new InvalidParameterException(AGENDA_ALREADY_CONFIRMED);
-		}
+		agendaStatsMustBeOpen();
 		this.status = AgendaStatus.CONFIRM;
 	}
 
+	public void cancelAgenda() {
+		agendaStatsMustBeOpen();
+		this.status = AgendaStatus.CANCEL;
+	}
+
 	public void finishAgenda() {
-		if (this.status == AgendaStatus.OPEN) {
-			throw new InvalidParameterException(AGENDA_DOES_NOT_CONFIRM);
-		}
-		if (this.status == AgendaStatus.CANCEL) {
-			throw new InvalidParameterException(AGENDA_ALREADY_CANCELED);
-		}
-		if (this.status == AgendaStatus.FINISH) {
-			throw new InvalidParameterException(AGENDA_ALREADY_FINISHED);
-		}
+		agendaStatusMustBeConfirm();
 		this.status = AgendaStatus.FINISH;
 	}
 
@@ -263,6 +252,7 @@ public class Agenda extends BaseTimeEntity {
 	public void leaveTeam(LocalDateTime now) {
 		mustStatusOpen();
 		mustBeforeDeadline(now);
+		this.currentTeam--;
 	}
 
 	private void mustBeWithinLocation(Location location) {
@@ -303,5 +293,29 @@ public class Agenda extends BaseTimeEntity {
 			return;
 		}
 		throw new ForbiddenException(AGENDA_MODIFICATION_FORBIDDEN);
+	}
+
+	private void agendaStatsMustBeOpen() {
+		if (this.status == AgendaStatus.FINISH) {
+			throw new InvalidParameterException(AGENDA_ALREADY_FINISHED);
+		}
+		if (this.status == AgendaStatus.CANCEL) {
+			throw new InvalidParameterException(AGENDA_ALREADY_CANCELED);
+		}
+		if (this.status == AgendaStatus.CONFIRM) {
+			throw new InvalidParameterException(AGENDA_ALREADY_CONFIRMED);
+		}
+	}
+
+	private void agendaStatusMustBeConfirm() {
+		if (this.status == AgendaStatus.OPEN) {
+			throw new InvalidParameterException(AGENDA_DOES_NOT_CONFIRM);
+		}
+		if (this.status == AgendaStatus.CANCEL) {
+			throw new InvalidParameterException(AGENDA_ALREADY_CANCELED);
+		}
+		if (this.status == AgendaStatus.FINISH) {
+			throw new InvalidParameterException(AGENDA_ALREADY_FINISHED);
+		}
 	}
 }
