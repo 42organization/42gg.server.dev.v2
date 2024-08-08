@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.springframework.stereotype.Component;
 
 import gg.data.agenda.Agenda;
@@ -32,6 +35,9 @@ public class AgendaTeamFixture {
 	private final AgendaTeamProfileFixture agendaTeamProfileFixture;
 
 	private final AgendaTeamRepository agendaTeamRepository;
+
+	@PersistenceContext
+	private final EntityManager em;
 
 	public AgendaTeam createAgendaTeam(Agenda agenda) {
 		AgendaTeam agendaTeam = AgendaTeam.builder()
@@ -78,7 +84,9 @@ public class AgendaTeamFixture {
 			.awardPriority(1)
 			.isPrivate(false)
 			.build();
-		return agendaTeamRepository.save(agendaTeam);
+		AgendaTeam savedTeam = agendaTeamRepository.save(agendaTeam);
+		agendaTeamProfileFixture.createAgendaTeamProfile(agenda, savedTeam, profile);
+		return savedTeam;
 	}
 
 	public AgendaTeam createAgendaTeam(Agenda agenda, User user) {

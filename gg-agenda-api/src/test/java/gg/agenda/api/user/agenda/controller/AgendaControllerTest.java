@@ -56,10 +56,13 @@ import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import gg.utils.converter.MultiValueMapConverter;
 import gg.utils.dto.PageRequestDto;
+import gg.utils.exception.custom.BusinessException;
 import gg.utils.exception.custom.NotExistException;
 import gg.utils.file.handler.AwsImageHandler;
 import gg.utils.fixture.agenda.AgendaFixture;
+import gg.utils.fixture.agenda.AgendaProfileFixture;
 import gg.utils.fixture.agenda.AgendaTeamFixture;
+import gg.utils.fixture.agenda.AgendaTeamProfileFixture;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -85,6 +88,12 @@ public class AgendaControllerTest {
 
 	@Autowired
 	private AgendaTeamFixture agendaTeamFixture;
+
+	@Autowired
+	private AgendaProfileFixture agendaProfileFixture;
+
+	@Autowired
+	private AgendaTeamProfileFixture agendaTeamProfileFixture;
 
 	@Autowired
 	private AgendaTestDataUtils agendaTestDataUtils;
@@ -1186,6 +1195,33 @@ public class AgendaControllerTest {
 					.param("agenda_key", agenda.getAgendaKey().toString())
 					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isBadRequest());
+		}
+	}
+
+	@Nested
+	@DisplayName("Agenda 취소하기")
+	class CancelAgenda {
+		@Test
+		@DisplayName("Agenda 취소하기 성공")
+		void cancelAgendaSuccess() throws Exception {
+			// given
+			Agenda agenda = agendaTestDataUtils.createAgendaTeamProfiles(user, AgendaStatus.OPEN);
+
+			// when
+			mockMvc.perform(patch("/agenda/cancel")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isNoContent());
+
+			// then
+			Agenda canceledAgenda = agendaRepository.findById(agenda.getId())
+				.orElseThrow(() -> new BusinessException("cancelAgendaSuccess - 테스트 실패"));
+			assertThat(canceledAgenda.getStatus()).isEqualTo(AgendaStatus.CANCEL);
+
+			em.createQuery("select at from AgendaTeam at where at.agenda = :agenda",
+					AgendaTeam.class).setParameter("agenda", agenda)
+				.getResultStream()
+				.forEach(agendaTeam -> assertThat(agendaTeam.getStatus()).isEqualTo(AgendaTeamStatus.CANCEL));
 		}
 	}
 }

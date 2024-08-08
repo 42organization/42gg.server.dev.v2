@@ -1,7 +1,9 @@
 package gg.utils;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.springframework.stereotype.Component;
 
@@ -33,6 +35,9 @@ public class AgendaTestDataUtils {
 
 	private final AgendaTeamProfileFixture agendaTeamProfileFixture;
 
+	@PersistenceContext
+	private final EntityManager em;
+
 	public Agenda createAgendaAndAnnouncements(int size) {
 		Agenda agenda = agendaFixture.createAgenda();
 		agendaAnnouncementFixture.createAgendaAnnouncementList(agenda, size / 2, true);
@@ -58,14 +63,16 @@ public class AgendaTestDataUtils {
 		for(int i = 0; i < 3; i++) {
 			AgendaProfile leader = agendaProfileFixture.createAgendaProfile();
 			List<AgendaProfile> mates = agendaProfileFixture.createAgendaProfileList(3);
-			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda, leader, AgendaTeamStatus.CONFIRM);
+			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda, leader, AgendaTeamStatus.OPEN);
 			agendaTeamProfileFixture.createAgendaTeamProfileList(agenda, team, mates);
+			team.confirm();
 		}
 		for(int i = 0; i < 3; i++) {
 			AgendaProfile leader = agendaProfileFixture.createAgendaProfile();
 			List<AgendaProfile> mates = agendaProfileFixture.createAgendaProfileList(3);
-			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda, leader, AgendaTeamStatus.CANCEL);
+			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda, leader, AgendaTeamStatus.OPEN);
 			agendaTeamProfileFixture.createAgendaTeamProfileList(agenda, team, mates);
+			team.cancelTeam();
 		}
 		return agenda;
 	}
