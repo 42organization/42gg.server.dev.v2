@@ -14,6 +14,8 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gg.utils.exception.user.TokenNotValidException;
+
 @Component
 public class ApiUtil {
 	private final RestTemplate restTemplate;
@@ -54,7 +56,7 @@ public class ApiUtil {
 		HttpEntity<String> request = new HttpEntity<>(headers);
 		ResponseEntity<T> res = restTemplate.exchange(url, method, request, responseType);
 		if (!res.getStatusCode().is2xxSuccessful()) {
-			throw new RuntimeException("api call error");
+			throw new TokenNotValidException();
 		}
 		return res.getBody();
 	}

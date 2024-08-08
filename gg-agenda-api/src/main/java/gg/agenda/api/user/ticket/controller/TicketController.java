@@ -24,6 +24,7 @@ import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
 import gg.utils.cookie.CookieUtil;
 import gg.utils.dto.PageRequestDto;
+import gg.utils.exception.user.TokenNotValidException;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 
@@ -63,8 +64,9 @@ public class TicketController {
 		HttpServletResponse response) {
 		try {
 			ticketService.modifyTicketApprove(user);
-		} catch (RuntimeException e) {
+		} catch (TokenNotValidException e) {
 			cookieUtil.deleteCookie(response, "refresh_token");
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
 		return ResponseEntity.noContent().build();
 	}
