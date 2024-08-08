@@ -1,5 +1,6 @@
 package gg.agenda.api.user.agendateam.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,6 +32,7 @@ import gg.agenda.api.user.agendateam.controller.response.TeamKeyResDto;
 import gg.agenda.api.user.agendateam.service.AgendaTeamService;
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
+import gg.data.agenda.AgendaTeam;
 import gg.utils.dto.PageRequestDto;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
@@ -47,8 +50,7 @@ public class AgendaTeamController {
 	 */
 	@GetMapping("/my")
 	public ResponseEntity<Optional<MyTeamSimpleResDto>> myTeamSimpleDetails(
-		@Parameter(hidden = true) @Login UserDto user,
-		@RequestParam("agenda_key") UUID agendaKey) {
+		@Parameter(hidden = true) @Login UserDto user, @RequestParam("agenda_key") UUID agendaKey) {
 		Optional<MyTeamSimpleResDto> myTeamSimpleResDto = agendaTeamService.detailsMyTeamSimple(user, agendaKey);
 		if (myTeamSimpleResDto.isEmpty()) {
 			return ResponseEntity.noContent().build();
@@ -98,7 +100,15 @@ public class AgendaTeamController {
 	@PatchMapping("/cancel")
 	public ResponseEntity<Void> leaveAgendaTeam(@Parameter(hidden = true) @Login UserDto user,
 		@RequestBody @Valid TeamKeyReqDto teamKeyReqDto, @RequestParam("agenda_key") UUID agendaKey) {
-		agendaTeamService.agendaTeamLeave(user, agendaKey, teamKeyReqDto.getTeamKey());
+		UUID teamKey = teamKeyReqDto.getTeamKey();
+
+		AgendaTeam agendaTeam = agendaTeamService.getAgendaTeam(agendaKey, teamKey);
+		agendaTeam.getAgenda().leaveTeam(LocalDateTime.now());
+		if (agendaTeam.getLeaderIntraId().equals(user.getIntraId())) {
+			agendaTeamService.leaveTeamAll(agendaTeam);
+		} else {
+			agendaTeamService.leaveTeamMate(agendaTeam, user);
+		}
 		return ResponseEntity.noContent().build();
 	}
 
@@ -106,8 +116,8 @@ public class AgendaTeamController {
 	 * 아젠다 팀 공개 모집인 팀 목록 조회
 	 * @param pageRequest 페이지네이션 요청 정보, agendaId 아젠다 아이디
 	 */
-	@GetMapping("/open")
-	public ResponseEntity<List<OpenTeamResDto>> openTeamList(@RequestBody @Valid PageRequestDto pageRequest,
+	@GetMapping("/open/list")
+	public ResponseEntity<List<OpenTeamResDto>> openTeamList(@ModelAttribute @Valid PageRequestDto pageRequest,
 		@RequestParam("agenda_key") UUID agendaKey) {
 		int page = pageRequest.getPage();
 		int size = pageRequest.getSize();
@@ -120,8 +130,8 @@ public class AgendaTeamController {
 	 * 아젠다 팀 확정된 팀 목록 조회
 	 * @param pageRequest 페이지네이션 요청 정보, agendaId 아젠다 아이디
 	 */
-	@GetMapping("/confirm")
-	public ResponseEntity<List<ConfirmTeamResDto>> confirmTeamList(@RequestBody @Valid PageRequestDto pageRequest,
+	@GetMapping("/confirm/list")
+	public ResponseEntity<List<ConfirmTeamResDto>> confirmTeamList(@ModelAttribute @Valid PageRequestDto pageRequest,
 		@RequestParam("agenda_key") UUID agendaKey) {
 		int page = pageRequest.getPage();
 		int size = pageRequest.getSize();

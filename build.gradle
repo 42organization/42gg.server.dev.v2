@@ -112,6 +112,8 @@ subprojects {
             "**/aws/*",
             "*NotiMailSender*",
             '*SlackbotService*',
+            "**/file/*",
+            "*AwsImageHandler*"
     ]
 
 //커버리지 리포트 생성
@@ -323,4 +325,3 @@ project(':gg-utils') {
     dependencies {
     }
 }
-

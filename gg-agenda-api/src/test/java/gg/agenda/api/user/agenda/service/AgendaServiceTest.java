@@ -4,6 +4,9 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +31,7 @@ import org.springframework.data.domain.Sort;
 import gg.agenda.api.user.agenda.controller.request.AgendaAwardsReqDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaCreateReqDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaTeamAward;
+import gg.agenda.api.user.agendateam.service.AgendaTeamService;
 import gg.agenda.api.user.ticket.service.TicketService;
 import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
@@ -42,6 +46,7 @@ import gg.repo.agenda.AgendaTeamRepository;
 import gg.utils.annotation.UnitTest;
 import gg.utils.exception.custom.InvalidParameterException;
 import gg.utils.exception.custom.NotExistException;
+import gg.utils.file.handler.ImageHandler;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -58,7 +63,13 @@ class AgendaServiceTest {
 	AgendaTeamProfileRepository agendaTeamProfileRepository;
 
 	@Mock
+	AgendaTeamService agendaTeamService;
+
+	@Mock
 	TicketService ticketService;
+
+	@Mock
+	ImageHandler imageHandler;
 
 	@InjectMocks
 	AgendaService agendaService;
@@ -147,25 +158,21 @@ class AgendaServiceTest {
 
 		@Test
 		@DisplayName("Agenda 생성 성공")
-		void createAgendaSuccess() {
+		void createAgendaSuccess() throws IOException {
 			// given
+			AgendaCreateReqDto agendaCreateReqDto = AgendaCreateReqDto.builder().build();
 			UserDto user = UserDto.builder().intraId("intraId").build();
-			AgendaCreateReqDto agendaCreateReqDto = AgendaCreateReqDto.builder()
-				.agendaDeadLine(LocalDateTime.now().plusDays(5))
-				.agendaStartTime(LocalDateTime.now().plusDays(8))
-				.agendaEndTime(LocalDateTime.now().plusDays(10))
-				.agendaMinTeam(2).agendaMaxTeam(5)
-				.agendaMinPeople(1).agendaMaxPeople(5)
-				.build();
 			Agenda agenda = Agenda.builder().build();
-			when(agendaRepository.save(any(Agenda.class))).thenReturn(agenda);
+			when(agendaRepository.save(any())).thenReturn(agenda);
+			when(imageHandler.uploadImageOrDefault(any(), any(), any())).thenReturn(new URL("http://localhost"));
 
 			// when
-			Agenda result = agendaService.addAgenda(agendaCreateReqDto, user);
+			Agenda result = agendaService.addAgenda(agendaCreateReqDto, null, user);
 
 			// then
-			verify(agendaRepository, times(1)).save(any(Agenda.class));
-			assertThat(result.getAgendaKey()).isEqualTo(agenda.getAgendaKey());
+			verify(agendaRepository, times(1)).save(any());
+			verify(imageHandler, times(1)).uploadImageOrDefault(any(), any(), any());
+			assertThat(result).isEqualTo(agenda);
 		}
 	}
 
@@ -186,7 +193,7 @@ class AgendaServiceTest {
 				.build()
 			));
 			Page<Agenda> agendaPage = new PageImpl<>(agendas.subList(0, 10), pageable, size);
-			when(agendaRepository.findAllByStatusIs(any(Pageable.class), eq(AgendaStatus.FINISH)))
+			when(agendaRepository.findAllByStatusIs(eq(AgendaStatus.FINISH), any(Pageable.class)))
 				.thenReturn(agendaPage);
 
 			// when
@@ -194,7 +201,7 @@ class AgendaServiceTest {
 
 			// then
 			verify(agendaRepository, times(1))
-				.findAllByStatusIs(pageable, AgendaStatus.FINISH);
+				.findAllByStatusIs(AgendaStatus.FINISH, pageable);
 			assertThat(result.size()).isEqualTo(size);
 			for (int i = 1; i < result.size(); i++) {
 				assertThat(result.get(i).getStartTime())
@@ -232,48 +239,11 @@ class AgendaServiceTest {
 				.thenReturn(agendaTeams);
 
 			// when
-			agendaService.finishAgendaWithAwards(confirmDto, agenda);
+			agendaService.awardAgenda(confirmDto, agenda);
 
 			// then
 			verify(agendaTeamRepository, times(1)).findAllByAgendaAndStatus(any(), any());
-			assertThat(agenda.getStatus()).isEqualTo(AgendaStatus.FINISH);
-		}
-
-		@Test
-		@DisplayName("Agenda 시상 및 확정 성공 - 시상하지 않는 대회인 경우")
-		void finishAgendaSuccessWithNoRank() {
-			// given
-			Agenda agenda = Agenda.builder()
-				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
-				.status(AgendaStatus.CONFIRM).isRanking(false).build();
-
-			// when
-			agendaService.finishAgendaWithAwards(null, agenda);
-
-			// then
-			assertThat(agenda.getStatus()).isEqualTo(AgendaStatus.FINISH);
-		}
-
-		@Test
-		@DisplayName("Agenda 시상 및 확정 성공 - 시상하지 않는 대회에 시상 내역이 들어온 경우")
-		void finishAgendaSuccessWithNoRankAndAwards() {
-			// given
-			Agenda agenda = Agenda.builder()
-				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
-				.status(AgendaStatus.CONFIRM).isRanking(false).build();
-			List<AgendaTeam> agendaTeams = new ArrayList<>();
-			IntStream.range(0, 10).forEach(i -> agendaTeams.add(AgendaTeam.builder().name("team" + i).build()));
-			AgendaTeamAward awardDto = AgendaTeamAward.builder()
-				.teamName("team1").awardName("award").awardPriority(1).build();
-			AgendaAwardsReqDto confirmDto = AgendaAwardsReqDto.builder()
-				.awards(List.of(awardDto)).build();
-
-			// when
-			agendaService.finishAgendaWithAwards(confirmDto, agenda);
-
-			// then
-			verify(agendaTeamRepository, never()).findAllByAgendaAndStatus(any(), any());
-			assertThat(agenda.getStatus()).isEqualTo(AgendaStatus.FINISH);
+			assertThat(agenda.getStatus()).isEqualTo(AgendaStatus.CONFIRM);
 		}
 
 		@Test
@@ -285,30 +255,15 @@ class AgendaServiceTest {
 				.status(AgendaStatus.CONFIRM).isRanking(false).build();
 			AgendaAwardsReqDto confirmDto = AgendaAwardsReqDto.builder()
 				.awards(List.of()).build();
+			when(agendaTeamRepository.findAllByAgendaAndStatus(any(), any()))
+				.thenReturn(List.of());
 
 			// when
-			agendaService.finishAgendaWithAwards(confirmDto, agenda);
+			agendaService.awardAgenda(confirmDto, agenda);
 
 			// then
-			verify(agendaTeamRepository, never()).findAllByAgendaAndStatus(any(), any());
-			assertThat(agenda.getStatus()).isEqualTo(AgendaStatus.FINISH);
-		}
-
-		@Test
-		@DisplayName("Agenda 시상 및 확정 성공 - 시상하지 않는 대회에 시상 내역이 null로 들어온 경우")
-		void finishAgendaSuccessWithNoRankAndNullAwards() {
-			// given
-			Agenda agenda = Agenda.builder()
-				.hostIntraId("intraId").startTime(LocalDateTime.now().minusDays(1))
-				.status(AgendaStatus.CONFIRM).isRanking(false).build();
-			AgendaAwardsReqDto confirmDto = AgendaAwardsReqDto.builder().build();
-
-			// when
-			agendaService.finishAgendaWithAwards(confirmDto, agenda);
-
-			// then
-			verify(agendaTeamRepository, never()).findAllByAgendaAndStatus(any(), any());
-			assertThat(agenda.getStatus()).isEqualTo(AgendaStatus.FINISH);
+			verify(agendaTeamRepository, times(1)).findAllByAgendaAndStatus(any(), any());
+			assertThat(agenda.getStatus()).isEqualTo(AgendaStatus.CONFIRM);
 		}
 
 		@Test
@@ -323,7 +278,7 @@ class AgendaServiceTest {
 
 			// expected
 			assertThrows(NullPointerException.class,
-				() -> agendaService.finishAgendaWithAwards(confirmDto, agenda));
+				() -> agendaService.awardAgenda(confirmDto, agenda));
 		}
 
 		@Test
@@ -336,7 +291,7 @@ class AgendaServiceTest {
 
 			// expected
 			assertThrows(NullPointerException.class,
-				() -> agendaService.finishAgendaWithAwards(null, agenda));
+				() -> agendaService.awardAgenda(null, agenda));
 		}
 
 		@Test
@@ -356,7 +311,7 @@ class AgendaServiceTest {
 
 			// expected
 			assertThrows(NotExistException.class,
-				() -> agendaService.finishAgendaWithAwards(confirmDto, agenda));
+				() -> agendaService.awardAgenda(confirmDto, agenda));
 		}
 	}
 
@@ -374,20 +329,14 @@ class AgendaServiceTest {
 				.profile(AgendaProfile.builder().build()).build();
 			when(agendaTeamRepository.findAllByAgendaAndStatus(agenda, AgendaTeamStatus.OPEN))
 				.thenReturn(List.of(agendaTeam));
-			when(agendaTeamProfileRepository.findAllByAgendaTeam(agendaTeam)).thenReturn(List.of(participant));
-			doNothing().when(ticketService).refundTickets(any(), any());
-
-
+			doNothing().when(agendaTeamService).leaveTeamAll(any());
 
 			// when
-			agendaService.confirmAgenda(agenda);
+			agendaService.confirmAgendaAndRefundTicketForOpenTeam(agenda);
 
 			// then
 			verify(agendaTeamRepository, times(1)).findAllByAgendaAndStatus(agenda, AgendaTeamStatus.OPEN);
-			verify(agendaTeamProfileRepository, times(1)).findAllByAgendaTeam(agendaTeam);
-			verify(ticketService, times(1)).refundTickets(any(), any());
 			assertThat(agenda.getStatus()).isEqualTo(AgendaStatus.CONFIRM);
-			assertThat(agendaTeam.getStatus()).isEqualTo(AgendaTeamStatus.CANCEL);
 		}
 
 		@Test
@@ -399,7 +348,7 @@ class AgendaServiceTest {
 				.thenReturn(List.of());
 
 			// when
-			agendaService.confirmAgenda(agenda);
+			agendaService.confirmAgendaAndRefundTicketForOpenTeam(agenda);
 
 			// then
 			verify(agendaTeamRepository, times(1)).findAllByAgendaAndStatus(agenda, AgendaTeamStatus.OPEN);
@@ -418,7 +367,7 @@ class AgendaServiceTest {
 
 			// expected
 			assertThrows(InvalidParameterException.class,
-				() -> agendaService.confirmAgenda(agenda));
+				() -> agendaService.confirmAgendaAndRefundTicketForOpenTeam(agenda));
 			verify(agendaTeamRepository, times(1)).findAllByAgendaAndStatus(agenda, AgendaTeamStatus.OPEN);
 		}
 	}

@@ -2,35 +2,40 @@ package gg.agenda.api.user.agenda.service;
 
 import static gg.utils.exception.ErrorCode.*;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.springframework.web.multipart.MultipartFile;
 
 import gg.agenda.api.user.agenda.controller.request.AgendaAwardsReqDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaCreateReqDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaTeamAward;
+import gg.agenda.api.user.agendateam.service.AgendaTeamService;
 import gg.agenda.api.user.ticket.service.TicketService;
 import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
-import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.AgendaTeam;
-import gg.data.agenda.AgendaTeamProfile;
 import gg.data.agenda.type.AgendaStatus;
 import gg.data.agenda.type.AgendaTeamStatus;
 import gg.repo.agenda.AgendaRepository;
 import gg.repo.agenda.AgendaTeamProfileRepository;
 import gg.repo.agenda.AgendaTeamRepository;
+import gg.utils.exception.custom.BusinessException;
+import gg.utils.exception.custom.ForbiddenException;
 import gg.utils.exception.custom.NotExistException;
+import gg.utils.file.handler.ImageHandler;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AgendaService {
@@ -43,6 +48,13 @@ public class AgendaService {
 
 	private final TicketService ticketService;
 
+	private final AgendaTeamService agendaTeamService;
+
+	private final ImageHandler imageHandler;
+
+	@Value("${info.image.defaultUrl}")
+	private String defaultUri;
+
 	@Transactional(readOnly = true)
 	public Agenda findAgendaByAgendaKey(UUID agendaKey) {
 		return agendaRepository.findByAgendaKey(agendaKey)
@@ -52,51 +64,60 @@ public class AgendaService {
 	@Transactional(readOnly = true)
 	public List<Agenda> findCurrentAgendaList() {
 		return agendaRepository.findAllByStatusIs(AgendaStatus.OPEN).stream()
-			.sorted(Comparator.comparing(Agenda::getIsOfficial, Comparator.reverseOrder())
-				.thenComparing(Agenda::getDeadline, Comparator.reverseOrder()))
+			.sorted(agendaComparatorWithIsOfficialThenDeadline())
 			.collect(Collectors.toList());
 	}
 
+	private Comparator<Agenda> agendaComparatorWithIsOfficialThenDeadline() {
+		return Comparator.comparing(Agenda::getIsOfficial, Comparator.reverseOrder())
+			.thenComparing(Agenda::getDeadline, Comparator.reverseOrder());
+	}
+
 	@Transactional
-	public Agenda addAgenda(AgendaCreateReqDto agendaCreateReqDto, UserDto user) {
-		Agenda newAgenda = AgendaCreateReqDto.MapStruct.INSTANCE.toEntity(agendaCreateReqDto, user);
-		return agendaRepository.save(newAgenda);
+	public Agenda addAgenda(AgendaCreateReqDto createDto, MultipartFile agendaPoster, UserDto user) {
+		try {
+			URL storedUrl = imageHandler.uploadImageOrDefault(agendaPoster, createDto.getAgendaTitle(), defaultUri);
+			createDto.updatePosterUri(storedUrl);
+			Agenda newAgenda = AgendaCreateReqDto.MapStruct.INSTANCE.toEntity(createDto, user.getIntraId());
+			return agendaRepository.save(newAgenda);
+		} catch (IOException e) {
+			log.error("Failed to upload image for agenda poster", e);
+			throw new BusinessException(AGENDA_CREATE_FAILED);
+		}
 	}
 
 	@Transactional(readOnly = true)
 	public List<Agenda> findHistoryAgendaList(Pageable pageable) {
-		return agendaRepository.findAllByStatusIs(pageable, AgendaStatus.FINISH).getContent();
+		return agendaRepository.findAllByStatusIs(AgendaStatus.FINISH, pageable).getContent();
 	}
 
 	@Transactional
-	public void finishAgendaWithAwards(AgendaAwardsReqDto agendaAwardsReqDto, Agenda agenda) {
-		if (!agenda.getIsRanking()) {
-			agenda.finish();
-			return;
-		}
-		Map<String, AgendaTeam> teams = new HashMap<>();
-		agendaTeamRepository.findAllByAgendaAndStatus(agenda, AgendaTeamStatus.CONFIRM)
-			.forEach(team -> teams.put(team.getName(), team));
+	public void finishAgenda(Agenda agenda) {
+		agenda.finishAgenda();
+	}
+
+	@Transactional
+	public void awardAgenda(AgendaAwardsReqDto agendaAwardsReqDto, Agenda agenda) {
+		List<AgendaTeam> teams = agendaTeamRepository.findAllByAgendaAndStatus(agenda, AgendaTeamStatus.CONFIRM);
 		for (AgendaTeamAward agendaTeamAward : agendaAwardsReqDto.getAwards()) {
-			if (!teams.containsKey(agendaTeamAward.getTeamName())) {
-				throw new NotExistException(TEAM_NOT_FOUND);
-			}
-			teams.get(agendaTeamAward.getTeamName())
-				.acceptAward(agendaTeamAward.getAwardName(), agendaTeamAward.getAwardPriority());
+			AgendaTeam matchedTeam = teams.stream()
+				.filter(team -> team.getName().equals(agendaTeamAward.getTeamName()))
+				.findFirst()
+				.orElseThrow(() -> new NotExistException(AGENDA_TEAM_NOT_FOUND));
+			matchedTeam.acceptAward(agendaTeamAward.getAwardName(), agendaTeamAward.getAwardPriority());
 		}
-		agenda.finish();
 	}
 
 	@Transactional
-	public void confirmAgenda(Agenda agenda) {
+	public void confirmAgendaAndRefundTicketForOpenTeam(Agenda agenda) {
+		if (agenda.getCurrentTeam() < agenda.getMinTeam()) {
+			throw new ForbiddenException("팀이 모두 구성되지 않았습니다.");
+		}
+
 		List<AgendaTeam> openTeams = agendaTeamRepository.findAllByAgendaAndStatus(agenda, AgendaTeamStatus.OPEN);
 		for (AgendaTeam openTeam : openTeams) {
-			openTeam.cancelTeam();
-			List<AgendaProfile> participants = agendaTeamProfileRepository.findAllByAgendaTeam(openTeam).stream()
-				.map(AgendaTeamProfile::getProfile)
-				.collect(Collectors.toList());
-			ticketService.refundTickets(participants, agenda.getAgendaKey());
+			agendaTeamService.leaveTeamAll(openTeam);
 		}
-		agenda.confirm();
+		agenda.confirmAgenda();
 	}
 }

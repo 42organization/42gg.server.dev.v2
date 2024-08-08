@@ -13,14 +13,14 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AgendaProfileResDto {
+public class AgendaTeamMateResDto {
 
 	private String intraId;
 
 	private Coalition coalition;
 
 	@Builder
-	public AgendaProfileResDto(String intraId, Coalition coalition) {
+	public AgendaTeamMateResDto(String intraId, Coalition coalition) {
 		this.intraId = intraId;
 		this.coalition = coalition;
 	}
@@ -28,10 +28,10 @@ public class AgendaProfileResDto {
 	@Mapper
 	public interface MapStruct {
 
-		AgendaProfileResDto.MapStruct INSTANCE = Mappers.getMapper(AgendaProfileResDto.MapStruct.class);
+		AgendaTeamMateResDto.MapStruct INSTANCE = Mappers.getMapper(AgendaTeamMateResDto.MapStruct.class);
 
 		@Mapping(target = "intraId", source = "intraId")
 		@Mapping(target = "coalition", source = "coalition")
-		AgendaProfileResDto toDto(AgendaProfile profile);
+		AgendaTeamMateResDto toDto(AgendaProfile profile);
 	}
 }

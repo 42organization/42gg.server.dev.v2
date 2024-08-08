@@ -17,6 +17,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.springframework.core.io.support.ResourcePatternUtils;
+
 import gg.data.BaseTimeEntity;
 import gg.data.agenda.type.AgendaStatus;
 import gg.data.agenda.type.AgendaTeamStatus;
@@ -118,39 +120,7 @@ public class Agenda extends BaseTimeEntity {
 		this.isRanking = isRanking;
 	}
 
-	public void addTeam(Location location, LocalDateTime now) {
-		mustBeWithinLocation(location);
-		mustStatusOnGoing();
-		mustBeforeDeadline(now);
-		mustHaveCapacity();
-	}
-
-	public void confirmTeam(Location location, LocalDateTime now) {
-		mustBeWithinLocation(location);
-		mustStatusOnGoing();
-		mustBeforeDeadline(now);
-		mustHaveCapacity();
-		this.currentTeam++;
-	}
-
-	public void attendTeam(Location location, LocalDateTime now) {
-		mustBeWithinLocation(location);
-		mustStatusOnGoing();
-		mustBeforeDeadline(now);
-	}
-
-	public void updateTeam(Location location, LocalDateTime now) {
-		mustBeWithinLocation(location);
-		mustStatusOnGoing();
-		mustBeforeDeadline(now);
-	}
-
-	public void cancelTeam(LocalDateTime now) {
-		mustStatusOnGoing();
-		mustBeforeDeadline(now);
-	}
-
-	public void confirm() {
+	public void confirmAgenda() {
 		if (this.status == AgendaStatus.FINISH) {
 			throw new InvalidParameterException(AGENDA_ALREADY_FINISHED);
 		}
@@ -163,7 +133,7 @@ public class Agenda extends BaseTimeEntity {
 		this.status = AgendaStatus.CONFIRM;
 	}
 
-	public void finish() {
+	public void finishAgenda() {
 		if (this.status == AgendaStatus.OPEN) {
 			throw new InvalidParameterException(AGENDA_DOES_NOT_CONFIRM);
 		}
@@ -176,14 +146,17 @@ public class Agenda extends BaseTimeEntity {
 		this.status = AgendaStatus.FINISH;
 	}
 
-	public void updateInformation(String title, String content, String posterUri) {
+	public void updateInformation(String title, String content) {
 		if (Objects.nonNull(title) && !title.isBlank()) {
 			this.title = title;
 		}
-		if (Objects.nonNull(content) && !title.isBlank()) {
+		if (Objects.nonNull(content) && !content.isBlank()) {
 			this.content = content;
 		}
-		if (Objects.nonNull(posterUri) && !title.isBlank()) {
+	}
+
+	public void updatePosterUri(String posterUri) {
+		if (Objects.nonNull(posterUri) && ResourcePatternUtils.isUrl(posterUri)) {
 			this.posterUri = posterUri;
 		}
 	}
@@ -260,13 +233,45 @@ public class Agenda extends BaseTimeEntity {
 		this.maxPeople = maxPeople;
 	}
 
+	public void addTeam(Location location, LocalDateTime now) {
+		mustBeWithinLocation(location);
+		mustStatusOpen();
+		mustBeforeDeadline(now);
+		mustHaveCapacity();
+	}
+
+	public void confirmTeam(Location location, LocalDateTime now) {
+		mustBeWithinLocation(location);
+		mustStatusOpen();
+		mustBeforeDeadline(now);
+		mustHaveCapacity();
+		this.currentTeam++;
+	}
+
+	public void attendTeam(Location location, LocalDateTime now) {
+		mustBeWithinLocation(location);
+		mustStatusOpen();
+		mustBeforeDeadline(now);
+	}
+
+	public void updateTeam(Location location, LocalDateTime now) {
+		mustBeWithinLocation(location);
+		mustStatusOpen();
+		mustBeforeDeadline(now);
+	}
+
+	public void leaveTeam(LocalDateTime now) {
+		mustStatusOpen();
+		mustBeforeDeadline(now);
+	}
+
 	private void mustBeWithinLocation(Location location) {
 		if (this.location != Location.MIX && this.location != location) {
 			throw new InvalidParameterException(LOCATION_NOT_VALID);
 		}
 	}
 
-	private void mustStatusOnGoing() {
+	private void mustStatusOpen() {
 		if (this.status != AgendaStatus.OPEN) {
 			throw new InvalidParameterException(AGENDA_NOT_OPEN);
 		}

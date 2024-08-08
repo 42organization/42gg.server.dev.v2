@@ -22,6 +22,7 @@ public class AgendaTeamProfileFixture {
 			.profile(agendaProfile)
 			.isExist(true)
 			.build();
+		agendaTeam.attendTeam(agenda);
 		return agendaTeamProfileRepository.save(agendaTeamProfile);
 	}
 

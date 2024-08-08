@@ -21,6 +21,7 @@ import gg.data.BaseTimeEntity;
 import gg.data.agenda.type.AgendaTeamStatus;
 import gg.data.agenda.type.Location;
 import gg.utils.exception.custom.BusinessException;
+import gg.utils.exception.custom.ForbiddenException;
 import gg.utils.exception.custom.InvalidParameterException;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -89,9 +90,11 @@ public class AgendaTeam extends BaseTimeEntity {
 		this.isPrivate = isPrivate;
 	}
 
-	public void acceptAward(String award, int awardPriority) {
+	public void acceptAward(String award, Integer awardPriority) {
 		this.award = award;
-		this.awardPriority = awardPriority;
+		if (Objects.nonNull(awardPriority)) {
+			this.awardPriority = awardPriority;
+		}
 	}
 
 	public void confirm() {
@@ -125,6 +128,13 @@ public class AgendaTeam extends BaseTimeEntity {
 		this.mateCount--;
 	}
 
+	public void leaveTeamMateAdmin(String intraId) {
+		if (intraId.equals(this.leaderIntraId)) {
+			throw new ForbiddenException(NOT_TEAM_MATE);
+		}
+		this.mateCount--;
+	}
+
 	public void attendTeam(Agenda agenda) {
 		if (this.status == CANCEL) {
 			throw new BusinessException(AGENDA_TEAM_ALREADY_CANCEL);
@@ -132,6 +142,13 @@ public class AgendaTeam extends BaseTimeEntity {
 		if (this.status == CONFIRM) {
 			throw new BusinessException(AGENDA_TEAM_ALREADY_CONFIRM);
 		}
+		if (this.mateCount >= agenda.getMaxPeople()) {
+			throw new BusinessException(AGENDA_TEAM_FULL);
+		}
+		this.mateCount++;
+	}
+
+	public void attendTeamAdmin(Agenda agenda) {
 		if (this.mateCount >= agenda.getMaxPeople()) {
 			throw new BusinessException(AGENDA_TEAM_FULL);
 		}
@@ -150,6 +167,13 @@ public class AgendaTeam extends BaseTimeEntity {
 		this.content = content;
 		this.isPrivate = isPrivate;
 		updateLocation(location, profiles);
+	}
+
+	public void updateTeamAdmin(String name, String content, Boolean isPrivate, AgendaTeamStatus status) {
+		this.name = name;
+		this.content = content;
+		this.isPrivate = isPrivate;
+		this.status = status;
 	}
 
 	public void updateLocation(Location location, List<AgendaTeamProfile> profiles) {

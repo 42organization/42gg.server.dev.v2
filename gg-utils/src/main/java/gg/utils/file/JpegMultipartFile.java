@@ -1,4 +1,4 @@
-package gg.pingpong.api.global.utils;
+package gg.utils.file;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;

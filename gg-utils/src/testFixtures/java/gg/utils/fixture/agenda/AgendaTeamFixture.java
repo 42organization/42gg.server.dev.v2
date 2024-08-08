@@ -4,6 +4,7 @@ import static gg.data.agenda.type.AgendaTeamStatus.*;
 import static gg.data.agenda.type.Location.*;
 import static java.util.UUID.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -16,11 +17,19 @@ import gg.data.agenda.type.AgendaTeamStatus;
 import gg.data.agenda.type.Location;
 import gg.data.user.User;
 import gg.repo.agenda.AgendaTeamRepository;
+import gg.utils.TestDataUtils;
 import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
 public class AgendaTeamFixture {
+
+	private final TestDataUtils testDataUtils;
+
+	private final AgendaProfileFixture agendaProfileFixture;
+
+	private final AgendaTeamProfileFixture agendaTeamProfileFixture;
+
 	private final AgendaTeamRepository agendaTeamRepository;
 
 	public AgendaTeam createAgendaTeam(Agenda agenda) {
@@ -32,7 +41,23 @@ public class AgendaTeamFixture {
 			.leaderIntraId("leaderIntraId")
 			.status(OPEN)
 			.location(MIX)
-			.mateCount(3)
+			.mateCount(1)
+			.awardPriority(1)
+			.isPrivate(false)
+			.build();
+		return agendaTeamRepository.save(agendaTeam);
+	}
+
+	public AgendaTeam createAgendaTeam(Agenda agenda, User user) {
+		AgendaTeam agendaTeam = AgendaTeam.builder()
+			.agenda(agenda)
+			.teamKey(UUID.randomUUID())
+			.name("name")
+			.content("content")
+			.leaderIntraId(user.getIntraId())
+			.status(OPEN)
+			.location(MIX)
+			.mateCount(1)
 			.awardPriority(1)
 			.isPrivate(false)
 			.build();
@@ -135,6 +160,9 @@ public class AgendaTeamFixture {
 				.isPrivate(false)
 				.build();
 			teams.add(agendaTeam);
+			if (status == CONFIRM) {
+				agenda.confirmTeam(agendaTeam.getLocation(), LocalDateTime.now());
+			}
 		}
 		return agendaTeamRepository.saveAll(teams);
 	}
