@@ -54,20 +54,20 @@ public class AgendaTestDataUtils {
 	public Agenda createAgendaTeamProfiles(User user, AgendaStatus status) {
 		AgendaProfile host = agendaProfileFixture.createAgendaProfile(user, Location.SEOUL);
 		Agenda agenda = agendaFixture.createAgenda(host.getIntraId(), status);
-		for(int i = 0; i < 3; i++) {
+		for (int i = 0; i < 3; i++) {
 			AgendaProfile leader = agendaProfileFixture.createAgendaProfile();
 			List<AgendaProfile> mates = agendaProfileFixture.createAgendaProfileList(3);
 			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda, leader, AgendaTeamStatus.OPEN);
 			agendaTeamProfileFixture.createAgendaTeamProfileList(agenda, team, mates);
 		}
-		for(int i = 0; i < 3; i++) {
+		for (int i = 0; i < 3; i++) {
 			AgendaProfile leader = agendaProfileFixture.createAgendaProfile();
 			List<AgendaProfile> mates = agendaProfileFixture.createAgendaProfileList(3);
 			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda, leader, AgendaTeamStatus.OPEN);
 			agendaTeamProfileFixture.createAgendaTeamProfileList(agenda, team, mates);
 			team.confirm();
 		}
-		for(int i = 0; i < 3; i++) {
+		for (int i = 0; i < 3; i++) {
 			AgendaProfile leader = agendaProfileFixture.createAgendaProfile();
 			List<AgendaProfile> mates = agendaProfileFixture.createAgendaProfileList(3);
 			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda, leader, AgendaTeamStatus.OPEN);
