@@ -99,11 +99,8 @@ public class AgendaTeamController {
 	 */
 	@PatchMapping("/cancel")
 	public ResponseEntity<Void> leaveAgendaTeam(@Parameter(hidden = true) @Login UserDto user,
-		@RequestBody @Valid TeamKeyReqDto teamKeyReqDto, @RequestParam("agenda_key") UUID agendaKey) {
-		UUID teamKey = teamKeyReqDto.getTeamKey();
-
-		AgendaTeam agendaTeam = agendaTeamService.getAgendaTeam(agendaKey, teamKey);
-		agendaTeam.getAgenda().leaveTeam(LocalDateTime.now());
+		@RequestBody @Valid TeamKeyReqDto teamKeyReqDto) {
+		AgendaTeam agendaTeam = agendaTeamService.getAgendaTeam(teamKeyReqDto.getTeamKey());
 		if (agendaTeam.getLeaderIntraId().equals(user.getIntraId())) {
 			agendaTeamService.leaveTeamAll(agendaTeam);
 		} else {

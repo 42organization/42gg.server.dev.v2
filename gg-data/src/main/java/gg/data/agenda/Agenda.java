@@ -121,17 +121,17 @@ public class Agenda extends BaseTimeEntity {
 	}
 
 	public void confirmAgenda() {
-		agendaStatsMustBeOpen();
+		this.agendaStatusMustBeOpen();
 		this.status = AgendaStatus.CONFIRM;
 	}
 
 	public void cancelAgenda() {
-		agendaStatsMustBeOpen();
+		this.agendaStatusMustBeOpen();
 		this.status = AgendaStatus.CANCEL;
 	}
 
 	public void finishAgenda() {
-		agendaStatusMustBeConfirm();
+		this.agendaStatusMustBeConfirm();
 		this.status = AgendaStatus.FINISH;
 	}
 
@@ -295,7 +295,7 @@ public class Agenda extends BaseTimeEntity {
 		throw new ForbiddenException(AGENDA_MODIFICATION_FORBIDDEN);
 	}
 
-	private void agendaStatsMustBeOpen() {
+	public void agendaStatusMustBeOpen() {
 		if (this.status == AgendaStatus.FINISH) {
 			throw new InvalidParameterException(AGENDA_ALREADY_FINISHED);
 		}
@@ -307,7 +307,7 @@ public class Agenda extends BaseTimeEntity {
 		}
 	}
 
-	private void agendaStatusMustBeConfirm() {
+	public void agendaStatusMustBeConfirm() {
 		if (this.status == AgendaStatus.OPEN) {
 			throw new InvalidParameterException(AGENDA_DOES_NOT_CONFIRM);
 		}
