@@ -85,7 +85,7 @@ public class AgendaAnnouncementServiceTest {
 			when(agendaAnnouncementRepository.findLatestByAgenda(agenda)).thenReturn(Optional.of(announcement));
 
 			// when
-			agendaAnnouncementService.findAgendaWithLatestAnnouncement(agenda);
+			agendaAnnouncementService.findLatestAnnounceTitleByAgendaOrDefault(agenda, "");
 
 			// then
 			verify(agendaAnnouncementRepository, times(1)).findLatestByAgenda(agenda);

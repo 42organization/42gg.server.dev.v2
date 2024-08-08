@@ -1,6 +1,9 @@
 package gg.agenda.api.admin.agenda.controller;
 
+import static gg.utils.exception.ErrorCode.*;
+
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -12,22 +15,25 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import gg.agenda.api.admin.agenda.controller.request.AgendaAdminUpdateReqDto;
 import gg.agenda.api.admin.agenda.controller.response.AgendaAdminResDto;
 import gg.agenda.api.admin.agenda.service.AgendaAdminService;
 import gg.utils.dto.PageRequestDto;
+import gg.utils.exception.custom.InvalidParameterException;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/admin/agenda")
+@RequestMapping("/agenda/admin")
 @RequiredArgsConstructor
 public class AgendaAdminController {
 
@@ -51,10 +57,14 @@ public class AgendaAdminController {
 		@ApiResponse(responseCode = "409", description = "Agenda 지역을 변경할 수 없음"),
 		@ApiResponse(responseCode = "409", description = "Agenda 팀 제한을 변경할 수 없음"),
 		@ApiResponse(responseCode = "409", description = "Agenda 팀 인원 제한을 변경할 수 없음")})
-	@PatchMapping("/request")
+	@PostMapping("/request")
 	public ResponseEntity<Void> agendaUpdate(@RequestParam("agenda_key") UUID agendaKey,
-		@RequestBody @Valid AgendaAdminUpdateReqDto agendaDto) {
-		agendaAdminService.updateAgenda(agendaKey, agendaDto);
+		@ModelAttribute @Valid AgendaAdminUpdateReqDto agendaDto,
+		@RequestParam(required = false) MultipartFile agendaPoster) {
+		if (Objects.nonNull(agendaPoster) && agendaPoster.getSize() > 1024 * 1024 * 2) {	// 2MB
+			throw new InvalidParameterException(AGENDA_POSTER_SIZE_TOO_LARGE);
+		}
+		agendaAdminService.updateAgenda(agendaKey, agendaDto, agendaPoster);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 }

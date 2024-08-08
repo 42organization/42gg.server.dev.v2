@@ -2,6 +2,7 @@ package gg.pingpong.api.global.security.service;
 
 import static gg.data.agenda.type.Coalition.*;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -78,7 +79,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		}
 	}
 
-	private OAuth2User process(OAuth2UserRequest userRequest, OAuth2User user) {
+	private OAuth2User process(OAuth2UserRequest userRequest, OAuth2User user) throws IOException {
 		ProviderType providerType = ProviderType.keyOf(
 			userRequest.getClientRegistration().getRegistrationId().toUpperCase());
 		User savedUser;

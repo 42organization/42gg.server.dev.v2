@@ -1,4 +1,4 @@
-package gg.pingpong.api.global.utils;
+package gg.utils.file;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

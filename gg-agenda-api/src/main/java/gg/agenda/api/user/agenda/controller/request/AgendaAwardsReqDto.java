@@ -17,7 +17,6 @@ public class AgendaAwardsReqDto {
 
 	@Valid
 	@NotNull
-	@NotEmpty
 	private List<AgendaTeamAward> awards;
 
 	@Builder

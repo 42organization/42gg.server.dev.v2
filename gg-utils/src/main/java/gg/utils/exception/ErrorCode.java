@@ -195,6 +195,8 @@ public enum ErrorCode {
 	AUTH_NOT_FOUND(404, "AG", "42 정보가 만료되었습니다."),
 
 	AGENDA_NOT_FOUND(404, "AG", "해당 일정이 존재하지 않습니다."),
+	AGENDA_CREATE_FAILED(500, "AG", "일정 생성에 실패했습니다."),
+	AGENDA_UPDATE_FAILED(500, "AG", "일정 수정에 실패했습니다."),
 	AGENDA_NOT_OPEN(400, "AG", "마감된 일정에는 팀을 생성할 수 없습니다."),
 	AGENDA_TEAM_ALREADY_CONFIRM(400, "AG", "이미 확정된 팀입니다."),
 	AGENDA_TEAM_ALREADY_CANCEL(400, "AG", "이미 취소된 팀입니다."),
@@ -202,6 +204,7 @@ public enum ErrorCode {
 	AGENDA_ANNOUNCEMENT_NOT_FOUND(404, "AG", "공지사항이 존재하지 않습니다."),
 	AGENDA_TEAM_FULL(400, "AG", "팀이 꽉 찼습니다."),
 	AGENDA_NO_CAPACITY(403, "AG", "해당 일정에 참여할 수 있는 팀이 꽉 찼습니다."),
+	AGENDA_POSTER_SIZE_TOO_LARGE(400, "AG", "포스터 사이즈가 너무 큽니다."),
 	AGENDA_INVALID_SCHEDULE(400, "AG", "유효하지 않은 일정입니다."),
 	AGENDA_INVALID_PARAM(400, "AG", "유효하지 않은 파라미터입니다."),
 	UPDATE_LOCATION_NOT_VALID(400, "AG", "지역을 변경할 수 없습니다."),

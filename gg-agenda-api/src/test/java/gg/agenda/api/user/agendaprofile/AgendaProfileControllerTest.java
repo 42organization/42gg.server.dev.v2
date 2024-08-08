@@ -5,12 +5,18 @@ import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
@@ -22,12 +28,20 @@ import gg.agenda.api.AgendaMockData;
 import gg.agenda.api.user.agendaprofile.controller.request.AgendaProfileChangeReqDto;
 import gg.agenda.api.user.agendaprofile.controller.response.AgendaProfileDetailsResDto;
 import gg.agenda.api.user.agendaprofile.controller.response.AgendaProfileInfoDetailsResDto;
+import gg.agenda.api.user.agendaprofile.controller.response.AttendedAgendaListResDto;
+import gg.agenda.api.user.agendaprofile.controller.response.CurrentAttendAgendaListResDto;
+import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaProfile;
+import gg.data.agenda.AgendaTeam;
+import gg.data.agenda.AgendaTeamProfile;
+import gg.data.agenda.type.AgendaStatus;
+import gg.data.agenda.type.Location;
 import gg.data.user.User;
 import gg.data.user.type.RoleType;
 import gg.repo.agenda.AgendaProfileRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
+import gg.utils.dto.PageRequestDto;
 
 @IntegrationTest
 @Transactional
@@ -45,6 +59,7 @@ public class AgendaProfileControllerTest {
 	private AgendaProfileRepository agendaProfileRepository;
 	User user;
 	String accessToken;
+	AgendaProfile agendaProfile;
 
 	@Nested
 	@DisplayName("agenda profile 상세 조회")
@@ -230,5 +245,200 @@ public class AgendaProfileControllerTest {
 			assertThat(result.getIsAdmin()).isEqualTo(isAdmin);
 		}
 	}
+
+	@Nested
+	@DisplayName("내가 참여 중인 대회 보기")
+	class GetCurrentAttendAgendaList {
+		@BeforeEach
+		void beforeEach() {
+			user = testDataUtils.createNewUser();
+			accessToken = testDataUtils.getLoginAccessTokenFromUser(user);
+		}
+
+		@Test
+		@DisplayName("200 내가 참여 중인 대회 조회 성공")
+		public void getCurrentAttendAgendaListSuccess() throws Exception {
+			//given
+			agendaProfile = agendaMockData.createAgendaProfile(user, SEOUL);
+			List<AgendaTeam> agendaTeamList = new ArrayList<>();
+			for (int i = 0; i < 5; i++) {
+				User agendaCreateUser = testDataUtils.createNewUser();
+				User otherUser = testDataUtils.createNewUser();
+				LocalDateTime startTime = LocalDateTime.now().plusDays(i);
+				Agenda agenda = agendaMockData.createAgenda(agendaCreateUser.getIntraId(), startTime,
+					i % 2 == 0 ? AgendaStatus.OPEN : AgendaStatus.CONFIRM);
+				AgendaTeam agendaTeam = agendaMockData.createAgendaTeam(agenda, otherUser, Location.SEOUL);
+				agendaMockData.createAgendaTeamProfile(agendaTeam, agendaProfile);
+				agendaTeamList.add(agendaTeam);
+			}
+
+			// when
+			String res = mockMvc.perform(
+					get("/agenda/profile/current/list")
+						.header("Authorization", "Bearer " + accessToken)
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+
+			CurrentAttendAgendaListResDto[] result = objectMapper.readValue(res, CurrentAttendAgendaListResDto[].class);
+
+			// then
+			assertThat(result.length).isEqualTo(agendaTeamList.size());
+			for (int i = 0; i < result.length; i++) {
+				assertThat(result[i].getAgendaId()).isEqualTo(agendaTeamList.get(i).getAgenda().getId().toString());
+				assertThat(result[i].getAgendaTitle()).isEqualTo(agendaTeamList.get(i).getAgenda().getTitle());
+				assertThat(result[i].getAgendaLocation()).isEqualTo(
+					agendaTeamList.get(i).getAgenda().getLocation().toString());
+				assertThat(result[i].getTeamKey()).isEqualTo(agendaTeamList.get(i).getTeamKey());
+				assertThat(result[i].getIsOfficial()).isEqualTo(agendaTeamList.get(i).getAgenda().getIsOfficial());
+				assertThat(result[i].getTeamName()).isEqualTo(agendaTeamList.get(i).getName());
+			}
+		}
+
+		@Test
+		@DisplayName("200 내가 참여 중인 대회가 없을 때 조회 성공")
+		public void getCurrentAttendAgendaListSuccessNoAgenda() throws Exception {
+			//given
+			agendaProfile = agendaMockData.createAgendaProfile(user, SEOUL);
+			// 참여 중인 대회가 없는 상태
+
+			// when
+			String res = mockMvc.perform(
+					get("/agenda/profile/current/list")
+						.header("Authorization", "Bearer " + accessToken)
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+
+			CurrentAttendAgendaListResDto[] result = objectMapper.readValue(res, CurrentAttendAgendaListResDto[].class);
+
+			// then
+			assertThat(result).isEmpty();
+		}
+
+		@Test
+		@DisplayName("해당 로그인 유저의 아젠다 프로필이 없을 때")
+		void testAgendaProfileNotFound() throws Exception {
+			// given: 특정 유저와 관련된 AgendaProfile이 없음
+
+			// when & then: 예외가 발생해야 함
+			mockMvc.perform(get("/agenda/profile/current/list")
+					.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isNotFound());
+		}
+
+		@Test
+		@DisplayName("해당 로그인 유저의 AgendaTeam이 없을 때")
+		void testAgendaTeamNotFound() throws Exception {
+			// given: 특정 유저와 관련된 AgendaTeam이 없음
+
+			// when & then: 예외가 발생해야 함
+			mockMvc.perform(get("/agenda/profile/current/list")
+					.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isNotFound());
+		}
+	}
+
+	@Nested
+	@DisplayName("내가 과거에 참여했던 대회 보기")
+	class GetAttendedAgendaList {
+		@BeforeEach
+		void beforeEach() {
+			user = testDataUtils.createNewUser();
+			accessToken = testDataUtils.getLoginAccessTokenFromUser(user);
+		}
+
+		@ParameterizedTest
+		@ValueSource(ints = {1, 2, 3})
+		@DisplayName("200 내가 참여 했었던 대회 조회 성공")
+		void getAttendedAgendaListSuccess(int page) throws Exception {
+			// given
+			int size = 10;
+			int total = 25;
+			agendaProfile = agendaMockData.createAgendaProfile(user, Location.SEOUL);
+			List<AgendaTeamProfile> attendedAgendas = new ArrayList<>();
+			for (int i = 0; i < total; i++) {
+				User agendaCreateUser = testDataUtils.createNewUser();
+				User otherUser = testDataUtils.createNewUser();
+				LocalDateTime startTime = LocalDateTime.now().minusDays(i + 1);
+				Agenda agenda = agendaMockData.createAgenda(agendaCreateUser.getIntraId(), startTime,
+					AgendaStatus.FINISH);
+				AgendaTeam agendaTeam = agendaMockData.createAgendaTeam(agenda, otherUser, Location.SEOUL);
+				attendedAgendas.add(agendaMockData.createAgendaTeamProfile(agendaTeam, agendaProfile));
+			}
+
+			PageRequestDto pageRequest = new PageRequestDto(page, size);
+			String request = objectMapper.writeValueAsString(pageRequest);
+
+			// when
+			String response = mockMvc.perform(get("/agenda/profile/history/list")
+					.header("Authorization", "Bearer " + accessToken)
+					.param("page", String.valueOf(page))
+					.param("size", String.valueOf(size))
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(request))
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+
+			AttendedAgendaListResDto[] result = objectMapper.readValue(response, AttendedAgendaListResDto[].class);
+
+			// then
+			assertThat(result).hasSize(size * page < total ? size : total % size);
+			attendedAgendas.sort((o1, o2) -> Long.compare(o2.getAgenda().getId(), o1.getAgenda().getId()));
+			for (int i = 0; i < result.length; i++) {
+				assertThat(result[i].getAgendaId()).isEqualTo(
+					attendedAgendas.get(i + (page - 1) * size).getAgenda().getId().toString());
+				assertThat(result[i].getAgendaTitle()).isEqualTo(
+					attendedAgendas.get(i + (page - 1) * size).getAgenda().getTitle());
+				assertThat(result[i].getAgendaLocation()).isEqualTo(
+					attendedAgendas.get(i + (page - 1) * size).getAgenda().getLocation().toString());
+				assertThat(result[i].getTeamKey()).isEqualTo(
+					attendedAgendas.get(i + (page - 1) * size).getAgendaTeam().getTeamKey());
+				assertThat(result[i].getIsOfficial()).isEqualTo(
+					attendedAgendas.get(i + (page - 1) * size).getAgenda().getIsOfficial());
+				assertThat(result[i].getTeamName()).isEqualTo(
+					attendedAgendas.get(i + (page - 1) * size).getAgendaTeam().getName());
+			}
+		}
+
+		@Test
+		@DisplayName("200 내가 참여 했었던 대회가 없을 때 조회 성공")
+		void getAttendedAgendaListSuccessNoAgenda() throws Exception {
+			// given
+			agendaProfile = agendaMockData.createAgendaProfile(user, Location.SEOUL);
+			PageRequestDto pageRequest = new PageRequestDto(1, 10);
+			String request = objectMapper.writeValueAsString(pageRequest);
+
+			// when
+			String response = mockMvc.perform(get("/agenda/profile/history/list")
+					.header("Authorization", "Bearer " + accessToken)
+					.param("page", "1")
+					.param("size", "10")
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(request))
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+
+			AttendedAgendaListResDto[] result = objectMapper.readValue(response, AttendedAgendaListResDto[].class);
+
+			// then
+			assertThat(result).isEmpty();
+		}
+
+		@Test
+		@DisplayName("400 잘못된 페이지 요청 시 실패")
+		void getAttendedAgendaListBadRequest() throws Exception {
+			// given
+			PageRequestDto pageRequest = new PageRequestDto(0, 10);
+			String request = objectMapper.writeValueAsString(pageRequest);
+
+			// when & then
+			mockMvc.perform(get("/agenda/profile/history/list")
+					.header("Authorization", "Bearer " + accessToken)
+					.param("page", "0")
+					.param("size", "10")
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(request))
+				.andExpect(status().isBadRequest());
+		}
+	}
 }
+
+
 

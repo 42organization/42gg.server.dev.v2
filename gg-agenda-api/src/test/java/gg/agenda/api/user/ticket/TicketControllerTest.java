@@ -235,15 +235,13 @@ public class TicketControllerTest {
 				ticketFixture.createTicket(seoulUserAgendaProfile);
 			}
 			PageRequestDto req = new PageRequestDto(page, 5);
-			String content = objectMapper.writeValueAsString(req);
 			//when
 			String res = mockMvc.perform(
 					get("/agenda/ticket/history")
 						.header("Authorization", "Bearer " + seoulUserAccessToken)
 						.param("page", String.valueOf(page))
-						.content(content)
-						.contentType(MediaType.APPLICATION_JSON)
-						.accept(MediaType.APPLICATION_JSON))
+						.param("page", String.valueOf(req.getPage()))
+						.param("size", String.valueOf(req.getSize())))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			TicketHistoryResDto[] result = objectMapper.readValue(res, TicketHistoryResDto[].class);
 			//then
@@ -257,14 +255,12 @@ public class TicketControllerTest {
 			//given
 			ticketFixture.createTicket(seoulUserAgendaProfile, false, false, null, null);
 			PageRequestDto req = new PageRequestDto(1, 5);
-			String content = objectMapper.writeValueAsString(req);
 			//when
 			String res = mockMvc.perform(
 					get("/agenda/ticket/history")
 						.header("Authorization", "Bearer " + seoulUserAccessToken)
-						.content(content)
-						.contentType(MediaType.APPLICATION_JSON)
-						.accept(MediaType.APPLICATION_JSON))
+						.param("page", String.valueOf(req.getPage()))
+						.param("size", String.valueOf(req.getSize())))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			TicketHistoryResDto[] result = objectMapper.readValue(res, TicketHistoryResDto[].class);
 			//then
@@ -280,16 +276,13 @@ public class TicketControllerTest {
 			Agenda seoulAgenda = agendaFixture.createAgenda(SEOUL);
 			Ticket ticket = ticketFixture.createTicket(seoulUserAgendaProfile, true, true, null,
 				seoulAgenda.getAgendaKey());
-			ticketRepository.save(ticket);
 			PageRequestDto req = new PageRequestDto(1, 5);
-			String content = objectMapper.writeValueAsString(req);
 			//when
 			String res = mockMvc.perform(
 					get("/agenda/ticket/history")
 						.header("Authorization", "Bearer " + seoulUserAccessToken)
-						.content(content)
-						.contentType(MediaType.APPLICATION_JSON)
-						.accept(MediaType.APPLICATION_JSON))
+						.param("page", String.valueOf(req.getPage()))
+						.param("size", String.valueOf(req.getSize())))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			TicketHistoryResDto[] result = objectMapper.readValue(res, TicketHistoryResDto[].class);
 			//then
@@ -305,16 +298,14 @@ public class TicketControllerTest {
 			Agenda seoulAgenda = agendaFixture.createAgenda(SEOUL);
 			Ticket ticket = ticketFixture.createTicket(seoulUserAgendaProfile, true, false, null,
 				null);
-			ticketRepository.save(ticket);
 			PageRequestDto req = new PageRequestDto(1, 5);
 			String content = objectMapper.writeValueAsString(req);
 			//when
 			String res = mockMvc.perform(
 					get("/agenda/ticket/history")
 						.header("Authorization", "Bearer " + seoulUserAccessToken)
-						.content(content)
-						.contentType(MediaType.APPLICATION_JSON)
-						.accept(MediaType.APPLICATION_JSON))
+						.param("page", String.valueOf(req.getPage()))
+						.param("size", String.valueOf(req.getSize())))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			TicketHistoryResDto[] result = objectMapper.readValue(res, TicketHistoryResDto[].class);
 			//then
@@ -330,16 +321,13 @@ public class TicketControllerTest {
 			Agenda seoulAgenda = agendaFixture.createAgenda(SEOUL);
 			Ticket ticket = ticketFixture.createTicket(seoulUserAgendaProfile, true, false, seoulAgenda.getAgendaKey(),
 				null);
-			ticketRepository.save(ticket);
 			PageRequestDto req = new PageRequestDto(1, 5);
-			String content = objectMapper.writeValueAsString(req);
 			//when
 			String res = mockMvc.perform(
 					get("/agenda/ticket/history")
 						.header("Authorization", "Bearer " + seoulUserAccessToken)
-						.content(content)
-						.contentType(MediaType.APPLICATION_JSON)
-						.accept(MediaType.APPLICATION_JSON))
+						.param("page", String.valueOf(req.getPage()))
+						.param("size", String.valueOf(req.getSize())))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			TicketHistoryResDto[] result = objectMapper.readValue(res, TicketHistoryResDto[].class);
 			//then
@@ -353,14 +341,12 @@ public class TicketControllerTest {
 		void findTicketHistorySuccessToEmptyTicket() throws Exception {
 			//given
 			PageRequestDto req = new PageRequestDto(1, 5);
-			String content = objectMapper.writeValueAsString(req);
 			//when
 			String res = mockMvc.perform(
 					get("/agenda/ticket/history")
 						.header("Authorization", "Bearer " + seoulUserAccessToken)
-						.content(content)
-						.contentType(MediaType.APPLICATION_JSON)
-						.accept(MediaType.APPLICATION_JSON))
+						.param("page", String.valueOf(req.getPage()))
+						.param("size", String.valueOf(req.getSize())))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			TicketHistoryResDto[] result = objectMapper.readValue(res, TicketHistoryResDto[].class);
 			//then
@@ -374,14 +360,12 @@ public class TicketControllerTest {
 			User notExistUser = testDataUtils.createNewUser();
 			String notExistUserAccessToken = testDataUtils.getLoginAccessTokenFromUser(notExistUser);
 			PageRequestDto req = new PageRequestDto(1, 5);
-			String content = objectMapper.writeValueAsString(req);
 			//when
 			mockMvc.perform(
 					get("/agenda/ticket/history")
 						.header("Authorization", "Bearer " + notExistUserAccessToken)
-						.content(content)
-						.contentType(MediaType.APPLICATION_JSON)
-						.accept(MediaType.APPLICATION_JSON))
+						.param("page", String.valueOf(req.getPage()))
+						.param("size", String.valueOf(req.getSize())))
 				.andExpect(status().isNotFound());
 		}
 	}

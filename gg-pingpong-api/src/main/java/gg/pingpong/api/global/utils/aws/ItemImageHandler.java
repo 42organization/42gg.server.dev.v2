@@ -1,11 +1,10 @@
-package gg.pingpong.api.global.utils;
+package gg.pingpong.api.global.utils.aws;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.services.s3.AmazonS3;
@@ -15,7 +14,10 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 
 import gg.data.pingpong.store.Item;
 
-@Component
+/**
+ * This Module has been replaced by gg.utils.file.handler.AwsImageHandler
+ */
+@Deprecated
 public class ItemImageHandler {
 	private final AmazonS3 amazonS3;
 
