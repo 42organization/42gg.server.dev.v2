@@ -120,4 +120,12 @@ public class AgendaService {
 		}
 		agenda.confirmAgenda();
 	}
+
+	@Transactional
+	public void cancelAgenda(Agenda agenda) {
+		List<AgendaTeam> attendTeams = agendaTeamRepository.findAllByAgendaAndStatus(agenda,
+			AgendaTeamStatus.OPEN, AgendaTeamStatus.CONFIRM);
+		attendTeams.forEach(agendaTeamService::leaveTeamAll);
+		agenda.cancelAgenda();
+	}
 }

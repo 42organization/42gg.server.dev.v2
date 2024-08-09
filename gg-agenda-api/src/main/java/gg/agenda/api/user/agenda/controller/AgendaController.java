@@ -71,7 +71,7 @@ public class AgendaController {
 	public ResponseEntity<AgendaKeyResDto> agendaAdd(@Login @Parameter(hidden = true) UserDto user,
 		@ModelAttribute @Valid AgendaCreateReqDto agendaCreateReqDto,
 		@RequestParam(required = false) MultipartFile agendaPoster) {
-		if (Objects.nonNull(agendaPoster) && agendaPoster.getSize() > 1024 * 1024 * 2) {	// 2MB
+		if (Objects.nonNull(agendaPoster) && agendaPoster.getSize() > 1024 * 1024) {	// 1MB
 			throw new InvalidParameterException(AGENDA_POSTER_SIZE_TOO_LARGE);
 		}
 		UUID agendaKey = agendaService.addAgenda(agendaCreateReqDto, agendaPoster, user).getAgendaKey();
@@ -110,6 +110,15 @@ public class AgendaController {
 		Agenda agenda = agendaService.findAgendaByAgendaKey(agendaKey);
 		agenda.mustModifiedByHost(user.getIntraId());
 		agendaService.confirmAgendaAndRefundTicketForOpenTeam(agenda);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	}
+
+	@PatchMapping("/cancel")
+	public ResponseEntity<Void> agendaCancel(@RequestParam("agenda_key") UUID agendaKey,
+		@Login @Parameter(hidden = true) UserDto user) {
+		Agenda agenda = agendaService.findAgendaByAgendaKey(agendaKey);
+		agenda.mustModifiedByHost(user.getIntraId());
+		agendaService.cancelAgenda(agenda);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 }

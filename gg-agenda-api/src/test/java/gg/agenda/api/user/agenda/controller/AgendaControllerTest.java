@@ -56,10 +56,13 @@ import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import gg.utils.converter.MultiValueMapConverter;
 import gg.utils.dto.PageRequestDto;
+import gg.utils.exception.custom.BusinessException;
 import gg.utils.exception.custom.NotExistException;
 import gg.utils.file.handler.AwsImageHandler;
 import gg.utils.fixture.agenda.AgendaFixture;
+import gg.utils.fixture.agenda.AgendaProfileFixture;
 import gg.utils.fixture.agenda.AgendaTeamFixture;
+import gg.utils.fixture.agenda.AgendaTeamProfileFixture;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -85,6 +88,12 @@ public class AgendaControllerTest {
 
 	@Autowired
 	private AgendaTeamFixture agendaTeamFixture;
+
+	@Autowired
+	private AgendaProfileFixture agendaProfileFixture;
+
+	@Autowired
+	private AgendaTeamProfileFixture agendaTeamProfileFixture;
 
 	@Autowired
 	private AgendaTestDataUtils agendaTestDataUtils;
@@ -1186,6 +1195,121 @@ public class AgendaControllerTest {
 					.param("agenda_key", agenda.getAgendaKey().toString())
 					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isBadRequest());
+		}
+	}
+
+	@Nested
+	@DisplayName("Agenda 취소하기")
+	class CancelAgenda {
+		@Test
+		@DisplayName("Agenda 취소하기 성공")
+		void cancelAgendaSuccess() throws Exception {
+			// given
+			Agenda agenda = agendaTestDataUtils.createAgendaTeamProfiles(user, AgendaStatus.OPEN);
+
+			// when
+			mockMvc.perform(patch("/agenda/cancel")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isNoContent());
+
+			// then
+			Agenda canceledAgenda = agendaRepository.findById(agenda.getId())
+				.orElseThrow(() -> new BusinessException("cancelAgendaSuccess - 테스트 실패"));
+			assertThat(canceledAgenda.getStatus()).isEqualTo(AgendaStatus.CANCEL);
+
+			em.createQuery("select at from AgendaTeam at where at.agenda = :agenda",
+					AgendaTeam.class).setParameter("agenda", agenda)
+				.getResultStream()
+				.forEach(agendaTeam -> assertThat(agendaTeam.getStatus()).isEqualTo(AgendaTeamStatus.CANCEL));
+		}
+
+		@Test
+		@DisplayName("Agenda 취소하기 실패 - 존재하지 않는 Agenda인 경우")
+		void cancelAgendaFailedWithInvalidAgenda() throws Exception {
+			// given
+			// No Agenda
+
+			// expected
+			mockMvc.perform(patch("/agenda/cancel")
+					.param("agenda_key", UUID.randomUUID().toString())
+					.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isNotFound());
+		}
+
+		@Test
+		@DisplayName("Agenda 취소하기 실패 - 개최자가 아닌 경우")
+		void cancelAgendaFailedWithNotHost() throws Exception {
+			// given
+			Agenda agenda = agendaTestDataUtils.createAgendaTeamProfiles(user, AgendaStatus.OPEN);
+			User other = testDataUtils.createNewUser();
+			String otherAccessToken = testDataUtils.getLoginAccessTokenFromUser(other);
+			// expected
+			mockMvc.perform(patch("/agenda/cancel")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.header("Authorization", "Bearer " + otherAccessToken))
+				.andExpect(status().isForbidden());
+		}
+
+		@Test
+		@DisplayName("Agenda 취소하기 실패 - 이미 취소된 경우")
+		void cancelAgendaFailedWithAlreadyCancel() throws Exception {
+			// given
+			Agenda agenda = agendaTestDataUtils.createAgendaTeamProfiles(user, AgendaStatus.OPEN);
+			agenda.cancelAgenda();
+
+			// expected
+			mockMvc.perform(patch("/agenda/cancel")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("Agenda 취소하기 실패 - 이미 확정된 경우")
+		void cancelAgendaFailedWithAlreadyConfirm() throws Exception {
+			// given
+			Agenda agenda = agendaTestDataUtils.createAgendaTeamProfiles(user, AgendaStatus.OPEN);
+			agenda.confirmAgenda();
+
+			// expected
+			mockMvc.perform(patch("/agenda/cancel")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("Agenda 취소하기 실패 - 이미 종료된 경우")
+		void cancelAgendaFailedWithAlreadyFinish() throws Exception {
+			// given
+			Agenda agenda = agendaTestDataUtils.createAgendaTeamProfiles(user, AgendaStatus.OPEN);
+			agenda.confirmAgenda();
+			agenda.finishAgenda();
+
+			// expected
+			mockMvc.perform(patch("/agenda/cancel")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("Agenda 취소하기 성공 - 참여한 팀이 없는 경우")
+		void cancelAgendaSuccessWithNoTeams() throws Exception {
+			// given
+			Agenda agenda = agendaFixture.createAgenda(user.getIntraId(), AgendaStatus.OPEN);
+
+			// when
+			mockMvc.perform(patch("/agenda/cancel")
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isNoContent());
+
+			// then
+			Agenda result = agendaRepository.findById(agenda.getId())
+				.orElseThrow(() -> new BusinessException("cancelAgendaSuccessWithNoTeams - 테스트 실패"));
+			assertThat(result.getStatus()).isEqualTo(AgendaStatus.CANCEL);
 		}
 	}
 }

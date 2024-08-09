@@ -182,43 +182,12 @@ public class AgendaTeamService {
 
 	/**
 	 * 아젠다 팀 찾기
-	 * @param agendaKey 아젠다 키, teamKey 팀 키
+	 * @param teamKey 팀 KEY
 	 */
 	@Transactional(readOnly = true)
-	public AgendaTeam getAgendaTeam(UUID agendaKey, UUID teamKey) {
-		Agenda agenda = agendaRepository.findByAgendaKey(agendaKey)
-			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
-		return agendaTeamRepository
-			.findByAgendaAndTeamKeyAndStatus(agenda, teamKey, OPEN, CONFIRM)
+	public AgendaTeam getAgendaTeam(UUID teamKey) {
+		return agendaTeamRepository.findByTeamKeyFetchJoin(teamKey)
 			.orElseThrow(() -> new NotExistException(AGENDA_TEAM_NOT_FOUND));
-	}
-
-	/**
-	 * 아젠다 팀원 나가기
-	 * @param agendaTeam 아젠다 팀, user 사용자 정보
-	 */
-	@Transactional
-	public void leaveTeamMate(AgendaTeam agendaTeam, UserDto user) {
-		AgendaProfile agendaProfile = agendaProfileRepository.findByUserId(user.getId())
-			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
-		AgendaTeamProfile agendaTeamProfile = agendaTeamProfileRepository
-			.findByAgendaAndProfileAndIsExistTrue(agendaTeam.getAgenda(), agendaProfile)
-			.orElseThrow(() -> new ForbiddenException(NOT_TEAM_MATE));
-		leaveTeam(agendaTeamProfile);
-	}
-
-	/**
-	 * 팀원이 팀 나가기
-	 * @param agendaTeamProfile 팀 프로필
-	 */
-	@Transactional(propagation = Propagation.MANDATORY)
-	public void leaveTeam(AgendaTeamProfile agendaTeamProfile) {
-		AgendaTeam agendaTeam = agendaTeamProfile.getAgendaTeam();
-		agendaTeamProfile.leaveTeam();
-		agendaTeam.leaveTeamMate();
-		if (agendaTeamProfile.getAgenda().getIsOfficial()) {
-			ticketService.refundTicket(agendaTeamProfile);
-		}
 	}
 
 	/**
@@ -227,12 +196,38 @@ public class AgendaTeamService {
 	 */
 	@Transactional(propagation = Propagation.MANDATORY)
 	public void leaveTeamAll(AgendaTeam agendaTeam) {
-		List<AgendaTeamProfile> teamProfiles = agendaTeamProfileRepository.findByAgendaTeamAndIsExistTrue(agendaTeam);
+		List<AgendaTeamProfile> agendaTeamProfiles = agendaTeamProfileRepository
+			.findByAgendaTeamAndIsExistTrue(agendaTeam);
+		agendaTeamProfiles.forEach(agendaTeamProfile -> leaveTeam(agendaTeam, agendaTeamProfile));
+		agendaTeam.cancelTeam();
+	}
 
-		for (AgendaTeamProfile teamProfile : teamProfiles) {
-			leaveTeam(teamProfile);
+	/**
+	 * 아젠다 팀원 나가기
+	 * @param agendaTeam 아젠다 팀, user 사용자 정보
+	 */
+	@Transactional
+	public void leaveTeamMate(AgendaTeam agendaTeam, UserDto user) {
+		List<AgendaTeamProfile> agendaTeamProfiles = agendaTeamProfileRepository
+			.findByAgendaTeamAndIsExistTrue(agendaTeam);
+		AgendaTeamProfile agendaTeamProfile = agendaTeamProfiles.stream()
+			.filter(profile -> profile.getProfile().getUserId().equals(user.getId()))
+			.findFirst()
+			.orElseThrow(() -> new ForbiddenException(NOT_TEAM_MATE));
+		leaveTeam(agendaTeam, agendaTeamProfile);
+	}
+
+	/**
+	 * 팀원이 팀 나가기
+	 * @param agendaTeamProfile 팀 프로필
+	 */
+	@Transactional(propagation = Propagation.MANDATORY)
+	public void leaveTeam(AgendaTeam agendaTeam, AgendaTeamProfile agendaTeamProfile) {
+		agendaTeam.leaveTeamMate();
+		agendaTeamProfile.changeExistFalse();
+		if (agendaTeamProfile.getAgenda().getIsOfficial()) {
+			ticketService.refundTicket(agendaTeamProfile);
 		}
-		agendaTeam.leaveTeamLeader();
 	}
 
 	/**

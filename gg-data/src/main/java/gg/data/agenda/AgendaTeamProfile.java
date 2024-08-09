@@ -54,7 +54,7 @@ public class AgendaTeamProfile extends BaseTimeEntity {
 		this.isExist = true;
 	}
 
-	public void leaveTeam() {
+	public void changeExistFalse() {
 		this.isExist = false;
 	}
 }
