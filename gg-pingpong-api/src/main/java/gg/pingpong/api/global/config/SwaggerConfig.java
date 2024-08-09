@@ -24,6 +24,15 @@ public class SwaggerConfig {
 	}
 
 	@Bean
+	public GroupedOpenApi agendaAdminGroup() {
+		return GroupedOpenApi.builder()
+			.group("agenda admin")
+			.pathsToMatch("/agenda/admin/**")
+			.packagesToScan("gg.agenda.api.admin")
+			.build();
+	}
+
+	@Bean
 	public GroupedOpenApi partyGroup() {
 		return GroupedOpenApi.builder()
 			.group("party")
