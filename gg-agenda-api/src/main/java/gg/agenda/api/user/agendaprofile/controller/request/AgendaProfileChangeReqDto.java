@@ -18,7 +18,7 @@ public class AgendaProfileChangeReqDto {
 	private String userContent;
 
 	@URL
-	@Size(max = 100, message = "userGithub의 길이가 허용된 범위를 초과합니다.")
+	@Size(max = 200, message = "userGithub의 길이가 허용된 범위를 초과합니다.")
 	private String userGithub;
 
 	@Builder
