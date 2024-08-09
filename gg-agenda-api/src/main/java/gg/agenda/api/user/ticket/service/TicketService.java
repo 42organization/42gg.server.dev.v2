@@ -46,7 +46,7 @@ public class TicketService {
 	private final AgendaProfileRepository agendaProfileRepository;
 	private final Auth42TokenRedisRepository auth42TokenRedisRepository;
 
-	@Value("https://api.intra.42.fr/v2/users/{id}/correction_point_historics?sort=-id")
+	@Value("${info.web.pointHistoryUrl}")
 	private String pointHistoryUrl;
 
 	private static final String selfDonation = "Provided points to the pool";

@@ -62,7 +62,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
 	@Value("${info.image.defaultUrl}")
 	private String defaultImageUrl;
-	@Value("https://api.intra.42.fr/v2/users/{id}/coalitions")
+	@Value("${info.web.coalitionUrl}")
 	private String coalitionUrl;
 
 	@Override
