@@ -43,7 +43,6 @@ public class AgendaProfileControllerAdminTest {
 	@Autowired
 	private AgendaProfileAdminRepository agendaProfileAdminRepository;
 	User user;
-	User user1;
 	String accessToken;
 
 	@Nested
@@ -54,29 +53,6 @@ public class AgendaProfileControllerAdminTest {
 			user = testDataUtils.createNewAdminUser(RoleType.ADMIN);
 			accessToken = testDataUtils.getLoginAccessTokenFromUser(user);
 		}
-
-		// @Test
-		// @DisplayName("유효한 정보로 개인 프로필을 변경합니다.")
-		// void updateProfileWithValidData() throws Exception {
-		// 	// Given
-		// 	AgendaProfile agendaProfile = agendaMockData.createAgendaProfile(user, SEOUL);
-		// 	agendaMockData.createTicket(agendaProfile);
-		// 	AgendaProfileChangeAdminReqDto requestDto = new AgendaProfileChangeAdminReqDto("Valid user content",
-		// 		"https://github.com/validUser", "SEOUL");
-		// 	String content = objectMapper.writeValueAsString(requestDto);
-		// 	// When
-		// 	mockMvc.perform(patch("/agenda/admin/profile")
-		// 			.param("user", user.getIntraId())
-		// 			.header("Authorization", "Bearer " + accessToken)
-		// 			.contentType(MediaType.APPLICATION_JSON)
-		// 			.content(content))
-		// 		.andExpect(status().isNoContent());
-		// 	// Then
-		// 	AgendaProfile result = agendaProfileAdminRepository.findByIntraId(user.getIntraId()).orElseThrow(null);
-		// 	assertThat(result.getContent()).isEqualTo(requestDto.getUserContent());
-		// 	assertThat(result.getGithubUrl()).isEqualTo(requestDto.getUserGithub());
-		// 	assertThat(result.getLocation().name()).isEqualTo(requestDto.getUserLocation());
-		// }
 
 		@Test
 		@DisplayName("유효한 정보로 개인 프로필을 변경합니다.")

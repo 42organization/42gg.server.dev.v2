@@ -12,9 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import gg.agenda.api.admin.agendaprofile.controller.request.AgendaProfileChangeAdminReqDto;
 import gg.agenda.api.admin.agendaprofile.service.AgendaProfileAdminService;
-import gg.auth.UserDto;
-import gg.auth.argumentresolver.Login;
-import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -26,13 +23,12 @@ public class AgendaProfileAdminController {
 	/**
 	 * 관리자 개인 프로필 변경 API
 	 *
-	 * @param user    로그인한 사용자 정보
 	 * @param intraId 수정할 사용자의 intra_id
 	 * @param reqDto  변경할 프로필 정보
 	 * @return HTTP 상태 코드와 빈 응답
 	 */
 	@PatchMapping
-	public ResponseEntity<String> agendaProfileModify(@Login @Parameter(hidden = true) UserDto user,
+	public ResponseEntity<String> agendaProfileModify(
 		@RequestParam String intraId,
 		@RequestBody @Valid AgendaProfileChangeAdminReqDto reqDto) {
 		agendaProfileAdminService.modifyAgendaProfile(intraId, reqDto);
