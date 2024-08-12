@@ -1,4 +1,4 @@
-package gg.utils.resttemplate;
+package gg.utils.external;
 
 import java.util.Map;
 

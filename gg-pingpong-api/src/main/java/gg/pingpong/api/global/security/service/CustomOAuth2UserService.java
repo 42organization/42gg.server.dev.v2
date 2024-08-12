@@ -34,7 +34,7 @@ import gg.pingpong.api.global.security.info.OAuthUserInfo;
 import gg.pingpong.api.global.security.info.OAuthUserInfoFactory;
 import gg.pingpong.api.global.security.info.ProviderType;
 import gg.pingpong.api.global.utils.aws.AsyncNewUserImageUploader;
-import gg.utils.resttemplate.ApiUtil;
+import gg.utils.external.ApiUtil;
 import gg.repo.agenda.AgendaProfileRepository;
 import gg.repo.rank.RankRepository;
 import gg.repo.rank.TierRepository;

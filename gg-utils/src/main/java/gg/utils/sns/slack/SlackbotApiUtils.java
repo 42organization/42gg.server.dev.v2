@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import gg.utils.resttemplate.ApiUtil;
+import gg.utils.external.ApiUtil;
 import gg.utils.sns.slack.constant.SlackConstant;
 import gg.utils.sns.slack.response.ConversationResponse;
 import gg.utils.sns.slack.response.SlackUserInfoResponse;
