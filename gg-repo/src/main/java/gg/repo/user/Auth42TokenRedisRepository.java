@@ -10,6 +10,7 @@ import gg.data.agenda.Auth42Token;
 import gg.utils.exception.custom.NotExistException;
 import lombok.RequiredArgsConstructor;
 
+@Deprecated
 @Repository
 @RequiredArgsConstructor
 public class Auth42TokenRedisRepository {
