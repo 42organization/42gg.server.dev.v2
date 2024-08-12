@@ -10,7 +10,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.mail.javamail.JavaMailSender;
 
 import gg.auth.UserDto;
 import gg.data.noti.Noti;
@@ -18,6 +17,7 @@ import gg.pingpong.api.user.noti.dto.UserNotiDto;
 import gg.pingpong.api.user.noti.service.NotiService;
 import gg.repo.game.out.GameUser;
 import gg.utils.annotation.UnitTest;
+import gg.utils.sns.MailSender;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)
@@ -25,7 +25,7 @@ import gg.utils.annotation.UnitTest;
 class NotiMailSenderUnitTest {
 
 	@Mock
-	JavaMailSender javaMailSender;
+	MailSender mailSender;
 
 	@Mock
 	NotiService notiService;
@@ -40,12 +40,15 @@ class NotiMailSenderUnitTest {
 		GameUser gameUser = mock(GameUser.class);
 		MimeMessage mimeMessage = mock(MimeMessage.class);
 		when(gameUser.getEmail()).thenReturn("testEmail");
-		when(javaMailSender.createMimeMessage()).thenReturn(mimeMessage);
+		doNothing().when(mailSender).send(anyString(), anyString(), anyString());
 		when(notiService.getMessage(any(Noti.class))).thenReturn("Test message");
+
 		// when
 		notiMailSender.send(new UserNotiDto(gameUser), new Noti());
+
 		// then
-		verify(javaMailSender).createMimeMessage();
+		verify(notiService).getMessage(any(Noti.class));
+		verify(mailSender).send(anyString(), anyString(), anyString());
 	}
 
 	@Test
@@ -55,11 +58,13 @@ class NotiMailSenderUnitTest {
 		UserDto userDto = mock(UserDto.class);
 		MimeMessage mimeMessage = mock(MimeMessage.class);
 		when(userDto.getEMail()).thenReturn("testEmail");
-		when(javaMailSender.createMimeMessage()).thenReturn(mimeMessage);
+		doNothing().when(mailSender).send(anyString(), anyString(), anyString());
 		when(notiService.getMessage(any(Noti.class))).thenReturn("Test message");
 		// when
 		notiMailSender.send(userDto, new Noti());
+
 		// then
-		verify(javaMailSender).createMimeMessage();
+		verify(notiService).getMessage(any(Noti.class));
+		verify(mailSender).send(anyString(), anyString(), anyString());
 	}
 }
