@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,7 +38,7 @@ public class AgendaTeamAdminController {
 
 	@GetMapping("/list")
 	public ResponseEntity<List<AgendaTeamResDto>> agendaTeamList(@RequestParam("agenda_key") UUID agendaKey,
-		@RequestBody @Valid PageRequestDto pageRequestDto) {
+		@ModelAttribute @Valid PageRequestDto pageRequestDto) {
 		int page = pageRequestDto.getPage();
 		int size = pageRequestDto.getSize();
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());
