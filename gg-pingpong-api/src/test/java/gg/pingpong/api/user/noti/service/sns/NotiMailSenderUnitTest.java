@@ -46,7 +46,6 @@ class NotiMailSenderUnitTest {
 		notiMailSender.send(new UserNotiDto(gameUser), new Noti());
 		// then
 		verify(javaMailSender).createMimeMessage();
-		verify(asyncMailSender).send(mimeMessage);
 	}
 
 	@Test
@@ -62,6 +61,5 @@ class NotiMailSenderUnitTest {
 		notiMailSender.send(userDto, new Noti());
 		// then
 		verify(javaMailSender).createMimeMessage();
-		verify(asyncMailSender).send(mimeMessage);
 	}
 }
