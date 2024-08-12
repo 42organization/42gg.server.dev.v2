@@ -27,32 +27,34 @@ public class SlackbotApiUtils {
 	private final ApiUtil apiUtil;
 
 	public String findSlackUserIdByIntraId(String intraId) {
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-		headers.add(HttpHeaders.AUTHORIZATION,
-			SlackConstant.AUTHENTICATION_PREFIX + authenticationToken);
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		httpHeaders.setBearerAuth(authenticationToken);
 
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-		params.add("email", intraId + SlackConstant.INTRA_EMAIL_SUFFIX);
+		params.add("email", convertToIntraEmail(intraId));
 
 		SlackUserInfoResponse res = apiUtil.apiCall(
 			SlackConstant.GET_USER_ID_URL.getValue(),
 			SlackUserInfoResponse.class,
-			headers,
+			httpHeaders,
 			params,
 			HttpMethod.POST
 		);
+
 		if (Objects.isNull(res) || Objects.isNull(res.getUser())) {
 			throw new RuntimeException("슬랙 API 고장으로 인한 NULL 참조" + intraId);
 		}
-
 		return res.getUser().getId();
+	}
+
+	private String convertToIntraEmail(String intraId) {
+		return intraId + SlackConstant.INTRA_EMAIL_SUFFIX;
 	}
 
 	public String createChannel(String slackUser) {
 		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.add(HttpHeaders.AUTHORIZATION,
-			SlackConstant.AUTHENTICATION_PREFIX + authenticationToken);
+		httpHeaders.setBearerAuth(authenticationToken);
 		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -65,17 +67,16 @@ public class SlackbotApiUtils {
 			params,
 			HttpMethod.POST
 		);
+
 		if (Objects.isNull(res) || Objects.isNull(res.getChannel())) {
 			throw new RuntimeException("슬랙 API 고장으로 인한 NULL 참조" + slackUser);
 		}
-
 		return res.getChannel().getId();
 	}
 
 	public String createGroupChannel(List<String> slackUserNames) {
 		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.add(HttpHeaders.AUTHORIZATION,
-			SlackConstant.AUTHENTICATION_PREFIX + authenticationToken);
+		httpHeaders.setBearerAuth(authenticationToken);
 		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -88,17 +89,16 @@ public class SlackbotApiUtils {
 			params,
 			HttpMethod.POST
 		);
+
 		if (Objects.isNull(res) || Objects.isNull(res.getChannel())) {
 			throw new RuntimeException("슬랙 API 고장으로 인한 NULL 참조" + slackUserNames);
 		}
-
 		return res.getChannel().getId();
 	}
 
 	public void sendSlackMessage(String message, String channelId) {
 		HttpHeaders headers = new HttpHeaders();
-		headers.add(HttpHeaders.AUTHORIZATION,
-			SlackConstant.AUTHENTICATION_PREFIX + authenticationToken);
+		headers.setBearerAuth(authenticationToken);
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
