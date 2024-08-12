@@ -9,27 +9,28 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
 
+import gg.agenda.api.user.agendaprofile.service.AgendaProfileService;
 import gg.agenda.api.user.ticket.controller.response.TicketHistoryResDto;
 import gg.auth.UserDto;
-import gg.auth.utils.RefreshTokenUtil;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.AgendaTeamProfile;
-import gg.data.agenda.Auth42Token;
 import gg.data.agenda.Ticket;
 import gg.repo.agenda.AgendaProfileRepository;
 import gg.repo.agenda.AgendaRepository;
 import gg.repo.agenda.TicketRepository;
-import gg.repo.user.Auth42TokenRedisRepository;
 import gg.utils.DateTimeUtil;
 import gg.utils.exception.custom.DuplicationException;
 import gg.utils.exception.custom.NotExistException;
@@ -40,11 +41,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TicketService {
 	private final ApiUtil apiUtil;
-	private final RefreshTokenUtil refreshTokenUtil;
 	private final TicketRepository ticketRepository;
 	private final AgendaRepository agendaRepository;
+	private final AgendaProfileService agendaProfileService;
 	private final AgendaProfileRepository agendaProfileRepository;
-	private final Auth42TokenRedisRepository auth42TokenRedisRepository;
 
 	@Value("${info.web.pointHistoryUrl}")
 	private String pointHistoryUrl;
@@ -90,44 +90,80 @@ public class TicketService {
 	 * @param user 사용자 정보
 	 */
 	@Transactional
-	public void modifyTicketApprove(UserDto user) {
-		AgendaProfile profile = agendaProfileRepository.findByUserId(user.getId())
-			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
+	public void modifyTicketApprove(UserDto user, Authentication authentication) {
+		AgendaProfile profile = agendaProfileService.getAgendaProfile(user.getId());
+		Ticket setUpTicket = getSetUpTicket(profile);
 
-		Ticket setUpTicket = ticketRepository.findByAgendaProfileAndIsApprovedFalse(profile)
+		OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken)authentication;
+		OAuth2AuthorizedClient oAuth2AuthorizedClient = apiUtil.getOAuth2AuthorizedClient(oauthToken);
+
+		List<Map<String, Object>> pointHistory = getPointHistory(profile, oAuth2AuthorizedClient, authentication);
+
+		processTicketApproval(profile, setUpTicket, pointHistory);
+	}
+
+	/**
+	 * 티켓 setup 조회
+	 * @param profile AgendaProfile
+	 * @return 티켓 설정
+	 */
+	private Ticket getSetUpTicket(AgendaProfile profile) {
+		return ticketRepository.findByAgendaProfileAndIsApprovedFalse(profile)
 			.orElseThrow(() -> new NotExistException(NOT_SETUP_TICKET));
+	}
 
-		Auth42Token auth42Token = auth42TokenRedisRepository.findByIntraId(user.getIntraId())
-			.orElseThrow(() -> new NotExistException(AUTH_NOT_FOUND));
+	/**
+	 * 포인트 이력 조회
+	 * @param profile AgendaProfile
+	 * @param client OAuth2AuthorizedClient
+	 * @param authentication Authentication
+	 * @return 포인트 이력
+	 */
+	private List<Map<String, Object>> getPointHistory(AgendaProfile profile, OAuth2AuthorizedClient client,
+		Authentication authentication) {
+		String url = pointHistoryUrl.replace("{id}", profile.getFortyTwoId().toString());
+		ParameterizedTypeReference<List<Map<String, Object>>> responseType = new ParameterizedTypeReference<>() {
+		};
 
-		String url = pointHistoryUrl.replace("{id}", auth42Token.getIntra42Id());
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("Authorization", "Bearer " + auth42Token.getAccessToken());
-		headers.setContentType(MediaType.APPLICATION_JSON);
-
-		List<Map<String, Object>> response = apiUtil.apiCall(url, List.class, headers, HttpMethod.GET);
-		if (response == null || response.isEmpty()) {
-			Auth42Token refreshedToken = refreshTokenUtil.refreshAuth42Token(auth42Token);
-			auth42TokenRedisRepository.update42Token(user.getIntraId(), refreshedToken);
-			response = apiUtil.apiCall(url, List.class, headers, HttpMethod.GET);
+		try {
+			return apiUtil.callApiWithAccessToken(url, client.getAccessToken().getTokenValue(), responseType);
+		} catch (HttpClientErrorException e) {
+			if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+				client = apiUtil.refreshAccessToken(client, authentication);
+				return apiUtil.callApiWithAccessToken(url, client.getAccessToken().getTokenValue(), responseType);
+			}
+			throw e;
 		}
+	}
+
+	/**
+	 * 티켓 승인 처리
+	 * @param profile AgendaProfile
+	 * @param setUpTicket Ticket
+	 * @param pointHistory 포인트 이력
+	 */
+	private void processTicketApproval(AgendaProfile profile, Ticket setUpTicket,
+		List<Map<String, Object>> pointHistory) {
 		LocalDateTime cutoffTime = setUpTicket.getCreatedAt();
 
-		int ticketSum = response.stream()
-			.takeWhile(histories -> DateTimeUtil.convertToSeoulDateTime((String)histories.get("created_at"))
-				.isAfter(cutoffTime))
-			.filter(histories -> {
-				String reason = (String)histories.get("reason");
+		int ticketSum = pointHistory.stream()
+			.takeWhile(
+				history -> DateTimeUtil.convertToSeoulDateTime((String)history.get("created_at")).isAfter(cutoffTime))
+			.filter(history -> {
+				String reason = (String)history.get("reason");
 				return reason.contains(selfDonation) || reason.contains(autoDonation);
 			})
-			.mapToInt(histories -> ((Number)histories.get("sum")).intValue() * (-1))
+			.mapToInt(history -> ((Number)history.get("sum")).intValue() * (-1))
 			.sum();
 
 		if (ticketSum == 0) {
-			throw new NotExistException("POINT_HISTORY_NOT_FOUND");
-		} else if (ticketSum >= 2) {
+			throw new NotExistException(POINT_HISTORY_NOT_FOUND);
+		}
+
+		if (ticketSum >= 2) {
 			ticketRepository.save(Ticket.createApproveTicket(profile));
 		}
+
 		setUpTicket.changeIsApproved();
 		ticketRepository.save(setUpTicket);
 	}

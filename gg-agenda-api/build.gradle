@@ -19,6 +19,9 @@ dependencies {
     /* StringUtils */
     implementation 'org.apache.commons:commons-lang3:3.12.0'
 
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
     testImplementation testFixtures(project(':gg-utils'))
