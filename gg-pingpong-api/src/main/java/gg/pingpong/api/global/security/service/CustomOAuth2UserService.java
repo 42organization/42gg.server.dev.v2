@@ -152,7 +152,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		headers.set("Authorization", "Bearer " + accessToken);
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
-		// HttpEntity 객체를 생성하여 헤더를 포함한 요청을 보냄
 		ParameterizedTypeReference<List<Map<String, Object>>> responseType = new ParameterizedTypeReference<>() {
 		};
 		List<Map<String, Object>> response = apiUtil.apiCall(url, responseType, headers, HttpMethod.GET);

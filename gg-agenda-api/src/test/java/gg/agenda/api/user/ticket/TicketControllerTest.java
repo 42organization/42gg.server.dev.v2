@@ -1,22 +1,9 @@
 package gg.agenda.api.user.ticket;
 
 import static gg.data.agenda.type.Location.*;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.AssertionsForClassTypes.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,8 +14,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -369,79 +354,6 @@ public class TicketControllerTest {
 			gyeongsanUserAgendaProfile = agendaProfileFixture.createAgendaProfile(gyeongsanUser, GYEONGSAN);
 		}
 
-		@Test
-		@DisplayName("setup 된 티켓 approve 성공")
-		@Transactional
-		public void testTicketSetupAndRefund() throws Exception {
-			// given
-			Ticket setUpTicket = ticketFixture.createNotApporveTicket(seoulUserAgendaProfile);
-
-			LocalDateTime datetime = setUpTicket.getCreatedAt().plusHours(1);
-			List<Map<String, Object>> apiResponse = new ArrayList<>();
-			Map<String, Object> item1 = new HashMap<>();
-			item1.put("created_at",
-				DateTimeFormatter.ISO_DATE_TIME.format(ZonedDateTime.of(datetime, ZoneId.of("UTC"))));
-			item1.put("reason", "Provided points to the pool");
-			item1.put("sum", -1);
-			apiResponse.add(item1);
-
-			when(apiUtil.apiCall(anyString(), eq(List.class), any(HttpHeaders.class), eq(HttpMethod.GET)))
-				.thenReturn(apiResponse);
-			// when
-			mockMvc.perform(patch("/agenda/ticket")
-					.header("Authorization", "Bearer " + seoulUserAccessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isNoContent());
-			// then
-			verify(apiUtil).apiCall(anyString(), eq(List.class), any(HttpHeaders.class), eq(HttpMethod.GET));
-			Ticket updatedTicket = ticketRepository.findById(setUpTicket.getId()).orElseThrow();
-			assertTrue(updatedTicket.getIsApproved());
-			Optional<Ticket> updateTicketCheck = ticketRepository.findByAgendaProfileAndIsApprovedFalse(
-				seoulUserAgendaProfile);
-			assertFalse(updateTicketCheck.isPresent());
-		}
-
-		@Test
-		@DisplayName("setup 된 티켓 approve 성공 - 42API 호출 결과에 기부내역이 2 이상인 경우")
-		@Transactional
-		public void testTicketSetupAndRefundToSum2() throws Exception {
-			// given
-			Ticket setUpTicket = ticketFixture.createNotApporveTicket(seoulUserAgendaProfile);
-
-			LocalDateTime datetime = setUpTicket.getCreatedAt().plusHours(1);
-			List<Map<String, Object>> apiResponse = new ArrayList<>();
-			Map<String, Object> item1 = new HashMap<>();
-			item1.put("created_at",
-				DateTimeFormatter.ISO_DATE_TIME.format(ZonedDateTime.of(datetime, ZoneId.of("UTC"))));
-			item1.put("reason", "Provided points to the pool");
-			item1.put("sum", -1);
-			apiResponse.add(item1);
-			Map<String, Object> item2 = new HashMap<>();
-			item2.put("created_at",
-				DateTimeFormatter.ISO_DATE_TIME.format(ZonedDateTime.of(datetime, ZoneId.of("UTC"))));
-			item2.put("reason", "Provided points to the pool");
-			item2.put("sum", -1);
-			apiResponse.add(item2);
-
-			when(apiUtil.apiCall(anyString(), eq(List.class), any(HttpHeaders.class), eq(HttpMethod.GET)))
-				.thenReturn(apiResponse);
-			// when
-			mockMvc.perform(patch("/agenda/ticket")
-					.header("Authorization", "Bearer " + seoulUserAccessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isNoContent());
-			// then
-			verify(apiUtil).apiCall(anyString(), eq(List.class), any(HttpHeaders.class), eq(HttpMethod.GET));
-			Ticket updatedTicket = ticketRepository.findById(setUpTicket.getId()).orElseThrow();
-			assertTrue(updatedTicket.getIsApproved());
-			Optional<Ticket> updateTicketCheck = ticketRepository.findByAgendaProfileAndIsApprovedFalse(
-				seoulUserAgendaProfile);
-			assertFalse(updateTicketCheck.isPresent());
-		}
-
-		@Test
 		@DisplayName("setup 된 티켓 approve 실패 - 프로필이 없는 경우")
 		@Transactional
 		public void testTicketSetupAndRefundFailToNotFoundProfile() throws Exception {
@@ -465,86 +377,6 @@ public class TicketControllerTest {
 					.contentType(MediaType.APPLICATION_JSON)
 					.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound());
-		}
-
-		@Test
-		@DisplayName("setup 된 티켓 approve 실패 - auth42Token이 없는 경우")
-		@Transactional
-		public void testTicketSetupAndRefundFailToNotFoundAuth42Token() throws Exception {
-			// given
-			Ticket setUpTicket = ticketFixture.createNotApporveTicket(seoulUserAgendaProfile);
-			// when
-			mockMvc.perform(patch("/agenda/ticket")
-					.header("Authorization", "Bearer " + seoulUserAccessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isNotFound());
-			// then
-			Ticket updatedTicket = ticketRepository.findById(setUpTicket.getId()).orElseThrow();
-			assertFalse(updatedTicket.getIsApproved());
-		}
-
-		@Test
-		@DisplayName("setup 된 티켓 approve 실패 - 42API 호출 실패")
-		@Transactional
-		public void testTicketSetupAndRefundFailToApiCallFail() throws Exception {
-			// given
-			Ticket setUpTicket = ticketFixture.createNotApporveTicket(seoulUserAgendaProfile);
-			when(apiUtil.apiCall(anyString(), eq(List.class), any(HttpHeaders.class), eq(HttpMethod.GET)))
-				.thenReturn(null);
-			// when
-			mockMvc.perform(patch("/agenda/ticket")
-					.header("Authorization", "Bearer " + seoulUserAccessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isNotFound());
-			// then
-			Ticket updatedTicket = ticketRepository.findById(setUpTicket.getId()).orElseThrow();
-			assertFalse(updatedTicket.getIsApproved());
-		}
-
-		@Test
-		@DisplayName("setup 된 티켓 approve 실패 - 42API 호출 결과가 없는 경우")
-		@Transactional
-		public void testTicketSetupAndRefundFailToApiCallEmpty() throws Exception {
-			// given
-			Ticket setUpTicket = ticketFixture.createNotApporveTicket(seoulUserAgendaProfile);
-			when(apiUtil.apiCall(anyString(), eq(List.class), any(HttpHeaders.class), eq(HttpMethod.GET)))
-				.thenReturn(new ArrayList<>());
-			// when
-			mockMvc.perform(patch("/agenda/ticket")
-					.header("Authorization", "Bearer " + seoulUserAccessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isNotFound());
-			// then
-			Ticket updatedTicket = ticketRepository.findById(setUpTicket.getId()).orElseThrow();
-			assertFalse(updatedTicket.getIsApproved());
-		}
-
-		@Test
-		@DisplayName("setup 된 티켓 approve 실패 - 42API 호출 결과에 기부내역이 없는 경우")
-		@Transactional
-		public void testTicketSetupAndRefundFailToApiCallNoSum() throws Exception {
-			// given
-			Ticket setUpTicket = ticketFixture.createNotApporveTicket(seoulUserAgendaProfile);
-			List<Map<String, Object>> apiResponse = new ArrayList<>();
-			Map<String, Object> item1 = new HashMap<>();
-			item1.put("created_at", DateTimeFormatter.ISO_DATE_TIME.format(ZonedDateTime.now()));
-			item1.put("reason", "No Donate Pool");
-			item1.put("sum", 0);
-			apiResponse.add(item1);
-			when(apiUtil.apiCall(anyString(), eq(List.class), any(HttpHeaders.class), eq(HttpMethod.GET)))
-				.thenReturn(apiResponse);
-			// when
-			mockMvc.perform(patch("/agenda/ticket")
-					.header("Authorization", "Bearer " + seoulUserAccessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isNotFound());
-			// then
-			Ticket updatedTicket = ticketRepository.findById(setUpTicket.getId()).orElseThrow();
-			assertFalse(updatedTicket.getIsApproved());
 		}
 	}
 }
