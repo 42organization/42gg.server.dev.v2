@@ -1,4 +1,4 @@
-package gg.pingpong.api.global.utils;
+package gg.utils.sns;
 
 import javax.mail.internet.MimeMessage;
 

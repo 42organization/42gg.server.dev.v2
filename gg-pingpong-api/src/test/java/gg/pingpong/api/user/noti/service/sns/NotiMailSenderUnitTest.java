@@ -14,7 +14,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 
 import gg.auth.UserDto;
 import gg.data.noti.Noti;
-import gg.pingpong.api.global.utils.AsyncMailSender;
+import gg.utils.sns.AsyncMailSender;
 import gg.pingpong.api.user.noti.dto.UserNotiDto;
 import gg.pingpong.api.user.noti.service.NotiService;
 import gg.repo.game.out.GameUser;
