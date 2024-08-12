@@ -15,11 +15,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
-public class ApiUtils {
+public class ApiUtil {
 	private final RestTemplate restTemplate;
 	private final ObjectMapper objectMapper;
 
-	public ApiUtils(ObjectMapper objectMapper, RestTemplateBuilder restTemplateBuilder) {
+	public ApiUtil(ObjectMapper objectMapper, RestTemplateBuilder restTemplateBuilder) {
 		this.objectMapper = objectMapper;
 		this.restTemplate = restTemplateBuilder.build();
 	}

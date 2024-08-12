@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import gg.utils.resttemplate.ApiUtils;
+import gg.utils.resttemplate.ApiUtil;
 import gg.utils.sns.slack.constant.SlackConstant;
 import gg.utils.sns.slack.response.ConversationResponse;
 import gg.utils.sns.slack.response.SlackUserInfoResponse;
@@ -24,7 +24,7 @@ public class SlackbotApiUtils {
 	@Value("${slack.xoxbToken}")
 	private String authenticationToken;
 
-	private final ApiUtils apiUtils;
+	private final ApiUtil apiUtil;
 
 	public String findSlackUserIdByIntraId(String intraId) {
 		HttpHeaders headers = new HttpHeaders();
@@ -35,7 +35,7 @@ public class SlackbotApiUtils {
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		params.add("email", intraId + SlackConstant.INTRA_EMAIL_SUFFIX);
 
-		SlackUserInfoResponse res = apiUtils.apiCall(
+		SlackUserInfoResponse res = apiUtil.apiCall(
 			SlackConstant.GET_USER_ID_URL.getValue(),
 			SlackUserInfoResponse.class,
 			headers,
@@ -58,7 +58,7 @@ public class SlackbotApiUtils {
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		params.add("users", slackUser);
 
-		ConversationResponse res = apiUtils.apiCall(
+		ConversationResponse res = apiUtil.apiCall(
 			SlackConstant.GET_USER_ID_URL.getValue(),
 			ConversationResponse.class,
 			httpHeaders,
@@ -81,7 +81,7 @@ public class SlackbotApiUtils {
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		params.add("users", String.join(",", slackUserNames));
 
-		ConversationResponse res = apiUtils.apiCall(
+		ConversationResponse res = apiUtil.apiCall(
 			SlackConstant.CONVERSATION_URL.getValue(),
 			ConversationResponse.class,
 			httpHeaders,
@@ -105,7 +105,7 @@ public class SlackbotApiUtils {
 		params.add("channel", channelId);
 		params.add("text", message);
 
-		apiUtils.apiCall(
+		apiUtil.apiCall(
 			SlackConstant.SEND_MESSAGE_URL.getValue(),
 			String.class,
 			headers,
