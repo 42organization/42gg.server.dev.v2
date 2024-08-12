@@ -16,15 +16,15 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class AsyncSlackMessageSender implements MessageSender {
 
-	private final SlackbotUtils slackbotUtils;
+	private final SlackbotApiUtils slackbotApiUtils;
 
 	@Async("asyncExecutor")
 	public void send(String intraUsername, String message) {
 		log.info("slack alarm send");
 		try {
-			String slackUsername = slackbotUtils.findSlackUserIdByIntraId(intraUsername);
-			String slackChannelName = slackbotUtils.createChannel(slackUsername);
-			slackbotUtils.sendSlackMessage(message, slackChannelName);
+			String slackUsername = slackbotApiUtils.findSlackUserIdByIntraId(intraUsername);
+			String slackChannelName = slackbotApiUtils.createChannel(slackUsername);
+			slackbotApiUtils.sendSlackMessage(message, slackChannelName);
 		} catch (SlackSendException e) {
 			log.error("SlackSendException message = {}", e.getMessage());
 		}
@@ -35,10 +35,10 @@ public class AsyncSlackMessageSender implements MessageSender {
 		log.info("slack alarm send");
 		try {
 			List<String> slackUsernames = intraUsernames.stream()
-				.map(slackbotUtils::findSlackUserIdByIntraId)
+				.map(slackbotApiUtils::findSlackUserIdByIntraId)
 				.collect(Collectors.toList());
-			String channelName = slackbotUtils.createGroupChannel(slackUsernames);
-			slackbotUtils.sendSlackMessage(message, channelName);
+			String channelName = slackbotApiUtils.createGroupChannel(slackUsernames);
+			slackbotApiUtils.sendSlackMessage(message, channelName);
 		} catch (SlackSendException e) {
 			log.error("SlackSendException message = {}", e.getMessage());
 		}

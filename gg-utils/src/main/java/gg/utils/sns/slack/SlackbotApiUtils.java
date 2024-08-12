@@ -1,8 +1,6 @@
 package gg.utils.sns.slack;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class SlackbotUtils {
+public class SlackbotApiUtils {
 
 	@Value("${slack.xoxbToken}")
 	private String authenticationToken;
