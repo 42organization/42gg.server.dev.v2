@@ -18,7 +18,6 @@ import gg.pingpong.api.user.noti.service.sns.NotiMailSender;
 import gg.pingpong.api.user.noti.service.sns.NotiSlackMessageSender;
 import gg.repo.game.out.GameUser;
 import gg.utils.annotation.UnitTest;
-import gg.utils.sns.AsyncMailSender;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)
@@ -27,9 +26,6 @@ class SnsNotiServiceUnitTest {
 
 	@Mock
 	NotiMailSender notiMailSender;
-
-	@Mock
-	AsyncMailSender asyncMailSender;
 
 	@Mock
 	NotiSlackMessageSender notiSlackMessageSender;

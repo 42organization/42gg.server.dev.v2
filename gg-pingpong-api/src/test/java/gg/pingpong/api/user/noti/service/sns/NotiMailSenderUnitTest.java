@@ -14,7 +14,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 
 import gg.auth.UserDto;
 import gg.data.noti.Noti;
-import gg.utils.sns.AsyncMailSender;
 import gg.pingpong.api.user.noti.dto.UserNotiDto;
 import gg.pingpong.api.user.noti.service.NotiService;
 import gg.repo.game.out.GameUser;
@@ -24,12 +23,13 @@ import gg.utils.annotation.UnitTest;
 @ExtendWith(MockitoExtension.class)
 @DisplayName("NotiMailSenderUnitTest")
 class NotiMailSenderUnitTest {
+
 	@Mock
 	JavaMailSender javaMailSender;
-	@Mock
-	AsyncMailSender asyncMailSender;
+
 	@Mock
 	NotiService notiService;
+
 	@InjectMocks
 	NotiMailSender notiMailSender;
 

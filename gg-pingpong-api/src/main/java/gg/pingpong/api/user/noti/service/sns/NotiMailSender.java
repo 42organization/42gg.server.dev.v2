@@ -6,18 +6,18 @@ import gg.auth.UserDto;
 import gg.data.noti.Noti;
 import gg.pingpong.api.user.noti.dto.UserNotiDto;
 import gg.pingpong.api.user.noti.service.NotiService;
-import gg.utils.sns.AsyncMailSender;
+import gg.utils.sns.MailSender;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class NotiMailSender {
 
 	private final NotiService notiService;
 
-	private final AsyncMailSender asyncMailSender;
+	private final MailSender mailSender;
 
 	private static final String SUBJECT = "핑퐁요정🧚으로부터 도착한 편지";
 
@@ -29,7 +29,7 @@ public class NotiMailSender {
 	 */
 	public void send(UserNotiDto user, Noti noti) {
 		String message = notiService.getMessage(noti);
-		asyncMailSender.send(SUBJECT, user.getEmail(), message);
+		mailSender.send(SUBJECT, user.getEmail(), message);
 	}
 
 	/**
@@ -40,6 +40,6 @@ public class NotiMailSender {
 	 */
 	public void send(UserDto user, Noti noti) {
 		String message = notiService.getMessage(noti);
-		asyncMailSender.send(SUBJECT, user.getEMail(),message);
+		mailSender.send(SUBJECT, user.getEMail(),message);
 	}
 }

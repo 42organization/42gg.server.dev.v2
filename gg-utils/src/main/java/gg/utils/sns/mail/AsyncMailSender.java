@@ -1,4 +1,4 @@
-package gg.utils.sns;
+package gg.utils.sns.mail;
 
 import javax.mail.internet.MimeMessage;
 
@@ -7,13 +7,14 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import gg.utils.sns.MailSender;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
 @AllArgsConstructor
-public class AsyncMailSender {
+public class AsyncMailSender implements MailSender {
 
 	private final JavaMailSender javaMailSender;
 
