@@ -27,6 +27,9 @@ public class AgendaProfile extends BaseTimeEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(name = "forty_two_id", nullable = false)
+	private Long fortyTwoId;
+
 	@Column(name = "content", length = 1000, nullable = false)
 	private String content;
 
@@ -49,13 +52,14 @@ public class AgendaProfile extends BaseTimeEntity {
 
 	@Builder
 	public AgendaProfile(String content, String githubUrl, Coalition coalition, Location location, String intraId,
-		Long userId) {
+		Long userId, Long fortyTwoId) {
 		this.content = content;
 		this.githubUrl = githubUrl;
 		this.coalition = coalition;
 		this.location = location;
 		this.intraId = intraId;
 		this.userId = userId;
+		this.fortyTwoId = fortyTwoId;
 	}
 
 	public void updateProfile(String content, String githubUrl) {
