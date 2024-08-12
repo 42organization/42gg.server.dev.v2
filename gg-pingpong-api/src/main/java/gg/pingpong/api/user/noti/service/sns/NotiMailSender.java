@@ -40,6 +40,6 @@ public class NotiMailSender {
 	 */
 	public void send(UserDto user, Noti noti) {
 		String message = notiService.getMessage(noti);
-		mailSender.send(SUBJECT, user.getEMail(),message);
+		mailSender.send(SUBJECT, user.getEMail(), message);
 	}
 }

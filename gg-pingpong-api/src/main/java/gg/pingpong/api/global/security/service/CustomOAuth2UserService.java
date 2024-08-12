@@ -34,7 +34,6 @@ import gg.pingpong.api.global.security.info.OAuthUserInfo;
 import gg.pingpong.api.global.security.info.OAuthUserInfoFactory;
 import gg.pingpong.api.global.security.info.ProviderType;
 import gg.pingpong.api.global.utils.aws.AsyncNewUserImageUploader;
-import gg.utils.external.ApiUtil;
 import gg.repo.agenda.AgendaProfileRepository;
 import gg.repo.rank.RankRepository;
 import gg.repo.rank.TierRepository;
@@ -43,6 +42,7 @@ import gg.repo.season.SeasonRepository;
 import gg.repo.user.UserRepository;
 import gg.utils.RedisKeyManager;
 import gg.utils.exception.tier.TierNotFoundException;
+import gg.utils.external.ApiUtil;
 import lombok.RequiredArgsConstructor;
 
 @Service
