@@ -20,10 +20,10 @@ public class AsyncSlackMessageSender implements MessageSender {
 
 	@Async("asyncExecutor")
 	public void send(String intraUsername, String message) {
-		log.info("slack alarm send");
 		try {
 			String slackUsername = slackbotApiUtils.findSlackUserIdByIntraId(intraUsername);
 			String slackChannelName = slackbotApiUtils.createChannel(slackUsername);
+			log.info("slack alarm send to {}:{}", slackChannelName, slackUsername);
 			slackbotApiUtils.sendSlackMessage(message, slackChannelName);
 		} catch (SlackSendException e) {
 			log.error("SlackSendException message = {}", e.getMessage());
@@ -32,12 +32,12 @@ public class AsyncSlackMessageSender implements MessageSender {
 
 	@Async("asyncExecutor")
 	public void sendGroup(List<String> intraUsernames, String message) {
-		log.info("slack alarm send");
 		try {
 			List<String> slackUsernames = intraUsernames.stream()
 				.map(slackbotApiUtils::findSlackUserIdByIntraId)
 				.collect(Collectors.toList());
 			String channelName = slackbotApiUtils.createGroupChannel(slackUsernames);
+			log.info("slack alarm send to {}", channelName);
 			slackbotApiUtils.sendSlackMessage(message, channelName);
 		} catch (SlackSendException e) {
 			log.error("SlackSendException message = {}", e.getMessage());
