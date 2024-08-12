@@ -1,7 +1,5 @@
 package gg.pingpong.api.user.noti.service.sns;
 
-import static gg.pingpong.api.user.noti.service.sns.SlackbotUtils.*;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +15,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import gg.data.user.User;
-import gg.pingpong.api.global.utils.external.ApiUtil;
+import gg.utils.resttemplate.ApiUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +27,7 @@ public class SlackPartybotService {
 	@Value("${slack.xoxbToken}")
 	private String authenticationToken;
 
-	private final ApiUtil apiUtil;
+	private final ApiUtils apiUtils;
 
 	private String getSlackUserId(String intraId) {
 		String userEmail = intraId + intraEmailSuffix;
@@ -40,7 +38,7 @@ public class SlackPartybotService {
 		MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
 		parameters.add("email", userEmail);
 
-		SlackUserInfoRes res = apiUtil.apiCall(userIdGetUrl, SlackUserInfoRes.class,
+		SlackUserInfoRes res = apiUtils.apiCall(userIdGetUrl, SlackUserInfoRes.class,
 			headers, parameters, HttpMethod.POST);
 
 		if (res == null || res.getUser() == null) {
@@ -58,7 +56,7 @@ public class SlackPartybotService {
 		Map<String, String> bodyMap = new HashMap<>();
 		bodyMap.put("users", String.join(",", slackUserIds));
 
-		ConversationRes res = apiUtil.apiCall(conversationsUrl, ConversationRes.class,
+		ConversationRes res = apiUtils.apiCall(conversationsUrl, ConversationRes.class,
 			httpHeaders, bodyMap, HttpMethod.POST);
 
 		return res.channel.id;
@@ -86,7 +84,7 @@ public class SlackPartybotService {
 		bodyMap.put("channel", channelId);
 		bodyMap.put("text", message);
 
-		apiUtil.apiCall(sendMessageUrl, String.class, headers, bodyMap, HttpMethod.POST);
+		apiUtils.apiCall(sendMessageUrl, String.class, headers, bodyMap, HttpMethod.POST);
 	}
 
 	@Getter

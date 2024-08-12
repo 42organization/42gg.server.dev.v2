@@ -1,4 +1,4 @@
-package gg.pingpong.api.global.utils.external;
+package gg.utils.resttemplate;
 
 import java.util.Map;
 
@@ -15,11 +15,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
-public class ApiUtil {
+public class ApiUtils {
 	private final RestTemplate restTemplate;
 	private final ObjectMapper objectMapper;
 
-	public ApiUtil(ObjectMapper objectMapper, RestTemplateBuilder restTemplateBuilder) {
+	public ApiUtils(ObjectMapper objectMapper, RestTemplateBuilder restTemplateBuilder) {
 		this.objectMapper = objectMapper;
 		this.restTemplate = restTemplateBuilder.build();
 	}

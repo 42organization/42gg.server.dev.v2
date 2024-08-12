@@ -34,7 +34,7 @@ import gg.pingpong.api.global.security.info.OAuthUserInfo;
 import gg.pingpong.api.global.security.info.OAuthUserInfoFactory;
 import gg.pingpong.api.global.security.info.ProviderType;
 import gg.pingpong.api.global.utils.aws.AsyncNewUserImageUploader;
-import gg.pingpong.api.global.utils.external.ApiUtil;
+import gg.utils.resttemplate.ApiUtils;
 import gg.repo.agenda.AgendaProfileRepository;
 import gg.repo.rank.RankRepository;
 import gg.repo.rank.TierRepository;
@@ -49,7 +49,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Transactional
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
-	private final ApiUtil apiUtil;
+	private final ApiUtils apiUtils;
 	private final UserRepository userRepository;
 	private final AsyncNewUserImageUploader asyncNewUserImageUploader;
 	private final RankRepository rankRepository;
@@ -153,7 +153,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
 		// HttpEntity 객체를 생성하여 헤더를 포함한 요청을 보냄
-		List<Map<String, Object>> response = apiUtil.apiCall(url, List.class, headers, HttpMethod.GET);
+		List<Map<String, Object>> response = apiUtils.apiCall(url, List.class, headers, HttpMethod.GET);
 
 		if (response != null && !response.isEmpty()) {
 			Map<String, Object> coalition = response.get(0);
