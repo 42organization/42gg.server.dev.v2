@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.data.user.User;
-import gg.utils.sns.slack.AsyncSlackMessageSender;
+import gg.utils.sns.MessageSender;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,11 +20,11 @@ public class PartyNotiService {
 		+ "장소 및 시간을 상호 협의해서 진행해주세요.\n"
 		+ "파티원이 연락두절이라면 $$마지 못해 신고$$ ----> https://42gg.kr";
 
-	private final AsyncSlackMessageSender asyncSlackMessageSender;
+	private final MessageSender messageSender;
 
 	@Transactional(readOnly = true)
 	public void sendPartyNotifications(List<User> users) {
 		List<String> intraUserNames = users.stream().map(User::getIntraId).collect(Collectors.toList());
-		asyncSlackMessageSender.sendGroup(intraUserNames, PARTY_MESSAGE);
+		messageSender.sendGroup(intraUserNames, PARTY_MESSAGE);
 	}
 }
