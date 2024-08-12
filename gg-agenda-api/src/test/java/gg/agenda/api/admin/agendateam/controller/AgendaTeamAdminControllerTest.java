@@ -27,7 +27,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gg.admin.repo.agenda.AgendaAdminRepository;
 import gg.admin.repo.agenda.AgendaTeamAdminRepository;
 import gg.admin.repo.agenda.AgendaTeamProfileAdminRepository;
-import gg.agenda.api.admin.agendateam.controller.request.AgendaTeamKeyReqDto;
 import gg.agenda.api.admin.agendateam.controller.request.AgendaTeamMateReqDto;
 import gg.agenda.api.admin.agendateam.controller.request.AgendaTeamUpdateDto;
 import gg.agenda.api.admin.agendateam.controller.response.AgendaTeamDetailResDto;
@@ -163,7 +162,6 @@ public class AgendaTeamAdminControllerTest {
 			List<AgendaProfile> profiles = agendaProfileFixture.createAgendaProfileList(5);
 			profiles.forEach(profile -> agendaTeamProfileFixture
 				.createAgendaTeamProfile(agenda, team, profile));
-			AgendaTeamKeyReqDto agendaTeamKeyReqDto = new AgendaTeamKeyReqDto(team.getTeamKey());
 
 			// when
 			String response = mockMvc.perform(get("/agenda/admin/team")
@@ -210,7 +208,6 @@ public class AgendaTeamAdminControllerTest {
 			// given
 			Agenda agenda = agendaFixture.createAgenda();
 			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda);
-			AgendaTeamKeyReqDto agendaTeamKeyReqDto = new AgendaTeamKeyReqDto(team.getTeamKey());
 
 			// when
 			String response = mockMvc.perform(get("/agenda/admin/team")

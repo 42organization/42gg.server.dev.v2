@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import gg.agenda.api.admin.agendateam.controller.request.AgendaTeamKeyReqDto;
 import gg.agenda.api.admin.agendateam.controller.request.AgendaTeamUpdateDto;
 import gg.agenda.api.admin.agendateam.controller.response.AgendaTeamDetailResDto;
 import gg.agenda.api.admin.agendateam.controller.response.AgendaTeamResDto;
@@ -50,9 +49,8 @@ public class AgendaTeamAdminController {
 	}
 
 	@GetMapping
-	public ResponseEntity<AgendaTeamDetailResDto> agendaTeamDetail(
-		@ModelAttribute @Valid AgendaTeamKeyReqDto agendaTeamKeyReqDto) {
-		AgendaTeam agendaTeam = agendaTeamAdminService.getAgendaTeamByTeamKey(agendaTeamKeyReqDto.getTeamKey());
+	public ResponseEntity<AgendaTeamDetailResDto> agendaTeamDetail(@RequestParam("team_key") UUID agendaTeamKey) {
+		AgendaTeam agendaTeam = agendaTeamAdminService.getAgendaTeamByTeamKey(agendaTeamKey);
 		List<AgendaProfile> participants = agendaTeamAdminService.getAgendaProfileListByAgendaTeam(agendaTeam);
 		AgendaTeamDetailResDto agendaTeamDetailResDto = AgendaTeamDetailResDto.MapStruct.INSTANCE
 			.toDto(agendaTeam, participants);
