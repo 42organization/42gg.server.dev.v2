@@ -92,15 +92,13 @@ public class AgendaAnnouncementAdminControllerTest {
 			Agenda agenda = agendaFixture.createAgenda();
 			List<AgendaAnnouncement> announcements =
 				agendaAnnouncementFixture.createAgendaAnnouncementList(agenda, 37);
-			PageRequestDto pageDto = new PageRequestDto(page, size);
-			String request = objectMapper.writeValueAsString(pageDto);
 
 			// when
 			String response = mockMvc.perform(get("/agenda/admin/announcement")
 					.header("Authorization", "Bearer " + accessToken)
 					.param("agenda_key", agenda.getAgendaKey().toString())
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(request))
+					.param("page", String.valueOf(page))
+					.param("size", String.valueOf(size)))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			AgendaAnnouncementResDto[] result =
 				objectMapper.readValue(response, AgendaAnnouncementResDto[].class);
@@ -121,15 +119,13 @@ public class AgendaAnnouncementAdminControllerTest {
 			int page = 1;
 			int size = 10;
 			Agenda agenda = agendaFixture.createAgenda();
-			PageRequestDto pageDto = new PageRequestDto(page, size);
-			String request = objectMapper.writeValueAsString(pageDto);
 
 			// when
 			String response = mockMvc.perform(get("/agenda/admin/announcement")
 					.header("Authorization", "Bearer " + accessToken)
 					.param("agenda_key", agenda.getAgendaKey().toString())
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(request))
+					.param("page", String.valueOf(page))
+					.param("size", String.valueOf(size)))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			AgendaAnnouncementResDto[] result =
 				objectMapper.readValue(response, AgendaAnnouncementResDto[].class);
@@ -144,15 +140,13 @@ public class AgendaAnnouncementAdminControllerTest {
 			// given
 			int page = 1;
 			int size = 10;
-			PageRequestDto pageDto = new PageRequestDto(page, size);
-			String request = objectMapper.writeValueAsString(pageDto);
 
 			// expected
 			mockMvc.perform(get("/agenda/admin/announcement")
 					.header("Authorization", "Bearer " + accessToken)
 					.param("agenda_key", UUID.randomUUID().toString())
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(request))
+					.param("page", String.valueOf(page))
+					.param("size", String.valueOf(size)))
 				.andExpect(status().isNotFound());
 		}
 	}

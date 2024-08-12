@@ -105,13 +105,12 @@ public class AgendaAdminControllerTest {
 			agendas.addAll(agendaMockData.createNonOfficialAgendaList(5, AgendaStatus.OPEN));
 			agendas.addAll(agendaMockData.createNonOfficialAgendaList(5, AgendaStatus.FINISH));
 			agendas.addAll(agendaMockData.createNonOfficialAgendaList(5, AgendaStatus.CANCEL));
-			PageRequestDto pageRequestDto = new PageRequestDto(page, size);
-			String request = objectMapper.writeValueAsString(pageRequestDto);
 
 			// when
 			String response = mockMvc.perform(get("/agenda/admin/request/list")
 					.header("Authorization", "Bearer " + accessToken)
-					.contentType(MediaType.APPLICATION_JSON).content(request))
+					.param("page", String.valueOf(page))
+					.param("size", String.valueOf(size)))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			AgendaAdminResDto[] result = objectMapper.readValue(response, AgendaAdminResDto[].class);
 
@@ -131,12 +130,12 @@ public class AgendaAdminControllerTest {
 			int page = 1;
 			int size = 10;
 			PageRequestDto pageRequestDto = new PageRequestDto(page, size);
-			String request = objectMapper.writeValueAsString(pageRequestDto);
 
 			// when
 			String response = mockMvc.perform(get("/agenda/admin/request/list")
 					.header("Authorization", "Bearer " + accessToken)
-					.contentType(MediaType.APPLICATION_JSON).content(request))
+					.param("page", String.valueOf(page))
+					.param("size", String.valueOf(size)))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			AgendaAdminResDto[] result = objectMapper.readValue(response, AgendaAdminResDto[].class);
 
