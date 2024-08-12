@@ -51,7 +51,7 @@ public class AgendaTeamAdminController {
 
 	@GetMapping
 	public ResponseEntity<AgendaTeamDetailResDto> agendaTeamDetail(
-		@RequestBody @Valid AgendaTeamKeyReqDto agendaTeamKeyReqDto) {
+		@ModelAttribute @Valid AgendaTeamKeyReqDto agendaTeamKeyReqDto) {
 		AgendaTeam agendaTeam = agendaTeamAdminService.getAgendaTeamByTeamKey(agendaTeamKeyReqDto.getTeamKey());
 		List<AgendaProfile> participants = agendaTeamAdminService.getAgendaProfileListByAgendaTeam(agendaTeam);
 		AgendaTeamDetailResDto agendaTeamDetailResDto = AgendaTeamDetailResDto.MapStruct.INSTANCE
