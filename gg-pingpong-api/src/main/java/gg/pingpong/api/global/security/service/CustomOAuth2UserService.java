@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.data.agenda.AgendaProfile;
-import gg.data.agenda.Auth42Token;
 import gg.data.agenda.type.Coalition;
 import gg.data.pingpong.rank.Rank;
 import gg.data.pingpong.rank.Tier;
@@ -40,7 +39,6 @@ import gg.repo.rank.RankRepository;
 import gg.repo.rank.TierRepository;
 import gg.repo.rank.redis.RankRedisRepository;
 import gg.repo.season.SeasonRepository;
-import gg.repo.user.Auth42TokenRedisRepository;
 import gg.repo.user.UserRepository;
 import gg.utils.RedisKeyManager;
 import gg.utils.exception.tier.TierNotFoundException;
@@ -59,7 +57,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 	private final RankRedisRepository rankRedisRepository;
 	private final TierRepository tierRepository;
 	private final AgendaProfileRepository agendaProfileRepository;
-	private final Auth42TokenRedisRepository auth42TokenRedisRepository;
 
 	@Value("${info.image.defaultUrl}")
 	private String defaultImageUrl;
@@ -106,10 +103,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 			createProfile(userInfo, savedUser, token);
 		}
 
-		Auth42Token auth42Token = new Auth42Token(userInfo.getUserId(), userRequest.getAccessToken().getTokenValue(),
-			"s");
-
-		auth42TokenRedisRepository.save42Token(savedUser.getIntraId(), auth42Token);
 		return UserPrincipal.create(savedUser, user.getAttributes());
 	}
 
@@ -146,8 +139,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 			.intraId(userInfo.getIntraId())
 			.content("안녕하세요! " + userInfo.getIntraId() + "입니다.")
 			.githubUrl(null)
-			.coalition(findCoalition(userInfo.getUserId().toString(), accessToken))
-			.fortyTwoId(userInfo.getUserId())
+			.coalition(findCoalition(userInfo.getUserId(), accessToken))
+			.fortyTwoId(Long.valueOf(userInfo.getUserId()))
 			.location(userInfo.getLocation())
 			.build();
 		agendaProfileRepository.save(agendaProfile);

@@ -39,20 +39,15 @@ import gg.agenda.api.user.ticket.controller.response.TicketCountResDto;
 import gg.agenda.api.user.ticket.controller.response.TicketHistoryResDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaProfile;
-import gg.data.agenda.Auth42Token;
 import gg.data.agenda.Ticket;
 import gg.data.user.User;
-import gg.repo.agenda.AgendaTeamRepository;
 import gg.repo.agenda.TicketRepository;
-import gg.repo.user.Auth42TokenRedisRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import gg.utils.dto.PageRequestDto;
 import gg.utils.external.ApiUtil;
 import gg.utils.fixture.agenda.AgendaFixture;
 import gg.utils.fixture.agenda.AgendaProfileFixture;
-import gg.utils.fixture.agenda.AgendaTeamFixture;
-import gg.utils.fixture.agenda.AgendaTeamProfileFixture;
 import gg.utils.fixture.agenda.TicketFixture;
 
 @IntegrationTest
@@ -68,19 +63,11 @@ public class TicketControllerTest {
 	@Autowired
 	private TicketRepository ticketRepository;
 	@Autowired
-	private AgendaTeamRepository agendaTeamRepository;
-	@Autowired
 	private AgendaFixture agendaFixture;
-	@Autowired
-	private AgendaTeamFixture agendaTeamFixture;
 	@Autowired
 	private AgendaProfileFixture agendaProfileFixture;
 	@Autowired
-	private AgendaTeamProfileFixture agendaTeamProfileFixture;
-	@Autowired
 	private TicketFixture ticketFixture;
-	@Autowired
-	private Auth42TokenRedisRepository auth42TokenRedisRepository;
 	@MockBean
 	private ApiUtil apiUtil;
 	User seoulUser;
@@ -389,9 +376,6 @@ public class TicketControllerTest {
 			// given
 			Ticket setUpTicket = ticketFixture.createNotApporveTicket(seoulUserAgendaProfile);
 
-			Auth42Token auth42Token = new Auth42Token(seoulUser.getIntraId(), "test_token", "test_refresh_token");
-			auth42TokenRedisRepository.save42Token(seoulUser.getIntraId(), auth42Token);
-
 			LocalDateTime datetime = setUpTicket.getCreatedAt().plusHours(1);
 			List<Map<String, Object>> apiResponse = new ArrayList<>();
 			Map<String, Object> item1 = new HashMap<>();
@@ -424,9 +408,6 @@ public class TicketControllerTest {
 		public void testTicketSetupAndRefundToSum2() throws Exception {
 			// given
 			Ticket setUpTicket = ticketFixture.createNotApporveTicket(seoulUserAgendaProfile);
-
-			Auth42Token auth42Token = new Auth42Token(seoulUser.getIntraId(), "test_token", "test_refresh_token");
-			auth42TokenRedisRepository.save42Token(seoulUser.getIntraId(), auth42Token);
 
 			LocalDateTime datetime = setUpTicket.getCreatedAt().plusHours(1);
 			List<Map<String, Object>> apiResponse = new ArrayList<>();
@@ -509,8 +490,6 @@ public class TicketControllerTest {
 		public void testTicketSetupAndRefundFailToApiCallFail() throws Exception {
 			// given
 			Ticket setUpTicket = ticketFixture.createNotApporveTicket(seoulUserAgendaProfile);
-			Auth42Token auth42Token = new Auth42Token(seoulUser.getIntraId(), "test_token", "test_refresh_token");
-			auth42TokenRedisRepository.save42Token(seoulUser.getIntraId(), auth42Token);
 			when(apiUtil.apiCall(anyString(), eq(List.class), any(HttpHeaders.class), eq(HttpMethod.GET)))
 				.thenReturn(null);
 			// when
@@ -530,8 +509,6 @@ public class TicketControllerTest {
 		public void testTicketSetupAndRefundFailToApiCallEmpty() throws Exception {
 			// given
 			Ticket setUpTicket = ticketFixture.createNotApporveTicket(seoulUserAgendaProfile);
-			Auth42Token auth42Token = new Auth42Token(seoulUser.getIntraId(), "test_token", "test_refresh_token");
-			auth42TokenRedisRepository.save42Token(seoulUser.getIntraId(), auth42Token);
 			when(apiUtil.apiCall(anyString(), eq(List.class), any(HttpHeaders.class), eq(HttpMethod.GET)))
 				.thenReturn(new ArrayList<>());
 			// when
@@ -551,8 +528,6 @@ public class TicketControllerTest {
 		public void testTicketSetupAndRefundFailToApiCallNoSum() throws Exception {
 			// given
 			Ticket setUpTicket = ticketFixture.createNotApporveTicket(seoulUserAgendaProfile);
-			Auth42Token auth42Token = new Auth42Token(seoulUser.getIntraId(), "test_token", "test_refresh_token");
-			auth42TokenRedisRepository.save42Token(seoulUser.getIntraId(), auth42Token);
 			List<Map<String, Object>> apiResponse = new ArrayList<>();
 			Map<String, Object> item1 = new HashMap<>();
 			item1.put("created_at", DateTimeFormatter.ISO_DATE_TIME.format(ZonedDateTime.now()));

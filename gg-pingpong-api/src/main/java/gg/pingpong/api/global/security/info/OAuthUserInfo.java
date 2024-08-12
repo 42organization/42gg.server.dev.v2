@@ -26,7 +26,7 @@ public abstract class OAuthUserInfo {
 
 	public abstract Long getKakaoId();
 
-	public abstract Long getUserId();
+	public abstract String getUserId();
 
 	public abstract Location getLocation();
 }
