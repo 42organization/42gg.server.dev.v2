@@ -1,5 +1,6 @@
 package gg.agenda.api.admin.agenda.controller.response;
 
+import java.net.URL;
 import java.util.UUID;
 
 import org.mapstruct.Mapper;
@@ -46,11 +47,13 @@ public class AgendaAdminResDto {
 
 	private AgendaStatus agendaStatus;
 
+	private URL agendaPosterUrl;
+
 	@Builder
 	public AgendaAdminResDto(Long agendaId, UUID agendaKey, String agendaTitle, String agendaDeadLine,
 		String agendaStartTime, String agendaEndTime, int agendaCurrentTeam, int agendaMaxTeam, int agendaMinPeople,
 		int agendaMaxPeople, Location agendaLocation, Boolean isRanking, Boolean isOfficial,
-		AgendaStatus agendaStatus) {
+		AgendaStatus agendaStatus, URL agendaPosterUrl) {
 		this.agendaId = agendaId;
 		this.agendaKey = agendaKey;
 		this.agendaTitle = agendaTitle;
@@ -65,6 +68,7 @@ public class AgendaAdminResDto {
 		this.isRanking = isRanking;
 		this.isOfficial = isOfficial;
 		this.agendaStatus = agendaStatus;
+		this.agendaPosterUrl = agendaPosterUrl;
 	}
 
 	@Mapper
@@ -86,6 +90,7 @@ public class AgendaAdminResDto {
 		@Mapping(target = "isRanking", source = "isRanking")
 		@Mapping(target = "isOfficial", source = "isOfficial")
 		@Mapping(target = "agendaStatus", source = "status")
+		@Mapping(target = "agendaPosterUrl", source = "posterUri")
 		AgendaAdminResDto toAgendaAdminResDto(Agenda agenda);
 	}
 }
