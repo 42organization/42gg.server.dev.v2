@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.nimbusds.oauth2.sdk.util.StringUtils;
 
-import gg.pingpong.api.global.security.cookie.CookieUtil;
+import gg.utils.cookie.CookieUtil;
 import lombok.RequiredArgsConstructor;
 
 @Repository

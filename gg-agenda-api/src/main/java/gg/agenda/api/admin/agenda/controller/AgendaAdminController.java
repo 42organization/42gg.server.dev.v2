@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import gg.agenda.api.admin.agenda.controller.request.AgendaAdminUpdateReqDto;
 import gg.agenda.api.admin.agenda.controller.response.AgendaAdminResDto;
+import gg.agenda.api.admin.agenda.controller.response.AgendaAdminSimpleResDto;
 import gg.agenda.api.admin.agenda.service.AgendaAdminService;
 import gg.utils.dto.PageRequestDto;
 import gg.utils.exception.custom.InvalidParameterException;
@@ -41,7 +41,7 @@ public class AgendaAdminController {
 
 	@ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Agenda 요청 리스트 조회 성공")})
 	@GetMapping("/request/list")
-	public ResponseEntity<List<AgendaAdminResDto>> agendaList(@RequestBody @Valid PageRequestDto pageDto) {
+	public ResponseEntity<List<AgendaAdminResDto>> agendaList(@ModelAttribute @Valid PageRequestDto pageDto) {
 		int page = pageDto.getPage();
 		int size = pageDto.getSize();
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());
@@ -49,6 +49,12 @@ public class AgendaAdminController {
 			.map(AgendaAdminResDto.MapStruct.INSTANCE::toAgendaAdminResDto)
 			.collect(Collectors.toList());
 		return ResponseEntity.ok(agendaDtos);
+	}
+
+	@GetMapping("/list")
+	public ResponseEntity<List<AgendaAdminSimpleResDto>> agendaSimpleList() {
+		List<AgendaAdminSimpleResDto> agendas = agendaAdminService.getAgendaSimpleList();
+		return ResponseEntity.status(HttpStatus.OK).body(agendas);
 	}
 
 	@ApiResponses(value = {@ApiResponse(responseCode = "204", description = "Agenda 수정 성공"),

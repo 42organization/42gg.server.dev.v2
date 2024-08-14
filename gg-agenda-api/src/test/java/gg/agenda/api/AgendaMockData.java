@@ -497,6 +497,7 @@ public class AgendaMockData {
 			.location(location)
 			.intraId(user.getIntraId())
 			.userId(user.getId())
+			.fortyTwoId(user.getId())
 			.build();
 		return agendaProfileRepository.save(agendaProfile);
 	}

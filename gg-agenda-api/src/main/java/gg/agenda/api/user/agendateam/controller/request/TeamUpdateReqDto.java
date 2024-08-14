@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -15,12 +16,15 @@ public class TeamUpdateReqDto {
 	@NotNull
 	private UUID teamKey;
 	@NotBlank
+	@Size(max = 30)
 	private String teamName;
 	@NotBlank
+	@Size(max = 500)
 	private String teamContent;
 	@NotNull
 	private Boolean teamIsPrivate;
 	@NotBlank
+	@Size(max = 10)
 	private String teamLocation;
 
 	@Builder

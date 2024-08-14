@@ -27,7 +27,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gg.admin.repo.agenda.AgendaAdminRepository;
 import gg.admin.repo.agenda.AgendaTeamAdminRepository;
 import gg.admin.repo.agenda.AgendaTeamProfileAdminRepository;
-import gg.agenda.api.admin.agendateam.controller.request.AgendaTeamKeyReqDto;
 import gg.agenda.api.admin.agendateam.controller.request.AgendaTeamMateReqDto;
 import gg.agenda.api.admin.agendateam.controller.request.AgendaTeamUpdateDto;
 import gg.agenda.api.admin.agendateam.controller.response.AgendaTeamDetailResDto;
@@ -114,15 +113,13 @@ public class AgendaTeamAdminControllerTest {
 			Agenda agenda = agendaFixture.createAgenda(2, 50, 1, 10);
 			List<AgendaTeam> teams = agendaTeamFixture
 				.createAgendaTeamList(agenda, AgendaTeamStatus.CONFIRM, total);
-			PageRequestDto pageRequestDto = new PageRequestDto(page, size);
-			String request = objectMapper.writeValueAsString(pageRequestDto);
 
 			// when
 			String response = mockMvc.perform(get("/agenda/admin/team/list")
 					.header("Authorization", "Bearer " + accessToken)
 					.param("agenda_key", agenda.getAgendaKey().toString())
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(request))
+					.param("page", String.valueOf(page))
+					.param("size", String.valueOf(size)))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			AgendaTeamResDto[] result = objectMapper.readValue(response, AgendaTeamResDto[].class);
 
@@ -140,15 +137,15 @@ public class AgendaTeamAdminControllerTest {
 		@DisplayName("Admin AgendaTeam 전체 조회 실패 - Agenda 없음")
 		void getAgendaTeamListAdminFailedWithNoAgenda() throws Exception {
 			// given
-			PageRequestDto pageRequestDto = new PageRequestDto(1, 10);
-			String request = objectMapper.writeValueAsString(pageRequestDto);
+			int page = 1;
+			int size = 10;
 
 			// expected
 			mockMvc.perform(get("/agenda/admin/team/list")
 					.header("Authorization", "Bearer " + accessToken)
 					.param("agenda_key", UUID.randomUUID().toString())
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(request))
+					.param("page", String.valueOf(page))
+					.param("size", String.valueOf(size)))
 				.andExpect(status().isNotFound());
 		}
 	}
@@ -165,13 +162,11 @@ public class AgendaTeamAdminControllerTest {
 			List<AgendaProfile> profiles = agendaProfileFixture.createAgendaProfileList(5);
 			profiles.forEach(profile -> agendaTeamProfileFixture
 				.createAgendaTeamProfile(agenda, team, profile));
-			String request = objectMapper.writeValueAsString(new AgendaTeamKeyReqDto(team.getTeamKey()));
 
 			// when
 			String response = mockMvc.perform(get("/agenda/admin/team")
 					.header("Authorization", "Bearer " + accessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(request))
+					.param("team_key", team.getTeamKey().toString()))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			AgendaTeamDetailResDto result = objectMapper.readValue(response, AgendaTeamDetailResDto.class);
 
@@ -200,13 +195,10 @@ public class AgendaTeamAdminControllerTest {
 		@DisplayName("Admin AgendaTeam 상세 조회 실패 - 존재하지 않는 Team")
 		void getAgendaTeamDetailAdminFailedWithNotFoundTeam() throws Exception {
 			// given
-			String request = objectMapper.writeValueAsString(new AgendaTeamKeyReqDto(UUID.randomUUID()));
-
 			// expected
 			mockMvc.perform(get("/agenda/admin/team")
 					.header("Authorization", "Bearer " + accessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(request))
+					.param("team_key", UUID.randomUUID().toString()))
 				.andExpect(status().isNotFound());
 		}
 
@@ -216,13 +208,11 @@ public class AgendaTeamAdminControllerTest {
 			// given
 			Agenda agenda = agendaFixture.createAgenda();
 			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda);
-			String request = objectMapper.writeValueAsString(new AgendaTeamKeyReqDto(team.getTeamKey()));
 
 			// when
 			String response = mockMvc.perform(get("/agenda/admin/team")
 					.header("Authorization", "Bearer " + accessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(request))
+					.param("team_key", team.getTeamKey().toString()))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			AgendaTeamDetailResDto result = objectMapper.readValue(response, AgendaTeamDetailResDto.class);
 

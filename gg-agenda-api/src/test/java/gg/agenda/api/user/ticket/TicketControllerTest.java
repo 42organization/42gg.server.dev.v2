@@ -13,6 +13,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,15 +26,13 @@ import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.Ticket;
 import gg.data.user.User;
-import gg.repo.agenda.AgendaTeamRepository;
 import gg.repo.agenda.TicketRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import gg.utils.dto.PageRequestDto;
+import gg.utils.external.ApiUtil;
 import gg.utils.fixture.agenda.AgendaFixture;
 import gg.utils.fixture.agenda.AgendaProfileFixture;
-import gg.utils.fixture.agenda.AgendaTeamFixture;
-import gg.utils.fixture.agenda.AgendaTeamProfileFixture;
 import gg.utils.fixture.agenda.TicketFixture;
 
 @IntegrationTest
@@ -49,17 +48,13 @@ public class TicketControllerTest {
 	@Autowired
 	private TicketRepository ticketRepository;
 	@Autowired
-	private AgendaTeamRepository agendaTeamRepository;
-	@Autowired
 	private AgendaFixture agendaFixture;
-	@Autowired
-	private AgendaTeamFixture agendaTeamFixture;
 	@Autowired
 	private AgendaProfileFixture agendaProfileFixture;
 	@Autowired
-	private AgendaTeamProfileFixture agendaTeamProfileFixture;
-	@Autowired
 	private TicketFixture ticketFixture;
+	@MockBean
+	private ApiUtil apiUtil;
 	User seoulUser;
 	User gyeongsanUser;
 	String seoulUserAccessToken;
@@ -343,6 +338,44 @@ public class TicketControllerTest {
 						.header("Authorization", "Bearer " + notExistUserAccessToken)
 						.param("page", String.valueOf(req.getPage()))
 						.param("size", String.valueOf(req.getSize())))
+				.andExpect(status().isNotFound());
+		}
+	}
+
+	@Nested
+	class ApproveTicketTest {
+		@BeforeEach
+		void beforeEach() {
+			seoulUser = testDataUtils.createNewUser();
+			seoulUserAccessToken = testDataUtils.getLoginAccessTokenFromUser(seoulUser);
+			seoulUserAgendaProfile = agendaProfileFixture.createAgendaProfile(seoulUser, SEOUL);
+			gyeongsanUser = testDataUtils.createNewUser();
+			gyeongsanUserAccessToken = testDataUtils.getLoginAccessTokenFromUser(gyeongsanUser);
+			gyeongsanUserAgendaProfile = agendaProfileFixture.createAgendaProfile(gyeongsanUser, GYEONGSAN);
+		}
+
+		@DisplayName("setup 된 티켓 approve 실패 - 프로필이 없는 경우")
+		@Transactional
+		public void testTicketSetupAndRefundFailToNotFoundProfile() throws Exception {
+			User notExistUser = testDataUtils.createNewUser();
+			String notExistUserAccessToken = testDataUtils.getLoginAccessTokenFromUser(notExistUser);
+			// when
+			mockMvc.perform(patch("/agenda/ticket")
+					.header("Authorization", "Bearer " + notExistUserAccessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+		}
+
+		@Test
+		@DisplayName("setup 된 티켓 approve 실패 - 티켓이 없는 경우")
+		@Transactional
+		public void testTicketSetupAndRefundFailToNotFoundTicket() throws Exception {
+			// when
+			mockMvc.perform(patch("/agenda/ticket")
+					.header("Authorization", "Bearer " + seoulUserAccessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound());
 		}
 	}

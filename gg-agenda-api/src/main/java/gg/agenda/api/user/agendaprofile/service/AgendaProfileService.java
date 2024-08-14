@@ -2,9 +2,8 @@ package gg.agenda.api.user.agendaprofile.service;
 
 import static gg.utils.exception.ErrorCode.*;
 
-import javax.transaction.Transactional;
-
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import gg.agenda.api.user.agendaprofile.controller.request.AgendaProfileChangeReqDto;
 import gg.data.agenda.AgendaProfile;
@@ -35,5 +34,11 @@ public class AgendaProfileService {
 
 		agendaProfile.updateProfile(reqDto.getUserContent(), reqDto.getUserGithub());
 		agendaProfileRepository.save(agendaProfile);
+	}
+
+	@Transactional(readOnly = true)
+	public AgendaProfile getAgendaProfile(Long userId) {
+		return agendaProfileRepository.findByUserId(userId)
+			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
 	}
 }

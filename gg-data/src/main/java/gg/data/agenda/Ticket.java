@@ -75,6 +75,18 @@ public class Ticket extends BaseTimeEntity {
 			.build();
 	}
 
+	public static Ticket createApproveTicket(AgendaProfile agendaProfile) {
+		return Ticket.builder()
+			.agendaProfile(agendaProfile)
+			.issuedFrom(null)
+			.usedTo(null)
+			.isApproved(true)
+			.approvedAt(LocalDateTime.now())
+			.isUsed(false)
+			.usedAt(null)
+			.build();
+	}
+
 	public static Ticket createNotApporveTicket(AgendaProfile agendaProfile) {
 		return Ticket.builder()
 			.agendaProfile(agendaProfile)
@@ -91,5 +103,10 @@ public class Ticket extends BaseTimeEntity {
 		this.usedTo = usedTo;
 		this.usedAt = LocalDateTime.now();
 		this.isUsed = true;
+	}
+
+	public void changeIsApproved() {
+		this.isApproved = true;
+		this.approvedAt = LocalDateTime.now();
 	}
 }
