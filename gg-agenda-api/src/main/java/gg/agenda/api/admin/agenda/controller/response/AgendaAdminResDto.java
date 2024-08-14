@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
 import gg.data.agenda.Agenda;
@@ -47,13 +48,13 @@ public class AgendaAdminResDto {
 
 	private AgendaStatus agendaStatus;
 
-	private URL agendaPosterUrl;
+	private String agendaPosterUrl;
 
 	@Builder
 	public AgendaAdminResDto(Long agendaId, UUID agendaKey, String agendaTitle, String agendaDeadLine,
 		String agendaStartTime, String agendaEndTime, int agendaCurrentTeam, int agendaMaxTeam, int agendaMinPeople,
 		int agendaMaxPeople, Location agendaLocation, Boolean isRanking, Boolean isOfficial,
-		AgendaStatus agendaStatus, URL agendaPosterUrl) {
+		AgendaStatus agendaStatus, String agendaPosterUrl) {
 		this.agendaId = agendaId;
 		this.agendaKey = agendaKey;
 		this.agendaTitle = agendaTitle;

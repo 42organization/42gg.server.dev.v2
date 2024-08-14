@@ -39,7 +39,7 @@ public class AgendaResDto {
 
 	private int agendaMaxPeople;
 
-	private URL agendaPosterUrl;
+	private String agendaPosterUrl;
 
 	private String agendaHost;
 
@@ -58,7 +58,7 @@ public class AgendaResDto {
 	@Builder
 	public AgendaResDto(String agendaTitle, String agendaContents, LocalDateTime agendaDeadLine,
 		LocalDateTime agendaStartTime, LocalDateTime agendaEndTime, int agendaMinTeam, int agendaMaxTeam,
-		int agendaCurrentTeam, int agendaMinPeople, int agendaMaxPeople, URL agendaPosterUrl, String agendaHost,
+		int agendaCurrentTeam, int agendaMinPeople, int agendaMaxPeople, String agendaPosterUrl, String agendaHost,
 		Location agendaLocation, AgendaStatus agendaStatus, LocalDateTime createdAt, String announcementTitle,
 		Boolean isOfficial, Boolean isRanking) {
 		this.agendaTitle = agendaTitle;

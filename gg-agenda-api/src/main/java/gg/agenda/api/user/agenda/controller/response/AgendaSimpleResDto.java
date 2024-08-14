@@ -43,13 +43,13 @@ public class AgendaSimpleResDto {
 
 	private Boolean isRanking;
 
-	private URL agendaPosterUrl;
+	private String agendaPosterUrl;
 
 	@Builder
 	public AgendaSimpleResDto(String agendaTitle, LocalDateTime agendaDeadLine, LocalDateTime agendaStartTime,
 		LocalDateTime agendaEndTime, int agendaCurrentTeam, int agendaMaxTeam, int agendaMinPeople,
 		int agendaMaxPeople, Location agendaLocation, UUID agendaKey, Boolean isOfficial, Boolean isRanking,
-		URL agendaPosterUrl) {
+		String agendaPosterUrl) {
 		this.agendaTitle = agendaTitle;
 		this.agendaDeadLine = agendaDeadLine;
 		this.agendaStartTime = agendaStartTime;
