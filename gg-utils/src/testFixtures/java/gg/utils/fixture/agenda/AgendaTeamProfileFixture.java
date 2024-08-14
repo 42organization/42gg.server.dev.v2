@@ -1,5 +1,8 @@
 package gg.utils.fixture.agenda;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Component;
 
 import gg.data.agenda.Agenda;
@@ -34,5 +37,12 @@ public class AgendaTeamProfileFixture {
 			.isExist(true)
 			.build();
 		return agendaTeamProfileRepository.save(agendaTeamProfile);
+	}
+
+	public List<AgendaTeamProfile> createAgendaTeamProfileList(Agenda agenda,
+		AgendaTeam team, List<AgendaProfile> mates) {
+		return mates.stream()
+			.map(mate -> createAgendaTeamProfile(agenda, team, mate))
+			.collect(Collectors.toList());
 	}
 }

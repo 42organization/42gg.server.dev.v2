@@ -77,7 +77,7 @@ public class AgendaTeamAdminService {
 			.forEach(agentTeamProfile -> {
 				String intraId = agentTeamProfile.getProfile().getIntraId();
 				agentTeamProfile.getAgendaTeam().leaveTeamMateAdmin(intraId);
-				agentTeamProfile.leaveTeam();
+				agentTeamProfile.changeExistFalse();
 			});
 
 		// AgendaTeam 팀원 추가하기

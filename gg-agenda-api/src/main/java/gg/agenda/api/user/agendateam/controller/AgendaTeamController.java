@@ -101,9 +101,9 @@ public class AgendaTeamController {
 	public ResponseEntity<Void> leaveAgendaTeam(@Parameter(hidden = true) @Login UserDto user,
 		@ModelAttribute @Valid TeamKeyReqDto teamKeyReqDto, @RequestParam("agenda_key") UUID agendaKey) {
 		UUID teamKey = teamKeyReqDto.getTeamKey();
-
-		AgendaTeam agendaTeam = agendaTeamService.getAgendaTeam(agendaKey, teamKey);
-		agendaTeam.getAgenda().leaveTeam(LocalDateTime.now());
+		AgendaTeam agendaTeam = agendaTeamService.getAgendaTeam(teamKeyReqDto.getTeamKey());
+		agendaTeam.agendaTeamStatusMustBeOpen();
+		agendaTeam.getAgenda().agendaStatusMustBeOpen();
 		if (agendaTeam.getLeaderIntraId().equals(user.getIntraId())) {
 			agendaTeamService.leaveTeamAll(agendaTeam);
 		} else {

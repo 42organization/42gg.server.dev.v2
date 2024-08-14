@@ -3,6 +3,7 @@ package gg.data.agenda;
 import static gg.data.agenda.type.AgendaTeamStatus.*;
 import static gg.utils.exception.ErrorCode.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -107,24 +108,13 @@ public class AgendaTeam extends BaseTimeEntity {
 		this.status = CONFIRM;
 	}
 
-	public void leaveTeamLeader() {
-		if (this.status == CANCEL) {
-			throw new BusinessException(AGENDA_TEAM_ALREADY_CANCEL);
-		}
-		if (this.status == CONFIRM) {
-			throw new BusinessException(AGENDA_TEAM_ALREADY_CONFIRM);
-		}
+	public void cancelTeam() {
 		this.status = CANCEL;
 		this.mateCount = 0;
+		this.agenda.leaveTeam(LocalDateTime.now());
 	}
 
 	public void leaveTeamMate() {
-		if (this.status == CANCEL) {
-			throw new BusinessException(AGENDA_TEAM_ALREADY_CANCEL);
-		}
-		if (this.status == CONFIRM) {
-			throw new BusinessException(AGENDA_TEAM_ALREADY_CONFIRM);
-		}
 		this.mateCount--;
 	}
 
@@ -189,10 +179,12 @@ public class AgendaTeam extends BaseTimeEntity {
 		this.location = location;
 	}
 
-	public void cancelTeam() {
+	public void agendaTeamStatusMustBeOpen() {
+		if (this.status == CANCEL) {
+			throw new BusinessException(AGENDA_TEAM_ALREADY_CANCEL);
+		}
 		if (this.status == CONFIRM) {
 			throw new BusinessException(AGENDA_TEAM_ALREADY_CONFIRM);
 		}
-		this.status = CANCEL;
 	}
 }

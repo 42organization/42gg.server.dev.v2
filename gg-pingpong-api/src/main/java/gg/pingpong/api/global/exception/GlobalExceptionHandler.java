@@ -9,6 +9,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.SdkClientException;
@@ -140,5 +141,12 @@ public class GlobalExceptionHandler {
 		exception.printStackTrace();
 		ErrorResponse response = new ErrorResponse(exception.getErrorCode());
 		return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+	}
+
+	@ExceptionHandler(MaxUploadSizeExceededException.class)
+	protected ResponseEntity handleException(MaxUploadSizeExceededException exception) {
+		String message = "File Size Exceeded: maximum permitted size of 1MB";
+		log.error(message);
+		return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
 	}
 }
