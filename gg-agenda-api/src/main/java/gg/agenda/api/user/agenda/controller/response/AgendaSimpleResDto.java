@@ -1,5 +1,6 @@
 package gg.agenda.api.user.agenda.controller.response;
 
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -17,6 +18,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AgendaSimpleResDto {
+
 	private String agendaTitle;
 
 	private LocalDateTime agendaDeadLine;
@@ -41,10 +43,13 @@ public class AgendaSimpleResDto {
 
 	private Boolean isRanking;
 
+	private String agendaPosterUrl;
+
 	@Builder
 	public AgendaSimpleResDto(String agendaTitle, LocalDateTime agendaDeadLine, LocalDateTime agendaStartTime,
 		LocalDateTime agendaEndTime, int agendaCurrentTeam, int agendaMaxTeam, int agendaMinPeople,
-		int agendaMaxPeople, Location agendaLocation, UUID agendaKey, Boolean isOfficial, Boolean isRanking) {
+		int agendaMaxPeople, Location agendaLocation, UUID agendaKey, Boolean isOfficial, Boolean isRanking,
+		String agendaPosterUrl) {
 		this.agendaTitle = agendaTitle;
 		this.agendaDeadLine = agendaDeadLine;
 		this.agendaStartTime = agendaStartTime;
@@ -57,6 +62,7 @@ public class AgendaSimpleResDto {
 		this.agendaKey = agendaKey;
 		this.isOfficial = isOfficial;
 		this.isRanking = isRanking;
+		this.agendaPosterUrl = agendaPosterUrl;
 	}
 
 	@Mapper
@@ -75,6 +81,7 @@ public class AgendaSimpleResDto {
 		@Mapping(target = "agendaKey", source = "agendaKey")
 		@Mapping(target = "isOfficial", source = "isOfficial")
 		@Mapping(target = "isRanking", source = "isRanking")
+		@Mapping(target = "agendaPosterUrl", source = "posterUri")
 		AgendaSimpleResDto toDto(Agenda agenda);
 	}
 }

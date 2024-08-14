@@ -1,5 +1,6 @@
 package gg.agenda.api.user.agenda.controller.response;
 
+import java.net.URL;
 import java.time.LocalDateTime;
 
 import org.mapstruct.Mapper;
@@ -38,7 +39,7 @@ public class AgendaResDto {
 
 	private int agendaMaxPeople;
 
-	private String agendaPoster;
+	private String agendaPosterUrl;
 
 	private String agendaHost;
 
@@ -57,7 +58,7 @@ public class AgendaResDto {
 	@Builder
 	public AgendaResDto(String agendaTitle, String agendaContents, LocalDateTime agendaDeadLine,
 		LocalDateTime agendaStartTime, LocalDateTime agendaEndTime, int agendaMinTeam, int agendaMaxTeam,
-		int agendaCurrentTeam, int agendaMinPeople, int agendaMaxPeople, String agendaPoster, String agendaHost,
+		int agendaCurrentTeam, int agendaMinPeople, int agendaMaxPeople, String agendaPosterUrl, String agendaHost,
 		Location agendaLocation, AgendaStatus agendaStatus, LocalDateTime createdAt, String announcementTitle,
 		Boolean isOfficial, Boolean isRanking) {
 		this.agendaTitle = agendaTitle;
@@ -70,7 +71,7 @@ public class AgendaResDto {
 		this.agendaCurrentTeam = agendaCurrentTeam;
 		this.agendaMinPeople = agendaMinPeople;
 		this.agendaMaxPeople = agendaMaxPeople;
-		this.agendaPoster = agendaPoster;
+		this.agendaPosterUrl = agendaPosterUrl;
 		this.agendaHost = agendaHost;
 		this.agendaLocation = agendaLocation;
 		this.agendaStatus = agendaStatus;
@@ -95,7 +96,7 @@ public class AgendaResDto {
 		@Mapping(target = "agendaCurrentTeam", source = "agenda.currentTeam")
 		@Mapping(target = "agendaMinPeople", source = "agenda.minPeople")
 		@Mapping(target = "agendaMaxPeople", source = "agenda.maxPeople")
-		@Mapping(target = "agendaPoster", source = "agenda.posterUri")
+		@Mapping(target = "agendaPosterUrl", source = "agenda.posterUri")
 		@Mapping(target = "agendaHost", source = "agenda.hostIntraId")
 		@Mapping(target = "agendaLocation", source = "agenda.location")
 		@Mapping(target = "agendaStatus", source = "agenda.status")
