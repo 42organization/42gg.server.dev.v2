@@ -23,6 +23,7 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import gg.agenda.api.user.agendaprofile.service.AgendaProfileService;
 import gg.agenda.api.user.ticket.controller.response.TicketHistoryResDto;
+import gg.auth.FortyTwoAuthUtil;
 import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaProfile;
@@ -41,6 +42,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TicketService {
 	private final ApiUtil apiUtil;
+	private final FortyTwoAuthUtil fortyTwoAuthUtil;
 	private final TicketRepository ticketRepository;
 	private final AgendaRepository agendaRepository;
 	private final AgendaProfileService agendaProfileService;
@@ -95,9 +97,9 @@ public class TicketService {
 		Ticket setUpTicket = getSetUpTicket(profile);
 
 		OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken)authentication;
-		OAuth2AuthorizedClient oAuth2AuthorizedClient = apiUtil.getOAuth2AuthorizedClient(oauthToken);
+		OAuth2AuthorizedClient oAuth2AuthorizedClient = fortyTwoAuthUtil.getOAuth2AuthorizedClient(oauthToken);
 
-		List<Map<String, Object>> pointHistory = getPointHistory(profile, oAuth2AuthorizedClient, authentication);
+		List<Map<String, String>> pointHistory = getPointHistory(profile, oAuth2AuthorizedClient, authentication);
 
 		processTicketApproval(profile, setUpTicket, pointHistory);
 	}
@@ -119,17 +121,17 @@ public class TicketService {
 	 * @param authentication Authentication
 	 * @return 포인트 이력
 	 */
-	private List<Map<String, Object>> getPointHistory(AgendaProfile profile, OAuth2AuthorizedClient client,
+	private List<Map<String, String>> getPointHistory(AgendaProfile profile, OAuth2AuthorizedClient client,
 		Authentication authentication) {
 		String url = pointHistoryUrl.replace("{id}", profile.getFortyTwoId().toString());
-		ParameterizedTypeReference<List<Map<String, Object>>> responseType = new ParameterizedTypeReference<>() {
+		ParameterizedTypeReference<List<Map<String, String>>> responseType = new ParameterizedTypeReference<>() {
 		};
 
 		try {
 			return apiUtil.callApiWithAccessToken(url, client.getAccessToken().getTokenValue(), responseType);
 		} catch (HttpClientErrorException e) {
 			if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
-				client = apiUtil.refreshAccessToken(client, authentication);
+				client = fortyTwoAuthUtil.refreshAccessToken(client, authentication);
 				return apiUtil.callApiWithAccessToken(url, client.getAccessToken().getTokenValue(), responseType);
 			}
 			throw e;
@@ -143,17 +145,17 @@ public class TicketService {
 	 * @param pointHistory 포인트 이력
 	 */
 	private void processTicketApproval(AgendaProfile profile, Ticket setUpTicket,
-		List<Map<String, Object>> pointHistory) {
+		List<Map<String, String>> pointHistory) {
 		LocalDateTime cutoffTime = setUpTicket.getCreatedAt();
 
 		int ticketSum = pointHistory.stream()
 			.takeWhile(
-				history -> DateTimeUtil.convertToSeoulDateTime((String)history.get("created_at")).isAfter(cutoffTime))
+				history -> DateTimeUtil.convertToSeoulDateTime(history.get("created_at")).isAfter(cutoffTime))
 			.filter(history -> {
-				String reason = (String)history.get("reason");
+				String reason = history.get("reason");
 				return reason.contains(selfDonation) || reason.contains(autoDonation);
 			})
-			.mapToInt(history -> ((Number)history.get("sum")).intValue() * (-1))
+			.mapToInt(history -> Integer.parseInt(history.get("sum")) * (-1))
 			.sum();
 
 		if (ticketSum == 0) {
