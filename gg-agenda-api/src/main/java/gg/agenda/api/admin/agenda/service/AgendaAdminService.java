@@ -7,6 +7,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import gg.admin.repo.agenda.AgendaAdminRepository;
 import gg.admin.repo.agenda.AgendaTeamAdminRepository;
 import gg.agenda.api.admin.agenda.controller.request.AgendaAdminUpdateReqDto;
+import gg.agenda.api.admin.agenda.controller.response.AgendaAdminSimpleResDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaTeam;
 import gg.utils.exception.custom.BusinessException;
@@ -69,5 +71,12 @@ public class AgendaAdminService {
 		agenda.updateLocation(agendaDto.getAgendaLocation(), teams);
 		agenda.updateAgendaCapacity(agendaDto.getAgendaMinTeam(), agendaDto.getAgendaMaxTeam(), teams);
 		agenda.updateAgendaTeamCapacity(agendaDto.getAgendaMinPeople(), agendaDto.getAgendaMaxPeople(), teams);
+	}
+
+	@Transactional(readOnly = true)
+	public List<AgendaAdminSimpleResDto> getAgendaSimpleList() {
+		return agendaAdminRepository.findAll().stream()
+			.map(AgendaAdminSimpleResDto.MapStruct.INSTANCE::toDto)
+			.collect(Collectors.toList());
 	}
 }

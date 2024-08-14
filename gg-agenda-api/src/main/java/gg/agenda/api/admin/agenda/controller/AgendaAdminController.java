@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import gg.agenda.api.admin.agenda.controller.request.AgendaAdminUpdateReqDto;
 import gg.agenda.api.admin.agenda.controller.response.AgendaAdminResDto;
+import gg.agenda.api.admin.agenda.controller.response.AgendaAdminSimpleResDto;
 import gg.agenda.api.admin.agenda.service.AgendaAdminService;
 import gg.utils.dto.PageRequestDto;
 import gg.utils.exception.custom.InvalidParameterException;
@@ -48,6 +49,12 @@ public class AgendaAdminController {
 			.map(AgendaAdminResDto.MapStruct.INSTANCE::toAgendaAdminResDto)
 			.collect(Collectors.toList());
 		return ResponseEntity.ok(agendaDtos);
+	}
+
+	@GetMapping("/list")
+	public ResponseEntity<List<AgendaAdminSimpleResDto>> agendaSimpleList() {
+		List<AgendaAdminSimpleResDto> agendas = agendaAdminService.getAgendaSimpleList();
+		return ResponseEntity.status(HttpStatus.OK).body(agendas);
 	}
 
 	@ApiResponses(value = {@ApiResponse(responseCode = "204", description = "Agenda 수정 성공"),
