@@ -41,11 +41,13 @@ import gg.data.agenda.Agenda;
 import gg.data.agenda.type.AgendaStatus;
 import gg.data.agenda.type.Location;
 import gg.data.user.User;
+import gg.utils.AgendaTestDataUtils;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import gg.utils.converter.MultiValueMapConverter;
 import gg.utils.dto.PageRequestDto;
 import gg.utils.file.handler.AwsImageHandler;
+import gg.utils.fixture.agenda.AgendaFixture;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -65,6 +67,9 @@ public class AgendaAdminControllerTest {
 
 	@Autowired
 	private AgendaMockData agendaMockData;
+
+	@Autowired
+	private AgendaFixture agendaFixture;
 
 	@Autowired
 	EntityManager em;
@@ -562,6 +567,44 @@ public class AgendaAdminControllerTest {
 					.params(params)
 					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isBadRequest());
+		}
+	}
+
+	@Nested
+	@DisplayName("Admin Agenda 목록 간단 조회")
+	class GetAgendaAdminSimple {
+		@Test
+		@DisplayName("Admin Agenda 목록 간단 조회 성공")
+		void getAgendaAdminSimpleSuccess() throws Exception {
+			// given
+			agendaFixture.createAgenda(OPEN);
+			agendaFixture.createAgenda(FINISH);
+			agendaFixture.createAgenda(CANCEL);
+
+			// when
+			String response = mockMvc.perform(get("/agenda/admin/list")
+					.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+			AgendaAdminResDto[] result = objectMapper.readValue(response, AgendaAdminResDto[].class);
+
+			// then
+			assertThat(result).hasSize(3);
+		}
+
+		@Test
+		@DisplayName("Admin Agenda 목록 간단 조회 성공 - 빈 리스트 반환")
+		void getAgendaAdminSimpleSuccessWithEmtpyList() throws Exception {
+			// given
+			// when
+			String response = mockMvc.perform(get("/agenda/admin/list")
+					.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+			AgendaAdminResDto[] result = objectMapper.readValue(response, AgendaAdminResDto[].class);
+
+			// then
+			assertThat(result).isEmpty();
 		}
 	}
 }
