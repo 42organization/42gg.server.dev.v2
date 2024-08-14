@@ -32,7 +32,7 @@ public class SlackPartybotService {
 	private final ApiUtil apiUtil;
 
 	private String getSlackUserId(String intraId) {
-		String userEmail = intraId + SlackConstant.INTRA_EMAIL_SUFFIX
+		String userEmail = intraId + SlackConstant.INTRA_EMAIL_SUFFIX;
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 		headers.setBearerAuth(authenticationToken);
