@@ -3,6 +3,7 @@ package gg.agenda.api.admin.agendateam.controller.response;
 import java.util.UUID;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 import gg.data.agenda.AgendaTeam;
@@ -46,6 +47,13 @@ public class AgendaTeamResDto {
 
 		AgendaTeamResDto.MapStruct INSTANCE = Mappers.getMapper(AgendaTeamResDto.MapStruct.class);
 
+		@Mapping(target = "teamName", source = "name")
+		@Mapping(target = "teamStatus", source = "status")
+		@Mapping(target = "teamScore", source = "score")
+		@Mapping(target = "teamIsPrivate", source = "isPrivate")
+		@Mapping(target = "teamLeaderIntraId", source = "leaderIntraId")
+		@Mapping(target = "teamMateCount", source = "mateCount")
+		@Mapping(target = "teamKey", source = "teamKey")
 		AgendaTeamResDto toDto(AgendaTeam agendaTeam);
 	}
 }
