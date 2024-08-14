@@ -15,7 +15,7 @@ import gg.data.noti.Noti;
 import gg.data.user.type.SnsType;
 import gg.pingpong.api.user.noti.dto.UserNotiDto;
 import gg.pingpong.api.user.noti.service.sns.NotiMailSender;
-import gg.pingpong.api.user.noti.service.sns.SlackbotService;
+import gg.pingpong.api.user.noti.service.sns.NotiSlackMessageSender;
 import gg.repo.game.out.GameUser;
 import gg.utils.annotation.UnitTest;
 
@@ -23,10 +23,13 @@ import gg.utils.annotation.UnitTest;
 @ExtendWith(MockitoExtension.class)
 @DisplayName("SnsNotiServiceTest")
 class SnsNotiServiceUnitTest {
+
 	@Mock
 	NotiMailSender notiMailSender;
+
 	@Mock
-	SlackbotService slackbotService;
+	NotiSlackMessageSender notiSlackMessageSender;
+
 	@InjectMocks
 	SnsNotiService snsNotiService;
 
@@ -43,7 +46,7 @@ class SnsNotiServiceUnitTest {
 			//when
 			snsNotiService.sendSnsNotification(noti, userDto);
 			//then
-			verify(slackbotService, never()).send(any(UserDto.class), any(Noti.class));
+			verify(notiSlackMessageSender, never()).send(any(UserDto.class), any(Noti.class));
 			verify(notiMailSender, times(1)).send(any(UserDto.class), any(Noti.class));
 		}
 
@@ -58,7 +61,7 @@ class SnsNotiServiceUnitTest {
 			snsNotiService.sendSnsNotification(noti, userDto);
 			//then
 			verify(notiMailSender, never()).send(any(UserDto.class), any(Noti.class));
-			verify(slackbotService, times(1)).send(any(UserDto.class), any(Noti.class));
+			verify(notiSlackMessageSender, times(1)).send(any(UserDto.class), any(Noti.class));
 		}
 
 		@Test
@@ -72,7 +75,7 @@ class SnsNotiServiceUnitTest {
 			snsNotiService.sendSnsNotification(noti, userDto);
 			//then
 			verify(notiMailSender, times(1)).send(any(UserDto.class), any(Noti.class));
-			verify(slackbotService, times(1)).send(any(UserDto.class), any(Noti.class));
+			verify(notiSlackMessageSender, times(1)).send(any(UserDto.class), any(Noti.class));
 		}
 
 		@Test
@@ -86,7 +89,7 @@ class SnsNotiServiceUnitTest {
 			snsNotiService.sendSnsNotification(noti, userDto);
 			//then
 			verify(notiMailSender, never()).send(any(UserDto.class), any(Noti.class));
-			verify(slackbotService, never()).send(any(UserDto.class), any(Noti.class));
+			verify(notiSlackMessageSender, never()).send(any(UserDto.class), any(Noti.class));
 		}
 
 		@Test
@@ -101,7 +104,7 @@ class SnsNotiServiceUnitTest {
 			snsNotiService.sendSnsNotification(noti, user);
 			//then
 			verify(notiMailSender, times(1)).send(user, noti);
-			verify(slackbotService, never()).send(any(UserNotiDto.class), any(Noti.class));
+			verify(notiSlackMessageSender, never()).send(any(UserNotiDto.class), any(Noti.class));
 		}
 	}
 }

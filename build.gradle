@@ -113,7 +113,8 @@ subprojects {
             "*NotiMailSender*",
             '*SlackbotService*',
             "**/file/*",
-            "*AwsImageHandler*"
+            "*AwsImageHandler*",
+            "*SlackbotApiUtils*"
     ]
 
 //커버리지 리포트 생성
