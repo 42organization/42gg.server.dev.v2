@@ -1,5 +1,7 @@
 package gg.agenda.api.admin.agenda.controller.response;
 
+import java.util.UUID;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -17,6 +19,8 @@ import lombok.NoArgsConstructor;
 public class AgendaAdminResDto {
 
 	private Long agendaId;
+
+	private UUID agendaKey;
 
 	private String agendaTitle;
 
@@ -43,10 +47,12 @@ public class AgendaAdminResDto {
 	private AgendaStatus agendaStatus;
 
 	@Builder
-	public AgendaAdminResDto(Long agendaId, String agendaTitle, String agendaDeadLine, String agendaStartTime,
-		String agendaEndTime, int agendaCurrentTeam, int agendaMaxTeam, int agendaMinPeople, int agendaMaxPeople,
-		Location agendaLocation, Boolean isRanking, Boolean isOfficial, AgendaStatus agendaStatus) {
+	public AgendaAdminResDto(Long agendaId, UUID agendaKey, String agendaTitle, String agendaDeadLine,
+		String agendaStartTime, String agendaEndTime, int agendaCurrentTeam, int agendaMaxTeam, int agendaMinPeople,
+		int agendaMaxPeople, Location agendaLocation, Boolean isRanking, Boolean isOfficial,
+		AgendaStatus agendaStatus) {
 		this.agendaId = agendaId;
+		this.agendaKey = agendaKey;
 		this.agendaTitle = agendaTitle;
 		this.agendaDeadLine = agendaDeadLine;
 		this.agendaStartTime = agendaStartTime;
@@ -67,6 +73,7 @@ public class AgendaAdminResDto {
 		AgendaAdminResDto.MapStruct INSTANCE = Mappers.getMapper(AgendaAdminResDto.MapStruct.class);
 
 		@Mapping(target = "agendaId", source = "id")
+		@Mapping(target = "agendaKey", source = "agendaKey")
 		@Mapping(target = "agendaTitle", source = "title")
 		@Mapping(target = "agendaDeadLine", source = "deadline")
 		@Mapping(target = "agendaStartTime", source = "startTime")
