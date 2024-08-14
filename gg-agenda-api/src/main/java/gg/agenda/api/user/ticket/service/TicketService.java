@@ -48,7 +48,7 @@ public class TicketService {
 	private final AgendaProfileService agendaProfileService;
 	private final AgendaProfileRepository agendaProfileRepository;
 
-	@Value("${info.web.pointHistoryUrl}")
+	@Value("https://api.intra.42.fr/v2/users/{id}/correction_point_historics?sort=-id")
 	private String pointHistoryUrl;
 
 	private static final String selfDonation = "Provided points to the pool";
