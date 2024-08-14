@@ -30,6 +30,7 @@ public class AgendaProfileFixture {
 			.location(location)
 			.intraId(user.getIntraId())
 			.userId(user.getId())
+			.fortyTwoId(user.getId())
 			.build();
 		return agendaProfileRepository.save(agendaProfile);
 	}
@@ -43,6 +44,7 @@ public class AgendaProfileFixture {
 			.location(Location.SEOUL)
 			.intraId(user.getIntraId())
 			.userId(user.getId())
+			.fortyTwoId(user.getId())
 			.build();
 		return agendaProfileRepository.save(agendaProfile);
 	}
@@ -58,6 +60,7 @@ public class AgendaProfileFixture {
 				.location(Location.SEOUL)
 				.intraId(user.getIntraId())
 				.userId(user.getId())
+				.fortyTwoId(user.getId())
 				.build();
 			agendaProfileList.add(agendaProfile);
 		}

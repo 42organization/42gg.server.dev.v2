@@ -1,4 +1,4 @@
-package gg.pingpong.api.global.security.cookie;
+package gg.utils.cookie;
 
 import java.util.Base64;
 import java.util.Optional;
@@ -12,7 +12,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 import org.springframework.util.SerializationUtils;
 
-import gg.pingpong.api.global.utils.ApplicationYmlRead;
+import gg.utils.ApplicationYmlRead;
 import lombok.RequiredArgsConstructor;
 
 @Component

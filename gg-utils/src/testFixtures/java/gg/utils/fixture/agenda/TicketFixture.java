@@ -28,7 +28,7 @@ public class TicketFixture {
 		return ticketRepository.save(ticket);
 	}
 
-	public void createNotApporveTicket(AgendaProfile seoulUserAgendaProfile) {
+	public Ticket createNotApporveTicket(AgendaProfile seoulUserAgendaProfile) {
 		Ticket ticket = Ticket.builder()
 			.agendaProfile(seoulUserAgendaProfile)
 			.issuedFrom(null)
@@ -38,7 +38,7 @@ public class TicketFixture {
 			.isUsed(false)
 			.usedAt(null)
 			.build();
-		ticketRepository.save(ticket);
+		return ticketRepository.save(ticket);
 	}
 
 	public Ticket createTicket(AgendaProfile agendaProfile, boolean isApproved, boolean isUsed, UUID issuedFrom,

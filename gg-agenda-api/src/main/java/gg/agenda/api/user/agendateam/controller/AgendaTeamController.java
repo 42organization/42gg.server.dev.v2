@@ -65,7 +65,7 @@ public class AgendaTeamController {
 	 */
 	@GetMapping
 	public ResponseEntity<TeamDetailsResDto> agendaTeamDetails(@Parameter(hidden = true) @Login UserDto user,
-		@RequestBody @Valid TeamKeyReqDto teamKeyReqDto, @RequestParam("agenda_key") UUID agendaKey) {
+		@ModelAttribute @Valid TeamKeyReqDto teamKeyReqDto, @RequestParam("agenda_key") UUID agendaKey) {
 		TeamDetailsResDto teamDetailsResDto = agendaTeamService.detailsAgendaTeam(user, agendaKey, teamKeyReqDto);
 		return ResponseEntity.ok(teamDetailsResDto);
 	}
@@ -88,7 +88,7 @@ public class AgendaTeamController {
 	 */
 	@PatchMapping("/confirm")
 	public ResponseEntity<Void> confirmTeam(@Parameter(hidden = true) @Login UserDto user,
-		@RequestBody @Valid TeamKeyReqDto teamKeyReqDto, @RequestParam("agenda_key") UUID agendaKey) {
+		@ModelAttribute @Valid TeamKeyReqDto teamKeyReqDto, @RequestParam("agenda_key") UUID agendaKey) {
 		agendaTeamService.confirmTeam(user, agendaKey, teamKeyReqDto.getTeamKey());
 		return ResponseEntity.ok().build();
 	}
@@ -99,7 +99,8 @@ public class AgendaTeamController {
 	 */
 	@PatchMapping("/cancel")
 	public ResponseEntity<Void> leaveAgendaTeam(@Parameter(hidden = true) @Login UserDto user,
-		@RequestBody @Valid TeamKeyReqDto teamKeyReqDto) {
+		@ModelAttribute @Valid TeamKeyReqDto teamKeyReqDto, @RequestParam("agenda_key") UUID agendaKey) {
+		UUID teamKey = teamKeyReqDto.getTeamKey();
 		AgendaTeam agendaTeam = agendaTeamService.getAgendaTeam(teamKeyReqDto.getTeamKey());
 		agendaTeam.agendaTeamStatusMustBeOpen();
 		agendaTeam.getAgenda().agendaStatusMustBeOpen();
@@ -145,7 +146,7 @@ public class AgendaTeamController {
 	 */
 	@PostMapping("/join")
 	public ResponseEntity<Void> attendTeamModify(@Parameter(hidden = true) @Login UserDto user,
-		@RequestBody @Valid TeamKeyReqDto teamKeyReqDto, @RequestParam("agenda_key") UUID agendaKey) {
+		@ModelAttribute @Valid TeamKeyReqDto teamKeyReqDto, @RequestParam("agenda_key") UUID agendaKey) {
 		agendaTeamService.modifyAttendTeam(user, teamKeyReqDto, agendaKey);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}

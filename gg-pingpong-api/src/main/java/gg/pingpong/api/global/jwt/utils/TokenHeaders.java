@@ -1,4 +1,4 @@
-package gg.pingpong.api.global.security.jwt.utils;
+package gg.pingpong.api.global.jwt.utils;
 
 public class TokenHeaders {
 	public static final String REFRESH_TOKEN = "refresh_token";

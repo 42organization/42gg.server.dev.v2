@@ -72,7 +72,10 @@ info:
   image:
     defaultUrl: 'https://42gg-public-test-image.s3.ap-northeast-2.amazonaws.com/images/small_default.jpeg'
     itemNotFoundUrl: 'https://42gg-public-test-image.s3.ap-northeast-2.amazonaws.com/images/not_found.svg'
-
+  web:
+    coalitionUrl: 'https://api.intra.42.fr/v2/users/{id}/coalitions'
+    pointHistoryUrl: 'https://api.intra.42.fr/v2/users/{id}/correction_point_historics?sort=-id'
+    
 constant:
   allowedMinimalStartDays: 2
   tournamentSchedule: "0 0 0 * * *"

@@ -192,6 +192,8 @@ public enum ErrorCode {
 	INVALID_CHECKLIST(400, "RE001", "잘못된 요청 데이터입니다."),
 
 	// agenda
+	AUTH_NOT_FOUND(404, "AG", "42 정보가 만료되었습니다."),
+
 	AGENDA_NOT_FOUND(404, "AG", "해당 일정이 존재하지 않습니다."),
 	AGENDA_CREATE_FAILED(500, "AG", "일정 생성에 실패했습니다."),
 	AGENDA_UPDATE_FAILED(500, "AG", "일정 수정에 실패했습니다."),
@@ -220,6 +222,9 @@ public enum ErrorCode {
 	AGENDA_TEAM_NOT_FOUND(404, "AG", "팀이 존재하지 않습니다."),
 	AGENDA_PROFILE_NOT_FOUND(404, "AG", "프로필이 존재하지 않습니다."),
 	ALREADY_TICKET_SETUP(409, "AG", "이미 티켓 신청이 되어있습니다."),
+	NOT_SETUP_TICKET(404, "AG", "티켓 신청이 되어있지 않습니다."),
+	POINT_HISTORY_NOT_FOUND(404, "AG", "기부 내역이 존재하지 않습니다."),
+	TICKET_FORBIDDEN(403, "AG", "티켓 신청은 1분의 대기시간이 있습니다."),
 	AGENDA_ALREADY_FINISHED(409, "AG", "이미 종료된 일정입니다."),
 	AGENDA_ALREADY_CONFIRMED(409, "AG", "이미 확정된 일정입니다."),
 	AGENDA_ALREADY_CANCELED(409, "AG", "이미 취소된 일정입니다."),

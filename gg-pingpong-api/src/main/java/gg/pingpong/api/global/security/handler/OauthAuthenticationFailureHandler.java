@@ -10,7 +10,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
 
-import gg.pingpong.api.global.utils.ApplicationYmlRead;
+import gg.utils.ApplicationYmlRead;
 import lombok.RequiredArgsConstructor;
 
 @Component
