@@ -99,6 +99,30 @@ public class Ticket extends BaseTimeEntity {
 			.build();
 	}
 
+	public static Ticket createUsedAdminTicket(AgendaProfile agendaProfile, UUID issuedFromKey) {
+		return Ticket.builder()
+			.agendaProfile(agendaProfile)
+			.issuedFrom(issuedFromKey)
+			.usedTo(null)
+			.isApproved(true)
+			.approvedAt(LocalDateTime.now())
+			.isUsed(true)
+			.usedAt(null)
+			.build();
+	}
+
+	public static Ticket createAdminTicket(AgendaProfile agendaProfile) {
+		return Ticket.builder()
+			.agendaProfile(agendaProfile)
+			.issuedFrom(null)
+			.usedTo(null)
+			.isApproved(true)
+			.approvedAt(LocalDateTime.now())
+			.isUsed(false)
+			.usedAt(null)
+			.build();
+	}
+
 	public void useTicket(UUID usedTo) {
 		this.usedTo = usedTo;
 		this.usedAt = LocalDateTime.now();

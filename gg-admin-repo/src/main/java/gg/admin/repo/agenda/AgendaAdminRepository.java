@@ -14,4 +14,6 @@ public interface AgendaAdminRepository extends JpaRepository<Agenda, Long> {
 
 	@Query("SELECT a FROM Agenda a WHERE a.agendaKey = :agendaKey")
 	Optional<Agenda> findByAgendaKey(UUID agendaKey);
+
+	boolean existsByAgendaKey(UUID issuedFromKey);
 }

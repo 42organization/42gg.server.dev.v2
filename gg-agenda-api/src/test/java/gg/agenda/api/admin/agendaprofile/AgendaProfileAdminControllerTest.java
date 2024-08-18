@@ -31,7 +31,7 @@ import gg.utils.annotation.IntegrationTest;
 @IntegrationTest
 @Transactional
 @AutoConfigureMockMvc
-public class AgendaProfileControllerAdminTest {
+public class AgendaProfileAdminControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 	@Autowired
