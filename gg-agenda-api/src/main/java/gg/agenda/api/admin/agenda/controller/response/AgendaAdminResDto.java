@@ -26,6 +26,8 @@ public class AgendaAdminResDto {
 
 	private String agendaTitle;
 
+	private String agendaContent;
+
 	private String agendaDeadLine;
 
 	private String agendaStartTime;
@@ -35,6 +37,8 @@ public class AgendaAdminResDto {
 	private int agendaCurrentTeam;
 
 	private int agendaMaxTeam;
+
+	private int agendaMinTeam;
 
 	private int agendaMinPeople;
 
@@ -54,15 +58,17 @@ public class AgendaAdminResDto {
 	public AgendaAdminResDto(Long agendaId, UUID agendaKey, String agendaTitle, String agendaDeadLine,
 		String agendaStartTime, String agendaEndTime, int agendaCurrentTeam, int agendaMaxTeam, int agendaMinPeople,
 		int agendaMaxPeople, Location agendaLocation, Boolean isRanking, Boolean isOfficial,
-		AgendaStatus agendaStatus, String agendaPosterUrl) {
+		AgendaStatus agendaStatus, String agendaPosterUrl, String agendaContent, int agendaMinTeam) {
 		this.agendaId = agendaId;
 		this.agendaKey = agendaKey;
 		this.agendaTitle = agendaTitle;
+		this.agendaContent = agendaContent;
 		this.agendaDeadLine = agendaDeadLine;
 		this.agendaStartTime = agendaStartTime;
 		this.agendaEndTime = agendaEndTime;
 		this.agendaCurrentTeam = agendaCurrentTeam;
 		this.agendaMaxTeam = agendaMaxTeam;
+		this.agendaMinTeam = agendaMinTeam;
 		this.agendaMinPeople = agendaMinPeople;
 		this.agendaMaxPeople = agendaMaxPeople;
 		this.agendaLocation = agendaLocation;
@@ -80,11 +86,13 @@ public class AgendaAdminResDto {
 		@Mapping(target = "agendaId", source = "id")
 		@Mapping(target = "agendaKey", source = "agendaKey")
 		@Mapping(target = "agendaTitle", source = "title")
+		@Mapping(target = "agendaContent", source = "content")
 		@Mapping(target = "agendaDeadLine", source = "deadline")
 		@Mapping(target = "agendaStartTime", source = "startTime")
 		@Mapping(target = "agendaEndTime", source = "endTime")
 		@Mapping(target = "agendaCurrentTeam", source = "currentTeam")
 		@Mapping(target = "agendaMaxTeam", source = "maxTeam")
+		@Mapping(target = "agendaMinTeam", source = "minTeam")
 		@Mapping(target = "agendaMinPeople", source = "minPeople")
 		@Mapping(target = "agendaMaxPeople", source = "maxPeople")
 		@Mapping(target = "agendaLocation", source = "location")
