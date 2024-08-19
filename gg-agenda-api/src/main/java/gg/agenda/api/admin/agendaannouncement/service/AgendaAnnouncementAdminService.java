@@ -5,6 +5,7 @@ import static gg.utils.exception.ErrorCode.*;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,10 +27,10 @@ public class AgendaAnnouncementAdminService {
 	private final AgendaAnnouncementAdminRepository agendaAnnouncementAdminRepository;
 
 	@Transactional(readOnly = true)
-	public List<AgendaAnnouncement> getAgendaAnnouncementList(UUID agendaKey, Pageable pageable) {
+	public Page<AgendaAnnouncement> getAgendaAnnouncementList(UUID agendaKey, Pageable pageable) {
 		Agenda agenda = agendaAdminRepository.findByAgendaKey(agendaKey)
 			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
-		return agendaAnnouncementAdminRepository.findAllByAgenda(agenda, pageable).getContent();
+		return agendaAnnouncementAdminRepository.findAllByAgenda(agenda, pageable);
 	}
 
 	@Transactional
