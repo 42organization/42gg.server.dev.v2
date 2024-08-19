@@ -66,7 +66,7 @@ public class AgendaAdminServiceTest {
 			when(agendaAdminRepository.findAll(pageable)).thenReturn(page);
 
 			// when
-			List<Agenda> result = agendaAdminService.getAgendaRequestList(pageable);
+			Page<Agenda> result = agendaAdminService.getAgendaRequestList(pageable);
 
 			// then
 			verify(agendaAdminRepository, times(1)).findAll(pageable);
@@ -82,7 +82,7 @@ public class AgendaAdminServiceTest {
 			when(agendaAdminRepository.findAll(pageable)).thenReturn(page);
 
 			// when
-			List<Agenda> result = agendaAdminService.getAgendaRequestList(pageable);
+			Page<Agenda> result = agendaAdminService.getAgendaRequestList(pageable);
 
 			// then
 			verify(agendaAdminRepository, times(1)).findAll(pageable);

@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -26,7 +27,9 @@ import gg.agenda.api.admin.agenda.controller.request.AgendaAdminUpdateReqDto;
 import gg.agenda.api.admin.agenda.controller.response.AgendaAdminResDto;
 import gg.agenda.api.admin.agenda.controller.response.AgendaAdminSimpleResDto;
 import gg.agenda.api.admin.agenda.service.AgendaAdminService;
+import gg.data.agenda.Agenda;
 import gg.utils.dto.PageRequestDto;
+import gg.utils.dto.PageResponseDto;
 import gg.utils.exception.custom.InvalidParameterException;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -41,14 +44,19 @@ public class AgendaAdminController {
 
 	@ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Agenda 요청 리스트 조회 성공")})
 	@GetMapping("/request/list")
-	public ResponseEntity<List<AgendaAdminResDto>> agendaList(@ModelAttribute @Valid PageRequestDto pageDto) {
+	public ResponseEntity<PageResponseDto<AgendaAdminResDto>> agendaList(@ModelAttribute @Valid PageRequestDto pageDto) {
 		int page = pageDto.getPage();
 		int size = pageDto.getSize();
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());
-		List<AgendaAdminResDto> agendaDtos = agendaAdminService.getAgendaRequestList(pageable).stream()
+
+		Page<Agenda> agendaRequestList = agendaAdminService.getAgendaRequestList(pageable);
+
+		List<AgendaAdminResDto> agendaDtos = agendaRequestList.getContent().stream()
 			.map(AgendaAdminResDto.MapStruct.INSTANCE::toAgendaAdminResDto)
 			.collect(Collectors.toList());
-		return ResponseEntity.ok(agendaDtos);
+		PageResponseDto<AgendaAdminResDto> pageResponseDto = PageResponseDto.of(
+			agendaRequestList.getTotalElements(), agendaDtos);
+		return ResponseEntity.ok(pageResponseDto);
 	}
 
 	@GetMapping("/list")
