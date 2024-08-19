@@ -1,6 +1,8 @@
 package gg.utils.sns.slack;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -49,7 +51,7 @@ public class SlackbotApiUtils {
 	}
 
 	private String convertToIntraEmail(String intraId) {
-		return intraId + SlackConstant.INTRA_EMAIL_SUFFIX;
+		return intraId + SlackConstant.INTRA_EMAIL_SUFFIX.getValue();
 	}
 
 	public String createChannel(String slackUser) {
@@ -57,11 +59,11 @@ public class SlackbotApiUtils {
 		httpHeaders.setBearerAuth(authenticationToken);
 		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
-		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-		params.add("users", slackUser);
+		Map<String, String> params = new HashMap<>();
+		params.put("users", slackUser);
 
 		ConversationResponse res = apiUtil.apiCall(
-			SlackConstant.GET_USER_ID_URL.getValue(),
+			SlackConstant.CONVERSATION_URL.getValue(),
 			ConversationResponse.class,
 			httpHeaders,
 			params,
@@ -101,9 +103,9 @@ public class SlackbotApiUtils {
 		headers.setBearerAuth(authenticationToken);
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
-		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-		params.add("channel", channelId);
-		params.add("text", message);
+		Map<String, String> params = new HashMap<>();
+		params.put("channel", channelId);
+		params.put("text", message);
 
 		apiUtil.apiCall(
 			SlackConstant.SEND_MESSAGE_URL.getValue(),
