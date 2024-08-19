@@ -44,7 +44,7 @@ public class AgendaAnnouncementAdminController {
 		Page<AgendaAnnouncement> agendaAnnouncementList = agendaAnnouncementAdminService
 			.getAgendaAnnouncementList(agendaKey, pageable);
 
-		List<AgendaAnnouncementAdminResDto> announceDtos = agendaAnnouncementList.getContent().stream()
+		List<AgendaAnnouncementAdminResDto> announceDtos = agendaAnnouncementList.stream()
 			.map(AgendaAnnouncementAdminResDto.MapStruct.INSTANCE::toDto)
 			.collect(Collectors.toList());
 		PageResponseDto<AgendaAnnouncementAdminResDto> pageResponseDto = PageResponseDto.of(

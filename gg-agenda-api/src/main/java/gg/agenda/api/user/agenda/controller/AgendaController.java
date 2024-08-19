@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -35,6 +36,7 @@ import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
 import gg.data.agenda.Agenda;
 import gg.utils.dto.PageRequestDto;
+import gg.utils.dto.PageResponseDto;
 import gg.utils.exception.custom.InvalidParameterException;
 import gg.utils.exception.user.UserImageLargeException;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -80,16 +82,20 @@ public class AgendaController {
 	}
 
 	@GetMapping("/history")
-	public ResponseEntity<List<AgendaSimpleResDto>> agendaListHistory(
+	public ResponseEntity<PageResponseDto<AgendaSimpleResDto>> agendaListHistory(
 		@ModelAttribute @Valid PageRequestDto pageRequest) {
 		int page = pageRequest.getPage();
 		int size = pageRequest.getSize();
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("startTime").descending());
-		List<Agenda> agendas = agendaService.findHistoryAgendaList(pageable);
+
+		Page<Agenda> agendas = agendaService.findHistoryAgendaList(pageable);
+
 		List<AgendaSimpleResDto> agendaSimpleResDtoList = agendas.stream()
 			.map(AgendaSimpleResDto.MapStruct.INSTANCE::toDto)
 			.collect(Collectors.toList());
-		return ResponseEntity.ok(agendaSimpleResDtoList);
+		PageResponseDto<AgendaSimpleResDto> pageResponseDto = PageResponseDto.of(
+			agendas.getTotalElements(), agendaSimpleResDtoList);
+		return ResponseEntity.ok(pageResponseDto);
 	}
 
 	@PatchMapping("/finish")

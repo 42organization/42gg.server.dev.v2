@@ -46,7 +46,7 @@ public class AgendaTeamAdminController {
 
 		Page<AgendaTeam> agendaTeamList = agendaTeamAdminService.getAgendaTeamList(agendaKey, pageable);
 
-		List<AgendaTeamResDto> agendaTeamResDtos = agendaTeamList.getContent().stream()
+		List<AgendaTeamResDto> agendaTeamResDtos = agendaTeamList.stream()
 			.map(AgendaTeamResDto.MapStruct.INSTANCE::toDto)
 			.collect(Collectors.toList());
 		PageResponseDto<AgendaTeamResDto> pageResponseDto = PageResponseDto.of(

@@ -51,7 +51,7 @@ public class AgendaAdminController {
 
 		Page<Agenda> agendaRequestList = agendaAdminService.getAgendaRequestList(pageable);
 
-		List<AgendaAdminResDto> agendaDtos = agendaRequestList.getContent().stream()
+		List<AgendaAdminResDto> agendaDtos = agendaRequestList.stream()
 			.map(AgendaAdminResDto.MapStruct.INSTANCE::toAgendaAdminResDto)
 			.collect(Collectors.toList());
 		PageResponseDto<AgendaAdminResDto> pageResponseDto = PageResponseDto.of(

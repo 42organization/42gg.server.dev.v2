@@ -33,6 +33,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.agenda.api.AgendaMockData;
@@ -56,6 +57,7 @@ import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import gg.utils.converter.MultiValueMapConverter;
 import gg.utils.dto.PageRequestDto;
+import gg.utils.dto.PageResponseDto;
 import gg.utils.exception.custom.BusinessException;
 import gg.utils.exception.custom.NotExistException;
 import gg.utils.file.handler.AwsImageHandler;
@@ -517,16 +519,19 @@ public class AgendaControllerTest {
 					.param("page", String.valueOf(page))
 					.param("size", String.valueOf(size)))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			AgendaSimpleResDto[] result = objectMapper.readValue(response, AgendaSimpleResDto[].class);
+			PageResponseDto<AgendaSimpleResDto> pageResponseDto = objectMapper.readValue(
+				response, new TypeReference<>() {});
+			List<AgendaSimpleResDto> result = pageResponseDto.getContent();
 
 			// then
-			assertThat(result.length).isEqualTo(size * page < totalCount ? size : totalCount % size);
-			for (int i = 0; i < result.length; i++) {
-				assertThat(result[i].getAgendaTitle()).isEqualTo(agendaHistory.get(size * (page - 1) + i).getTitle());
+			assertThat(result.size()).isEqualTo(size * page < totalCount ? size : totalCount % size);
+			for (int i = 0; i < result.size(); i++) {
+				assertThat(result.get(i).getAgendaTitle())
+					.isEqualTo(agendaHistory.get(size * (page - 1) + i).getTitle());
 				if (i == 0) {
 					continue;
 				}
-				assertThat(result[i].getAgendaStartTime()).isBefore(result[i - 1].getAgendaStartTime());
+				assertThat(result.get(i).getAgendaStartTime()).isBefore(result.get(i - 1).getAgendaStartTime());
 			}
 		}
 
@@ -543,10 +548,11 @@ public class AgendaControllerTest {
 					.param("page", String.valueOf(page))
 					.param("size", String.valueOf(size)))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			AgendaSimpleResDto[] result = objectMapper.readValue(response, AgendaSimpleResDto[].class);
-
+			PageResponseDto<AgendaSimpleResDto> pageResponseDto = objectMapper.readValue(
+				response, new TypeReference<>() {});
+			List<AgendaSimpleResDto> result = pageResponseDto.getContent();
 			// then
-			assertThat(result.length).isEqualTo(0);
+			assertThat(result.size()).isEqualTo(0);
 		}
 
 		@ParameterizedTest
@@ -597,10 +603,12 @@ public class AgendaControllerTest {
 					.param("page", String.valueOf(page))
 					.param("size", String.valueOf(size)))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			AgendaSimpleResDto[] result = objectMapper.readValue(response, AgendaSimpleResDto[].class);
+			PageResponseDto<AgendaSimpleResDto> pageResponseDto = objectMapper.readValue(
+				response, new TypeReference<>() {});
+			List<AgendaSimpleResDto> result = pageResponseDto.getContent();
 
 			// then
-			assertThat(result.length).isEqualTo(0);
+			assertThat(result.size()).isEqualTo(0);
 		}
 
 		@ParameterizedTest
@@ -632,16 +640,18 @@ public class AgendaControllerTest {
 					.header("Authorization", "Bearer " + accessToken)
 					.param("page", String.valueOf(page)))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			AgendaSimpleResDto[] result = objectMapper.readValue(response, AgendaSimpleResDto[].class);
+			PageResponseDto<AgendaSimpleResDto> pageResponseDto = objectMapper.readValue(
+				response, new TypeReference<>() {});
+			List<AgendaSimpleResDto> result = pageResponseDto.getContent();
 
 			// then
-			assertThat(result.length).isEqualTo(20);
-			for (int i = 0; i < result.length; i++) {
-				assertThat(result[i].getAgendaTitle()).isEqualTo(agendaHistory.get(i).getTitle());
+			assertThat(result.size()).isEqualTo(20);
+			for (int i = 0; i < result.size(); i++) {
+				assertThat(result.get(i).getAgendaTitle()).isEqualTo(agendaHistory.get(i).getTitle());
 				if (i == 0) {
 					continue;
 				}
-				assertThat(result[i].getAgendaStartTime()).isBefore(result[i - 1].getAgendaStartTime());
+				assertThat(result.get(i).getAgendaStartTime()).isBefore(result.get(i - 1).getAgendaStartTime());
 			}
 		}
 	}

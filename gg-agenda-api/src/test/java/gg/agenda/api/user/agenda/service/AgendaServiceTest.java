@@ -197,7 +197,8 @@ class AgendaServiceTest {
 				.thenReturn(agendaPage);
 
 			// when
-			List<Agenda> result = agendaService.findHistoryAgendaList(pageable);
+			Page<Agenda> res = agendaService.findHistoryAgendaList(pageable);
+			List<Agenda> result = res.getContent();
 
 			// then
 			verify(agendaRepository, times(1))
