@@ -219,8 +219,8 @@ public class TicketControllerTest {
 						.param("page", String.valueOf(req.getPage()))
 						.param("size", String.valueOf(req.getSize())))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			PageResponseDto<TicketHistoryResDto> pageResponseDto = objectMapper
-				.readValue(res, new TypeReference<>() {});
+			PageResponseDto<TicketHistoryResDto> pageResponseDto = objectMapper.readValue(res, new TypeReference<>() {
+			});
 			List<TicketHistoryResDto> result = pageResponseDto.getContent();
 
 			//then
@@ -241,8 +241,8 @@ public class TicketControllerTest {
 						.param("page", String.valueOf(req.getPage()))
 						.param("size", String.valueOf(req.getSize())))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			PageResponseDto<TicketHistoryResDto> pageResponseDto = objectMapper
-				.readValue(res, new TypeReference<>() {});
+			PageResponseDto<TicketHistoryResDto> pageResponseDto = objectMapper.readValue(res, new TypeReference<>() {
+			});
 			List<TicketHistoryResDto> result = pageResponseDto.getContent();
 
 			//then
@@ -266,8 +266,8 @@ public class TicketControllerTest {
 						.param("page", String.valueOf(req.getPage()))
 						.param("size", String.valueOf(req.getSize())))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			PageResponseDto<TicketHistoryResDto> pageResponseDto = objectMapper
-				.readValue(res, new TypeReference<>() {});
+			PageResponseDto<TicketHistoryResDto> pageResponseDto = objectMapper.readValue(res, new TypeReference<>() {
+				});
 			List<TicketHistoryResDto> result = pageResponseDto.getContent();
 
 			//then
@@ -292,10 +292,9 @@ public class TicketControllerTest {
 						.param("page", String.valueOf(req.getPage()))
 						.param("size", String.valueOf(req.getSize())))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			PageResponseDto<TicketHistoryResDto> pageResponseDto = objectMapper
-				.readValue(res, new TypeReference<>() {});
+			PageResponseDto<TicketHistoryResDto> pageResponseDto = objectMapper.readValue(res, new TypeReference<>() {
+			});
 			List<TicketHistoryResDto> result = pageResponseDto.getContent();
-
 			//then
 			assertThat(result.size()).isEqualTo(1);
 			assertThat(result.get(0).getIssuedFrom()).isEqualTo("42Intra");
@@ -317,10 +316,9 @@ public class TicketControllerTest {
 						.param("page", String.valueOf(req.getPage()))
 						.param("size", String.valueOf(req.getSize())))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			PageResponseDto<TicketHistoryResDto> pageResponseDto = objectMapper
-				.readValue(res, new TypeReference<>() {});
+			PageResponseDto<TicketHistoryResDto> pageResponseDto = objectMapper.readValue(res, new TypeReference<>() {
+			});
 			List<TicketHistoryResDto> result = pageResponseDto.getContent();
-
 			//then
 			assertThat(result.size()).isEqualTo(1);
 			assertThat(result.get(0).getIssuedFrom()).isEqualTo(seoulAgenda.getTitle());
@@ -339,10 +337,9 @@ public class TicketControllerTest {
 						.param("page", String.valueOf(req.getPage()))
 						.param("size", String.valueOf(req.getSize())))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			PageResponseDto<TicketHistoryResDto> pageResponseDto = objectMapper
-				.readValue(res, new TypeReference<>() {});
+			PageResponseDto<TicketHistoryResDto> pageResponseDto = objectMapper.readValue(res, new TypeReference<>() {
+			});
 			List<TicketHistoryResDto> result = pageResponseDto.getContent();
-
 			//then
 			assertThat(result.size()).isEqualTo(0);
 		}

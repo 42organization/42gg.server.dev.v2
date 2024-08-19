@@ -44,7 +44,8 @@ public class AgendaAdminController {
 
 	@ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Agenda 요청 리스트 조회 성공")})
 	@GetMapping("/request/list")
-	public ResponseEntity<PageResponseDto<AgendaAdminResDto>> agendaList(@ModelAttribute @Valid PageRequestDto pageDto) {
+	public ResponseEntity<PageResponseDto<AgendaAdminResDto>> agendaList(
+		@ModelAttribute @Valid PageRequestDto pageDto) {
 		int page = pageDto.getPage();
 		int size = pageDto.getSize();
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());

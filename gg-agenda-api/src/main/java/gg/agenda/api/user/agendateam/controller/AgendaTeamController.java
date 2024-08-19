@@ -122,8 +122,8 @@ public class AgendaTeamController {
 	 * @param pageRequest 페이지네이션 요청 정보, agendaId 아젠다 아이디
 	 */
 	@GetMapping("/open/list")
-	public ResponseEntity<PageResponseDto<OpenTeamResDto>> openTeamList(@ModelAttribute @Valid PageRequestDto pageRequest,
-		@RequestParam("agenda_key") UUID agendaKey) {
+	public ResponseEntity<PageResponseDto<OpenTeamResDto>> openTeamList(
+		@ModelAttribute @Valid PageRequestDto pageRequest, @RequestParam("agenda_key") UUID agendaKey) {
 		int page = pageRequest.getPage();
 		int size = pageRequest.getSize();
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());
@@ -147,8 +147,8 @@ public class AgendaTeamController {
 	 * @param pageRequest 페이지네이션 요청 정보, agendaId 아젠다 아이디
 	 */
 	@GetMapping("/confirm/list")
-	public ResponseEntity<PageResponseDto<ConfirmTeamResDto>> confirmTeamList(@ModelAttribute @Valid PageRequestDto pageRequest,
-		@RequestParam("agenda_key") UUID agendaKey) {
+	public ResponseEntity<PageResponseDto<ConfirmTeamResDto>> confirmTeamList(
+		@ModelAttribute @Valid PageRequestDto pageRequest, @RequestParam("agenda_key") UUID agendaKey) {
 		int page = pageRequest.getPage();
 		int size = pageRequest.getSize();
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());

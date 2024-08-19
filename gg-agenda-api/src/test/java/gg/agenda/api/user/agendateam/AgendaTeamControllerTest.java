@@ -1122,7 +1122,8 @@ public class AgendaTeamControllerTest {
 						.param("size", String.valueOf(req.getSize())))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			PageResponseDto<OpenTeamResDto> pageResponseDto = objectMapper
-				.readValue(res, new TypeReference<>() {});
+				.readValue(res, new TypeReference<>() {
+				});
 			List<OpenTeamResDto> result = pageResponseDto.getContent();
 
 			// then
@@ -1149,7 +1150,8 @@ public class AgendaTeamControllerTest {
 						.param("size", String.valueOf(req.getSize())))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			PageResponseDto<OpenTeamResDto> pageResponseDto = objectMapper
-				.readValue(res, new TypeReference<>() {});
+				.readValue(res, new TypeReference<>() {
+				});
 			List<OpenTeamResDto> result = pageResponseDto.getContent();
 
 			// then
@@ -1204,7 +1206,8 @@ public class AgendaTeamControllerTest {
 						.param("size", String.valueOf(req.getSize())))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			PageResponseDto<ConfirmTeamResDto> pageResponseDto = objectMapper
-				.readValue(res, new TypeReference<>() {});
+				.readValue(res, new TypeReference<>() {
+				});
 			List<ConfirmTeamResDto> result = pageResponseDto.getContent();
 
 			// then
@@ -1232,7 +1235,8 @@ public class AgendaTeamControllerTest {
 						.param("size", String.valueOf(req.getSize())))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			PageResponseDto<ConfirmTeamResDto> pageResponseDto = objectMapper
-				.readValue(res, new TypeReference<>() {});
+				.readValue(res, new TypeReference<>() {
+				});
 			List<ConfirmTeamResDto> result = pageResponseDto.getContent();
 
 			// then

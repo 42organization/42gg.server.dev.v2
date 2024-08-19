@@ -380,7 +380,8 @@ public class AgendaProfileControllerTest {
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
 			PageResponseDto<AttendedAgendaListResDto> pageResponseDto = objectMapper
-				.readValue(response, new TypeReference<>() {});
+				.readValue(response, new TypeReference<>() {
+				});
 			List<AttendedAgendaListResDto> result = pageResponseDto.getContent();
 
 			// then
@@ -420,7 +421,8 @@ public class AgendaProfileControllerTest {
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
 			PageResponseDto<AttendedAgendaListResDto> pageResponseDto = objectMapper
-				.readValue(response, new TypeReference<>() {});
+				.readValue(response, new TypeReference<>() {
+				});
 			List<AttendedAgendaListResDto> result = pageResponseDto.getContent();
 
 			// then

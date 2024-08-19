@@ -124,7 +124,8 @@ public class AgendaTeamAdminControllerTest {
 					.param("size", String.valueOf(size)))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			PageResponseDto<AgendaTeamResDto> pageResponseDto = objectMapper
-				.readValue(response, new TypeReference<>() {});
+				.readValue(response, new TypeReference<>() {
+				});
 			List<AgendaTeamResDto> result = pageResponseDto.getContent();
 
 			// then

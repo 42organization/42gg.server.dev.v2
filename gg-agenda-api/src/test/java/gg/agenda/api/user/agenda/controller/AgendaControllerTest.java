@@ -519,8 +519,9 @@ public class AgendaControllerTest {
 					.param("page", String.valueOf(page))
 					.param("size", String.valueOf(size)))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			PageResponseDto<AgendaSimpleResDto> pageResponseDto = objectMapper.readValue(
-				response, new TypeReference<>() {});
+			PageResponseDto<AgendaSimpleResDto> pageResponseDto = objectMapper
+				.readValue(response, new TypeReference<>() {
+				});
 			List<AgendaSimpleResDto> result = pageResponseDto.getContent();
 
 			// then
@@ -549,7 +550,8 @@ public class AgendaControllerTest {
 					.param("size", String.valueOf(size)))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			PageResponseDto<AgendaSimpleResDto> pageResponseDto = objectMapper.readValue(
-				response, new TypeReference<>() {});
+				response, new TypeReference<>() {
+				});
 			List<AgendaSimpleResDto> result = pageResponseDto.getContent();
 			// then
 			assertThat(result.size()).isEqualTo(0);
@@ -604,7 +606,8 @@ public class AgendaControllerTest {
 					.param("size", String.valueOf(size)))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			PageResponseDto<AgendaSimpleResDto> pageResponseDto = objectMapper.readValue(
-				response, new TypeReference<>() {});
+				response, new TypeReference<>() {
+				});
 			List<AgendaSimpleResDto> result = pageResponseDto.getContent();
 
 			// then
@@ -641,7 +644,8 @@ public class AgendaControllerTest {
 					.param("page", String.valueOf(page)))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			PageResponseDto<AgendaSimpleResDto> pageResponseDto = objectMapper.readValue(
-				response, new TypeReference<>() {});
+				response, new TypeReference<>() {
+				});
 			List<AgendaSimpleResDto> result = pageResponseDto.getContent();
 
 			// then

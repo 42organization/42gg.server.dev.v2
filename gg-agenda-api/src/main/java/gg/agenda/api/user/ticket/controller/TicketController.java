@@ -89,8 +89,8 @@ public class TicketController {
 	 * @param pageRequest 페이지 정보
 	 */
 	@GetMapping("/history")
-	public ResponseEntity<PageResponseDto<TicketHistoryResDto>> ticketHistoryList(@Parameter(hidden = true) @Login UserDto user,
-		@ModelAttribute @Valid PageRequestDto pageRequest) {
+	public ResponseEntity<PageResponseDto<TicketHistoryResDto>> ticketHistoryList(
+		@Parameter(hidden = true) @Login UserDto user, @ModelAttribute @Valid PageRequestDto pageRequest) {
 		int page = pageRequest.getPage();
 		int size = pageRequest.getSize();
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());

@@ -231,7 +231,8 @@ public class AgendaAnnouncementControllerTest {
 					.param("size", String.valueOf(size)))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			PageResponseDto<AgendaAnnouncementResDto> pageResponseDto = objectMapper
-				.readValue(response, new TypeReference<>() {});
+				.readValue(response, new TypeReference<>() {
+				});
 			List<AgendaAnnouncementResDto> result = pageResponseDto.getContent();
 
 			// then
@@ -265,7 +266,8 @@ public class AgendaAnnouncementControllerTest {
 					.param("size", String.valueOf(size)))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			PageResponseDto<AgendaAnnouncementResDto> pageResponseDto = objectMapper
-				.readValue(response, new TypeReference<>() {});
+				.readValue(response, new TypeReference<>() {
+				});
 			List<AgendaAnnouncementResDto> result = pageResponseDto.getContent();
 			// then
 			assertThat(result).hasSize(0);
