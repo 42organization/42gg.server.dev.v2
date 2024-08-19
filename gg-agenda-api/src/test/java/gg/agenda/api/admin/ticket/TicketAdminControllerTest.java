@@ -92,7 +92,7 @@ public class TicketAdminControllerTest {
 		}
 
 		@Test
-		@DisplayName("존재하는 대회의 issuedFromKey 넣어 티켓이 잘 생성되어 201 반환 및 ticketId 반환")
+		@DisplayName("존재하는 대회의 issuedFromKey 넣어 티켓(환불티켓생성)이 잘 생성되어 201 반환 및 ticketId 반환")
 		void createTicketWithNotNullIssuedFromKey() throws Exception {
 			// Given
 			User agendaCreateUser = testDataUtils.createNewUser();
@@ -117,7 +117,7 @@ public class TicketAdminControllerTest {
 			assertThat(createdTicket.getAgendaProfile().getId()).isEqualTo(agendaProfile.getId());
 			assertThat(createdTicket.getIssuedFrom()).isEqualTo(agenda.getAgendaKey());
 			assertThat(createdTicket.getIsApproved()).isTrue();
-			assertThat(createdTicket.getIsUsed()).isTrue();
+			assertThat(createdTicket.getIsUsed()).isFalse();
 		}
 
 		@Test

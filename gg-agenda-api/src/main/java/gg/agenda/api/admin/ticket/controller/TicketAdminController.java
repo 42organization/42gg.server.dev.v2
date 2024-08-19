@@ -24,7 +24,7 @@ public class TicketAdminController {
 	 * @param intraId 사용자 정보
 	 */
 	@PostMapping
-	public ResponseEntity<TicketAddAdminResDto> ticketSetupAdd(@RequestParam String intraId,
+	public ResponseEntity<TicketAddAdminResDto> ticketAdminAdd(@RequestParam String intraId,
 		@RequestBody TicketAddAdminReqDto ticketAddAdminReqDto) {
 		Long ticketId = ticketAdminService.addTicket(intraId, ticketAddAdminReqDto);
 		TicketAddAdminResDto ticketAddAdminResDto = new TicketAddAdminResDto(ticketId);

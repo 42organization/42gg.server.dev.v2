@@ -2,6 +2,7 @@ package gg.agenda.api.admin.ticket.service;
 
 import static gg.utils.exception.ErrorCode.*;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TicketAdminService {
 
-	private final TicketAdminRepository ticketRepository;
+	private final TicketAdminRepository ticketAdminRepository;
 	private final AgendaProfileAdminRepository agendaProfileRepository;
 	private final AgendaAdminRepository agendaAdminRepository;
 
@@ -35,15 +36,18 @@ public class TicketAdminService {
 
 		UUID issuedFromKey = ticketAddAdminReqDto.getIssuedFromKey();
 
-		if (issuedFromKey != null) {
-			if (!agendaAdminRepository.existsByAgendaKey(issuedFromKey)) {
+		if (isRefundedTicket(issuedFromKey)) {
+			boolean result = agendaAdminRepository.existsByAgendaKey(issuedFromKey);
+			if (!result) {
 				throw new NotExistException(AGENDA_NOT_FOUND);
 			}
-			Ticket ticket = Ticket.createUsedAdminTicket(profile, issuedFromKey);
-			return ticketRepository.save(ticket).getId();
 		}
 
-		Ticket ticket = Ticket.createAdminTicket(profile);
-		return ticketRepository.save(ticket).getId();
+		Ticket ticket = Ticket.createAdminTicket(profile, issuedFromKey);
+		return ticketAdminRepository.save(ticket).getId();
+	}
+
+	private boolean isRefundedTicket(UUID issuedFromKey) {
+		return Objects.nonNull(issuedFromKey);
 	}
 }
