@@ -1,9 +1,11 @@
 package gg.agenda.api.user.agendaprofile.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -23,10 +25,13 @@ import gg.agenda.api.user.agendaprofile.controller.response.AttendedAgendaListRe
 import gg.agenda.api.user.agendaprofile.controller.response.CurrentAttendAgendaListResDto;
 import gg.agenda.api.user.agendaprofile.service.AgendaProfileFindService;
 import gg.agenda.api.user.agendaprofile.service.AgendaProfileService;
+import gg.agenda.api.user.agendateam.controller.response.TeamMateDto;
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
+import gg.data.agenda.AgendaTeamProfile;
 import gg.data.user.type.RoleType;
 import gg.utils.dto.PageRequestDto;
+import gg.utils.dto.PageResponseDto;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 
@@ -99,16 +104,26 @@ public class AgendaProfileController {
 	 * @param pageRequest 페이지네이션 요청 정보, agendaId 아젠다 아이디
 	 */
 	@GetMapping("/history/list")
-	public ResponseEntity<List<AttendedAgendaListResDto>> getAttendedAgendaList(
+	public ResponseEntity<PageResponseDto<AttendedAgendaListResDto>> getAttendedAgendaList(
 		@Login @Parameter(hidden = true) UserDto user, @ModelAttribute @Valid PageRequestDto pageRequest) {
 		int page = pageRequest.getPage();
 		int size = pageRequest.getSize();
 		String intraId = user.getIntraId();
-
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());
-		List<AttendedAgendaListResDto> attendedAgendaList = agendaProfileFindService.findAttendedAgenda(
-			intraId, pageable);
-		return ResponseEntity.ok(attendedAgendaList);
+
+		Page<AgendaTeamProfile> attendedAgendaList = agendaProfileFindService
+			.findAttendedAgenda(intraId, pageable);
+
+		List<AttendedAgendaListResDto> attendedAgendaDtos = attendedAgendaList.stream()
+			.map(agendaTeamProfile -> {
+				List<AgendaTeamProfile> teamMates = agendaProfileFindService
+					.findTeamMatesFromAgendaTeam(agendaTeamProfile.getAgendaTeam());
+				return new AttendedAgendaListResDto(agendaTeamProfile, teamMates);
+			})
+			.collect(Collectors.toList());
+
+		PageResponseDto<AttendedAgendaListResDto> pageResponseDto = PageResponseDto.of(
+			attendedAgendaList.getTotalElements(), attendedAgendaDtos);
+		return ResponseEntity.ok(pageResponseDto);
 	}
 }
-

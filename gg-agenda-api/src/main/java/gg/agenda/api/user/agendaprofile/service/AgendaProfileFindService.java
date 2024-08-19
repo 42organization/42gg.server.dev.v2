@@ -14,6 +14,7 @@ import gg.agenda.api.user.agendaprofile.controller.response.AgendaProfileDetails
 import gg.agenda.api.user.agendaprofile.controller.response.AttendedAgendaListResDto;
 import gg.agenda.api.user.agendaprofile.controller.response.CurrentAttendAgendaListResDto;
 import gg.data.agenda.AgendaProfile;
+import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.AgendaTeamProfile;
 import gg.data.agenda.type.AgendaStatus;
 import gg.repo.agenda.AgendaProfileRepository;
@@ -72,25 +73,16 @@ public class AgendaProfileFindService {
 			.collect(Collectors.toList());
 	}
 
-	/**
-	 * 자기가 참여했던 Agenda 목록 조회하는 메서드
-	 * @param intraId,pageable 페이지네이션 요청 정보, 로그인한 유저의 id
-	 */
 	@Transactional(readOnly = true)
-	public List<AttendedAgendaListResDto> findAttendedAgenda(String intraId, Pageable pageable) {
+	public Page<AgendaTeamProfile> findAttendedAgenda(String intraId, Pageable pageable) {
 		AgendaProfile agendaProfile = agendaProfileRepository.findByIntraId(intraId)
 			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
-
-		Page<AgendaTeamProfile> agendaTeamProfilePage =
-			agendaTeamProfileRepository.findByProfileAndIsExistTrueAndAgendaStatus(
+		return agendaTeamProfileRepository.findByProfileAndIsExistTrueAndAgendaStatus(
 				agendaProfile, AgendaStatus.FINISH, pageable);
+	}
 
-		return agendaTeamProfilePage.getContent().stream()
-			.map(agendaTeamProfile -> {
-				List<AgendaTeamProfile> agendaTeamProfiles = agendaTeamProfileRepository
-					.findByAgendaTeamAndIsExistTrue(agendaTeamProfile.getAgendaTeam());
-				return new AttendedAgendaListResDto(agendaTeamProfile, agendaTeamProfiles);
-			})
-			.collect(Collectors.toList());
+	@Transactional(readOnly = true)
+	public List<AgendaTeamProfile> findTeamMatesFromAgendaTeam(AgendaTeam agendaTeam) {
+		return agendaTeamProfileRepository.findByAgendaTeamAndIsExistTrue(agendaTeam);
 	}
 }
