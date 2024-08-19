@@ -179,6 +179,12 @@ public class AgendaTeam extends BaseTimeEntity {
 		this.location = location;
 	}
 
+	public void agendaTeamStatusMustBeOpenAndConfirm() {
+		if (this.status == CANCEL) {
+			throw new BusinessException(AGENDA_TEAM_ALREADY_CANCEL);
+		}
+	}
+
 	public void agendaTeamStatusMustBeOpen() {
 		if (this.status == CANCEL) {
 			throw new BusinessException(AGENDA_TEAM_ALREADY_CANCEL);
