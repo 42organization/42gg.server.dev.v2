@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -170,33 +169,29 @@ public class TicketService {
 		ticketRepository.save(setUpTicket);
 	}
 
-	/**
-	 * 티켓 이력 조회
-	 * @param user 사용자 정보
-	 * @param pageable 페이지 정보
-	 * @return 티켓 이력 목록
-	 */
 	@Transactional(readOnly = true)
-	public List<TicketHistoryResDto> listTicketHistory(UserDto user, Pageable pageable) {
-		AgendaProfile profile = agendaProfileRepository.findByUserId(user.getId())
+	public Page<Ticket> findTicketsByUserId(Long userId, Pageable pageable) {
+		AgendaProfile profile = agendaProfileRepository.findByUserId(userId)
 			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
+		return ticketRepository.findByAgendaProfileId(profile.getId(), pageable);
+	}
 
-		Page<Ticket> tickets = ticketRepository.findByAgendaProfileId(profile.getId(), pageable);
-
-		List<TicketHistoryResDto> ticketHistoryResDtos = tickets.getContent().stream()
-			.map(TicketHistoryResDto::new)
-			.collect(Collectors.toList());
-
-		for (TicketHistoryResDto dto : ticketHistoryResDtos) {
-			if (dto.getIssuedFromKey() != null) {
-				Agenda agenda = agendaRepository.findAgendaByAgendaKey(dto.getIssuedFromKey()).orElse(null);
-				dto.changeIssuedFrom(agenda);
-			}
-			if (dto.getUsedToKey() != null) {
-				Agenda agenda = agendaRepository.findAgendaByAgendaKey(dto.getUsedToKey()).orElse(null);
-				dto.changeUsedTo(agenda);
-			}
+		/**
+		 * 티켓 이력 조회
+		 */
+	@Transactional(readOnly = true)
+	public TicketHistoryResDto convertAgendaKeyToTitleWhereIssuedFromAndUsedTo(Ticket ticket) {
+		TicketHistoryResDto dto = new TicketHistoryResDto(ticket);
+		if (dto.getIssuedFromKey() != null) {
+			Agenda agenda = agendaRepository.findAgendaByAgendaKey(dto.getIssuedFromKey())
+				.orElse(null);
+			dto.changeIssuedFrom(agenda);
 		}
-		return ticketHistoryResDtos;
+		if (dto.getUsedToKey() != null) {
+			Agenda agenda = agendaRepository.findAgendaByAgendaKey(dto.getUsedToKey())
+				.orElse(null);
+			dto.changeUsedTo(agenda);
+		}
+		return dto;
 	}
 }

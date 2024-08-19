@@ -1,10 +1,12 @@
 package gg.agenda.api.user.ticket.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -20,13 +22,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import gg.agenda.api.user.agenda.service.AgendaService;
 import gg.agenda.api.user.ticket.controller.response.TicketCountResDto;
 import gg.agenda.api.user.ticket.controller.response.TicketHistoryResDto;
 import gg.agenda.api.user.ticket.service.TicketService;
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
+import gg.data.agenda.Ticket;
 import gg.utils.cookie.CookieUtil;
 import gg.utils.dto.PageRequestDto;
+import gg.utils.dto.PageResponseDto;
 import gg.utils.exception.user.TokenNotValidException;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +42,7 @@ import lombok.RequiredArgsConstructor;
 public class TicketController {
 	private final CookieUtil cookieUtil;
 	private final TicketService ticketService;
+	private final AgendaService agendaService;
 
 	/**
 	 * 티켓 설정 추가
@@ -83,12 +89,20 @@ public class TicketController {
 	 * @param pageRequest 페이지 정보
 	 */
 	@GetMapping("/history")
-	public ResponseEntity<List<TicketHistoryResDto>> ticketHistoryList(@Parameter(hidden = true) @Login UserDto user,
+	public ResponseEntity<PageResponseDto<TicketHistoryResDto>> ticketHistoryList(@Parameter(hidden = true) @Login UserDto user,
 		@ModelAttribute @Valid PageRequestDto pageRequest) {
 		int page = pageRequest.getPage();
 		int size = pageRequest.getSize();
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());
-		List<TicketHistoryResDto> tickets = ticketService.listTicketHistory(user, pageable);
-		return ResponseEntity.ok().body(tickets);
+
+		Page<Ticket> tickets = ticketService.findTicketsByUserId(user.getId(), pageable);
+
+		List<TicketHistoryResDto> ticketDtos = tickets.stream()
+			.map(ticketService::convertAgendaKeyToTitleWhereIssuedFromAndUsedTo)
+			.collect(Collectors.toList());
+
+		PageResponseDto<TicketHistoryResDto> pageResponseDto = PageResponseDto.of(
+			tickets.getTotalElements(), ticketDtos);
+		return ResponseEntity.ok(pageResponseDto);
 	}
 }
