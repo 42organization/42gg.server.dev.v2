@@ -27,10 +27,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.MultiValueMap;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.admin.repo.agenda.AgendaAdminRepository;
@@ -46,6 +46,7 @@ import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import gg.utils.converter.MultiValueMapConverter;
 import gg.utils.dto.PageRequestDto;
+import gg.utils.dto.PageResponseDto;
 import gg.utils.file.handler.AwsImageHandler;
 import gg.utils.fixture.agenda.AgendaFixture;
 import lombok.extern.slf4j.Slf4j;
@@ -117,14 +118,16 @@ public class AgendaAdminControllerTest {
 					.param("page", String.valueOf(page))
 					.param("size", String.valueOf(size)))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			AgendaAdminResDto[] result = objectMapper.readValue(response, AgendaAdminResDto[].class);
+			PageResponseDto<AgendaAdminResDto> pageResponseDto = objectMapper
+				.readValue(response, new TypeReference<>() {});
+			List<AgendaAdminResDto> result = pageResponseDto.getContent();
 
 			// then
-			assertThat(result).hasSize(
+			assertThat(result.size()).isEqualTo(
 				((page - 1) * size) < agendas.size() ? Math.min(size, agendas.size() - (page - 1) * size) : 0);
 			agendas.sort((a, b) -> b.getId().compareTo(a.getId()));
-			for (int i = 0; i < result.length; i++) {
-				assertThat(result[i].getAgendaId()).isEqualTo(agendas.get(i + (page - 1) * size).getId());
+			for (int i = 0; i < result.size(); i++) {
+				assertThat(result.get(i).getAgendaId()).isEqualTo(agendas.get(i + (page - 1) * size).getId());
 			}
 		}
 
@@ -134,7 +137,6 @@ public class AgendaAdminControllerTest {
 			// given
 			int page = 1;
 			int size = 10;
-			PageRequestDto pageRequestDto = new PageRequestDto(page, size);
 
 			// when
 			String response = mockMvc.perform(get("/agenda/admin/request/list")
@@ -142,10 +144,12 @@ public class AgendaAdminControllerTest {
 					.param("page", String.valueOf(page))
 					.param("size", String.valueOf(size)))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			AgendaAdminResDto[] result = objectMapper.readValue(response, AgendaAdminResDto[].class);
+			PageResponseDto<AgendaAdminResDto> pageResponseDto = objectMapper
+				.readValue(response, new TypeReference<>() {});
+			List<AgendaAdminResDto> result = pageResponseDto.getContent();
 
 			// then
-			assertThat(result).isEmpty();
+			assertThat(result.size()).isEqualTo(0);
 		}
 	}
 
