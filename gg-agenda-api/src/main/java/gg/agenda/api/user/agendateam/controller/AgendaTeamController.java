@@ -1,11 +1,15 @@
 package gg.agenda.api.user.agendateam.controller;
 
+import static gg.data.agenda.type.AgendaTeamStatus.*;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -32,7 +36,9 @@ import gg.agenda.api.user.agendateam.service.AgendaTeamService;
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
 import gg.data.agenda.AgendaTeam;
+import gg.data.agenda.type.Coalition;
 import gg.utils.dto.PageRequestDto;
+import gg.utils.dto.PageResponseDto;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 
@@ -116,13 +122,24 @@ public class AgendaTeamController {
 	 * @param pageRequest 페이지네이션 요청 정보, agendaId 아젠다 아이디
 	 */
 	@GetMapping("/open/list")
-	public ResponseEntity<List<OpenTeamResDto>> openTeamList(@ModelAttribute @Valid PageRequestDto pageRequest,
+	public ResponseEntity<PageResponseDto<OpenTeamResDto>> openTeamList(@ModelAttribute @Valid PageRequestDto pageRequest,
 		@RequestParam("agenda_key") UUID agendaKey) {
 		int page = pageRequest.getPage();
 		int size = pageRequest.getSize();
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());
-		List<OpenTeamResDto> openTeamResDtoList = agendaTeamService.listOpenTeam(agendaKey, pageable);
-		return ResponseEntity.ok(openTeamResDtoList);
+
+		Page<AgendaTeam> openTeams = agendaTeamService.findAgendaTeamWithStatus(agendaKey, OPEN, pageable);
+
+		List<OpenTeamResDto> openTeamResDtoList = openTeams.stream()
+			.map(agendaTeam -> {
+				List<Coalition> coalitions = agendaTeamService.getCoalitionsFromAgendaTeam(agendaTeam);
+				return new OpenTeamResDto(agendaTeam, coalitions);
+			})
+			.collect(Collectors.toList());
+
+		PageResponseDto<OpenTeamResDto> pageResponseDto = PageResponseDto.of(
+			openTeams.getTotalElements(), openTeamResDtoList);
+		return ResponseEntity.ok(pageResponseDto);
 	}
 
 	/**
@@ -130,13 +147,24 @@ public class AgendaTeamController {
 	 * @param pageRequest 페이지네이션 요청 정보, agendaId 아젠다 아이디
 	 */
 	@GetMapping("/confirm/list")
-	public ResponseEntity<List<ConfirmTeamResDto>> confirmTeamList(@ModelAttribute @Valid PageRequestDto pageRequest,
+	public ResponseEntity<PageResponseDto<ConfirmTeamResDto>> confirmTeamList(@ModelAttribute @Valid PageRequestDto pageRequest,
 		@RequestParam("agenda_key") UUID agendaKey) {
 		int page = pageRequest.getPage();
 		int size = pageRequest.getSize();
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());
-		List<ConfirmTeamResDto> confirmTeamResDto = agendaTeamService.listConfirmTeam(agendaKey, pageable);
-		return ResponseEntity.ok(confirmTeamResDto);
+
+		Page<AgendaTeam> confirmTeams = agendaTeamService.findAgendaTeamWithStatus(agendaKey, CONFIRM, pageable);
+
+		List<ConfirmTeamResDto> confirmTeamResDtoList = confirmTeams.stream()
+			.map(agendaTeam -> {
+				List<Coalition> coalitions = agendaTeamService.getCoalitionsFromAgendaTeam(agendaTeam);
+				return new ConfirmTeamResDto(agendaTeam, coalitions);
+			})
+			.collect(Collectors.toList());
+
+		PageResponseDto<ConfirmTeamResDto> pageResponseDto = PageResponseDto.of(
+			confirmTeams.getTotalElements(), confirmTeamResDtoList);
+		return ResponseEntity.ok(pageResponseDto);
 	}
 
 	/**
