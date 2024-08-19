@@ -18,6 +18,7 @@ public class TeamDetailsResDto {
 	private AgendaTeamStatus teamStatus;
 	private Location teamLocation;
 	private String teamContent;
+	private boolean teamIsPrivate;
 	private List<TeamMateDto> teamMates;
 
 	public TeamDetailsResDto(AgendaTeam agendaTeam, List<AgendaTeamProfile> agendaTeamProfileList) {
@@ -26,6 +27,7 @@ public class TeamDetailsResDto {
 		this.teamStatus = agendaTeam.getStatus();
 		this.teamLocation = agendaTeam.getLocation();
 		this.teamContent = agendaTeam.getContent();
+		this.teamIsPrivate = agendaTeam.getIsPrivate();
 		this.teamMates = agendaTeamProfileList.stream()
 			.map(TeamMateDto::new)
 			.collect(Collectors.toList());

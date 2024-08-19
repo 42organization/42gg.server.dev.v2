@@ -1,6 +1,5 @@
 package gg.agenda.api.user.agendateam.controller;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -99,14 +98,14 @@ public class AgendaTeamController {
 	 */
 	@PatchMapping("/cancel")
 	public ResponseEntity<Void> leaveAgendaTeam(@Parameter(hidden = true) @Login UserDto user,
-		@ModelAttribute @Valid TeamKeyReqDto teamKeyReqDto, @RequestParam("agenda_key") UUID agendaKey) {
-		UUID teamKey = teamKeyReqDto.getTeamKey();
+		@ModelAttribute @Valid TeamKeyReqDto teamKeyReqDto) {
 		AgendaTeam agendaTeam = agendaTeamService.getAgendaTeam(teamKeyReqDto.getTeamKey());
-		agendaTeam.agendaTeamStatusMustBeOpen();
 		agendaTeam.getAgenda().agendaStatusMustBeOpen();
 		if (agendaTeam.getLeaderIntraId().equals(user.getIntraId())) {
+			agendaTeam.agendaTeamStatusMustBeOpenAndConfirm();
 			agendaTeamService.leaveTeamAll(agendaTeam);
 		} else {
+			agendaTeam.agendaTeamStatusMustBeOpen();
 			agendaTeamService.leaveTeamMate(agendaTeam, user);
 		}
 		return ResponseEntity.noContent().build();

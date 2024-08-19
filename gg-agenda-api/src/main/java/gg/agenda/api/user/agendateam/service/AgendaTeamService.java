@@ -194,7 +194,7 @@ public class AgendaTeamService {
 	 * 팀장이 팀 나가기
 	 * @param agendaTeam 팀
 	 */
-	@Transactional(propagation = Propagation.MANDATORY)
+	@Transactional
 	public void leaveTeamAll(AgendaTeam agendaTeam) {
 		List<AgendaTeamProfile> agendaTeamProfiles = agendaTeamProfileRepository
 			.findByAgendaTeamAndIsExistTrue(agendaTeam);

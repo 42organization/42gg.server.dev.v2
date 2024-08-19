@@ -909,6 +909,44 @@ public class AgendaTeamControllerTest {
 		}
 
 		@Test
+		@DisplayName("200 Confirm 팀 리더 팀 나가기 성공")
+		public void leaveTeamLeaderTeamStatusConfirmSuccess() throws Exception {
+			//given
+			Agenda agenda = agendaMockData.createAgenda(SEOUL);
+			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser, SEOUL, AgendaTeamStatus.CONFIRM);
+			AgendaTeamProfile atpLeader = agendaMockData.createAgendaTeamProfile(team, seoulUserAgendaProfile);
+			AgendaTeamProfile atp = agendaMockData.createAgendaTeamProfile(team, anotherSeoulUserAgendaProfile);
+			// when
+			mockMvc.perform(
+					patch("/agenda/team/cancel")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.param("teamKey", team.getTeamKey().toString())
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNoContent());
+			// then
+			AgendaTeam updatedTeam = agendaTeamRepository.findByTeamKey(team.getTeamKey()).orElse(null);
+			assert updatedTeam != null;
+			assertThat(updatedTeam.getMateCount()).isEqualTo(0);
+			AgendaTeamProfile updatedAtp = agendaTeamProfileRepository.findById(atp.getId()).orElse(null);
+			assert updatedAtp != null;
+			assertThat(updatedAtp.getIsExist()).isFalse();
+			AgendaTeamProfile updatedAtpLeader = agendaTeamProfileRepository.findById(atpLeader.getId()).orElse(null);
+			assert updatedAtpLeader != null;
+			assertThat(updatedAtpLeader.getIsExist()).isFalse();
+			ticketRepository.findFirstByAgendaProfileAndIsApprovedTrueAndIsUsedFalseOrderByCreatedAtAsc(
+					updatedAtp.getProfile())
+				.ifPresent(ticket -> {
+					assertThat(ticket.getUsedTo()).isNull();
+				});
+			ticketRepository.findFirstByAgendaProfileAndIsApprovedTrueAndIsUsedFalseOrderByCreatedAtAsc(
+					updatedAtpLeader.getProfile())
+				.ifPresent(ticket -> {
+					assertThat(ticket.getUsedTo()).isNull();
+				});
+		}
+
+		@Test
 		@DisplayName("404 agenda 없음으로 인한 실패")
 		public void noAgendaFail() throws Exception {
 			//given
@@ -944,14 +982,32 @@ public class AgendaTeamControllerTest {
 		public void notValidAgendaTeamStatusWhenTeamLeader() throws Exception {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(SEOUL);
+			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser, SEOUL, AgendaTeamStatus.CANCEL);
+			agendaMockData.createAgendaTeamProfile(team, seoulUserAgendaProfile);
+			// when && then
+			mockMvc.perform(
+					patch("/agenda/team/cancel")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.param("teamKey", team.getTeamKey().toString())
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("400 탈퇴 불가능한 AgendaTeam Status로 인한 팀원의 나가기 실패")
+		public void notValidAgendaTeamStatusConfirmWhenTeamMate() throws Exception {
+			//given
+			Agenda agenda = agendaMockData.createAgenda(SEOUL);
 			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser, SEOUL, AgendaTeamStatus.CONFIRM);
 			agendaMockData.createAgendaTeamProfile(team, seoulUserAgendaProfile);
+			AgendaTeamProfile atp = agendaMockData.createAgendaTeamProfile(team, anotherSeoulUserAgendaProfile);
 			TeamKeyReqDto req = new TeamKeyReqDto(team.getTeamKey());
 			String content = objectMapper.writeValueAsString(req);
 			// when && then
 			mockMvc.perform(
 					patch("/agenda/team/cancel")
-						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.header("Authorization", "Bearer " + anotherSeoulUserAccessToken)
 						.param("agenda_key", agenda.getAgendaKey().toString())
 						.content(content)
 						.contentType(MediaType.APPLICATION_JSON))
@@ -960,7 +1016,7 @@ public class AgendaTeamControllerTest {
 
 		@Test
 		@DisplayName("400 탈퇴 불가능한 AgendaTeam Status로 인한 팀원의 나가기 실패")
-		public void notValidAgendaTeamStatusWhenTeamMate() throws Exception {
+		public void notValidAgendaTeamStatusCoiWhenTeamMate() throws Exception {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(SEOUL);
 			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser, SEOUL, AgendaTeamStatus.CONFIRM);
@@ -998,7 +1054,7 @@ public class AgendaTeamControllerTest {
 		}
 
 		@Test
-		@DisplayName("403 참여 불가능한 Agenda Status 으로 인한 실패")
+		@DisplayName("403 탈퇴 불가능한 Agenda Status 으로 인한 실패")
 		public void notValidAgendaStatus() throws Exception {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(FINISH);
