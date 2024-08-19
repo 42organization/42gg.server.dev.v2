@@ -2,8 +2,6 @@ package gg.utils.dto;
 
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
