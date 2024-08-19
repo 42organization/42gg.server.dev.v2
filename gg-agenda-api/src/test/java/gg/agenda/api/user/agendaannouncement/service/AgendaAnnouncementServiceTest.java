@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import gg.agenda.api.user.agendaannouncement.controller.request.AgendaAnnouncementCreateReqDto;
@@ -62,7 +63,7 @@ public class AgendaAnnouncementServiceTest {
 			Agenda agenda = mock(Agenda.class);
 			Pageable pageable = mock(Pageable.class);
 			when(agendaAnnouncementRepository.findListByAgenda(pageable, agenda))
-				.thenReturn(List.of());
+				.thenReturn(Page.empty());
 
 			// when
 			agendaAnnouncementService.findAnnouncementListByAgenda(pageable, agenda);

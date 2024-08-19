@@ -22,6 +22,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.agenda.api.AgendaMockData;
@@ -33,6 +34,7 @@ import gg.data.user.User;
 import gg.repo.agenda.AgendaAnnouncementRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
+import gg.utils.dto.PageResponseDto;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -228,19 +230,21 @@ public class AgendaAnnouncementControllerTest {
 					.param("page", String.valueOf(page))
 					.param("size", String.valueOf(size)))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			AgendaAnnouncementResDto[] result = objectMapper.readValue(response, AgendaAnnouncementResDto[].class);
+			PageResponseDto<AgendaAnnouncementResDto> pageResponseDto = objectMapper
+				.readValue(response, new TypeReference<>() {});
+			List<AgendaAnnouncementResDto> result = pageResponseDto.getContent();
 
 			// then
 			assertThat(result).hasSize(size * page < total ? size : total % size);
 			announcements.sort((o1, o2) -> Long.compare(o2.getId(), o1.getId()));
-			for (int i = 0; i < result.length; i++) {
-				assertThat(result[i].getId()).isEqualTo(announcements.get(i + (page - 1) * size).getId());
-				assertThat(result[i].getTitle()).isEqualTo(announcements.get(i + (page - 1) * size).getTitle());
-				assertThat(result[i].getContent()).isEqualTo(announcements.get(i + (page - 1) * size).getContent());
+			for (int i = 0; i < result.size(); i++) {
+				assertThat(result.get(i).getId()).isEqualTo(announcements.get(i + (page - 1) * size).getId());
+				assertThat(result.get(i).getTitle()).isEqualTo(announcements.get(i + (page - 1) * size).getTitle());
+				assertThat(result.get(i).getContent()).isEqualTo(announcements.get(i + (page - 1) * size).getContent());
 				if (i == 0) {
 					continue;
 				}
-				assertThat(result[i].getId()).isLessThan(result[i - 1].getId());
+				assertThat(result.get(i).getId()).isLessThan(result.get(i - 1).getId());
 			}
 		}
 
@@ -260,8 +264,9 @@ public class AgendaAnnouncementControllerTest {
 					.param("page", String.valueOf(page))
 					.param("size", String.valueOf(size)))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			AgendaAnnouncementResDto[] result = objectMapper.readValue(response, AgendaAnnouncementResDto[].class);
-
+			PageResponseDto<AgendaAnnouncementResDto> pageResponseDto = objectMapper
+				.readValue(response, new TypeReference<>() {});
+			List<AgendaAnnouncementResDto> result = pageResponseDto.getContent();
 			// then
 			assertThat(result).hasSize(0);
 		}
