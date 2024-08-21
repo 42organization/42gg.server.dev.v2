@@ -28,13 +28,13 @@ public class AgendaAdminUpdateReqDto {
 
 	private AgendaStatus agendaStatus;
 
-	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
 	private LocalDateTime agendaDeadLine;
 
-	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
 	private LocalDateTime agendaStartTime;
 
-	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
 	private LocalDateTime agendaEndTime;
 
 	private Location agendaLocation;
