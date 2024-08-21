@@ -22,6 +22,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.admin.repo.agenda.AgendaAdminRepository;
@@ -43,6 +44,7 @@ import gg.utils.AgendaTestDataUtils;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import gg.utils.dto.PageRequestDto;
+import gg.utils.dto.PageResponseDto;
 import gg.utils.fixture.agenda.AgendaFixture;
 import gg.utils.fixture.agenda.AgendaProfileFixture;
 import gg.utils.fixture.agenda.AgendaTeamFixture;
@@ -121,15 +123,18 @@ public class AgendaTeamAdminControllerTest {
 					.param("page", String.valueOf(page))
 					.param("size", String.valueOf(size)))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			AgendaTeamResDto[] result = objectMapper.readValue(response, AgendaTeamResDto[].class);
+			PageResponseDto<AgendaTeamResDto> pageResponseDto = objectMapper
+				.readValue(response, new TypeReference<>() {
+				});
+			List<AgendaTeamResDto> result = pageResponseDto.getContent();
 
 			// then
 			assertThat(result).isNotNull();
-			assertThat(result).hasSize(((page - 1) * size) < teams.size()
+			assertThat(result.size()).isEqualTo(((page - 1) * size) < teams.size()
 				? Math.min(size, teams.size() - (page - 1) * size) : 0);
 			teams.sort((a, b) -> b.getId().compareTo(a.getId()));
-			for (int i = 0; i < result.length; i++) {
-				assertThat(result[i].getTeamKey()).isEqualTo(teams.get(i + (page - 1) * size).getTeamKey());
+			for (int i = 0; i < result.size(); i++) {
+				assertThat(result.get(i).getTeamKey()).isEqualTo(teams.get(i + (page - 1) * size).getTeamKey());
 			}
 		}
 

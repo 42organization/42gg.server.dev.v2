@@ -21,6 +21,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.admin.repo.agenda.AgendaAdminRepository;
@@ -34,6 +35,7 @@ import gg.utils.AgendaTestDataUtils;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import gg.utils.dto.PageRequestDto;
+import gg.utils.dto.PageResponseDto;
 import gg.utils.fixture.agenda.AgendaAnnouncementFixture;
 import gg.utils.fixture.agenda.AgendaFixture;
 
@@ -100,15 +102,17 @@ public class AgendaAnnouncementAdminControllerTest {
 					.param("page", String.valueOf(page))
 					.param("size", String.valueOf(size)))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			AgendaAnnouncementResDto[] result =
-				objectMapper.readValue(response, AgendaAnnouncementResDto[].class);
+			PageResponseDto<AgendaAnnouncementResDto> pageResponseDto = objectMapper.readValue(
+				response, new TypeReference<>() {
+				});
+			List<AgendaAnnouncementResDto> result = pageResponseDto.getContent();
 
 			// then
-			assertThat(result).hasSize(((page - 1) * size) < announcements.size()
+			assertThat(result.size()).isEqualTo(((page - 1) * size) < announcements.size()
 				? Math.min(size, announcements.size() - (page - 1) * size) : 0);
 			announcements.sort((a, b) -> b.getId().compareTo(a.getId()));
-			for (int i = 0; i < result.length; i++) {
-				assertThat(result[i].getId()).isEqualTo(announcements.get(i + (page - 1) * size).getId());
+			for (int i = 0; i < result.size(); i++) {
+				assertThat(result.get(i).getId()).isEqualTo(announcements.get(i + (page - 1) * size).getId());
 			}
 		}
 
@@ -127,11 +131,13 @@ public class AgendaAnnouncementAdminControllerTest {
 					.param("page", String.valueOf(page))
 					.param("size", String.valueOf(size)))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			AgendaAnnouncementResDto[] result =
-				objectMapper.readValue(response, AgendaAnnouncementResDto[].class);
+			PageResponseDto<AgendaAnnouncementResDto> pageResponseDto = objectMapper.readValue(
+				response, new TypeReference<>() {
+				});
+			List<AgendaAnnouncementResDto> result = pageResponseDto.getContent();
 
 			// then
-			assertThat(result).isEmpty();
+			assertThat(result.size()).isEqualTo(0);
 		}
 
 		@Test

@@ -5,6 +5,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -18,6 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.agenda.api.user.ticket.controller.response.TicketCountResDto;
@@ -30,6 +33,7 @@ import gg.repo.agenda.TicketRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import gg.utils.dto.PageRequestDto;
+import gg.utils.dto.PageResponseDto;
 import gg.utils.external.ApiUtil;
 import gg.utils.fixture.agenda.AgendaFixture;
 import gg.utils.fixture.agenda.AgendaProfileFixture;
@@ -215,9 +219,12 @@ public class TicketControllerTest {
 						.param("page", String.valueOf(req.getPage()))
 						.param("size", String.valueOf(req.getSize())))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			TicketHistoryResDto[] result = objectMapper.readValue(res, TicketHistoryResDto[].class);
+			PageResponseDto<TicketHistoryResDto> pageResponseDto = objectMapper.readValue(res, new TypeReference<>() {
+			});
+			List<TicketHistoryResDto> result = pageResponseDto.getContent();
+
 			//then
-			assertThat(result).hasSize(((page - 1) * 5) < 23
+			assertThat(result.size()).isEqualTo(((page - 1) * 5) < 23
 				? Math.min(5, 23 - (page - 1) * 5) : 0);
 		}
 
@@ -234,11 +241,14 @@ public class TicketControllerTest {
 						.param("page", String.valueOf(req.getPage()))
 						.param("size", String.valueOf(req.getSize())))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			TicketHistoryResDto[] result = objectMapper.readValue(res, TicketHistoryResDto[].class);
+			PageResponseDto<TicketHistoryResDto> pageResponseDto = objectMapper.readValue(res, new TypeReference<>() {
+			});
+			List<TicketHistoryResDto> result = pageResponseDto.getContent();
+
 			//then
-			assertThat(result).hasSize(1);
-			assertThat(result[0].getIssuedFrom()).isEqualTo("42Intra");
-			assertThat(result[0].getUsedTo()).isEqualTo("NotApproved");
+			assertThat(result.size()).isEqualTo(1);
+			assertThat(result.get(0).getIssuedFrom()).isEqualTo("42Intra");
+			assertThat(result.get(0).getUsedTo()).isEqualTo("NotApproved");
 		}
 
 		@Test
@@ -256,11 +266,14 @@ public class TicketControllerTest {
 						.param("page", String.valueOf(req.getPage()))
 						.param("size", String.valueOf(req.getSize())))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			TicketHistoryResDto[] result = objectMapper.readValue(res, TicketHistoryResDto[].class);
+			PageResponseDto<TicketHistoryResDto> pageResponseDto = objectMapper.readValue(res, new TypeReference<>() {
+				});
+			List<TicketHistoryResDto> result = pageResponseDto.getContent();
+
 			//then
-			assertThat(result).hasSize(1);
-			assertThat(result[0].getIssuedFrom()).isEqualTo("42Intra");
-			assertThat(result[0].getUsedTo()).isEqualTo(seoulAgenda.getTitle());
+			assertThat(result.size()).isEqualTo(1);
+			assertThat(result.get(0).getIssuedFrom()).isEqualTo("42Intra");
+			assertThat(result.get(0).getUsedTo()).isEqualTo(seoulAgenda.getTitle());
 		}
 
 		@Test
@@ -279,11 +292,13 @@ public class TicketControllerTest {
 						.param("page", String.valueOf(req.getPage()))
 						.param("size", String.valueOf(req.getSize())))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			TicketHistoryResDto[] result = objectMapper.readValue(res, TicketHistoryResDto[].class);
+			PageResponseDto<TicketHistoryResDto> pageResponseDto = objectMapper.readValue(res, new TypeReference<>() {
+			});
+			List<TicketHistoryResDto> result = pageResponseDto.getContent();
 			//then
-			assertThat(result).hasSize(1);
-			assertThat(result[0].getIssuedFrom()).isEqualTo("42Intra");
-			assertThat(result[0].getUsedTo()).isEqualTo("NotUsed");
+			assertThat(result.size()).isEqualTo(1);
+			assertThat(result.get(0).getIssuedFrom()).isEqualTo("42Intra");
+			assertThat(result.get(0).getUsedTo()).isEqualTo("NotUsed");
 		}
 
 		@Test
@@ -301,11 +316,13 @@ public class TicketControllerTest {
 						.param("page", String.valueOf(req.getPage()))
 						.param("size", String.valueOf(req.getSize())))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			TicketHistoryResDto[] result = objectMapper.readValue(res, TicketHistoryResDto[].class);
+			PageResponseDto<TicketHistoryResDto> pageResponseDto = objectMapper.readValue(res, new TypeReference<>() {
+			});
+			List<TicketHistoryResDto> result = pageResponseDto.getContent();
 			//then
-			assertThat(result).hasSize(1);
-			assertThat(result[0].getIssuedFrom()).isEqualTo(seoulAgenda.getTitle());
-			assertThat(result[0].getUsedTo()).isEqualTo("NotUsed");
+			assertThat(result.size()).isEqualTo(1);
+			assertThat(result.get(0).getIssuedFrom()).isEqualTo(seoulAgenda.getTitle());
+			assertThat(result.get(0).getUsedTo()).isEqualTo("NotUsed");
 		}
 
 		@Test
@@ -320,9 +337,11 @@ public class TicketControllerTest {
 						.param("page", String.valueOf(req.getPage()))
 						.param("size", String.valueOf(req.getSize())))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			TicketHistoryResDto[] result = objectMapper.readValue(res, TicketHistoryResDto[].class);
+			PageResponseDto<TicketHistoryResDto> pageResponseDto = objectMapper.readValue(res, new TypeReference<>() {
+			});
+			List<TicketHistoryResDto> result = pageResponseDto.getContent();
 			//then
-			assertThat(result).isEmpty();
+			assertThat(result.size()).isEqualTo(0);
 		}
 
 		@Test

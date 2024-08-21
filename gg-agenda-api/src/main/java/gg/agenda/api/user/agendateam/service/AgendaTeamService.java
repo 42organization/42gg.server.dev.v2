@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -29,6 +30,7 @@ import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.AgendaTeamProfile;
 import gg.data.agenda.Ticket;
+import gg.data.agenda.type.AgendaTeamStatus;
 import gg.data.agenda.type.Coalition;
 import gg.data.agenda.type.Location;
 import gg.repo.agenda.AgendaProfileRepository;
@@ -230,46 +232,17 @@ public class AgendaTeamService {
 		}
 	}
 
-	/**
-	 * 아젠다 팀 공개 모집인 팀 목록 조회
-	 * @param pageable 페이지네이션 요청 정보, agendaId 아젠다 아이디
-	 */
 	@Transactional(readOnly = true)
-	public List<OpenTeamResDto> listOpenTeam(UUID agendaKey, Pageable pageable) {
+	public Page<AgendaTeam> findAgendaTeamWithStatus(UUID agendaKey, AgendaTeamStatus status, Pageable pageable) {
 		Agenda agenda = agendaRepository.findByAgendaKey(agendaKey)
 			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
-		List<AgendaTeam> agendaTeams = agendaTeamRepository.findByAgendaAndStatusAndIsPrivateFalse(agenda, OPEN,
-			pageable).getContent();
-		return agendaTeams.stream()
-			.map(agendaTeam -> {
-				List<Coalition> coalitions = agendaTeamProfileRepository
-					.findByAgendaTeamAndIsExistTrue(agendaTeam).stream()
-					.map(agendaTeamProfile -> agendaTeamProfile.getProfile().getCoalition())
-					.collect(Collectors.toList());
-				return new OpenTeamResDto(agendaTeam, coalitions);
-			})
-			.collect(Collectors.toList());
+		return agendaTeamRepository.findByAgendaAndStatusAndIsPrivateFalse(agenda, status, pageable);
 	}
 
-	/**
-	 * 아젠다 팀 확정된 팀 목록 조회
-	 * @param pageable 페이지네이션 요청 정보, agendaId 아젠다 아이디
-	 */
 	@Transactional(readOnly = true)
-	public List<ConfirmTeamResDto> listConfirmTeam(UUID agendaKey, Pageable pageable) {
-		Agenda agenda = agendaRepository.findByAgendaKey(agendaKey)
-			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
-
-		List<AgendaTeam> agendaTeams = agendaTeamRepository.findByAgendaAndStatus(agenda, CONFIRM, pageable)
-			.getContent();
-		return agendaTeams.stream()
-			.map(agendaTeam -> {
-				List<Coalition> coalitions = agendaTeamProfileRepository
-					.findByAgendaTeamAndIsExistTrue(agendaTeam).stream()
-					.map(agendaTeamProfile -> agendaTeamProfile.getProfile().getCoalition())
-					.collect(Collectors.toList());
-				return new ConfirmTeamResDto(agendaTeam, coalitions);
-			})
+	public List<Coalition> getCoalitionsFromAgendaTeam(AgendaTeam agendaTeam) {
+		return agendaTeamProfileRepository.findByAgendaTeamAndIsExistTrue(agendaTeam).stream()
+			.map(agendaTeamProfile -> agendaTeamProfile.getProfile().getCoalition())
 			.collect(Collectors.toList());
 	}
 

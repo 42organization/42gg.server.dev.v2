@@ -22,6 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.agenda.api.AgendaMockData;
@@ -44,6 +45,7 @@ import gg.repo.agenda.TicketRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import gg.utils.dto.PageRequestDto;
+import gg.utils.dto.PageResponseDto;
 import gg.utils.fixture.agenda.AgendaFixture;
 import gg.utils.fixture.agenda.AgendaTeamFixture;
 import gg.utils.fixture.agenda.AgendaTeamProfileFixture;
@@ -1119,13 +1121,17 @@ public class AgendaTeamControllerTest {
 						.param("page", String.valueOf(req.getPage()))
 						.param("size", String.valueOf(req.getSize())))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			OpenTeamResDto[] result = objectMapper.readValue(res, OpenTeamResDto[].class);
+			PageResponseDto<OpenTeamResDto> pageResponseDto = objectMapper
+				.readValue(res, new TypeReference<>() {
+				});
+			List<OpenTeamResDto> result = pageResponseDto.getContent();
+
 			// then
-			assertThat(result).hasSize(((page - 1) * 5) < teams.size()
+			assertThat(result.size()).isEqualTo(((page - 1) * 5) < teams.size()
 				? Math.min(5, teams.size() - (page - 1) * 5) : 0);
 			teams.sort((a, b) -> b.getId().compareTo(a.getId()));
-			for (int i = 0; i < result.length; i++) {
-				assertThat(result[i].getTeamName()).isEqualTo(teams.get((page - 1) * 5 + i).getName());
+			for (int i = 0; i < result.size(); i++) {
+				assertThat(result.get(i).getTeamName()).isEqualTo(teams.get((page - 1) * 5 + i).getName());
 			}
 		}
 
@@ -1143,9 +1149,13 @@ public class AgendaTeamControllerTest {
 						.param("page", String.valueOf(req.getPage()))
 						.param("size", String.valueOf(req.getSize())))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			OpenTeamResDto[] result = objectMapper.readValue(res, OpenTeamResDto[].class);
+			PageResponseDto<OpenTeamResDto> pageResponseDto = objectMapper
+				.readValue(res, new TypeReference<>() {
+				});
+			List<OpenTeamResDto> result = pageResponseDto.getContent();
+
 			// then
-			assertThat(result).isEmpty();
+			assertThat(result.size()).isEqualTo(0);
 		}
 
 		@Test
@@ -1195,13 +1205,17 @@ public class AgendaTeamControllerTest {
 						.param("page", String.valueOf(req.getPage()))
 						.param("size", String.valueOf(req.getSize())))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			ConfirmTeamResDto[] result = objectMapper.readValue(res, ConfirmTeamResDto[].class);
+			PageResponseDto<ConfirmTeamResDto> pageResponseDto = objectMapper
+				.readValue(res, new TypeReference<>() {
+				});
+			List<ConfirmTeamResDto> result = pageResponseDto.getContent();
+
 			// then
-			assertThat(result).hasSize(((page - 1) * 5) < teams.size()
+			assertThat(result.size()).isEqualTo(((page - 1) * 5) < teams.size()
 				? Math.min(5, teams.size() - (page - 1) * 5) : 0);
 			teams.sort((a, b) -> b.getId().compareTo(a.getId()));
-			for (int i = 0; i < result.length; i++) {
-				assertThat(result[i].getTeamName()).isEqualTo(teams.get((page - 1) * 5 + i).getName());
+			for (int i = 0; i < result.size(); i++) {
+				assertThat(result.get(i).getTeamName()).isEqualTo(teams.get((page - 1) * 5 + i).getName());
 			}
 		}
 
@@ -1220,9 +1234,13 @@ public class AgendaTeamControllerTest {
 						.param("page", String.valueOf(req.getPage()))
 						.param("size", String.valueOf(req.getSize())))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-			ConfirmTeamResDto[] result = objectMapper.readValue(res, ConfirmTeamResDto[].class);
+			PageResponseDto<ConfirmTeamResDto> pageResponseDto = objectMapper
+				.readValue(res, new TypeReference<>() {
+				});
+			List<ConfirmTeamResDto> result = pageResponseDto.getContent();
+
 			// then
-			assertThat(result).isEmpty();
+			assertThat(result.size()).isEqualTo(0);
 		}
 
 		@Test

@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -23,6 +24,7 @@ import gg.agenda.api.admin.agendaannouncement.controller.response.AgendaAnnounce
 import gg.agenda.api.admin.agendaannouncement.service.AgendaAnnouncementAdminService;
 import gg.data.agenda.AgendaAnnouncement;
 import gg.utils.dto.PageRequestDto;
+import gg.utils.dto.PageResponseDto;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -33,17 +35,21 @@ public class AgendaAnnouncementAdminController {
 	private final AgendaAnnouncementAdminService agendaAnnouncementAdminService;
 
 	@GetMapping()
-	public ResponseEntity<List<AgendaAnnouncementAdminResDto>> agendaAnnouncementList(
+	public ResponseEntity<PageResponseDto<AgendaAnnouncementAdminResDto>> agendaAnnouncementList(
 		@RequestParam("agenda_key") UUID agendaKey, @ModelAttribute @Valid PageRequestDto pageRequest) {
 		int page = pageRequest.getPage();
 		int size = pageRequest.getSize();
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());
-		List<AgendaAnnouncement> announcements = agendaAnnouncementAdminService
+
+		Page<AgendaAnnouncement> agendaAnnouncementList = agendaAnnouncementAdminService
 			.getAgendaAnnouncementList(agendaKey, pageable);
-		List<AgendaAnnouncementAdminResDto> announceDtos = announcements.stream()
+
+		List<AgendaAnnouncementAdminResDto> announceDtos = agendaAnnouncementList.stream()
 			.map(AgendaAnnouncementAdminResDto.MapStruct.INSTANCE::toDto)
 			.collect(Collectors.toList());
-		return ResponseEntity.ok(announceDtos);
+		PageResponseDto<AgendaAnnouncementAdminResDto> pageResponseDto = PageResponseDto.of(
+			agendaAnnouncementList.getTotalElements(), announceDtos);
+		return ResponseEntity.ok(pageResponseDto);
 	}
 
 	@PatchMapping()

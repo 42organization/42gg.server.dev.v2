@@ -22,6 +22,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.agenda.api.AgendaMockData;
@@ -42,6 +43,7 @@ import gg.repo.agenda.AgendaProfileRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import gg.utils.dto.PageRequestDto;
+import gg.utils.dto.PageResponseDto;
 
 @IntegrationTest
 @Transactional
@@ -377,23 +379,26 @@ public class AgendaProfileControllerTest {
 					.content(request))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
-			AttendedAgendaListResDto[] result = objectMapper.readValue(response, AttendedAgendaListResDto[].class);
+			PageResponseDto<AttendedAgendaListResDto> pageResponseDto = objectMapper
+				.readValue(response, new TypeReference<>() {
+				});
+			List<AttendedAgendaListResDto> result = pageResponseDto.getContent();
 
 			// then
 			assertThat(result).hasSize(size * page < total ? size : total % size);
 			attendedAgendas.sort((o1, o2) -> Long.compare(o2.getAgenda().getId(), o1.getAgenda().getId()));
-			for (int i = 0; i < result.length; i++) {
-				assertThat(result[i].getAgendaId()).isEqualTo(
+			for (int i = 0; i < result.size(); i++) {
+				assertThat(result.get(i).getAgendaId()).isEqualTo(
 					attendedAgendas.get(i + (page - 1) * size).getAgenda().getId().toString());
-				assertThat(result[i].getAgendaTitle()).isEqualTo(
+				assertThat(result.get(i).getAgendaTitle()).isEqualTo(
 					attendedAgendas.get(i + (page - 1) * size).getAgenda().getTitle());
-				assertThat(result[i].getAgendaLocation()).isEqualTo(
+				assertThat(result.get(i).getAgendaLocation()).isEqualTo(
 					attendedAgendas.get(i + (page - 1) * size).getAgenda().getLocation().toString());
-				assertThat(result[i].getTeamKey()).isEqualTo(
+				assertThat(result.get(i).getTeamKey()).isEqualTo(
 					attendedAgendas.get(i + (page - 1) * size).getAgendaTeam().getTeamKey());
-				assertThat(result[i].getIsOfficial()).isEqualTo(
+				assertThat(result.get(i).getIsOfficial()).isEqualTo(
 					attendedAgendas.get(i + (page - 1) * size).getAgenda().getIsOfficial());
-				assertThat(result[i].getTeamName()).isEqualTo(
+				assertThat(result.get(i).getTeamName()).isEqualTo(
 					attendedAgendas.get(i + (page - 1) * size).getAgendaTeam().getName());
 			}
 		}
@@ -415,7 +420,10 @@ public class AgendaProfileControllerTest {
 					.content(request))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
-			AttendedAgendaListResDto[] result = objectMapper.readValue(response, AttendedAgendaListResDto[].class);
+			PageResponseDto<AttendedAgendaListResDto> pageResponseDto = objectMapper
+				.readValue(response, new TypeReference<>() {
+				});
+			List<AttendedAgendaListResDto> result = pageResponseDto.getContent();
 
 			// then
 			assertThat(result).isEmpty();
@@ -439,6 +447,3 @@ public class AgendaProfileControllerTest {
 		}
 	}
 }
-
-
-

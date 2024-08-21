@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -68,7 +69,7 @@ public class AgendaTeamAdminServiceTest {
 				.thenReturn(new PageImpl<>(announcements));
 
 			// when
-			List<AgendaTeam> result = agendaTeamAdminService.getAgendaTeamList(agenda.getAgendaKey(), pageable);
+			Page<AgendaTeam> result = agendaTeamAdminService.getAgendaTeamList(agenda.getAgendaKey(), pageable);
 
 			// then
 			verify(agendaAdminRepository, times(1)).findByAgendaKey(any(UUID.class));

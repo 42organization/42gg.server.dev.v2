@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -26,6 +27,7 @@ import gg.agenda.api.admin.agendateam.service.AgendaTeamAdminService;
 import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.AgendaTeam;
 import gg.utils.dto.PageRequestDto;
+import gg.utils.dto.PageResponseDto;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -36,16 +38,20 @@ public class AgendaTeamAdminController {
 	private final AgendaTeamAdminService agendaTeamAdminService;
 
 	@GetMapping("/list")
-	public ResponseEntity<List<AgendaTeamResDto>> agendaTeamList(@RequestParam("agenda_key") UUID agendaKey,
+	public ResponseEntity<PageResponseDto<AgendaTeamResDto>> agendaTeamList(@RequestParam("agenda_key") UUID agendaKey,
 		@ModelAttribute @Valid PageRequestDto pageRequestDto) {
 		int page = pageRequestDto.getPage();
 		int size = pageRequestDto.getSize();
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());
-		List<AgendaTeam> agendaTeamList = agendaTeamAdminService.getAgendaTeamList(agendaKey, pageable);
-		List<AgendaTeamResDto> agendaTeamResDtoList = agendaTeamList.stream()
+
+		Page<AgendaTeam> agendaTeamList = agendaTeamAdminService.getAgendaTeamList(agendaKey, pageable);
+
+		List<AgendaTeamResDto> agendaTeamResDtos = agendaTeamList.stream()
 			.map(AgendaTeamResDto.MapStruct.INSTANCE::toDto)
 			.collect(Collectors.toList());
-		return ResponseEntity.ok(agendaTeamResDtoList);
+		PageResponseDto<AgendaTeamResDto> pageResponseDto = PageResponseDto.of(
+			agendaTeamList.getTotalElements(), agendaTeamResDtos);
+		return ResponseEntity.ok(pageResponseDto);
 	}
 
 	@GetMapping
