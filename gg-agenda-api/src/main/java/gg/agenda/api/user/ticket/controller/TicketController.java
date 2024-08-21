@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import gg.agenda.api.user.agendaprofile.service.AgendaProfileService;
 import gg.agenda.api.user.ticket.controller.response.TicketCountResDto;
 import gg.agenda.api.user.ticket.controller.response.TicketHistoryResDto;
 import gg.agenda.api.user.ticket.service.TicketService;
@@ -66,7 +65,7 @@ public class TicketController {
 			.count();
 		boolean setupTicket = tickets.size() > approvedCount;
 
-		return ResponseEntity.ok(new TicketCountResDto(tickets.size(), setupTicket);
+		return ResponseEntity.ok(new TicketCountResDto(tickets.size(), setupTicket));
 	}
 
 	/**
