@@ -141,7 +141,7 @@ public class AgendaHostControllerTest {
 				.collect(Collectors.toList());
 
 			// when
-			String response = mockMvc.perform(get("/agenda/host/history/list")
+			String response = mockMvc.perform(get("/agenda/host/current/list")
 					.header("Authorization", "Bearer " + accessToken)
 					.param("page", String.valueOf(page))
 					.param("size", String.valueOf(size)))
@@ -170,7 +170,7 @@ public class AgendaHostControllerTest {
 			// given
 
 			// when
-			String response = mockMvc.perform(get("/agenda/host/history/list")
+			String response = mockMvc.perform(get("/agenda/host/current/list")
 					.header("Authorization", "Bearer " + accessToken)
 					.param("page", "1")
 					.param("size", "10"))
