@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import gg.agenda.api.user.agenda.service.AgendaService;
+import gg.agenda.api.user.agendaprofile.service.AgendaProfileService;
 import gg.agenda.api.user.ticket.controller.response.TicketCountResDto;
 import gg.agenda.api.user.ticket.controller.response.TicketHistoryResDto;
 import gg.agenda.api.user.ticket.service.TicketService;
@@ -42,7 +42,6 @@ import lombok.RequiredArgsConstructor;
 public class TicketController {
 	private final CookieUtil cookieUtil;
 	private final TicketService ticketService;
-	private final AgendaService agendaService;
 
 	/**
 	 * 티켓 설정 추가
@@ -56,12 +55,18 @@ public class TicketController {
 
 	/**
 	 * 티켓 수 조회
+	 * boolean setupTicket = tickets.size() > approvedCount; setupTicket이 있는지 확인하는 부분
 	 * @param user 사용자 정보
 	 */
 	@GetMapping
 	public ResponseEntity<TicketCountResDto> ticketCountFind(@Parameter(hidden = true) @Login UserDto user) {
-		int ticketCount = ticketService.findTicketCount(user);
-		return ResponseEntity.ok().body(new TicketCountResDto(ticketCount));
+		List<Ticket> tickets = ticketService.findTicketList(user);
+		long approvedCount = tickets.stream()
+			.filter(Ticket::getIsApproved)
+			.count();
+		boolean setupTicket = tickets.size() > approvedCount;
+
+		return ResponseEntity.ok(new TicketCountResDto(tickets.size(), setupTicket);
 	}
 
 	/**
