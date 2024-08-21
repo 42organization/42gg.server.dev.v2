@@ -14,8 +14,6 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import gg.agenda.api.user.agenda.controller.request.validator.AgendaCapacityValid;
 import gg.agenda.api.user.agenda.controller.request.validator.AgendaScheduleValid;
 import gg.data.agenda.Agenda;
