@@ -18,9 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import gg.agenda.api.user.agendateam.controller.request.TeamCreateReqDto;
 import gg.agenda.api.user.agendateam.controller.request.TeamKeyReqDto;
 import gg.agenda.api.user.agendateam.controller.request.TeamUpdateReqDto;
-import gg.agenda.api.user.agendateam.controller.response.ConfirmTeamResDto;
 import gg.agenda.api.user.agendateam.controller.response.MyTeamSimpleResDto;
-import gg.agenda.api.user.agendateam.controller.response.OpenTeamResDto;
 import gg.agenda.api.user.agendateam.controller.response.TeamDetailsResDto;
 import gg.agenda.api.user.agendateam.controller.response.TeamKeyResDto;
 import gg.agenda.api.user.ticket.service.TicketService;
@@ -201,7 +199,7 @@ public class AgendaTeamService {
 		List<AgendaTeamProfile> agendaTeamProfiles = agendaTeamProfileRepository
 			.findByAgendaTeamAndIsExistTrue(agendaTeam);
 		agendaTeamProfiles.forEach(agendaTeamProfile -> leaveTeam(agendaTeam, agendaTeamProfile));
-		agendaTeam.cancelTeam();
+		agendaTeam.cancelTeam(agendaTeam.getStatus());
 	}
 
 	/**

@@ -79,11 +79,10 @@ public class TicketService {
 	 * @return 티켓 수
 	 */
 	@Transactional(readOnly = true)
-	public int findTicketCount(UserDto user) {
+	public List<Ticket> findTicketList(UserDto user) {
 		AgendaProfile profile = agendaProfileRepository.findByUserId(user.getId())
 			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
-		List<Ticket> tickets = ticketRepository.findByAgendaProfileIdAndIsUsedFalseAndIsApprovedTrue(profile.getId());
-		return tickets.size();
+		return ticketRepository.findByAgendaProfileAndIsUsedFalse(profile);
 	}
 
 	/**
@@ -108,7 +107,7 @@ public class TicketService {
 	 * @param profile AgendaProfile
 	 * @return 티켓 설정
 	 */
-	private Ticket getSetUpTicket(AgendaProfile profile) {
+	public Ticket getSetUpTicket(AgendaProfile profile) {
 		return ticketRepository.findByAgendaProfileAndIsApprovedFalse(profile)
 			.orElseThrow(() -> new NotExistException(NOT_SETUP_TICKET));
 	}
@@ -176,9 +175,9 @@ public class TicketService {
 		return ticketRepository.findByAgendaProfileId(profile.getId(), pageable);
 	}
 
-		/**
-		 * 티켓 이력 조회
-		 */
+	/**
+	 * 티켓 이력 조회
+	 */
 	@Transactional(readOnly = true)
 	public TicketHistoryResDto convertAgendaKeyToTitleWhereIssuedFromAndUsedTo(Ticket ticket) {
 		TicketHistoryResDto dto = new TicketHistoryResDto(ticket);

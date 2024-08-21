@@ -23,7 +23,7 @@ public class AgendaCapacityValidator implements ConstraintValidator<AgendaCapaci
 	}
 
 	private boolean mustHaveValidTeam(AgendaCreateReqDto value) {
-		return value.getAgendaMinTeam() < value.getAgendaMaxTeam()
-			&& value.getAgendaMinPeople() < value.getAgendaMaxPeople();
+		return value.getAgendaMinTeam() <= value.getAgendaMaxTeam()
+			&& value.getAgendaMinPeople() <= value.getAgendaMaxPeople();
 	}
 }

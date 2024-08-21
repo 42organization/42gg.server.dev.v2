@@ -7,8 +7,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class TicketCountResDto {
 	private int ticketCount;
+	private boolean setupTicket;
 
-	public TicketCountResDto(int ticketCount) {
+	public TicketCountResDto(int ticketCount, boolean setupTicket) {
 		this.ticketCount = ticketCount;
+		this.setupTicket = setupTicket;
 	}
 }

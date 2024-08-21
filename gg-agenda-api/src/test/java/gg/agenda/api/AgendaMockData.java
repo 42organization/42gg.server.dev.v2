@@ -410,7 +410,7 @@ public class AgendaMockData {
 			.endTime(LocalDateTime.now().plusDays(3))
 			.minTeam(2)
 			.maxTeam(20)
-			.currentTeam(0)
+			.currentTeam(1)
 			.minPeople(1)
 			.maxPeople(20)
 			.posterUri("posterUri")

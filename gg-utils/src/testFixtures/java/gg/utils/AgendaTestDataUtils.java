@@ -72,7 +72,7 @@ public class AgendaTestDataUtils {
 			List<AgendaProfile> mates = agendaProfileFixture.createAgendaProfileList(3);
 			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda, leader, AgendaTeamStatus.OPEN);
 			agendaTeamProfileFixture.createAgendaTeamProfileList(agenda, team, mates);
-			team.cancelTeam();
+			team.cancelTeam(team.getStatus());
 		}
 		return agenda;
 	}

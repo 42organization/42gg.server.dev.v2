@@ -862,6 +862,7 @@ public class AgendaTeamControllerTest {
 			AgendaTeam updatedTeam = agendaTeamRepository.findByTeamKey(team.getTeamKey()).orElse(null);
 			assert updatedTeam != null;
 			assertThat(updatedTeam.getMateCount()).isEqualTo(1);
+			assertThat(agenda.getCurrentTeam()).isEqualTo(1);
 			AgendaTeamProfile updatedAtp = agendaTeamProfileRepository.findById(atp.getId()).orElse(null);
 			assert updatedAtp != null;
 			assertThat(updatedAtp.getIsExist()).isFalse();
@@ -892,6 +893,7 @@ public class AgendaTeamControllerTest {
 			AgendaTeam updatedTeam = agendaTeamRepository.findByTeamKey(team.getTeamKey()).orElse(null);
 			assert updatedTeam != null;
 			assertThat(updatedTeam.getMateCount()).isEqualTo(0);
+			assertThat(agenda.getCurrentTeam()).isEqualTo(1);
 			AgendaTeamProfile updatedAtp = agendaTeamProfileRepository.findById(atp.getId()).orElse(null);
 			assert updatedAtp != null;
 			assertThat(updatedAtp.getIsExist()).isFalse();
@@ -930,6 +932,7 @@ public class AgendaTeamControllerTest {
 			AgendaTeam updatedTeam = agendaTeamRepository.findByTeamKey(team.getTeamKey()).orElse(null);
 			assert updatedTeam != null;
 			assertThat(updatedTeam.getMateCount()).isEqualTo(0);
+			assertThat(agenda.getCurrentTeam()).isEqualTo(0);
 			AgendaTeamProfile updatedAtp = agendaTeamProfileRepository.findById(atp.getId()).orElse(null);
 			assert updatedAtp != null;
 			assertThat(updatedAtp.getIsExist()).isFalse();

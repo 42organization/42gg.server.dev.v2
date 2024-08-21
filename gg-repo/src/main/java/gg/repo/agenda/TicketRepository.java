@@ -21,4 +21,6 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
 	Optional<Ticket> findByAgendaProfileId(Long agendaProfileId);
 
 	Page<Ticket> findByAgendaProfileId(Long agendaProfileId, Pageable pageable);
+
+	List<Ticket> findByAgendaProfileAndIsUsedFalse(AgendaProfile agendaProfile);
 }
