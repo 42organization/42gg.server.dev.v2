@@ -21,7 +21,7 @@ public class AgendaResDto {
 
 	private String agendaTitle;
 
-	private String agendaContents;
+	private String agendaContent;
 
 	private LocalDateTime agendaDeadLine;
 
@@ -56,13 +56,13 @@ public class AgendaResDto {
 	private String announcementTitle;
 
 	@Builder
-	public AgendaResDto(String agendaTitle, String agendaContents, LocalDateTime agendaDeadLine,
+	public AgendaResDto(String agendaTitle, String agendaContent, LocalDateTime agendaDeadLine,
 		LocalDateTime agendaStartTime, LocalDateTime agendaEndTime, int agendaMinTeam, int agendaMaxTeam,
 		int agendaCurrentTeam, int agendaMinPeople, int agendaMaxPeople, String agendaPosterUrl, String agendaHost,
 		Location agendaLocation, AgendaStatus agendaStatus, LocalDateTime createdAt, String announcementTitle,
 		Boolean isOfficial, Boolean isRanking) {
 		this.agendaTitle = agendaTitle;
-		this.agendaContents = agendaContents;
+		this.agendaContent = agendaContent;
 		this.agendaDeadLine = agendaDeadLine;
 		this.agendaStartTime = agendaStartTime;
 		this.agendaEndTime = agendaEndTime;
@@ -87,7 +87,7 @@ public class AgendaResDto {
 		AgendaResDto.MapStruct INSTANCE = Mappers.getMapper(AgendaResDto.MapStruct.class);
 
 		@Mapping(target = "agendaTitle", source = "agenda.title")
-		@Mapping(target = "agendaContents", source = "agenda.content")
+		@Mapping(target = "agendaContent", source = "agenda.content")
 		@Mapping(target = "agendaDeadLine", source = "agenda.deadline")
 		@Mapping(target = "agendaStartTime", source = "agenda.startTime")
 		@Mapping(target = "agendaEndTime", source = "agenda.endTime")
