@@ -249,10 +249,12 @@ public class Agenda extends BaseTimeEntity {
 		mustBeforeDeadline(now);
 	}
 
-	public void leaveTeam(LocalDateTime now) {
+	public void leaveTeam(LocalDateTime now, AgendaTeamStatus status) {
 		mustStatusOpen();
 		mustBeforeDeadline(now);
-		this.currentTeam--;
+		if (status == AgendaTeamStatus.CONFIRM) {
+			this.currentTeam--;
+		}
 	}
 
 	private void mustBeWithinLocation(Location location) {
