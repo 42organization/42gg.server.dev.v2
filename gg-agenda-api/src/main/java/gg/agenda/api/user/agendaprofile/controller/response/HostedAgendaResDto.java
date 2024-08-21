@@ -8,6 +8,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 import gg.data.agenda.Agenda;
+import gg.data.agenda.type.AgendaStatus;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,12 +30,13 @@ public class HostedAgendaResDto {
 	private String agendaLocation;
 	private Boolean isRanking;
 	private Boolean isOfficial;
+	private AgendaStatus agendaStatus;
 
 	@Builder
 	public HostedAgendaResDto(String agendaKey, String agendaTitle, LocalDateTime agendaDeadLine,
 		LocalDateTime agendaStartTime, LocalDateTime agendaEndTime, int agendaCurrentTeam, int agendaMaxTeam,
 		int agendaMinTeam, int agendaMinPeople, int agendaMaxPeople, String agendaLocation, Boolean isRanking,
-		Boolean isOfficial) {
+		Boolean isOfficial, AgendaStatus agendaStatus) {
 		this.agendaKey = agendaKey;
 		this.agendaTitle = agendaTitle;
 		this.agendaDeadLine = agendaDeadLine;
@@ -48,6 +50,7 @@ public class HostedAgendaResDto {
 		this.agendaLocation = agendaLocation;
 		this.isRanking = isRanking;
 		this.isOfficial = isOfficial;
+		this.agendaStatus = agendaStatus;
 	}
 
 	@Mapper
@@ -67,6 +70,7 @@ public class HostedAgendaResDto {
 		@Mapping(target = "agendaLocation", source = "location")
 		@Mapping(target = "isRanking", source = "isRanking")
 		@Mapping(target = "isOfficial", source = "isOfficial")
+		@Mapping(target = "agendaStatus", source = "status")
 		HostedAgendaResDto toDto(Agenda agenda);
 	}
 }

@@ -1,5 +1,6 @@
 package gg.utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -75,5 +76,18 @@ public class AgendaTestDataUtils {
 			team.cancelTeam();
 		}
 		return agenda;
+	}
+
+	public List<Agenda> createAgendasWithAllStatus(User user, int size) {
+		List<Agenda> agendas = new ArrayList<>();
+		for (int i = 0; i < size; i++) {
+			agendas.add(agendaFixture.createAgenda(user.getIntraId(), AgendaStatus.OPEN));
+			agendas.add(agendaFixture.createAgenda(user.getIntraId(), AgendaStatus.CONFIRM));
+			agendas.add(agendaFixture.createAgenda(user.getIntraId(), AgendaStatus.FINISH));
+			agendas.add(agendaFixture.createAgenda(user.getIntraId(), AgendaStatus.CANCEL));
+		}
+		em.flush();
+		em.clear();
+		return agendas;
 	}
 }

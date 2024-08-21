@@ -89,17 +89,13 @@ public class AgendaProfileFindService {
 
 	@Transactional(readOnly = true)
 	public Page<Agenda> findHostedAgenda(String intraId, Pageable pageable) {
-		AgendaProfile agendaProfile = agendaProfileRepository.findByIntraId(intraId)
-			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
 		return agendaRepository.findAllByHostIntraIdAndStatus(
-			agendaProfile.getIntraId(), AgendaStatus.FINISH, AgendaStatus.CANCEL, pageable);
+			intraId, AgendaStatus.FINISH, AgendaStatus.CANCEL, pageable);
 	}
 
 	@Transactional(readOnly = true)
 	public Page<Agenda> findHostingAgenda(String intraId, Pageable pageable) {
-		AgendaProfile agendaProfile = agendaProfileRepository.findByIntraId(intraId)
-			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
 		return agendaRepository.findAllByHostIntraIdAndStatus(
-			agendaProfile.getIntraId(), AgendaStatus.OPEN, AgendaStatus.CONFIRM, pageable);
+			intraId, AgendaStatus.OPEN, AgendaStatus.CONFIRM, pageable);
 	}
 }
