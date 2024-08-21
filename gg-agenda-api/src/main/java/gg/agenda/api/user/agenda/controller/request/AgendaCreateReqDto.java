@@ -38,17 +38,17 @@ public class AgendaCreateReqDto {
 	private String agendaContent;
 
 	@NotNull
-	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	@Future(message = "마감일은 현재 시간 이후여야 합니다.")
 	private LocalDateTime agendaDeadLine;
 
 	@NotNull
-	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	@Future(message = "시작 시간은 현재 시간 이후여야 합니다.")
 	private LocalDateTime agendaStartTime;
 
 	@NotNull
-	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	@Future(message = "종료 시간은 현재 시간 이후여야 합니다.")
 	private LocalDateTime agendaEndTime;
 
