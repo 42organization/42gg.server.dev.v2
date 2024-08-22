@@ -121,4 +121,14 @@ public class Ticket extends BaseTimeEntity {
 		this.isApproved = true;
 		this.approvedAt = LocalDateTime.now();
 	}
+
+	public void updateTicketAdmin(UUID issuedFrom, UUID usedTo, Boolean isApproved, LocalDateTime approvedAt,
+		Boolean isUsed, LocalDateTime usedAt) {
+		this.issuedFrom = issuedFrom;
+		this.usedTo = usedTo;
+		this.isApproved = isApproved;
+		this.approvedAt = approvedAt;
+		this.isUsed = isUsed;
+		this.usedAt = usedAt;
+	}
 }
