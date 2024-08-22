@@ -1,6 +1,7 @@
 package gg.data.agenda;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -126,9 +127,13 @@ public class Ticket extends BaseTimeEntity {
 		Boolean isUsed, LocalDateTime usedAt) {
 		this.issuedFrom = issuedFrom;
 		this.usedTo = usedTo;
-		this.isApproved = isApproved;
 		this.approvedAt = approvedAt;
-		this.isUsed = isUsed;
 		this.usedAt = usedAt;
+		if (Objects.nonNull(isUsed)) {
+			this.isUsed = isUsed;
+		}
+		if (Objects.nonNull(isApproved)) {
+			this.isApproved = isApproved;
+		}
 	}
 }

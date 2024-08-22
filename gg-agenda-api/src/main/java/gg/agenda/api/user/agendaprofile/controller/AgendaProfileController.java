@@ -25,7 +25,6 @@ import gg.agenda.api.user.agendaprofile.controller.response.AttendedAgendaListRe
 import gg.agenda.api.user.agendaprofile.controller.response.CurrentAttendAgendaListResDto;
 import gg.agenda.api.user.agendaprofile.service.AgendaProfileFindService;
 import gg.agenda.api.user.agendaprofile.service.AgendaProfileService;
-import gg.agenda.api.user.agendateam.controller.response.TeamMateDto;
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
 import gg.data.agenda.AgendaTeamProfile;
@@ -69,9 +68,8 @@ public class AgendaProfileController {
 	}
 
 	/**
-	 * AgendaProfile 상세 조회 API
+	 * AgendaProfile admin 여부 조회 API
 	 * @param user 로그인한 사용자 정보
-	 * @return AgendaProfileDetailsResDto 객체와 HTTP 상태 코드를 포함한 ResponseEntity
 	 */
 	@GetMapping("/info")
 	public ResponseEntity<AgendaProfileInfoDetailsResDto> myAgendaProfileInfoDetails(
