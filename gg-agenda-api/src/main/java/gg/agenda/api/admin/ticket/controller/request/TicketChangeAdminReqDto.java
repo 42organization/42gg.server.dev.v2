@@ -15,10 +15,10 @@ public class TicketChangeAdminReqDto {
 	private UUID issuedFromKey;
 	private UUID usedToKey;
 	private Boolean isApproved;
-	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
 	private LocalDateTime approvedAt;
 	private Boolean isUsed;
-	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
 	private LocalDateTime usedAt;
 
 	@Builder
