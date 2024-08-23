@@ -13,11 +13,13 @@ import org.springframework.transaction.annotation.Transactional;
 import gg.agenda.api.user.agendaprofile.controller.response.AgendaProfileDetailsResDto;
 import gg.agenda.api.user.agendaprofile.controller.response.AttendedAgendaListResDto;
 import gg.agenda.api.user.agendaprofile.controller.response.CurrentAttendAgendaListResDto;
+import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.AgendaTeamProfile;
 import gg.data.agenda.type.AgendaStatus;
 import gg.repo.agenda.AgendaProfileRepository;
+import gg.repo.agenda.AgendaRepository;
 import gg.repo.agenda.AgendaTeamProfileRepository;
 import gg.repo.agenda.AgendaTeamRepository;
 import gg.repo.agenda.TicketRepository;
@@ -29,11 +31,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AgendaProfileFindService {
 
-	private final UserRepository userRepository;
 	private final AgendaProfileRepository agendaProfileRepository;
 	private final TicketRepository ticketRepository;
 	private final AgendaTeamProfileRepository agendaTeamProfileRepository;
-	private final AgendaTeamRepository agendaTeamRepository;
+	private final AgendaRepository agendaRepository;
 
 	/**
 	 * AgendaProfile 상세 정보를 조회하는 메서드
@@ -84,5 +85,17 @@ public class AgendaProfileFindService {
 	@Transactional(readOnly = true)
 	public List<AgendaTeamProfile> findTeamMatesFromAgendaTeam(AgendaTeam agendaTeam) {
 		return agendaTeamProfileRepository.findByAgendaTeamAndIsExistTrue(agendaTeam);
+	}
+
+	@Transactional(readOnly = true)
+	public Page<Agenda> findHostedAgenda(String intraId, Pageable pageable) {
+		return agendaRepository.findAllByHostIntraIdAndStatus(
+			intraId, AgendaStatus.FINISH, AgendaStatus.CANCEL, pageable);
+	}
+
+	@Transactional(readOnly = true)
+	public Page<Agenda> findHostingAgenda(String intraId, Pageable pageable) {
+		return agendaRepository.findAllByHostIntraIdAndStatus(
+			intraId, AgendaStatus.OPEN, AgendaStatus.CONFIRM, pageable);
 	}
 }
