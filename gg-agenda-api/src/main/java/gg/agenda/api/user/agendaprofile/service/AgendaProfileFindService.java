@@ -11,11 +11,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import gg.agenda.api.user.agendaprofile.controller.response.CurrentAttendAgendaListResDto;
+import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.AgendaTeamProfile;
 import gg.data.agenda.type.AgendaStatus;
 import gg.repo.agenda.AgendaProfileRepository;
+import gg.repo.agenda.AgendaRepository;
 import gg.repo.agenda.AgendaTeamProfileRepository;
 import gg.utils.exception.custom.NotExistException;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +30,7 @@ public class AgendaProfileFindService {
 
 	private final AgendaProfileRepository agendaProfileRepository;
 	private final AgendaTeamProfileRepository agendaTeamProfileRepository;
+	private final AgendaRepository agendaRepository;
 
 	@Transactional(readOnly = true)
 	public AgendaProfile findAgendaProfileByIntraId(String intraId) {
@@ -68,5 +71,17 @@ public class AgendaProfileFindService {
 	@Transactional(readOnly = true)
 	public List<AgendaTeamProfile> findTeamMatesFromAgendaTeam(AgendaTeam agendaTeam) {
 		return agendaTeamProfileRepository.findByAgendaTeamAndIsExistTrue(agendaTeam);
+	}
+
+	@Transactional(readOnly = true)
+	public Page<Agenda> findHostedAgenda(String intraId, Pageable pageable) {
+		return agendaRepository.findAllByHostIntraIdAndStatus(
+			intraId, AgendaStatus.FINISH, AgendaStatus.CANCEL, pageable);
+	}
+
+	@Transactional(readOnly = true)
+	public Page<Agenda> findHostingAgenda(String intraId, Pageable pageable) {
+		return agendaRepository.findAllByHostIntraIdAndStatus(
+			intraId, AgendaStatus.OPEN, AgendaStatus.CONFIRM, pageable);
 	}
 }
