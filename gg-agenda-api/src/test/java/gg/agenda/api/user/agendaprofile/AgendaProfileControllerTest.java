@@ -287,6 +287,7 @@ public class AgendaProfileControllerTest {
 			assertThat(result.length).isEqualTo(agendaTeamList.size());
 			for (int i = 0; i < result.length; i++) {
 				assertThat(result[i].getAgendaId()).isEqualTo(agendaTeamList.get(i).getAgenda().getId().toString());
+				assertThat(result[i].getAgendaKey()).isEqualTo(agendaTeamList.get(i).getAgenda().getAgendaKey());
 				assertThat(result[i].getAgendaTitle()).isEqualTo(agendaTeamList.get(i).getAgenda().getTitle());
 				assertThat(result[i].getAgendaLocation()).isEqualTo(
 					agendaTeamList.get(i).getAgenda().getLocation().toString());
@@ -390,6 +391,8 @@ public class AgendaProfileControllerTest {
 			for (int i = 0; i < result.size(); i++) {
 				assertThat(result.get(i).getAgendaId()).isEqualTo(
 					attendedAgendas.get(i + (page - 1) * size).getAgenda().getId().toString());
+				assertThat(result.get(i).getAgendaKey()).isEqualTo(
+					attendedAgendas.get(i + (page - 1) * size).getAgenda().getAgendaKey());
 				assertThat(result.get(i).getAgendaTitle()).isEqualTo(
 					attendedAgendas.get(i + (page - 1) * size).getAgenda().getTitle());
 				assertThat(result.get(i).getAgendaLocation()).isEqualTo(
