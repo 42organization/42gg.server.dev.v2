@@ -220,6 +220,7 @@ public enum ErrorCode {
 	NOT_TEAM_MATE(403, "AG", "팀원이 아닙니다."),
 	TEAM_NAME_EXIST(409, "AG", "이미 존재하는 팀 이름입니다."),
 	TICKET_NOT_EXIST(403, "AG", "보유한 티켓이 부족합니다."),
+	TICKET_NOT_FOUND(404, "AG", "해당 티켓이 존재하지 않습니다."),
 	AGENDA_TEAM_NOT_FOUND(404, "AG", "팀이 존재하지 않습니다."),
 	AGENDA_PROFILE_NOT_FOUND(404, "AG", "프로필이 존재하지 않습니다."),
 	ALREADY_TICKET_SETUP(409, "AG", "이미 티켓 신청이 되어있습니다."),

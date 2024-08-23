@@ -78,6 +78,10 @@ public class AgendaProfileController {
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
+	/**
+	 * AgendaProfile admin 여부 조회 API
+	 * @param user 로그인한 사용자 정보
+	 */
 	@GetMapping("/info")
 	public ResponseEntity<AgendaProfileInfoDetailsResDto> myAgendaProfileInfoDetails(
 		@Login @Parameter(hidden = true) UserDto user) {

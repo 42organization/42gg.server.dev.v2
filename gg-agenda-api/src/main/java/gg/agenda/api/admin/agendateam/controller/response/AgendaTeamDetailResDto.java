@@ -21,6 +21,8 @@ public class AgendaTeamDetailResDto {
 
 	private String teamName;
 
+	private String teamContent;
+
 	private String teamLeaderIntraId;
 
 	private String teamStatus;
@@ -35,8 +37,9 @@ public class AgendaTeamDetailResDto {
 
 	@Builder
 	public AgendaTeamDetailResDto(String teamName, String teamLeaderIntraId, String teamStatus, String teamAward,
-		int teamAwardPriority, boolean teamIsPrivate, List<AgendaTeamMateResDto> teamMates) {
+		int teamAwardPriority, boolean teamIsPrivate, List<AgendaTeamMateResDto> teamMates, String teamContent) {
 		this.teamName = teamName;
+		this.teamContent = teamContent;
 		this.teamLeaderIntraId = teamLeaderIntraId;
 		this.teamStatus = teamStatus;
 		this.teamAward = teamAward;
@@ -51,6 +54,7 @@ public class AgendaTeamDetailResDto {
 		AgendaTeamDetailResDto.MapStruct INSTANCE = Mappers.getMapper(AgendaTeamDetailResDto.MapStruct.class);
 
 		@Mapping(target = "teamName", source = "team.name")
+		@Mapping(target = "teamContent", source = "team.content")
 		@Mapping(target = "teamLeaderIntraId", source = "team.leaderIntraId")
 		@Mapping(target = "teamStatus", source = "team.status")
 		@Mapping(target = "teamAward", source = "team.award")

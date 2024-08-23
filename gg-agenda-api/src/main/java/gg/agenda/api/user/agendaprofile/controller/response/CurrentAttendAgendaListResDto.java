@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class CurrentAttendAgendaListResDto {
 	private String agendaId;
+	private UUID agendaKey;
 	private String agendaTitle;
 	private String agendaLocation;
 	private UUID teamKey;
@@ -21,6 +22,7 @@ public class CurrentAttendAgendaListResDto {
 
 	public CurrentAttendAgendaListResDto(AgendaTeamProfile agendaTeamProfile) {
 		this.agendaId = agendaTeamProfile.getAgenda().getId().toString();
+		this.agendaKey = agendaTeamProfile.getAgenda().getAgendaKey();
 		this.agendaTitle = agendaTeamProfile.getAgenda().getTitle();
 		this.agendaLocation = agendaTeamProfile.getAgenda().getLocation().toString();
 		this.teamKey = agendaTeamProfile.getAgendaTeam().getTeamKey();
