@@ -1,5 +1,7 @@
 package gg.agenda.api.user.ticket.controller;
 
+import static gg.utils.exception.ErrorCode.*;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,15 +24,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import gg.agenda.api.user.agendaprofile.service.AgendaProfileFindService;
+import gg.agenda.api.user.agendaprofile.service.AgendaProfileService;
 import gg.agenda.api.user.ticket.controller.response.TicketCountResDto;
 import gg.agenda.api.user.ticket.controller.response.TicketHistoryResDto;
 import gg.agenda.api.user.ticket.service.TicketService;
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
+import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.Ticket;
 import gg.utils.cookie.CookieUtil;
 import gg.utils.dto.PageRequestDto;
 import gg.utils.dto.PageResponseDto;
+import gg.utils.exception.custom.AuthenticationException;
 import gg.utils.exception.user.TokenNotValidException;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +47,7 @@ import lombok.RequiredArgsConstructor;
 public class TicketController {
 	private final CookieUtil cookieUtil;
 	private final TicketService ticketService;
+	private final AgendaProfileFindService agendaProfileService;
 
 	/**
 	 * 티켓 설정 추가
@@ -59,7 +66,8 @@ public class TicketController {
 	 */
 	@GetMapping
 	public ResponseEntity<TicketCountResDto> ticketCountFind(@Parameter(hidden = true) @Login UserDto user) {
-		List<Ticket> tickets = ticketService.findTicketList(user);
+		AgendaProfile profile = agendaProfileService.findAgendaProfileByIntraId(user.getIntraId());
+		List<Ticket> tickets = ticketService.findTicketList(profile);
 		long approvedCount = tickets.stream()
 			.filter(Ticket::getIsApproved)
 			.count();
@@ -75,16 +83,13 @@ public class TicketController {
 	@PatchMapping
 	public ResponseEntity<Void> ticketApproveModify(@Parameter(hidden = true) @Login UserDto user,
 		HttpServletResponse response) {
-		SecurityContext context = SecurityContextHolder.getContext();
-		Authentication authentication = context.getAuthentication();
-
 		try {
-			ticketService.modifyTicketApprove(user, authentication);
+			ticketService.modifyTicketApprove(user);
+			return ResponseEntity.noContent().build();
 		} catch (TokenNotValidException e) {
 			cookieUtil.deleteCookie(response, "refresh_token");
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+			throw new AuthenticationException(REFRESH_TOKEN_EXPIRED);
 		}
-		return ResponseEntity.noContent().build();
 	}
 
 	/**

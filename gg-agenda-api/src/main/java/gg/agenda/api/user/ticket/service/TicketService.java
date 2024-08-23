@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 
+import gg.agenda.api.user.agendaprofile.service.AgendaProfileFindService;
 import gg.agenda.api.user.agendaprofile.service.AgendaProfileService;
 import gg.agenda.api.user.ticket.controller.response.TicketHistoryResDto;
 import gg.auth.FortyTwoAuthUtil;
@@ -44,7 +45,7 @@ public class TicketService {
 	private final FortyTwoAuthUtil fortyTwoAuthUtil;
 	private final TicketRepository ticketRepository;
 	private final AgendaRepository agendaRepository;
-	private final AgendaProfileService agendaProfileService;
+	private final AgendaProfileFindService agendaProfileFindService;
 	private final AgendaProfileRepository agendaProfileRepository;
 
 	@Value("https://api.intra.42.fr/v2/users/{id}/correction_point_historics?sort=-id")
@@ -75,13 +76,11 @@ public class TicketService {
 
 	/**
 	 * 티켓 수 조회
-	 * @param user 사용자 정보
+	 * @param profile AgendaProfile
 	 * @return 티켓 수
 	 */
 	@Transactional(readOnly = true)
-	public List<Ticket> findTicketList(UserDto user) {
-		AgendaProfile profile = agendaProfileRepository.findByUserId(user.getId())
-			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
+	public List<Ticket> findTicketList(AgendaProfile profile) {
 		return ticketRepository.findByAgendaProfileAndIsUsedFalse(profile);
 	}
 
@@ -90,15 +89,10 @@ public class TicketService {
 	 * @param user 사용자 정보
 	 */
 	@Transactional
-	public void modifyTicketApprove(UserDto user, Authentication authentication) {
-		AgendaProfile profile = agendaProfileService.getAgendaProfile(user.getId());
+	public void modifyTicketApprove(UserDto user) {
+		AgendaProfile profile = agendaProfileFindService.getAgendaProfile(user.getId());
 		Ticket setUpTicket = getSetUpTicket(profile);
-
-		OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken)authentication;
-		OAuth2AuthorizedClient oAuth2AuthorizedClient = fortyTwoAuthUtil.getOAuth2AuthorizedClient(oauthToken);
-
-		List<Map<String, String>> pointHistory = getPointHistory(profile, oAuth2AuthorizedClient, authentication);
-
+		List<Map<String, String>> pointHistory = getPointHistory(profile);
 		processTicketApproval(profile, setUpTicket, pointHistory);
 	}
 
@@ -115,22 +109,19 @@ public class TicketService {
 	/**
 	 * 포인트 이력 조회
 	 * @param profile AgendaProfile
-	 * @param client OAuth2AuthorizedClient
-	 * @param authentication Authentication
 	 * @return 포인트 이력
 	 */
-	private List<Map<String, String>> getPointHistory(AgendaProfile profile, OAuth2AuthorizedClient client,
-		Authentication authentication) {
+	private List<Map<String, String>> getPointHistory(AgendaProfile profile) {
 		String url = pointHistoryUrl.replace("{id}", profile.getFortyTwoId().toString());
 		ParameterizedTypeReference<List<Map<String, String>>> responseType = new ParameterizedTypeReference<>() {
 		};
-
 		try {
-			return apiUtil.callApiWithAccessToken(url, client.getAccessToken().getTokenValue(), responseType);
+			String accessToken = fortyTwoAuthUtil.getAccessToken();
+			return apiUtil.callApiWithAccessToken(url, accessToken, responseType);
 		} catch (HttpClientErrorException e) {
 			if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
-				client = fortyTwoAuthUtil.refreshAccessToken(client, authentication);
-				return apiUtil.callApiWithAccessToken(url, client.getAccessToken().getTokenValue(), responseType);
+				String accessToken = fortyTwoAuthUtil.refreshAccessToken();
+				return apiUtil.callApiWithAccessToken(url, accessToken, responseType);
 			}
 			throw e;
 		}

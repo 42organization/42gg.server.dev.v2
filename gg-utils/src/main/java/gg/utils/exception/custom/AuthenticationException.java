@@ -8,4 +8,8 @@ public class AuthenticationException extends CustomRuntimeException {
 	public AuthenticationException(String message, ErrorCode errorCode) {
 		super(message, errorCode);
 	}
+
+	public AuthenticationException(ErrorCode errorCode) {
+		super(errorCode.getMessage(), errorCode);
+	}
 }
