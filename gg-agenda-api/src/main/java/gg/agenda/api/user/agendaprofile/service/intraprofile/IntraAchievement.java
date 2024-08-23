@@ -2,6 +2,8 @@ package gg.agenda.api.user.agendaprofile.service.intraprofile;
 
 import java.net.URL;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,21 +31,23 @@ public class IntraAchievement {
 
 	private String image;
 
-	private String nbr_of_success;
+	@JsonProperty("nbr_of_success")
+	private String nbrOfSuccess;
 
-	private URL users_url;
+	@JsonProperty("users_url")
+	private URL usersUrl;
 
 	@Builder
 	public IntraAchievement(Long id, String name, String description, String tier, String kind, boolean visible,
-		String image, String nbr_of_success, URL users_url) {
+		String image, String nbrOfSuccess, URL usersUrl) {
 		this.id = id;
 		this.name = name;
 		this.description = description;
 		this.tier = tier;
 		this.kind = kind;
 		this.visible = visible;
-		this.nbr_of_success = nbr_of_success;
-		this.users_url = users_url;
 		this.image = image;
+		this.nbrOfSuccess = nbrOfSuccess;
+		this.usersUrl = usersUrl;
 	}
 }

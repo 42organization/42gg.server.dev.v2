@@ -23,10 +23,10 @@ import gg.agenda.api.user.agendaprofile.controller.response.AgendaProfileDetails
 import gg.agenda.api.user.agendaprofile.controller.response.AgendaProfileInfoDetailsResDto;
 import gg.agenda.api.user.agendaprofile.controller.response.AttendedAgendaListResDto;
 import gg.agenda.api.user.agendaprofile.controller.response.CurrentAttendAgendaListResDto;
-import gg.agenda.api.user.agendaprofile.service.IntraProfileUtils;
-import gg.agenda.api.user.agendaprofile.service.intraprofile.IntraProfile;
 import gg.agenda.api.user.agendaprofile.service.AgendaProfileFindService;
 import gg.agenda.api.user.agendaprofile.service.AgendaProfileService;
+import gg.agenda.api.user.agendaprofile.service.IntraProfileUtils;
+import gg.agenda.api.user.agendaprofile.service.intraprofile.IntraProfile;
 import gg.agenda.api.user.ticket.service.TicketService;
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
@@ -61,7 +61,7 @@ public class AgendaProfileController {
 		int ticketCount = ticketService.findTicketList(profile).size();
 		IntraProfile intraProfile = intraProfileUtils.getIntraProfile();
 		AgendaProfileDetailsResDto agendaProfileDetails = AgendaProfileDetailsResDto.toDto(
-				profile, ticketCount, intraProfile);
+			profile, ticketCount, intraProfile);
 		return ResponseEntity.ok(agendaProfileDetails);
 	}
 
