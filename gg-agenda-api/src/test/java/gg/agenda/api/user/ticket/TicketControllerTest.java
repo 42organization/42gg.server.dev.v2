@@ -146,6 +146,8 @@ public class TicketControllerTest {
 			//given
 			ticketFixture.createTicket(seoulUserAgendaProfile);
 			ticketFixture.createTicket(seoulUserAgendaProfile);
+			ticketFixture.createNotApporveTicket(seoulUserAgendaProfile);
+
 			//when
 			String res = mockMvc.perform(
 					get("/agenda/ticket")
