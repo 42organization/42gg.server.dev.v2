@@ -82,11 +82,10 @@ public class TicketService {
 
 	/**
 	 * 티켓 승인/거절
-	 * @param user 사용자 정보
+	 * @param profile 사용자 정보
 	 */
 	@Transactional
-	public void modifyTicketApprove(UserDto user) {
-		AgendaProfile profile = agendaProfileFindService.getAgendaProfile(user.getId());
+	public void modifyTicketApprove(AgendaProfile profile) {
 		Ticket setUpTicket = getSetUpTicket(profile);
 		List<Map<String, String>> pointHistory = getPointHistory(profile);
 		processTicketApproval(profile, setUpTicket, pointHistory);

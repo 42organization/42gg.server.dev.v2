@@ -35,12 +35,6 @@ public class AgendaProfileFindService {
 			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
 	}
 
-	@Transactional(readOnly = true)
-	public AgendaProfile getAgendaProfile(Long userId) {
-		return agendaProfileRepository.findByUserId(userId)
-			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
-	}
-
 	/**
 	 * 자기가 참여중인 Agenda 목록 조회하는 메서드
 	 * @param intraId 로그인한 유저의 id

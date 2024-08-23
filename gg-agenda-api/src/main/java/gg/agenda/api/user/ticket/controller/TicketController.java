@@ -14,9 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -25,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import gg.agenda.api.user.agendaprofile.service.AgendaProfileFindService;
-import gg.agenda.api.user.agendaprofile.service.AgendaProfileService;
 import gg.agenda.api.user.ticket.controller.response.TicketCountResDto;
 import gg.agenda.api.user.ticket.controller.response.TicketHistoryResDto;
 import gg.agenda.api.user.ticket.service.TicketService;
@@ -47,7 +43,7 @@ import lombok.RequiredArgsConstructor;
 public class TicketController {
 	private final CookieUtil cookieUtil;
 	private final TicketService ticketService;
-	private final AgendaProfileFindService agendaProfileService;
+	private final AgendaProfileFindService agendaProfileFindService;
 
 	/**
 	 * 티켓 설정 추가
@@ -66,7 +62,7 @@ public class TicketController {
 	 */
 	@GetMapping
 	public ResponseEntity<TicketCountResDto> ticketCountFind(@Parameter(hidden = true) @Login UserDto user) {
-		AgendaProfile profile = agendaProfileService.findAgendaProfileByIntraId(user.getIntraId());
+		AgendaProfile profile = agendaProfileFindService.findAgendaProfileByIntraId(user.getIntraId());
 		List<Ticket> tickets = ticketService.findTicketList(profile);
 		long approvedCount = tickets.stream()
 			.filter(Ticket::getIsApproved)
@@ -84,7 +80,8 @@ public class TicketController {
 	public ResponseEntity<Void> ticketApproveModify(@Parameter(hidden = true) @Login UserDto user,
 		HttpServletResponse response) {
 		try {
-			ticketService.modifyTicketApprove(user);
+			AgendaProfile profile = agendaProfileFindService.findAgendaProfileByIntraId(user.getIntraId());
+			ticketService.modifyTicketApprove(profile);
 			return ResponseEntity.noContent().build();
 		} catch (TokenNotValidException e) {
 			cookieUtil.deleteCookie(response, "refresh_token");
