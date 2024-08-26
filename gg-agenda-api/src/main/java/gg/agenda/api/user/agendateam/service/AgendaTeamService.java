@@ -299,8 +299,7 @@ public class AgendaTeamService {
 		List<AgendaTeamProfile> agendaTeamProfiles = agendaTeamProfileRepository.findByAgendaTeamAndIsExistTrue(
 			newTeam);
 		String message = snsMessageUtil.confirmTeamMessage(agenda, newTeam);
-		agendaTeamProfiles.stream()
-			.map(atp -> atp.getProfile().getIntraId())
+		agendaTeamProfiles.stream().map(atp -> atp.getProfile().getIntraId())
 			.forEach(intraId -> messageSender.send(intraId, message));
 		String toHostMessage = snsMessageUtil.agendaHostMessage(agenda);
 		if (agenda.getHostIntraId() != null) {
@@ -312,8 +311,7 @@ public class AgendaTeamService {
 		List<AgendaTeamProfile> agendaTeamProfiles = agendaTeamProfileRepository.findByAgendaTeamAndIsExistTrue(
 			newTeam);
 		String message = snsMessageUtil.cancelTeamMessage(agenda, newTeam);
-		agendaTeamProfiles.stream()
-			.map(atp -> atp.getProfile().getIntraId())
+		agendaTeamProfiles.stream().map(atp -> atp.getProfile().getIntraId())
 			.forEach(intraId -> messageSender.send(intraId, message));
 	}
 
@@ -321,8 +319,7 @@ public class AgendaTeamService {
 		List<AgendaTeamProfile> agendaTeamProfiles = agendaTeamProfileRepository.findByAgendaTeamInAndIsExistTrue(
 			failTeam);
 		String message = snsMessageUtil.failTeamMessage(agenda);
-		agendaTeamProfiles.stream()
-			.map(atp -> atp.getProfile().getIntraId())
+		agendaTeamProfiles.stream().map(atp -> atp.getProfile().getIntraId())
 			.forEach(intraId -> messageSender.send(intraId, message));
 	}
 
@@ -330,8 +327,7 @@ public class AgendaTeamService {
 		List<AgendaTeamProfile> agendaTeamProfiles = agendaTeamProfileRepository.findByAgendaTeamAndIsExistTrue(
 			agendaTeam);
 		String message = snsMessageUtil.attendTeamMateMessage(agenda, agendaTeam, userIntraId);
-		agendaTeamProfiles.stream()
-			.map(atp -> atp.getProfile().getIntraId())
+		agendaTeamProfiles.stream().map(atp -> atp.getProfile().getIntraId())
 			.forEach(intraId -> messageSender.send(intraId, message));
 	}
 
@@ -339,8 +335,7 @@ public class AgendaTeamService {
 		List<AgendaTeamProfile> agendaTeamProfiles = agendaTeamProfileRepository.findByAgendaTeamAndIsExistTrue(
 			agendaTeam);
 		String message = snsMessageUtil.leaveTeamMateMessage(agenda, agendaTeam, userIntraId);
-		agendaTeamProfiles.stream()
-			.map(atp -> atp.getProfile().getIntraId())
+		agendaTeamProfiles.stream().map(atp -> atp.getProfile().getIntraId())
 			.forEach(intraId -> messageSender.send(intraId, message));
 	}
 }

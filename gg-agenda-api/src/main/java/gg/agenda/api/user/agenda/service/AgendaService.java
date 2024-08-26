@@ -138,24 +138,21 @@ public class AgendaService {
 	public void slackCancelAgenda(Agenda agenda) {
 		List<AgendaTeamProfile> agendaTeamProfiles = agendaTeamProfileRepository.findAllByAgendaAndIsExistTrue(agenda);
 		String message = snsMessageUtil.cancelAgendaMessage(agenda);
-		agendaTeamProfiles.stream()
-			.map(atp -> atp.getProfile().getIntraId())
+		agendaTeamProfiles.stream().map(atp -> atp.getProfile().getIntraId())
 			.forEach(intraId -> messageSender.send(intraId, message));
 	}
 
 	public void slackFinishAgenda(Agenda agenda) {
 		List<AgendaTeamProfile> agendaTeamProfiles = agendaTeamProfileRepository.findAllByAgendaAndIsExistTrue(agenda);
 		String message = snsMessageUtil.finishAgendaMessage(agenda);
-		agendaTeamProfiles.stream()
-			.map(atp -> atp.getProfile().getIntraId())
+		agendaTeamProfiles.stream().map(atp -> atp.getProfile().getIntraId())
 			.forEach(intraId -> messageSender.send(intraId, message));
 	}
 
 	public void slackConfirmAgenda(Agenda agenda) {
 		List<AgendaTeamProfile> agendaTeamProfiles = agendaTeamProfileRepository.findAllByAgendaAndIsExistTrue(agenda);
 		String message = snsMessageUtil.confirmAgendaMessage(agenda);
-		agendaTeamProfiles.stream()
-			.map(atp -> atp.getProfile().getIntraId())
+		agendaTeamProfiles.stream().map(atp -> atp.getProfile().getIntraId())
 			.forEach(intraId -> messageSender.send(intraId, message));
 	}
 }

@@ -51,8 +51,7 @@ public class AgendaAnnouncementService {
 	public void slackAddAgendaAnnouncement(Agenda agenda, AgendaAnnouncement newAnnounce) {
 		List<AgendaTeamProfile> agendaTeamProfiles = agendaTeamProfileRepository.findAllByAgendaAndIsExistTrue(agenda);
 		String message = snsMessageUtil.addAgendaAnnouncementMessage(agenda, newAnnounce);
-		agendaTeamProfiles.stream()
-			.map(atp -> atp.getProfile().getIntraId())
+		agendaTeamProfiles.stream().map(atp -> atp.getProfile().getIntraId())
 			.forEach(intraId -> messageSender.send(intraId, message));
 	}
 }
