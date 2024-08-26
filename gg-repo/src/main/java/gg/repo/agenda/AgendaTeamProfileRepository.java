@@ -47,4 +47,6 @@ public interface AgendaTeamProfileRepository extends JpaRepository<AgendaTeamPro
 	Page<AgendaTeamProfile> findByProfileAndIsExistTrueAndAgendaStatus(
 		@Param("agendaProfile") AgendaProfile agendaProfile,
 		@Param("status") AgendaStatus status, Pageable pageable);
+
+	List<AgendaTeamProfile> findAllByAgendaAndIsExistTrue(Agenda agenda);
 }

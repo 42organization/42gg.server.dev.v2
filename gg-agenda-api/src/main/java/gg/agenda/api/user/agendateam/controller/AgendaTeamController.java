@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import gg.agenda.api.user.agenda.service.AgendaService;
 import gg.agenda.api.user.agendateam.controller.request.TeamCreateReqDto;
 import gg.agenda.api.user.agendateam.controller.request.TeamKeyReqDto;
 import gg.agenda.api.user.agendateam.controller.request.TeamUpdateReqDto;
@@ -35,6 +36,7 @@ import gg.agenda.api.user.agendateam.controller.response.TeamKeyResDto;
 import gg.agenda.api.user.agendateam.service.AgendaTeamService;
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
+import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.type.Coalition;
 import gg.utils.dto.PageRequestDto;
@@ -46,6 +48,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/agenda/team")
 public class AgendaTeamController {
+	private final AgendaService agendaService;
 	private final AgendaTeamService agendaTeamService;
 
 	/**
@@ -94,7 +97,9 @@ public class AgendaTeamController {
 	@PatchMapping("/confirm")
 	public ResponseEntity<Void> confirmTeam(@Parameter(hidden = true) @Login UserDto user,
 		@ModelAttribute @Valid TeamKeyReqDto teamKeyReqDto, @RequestParam("agenda_key") UUID agendaKey) {
-		agendaTeamService.confirmTeam(user, agendaKey, teamKeyReqDto.getTeamKey());
+		Agenda agenda = agendaService.findAgendaByAgendaKey(agendaKey);
+		AgendaTeam agendaTeam = agendaTeamService.confirmTeam(user, agenda, teamKeyReqDto.getTeamKey());
+		agendaTeamService.slackConfirmAgendaTeam(agenda, agendaTeam);
 		return ResponseEntity.ok().build();
 	}
 
@@ -109,10 +114,12 @@ public class AgendaTeamController {
 		agendaTeam.getAgenda().agendaStatusMustBeOpen();
 		if (agendaTeam.getLeaderIntraId().equals(user.getIntraId())) {
 			agendaTeam.agendaTeamStatusMustBeOpenAndConfirm();
+			agendaTeamService.slackCancelAgendaTeam(agendaTeam.getAgenda(), agendaTeam);
 			agendaTeamService.leaveTeamAll(agendaTeam);
 		} else {
 			agendaTeam.agendaTeamStatusMustBeOpen();
 			agendaTeamService.leaveTeamMate(agendaTeam, user);
+			agendaTeamService.slackLeaveTeamMate(agendaTeam.getAgenda(), agendaTeam, user.getIntraId());
 		}
 		return ResponseEntity.noContent().build();
 	}
@@ -174,7 +181,10 @@ public class AgendaTeamController {
 	@PostMapping("/join")
 	public ResponseEntity<Void> attendTeamModify(@Parameter(hidden = true) @Login UserDto user,
 		@ModelAttribute @Valid TeamKeyReqDto teamKeyReqDto, @RequestParam("agenda_key") UUID agendaKey) {
-		agendaTeamService.modifyAttendTeam(user, teamKeyReqDto, agendaKey);
+		Agenda agenda = agendaService.findAgendaByAgendaKey(agendaKey);
+		AgendaTeam agendaTeam = agendaTeamService.getAgendaTeam(teamKeyReqDto.getTeamKey());
+		agendaTeamService.slackAttendTeamMate(agenda, agendaTeam, user.getIntraId());
+		agendaTeamService.modifyAttendTeam(user, agendaTeam, agenda);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 

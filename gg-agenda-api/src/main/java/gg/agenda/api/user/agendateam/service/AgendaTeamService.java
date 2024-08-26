@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import gg.agenda.api.user.SnsMessageUtil;
 import gg.agenda.api.user.agendateam.controller.request.TeamCreateReqDto;
 import gg.agenda.api.user.agendateam.controller.request.TeamKeyReqDto;
 import gg.agenda.api.user.agendateam.controller.request.TeamUpdateReqDto;
@@ -40,12 +41,15 @@ import gg.utils.exception.custom.BusinessException;
 import gg.utils.exception.custom.DuplicationException;
 import gg.utils.exception.custom.ForbiddenException;
 import gg.utils.exception.custom.NotExistException;
+import gg.utils.sns.MessageSender;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class AgendaTeamService {
 	private final TicketService ticketService;
+	private final MessageSender messageSender;
+	private final SnsMessageUtil snsMessageUtil;
 	private final AgendaRepository agendaRepository;
 	private final TicketRepository ticketRepository;
 	private final AgendaTeamRepository agendaTeamRepository;
@@ -161,10 +165,7 @@ public class AgendaTeamService {
 	 * @param user 사용자 정보, teamKeyReqDto 팀 KEY 요청 정보, agendaId 아젠다 아이디
 	 */
 	@Transactional
-	public void confirmTeam(UserDto user, UUID agendaKey, UUID teamKey) {
-		Agenda agenda = agendaRepository.findByAgendaKey(agendaKey)
-			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
-
+	public AgendaTeam confirmTeam(UserDto user, Agenda agenda, UUID teamKey) {
 		AgendaTeam agendaTeam = agendaTeamRepository
 			.findByAgendaAndTeamKeyAndStatus(agenda, teamKey, OPEN, CONFIRM)
 			.orElseThrow(() -> new NotExistException(AGENDA_TEAM_NOT_FOUND));
@@ -177,7 +178,7 @@ public class AgendaTeamService {
 		}
 		agenda.confirmTeam(agendaTeam.getLocation(), LocalDateTime.now());
 		agendaTeam.confirm();
-		agendaTeamRepository.save(agendaTeam);
+		return agendaTeamRepository.save(agendaTeam);
 	}
 
 	/**
@@ -246,19 +247,11 @@ public class AgendaTeamService {
 
 	/**
 	 * 아젠다 팀 참여하기
-	 * @param user 사용자 정보, teamKeyReqDto 팀 KEY 요청 정보, agendaId 아젠다 아이디
 	 */
 	@Transactional
-	public void modifyAttendTeam(UserDto user, TeamKeyReqDto teamKeyReqDto, UUID agendaKey) {
+	public void modifyAttendTeam(UserDto user, AgendaTeam agendaTeam, Agenda agenda) {
 		AgendaProfile agendaProfile = agendaProfileRepository.findByUserId(user.getId())
 			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
-
-		Agenda agenda = agendaRepository.findByAgendaKey(agendaKey)
-			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
-
-		AgendaTeam agendaTeam = agendaTeamRepository
-			.findByAgendaAndTeamKeyAndStatus(agenda, teamKeyReqDto.getTeamKey(), OPEN, CONFIRM)
-			.orElseThrow(() -> new NotExistException(AGENDA_TEAM_NOT_FOUND));
 
 		agendaTeamProfileRepository.findByAgendaAndProfileAndIsExistTrue(agenda, agendaProfile)
 			.ifPresent(profile -> {
@@ -301,4 +294,54 @@ public class AgendaTeamService {
 			profiles);
 		agendaTeamRepository.save(agendaTeam);
 	}
+
+	public void slackConfirmAgendaTeam(Agenda agenda, AgendaTeam newTeam) {
+		List<AgendaTeamProfile> agendaTeamProfiles = agendaTeamProfileRepository.findByAgendaTeamAndIsExistTrue(
+			newTeam);
+		String message = snsMessageUtil.confirmTeamMessage(agenda, newTeam);
+		agendaTeamProfiles.stream()
+			.map(atp -> atp.getProfile().getIntraId())
+			.forEach(intraId -> messageSender.send(intraId, message));
+		String toHostMessage = snsMessageUtil.agendaHostMessage(agenda);
+		if (agenda.getHostIntraId() != null) {
+			messageSender.send(agenda.getHostIntraId(), toHostMessage);
+		}
+	}
+
+	public void slackCancelAgendaTeam(Agenda agenda, AgendaTeam newTeam) {
+		List<AgendaTeamProfile> agendaTeamProfiles = agendaTeamProfileRepository.findByAgendaTeamAndIsExistTrue(
+			newTeam);
+		String message = snsMessageUtil.cancelTeamMessage(agenda, newTeam);
+		agendaTeamProfiles.stream()
+			.map(atp -> atp.getProfile().getIntraId())
+			.forEach(intraId -> messageSender.send(intraId, message));
+	}
+
+	public void slackCancelByAgendaConfirm(Agenda agenda, AgendaTeam newTeam) {
+		List<AgendaTeamProfile> agendaTeamProfiles = agendaTeamProfileRepository.findByAgendaTeamAndIsExistTrue(
+			newTeam);
+		String message = snsMessageUtil.failTeamMessage(agenda, newTeam);
+		agendaTeamProfiles.stream()
+			.map(atp -> atp.getProfile().getIntraId())
+			.forEach(intraId -> messageSender.send(intraId, message));
+	}
+
+	public void slackAttendTeamMate(Agenda agenda, AgendaTeam agendaTeam, String userIntraId) {
+		List<AgendaTeamProfile> agendaTeamProfiles = agendaTeamProfileRepository.findByAgendaTeamAndIsExistTrue(
+			agendaTeam);
+		String message = snsMessageUtil.attendTeamMateMessage(agenda, agendaTeam, userIntraId);
+		agendaTeamProfiles.stream()
+			.map(atp -> atp.getProfile().getIntraId())
+			.forEach(intraId -> messageSender.send(intraId, message));
+	}
+
+	public void slackLeaveTeamMate(Agenda agenda, AgendaTeam agendaTeam, String userIntraId) {
+		List<AgendaTeamProfile> agendaTeamProfiles = agendaTeamProfileRepository.findByAgendaTeamAndIsExistTrue(
+			agendaTeam);
+		String message = snsMessageUtil.leaveTeamMateMessage(agenda, agendaTeam, userIntraId);
+		agendaTeamProfiles.stream()
+			.map(atp -> atp.getProfile().getIntraId())
+			.forEach(intraId -> messageSender.send(intraId, message));
+	}
 }
+

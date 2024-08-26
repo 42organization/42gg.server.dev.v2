@@ -46,7 +46,9 @@ public class AgendaAnnouncementController {
 		@RequestBody @Valid AgendaAnnouncementCreateReqDto agendaAnnouncementCreateReqDto) {
 		Agenda agenda = agendaService.findAgendaByAgendaKey(agendaKey);
 		agenda.mustModifiedByHost(user.getIntraId());
-		agendaAnnouncementService.addAgendaAnnouncement(agendaAnnouncementCreateReqDto, agenda);
+		AgendaAnnouncement newAnnounce = agendaAnnouncementService
+			.addAgendaAnnouncement(agendaAnnouncementCreateReqDto, agenda);
+		agendaAnnouncementService.slackAddAgendaAnnouncement(agenda, newAnnounce);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
