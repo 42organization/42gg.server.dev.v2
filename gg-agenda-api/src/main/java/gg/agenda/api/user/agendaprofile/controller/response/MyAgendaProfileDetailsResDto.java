@@ -39,7 +39,8 @@ public class MyAgendaProfileDetailsResDto {
 		this.achievements = achievements;
 	}
 
-	public static MyAgendaProfileDetailsResDto toDto(AgendaProfile profile, int ticketCount, IntraProfile intraProfile) {
+	public static MyAgendaProfileDetailsResDto toDto(AgendaProfile profile, int ticketCount,
+		IntraProfile intraProfile) {
 		return MyAgendaProfileDetailsResDto.builder()
 			.userIntraId(profile.getIntraId())
 			.userContent(profile.getContent())

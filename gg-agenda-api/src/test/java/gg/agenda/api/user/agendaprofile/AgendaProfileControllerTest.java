@@ -9,7 +9,6 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -32,10 +31,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gg.agenda.api.AgendaMockData;
 import gg.agenda.api.user.agendaprofile.controller.request.AgendaProfileChangeReqDto;
 import gg.agenda.api.user.agendaprofile.controller.response.AgendaProfileDetailsResDto;
-import gg.agenda.api.user.agendaprofile.controller.response.MyAgendaProfileDetailsResDto;
 import gg.agenda.api.user.agendaprofile.controller.response.AgendaProfileInfoDetailsResDto;
 import gg.agenda.api.user.agendaprofile.controller.response.AttendedAgendaListResDto;
 import gg.agenda.api.user.agendaprofile.controller.response.CurrentAttendAgendaListResDto;
+import gg.agenda.api.user.agendaprofile.controller.response.MyAgendaProfileDetailsResDto;
 import gg.agenda.api.user.agendaprofile.service.IntraProfileUtils;
 import gg.agenda.api.user.agendaprofile.service.intraprofile.IntraProfile;
 import gg.data.agenda.Agenda;

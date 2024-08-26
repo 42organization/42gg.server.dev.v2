@@ -21,10 +21,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import gg.agenda.api.user.agendaprofile.controller.request.AgendaProfileChangeReqDto;
 import gg.agenda.api.user.agendaprofile.controller.response.AgendaProfileDetailsResDto;
-import gg.agenda.api.user.agendaprofile.controller.response.MyAgendaProfileDetailsResDto;
 import gg.agenda.api.user.agendaprofile.controller.response.AgendaProfileInfoDetailsResDto;
 import gg.agenda.api.user.agendaprofile.controller.response.AttendedAgendaListResDto;
 import gg.agenda.api.user.agendaprofile.controller.response.CurrentAttendAgendaListResDto;
+import gg.agenda.api.user.agendaprofile.controller.response.MyAgendaProfileDetailsResDto;
 import gg.agenda.api.user.agendaprofile.service.AgendaProfileFindService;
 import gg.agenda.api.user.agendaprofile.service.AgendaProfileService;
 import gg.agenda.api.user.agendaprofile.service.IntraProfileUtils;
