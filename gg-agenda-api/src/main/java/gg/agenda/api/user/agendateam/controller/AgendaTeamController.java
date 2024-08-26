@@ -114,8 +114,8 @@ public class AgendaTeamController {
 		agendaTeam.getAgenda().agendaStatusMustBeOpen();
 		if (agendaTeam.getLeaderIntraId().equals(user.getIntraId())) {
 			agendaTeam.agendaTeamStatusMustBeOpenAndConfirm();
-			agendaTeamService.slackCancelAgendaTeam(agendaTeam.getAgenda(), agendaTeam);
 			agendaTeamService.leaveTeamAll(agendaTeam);
+			agendaTeamService.slackCancelAgendaTeam(agendaTeam.getAgenda(), agendaTeam);
 		} else {
 			agendaTeam.agendaTeamStatusMustBeOpen();
 			agendaTeamService.leaveTeamMate(agendaTeam, user);

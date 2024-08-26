@@ -317,10 +317,10 @@ public class AgendaTeamService {
 			.forEach(intraId -> messageSender.send(intraId, message));
 	}
 
-	public void slackCancelByAgendaConfirm(Agenda agenda, AgendaTeam newTeam) {
-		List<AgendaTeamProfile> agendaTeamProfiles = agendaTeamProfileRepository.findByAgendaTeamAndIsExistTrue(
-			newTeam);
-		String message = snsMessageUtil.failTeamMessage(agenda, newTeam);
+	public void slackCancelByAgendaConfirm(Agenda agenda, List<AgendaTeam> failTeam) {
+		List<AgendaTeamProfile> agendaTeamProfiles = agendaTeamProfileRepository.findByAgendaTeamInAndIsExistTrue(
+			failTeam);
+		String message = snsMessageUtil.failTeamMessage(agenda);
 		agendaTeamProfiles.stream()
 			.map(atp -> atp.getProfile().getIntraId())
 			.forEach(intraId -> messageSender.send(intraId, message));

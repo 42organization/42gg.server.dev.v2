@@ -49,4 +49,7 @@ public interface AgendaTeamProfileRepository extends JpaRepository<AgendaTeamPro
 		@Param("status") AgendaStatus status, Pageable pageable);
 
 	List<AgendaTeamProfile> findAllByAgendaAndIsExistTrue(Agenda agenda);
+
+	@Query("SELECT atp FROM AgendaTeamProfile atp WHERE atp.agendaTeam IN :agendaTeams AND atp.isExist = true")
+	List<AgendaTeamProfile> findByAgendaTeamInAndIsExistTrue(List<AgendaTeam> agendaTeams);
 }

@@ -32,9 +32,11 @@ import gg.agenda.api.user.agenda.controller.response.AgendaResDto;
 import gg.agenda.api.user.agenda.controller.response.AgendaSimpleResDto;
 import gg.agenda.api.user.agenda.service.AgendaService;
 import gg.agenda.api.user.agendaannouncement.service.AgendaAnnouncementService;
+import gg.agenda.api.user.agendateam.service.AgendaTeamService;
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
 import gg.data.agenda.Agenda;
+import gg.data.agenda.AgendaTeam;
 import gg.utils.dto.PageRequestDto;
 import gg.utils.dto.PageResponseDto;
 import gg.utils.exception.custom.InvalidParameterException;
@@ -47,7 +49,7 @@ import lombok.RequiredArgsConstructor;
 public class AgendaController {
 
 	private final AgendaService agendaService;
-
+	private final AgendaTeamService agendaTeamService;
 	private final AgendaAnnouncementService agendaAnnouncementService;
 
 	@GetMapping
@@ -115,8 +117,9 @@ public class AgendaController {
 		@Login @Parameter(hidden = true) UserDto user) {
 		Agenda agenda = agendaService.findAgendaByAgendaKey(agendaKey);
 		agenda.mustModifiedByHost(user.getIntraId());
-		agendaService.confirmAgendaAndRefundTicketForOpenTeam(agenda);
+		List<AgendaTeam> failTeam = agendaService.confirmAgendaAndRefundTicketForOpenTeam(agenda);
 		agendaService.slackConfirmAgenda(agenda);
+		agendaTeamService.slackCancelByAgendaConfirm(agenda, failTeam);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 

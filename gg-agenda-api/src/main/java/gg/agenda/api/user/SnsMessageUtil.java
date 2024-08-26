@@ -58,9 +58,9 @@ public class SnsMessageUtil {
 			+ "\n" + agenda.getTitle() + "의" + agendaTeam.getName() + "팀이 취소되었습니다.";
 	}
 
-	public String failTeamMessage(Agenda agenda, AgendaTeam agendaTeam) {
+	public String failTeamMessage(Agenda agenda) {
 		return SUBJECT
-			+ "\n" + agenda.getTitle() + "의" + agendaTeam.getName() + "팀이 취소되었습니다."
+			+ "\n" + agenda.getTitle() + "의 팀이 취소되었습니다."
 			+ "\n" + "행사가 확정되어 확정되지 않은 팀은 취소됩니다.";
 	}
 

@@ -114,17 +114,17 @@ public class AgendaService {
 	}
 
 	@Transactional
-	public void confirmAgendaAndRefundTicketForOpenTeam(Agenda agenda) {
+	public List<AgendaTeam> confirmAgendaAndRefundTicketForOpenTeam(Agenda agenda) {
 		if (agenda.getCurrentTeam() < agenda.getMinTeam()) {
 			throw new ForbiddenException("팀이 모두 구성되지 않았습니다.");
 		}
 
 		List<AgendaTeam> openTeams = agendaTeamRepository.findAllByAgendaAndStatus(agenda, AgendaTeamStatus.OPEN);
 		for (AgendaTeam openTeam : openTeams) {
-			agendaTeamService.slackCancelByAgendaConfirm(openTeam.getAgenda(), openTeam);
 			agendaTeamService.leaveTeamAll(openTeam);
 		}
 		agenda.confirmAgenda();
+		return openTeams;
 	}
 
 	@Transactional
