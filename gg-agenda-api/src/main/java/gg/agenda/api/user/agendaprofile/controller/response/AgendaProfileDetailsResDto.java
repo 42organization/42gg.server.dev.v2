@@ -1,7 +1,11 @@
 package gg.agenda.api.user.agendaprofile.controller.response;
 
+import java.net.URL;
+import java.util.List;
+
 import org.mapstruct.Mapper;
 
+import gg.agenda.api.user.agendaprofile.service.intraprofile.IntraAchievement;
 import gg.agenda.api.user.agendaprofile.service.intraprofile.IntraProfile;
 import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.type.Coalition;
@@ -19,18 +23,20 @@ public class AgendaProfileDetailsResDto {
 	private String userGithub;
 	private Coalition userCoalition;
 	private Location userLocation;
-	private IntraProfile intraProfile;
+	private URL imageUrl;
+	private List<IntraAchievement> achievements;
 
 	@Builder
 	public AgendaProfileDetailsResDto(String userIntraId, String userContent, String userGithub,
-		Coalition userCoalition,
-		Location userLocation, IntraProfile intraProfile) {
+		Coalition userCoalition, Location userLocation, URL imageUrl,
+		List<IntraAchievement> achievements) {
 		this.userIntraId = userIntraId;
 		this.userContent = userContent;
 		this.userGithub = userGithub;
 		this.userCoalition = userCoalition;
 		this.userLocation = userLocation;
-		this.intraProfile = intraProfile;
+		this.imageUrl = imageUrl;
+		this.achievements = achievements;
 	}
 
 	public static AgendaProfileDetailsResDto toDto(AgendaProfile profile, IntraProfile intraProfile) {
@@ -40,7 +46,8 @@ public class AgendaProfileDetailsResDto {
 			.userGithub(profile.getGithubUrl())
 			.userCoalition(profile.getCoalition())
 			.userLocation(profile.getLocation())
-			.intraProfile(intraProfile)
+			.imageUrl(intraProfile.getImageUrl())
+			.achievements(intraProfile.getAchievements())
 			.build();
 	}
 }

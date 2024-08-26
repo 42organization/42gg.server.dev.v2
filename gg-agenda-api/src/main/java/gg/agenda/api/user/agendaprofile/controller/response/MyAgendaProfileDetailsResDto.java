@@ -1,5 +1,9 @@
 package gg.agenda.api.user.agendaprofile.controller.response;
 
+import java.net.URL;
+import java.util.List;
+
+import gg.agenda.api.user.agendaprofile.service.intraprofile.IntraAchievement;
 import gg.agenda.api.user.agendaprofile.service.intraprofile.IntraProfile;
 import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.type.Coalition;
@@ -18,18 +22,21 @@ public class MyAgendaProfileDetailsResDto {
 	private Coalition userCoalition;
 	private Location userLocation;
 	private int ticketCount;
-	private IntraProfile intraProfile;
+	private URL imageUrl;
+	private List<IntraAchievement> achievements;
 
 	@Builder
 	public MyAgendaProfileDetailsResDto(String userIntraId, String userContent, String userGithub,
-		Coalition userCoalition, Location userLocation, int ticketCount, IntraProfile intraProfile) {
+		Coalition userCoalition, Location userLocation, int ticketCount, URL imageUrl,
+		List<IntraAchievement> achievements) {
 		this.userIntraId = userIntraId;
 		this.userContent = userContent;
 		this.userGithub = userGithub;
 		this.userCoalition = userCoalition;
 		this.userLocation = userLocation;
 		this.ticketCount = ticketCount;
-		this.intraProfile = intraProfile;
+		this.imageUrl = imageUrl;
+		this.achievements = achievements;
 	}
 
 	public static MyAgendaProfileDetailsResDto toDto(AgendaProfile profile, int ticketCount, IntraProfile intraProfile) {
@@ -40,7 +47,8 @@ public class MyAgendaProfileDetailsResDto {
 			.userCoalition(profile.getCoalition())
 			.userLocation(profile.getLocation())
 			.ticketCount(ticketCount)
-			.intraProfile(intraProfile)
+			.imageUrl(intraProfile.getImageUrl())
+			.achievements(intraProfile.getAchievements())
 			.build();
 	}
 }
