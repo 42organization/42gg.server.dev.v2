@@ -5,11 +5,14 @@ import static gg.utils.exception.ErrorCode.*;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -19,7 +22,6 @@ import org.springframework.security.oauth2.core.OAuth2RefreshToken;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestClientException;
 
 import gg.utils.exception.ErrorCode;
 import gg.utils.exception.custom.NotExistException;
@@ -32,72 +34,88 @@ public class FortyTwoAuthUtil {
 	private final ApiUtil apiUtil;
 	private final OAuth2AuthorizedClientService authorizedClientService;
 
-	/**
-	 * OAuth2AuthorizedClient 조회
-	 * @param oauthToken OAuth2AuthenticationToken
-	 * @return OAuth2AuthorizedClient
-	 */
-	public OAuth2AuthorizedClient getOAuth2AuthorizedClient(OAuth2AuthenticationToken oauthToken) {
-		String registrationId = oauthToken.getAuthorizedClientRegistrationId();
-		OAuth2AuthorizedClient client = authorizedClientService.loadAuthorizedClient(registrationId,
-			oauthToken.getName());
-		if (client.getRefreshToken() == null) {
-			throw new NotExistException(AUTH_NOT_FOUND);
-		}
-		return client;
+	public String getAccessToken() {
+		Authentication authentication = getAuthenticationFromContext();
+		OAuth2AuthorizedClient client = getClientFromAuthentication(authentication);
+		return client.getAccessToken().getTokenValue();
 	}
 
 	/**
 	 * 토큰 갱신
-	 * @param client OAuth2AuthorizedClient
-	 * @param authentication Authentication
 	 * @return 갱신된 OAuth2AuthorizedClient
 	 */
-	public OAuth2AuthorizedClient refreshAccessToken(OAuth2AuthorizedClient client, Authentication authentication) {
-		try {
-			ClientRegistration registration = client.getClientRegistration();
-			if (client.getRefreshToken() == null) {
-				throw new NotExistException(AUTH_NOT_FOUND);
-			}
+	public String refreshAccessToken() {
+		Authentication authentication = getAuthenticationFromContext();
+		OAuth2AuthorizedClient client = getClientFromAuthentication(authentication);
+		ClientRegistration registration = client.getClientRegistration();
 
-			String tokenUri = registration.getProviderDetails().getTokenUri();
-			MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-			params.add("grant_type", "refresh_token");
-			params.add("refresh_token", client.getRefreshToken().getTokenValue());
-			params.add("client_id", registration.getClientId());
-			params.add("client_secret", registration.getClientSecret());
-			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		OAuth2AuthorizedClient newClient = requestNewClient(client, registration);
 
-			List<Map<String, Object>> responseBody = apiUtil.apiCall(tokenUri, List.class, headers, params,
-				HttpMethod.POST);
-			if (responseBody == null || responseBody.isEmpty()) {
-				throw new NotExistException(ErrorCode.AUTH_NOT_FOUND);
-			}
-			Map<String, Object> map = responseBody.get(0);
+		authorizedClientService.removeAuthorizedClient(
+			registration.getRegistrationId(), client.getPrincipalName());
+		authorizedClientService.saveAuthorizedClient(newClient, authentication);
 
-			OAuth2AccessToken newAccessToken = new OAuth2AccessToken(
-				OAuth2AccessToken.TokenType.BEARER,
-				(String)map.get("access_token"),
-				Instant.now(),
-				Instant.now().plusSeconds((Integer)map.get("expires_in"))
-			);
+		return newClient.getAccessToken().getTokenValue();
+	}
 
-			OAuth2RefreshToken newRefreshToken = new OAuth2RefreshToken(
-				(String)map.get("refresh_token"),
-				Instant.now()
-			);
+	private Authentication getAuthenticationFromContext() {
+		SecurityContext context = SecurityContextHolder.getContext();
+		return context.getAuthentication();
+	}
 
-			OAuth2AuthorizedClient newClient = new OAuth2AuthorizedClient(
-				registration, client.getPrincipalName(), newAccessToken, newRefreshToken);
+	private OAuth2AuthorizedClient getClientFromAuthentication(Authentication authentication) {
+		OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken)authentication;
+		String registrationId = oauthToken.getAuthorizedClientRegistrationId();
+		return authorizedClientService.loadAuthorizedClient(registrationId, oauthToken.getName());
+	}
 
-			String principalName = authentication.getName();
-			authorizedClientService.removeAuthorizedClient(registration.getRegistrationId(), principalName);
-			authorizedClientService.saveAuthorizedClient(newClient, authentication);
-
-			return newClient;
-		} catch (RestClientException e) {
+	private OAuth2AuthorizedClient requestNewClient(OAuth2AuthorizedClient client, ClientRegistration registration) {
+		if (Objects.isNull(client.getRefreshToken())) {
 			throw new NotExistException(AUTH_NOT_FOUND);
 		}
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("grant_type", "refresh_token");
+		params.add("refresh_token", client.getRefreshToken().getTokenValue());
+		params.add("client_id", registration.getClientId());
+		params.add("client_secret", registration.getClientSecret());
+
+		List<Map<String, Object>> responseBody = apiUtil.apiCall(
+			registration.getProviderDetails().getTokenUri(),
+			List.class,
+			headers,
+			params,
+			HttpMethod.POST
+		);
+		if (Objects.isNull(responseBody) || responseBody.isEmpty()) {
+			throw new NotExistException(ErrorCode.AUTH_NOT_FOUND);
+		}
+		return createNewClientFromApiResponse(responseBody.get(0), client);
+	}
+
+	private OAuth2AuthorizedClient createNewClientFromApiResponse(
+		Map<String, Object> response, OAuth2AuthorizedClient client) {
+
+		OAuth2AccessToken newAccessToken = new OAuth2AccessToken(
+			OAuth2AccessToken.TokenType.BEARER,
+			(String)response.get("access_token"),
+			Instant.now(),
+			Instant.now().plusSeconds((Integer)response.get("expires_in"))
+		);
+
+		OAuth2RefreshToken newRefreshToken = new OAuth2RefreshToken(
+			(String)response.get("refresh_token"),
+			Instant.now()
+		);
+
+		return new OAuth2AuthorizedClient(
+			client.getClientRegistration(),
+			client.getPrincipalName(),
+			newAccessToken,
+			newRefreshToken
+		);
 	}
 }

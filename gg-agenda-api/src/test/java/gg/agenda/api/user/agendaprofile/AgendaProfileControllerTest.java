@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +18,10 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -31,6 +34,8 @@ import gg.agenda.api.user.agendaprofile.controller.response.AgendaProfileDetails
 import gg.agenda.api.user.agendaprofile.controller.response.AgendaProfileInfoDetailsResDto;
 import gg.agenda.api.user.agendaprofile.controller.response.AttendedAgendaListResDto;
 import gg.agenda.api.user.agendaprofile.controller.response.CurrentAttendAgendaListResDto;
+import gg.agenda.api.user.agendaprofile.service.IntraProfileUtils;
+import gg.agenda.api.user.agendaprofile.service.intraprofile.IntraProfile;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.AgendaTeam;
@@ -59,6 +64,10 @@ public class AgendaProfileControllerTest {
 	private AgendaMockData agendaMockData;
 	@Autowired
 	private AgendaProfileRepository agendaProfileRepository;
+
+	@MockBean
+	private IntraProfileUtils intraProfileUtils;
+
 	User user;
 	String accessToken;
 	AgendaProfile agendaProfile;
@@ -77,6 +86,9 @@ public class AgendaProfileControllerTest {
 		@DisplayName("로그인된 유저에 해당하는 Agenda profile를 상세 조회합니다.")
 		void test() throws Exception {
 			//given
+			URL url = new URL("http://localhost:8080");
+			IntraProfile intraProfile = new IntraProfile(url, List.of());
+			Mockito.when(intraProfileUtils.getIntraProfile()).thenReturn(intraProfile);
 			AgendaProfile agendaProfile = agendaMockData.createAgendaProfile(user, SEOUL);
 			agendaMockData.createTicket(agendaProfile);
 			// when

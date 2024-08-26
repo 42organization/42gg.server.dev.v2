@@ -25,21 +25,29 @@ import gg.agenda.api.user.agendaprofile.controller.response.AttendedAgendaListRe
 import gg.agenda.api.user.agendaprofile.controller.response.CurrentAttendAgendaListResDto;
 import gg.agenda.api.user.agendaprofile.service.AgendaProfileFindService;
 import gg.agenda.api.user.agendaprofile.service.AgendaProfileService;
+import gg.agenda.api.user.agendaprofile.service.IntraProfileUtils;
+import gg.agenda.api.user.agendaprofile.service.intraprofile.IntraProfile;
+import gg.agenda.api.user.ticket.service.TicketService;
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
+import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.AgendaTeamProfile;
 import gg.data.user.type.RoleType;
 import gg.utils.dto.PageRequestDto;
 import gg.utils.dto.PageResponseDto;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/agenda/profile")
 public class AgendaProfileController {
 	private final AgendaProfileFindService agendaProfileFindService;
 	private final AgendaProfileService agendaProfileService;
+	private final TicketService ticketService;
+	private final IntraProfileUtils intraProfileUtils;
 
 	/**
 	 * AgendaProfile 상세 조회 API
@@ -49,9 +57,12 @@ public class AgendaProfileController {
 	@GetMapping
 	public ResponseEntity<AgendaProfileDetailsResDto> myAgendaProfileDetails(
 		@Login @Parameter(hidden = true) UserDto user) {
-		AgendaProfileDetailsResDto agendaProfileDetails = agendaProfileFindService.detailsAgendaProfile(
-			user.getIntraId());
-		return ResponseEntity.status(HttpStatus.OK).body(agendaProfileDetails);
+		AgendaProfile profile = agendaProfileFindService.findAgendaProfileByIntraId(user.getIntraId());
+		int ticketCount = ticketService.findTicketList(profile).size();
+		IntraProfile intraProfile = intraProfileUtils.getIntraProfile();
+		AgendaProfileDetailsResDto agendaProfileDetails = AgendaProfileDetailsResDto.toDto(
+			profile, ticketCount, intraProfile);
+		return ResponseEntity.ok(agendaProfileDetails);
 	}
 
 	/**

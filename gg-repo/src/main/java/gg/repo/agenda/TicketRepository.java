@@ -14,13 +14,11 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
 	Optional<Ticket> findFirstByAgendaProfileAndIsApprovedTrueAndIsUsedFalseOrderByCreatedAtAsc(
 		AgendaProfile agendaProfile);
 
-	List<Ticket> findByAgendaProfileIdAndIsUsedFalseAndIsApprovedTrue(Long agendaProfileId);
-
 	Optional<Ticket> findByAgendaProfileAndIsApprovedFalse(AgendaProfile agendaProfile);
 
 	Optional<Ticket> findByAgendaProfileId(Long agendaProfileId);
 
 	Page<Ticket> findByAgendaProfileId(Long agendaProfileId, Pageable pageable);
 
-	List<Ticket> findByAgendaProfileAndIsUsedFalse(AgendaProfile agendaProfile);
+	List<Ticket> findByAgendaProfileAndIsUsedFalseAndIsApprovedTrue(AgendaProfile agendaProfile);
 }

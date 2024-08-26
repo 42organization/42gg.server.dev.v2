@@ -129,6 +129,7 @@ public enum ErrorCode {
 	UNREADABLE_HTTP_MESSAGE(400, "CM008", "유효하지 않은 HTTP 메시지입니다."),
 	CONFLICT(409, "CM009", "CONFLICT"),
 	FORBIDDEN(403, "CM010", "접근이 금지된 요청입니다."),
+	REFRESH_TOKEN_EXPIRED(401, "CM011", "토큰이 만료되었습니다. 다시 로그인해주세요."),
 
 	//Feedback
 	FEEDBACK_NOT_FOUND(404, "FB100", "FB NOT FOUND"),
