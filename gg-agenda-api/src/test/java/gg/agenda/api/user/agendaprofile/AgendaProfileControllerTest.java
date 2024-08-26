@@ -73,8 +73,8 @@ public class AgendaProfileControllerTest {
 	AgendaProfile agendaProfile;
 
 	@Nested
-	@DisplayName("agenda profile 상세 조회")
-	class GetAgendaProfile {
+	@DisplayName("나의 agenda profile 상세 조회")
+	class GetMyAgendaProfile {
 
 		@BeforeEach
 		void beforeEach() {
@@ -126,6 +126,17 @@ public class AgendaProfileControllerTest {
 			mockMvc.perform(get("/agenda/profile")
 					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isNotFound());
+		}
+	}
+
+	@Nested
+	@DisplayName("agenda profile 상세 조회")
+	class GetAgendaProfile {
+
+		@BeforeEach
+		void beforeEach() {
+			user = testDataUtils.createNewUser();
+			accessToken = testDataUtils.getLoginAccessTokenFromUser(user);
 		}
 	}
 
@@ -384,7 +395,7 @@ public class AgendaProfileControllerTest {
 			String request = objectMapper.writeValueAsString(pageRequest);
 
 			// when
-			String response = mockMvc.perform(get("/agenda/profile/history/list")
+			String response = mockMvc.perform(get("/agenda/profile/history/list/" + user.getIntraId())
 					.header("Authorization", "Bearer " + accessToken)
 					.param("page", String.valueOf(page))
 					.param("size", String.valueOf(size))
@@ -427,7 +438,7 @@ public class AgendaProfileControllerTest {
 			String request = objectMapper.writeValueAsString(pageRequest);
 
 			// when
-			String response = mockMvc.perform(get("/agenda/profile/history/list")
+			String response = mockMvc.perform(get("/agenda/profile/history/list/" + user.getIntraId())
 					.header("Authorization", "Bearer " + accessToken)
 					.param("page", "1")
 					.param("size", "10")
@@ -452,7 +463,7 @@ public class AgendaProfileControllerTest {
 			String request = objectMapper.writeValueAsString(pageRequest);
 
 			// when & then
-			mockMvc.perform(get("/agenda/profile/history/list")
+			mockMvc.perform(get("/agenda/profile/history/list/" + user.getIntraId())
 					.header("Authorization", "Bearer " + accessToken)
 					.param("page", "0")
 					.param("size", "10")
