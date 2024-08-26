@@ -34,6 +34,7 @@ import gg.agenda.api.user.agendaprofile.controller.response.AgendaProfileDetails
 import gg.agenda.api.user.agendaprofile.controller.response.AgendaProfileInfoDetailsResDto;
 import gg.agenda.api.user.agendaprofile.controller.response.AttendedAgendaListResDto;
 import gg.agenda.api.user.agendaprofile.controller.response.CurrentAttendAgendaListResDto;
+import gg.agenda.api.user.agendaprofile.controller.response.MyAgendaProfileDetailsResDto;
 import gg.agenda.api.user.agendaprofile.service.IntraProfileUtils;
 import gg.agenda.api.user.agendaprofile.service.intraprofile.IntraProfile;
 import gg.data.agenda.Agenda;
@@ -73,8 +74,8 @@ public class AgendaProfileControllerTest {
 	AgendaProfile agendaProfile;
 
 	@Nested
-	@DisplayName("agenda profile 상세 조회")
-	class GetAgendaProfile {
+	@DisplayName("나의 agenda profile 상세 조회")
+	class GetMyAgendaProfile {
 
 		@BeforeEach
 		void beforeEach() {
@@ -96,7 +97,7 @@ public class AgendaProfileControllerTest {
 					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
-			AgendaProfileDetailsResDto result = objectMapper.readValue(response, AgendaProfileDetailsResDto.class);
+			MyAgendaProfileDetailsResDto result = objectMapper.readValue(response, MyAgendaProfileDetailsResDto.class);
 			// then
 			assertThat(result.getUserIntraId()).isEqualTo(user.getIntraId());
 			assertThat(result.getUserContent()).isEqualTo(agendaProfile.getContent());
@@ -124,6 +125,58 @@ public class AgendaProfileControllerTest {
 
 			// when & then: 예외가 발생해야 함
 			mockMvc.perform(get("/agenda/profile")
+					.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isNotFound());
+		}
+	}
+
+	@Nested
+	@DisplayName("agenda profile 상세 조회")
+	class GetAgendaProfile {
+
+		@BeforeEach
+		void beforeEach() {
+			user = testDataUtils.createNewUser();
+			accessToken = testDataUtils.getLoginAccessTokenFromUser(user);
+		}
+
+		@Test
+		@DisplayName("agenda profile 상세 조회 성공")
+		void getAgendaProfileSuccess() throws Exception {
+			//given
+			URL url = new URL("http://localhost:8080");
+			IntraProfile intraProfile = new IntraProfile(url, List.of());
+			Mockito.when(intraProfileUtils.getIntraProfile(user.getIntraId())).thenReturn(intraProfile);
+			AgendaProfile agendaProfile = agendaMockData.createAgendaProfile(user, SEOUL);
+			agendaMockData.createTicket(agendaProfile);
+			// when
+			String response = mockMvc.perform(get("/agenda/profile/" + user.getIntraId())
+					.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+			AgendaProfileDetailsResDto result = objectMapper.readValue(response,
+				AgendaProfileDetailsResDto.class);
+
+			// then
+			assertThat(result.getUserIntraId()).isEqualTo(user.getIntraId());
+			assertThat(result.getUserContent()).isEqualTo(agendaProfile.getContent());
+			assertThat(result.getUserGithub()).isEqualTo(agendaProfile.getGithubUrl());
+			assertThat(result.getUserCoalition()).isEqualTo(agendaProfile.getCoalition());
+			assertThat(result.getUserLocation()).isEqualTo(agendaProfile.getLocation());
+		}
+
+		@Test
+		@DisplayName("agenda profile 상세 조회 성공 - 존재하지 않는 사용자인 경우")
+		void getAgendaProfileFailedWithInvalidIntraId() throws Exception {
+			//given
+			URL url = new URL("http://localhost:8080");
+			IntraProfile intraProfile = new IntraProfile(url, List.of());
+			Mockito.when(intraProfileUtils.getIntraProfile()).thenReturn(intraProfile);
+			AgendaProfile agendaProfile = agendaMockData.createAgendaProfile(user, SEOUL);
+			agendaMockData.createTicket(agendaProfile);
+
+			// when
+			mockMvc.perform(get("/agenda/profile/" + "invalidIntraId")
 					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isNotFound());
 		}
@@ -384,7 +437,7 @@ public class AgendaProfileControllerTest {
 			String request = objectMapper.writeValueAsString(pageRequest);
 
 			// when
-			String response = mockMvc.perform(get("/agenda/profile/history/list")
+			String response = mockMvc.perform(get("/agenda/profile/history/list/" + user.getIntraId())
 					.header("Authorization", "Bearer " + accessToken)
 					.param("page", String.valueOf(page))
 					.param("size", String.valueOf(size))
@@ -427,7 +480,7 @@ public class AgendaProfileControllerTest {
 			String request = objectMapper.writeValueAsString(pageRequest);
 
 			// when
-			String response = mockMvc.perform(get("/agenda/profile/history/list")
+			String response = mockMvc.perform(get("/agenda/profile/history/list/" + user.getIntraId())
 					.header("Authorization", "Bearer " + accessToken)
 					.param("page", "1")
 					.param("size", "10")
@@ -452,7 +505,7 @@ public class AgendaProfileControllerTest {
 			String request = objectMapper.writeValueAsString(pageRequest);
 
 			// when & then
-			mockMvc.perform(get("/agenda/profile/history/list")
+			mockMvc.perform(get("/agenda/profile/history/list/" + user.getIntraId())
 					.header("Authorization", "Bearer " + accessToken)
 					.param("page", "0")
 					.param("size", "10")

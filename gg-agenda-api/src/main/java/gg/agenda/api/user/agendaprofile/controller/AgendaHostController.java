@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,15 +33,14 @@ public class AgendaHostController {
 
 	private final AgendaProfileFindService agendaProfileFindService;
 
-	@GetMapping("/history/list")
+	@GetMapping("/history/list/{intraId}")
 	public ResponseEntity<PageResponseDto<HostedAgendaResDto>> hostedAgendaList(
-		@Login @Parameter(hidden = true) UserDto user,
-		@ModelAttribute @Valid PageRequestDto pageRequestDto) {
+		@PathVariable String intraId, @ModelAttribute @Valid PageRequestDto pageRequestDto) {
 		int page = pageRequestDto.getPage();
 		int size = pageRequestDto.getSize();
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());
 
-		Page<Agenda> hostedAgendas = agendaProfileFindService.findHostedAgenda(user.getIntraId(), pageable);
+		Page<Agenda> hostedAgendas = agendaProfileFindService.findHostedAgenda(intraId, pageable);
 
 		List<HostedAgendaResDto> agendaResDtos = hostedAgendas.stream()
 			.map(HostedAgendaResDto.MapStruct.INSTANCE::toDto)
@@ -50,15 +50,15 @@ public class AgendaHostController {
 		return ResponseEntity.ok(pageResponseDto);
 	}
 
-	@GetMapping("/current/list")
+	@GetMapping("/current/list/{intraId}")
 	public ResponseEntity<PageResponseDto<HostedAgendaResDto>> hostingAgendaList(
-		@Login @Parameter(hidden = true) UserDto user,
+		@PathVariable String intraId,
 		@ModelAttribute @Valid PageRequestDto pageRequestDto) {
 		int page = pageRequestDto.getPage();
 		int size = pageRequestDto.getSize();
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());
 
-		Page<Agenda> hostedAgendas = agendaProfileFindService.findHostingAgenda(user.getIntraId(), pageable);
+		Page<Agenda> hostedAgendas = agendaProfileFindService.findHostingAgenda(intraId, pageable);
 
 		List<HostedAgendaResDto> agendaResDtos = hostedAgendas.stream()
 			.map(HostedAgendaResDto.MapStruct.INSTANCE::toDto)
