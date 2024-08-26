@@ -14,12 +14,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import gg.agenda.api.user.agendaprofile.controller.request.AgendaProfileChangeReqDto;
 import gg.agenda.api.user.agendaprofile.controller.response.AgendaProfileDetailsResDto;
+import gg.agenda.api.user.agendaprofile.controller.response.MyAgendaProfileDetailsResDto;
 import gg.agenda.api.user.agendaprofile.controller.response.AgendaProfileInfoDetailsResDto;
 import gg.agenda.api.user.agendaprofile.controller.response.AttendedAgendaListResDto;
 import gg.agenda.api.user.agendaprofile.controller.response.CurrentAttendAgendaListResDto;
@@ -55,14 +57,22 @@ public class AgendaProfileController {
 	 * @return AgendaProfileDetailsResDto 객체와 HTTP 상태 코드를 포함한 ResponseEntity
 	 */
 	@GetMapping
-	public ResponseEntity<AgendaProfileDetailsResDto> myAgendaProfileDetails(
+	public ResponseEntity<MyAgendaProfileDetailsResDto> myAgendaProfileDetails(
 		@Login @Parameter(hidden = true) UserDto user) {
 		AgendaProfile profile = agendaProfileFindService.findAgendaProfileByIntraId(user.getIntraId());
 		int ticketCount = ticketService.findTicketList(profile).size();
 		IntraProfile intraProfile = intraProfileUtils.getIntraProfile();
-		AgendaProfileDetailsResDto agendaProfileDetails = AgendaProfileDetailsResDto.toDto(
+		MyAgendaProfileDetailsResDto agendaProfileDetails = MyAgendaProfileDetailsResDto.toDto(
 			profile, ticketCount, intraProfile);
 		return ResponseEntity.ok(agendaProfileDetails);
+	}
+
+	@GetMapping("/{intraId}")
+	public ResponseEntity<AgendaProfileDetailsResDto> agendaProfileDetails(@PathVariable String intraId) {
+		AgendaProfile profile = agendaProfileFindService.findAgendaProfileByIntraId(intraId);
+		IntraProfile intraProfile = intraProfileUtils.getIntraProfile(intraId);
+		AgendaProfileDetailsResDto resDto = AgendaProfileDetailsResDto.toDto(profile, intraProfile);
+		return ResponseEntity.ok(resDto);
 	}
 
 	/**

@@ -30,7 +30,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.agenda.api.AgendaMockData;
 import gg.agenda.api.user.agendaprofile.controller.request.AgendaProfileChangeReqDto;
-import gg.agenda.api.user.agendaprofile.controller.response.AgendaProfileDetailsResDto;
+import gg.agenda.api.user.agendaprofile.controller.response.MyAgendaProfileDetailsResDto;
 import gg.agenda.api.user.agendaprofile.controller.response.AgendaProfileInfoDetailsResDto;
 import gg.agenda.api.user.agendaprofile.controller.response.AttendedAgendaListResDto;
 import gg.agenda.api.user.agendaprofile.controller.response.CurrentAttendAgendaListResDto;
@@ -96,7 +96,7 @@ public class AgendaProfileControllerTest {
 					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
-			AgendaProfileDetailsResDto result = objectMapper.readValue(response, AgendaProfileDetailsResDto.class);
+			MyAgendaProfileDetailsResDto result = objectMapper.readValue(response, MyAgendaProfileDetailsResDto.class);
 			// then
 			assertThat(result.getUserIntraId()).isEqualTo(user.getIntraId());
 			assertThat(result.getUserContent()).isEqualTo(agendaProfile.getContent());

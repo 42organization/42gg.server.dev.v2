@@ -37,6 +37,11 @@ public class IntraProfileUtils {
 		return new IntraProfile(intraImage.getLink(), intraAchievements);
 	}
 
+
+	public IntraProfile getIntraProfile(String intraId) {
+		return null;
+	}
+
 	private IntraProfileResponse requestIntraProfile() {
 		try {
 			String accessToken = fortyTwoAuthUtil.getAccessToken();
