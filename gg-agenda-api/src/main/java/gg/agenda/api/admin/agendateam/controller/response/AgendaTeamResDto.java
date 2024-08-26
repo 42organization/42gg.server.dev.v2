@@ -7,6 +7,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 import gg.data.agenda.AgendaTeam;
+import gg.data.agenda.type.Location;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -32,11 +33,14 @@ public class AgendaTeamResDto {
 
 	private String teamAward;
 
+	private Location teamLocation;
+
 	private Integer teamAwardPriority;
 
 	@Builder
 	public AgendaTeamResDto(String teamName, String teamStatus, boolean teamIsPrivate, String teamLeaderIntraId,
-		int teamMateCount, UUID teamKey, String teamAward, Integer teamAwardPriority, String teamContent) {
+		int teamMateCount, UUID teamKey, String teamAward, Integer teamAwardPriority, String teamContent,
+		Location teamLocation) {
 		this.teamName = teamName;
 		this.teamContent = teamContent;
 		this.teamStatus = teamStatus;
@@ -46,6 +50,7 @@ public class AgendaTeamResDto {
 		this.teamKey = teamKey;
 		this.teamAward = teamAward;
 		this.teamAwardPriority = teamAwardPriority;
+		this.teamLocation = teamLocation;
 	}
 
 	@Mapper
@@ -60,6 +65,7 @@ public class AgendaTeamResDto {
 		@Mapping(target = "teamLeaderIntraId", source = "leaderIntraId")
 		@Mapping(target = "teamMateCount", source = "mateCount")
 		@Mapping(target = "teamKey", source = "teamKey")
+		@Mapping(target = "teamLocation", source = "location")
 		@Mapping(target = "teamAward", source = "award", defaultValue = "AgendaTeam.DEFAULT_AWARD")
 		@Mapping(target = "teamAwardPriority", source = "awardPriority", defaultValue = "0")
 		AgendaTeamResDto toDto(AgendaTeam agendaTeam);
