@@ -52,6 +52,21 @@ public class AgendaProfileController {
 	private final IntraProfileUtils intraProfileUtils;
 
 	/**
+	 * AgendaProfile admin 여부 조회 API
+	 * @param user 로그인한 사용자 정보
+	 */
+	@GetMapping("/info")
+	public ResponseEntity<AgendaProfileInfoDetailsResDto> myAgendaProfileInfoDetails(
+		@Login @Parameter(hidden = true) UserDto user) {
+		String intraId = user.getIntraId();
+		Boolean isAdmin = user.getRoleType() == RoleType.ADMIN;
+
+		AgendaProfileInfoDetailsResDto agendaProfileInfoDetails = new AgendaProfileInfoDetailsResDto(intraId, isAdmin);
+
+		return ResponseEntity.ok(agendaProfileInfoDetails);
+	}
+
+	/**
 	 * AgendaProfile 상세 조회 API
 	 * @param user 로그인한 사용자 정보
 	 * @return AgendaProfileDetailsResDto 객체와 HTTP 상태 코드를 포함한 ResponseEntity
@@ -65,14 +80,6 @@ public class AgendaProfileController {
 		MyAgendaProfileDetailsResDto agendaProfileDetails = MyAgendaProfileDetailsResDto.toDto(
 			profile, ticketCount, intraProfile);
 		return ResponseEntity.ok(agendaProfileDetails);
-	}
-
-	@GetMapping("/{intraId}")
-	public ResponseEntity<AgendaProfileDetailsResDto> agendaProfileDetails(@PathVariable String intraId) {
-		AgendaProfile profile = agendaProfileFindService.findAgendaProfileByIntraId(intraId);
-		IntraProfile intraProfile = intraProfileUtils.getIntraProfile(intraId);
-		AgendaProfileDetailsResDto resDto = AgendaProfileDetailsResDto.toDto(profile, intraProfile);
-		return ResponseEntity.ok(resDto);
 	}
 
 	/**
@@ -89,21 +96,6 @@ public class AgendaProfileController {
 	}
 
 	/**
-	 * AgendaProfile admin 여부 조회 API
-	 * @param user 로그인한 사용자 정보
-	 */
-	@GetMapping("/info")
-	public ResponseEntity<AgendaProfileInfoDetailsResDto> myAgendaProfileInfoDetails(
-		@Login @Parameter(hidden = true) UserDto user) {
-		String intraId = user.getIntraId();
-		Boolean isAdmin = user.getRoleType() == RoleType.ADMIN;
-
-		AgendaProfileInfoDetailsResDto agendaProfileInfoDetails = new AgendaProfileInfoDetailsResDto(intraId, isAdmin);
-
-		return ResponseEntity.ok(agendaProfileInfoDetails);
-	}
-
-	/**
 	 * 현재 참여중인 Agenda 목록 조회하는 메서드
 	 * @param user 로그인한 유저의 id
 	 * @return List<CurrentAttendAgendaListResDto> 객체
@@ -111,23 +103,28 @@ public class AgendaProfileController {
 	@GetMapping("/current/list")
 	public ResponseEntity<List<CurrentAttendAgendaListResDto>> getCurrentAttendAgendaList(
 		@Login @Parameter(hidden = true) UserDto user) {
-		String intraId = user.getIntraId();
-
-		List<CurrentAttendAgendaListResDto> currentAttendAgendaList = agendaProfileFindService.findCurrentAttendAgenda(
-			intraId);
+		List<CurrentAttendAgendaListResDto> currentAttendAgendaList = agendaProfileFindService
+			.findCurrentAttendAgenda(user.getIntraId());
 		return ResponseEntity.ok(currentAttendAgendaList);
+	}
+
+	@GetMapping("/{intraId}")
+	public ResponseEntity<AgendaProfileDetailsResDto> agendaProfileDetails(@PathVariable String intraId) {
+		AgendaProfile profile = agendaProfileFindService.findAgendaProfileByIntraId(intraId);
+		IntraProfile intraProfile = intraProfileUtils.getIntraProfile(intraId);
+		AgendaProfileDetailsResDto resDto = AgendaProfileDetailsResDto.toDto(profile, intraProfile);
+		return ResponseEntity.ok(resDto);
 	}
 
 	/**
 	 * 과거에 참여했던 Agenda 목록 조회하는 메서드
 	 * @param pageRequest 페이지네이션 요청 정보, agendaId 아젠다 아이디
 	 */
-	@GetMapping("/history/list")
+	@GetMapping("/history/list/{intraId}")
 	public ResponseEntity<PageResponseDto<AttendedAgendaListResDto>> getAttendedAgendaList(
-		@Login @Parameter(hidden = true) UserDto user, @ModelAttribute @Valid PageRequestDto pageRequest) {
+		@PathVariable String intraId, @ModelAttribute @Valid PageRequestDto pageRequest) {
 		int page = pageRequest.getPage();
 		int size = pageRequest.getSize();
-		String intraId = user.getIntraId();
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());
 
 		Page<AgendaTeamProfile> attendedAgendaList = agendaProfileFindService
