@@ -74,20 +74,18 @@ public class SnsMessageUtil {
 			+ "\n" + agenda.getTitle() + "의" + agendaTeam.getName() + "팀에서" + intraId + "님이 탈퇴했습니다.";
 	}
 
-	public String agendaHostMessage(Agenda agenda) {
-		if (agenda.getMinTeam() == agenda.getCurrentTeam()) {
-			return SUBJECT
-				+ "\n" + agenda.getTitle() + "행사가 최소 팀 개수를 충족했습니다."
-				+ "\n" + "행사를 확정할 수 있습니다."
-				+ "\n" + "확정시엔 다른 팀들이 참가 할 수 없으니, 주의하세요!"
-				+ "\n" + "$$" + URL + "agenda_key=" + agenda.getAgendaKey() + "$$";
-		}
-		if (agenda.getMaxTeam() == agenda.getCurrentTeam()) {
-			return SUBJECT
-				+ "\n" + agenda.getTitle() + "행사가 최대 팀 개수를 충족했습니다."
-				+ "\n" + "행사를 확정하고 진행 시간과 장소를 공지사항으로 전달해주세요."
-				+ "\n" + "$$" + URL + "agenda_key=" + agenda.getAgendaKey() + "$$";
-		}
-		return null;
+	public String agendaHostMinTeamSatisfiedMessage(Agenda agenda) {
+		return SUBJECT
+			+ "\n" + agenda.getTitle() + "행사가 최소 팀 개수를 충족했습니다."
+			+ "\n" + "행사를 확정할 수 있습니다."
+			+ "\n" + "확정시엔 다른 팀들이 참가 할 수 없으니, 주의하세요!"
+			+ "\n" + "$$" + URL + "agenda_key=" + agenda.getAgendaKey() + "$$";
+	}
+
+	public String agendaHostMaxTeamSatisfiedMessage(Agenda agenda) {
+		return SUBJECT
+			+ "\n" + agenda.getTitle() + "행사가 최대 팀 개수를 충족했습니다."
+			+ "\n" + "행사를 확정하고 진행 시간과 장소를 공지사항으로 전달해주세요."
+			+ "\n" + "$$" + URL + "agenda_key=" + agenda.getAgendaKey() + "$$";
 	}
 }
