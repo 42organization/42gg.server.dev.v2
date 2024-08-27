@@ -294,6 +294,4 @@ public class AgendaTeamService {
 			profiles);
 		agendaTeamRepository.save(agendaTeam);
 	}
-
 }
-

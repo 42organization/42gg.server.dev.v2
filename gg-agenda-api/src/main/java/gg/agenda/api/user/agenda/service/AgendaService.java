@@ -133,5 +133,4 @@ public class AgendaService {
 		attendTeams.forEach(agendaTeamService::leaveTeamAll);
 		agenda.cancelAgenda();
 	}
-
 }
