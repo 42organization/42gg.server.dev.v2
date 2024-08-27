@@ -16,15 +16,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import gg.agenda.api.user.SnsMessageUtil;
 import gg.agenda.api.user.agenda.controller.request.AgendaAwardsReqDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaCreateReqDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaTeamAward;
 import gg.agenda.api.user.agendateam.service.AgendaTeamService;
+import gg.agenda.api.utils.SnsMessageUtil;
 import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaTeam;
-import gg.data.agenda.AgendaTeamProfile;
 import gg.data.agenda.type.AgendaStatus;
 import gg.data.agenda.type.AgendaTeamStatus;
 import gg.repo.agenda.AgendaRepository;
@@ -135,24 +134,4 @@ public class AgendaService {
 		agenda.cancelAgenda();
 	}
 
-	public void slackCancelAgenda(Agenda agenda) {
-		List<AgendaTeamProfile> agendaTeamProfiles = agendaTeamProfileRepository.findAllByAgendaAndIsExistTrue(agenda);
-		String message = snsMessageUtil.cancelAgendaMessage(agenda);
-		agendaTeamProfiles.stream().map(atp -> atp.getProfile().getIntraId())
-			.forEach(intraId -> messageSender.send(intraId, message));
-	}
-
-	public void slackFinishAgenda(Agenda agenda) {
-		List<AgendaTeamProfile> agendaTeamProfiles = agendaTeamProfileRepository.findAllByAgendaAndIsExistTrue(agenda);
-		String message = snsMessageUtil.finishAgendaMessage(agenda);
-		agendaTeamProfiles.stream().map(atp -> atp.getProfile().getIntraId())
-			.forEach(intraId -> messageSender.send(intraId, message));
-	}
-
-	public void slackConfirmAgenda(Agenda agenda) {
-		List<AgendaTeamProfile> agendaTeamProfiles = agendaTeamProfileRepository.findAllByAgendaAndIsExistTrue(agenda);
-		String message = snsMessageUtil.confirmAgendaMessage(agenda);
-		agendaTeamProfiles.stream().map(atp -> atp.getProfile().getIntraId())
-			.forEach(intraId -> messageSender.send(intraId, message));
-	}
 }

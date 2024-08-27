@@ -24,6 +24,7 @@ import gg.agenda.api.user.agenda.service.AgendaService;
 import gg.agenda.api.user.agendaannouncement.controller.request.AgendaAnnouncementCreateReqDto;
 import gg.agenda.api.user.agendaannouncement.controller.response.AgendaAnnouncementResDto;
 import gg.agenda.api.user.agendaannouncement.service.AgendaAnnouncementService;
+import gg.agenda.api.utils.AgendaSlackService;
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
 import gg.data.agenda.Agenda;
@@ -38,7 +39,7 @@ import lombok.RequiredArgsConstructor;
 public class AgendaAnnouncementController {
 
 	private final AgendaService agendaService;
-
+	private final AgendaSlackService agendaSlackService;
 	private final AgendaAnnouncementService agendaAnnouncementService;
 
 	@PostMapping
@@ -48,7 +49,7 @@ public class AgendaAnnouncementController {
 		agenda.mustModifiedByHost(user.getIntraId());
 		AgendaAnnouncement newAnnounce = agendaAnnouncementService
 			.addAgendaAnnouncement(agendaAnnouncementCreateReqDto, agenda);
-		agendaAnnouncementService.slackAddAgendaAnnouncement(agenda, newAnnounce);
+		agendaSlackService.slackAddAgendaAnnouncement(agenda, newAnnounce);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 

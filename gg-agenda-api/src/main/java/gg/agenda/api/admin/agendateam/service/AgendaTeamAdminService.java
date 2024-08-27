@@ -97,6 +97,6 @@ public class AgendaTeamAdminService {
 		List<AgendaTeamProfile> agendaTeamProfiles = agendaTeamProfileAdminRepository
 			.findAllByAgendaTeamAndIsExistIsTrue(agendaTeam);
 		agendaTeamProfiles.forEach(AgendaTeamProfile::changeExistFalse);
-		agendaTeam.cancelTeam(agendaTeam.getStatus());
+		agendaTeam.adminCancelTeam();
 	}
 }

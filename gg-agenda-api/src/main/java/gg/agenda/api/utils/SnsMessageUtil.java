@@ -1,4 +1,4 @@
-package gg.agenda.api.user;
+package gg.agenda.api.utils;
 
 import org.springframework.stereotype.Component;
 

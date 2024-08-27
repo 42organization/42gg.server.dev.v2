@@ -32,7 +32,7 @@ import gg.agenda.api.user.agenda.controller.response.AgendaResDto;
 import gg.agenda.api.user.agenda.controller.response.AgendaSimpleResDto;
 import gg.agenda.api.user.agenda.service.AgendaService;
 import gg.agenda.api.user.agendaannouncement.service.AgendaAnnouncementService;
-import gg.agenda.api.user.agendateam.service.AgendaTeamService;
+import gg.agenda.api.utils.AgendaSlackService;
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
 import gg.data.agenda.Agenda;
@@ -49,7 +49,7 @@ import lombok.RequiredArgsConstructor;
 public class AgendaController {
 
 	private final AgendaService agendaService;
-	private final AgendaTeamService agendaTeamService;
+	private final AgendaSlackService agendaSlackService;
 	private final AgendaAnnouncementService agendaAnnouncementService;
 
 	@GetMapping
@@ -108,7 +108,7 @@ public class AgendaController {
 			agendaService.awardAgenda(agendaAwardsReqDto, agenda);
 		}
 		agendaService.finishAgenda(agenda);
-		agendaService.slackFinishAgenda(agenda);
+		agendaSlackService.slackFinishAgenda(agenda);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
@@ -118,8 +118,8 @@ public class AgendaController {
 		Agenda agenda = agendaService.findAgendaByAgendaKey(agendaKey);
 		agenda.mustModifiedByHost(user.getIntraId());
 		List<AgendaTeam> failTeam = agendaService.confirmAgendaAndRefundTicketForOpenTeam(agenda);
-		agendaService.slackConfirmAgenda(agenda);
-		agendaTeamService.slackCancelByAgendaConfirm(agenda, failTeam);
+		agendaSlackService.slackConfirmAgenda(agenda);
+		agendaSlackService.slackCancelByAgendaConfirm(agenda, failTeam);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
@@ -129,7 +129,7 @@ public class AgendaController {
 		Agenda agenda = agendaService.findAgendaByAgendaKey(agendaKey);
 		agenda.mustModifiedByHost(user.getIntraId());
 		agendaService.cancelAgenda(agenda);
-		agendaService.slackCancelAgenda(agenda);
+		agendaSlackService.slackCancelAgenda(agenda);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 }

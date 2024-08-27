@@ -1,6 +1,5 @@
 package gg.agenda.api.user.agendaannouncement.service;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -8,11 +7,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.agenda.api.user.SnsMessageUtil;
 import gg.agenda.api.user.agendaannouncement.controller.request.AgendaAnnouncementCreateReqDto;
+import gg.agenda.api.utils.SnsMessageUtil;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaAnnouncement;
-import gg.data.agenda.AgendaTeamProfile;
 import gg.repo.agenda.AgendaAnnouncementRepository;
 import gg.repo.agenda.AgendaTeamProfileRepository;
 import gg.utils.sns.MessageSender;
@@ -46,12 +44,5 @@ public class AgendaAnnouncementService {
 			return defaultTitle;
 		}
 		return latestAnnounce.get().getTitle();
-	}
-
-	public void slackAddAgendaAnnouncement(Agenda agenda, AgendaAnnouncement newAnnounce) {
-		List<AgendaTeamProfile> agendaTeamProfiles = agendaTeamProfileRepository.findAllByAgendaAndIsExistTrue(agenda);
-		String message = snsMessageUtil.addAgendaAnnouncementMessage(agenda, newAnnounce);
-		agendaTeamProfiles.stream().map(atp -> atp.getProfile().getIntraId())
-			.forEach(intraId -> messageSender.send(intraId, message));
 	}
 }
