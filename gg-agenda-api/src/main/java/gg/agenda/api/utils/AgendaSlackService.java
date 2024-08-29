@@ -53,11 +53,10 @@ public class AgendaSlackService {
 		String message = snsMessageUtil.confirmTeamMessage(agenda, newTeam);
 		agendaTeamProfiles.stream().map(atp -> atp.getProfile().getIntraId())
 			.forEach(intraId -> messageSender.send(intraId, message));
-		if (agenda.getMinTeam() == agenda.getCurrentTeam()) {
+		if (agenda.getMaxTeam() == agenda.getCurrentTeam()) {
 			String toHostMessage = snsMessageUtil.agendaHostMinTeamSatisfiedMessage(agenda);
 			messageSender.send(agenda.getHostIntraId(), toHostMessage);
-		}
-		if (agenda.getMaxTeam() == agenda.getCurrentTeam()) {
+		} else if (agenda.getMinTeam() == agenda.getCurrentTeam()) {
 			String toHostMessage = snsMessageUtil.agendaHostMaxTeamSatisfiedMessage(agenda);
 			messageSender.send(agenda.getHostIntraId(), toHostMessage);
 		}
