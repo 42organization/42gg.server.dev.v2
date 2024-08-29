@@ -3,6 +3,7 @@ package gg.agenda.api.user.agendaprofile.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.data.domain.Page;
@@ -73,10 +74,10 @@ public class AgendaProfileController {
 	 */
 	@GetMapping
 	public ResponseEntity<MyAgendaProfileDetailsResDto> myAgendaProfileDetails(
-		@Login @Parameter(hidden = true) UserDto user) {
+		@Login @Parameter(hidden = true) UserDto user, HttpServletResponse response) {
 		AgendaProfile profile = agendaProfileFindService.findAgendaProfileByIntraId(user.getIntraId());
 		int ticketCount = ticketService.findTicketList(profile).size();
-		IntraProfile intraProfile = intraProfileUtils.getIntraProfile();
+		IntraProfile intraProfile = intraProfileUtils.getIntraProfile(response);
 		MyAgendaProfileDetailsResDto agendaProfileDetails = MyAgendaProfileDetailsResDto.toDto(
 			profile, ticketCount, intraProfile);
 		return ResponseEntity.ok(agendaProfileDetails);
@@ -109,9 +110,10 @@ public class AgendaProfileController {
 	}
 
 	@GetMapping("/{intraId}")
-	public ResponseEntity<AgendaProfileDetailsResDto> agendaProfileDetails(@PathVariable String intraId) {
+	public ResponseEntity<AgendaProfileDetailsResDto> agendaProfileDetails(@PathVariable String intraId,
+		HttpServletResponse response) {
 		AgendaProfile profile = agendaProfileFindService.findAgendaProfileByIntraId(intraId);
-		IntraProfile intraProfile = intraProfileUtils.getIntraProfile(intraId);
+		IntraProfile intraProfile = intraProfileUtils.getIntraProfile(intraId, response);
 		AgendaProfileDetailsResDto resDto = AgendaProfileDetailsResDto.toDto(profile, intraProfile);
 		return ResponseEntity.ok(resDto);
 	}

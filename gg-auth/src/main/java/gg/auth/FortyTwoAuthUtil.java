@@ -25,6 +25,7 @@ import org.springframework.util.MultiValueMap;
 
 import gg.utils.exception.ErrorCode;
 import gg.utils.exception.custom.NotExistException;
+import gg.utils.exception.user.TokenNotValidException;
 import gg.utils.external.ApiUtil;
 import lombok.RequiredArgsConstructor;
 
@@ -37,6 +38,9 @@ public class FortyTwoAuthUtil {
 	public String getAccessToken() {
 		Authentication authentication = getAuthenticationFromContext();
 		OAuth2AuthorizedClient client = getClientFromAuthentication(authentication);
+		if (Objects.isNull(client)) {
+			throw new TokenNotValidException();
+		}
 		return client.getAccessToken().getTokenValue();
 	}
 
