@@ -1,10 +1,13 @@
 package gg.agenda.api.admin.ticket;
 
-import static org.assertj.core.api.AssertionsForClassTypes.*;
+import static gg.data.agenda.type.Location.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import javax.transaction.Transactional;
@@ -13,17 +16,22 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gg.admin.repo.agenda.TicketAdminRepository;
 import gg.agenda.api.admin.ticket.controller.request.TicketAddAdminReqDto;
 import gg.agenda.api.admin.ticket.controller.request.TicketChangeAdminReqDto;
 import gg.agenda.api.admin.ticket.controller.response.TicketAddAdminResDto;
+import gg.agenda.api.admin.ticket.controller.response.TicketListResDto;
+import gg.agenda.api.user.ticket.controller.response.TicketHistoryResDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.Ticket;
@@ -33,6 +41,8 @@ import gg.data.user.User;
 import gg.data.user.type.RoleType;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
+import gg.utils.dto.PageRequestDto;
+import gg.utils.dto.PageResponseDto;
 import gg.utils.fixture.agenda.AgendaFixture;
 import gg.utils.fixture.agenda.AgendaProfileFixture;
 import gg.utils.fixture.agenda.TicketFixture;
@@ -218,6 +228,205 @@ public class TicketAdminControllerTest {
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(content))
 				.andExpect(status().isNotFound());
+		}
+	}
+
+	@Nested
+	@DisplayName("티켓 목록 조회 테스트")
+	class GetTicketList {
+
+		@BeforeEach
+		void beforeEach() {
+			user = testDataUtils.createNewAdminUser(RoleType.ADMIN);
+			accessToken = testDataUtils.getLoginAccessTokenFromUser(user);
+			agendaProfile = agendaProfileFixture.createAgendaProfile(user, Location.SEOUL);
+		}
+
+		@ParameterizedTest
+		@ValueSource(ints = {1, 2, 3})
+		@DisplayName("200 모든 티켓 목록 조회 성공")
+		void getAllTicketsSuccess(int page) throws Exception {
+			// Given
+			int size = 10;
+			int total = 25;
+			List<Ticket> tickets = new ArrayList<>();
+			for (int i = 0; i < total; i++) {
+				tickets.add(ticketFixture.createTicket(agendaProfile));
+			}
+			tickets.sort((o1, o2) -> Long.compare(o2.getId(), o1.getId()));
+
+			PageRequestDto pageRequest = new PageRequestDto(page, size);
+			String request = objectMapper.writeValueAsString(pageRequest);
+
+			// When
+			String res = mockMvc.perform(
+					get("/agenda/admin/ticket/list/" + user.getIntraId())
+						.header("Authorization", "Bearer " + accessToken)
+						.param("page", String.valueOf(page))
+						.param("size", String.valueOf(size))
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+
+			PageResponseDto<TicketListResDto> pageResponseDto = objectMapper.readValue(res, new TypeReference<>() {
+			});
+			List<TicketListResDto> result = pageResponseDto.getContent();
+
+			// Then
+			int expectedSize = Math.min(size, total - (page - 1) * size);
+			assertThat(result).hasSize(expectedSize);
+
+			for (int i = 0; i < result.size(); i++) {
+				TicketListResDto actual = result.get(i);
+
+				int ticketIndex = (page - 1) * size + i;
+				if (ticketIndex >= tickets.size()) {
+					break;
+				}
+				Ticket expected = tickets.get(ticketIndex);
+
+				// 검증
+				assertThat(actual.getTicketId()).isEqualTo(expected.getId());
+				assertThat(actual.getCreatedAt()).isEqualTo(expected.getCreatedAt());
+				assertThat(actual.getIsApproved()).isEqualTo(expected.getIsApproved());
+				assertThat(actual.getApprovedAt()).isEqualTo(expected.getApprovedAt());
+				assertThat(actual.getIsUsed()).isEqualTo(expected.getIsUsed());
+				assertThat(actual.getUsedAt()).isEqualTo(expected.getUsedAt());
+			}
+		}
+
+		@Test
+		@DisplayName("200 티켓 히스토리 조회 성공 - approve 되어있지 않은 경우")
+		void findTicketHistorySuccessToNotApprove() throws Exception {
+			//given
+			ticketFixture.createTicket(agendaProfile, false, false, null, null);
+			PageRequestDto req = new PageRequestDto(1, 5);
+			//when
+			String res = mockMvc.perform(
+					get("/agenda/admin/ticket/list/" + user.getIntraId())
+						.header("Authorization", "Bearer " + accessToken)
+						.param("page", String.valueOf(req.getPage()))
+						.param("size", String.valueOf(req.getSize())))
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+			PageResponseDto<TicketHistoryResDto> pageResponseDto = objectMapper.readValue(res, new TypeReference<>() {
+			});
+			List<TicketHistoryResDto> result = pageResponseDto.getContent();
+
+			//then
+			assertThat(result.size()).isEqualTo(1);
+			assertThat(result.get(0).getIssuedFrom()).isEqualTo("42Intra");
+			assertThat(result.get(0).getUsedTo()).isEqualTo("NotApproved");
+		}
+
+		@Test
+		@DisplayName("200 티켓 히스토리 조회 성공 - approve 되어있고 used 되어있는 경우")
+		void findTicketHistorySuccessToUsed() throws Exception {
+			//given
+			Agenda seoulAgenda = agendaFixture.createAgenda(SEOUL);
+			Ticket ticket = ticketFixture.createTicket(agendaProfile, true, true, null,
+				seoulAgenda.getAgendaKey());
+			PageRequestDto req = new PageRequestDto(1, 5);
+			//when
+			String res = mockMvc.perform(
+					get("/agenda/admin/ticket/list/" + user.getIntraId())
+						.header("Authorization", "Bearer " + accessToken)
+						.param("page", String.valueOf(req.getPage()))
+						.param("size", String.valueOf(req.getSize())))
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+			PageResponseDto<TicketHistoryResDto> pageResponseDto = objectMapper.readValue(res, new TypeReference<>() {
+			});
+			List<TicketHistoryResDto> result = pageResponseDto.getContent();
+
+			//then
+			assertThat(result.size()).isEqualTo(1);
+			assertThat(result.get(0).getIssuedFrom()).isEqualTo("42Intra");
+			assertThat(result.get(0).getUsedTo()).isEqualTo(seoulAgenda.getTitle());
+		}
+
+		@Test
+		@DisplayName("200 티켓 히스토리 조회 성공 - approve 되어있고 used 되어있지 않은 경우")
+		void findTicketHistorySuccessToNotUsed() throws Exception {
+			//given
+			Agenda seoulAgenda = agendaFixture.createAgenda(SEOUL);
+			Ticket ticket = ticketFixture.createTicket(agendaProfile, true, false, null,
+				null);
+			PageRequestDto req = new PageRequestDto(1, 5);
+			String content = objectMapper.writeValueAsString(req);
+			//when
+			String res = mockMvc.perform(
+					get("/agenda/admin/ticket/list/" + user.getIntraId())
+						.header("Authorization", "Bearer " + accessToken)
+						.param("page", String.valueOf(req.getPage()))
+						.param("size", String.valueOf(req.getSize())))
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+			PageResponseDto<TicketHistoryResDto> pageResponseDto = objectMapper.readValue(res, new TypeReference<>() {
+			});
+			List<TicketHistoryResDto> result = pageResponseDto.getContent();
+			//then
+			assertThat(result.size()).isEqualTo(1);
+			assertThat(result.get(0).getIssuedFrom()).isEqualTo("42Intra");
+			assertThat(result.get(0).getUsedTo()).isEqualTo("NotUsed");
+		}
+
+		@Test
+		@DisplayName("200 티켓 히스토리 조회 성공 - refund 되어있고 used 되어있지 않은 경우")
+		void findTicketHistorySuccessToRefund() throws Exception {
+			//given
+			Agenda seoulAgenda = agendaFixture.createAgenda(SEOUL);
+			Ticket ticket = ticketFixture.createTicket(agendaProfile, true, false, seoulAgenda.getAgendaKey(),
+				null);
+			PageRequestDto req = new PageRequestDto(1, 5);
+			//when
+			String res = mockMvc.perform(
+					get("/agenda/admin/ticket/list/" + user.getIntraId())
+						.header("Authorization", "Bearer " + accessToken)
+						.param("page", String.valueOf(req.getPage()))
+						.param("size", String.valueOf(req.getSize())))
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+			PageResponseDto<TicketHistoryResDto> pageResponseDto = objectMapper.readValue(res, new TypeReference<>() {
+			});
+			List<TicketHistoryResDto> result = pageResponseDto.getContent();
+			//then
+			assertThat(result.size()).isEqualTo(1);
+			assertThat(result.get(0).getIssuedFrom()).isEqualTo(seoulAgenda.getTitle());
+			assertThat(result.get(0).getUsedTo()).isEqualTo("NotUsed");
+		}
+
+		@Test
+		@DisplayName("200 티켓이 없는 경우")
+		void getAllTicketsEmpty() throws Exception {
+			//Given
+			PageRequestDto req = new PageRequestDto(1, 5);
+			// When
+			String res = mockMvc.perform(
+					get("/agenda/admin/ticket/list/" + user.getIntraId())
+						.header("Authorization", "Bearer " + accessToken)
+						.param("page", "1")
+						.param("size", "10")
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+
+			PageResponseDto<TicketListResDto> pageResponseDto = objectMapper.readValue(res, new TypeReference<>() {
+			});
+			List<TicketListResDto> result = pageResponseDto.getContent();
+
+			// Then
+			assertThat(result).isEmpty();
+		}
+
+		@Test
+		@DisplayName("400 유효하지 않은 페이지 요청")
+		void getAllTicketsInvalidPageRequest() throws Exception {
+			// Given
+			// When & Then
+			mockMvc.perform(
+					get("/agenda/admin/ticket/list/" + user.getIntraId())
+						.header("Authorization", "Bearer " + accessToken)
+						.param("page", "-1")
+						.param("size", "10")
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isBadRequest());
 		}
 	}
 }
