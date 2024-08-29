@@ -114,6 +114,11 @@ public class AgendaTeam extends BaseTimeEntity {
 		this.mateCount = 0;
 	}
 
+	public void adminCancelTeam() {
+		this.status = CANCEL;
+		this.mateCount = 0;
+	}
+
 	public void leaveTeamMate() {
 		this.mateCount--;
 	}

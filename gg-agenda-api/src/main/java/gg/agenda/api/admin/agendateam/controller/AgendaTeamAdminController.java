@@ -68,4 +68,11 @@ public class AgendaTeamAdminController {
 		agendaTeamAdminService.updateAgendaTeam(agendaTeamUpdateDto);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
+
+	@PatchMapping("/cancel")
+	public ResponseEntity<Void> agendaTeamCancel(@RequestParam("team_key") UUID teamKey) {
+		AgendaTeam agendaTeam = agendaTeamAdminService.getAgendaTeamByTeamKey(teamKey);
+		agendaTeamAdminService.cancelAgendaTeam(agendaTeam);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	}
 }

@@ -22,6 +22,7 @@ import gg.agenda.api.user.agendateam.controller.response.MyTeamSimpleResDto;
 import gg.agenda.api.user.agendateam.controller.response.TeamDetailsResDto;
 import gg.agenda.api.user.agendateam.controller.response.TeamKeyResDto;
 import gg.agenda.api.user.ticket.service.TicketService;
+import gg.agenda.api.utils.SnsMessageUtil;
 import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaProfile;
@@ -40,12 +41,15 @@ import gg.utils.exception.custom.BusinessException;
 import gg.utils.exception.custom.DuplicationException;
 import gg.utils.exception.custom.ForbiddenException;
 import gg.utils.exception.custom.NotExistException;
+import gg.utils.sns.MessageSender;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class AgendaTeamService {
 	private final TicketService ticketService;
+	private final MessageSender messageSender;
+	private final SnsMessageUtil snsMessageUtil;
 	private final AgendaRepository agendaRepository;
 	private final TicketRepository ticketRepository;
 	private final AgendaTeamRepository agendaTeamRepository;
@@ -161,10 +165,7 @@ public class AgendaTeamService {
 	 * @param user 사용자 정보, teamKeyReqDto 팀 KEY 요청 정보, agendaId 아젠다 아이디
 	 */
 	@Transactional
-	public void confirmTeam(UserDto user, UUID agendaKey, UUID teamKey) {
-		Agenda agenda = agendaRepository.findByAgendaKey(agendaKey)
-			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
-
+	public AgendaTeam confirmTeam(UserDto user, Agenda agenda, UUID teamKey) {
 		AgendaTeam agendaTeam = agendaTeamRepository
 			.findByAgendaAndTeamKeyAndStatus(agenda, teamKey, OPEN, CONFIRM)
 			.orElseThrow(() -> new NotExistException(AGENDA_TEAM_NOT_FOUND));
@@ -177,7 +178,7 @@ public class AgendaTeamService {
 		}
 		agenda.confirmTeam(agendaTeam.getLocation(), LocalDateTime.now());
 		agendaTeam.confirm();
-		agendaTeamRepository.save(agendaTeam);
+		return agendaTeamRepository.save(agendaTeam);
 	}
 
 	/**
@@ -246,19 +247,11 @@ public class AgendaTeamService {
 
 	/**
 	 * 아젠다 팀 참여하기
-	 * @param user 사용자 정보, teamKeyReqDto 팀 KEY 요청 정보, agendaId 아젠다 아이디
 	 */
 	@Transactional
-	public void modifyAttendTeam(UserDto user, TeamKeyReqDto teamKeyReqDto, UUID agendaKey) {
+	public void modifyAttendTeam(UserDto user, AgendaTeam agendaTeam, Agenda agenda) {
 		AgendaProfile agendaProfile = agendaProfileRepository.findByUserId(user.getId())
 			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
-
-		Agenda agenda = agendaRepository.findByAgendaKey(agendaKey)
-			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
-
-		AgendaTeam agendaTeam = agendaTeamRepository
-			.findByAgendaAndTeamKeyAndStatus(agenda, teamKeyReqDto.getTeamKey(), OPEN, CONFIRM)
-			.orElseThrow(() -> new NotExistException(AGENDA_TEAM_NOT_FOUND));
 
 		agendaTeamProfileRepository.findByAgendaAndProfileAndIsExistTrue(agenda, agendaProfile)
 			.ifPresent(profile -> {

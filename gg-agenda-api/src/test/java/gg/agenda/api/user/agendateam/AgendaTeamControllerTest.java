@@ -1475,7 +1475,7 @@ public class AgendaTeamControllerTest {
 						.param("agenda_key", agenda.getAgendaKey().toString())
 						.param("teamKey", team.getTeamKey().toString())
 						.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isNotFound());
+				.andExpect(status().isBadRequest());
 		}
 
 		@Test

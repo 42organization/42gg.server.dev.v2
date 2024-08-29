@@ -32,13 +32,14 @@ import gg.agenda.api.user.agenda.controller.response.AgendaResDto;
 import gg.agenda.api.user.agenda.controller.response.AgendaSimpleResDto;
 import gg.agenda.api.user.agenda.service.AgendaService;
 import gg.agenda.api.user.agendaannouncement.service.AgendaAnnouncementService;
+import gg.agenda.api.utils.AgendaSlackService;
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
 import gg.data.agenda.Agenda;
+import gg.data.agenda.AgendaTeam;
 import gg.utils.dto.PageRequestDto;
 import gg.utils.dto.PageResponseDto;
 import gg.utils.exception.custom.InvalidParameterException;
-import gg.utils.exception.user.UserImageLargeException;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 
@@ -48,7 +49,7 @@ import lombok.RequiredArgsConstructor;
 public class AgendaController {
 
 	private final AgendaService agendaService;
-
+	private final AgendaSlackService agendaSlackService;
 	private final AgendaAnnouncementService agendaAnnouncementService;
 
 	@GetMapping
@@ -73,7 +74,7 @@ public class AgendaController {
 	public ResponseEntity<AgendaKeyResDto> agendaAdd(@Login @Parameter(hidden = true) UserDto user,
 		@ModelAttribute @Valid AgendaCreateReqDto agendaCreateReqDto,
 		@RequestParam(required = false) MultipartFile agendaPoster) {
-		if (Objects.nonNull(agendaPoster) && agendaPoster.getSize() > 1024 * 1024) {	// 1MB
+		if (Objects.nonNull(agendaPoster) && agendaPoster.getSize() > 1024 * 1024) {    // 1MB
 			throw new InvalidParameterException(AGENDA_POSTER_SIZE_TOO_LARGE);
 		}
 		UUID agendaKey = agendaService.addAgenda(agendaCreateReqDto, agendaPoster, user).getAgendaKey();
@@ -107,6 +108,7 @@ public class AgendaController {
 			agendaService.awardAgenda(agendaAwardsReqDto, agenda);
 		}
 		agendaService.finishAgenda(agenda);
+		agendaSlackService.slackFinishAgenda(agenda);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
@@ -115,7 +117,9 @@ public class AgendaController {
 		@Login @Parameter(hidden = true) UserDto user) {
 		Agenda agenda = agendaService.findAgendaByAgendaKey(agendaKey);
 		agenda.mustModifiedByHost(user.getIntraId());
-		agendaService.confirmAgendaAndRefundTicketForOpenTeam(agenda);
+		List<AgendaTeam> failTeam = agendaService.confirmAgendaAndRefundTicketForOpenTeam(agenda);
+		agendaSlackService.slackConfirmAgenda(agenda);
+		agendaSlackService.slackCancelByAgendaConfirm(agenda, failTeam);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
@@ -125,6 +129,7 @@ public class AgendaController {
 		Agenda agenda = agendaService.findAgendaByAgendaKey(agendaKey);
 		agenda.mustModifiedByHost(user.getIntraId());
 		agendaService.cancelAgenda(agenda);
+		agendaSlackService.slackCancelAgenda(agenda);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 }

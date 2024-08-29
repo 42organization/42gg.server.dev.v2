@@ -20,7 +20,7 @@ import gg.agenda.api.user.agenda.controller.request.AgendaAwardsReqDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaCreateReqDto;
 import gg.agenda.api.user.agenda.controller.request.AgendaTeamAward;
 import gg.agenda.api.user.agendateam.service.AgendaTeamService;
-import gg.agenda.api.user.ticket.service.TicketService;
+import gg.agenda.api.utils.SnsMessageUtil;
 import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaTeam;
@@ -33,6 +33,7 @@ import gg.utils.exception.custom.BusinessException;
 import gg.utils.exception.custom.ForbiddenException;
 import gg.utils.exception.custom.NotExistException;
 import gg.utils.file.handler.ImageHandler;
+import gg.utils.sns.MessageSender;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -47,11 +48,13 @@ public class AgendaService {
 
 	private final AgendaTeamProfileRepository agendaTeamProfileRepository;
 
-	private final TicketService ticketService;
-
 	private final AgendaTeamService agendaTeamService;
 
 	private final ImageHandler imageHandler;
+
+	private final MessageSender messageSender;
+
+	private final SnsMessageUtil snsMessageUtil;
 
 	@Value("${info.image.defaultUrl}")
 	private String defaultUri;
@@ -110,7 +113,7 @@ public class AgendaService {
 	}
 
 	@Transactional
-	public void confirmAgendaAndRefundTicketForOpenTeam(Agenda agenda) {
+	public List<AgendaTeam> confirmAgendaAndRefundTicketForOpenTeam(Agenda agenda) {
 		if (agenda.getCurrentTeam() < agenda.getMinTeam()) {
 			throw new ForbiddenException("팀이 모두 구성되지 않았습니다.");
 		}
@@ -120,6 +123,7 @@ public class AgendaService {
 			agendaTeamService.leaveTeamAll(openTeam);
 		}
 		agenda.confirmAgenda();
+		return openTeams;
 	}
 
 	@Transactional
