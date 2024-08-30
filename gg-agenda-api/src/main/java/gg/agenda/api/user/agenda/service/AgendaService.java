@@ -96,7 +96,7 @@ public class AgendaService {
 
 	@Transactional(readOnly = true)
 	public Page<Agenda> findHistoryAgendaList(Pageable pageable) {
-		return agendaRepository.findAllByStatusIs(AgendaStatus.FINISH, pageable);
+		return agendaRepository.findAllByStatusIs(AgendaStatus.FINISH, AgendaStatus.CONFIRM, pageable);
 	}
 
 	@Transactional
