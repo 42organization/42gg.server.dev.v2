@@ -51,6 +51,6 @@ public interface AgendaTeamProfileRepository extends JpaRepository<AgendaTeamPro
 	List<AgendaTeamProfile> findAllByAgendaAndIsExistTrue(Agenda agenda);
 
 	@Query("SELECT atp FROM AgendaTeamProfile atp JOIN FETCH atp.profile "
-		+ "WHERE atp.agendaTeam = :agendaTeams AND atp.isExist = true")
+		+ "WHERE atp.agendaTeam IN :agendaTeams AND atp.isExist = true")
 	List<AgendaTeamProfile> findByAgendaTeamInAndIsExistTrue(List<AgendaTeam> agendaTeams);
 }
