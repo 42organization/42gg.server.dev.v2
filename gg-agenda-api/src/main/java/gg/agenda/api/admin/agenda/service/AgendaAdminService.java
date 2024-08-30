@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -79,5 +80,10 @@ public class AgendaAdminService {
 		return agendaAdminRepository.findAll().stream()
 			.map(AgendaAdminSimpleResDto.MapStruct.INSTANCE::toDto)
 			.collect(Collectors.toList());
+	}
+
+	@Transactional(readOnly = true)
+	public Optional<Agenda> getAgenda(UUID agendaKey) {
+		return agendaAdminRepository.findByAgendaKey(agendaKey);
 	}
 }

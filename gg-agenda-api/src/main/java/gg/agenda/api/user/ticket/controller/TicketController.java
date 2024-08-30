@@ -21,12 +21,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import gg.agenda.api.user.agenda.service.AgendaService;
 import gg.agenda.api.user.agendaprofile.service.AgendaProfileFindService;
 import gg.agenda.api.user.ticket.controller.response.TicketCountResDto;
 import gg.agenda.api.user.ticket.controller.response.TicketHistoryResDto;
 import gg.agenda.api.user.ticket.service.TicketService;
 import gg.auth.UserDto;
 import gg.auth.argumentresolver.Login;
+import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.Ticket;
 import gg.utils.cookie.CookieUtil;
@@ -44,6 +46,7 @@ public class TicketController {
 	private final CookieUtil cookieUtil;
 	private final TicketService ticketService;
 	private final AgendaProfileFindService agendaProfileFindService;
+	private final AgendaService agendaService;
 
 	/**
 	 * 티켓 설정 추가
@@ -104,7 +107,21 @@ public class TicketController {
 		Page<Ticket> tickets = ticketService.findTicketsByUserId(user.getId(), pageable);
 
 		List<TicketHistoryResDto> ticketDtos = tickets.stream()
-			.map(ticketService::convertAgendaKeyToTitleWhereIssuedFromAndUsedTo)
+			.map(ticket -> {
+				TicketHistoryResDto dto = new TicketHistoryResDto(ticket);
+
+				if (dto.getIssuedFromKey() != null) {
+					Agenda agendaIssuedFrom = agendaService.getAgenda(dto.getIssuedFromKey()).orElse(null);
+					dto.changeIssuedFrom(agendaIssuedFrom);
+				}
+
+				if (dto.getUsedToKey() != null) {
+					Agenda agendaUsedTo = agendaService.getAgenda(dto.getUsedToKey()).orElse(null);
+					dto.changeUsedTo(agendaUsedTo);
+				}
+
+				return dto;
+			})
 			.collect(Collectors.toList());
 
 		PageResponseDto<TicketHistoryResDto> pageResponseDto = PageResponseDto.of(
