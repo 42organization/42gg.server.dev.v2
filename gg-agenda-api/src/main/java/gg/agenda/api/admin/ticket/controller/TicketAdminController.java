@@ -81,9 +81,6 @@ public class TicketAdminController {
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());
 
 		Page<Ticket> ticketList = ticketAdminFindService.findTicket(intraId, pageable);
-		// List<TicketFindResDto> ticketFindResDto = ticketList.stream()
-		// 	.map(ticketAdminFindService::convertAgendaKeyToTitleWhereIssuedFromAndUsedTo)
-		// 	.collect(Collectors.toList());
 
 		List<TicketFindResDto> ticketFindResDto = ticketList.stream()
 			.map(ticket -> {
