@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -80,8 +81,10 @@ public class AgendaService {
 	@Transactional
 	public Agenda addAgenda(AgendaCreateReqDto createDto, MultipartFile agendaPoster, UserDto user) {
 		try {
-			URL storedUrl = imageHandler.uploadImageOrDefault(agendaPoster, createDto.getAgendaTitle(), defaultUri);
-			createDto.updatePosterUri(storedUrl);
+			if (Objects.nonNull(agendaPoster)) {
+				URL storedUrl = imageHandler.uploadImageOrDefault(agendaPoster, createDto.getAgendaTitle(), defaultUri);
+				createDto.updatePosterUri(storedUrl);
+			}
 			Agenda newAgenda = AgendaCreateReqDto.MapStruct.INSTANCE.toEntity(createDto, user.getIntraId());
 			return agendaRepository.save(newAgenda);
 		} catch (IOException e) {
