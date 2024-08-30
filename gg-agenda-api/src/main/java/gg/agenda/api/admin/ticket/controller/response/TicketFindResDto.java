@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
-public class TicketListResDto {
+public class TicketFindResDto {
 	private Long ticketId;
 	private LocalDateTime createdAt;
 	private String issuedFrom;
@@ -22,7 +22,7 @@ public class TicketListResDto {
 	private Boolean isUsed;
 	private LocalDateTime usedAt;
 
-	public TicketListResDto(Ticket ticket) {
+	public TicketFindResDto(Ticket ticket) {
 		this.ticketId = ticket.getId();
 		this.createdAt = ticket.getCreatedAt();
 		this.issuedFrom = "42Intra";

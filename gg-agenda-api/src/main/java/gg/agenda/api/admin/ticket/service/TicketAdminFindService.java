@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import gg.admin.repo.agenda.AgendaAdminRepository;
 import gg.admin.repo.agenda.TicketAdminRepository;
-import gg.agenda.api.admin.ticket.controller.response.TicketListResDto;
+import gg.agenda.api.admin.ticket.controller.response.TicketFindResDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.Ticket;
@@ -35,8 +35,8 @@ public class TicketAdminFindService {
 	 * 티켓 이력 조회
 	 */
 	@Transactional(readOnly = true)
-	public TicketListResDto convertAgendaKeyToTitleWhereIssuedFromAndUsedTo(Ticket ticket) {
-		TicketListResDto dto = new TicketListResDto(ticket);
+	public TicketFindResDto convertAgendaKeyToTitleWhereIssuedFromAndUsedTo(Ticket ticket) {
+		TicketFindResDto dto = new TicketFindResDto(ticket);
 		if (dto.getIssuedFromKey() != null) {
 			Agenda agenda = agendaAdminRepository.findByAgendaKey(dto.getIssuedFromKey())
 				.orElse(null);

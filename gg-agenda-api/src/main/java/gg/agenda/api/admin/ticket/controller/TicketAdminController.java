@@ -21,12 +21,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import gg.agenda.api.admin.agenda.service.AgendaAdminService;
 import gg.agenda.api.admin.ticket.controller.request.TicketAddAdminReqDto;
 import gg.agenda.api.admin.ticket.controller.request.TicketChangeAdminReqDto;
 import gg.agenda.api.admin.ticket.controller.response.TicketAddAdminResDto;
-import gg.agenda.api.admin.ticket.controller.response.TicketListResDto;
+import gg.agenda.api.admin.ticket.controller.response.TicketFindResDto;
 import gg.agenda.api.admin.ticket.service.TicketAdminFindService;
 import gg.agenda.api.admin.ticket.service.TicketAdminService;
+import gg.data.agenda.Agenda;
 import gg.data.agenda.Ticket;
 import gg.utils.dto.PageRequestDto;
 import gg.utils.dto.PageResponseDto;
@@ -38,6 +40,7 @@ import lombok.RequiredArgsConstructor;
 public class TicketAdminController {
 	private final TicketAdminService ticketAdminService;
 	private final TicketAdminFindService ticketAdminFindService;
+	private final AgendaAdminService agendaAdminService;
 
 	/**
 	 * 티켓 설정 추가
@@ -71,19 +74,37 @@ public class TicketAdminController {
 	 * @param pageRequest 페이지네이션 요청 정보
 	 */
 	@GetMapping("/list/{intraId}")
-	public ResponseEntity<PageResponseDto<TicketListResDto>> getTicketList(
+	public ResponseEntity<PageResponseDto<TicketFindResDto>> getTicketList(
 		@PathVariable String intraId, @ModelAttribute @Valid PageRequestDto pageRequest) {
 		int page = pageRequest.getPage();
 		int size = pageRequest.getSize();
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());
 
 		Page<Ticket> ticketList = ticketAdminFindService.findTicket(intraId, pageable);
-		List<TicketListResDto> ticketListResDto = ticketList.stream()
-			.map(ticketAdminFindService::convertAgendaKeyToTitleWhereIssuedFromAndUsedTo)
+		// List<TicketFindResDto> ticketFindResDto = ticketList.stream()
+		// 	.map(ticketAdminFindService::convertAgendaKeyToTitleWhereIssuedFromAndUsedTo)
+		// 	.collect(Collectors.toList());
+
+		List<TicketFindResDto> ticketFindResDto = ticketList.stream()
+			.map(ticket -> {
+				TicketFindResDto dto = new TicketFindResDto(ticket);
+
+				if (dto.getIssuedFromKey() != null) {
+					Agenda agendaIssuedFrom = agendaAdminService.getAgenda(dto.getIssuedFromKey());
+					dto.changeIssuedFrom(agendaIssuedFrom);
+				}
+
+				if (dto.getUsedToKey() != null) {
+					Agenda agendaUsedTo = agendaAdminService.getAgenda(dto.getUsedToKey());
+					dto.changeUsedTo(agendaUsedTo);
+				}
+
+				return dto;
+			})
 			.collect(Collectors.toList());
 
-		PageResponseDto<TicketListResDto> pageResponseDto = PageResponseDto.of(
-			ticketList.getTotalElements(), ticketListResDto);
+		PageResponseDto<TicketFindResDto> pageResponseDto = PageResponseDto.of(
+			ticketList.getTotalElements(), ticketFindResDto);
 		return ResponseEntity.ok(pageResponseDto);
 	}
 }

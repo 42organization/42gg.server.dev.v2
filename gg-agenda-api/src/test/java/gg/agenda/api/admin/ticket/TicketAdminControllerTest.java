@@ -30,7 +30,7 @@ import gg.admin.repo.agenda.TicketAdminRepository;
 import gg.agenda.api.admin.ticket.controller.request.TicketAddAdminReqDto;
 import gg.agenda.api.admin.ticket.controller.request.TicketChangeAdminReqDto;
 import gg.agenda.api.admin.ticket.controller.response.TicketAddAdminResDto;
-import gg.agenda.api.admin.ticket.controller.response.TicketListResDto;
+import gg.agenda.api.admin.ticket.controller.response.TicketFindResDto;
 import gg.agenda.api.user.ticket.controller.response.TicketHistoryResDto;
 import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaProfile;
@@ -268,16 +268,16 @@ public class TicketAdminControllerTest {
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
 
-			PageResponseDto<TicketListResDto> pageResponseDto = objectMapper.readValue(res, new TypeReference<>() {
+			PageResponseDto<TicketFindResDto> pageResponseDto = objectMapper.readValue(res, new TypeReference<>() {
 			});
-			List<TicketListResDto> result = pageResponseDto.getContent();
+			List<TicketFindResDto> result = pageResponseDto.getContent();
 
 			// Then
 			int expectedSize = Math.min(size, total - (page - 1) * size);
 			assertThat(result).hasSize(expectedSize);
 
 			for (int i = 0; i < result.size(); i++) {
-				TicketListResDto actual = result.get(i);
+				TicketFindResDto actual = result.get(i);
 
 				int ticketIndex = (page - 1) * size + i;
 				if (ticketIndex >= tickets.size()) {
@@ -407,9 +407,9 @@ public class TicketAdminControllerTest {
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
 
-			PageResponseDto<TicketListResDto> pageResponseDto = objectMapper.readValue(res, new TypeReference<>() {
+			PageResponseDto<TicketFindResDto> pageResponseDto = objectMapper.readValue(res, new TypeReference<>() {
 			});
-			List<TicketListResDto> result = pageResponseDto.getContent();
+			List<TicketFindResDto> result = pageResponseDto.getContent();
 
 			// Then
 			assertThat(result).isEmpty();

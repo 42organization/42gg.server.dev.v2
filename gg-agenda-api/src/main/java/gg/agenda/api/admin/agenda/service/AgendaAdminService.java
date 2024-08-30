@@ -80,4 +80,10 @@ public class AgendaAdminService {
 			.map(AgendaAdminSimpleResDto.MapStruct.INSTANCE::toDto)
 			.collect(Collectors.toList());
 	}
+
+	@Transactional(readOnly = true)
+	public Agenda getAgenda(UUID agendaKey) {
+		return agendaAdminRepository.findByAgendaKey(agendaKey)
+			.orElse(null);
+	}
 }
