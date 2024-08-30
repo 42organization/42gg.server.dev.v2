@@ -25,9 +25,11 @@ import gg.agenda.api.user.agendateam.service.AgendaTeamService;
 import gg.agenda.api.utils.SnsMessageUtil;
 import gg.auth.UserDto;
 import gg.data.agenda.Agenda;
+import gg.data.agenda.AgendaPosterImage;
 import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.type.AgendaStatus;
 import gg.data.agenda.type.AgendaTeamStatus;
+import gg.repo.agenda.AgendaPosterImageRepository;
 import gg.repo.agenda.AgendaRepository;
 import gg.repo.agenda.AgendaTeamProfileRepository;
 import gg.repo.agenda.AgendaTeamRepository;
@@ -47,6 +49,8 @@ public class AgendaService {
 	private final AgendaRepository agendaRepository;
 
 	private final AgendaTeamRepository agendaTeamRepository;
+
+	private final AgendaPosterImageRepository agendaPosterImageRepository;
 
 	private final AgendaTeamProfileRepository agendaTeamProfileRepository;
 
@@ -87,6 +91,7 @@ public class AgendaService {
 				createDto.updatePosterUri(storedUrl);
 			}
 			Agenda newAgenda = AgendaCreateReqDto.MapStruct.INSTANCE.toEntity(createDto, user.getIntraId());
+			agendaPosterImageRepository.save(new AgendaPosterImage(newAgenda.getId(), storedUrl.toString()));
 			return agendaRepository.save(newAgenda);
 		} catch (IOException e) {
 			log.error("Failed to upload image for agenda poster", e);

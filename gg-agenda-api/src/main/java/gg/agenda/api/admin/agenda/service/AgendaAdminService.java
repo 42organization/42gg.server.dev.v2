@@ -22,7 +22,9 @@ import gg.admin.repo.agenda.AgendaTeamAdminRepository;
 import gg.agenda.api.admin.agenda.controller.request.AgendaAdminUpdateReqDto;
 import gg.agenda.api.admin.agenda.controller.response.AgendaAdminSimpleResDto;
 import gg.data.agenda.Agenda;
+import gg.data.agenda.AgendaPosterImage;
 import gg.data.agenda.AgendaTeam;
+import gg.repo.agenda.AgendaPosterImageRepository;
 import gg.utils.exception.custom.BusinessException;
 import gg.utils.exception.custom.NotExistException;
 import gg.utils.file.handler.ImageHandler;
@@ -37,6 +39,8 @@ public class AgendaAdminService {
 	private final AgendaAdminRepository agendaAdminRepository;
 
 	private final AgendaTeamAdminRepository agendaTeamAdminRepository;
+
+	private final AgendaPosterImageRepository agendaPosterImageRepository;
 
 	private final ImageHandler imageHandler;
 
@@ -58,6 +62,10 @@ public class AgendaAdminService {
 			if (Objects.nonNull(agendaPoster)) {
 				URL storedUrl = imageHandler.uploadImageOrDefault(agendaPoster, agenda.getTitle(), defaultUri);
 				agenda.updatePosterUri(storedUrl.toString());
+				Optional<AgendaPosterImage> posterImage = agendaPosterImageRepository.findByAgendaIdAndIsCurrentTrue(
+					agenda.getId());
+				posterImage.ifPresent(AgendaPosterImage::updateIsCurrentToFalse);
+				agendaPosterImageRepository.save(new AgendaPosterImage(agenda.getId(), storedUrl.toString()));
 			}
 		} catch (IOException e) {
 			log.error("Failed to upload image", e);
