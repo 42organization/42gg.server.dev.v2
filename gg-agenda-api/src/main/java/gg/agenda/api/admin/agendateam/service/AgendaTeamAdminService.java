@@ -21,6 +21,7 @@ import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.AgendaTeamProfile;
+import gg.utils.exception.custom.ForbiddenException;
 import gg.utils.exception.custom.NotExistException;
 import lombok.RequiredArgsConstructor;
 
@@ -86,6 +87,10 @@ public class AgendaTeamAdminService {
 			.forEach(intraId -> {
 				AgendaProfile profile = agendaProfileAdminRepository.findByIntraId(intraId)
 					.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
+				agendaTeamProfileAdminRepository.findByAgendaAndProfileAndIsExistTrue(team.getAgenda(), profile)
+					.ifPresent(agendaTeamProfile -> {
+						throw new ForbiddenException(AGENDA_TEAM_FORBIDDEN);
+					});
 				team.attendTeamAdmin(team.getAgenda());
 				AgendaTeamProfile agendaTeamProfile = new AgendaTeamProfile(team, team.getAgenda(), profile);
 				agendaTeamProfileAdminRepository.save(agendaTeamProfile);
