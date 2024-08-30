@@ -191,7 +191,8 @@ class AgendaServiceTest {
 				.build()
 			));
 			Page<Agenda> agendaPage = new PageImpl<>(agendas.subList(0, 10), pageable, size);
-			when(agendaRepository.findAllByStatusIs(eq(AgendaStatus.FINISH), any(Pageable.class)))
+			when(agendaRepository.findAllByStatusIs(
+				eq(AgendaStatus.FINISH), eq(AgendaStatus.CONFIRM), any(Pageable.class)))
 				.thenReturn(agendaPage);
 
 			// when
@@ -200,7 +201,7 @@ class AgendaServiceTest {
 
 			// then
 			verify(agendaRepository, times(1))
-				.findAllByStatusIs(AgendaStatus.FINISH, pageable);
+				.findAllByStatusIs(AgendaStatus.FINISH, AgendaStatus.CONFIRM, pageable);
 			assertThat(result.size()).isEqualTo(size);
 			for (int i = 1; i < result.size(); i++) {
 				assertThat(result.get(i).getStartTime())
