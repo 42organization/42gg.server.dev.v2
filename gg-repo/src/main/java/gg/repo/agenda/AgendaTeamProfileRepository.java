@@ -31,11 +31,12 @@ public interface AgendaTeamProfileRepository extends JpaRepository<AgendaTeamPro
 		+ "WHERE atp.agendaTeam = :agendaTeam AND atp.isExist = true")
 	List<AgendaTeamProfile> findAllByAgendaTeamAndIsExistTrue(AgendaTeam agendaTeam);
 
-	@Query("SELECT atp FROM AgendaTeamProfile atp WHERE atp.profile = :agendaProfile AND atp.isExist = true")
+	@Query("SELECT atp FROM AgendaTeamProfile atp JOIN FETCH atp.agenda "
+		+ "WHERE atp.profile = :agendaProfile AND atp.isExist = true")
 	List<AgendaTeamProfile> findByProfileAndIsExistTrue(@Param("agendaProfile") AgendaProfile agendaProfile);
 
 	@Query(
-		"SELECT atp FROM AgendaTeamProfile atp "
+		"SELECT atp FROM AgendaTeamProfile atp JOIN FETCH atp.agendaTeam "
 			+ "WHERE atp.profile = :agendaProfile "
 			+ "AND atp.isExist = true "
 			+ "AND atp.agenda.status = :status"
@@ -44,8 +45,11 @@ public interface AgendaTeamProfileRepository extends JpaRepository<AgendaTeamPro
 		@Param("agendaProfile") AgendaProfile agendaProfile,
 		@Param("status") AgendaStatus status, Pageable pageable);
 
+	@Query("SELECT atp FROM AgendaTeamProfile atp JOIN FETCH atp.profile "
+		+ "WHERE atp.agenda = :agenda AND atp.isExist = true")
 	List<AgendaTeamProfile> findAllByAgendaAndIsExistTrue(Agenda agenda);
 
-	@Query("SELECT atp FROM AgendaTeamProfile atp WHERE atp.agendaTeam IN :agendaTeams AND atp.isExist = true")
+	@Query("SELECT atp FROM AgendaTeamProfile atp JOIN FETCH atp.profile "
+		+ "WHERE atp.agendaTeam IN :agendaTeams AND atp.isExist = true")
 	List<AgendaTeamProfile> findByAgendaTeamInAndIsExistTrue(List<AgendaTeam> agendaTeams);
 }
