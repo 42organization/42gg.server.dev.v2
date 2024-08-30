@@ -286,7 +286,8 @@ public class AgendaTeamService {
 			throw new ForbiddenException(TEAM_LEADER_FORBIDDEN);
 		}
 
-		List<AgendaTeamProfile> profiles = agendaTeamProfileRepository.findAllByAgendaTeam(agendaTeam);
+		List<AgendaTeamProfile> profiles = agendaTeamProfileRepository
+			.findAllByAgendaTeamAndIsExistTrue(agendaTeam);
 
 		agenda.updateTeam(Location.valueOfLocation(teamUpdateReqDto.getTeamLocation()), LocalDateTime.now());
 		agendaTeam.updateTeam(teamUpdateReqDto.getTeamName(), teamUpdateReqDto.getTeamContent(),
