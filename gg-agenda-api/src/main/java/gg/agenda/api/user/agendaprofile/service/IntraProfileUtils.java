@@ -5,6 +5,8 @@ import static gg.utils.exception.ErrorCode.*;
 import java.util.List;
 import java.util.Objects;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
@@ -14,6 +16,7 @@ import gg.agenda.api.user.agendaprofile.service.intraprofile.IntraImage;
 import gg.agenda.api.user.agendaprofile.service.intraprofile.IntraProfile;
 import gg.agenda.api.user.agendaprofile.service.intraprofile.IntraProfileResponse;
 import gg.auth.FortyTwoAuthUtil;
+import gg.utils.cookie.CookieUtil;
 import gg.utils.exception.custom.AuthenticationException;
 import gg.utils.external.ApiUtil;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +34,9 @@ public class IntraProfileUtils {
 
 	private final ApiUtil apiUtil;
 
-	public IntraProfile getIntraProfile() {
+	private final CookieUtil cookieUtil;
+
+	public IntraProfile getIntraProfile(HttpServletResponse response) {
 		try {
 			IntraProfileResponse intraProfileResponse = requestIntraProfile(INTRA_PROFILE_URL);
 			intraProfileResponseValidation(intraProfileResponse);
@@ -40,11 +45,12 @@ public class IntraProfileUtils {
 			return new IntraProfile(intraImage.getLink(), intraAchievements);
 		} catch (Exception e) {
 			log.error("42 Intra Profile API 호출 실패", e);
+			cookieUtil.deleteCookie(response, "refresh_token");
 			throw new AuthenticationException(AUTH_NOT_FOUND);
 		}
 	}
 
-	public IntraProfile getIntraProfile(String intraId) {
+	public IntraProfile getIntraProfile(String intraId, HttpServletResponse response) {
 		try {
 			IntraProfileResponse intraProfileResponse = requestIntraProfile(INTRA_USERS_URL + intraId);
 			intraProfileResponseValidation(intraProfileResponse);
@@ -53,6 +59,7 @@ public class IntraProfileUtils {
 			return new IntraProfile(intraImage.getLink(), intraAchievements);
 		} catch (Exception e) {
 			log.error("42 Intra Profile API 호출 실패", e);
+			cookieUtil.deleteCookie(response, "refresh_token");
 			throw new AuthenticationException(AUTH_NOT_FOUND);
 		}
 	}
@@ -70,7 +77,6 @@ public class IntraProfileUtils {
 			return apiUtil.apiCall(requestUrl, IntraProfileResponse.class, headers, HttpMethod.GET);
 		}
 	}
-
 
 	private void intraProfileResponseValidation(IntraProfileResponse intraProfileResponse) {
 		if (Objects.isNull(intraProfileResponse)) {
