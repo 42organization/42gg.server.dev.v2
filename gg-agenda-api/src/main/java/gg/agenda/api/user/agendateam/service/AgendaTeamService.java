@@ -187,7 +187,7 @@ public class AgendaTeamService {
 	 */
 	@Transactional(readOnly = true)
 	public AgendaTeam getAgendaTeam(UUID teamKey) {
-		return agendaTeamRepository.findByTeamKeyFetchJoin(teamKey)
+		return agendaTeamRepository.findByTeamKey(teamKey)
 			.orElseThrow(() -> new NotExistException(AGENDA_TEAM_NOT_FOUND));
 	}
 
