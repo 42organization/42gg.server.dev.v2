@@ -18,10 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 
 import gg.agenda.api.user.agendaprofile.service.AgendaProfileFindService;
-import gg.agenda.api.user.ticket.controller.response.TicketHistoryResDto;
 import gg.auth.FortyTwoAuthUtil;
 import gg.auth.UserDto;
-import gg.data.agenda.Agenda;
 import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.AgendaTeamProfile;
 import gg.data.agenda.Ticket;
@@ -159,24 +157,5 @@ public class TicketService {
 		AgendaProfile profile = agendaProfileRepository.findByUserId(userId)
 			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
 		return ticketRepository.findByAgendaProfileId(profile.getId(), pageable);
-	}
-
-	/**
-	 * 티켓 이력 조회
-	 */
-	@Transactional(readOnly = true)
-	public TicketHistoryResDto convertAgendaKeyToTitleWhereIssuedFromAndUsedTo(Ticket ticket) {
-		TicketHistoryResDto dto = new TicketHistoryResDto(ticket);
-		if (dto.getIssuedFromKey() != null) {
-			Agenda agenda = agendaRepository.findAgendaByAgendaKey(dto.getIssuedFromKey())
-				.orElse(null);
-			dto.changeIssuedFrom(agenda);
-		}
-		if (dto.getUsedToKey() != null) {
-			Agenda agenda = agendaRepository.findAgendaByAgendaKey(dto.getUsedToKey())
-				.orElse(null);
-			dto.changeUsedTo(agenda);
-		}
-		return dto;
 	}
 }
