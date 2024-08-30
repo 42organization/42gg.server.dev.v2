@@ -304,7 +304,7 @@ public class AgendaControllerTest {
 			assertThat(agenda.getTitle()).isEqualTo(dto.getAgendaTitle());
 			assertThat(agenda.getContent()).isEqualTo(dto.getAgendaContent());
 			assertThat(agenda.getMinPeople()).isEqualTo(dto.getAgendaMinPeople());
-			assertThat(agenda.getPosterUri()).isEqualTo(defaultUri);
+			assertThat(agenda.getPosterUri()).isNull();
 		}
 
 		@Test

@@ -68,7 +68,7 @@ public class AgendaTeamService {
 		AgendaProfile agendaProfile = agendaProfileRepository.findByUserId(user.getId())
 			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
 
-		Optional<AgendaTeam> agendaTeam = agendaTeamProfileRepository.findByAgendaProfileAndIsExistTrue(agenda,
+		Optional<AgendaTeam> agendaTeam = agendaTeamProfileRepository.findByAgendaAndAgendaProfileAndIsExistTrue(agenda,
 				agendaProfile)
 			.map(AgendaTeamProfile::getAgendaTeam);
 		if (agendaTeam.isEmpty()) {

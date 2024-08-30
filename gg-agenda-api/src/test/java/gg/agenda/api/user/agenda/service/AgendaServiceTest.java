@@ -164,14 +164,12 @@ class AgendaServiceTest {
 			UserDto user = UserDto.builder().intraId("intraId").build();
 			Agenda agenda = Agenda.builder().build();
 			when(agendaRepository.save(any())).thenReturn(agenda);
-			when(imageHandler.uploadImageOrDefault(any(), any(), any())).thenReturn(new URL("http://localhost"));
 
 			// when
 			Agenda result = agendaService.addAgenda(agendaCreateReqDto, null, user);
 
 			// then
 			verify(agendaRepository, times(1)).save(any());
-			verify(imageHandler, times(1)).uploadImageOrDefault(any(), any(), any());
 			assertThat(result).isEqualTo(agenda);
 		}
 	}
