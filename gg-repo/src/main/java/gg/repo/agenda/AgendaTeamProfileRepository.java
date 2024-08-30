@@ -16,15 +16,16 @@ import gg.data.agenda.AgendaTeamProfile;
 import gg.data.agenda.type.AgendaStatus;
 
 public interface AgendaTeamProfileRepository extends JpaRepository<AgendaTeamProfile, Long> {
-	@Query("SELECT atp FROM AgendaTeamProfile atp WHERE atp.agendaTeam.agenda = :agenda "
-		+ "AND atp.profile = :agendaProfile AND atp.isExist = true")
+	@Query("SELECT atp FROM AgendaTeamProfile atp "
+		+ "WHERE atp.agendaTeam.agenda = :agenda AND atp.profile = :agendaProfile AND atp.isExist = true")
 	Optional<AgendaTeamProfile> findByAgendaAndAgendaProfileAndIsExistTrue(Agenda agenda, AgendaProfile agendaProfile);
 
-	@Query("SELECT atp FROM AgendaTeamProfile atp WHERE atp.agendaTeam = :agendaTeam AND atp.isExist = true")
+	@Query("SELECT atp FROM AgendaTeamProfile atp "
+		+ "WHERE atp.agendaTeam = :agendaTeam AND atp.isExist = true")
 	List<AgendaTeamProfile> findByAgendaTeamAndIsExistTrue(AgendaTeam agendaTeam);
 
-	@Query("SELECT atp FROM AgendaTeamProfile atp WHERE atp.agenda = :agenda AND atp.profile = :agendaProfile "
-		+ "AND atp.isExist = true")
+	@Query("SELECT atp FROM AgendaTeamProfile atp "
+		+ "WHERE atp.agenda = :agenda AND atp.profile = :agendaProfile AND atp.isExist = true")
 	Optional<AgendaTeamProfile> findByAgendaAndProfileAndIsExistTrue(Agenda agenda, AgendaProfile agendaProfile);
 
 	@Query("SELECT atp FROM AgendaTeamProfile atp JOIN FETCH atp.profile "
