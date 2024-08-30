@@ -87,12 +87,12 @@ public class TicketAdminController {
 				TicketFindResDto dto = new TicketFindResDto(ticket);
 
 				if (dto.getIssuedFromKey() != null) {
-					Agenda agendaIssuedFrom = agendaAdminService.getAgenda(dto.getIssuedFromKey());
+					Agenda agendaIssuedFrom = agendaAdminService.getAgenda(dto.getIssuedFromKey()).orElse(null);
 					dto.changeIssuedFrom(agendaIssuedFrom);
 				}
 
 				if (dto.getUsedToKey() != null) {
-					Agenda agendaUsedTo = agendaAdminService.getAgenda(dto.getUsedToKey());
+					Agenda agendaUsedTo = agendaAdminService.getAgenda(dto.getUsedToKey()).orElse(null);
 					dto.changeUsedTo(agendaUsedTo);
 				}
 
