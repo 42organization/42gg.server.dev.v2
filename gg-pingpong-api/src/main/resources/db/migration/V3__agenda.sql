@@ -108,8 +108,8 @@ CREATE TABLE `ticket`
     `modified_at` DATETIME NOT NULL,
     PRIMARY KEY (`id`),
     KEY           `fk_ticket_profile_profile_id` (`profile_id`),
-    CONSTRAINT `fk_ticket_profile_profile_id` FOREIGN KEY (`profile_id`) RERENCES `agenda_profile` (`id`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ciEF;
+    CONSTRAINT `fk_ticket_profile_profile_id` FOREIGN KEY (`profile_id`) REFERENCES `agenda_profile` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `agenda_poster_image`
 (
@@ -119,7 +119,5 @@ CREATE TABLE `agenda_poster_image`
     `is_current`  BOOLEAN        NOT NULL,
     `s3_deleted`  BOOLEAN        NOT NULL,
     `created_at`  DATETIME       NOT NULL,
-    PRIMARY KEY (`id`),
-    KEY           `fk_poster_image_agenda_agenda_id` (`agenda_id`),
-    CONSTRAINT `fk_poster_image_agenda_agenda_id` FOREIGN KEY (`agenda_id`) REFERENCES `agenda` (`id`)
+    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

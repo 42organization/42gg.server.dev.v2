@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.MultiValueMap;
 
@@ -41,12 +42,14 @@ import gg.data.agenda.Agenda;
 import gg.data.agenda.type.AgendaStatus;
 import gg.data.agenda.type.Location;
 import gg.data.user.User;
+import gg.repo.agenda.AgendaPosterImageRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
 import gg.utils.converter.MultiValueMapConverter;
 import gg.utils.dto.PageResponseDto;
 import gg.utils.file.handler.AwsImageHandler;
 import gg.utils.fixture.agenda.AgendaFixture;
+import gg.utils.fixture.agenda.AgendaPosterImageFixture;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -71,10 +74,16 @@ public class AgendaAdminControllerTest {
 	private AgendaFixture agendaFixture;
 
 	@Autowired
+	private AgendaPosterImageFixture agendaPosterImageFixture;
+
+	@Autowired
 	EntityManager em;
 
 	@Autowired
 	AgendaAdminRepository agendaAdminRepository;
+
+	@Autowired
+	AgendaPosterImageRepository agendaPosterImageRepository;
 
 	@Value("${info.image.defaultUrl}")
 	private String defaultUri;
@@ -374,6 +383,44 @@ public class AgendaAdminControllerTest {
 			assert (updated.isPresent());
 			assertThat(updated.get().getMinPeople()).isEqualTo(agendaDto.getAgendaMinPeople());
 			assertThat(updated.get().getMaxPeople()).isEqualTo(agendaDto.getAgendaMaxPeople());
+		}
+
+		@Test
+		@DisplayName("Admin Agenda 수정 및 삭제 성공 -Poster URI 변경")
+		void updateAgendaAdminSuccessWithAgendaPosterUri() throws Exception {
+			// given
+			URL mockUrl = new URL(defaultUri);
+			URL newMockUrl = new URL("https://newPosterUri.com");
+			Mockito.when(imageHandler.uploadImageOrDefault(Mockito.any(), Mockito.anyString(), Mockito.anyString()))
+				.thenReturn(newMockUrl);
+			Agenda agenda = agendaMockData.createAgendaWithTeam(10);
+			agendaPosterImageFixture.createAgendaPosterImage(agenda, mockUrl.toString());
+			AgendaAdminUpdateReqDto agendaDto = AgendaAdminUpdateReqDto.builder()
+				.agendaPosterUri(newMockUrl)
+				.build();
+			MockMultipartFile multipartFile = new MockMultipartFile("file", "test.jpg", "image/jpeg",
+				"test".getBytes());
+			MultiValueMap<String, String> params = MultiValueMapConverter.convert(objectMapper, agendaDto);
+
+			// when
+			mockMvc.perform(multipart("/agenda/admin/request")
+					.file("agendaPoster", multipartFile.getBytes())
+					.param("agenda_key", agenda.getAgendaKey().toString())
+					.params(params)
+					.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isNoContent());
+			Optional<Agenda> updated = agendaAdminRepository.findByAgendaKey(agenda.getAgendaKey());
+
+			// then
+			assert (updated.isPresent());
+			assertThat(updated.get().getPosterUri()).isEqualTo(agendaDto.getAgendaPosterUri().toString());
+			agendaPosterImageRepository.findByAgendaIdAndIsCurrentTrue(agenda.getId()).ifPresentOrElse(
+				posterImage -> assertThat(posterImage.getImageUri()).isEqualTo(
+					agendaDto.getAgendaPosterUri().toString()),
+				() -> fail("Agenda Poster Image not found"));
+			agendaPosterImageRepository.findByAgendaIdAndIsCurrentFalse(agenda.getId()).ifPresentOrElse(
+				posterImage -> assertThat(posterImage.getIsCurrent()).isEqualTo(false),
+				() -> fail("Agenda Poster Image not found"));
 		}
 
 		@Test

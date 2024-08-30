@@ -3,12 +3,18 @@ package gg.data.agenda;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import lombok.Builder;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Getter
+@Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AgendaPosterImage {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,16 +30,6 @@ public class AgendaPosterImage {
 	private Boolean s3Deleted;
 	@Column(name = "created_at", nullable = false)
 	private LocalDateTime createdAt;
-
-	@Builder
-	public AgendaPosterImage(Long agendaId, String imageUri, Boolean isCurrent, Boolean s3Deleted,
-		LocalDateTime createdAt) {
-		this.agendaId = agendaId;
-		this.imageUri = imageUri;
-		this.isCurrent = isCurrent;
-		this.s3Deleted = s3Deleted;
-		this.createdAt = createdAt;
-	}
 
 	public AgendaPosterImage(Long agendaID, String imageUri) {
 		this.agendaId = agendaID;
