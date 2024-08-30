@@ -39,12 +39,11 @@ public interface AgendaTeamProfileRepository extends JpaRepository<AgendaTeamPro
 	@Query(
 		"SELECT atp FROM AgendaTeamProfile atp JOIN FETCH atp.agendaTeam "
 			+ "WHERE atp.profile = :agendaProfile "
-			+ "AND atp.isExist = true "
-			+ "AND atp.agenda.status = :status"
+			+ "AND atp.agenda.status = :status "
+			+ "AND atp.isExist = true"
 	)
 	Page<AgendaTeamProfile> findByProfileAndIsExistTrueAndAgendaStatus(
-		@Param("agendaProfile") AgendaProfile agendaProfile,
-		@Param("status") AgendaStatus status, Pageable pageable);
+		AgendaProfile agendaProfile, AgendaStatus status, Pageable pageable);
 
 	@Query("SELECT atp FROM AgendaTeamProfile atp JOIN FETCH atp.profile "
 		+ "WHERE atp.agenda = :agenda AND atp.isExist = true")
