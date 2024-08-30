@@ -91,4 +91,12 @@ public class AgendaTeamAdminService {
 				agendaTeamProfileAdminRepository.save(agendaTeamProfile);
 			});
 	}
+
+	@Transactional
+	public void cancelAgendaTeam(AgendaTeam agendaTeam) {
+		List<AgendaTeamProfile> agendaTeamProfiles = agendaTeamProfileAdminRepository
+			.findAllByAgendaTeamAndIsExistIsTrue(agendaTeam);
+		agendaTeamProfiles.forEach(AgendaTeamProfile::changeExistFalse);
+		agendaTeam.adminCancelTeam();
+	}
 }

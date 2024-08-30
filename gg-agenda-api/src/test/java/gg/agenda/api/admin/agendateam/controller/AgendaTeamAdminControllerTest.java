@@ -43,7 +43,6 @@ import gg.data.user.User;
 import gg.utils.AgendaTestDataUtils;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
-import gg.utils.dto.PageRequestDto;
 import gg.utils.dto.PageResponseDto;
 import gg.utils.fixture.agenda.AgendaFixture;
 import gg.utils.fixture.agenda.AgendaProfileFixture;
@@ -341,7 +340,7 @@ public class AgendaTeamAdminControllerTest {
 			AgendaTeam updatedAgendaTeam = agendaTeamAdminRepository.findByTeamKey(team.getTeamKey())
 				.orElseThrow(() -> new AssertionError("AgendaTeam not found"));
 			List<AgendaTeamProfile> participants = agendaTeamProfileAdminRepository
-					.findAllByAgendaTeamAndIsExistIsTrue(updatedAgendaTeam);
+				.findAllByAgendaTeamAndIsExistIsTrue(updatedAgendaTeam);
 
 			// then
 			assertThat(updatedAgendaTeam.getName()).isEqualTo(updateDto.getTeamName());
@@ -533,6 +532,45 @@ public class AgendaTeamAdminControllerTest {
 			assertThat(result.getStatus()).isEqualTo(team.getStatus());
 			assertThat(result.getAward()).isEqualTo(team.getAward());
 			assertThat(result.getAwardPriority()).isEqualTo(team.getAwardPriority());
+		}
+	}
+
+	@Nested
+	@DisplayName("Admin AgendaTeam 취소")
+	class CancelAgendaTeamAdmin {
+		@Test
+		@DisplayName("Admin AgendaTeam 취소 성공")
+		void cancelAgendaTeamAdminSuccess() throws Exception {
+			// given
+			Agenda agenda = agendaFixture.createAgenda();
+			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda);
+			List<AgendaProfile> profiles = agendaProfileFixture.createAgendaProfileList(5);
+			profiles.forEach(profile -> agendaTeamProfileFixture
+				.createAgendaTeamProfile(agenda, team, profile));
+
+			// when
+			mockMvc.perform(patch("/agenda/admin/team/cancel")
+					.header("Authorization", "Bearer " + accessToken)
+					.param("team_key", team.getTeamKey().toString()))
+				.andExpect(status().isNoContent());
+			AgendaTeam result = agendaTeamAdminRepository.findByTeamKey(team.getTeamKey())
+				.orElseThrow(() -> new AssertionError("AgendaTeam not found"));
+
+			// then
+			assertThat(result.getStatus()).isEqualTo(AgendaTeamStatus.CANCEL);
+			assertThat(agendaTeamProfileAdminRepository
+				.findAllByAgendaTeamAndIsExistIsTrue(result).size()).isEqualTo(0);
+		}
+
+		@Test
+		@DisplayName("Admin AgendaTeam 취소 실패 - 존재하지 않는 Team Key")
+		void cancelAgendaTeamAdminFailedWithInvalidTeamKey() throws Exception {
+			// given
+			// expected
+			mockMvc.perform(patch("/agenda/admin/team/cancel")
+					.header("Authorization", "Bearer " + accessToken)
+					.param("team_key", UUID.randomUUID().toString()))
+				.andExpect(status().isNotFound());
 		}
 	}
 }

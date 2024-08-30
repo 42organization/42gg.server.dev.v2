@@ -2,6 +2,7 @@ package gg.agenda.api.user.agendaprofile;
 
 import static gg.data.agenda.type.Location.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -89,7 +91,8 @@ public class AgendaProfileControllerTest {
 			//given
 			URL url = new URL("http://localhost:8080");
 			IntraProfile intraProfile = new IntraProfile(url, List.of());
-			Mockito.when(intraProfileUtils.getIntraProfile()).thenReturn(intraProfile);
+			Mockito.when(intraProfileUtils.getIntraProfile(any(HttpServletResponse.class)))
+				.thenReturn(intraProfile);
 			AgendaProfile agendaProfile = agendaMockData.createAgendaProfile(user, SEOUL);
 			agendaMockData.createTicket(agendaProfile);
 			// when
@@ -146,9 +149,10 @@ public class AgendaProfileControllerTest {
 			//given
 			URL url = new URL("http://localhost:8080");
 			IntraProfile intraProfile = new IntraProfile(url, List.of());
-			Mockito.when(intraProfileUtils.getIntraProfile(user.getIntraId())).thenReturn(intraProfile);
 			AgendaProfile agendaProfile = agendaMockData.createAgendaProfile(user, SEOUL);
 			agendaMockData.createTicket(agendaProfile);
+			Mockito.when(intraProfileUtils.getIntraProfile(any(String.class), any(HttpServletResponse.class)))
+				.thenReturn(intraProfile);
 			// when
 			String response = mockMvc.perform(get("/agenda/profile/" + user.getIntraId())
 					.header("Authorization", "Bearer " + accessToken))
@@ -171,7 +175,8 @@ public class AgendaProfileControllerTest {
 			//given
 			URL url = new URL("http://localhost:8080");
 			IntraProfile intraProfile = new IntraProfile(url, List.of());
-			Mockito.when(intraProfileUtils.getIntraProfile()).thenReturn(intraProfile);
+			HttpServletResponse res = Mockito.mock(HttpServletResponse.class);
+			Mockito.when(intraProfileUtils.getIntraProfile(res)).thenReturn(intraProfile);
 			AgendaProfile agendaProfile = agendaMockData.createAgendaProfile(user, SEOUL);
 			agendaMockData.createTicket(agendaProfile);
 
