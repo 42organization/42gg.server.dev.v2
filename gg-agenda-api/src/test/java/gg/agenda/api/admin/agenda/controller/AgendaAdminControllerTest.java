@@ -414,13 +414,14 @@ public class AgendaAdminControllerTest {
 			// then
 			assert (updated.isPresent());
 			assertThat(updated.get().getPosterUri()).isEqualTo(agendaDto.getAgendaPosterUri().toString());
-			agendaPosterImageRepository.findByAgendaIdAndIsCurrentTrue(agenda.getId()).ifPresentOrElse(
-				posterImage -> assertThat(posterImage.getImageUri()).isEqualTo(
-					agendaDto.getAgendaPosterUri().toString()),
-				() -> fail("Agenda Poster Image not found"));
-			agendaPosterImageRepository.findByAgendaIdAndIsCurrentFalse(agenda.getId()).ifPresentOrElse(
-				posterImage -> assertThat(posterImage.getIsCurrent()).isEqualTo(false),
-				() -> fail("Agenda Poster Image not found"));
+			agendaPosterImageRepository.findByAgendaIdAndIsCurrentTrue(agenda.getId())
+				.ifPresentOrElse(posterImage -> assertThat(posterImage.getImageUri())
+						.isEqualTo(agendaDto.getAgendaPosterUri().toString()),
+					() -> fail("Agenda Poster Image not found"));
+			agendaPosterImageRepository.findByAgendaIdAndIsCurrentFalse(agenda.getId())
+				.ifPresentOrElse(posterImage -> assertThat(posterImage.getIsCurrent())
+						.isEqualTo(false),
+					() -> fail("Agenda Poster Image not found"));
 		}
 
 		@Test

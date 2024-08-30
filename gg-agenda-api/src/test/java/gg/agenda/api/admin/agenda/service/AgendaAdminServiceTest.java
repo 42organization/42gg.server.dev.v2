@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +30,7 @@ import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.type.AgendaStatus;
 import gg.data.agenda.type.AgendaTeamStatus;
 import gg.data.agenda.type.Location;
+import gg.repo.agenda.AgendaPosterImageRepository;
 import gg.utils.annotation.UnitTest;
 import gg.utils.exception.custom.InvalidParameterException;
 import gg.utils.exception.custom.NotExistException;
@@ -44,6 +44,9 @@ public class AgendaAdminServiceTest {
 
 	@Mock
 	AgendaTeamAdminRepository agendaTeamAdminRepository;
+
+	@Mock
+	AgendaPosterImageRepository agendaPosterImageRepository;
 
 	@Mock
 	AwsImageHandler imageHandler;
