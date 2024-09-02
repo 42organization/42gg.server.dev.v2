@@ -10,7 +10,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import gg.data.agenda.Agenda;
-import gg.data.agenda.AgendaTeamProfile;
 import gg.data.agenda.type.AgendaStatus;
 
 public interface AgendaRepository extends JpaRepository<Agenda, Long> {
@@ -21,7 +20,10 @@ public interface AgendaRepository extends JpaRepository<Agenda, Long> {
 	List<Agenda> findAllByStatusIs(AgendaStatus status);
 
 	@Query("SELECT a FROM Agenda a WHERE a.status = :status1 OR a.status = :status2")
-	Page<Agenda> findAllByStatusIs(AgendaStatus status1, AgendaStatus status2, Pageable pageable);
+	List<Agenda> findAllByStatusIs(AgendaStatus status1, AgendaStatus status2);
+
+	@Query("SELECT a FROM Agenda a WHERE a.status = :status")
+	Page<Agenda> findAllByStatusIs(AgendaStatus status, Pageable pageable);
 
 	@Query("SELECT a FROM Agenda a WHERE a.hostIntraId = :intraId AND (a.status = :status1 OR a.status = :status2)")
 	Page<Agenda> findAllByHostIntraIdAndStatus(

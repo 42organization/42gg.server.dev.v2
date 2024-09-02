@@ -222,19 +222,19 @@ public class AgendaControllerTest {
 	}
 
 	@Nested
-	@DisplayName("Agenda 현황 전체 조회")
-	class GetAgendaListCurrent {
+	@DisplayName("모집중 Agenda 전체 조회")
+	class GetAgendaListOpen {
 
 		@Test
-		@DisplayName("Official과 Deadline이 빠른 순으로 정렬하여 반환합니다.")
-		void getAgendaListSuccess() throws Exception {
+		@DisplayName("모집중인 대회를 Official과 Deadline이 빠른 순으로 정렬하여 반환합니다.")
+		void getAgendaListOpenSuccess() throws Exception {
 			// given
 			List<Agenda> officialAgendaList = agendaMockData.createOfficialAgendaList(3, AgendaStatus.OPEN);
 			List<Agenda> nonOfficialAgendaList = agendaMockData
-				.createNonOfficialAgendaList(6, AgendaStatus.OPEN);
+				.createNonOfficialAgendaList(3, AgendaStatus.OPEN);
 
 			// when
-			String response = mockMvc.perform(get("/agenda/list")
+			String response = mockMvc.perform(get("/agenda/open")
 					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
@@ -252,14 +252,76 @@ public class AgendaControllerTest {
 		}
 
 		@Test
-		@DisplayName("진행 중인 Agenda가 없는 경우 빈 리스트를 반환합니다.")
-		void getAgendaListSuccessWithNoAgenda() throws Exception {
+		@DisplayName("모집 중인 Agenda가 없는 경우 빈 리스트를 반환합니다.")
+		void getAgendaListOpenSuccessWithNoAgenda() throws Exception {
 			// given
 			agendaMockData.createOfficialAgendaList(3, AgendaStatus.FINISH);
 			agendaMockData.createNonOfficialAgendaList(6, AgendaStatus.CANCEL);
 
 			// when
-			String response = mockMvc.perform(get("/agenda/list")
+			String response = mockMvc.perform(get("/agenda/open")
+					.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+			AgendaSimpleResDto[] result = objectMapper.readValue(response, AgendaSimpleResDto[].class);
+
+			// then
+			assertThat(result.length).isEqualTo(0);
+		}
+	}
+
+	@Nested
+	@DisplayName("진행중 Agenda 전체 조회")
+	class GetAgendaListConfirm {
+
+		@Test
+		@DisplayName("진행중인 대회를 Official과 Deadline이 빠른 순으로 정렬하여 반환합니다.")
+		void getAgendaListConfirmSuccess() throws Exception {
+			// given
+			List<Agenda> officialAgendaList = agendaMockData
+				.createOfficialAgendaList(3, AgendaStatus.OPEN);
+			for (Agenda agenda : officialAgendaList) {
+				agenda.updateSchedule(LocalDateTime.now().minusDays(1), LocalDateTime.now().plusDays(1),
+					LocalDateTime.now().plusDays(2));
+			}
+			List<Agenda> nonOfficialAgendaList = agendaMockData
+				.createNonOfficialAgendaList(3, AgendaStatus.OPEN);
+			for (Agenda agenda : nonOfficialAgendaList) {
+				agenda.updateSchedule(LocalDateTime.now().minusDays(1), LocalDateTime.now().plusDays(1),
+					LocalDateTime.now().plusDays(2));
+			}
+			List<Agenda> confirmedAgendaList = agendaMockData
+				.createNonOfficialAgendaList(3, AgendaStatus.CONFIRM);
+			int totalSize = officialAgendaList.size() + nonOfficialAgendaList.size() + confirmedAgendaList.size();
+
+			// when
+			String response = mockMvc.perform(get("/agenda/confirm")
+					.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+			AgendaSimpleResDto[] result = objectMapper.readValue(response, AgendaSimpleResDto[].class);
+
+			// then
+			assertThat(result.length).isEqualTo(totalSize);
+			for (int i = 0; i < result.length; i++) {
+				assertThat(result[i].getIsOfficial()).isEqualTo(i < officialAgendaList.size());
+				if (i == 0 || i == officialAgendaList.size()) {
+					continue;
+				}
+				assertThat(result[i].getAgendaStartTime()).isBefore(result[i - 1].getAgendaStartTime());
+			}
+		}
+
+		@Test
+		@DisplayName("진행 중인 Agenda가 없는 경우 빈 리스트를 반환합니다.")
+		void getAgendaListConfirmSuccessWithNoAgenda() throws Exception {
+			// given
+			agendaMockData.createOfficialAgendaList(3, AgendaStatus.OPEN);
+			agendaMockData.createOfficialAgendaList(3, AgendaStatus.FINISH);
+			agendaMockData.createNonOfficialAgendaList(3, AgendaStatus.CANCEL);
+
+			// when
+			String response = mockMvc.perform(get("/agenda/confirm")
 					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
