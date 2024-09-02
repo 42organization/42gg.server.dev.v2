@@ -5,8 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -124,7 +122,7 @@ class AgendaServiceTest {
 			when(agendaRepository.findAllByStatusIs(AgendaStatus.OPEN)).thenReturn(agendas);
 
 			// when
-			List<Agenda> result = agendaService.findCurrentAgendaList();
+			List<Agenda> result = agendaService.findOpenAgendaList();
 
 			// then
 			verify(agendaRepository, times(1)).findAllByStatusIs(any());
@@ -145,7 +143,7 @@ class AgendaServiceTest {
 			when(agendaRepository.findAllByStatusIs(AgendaStatus.OPEN)).thenReturn(agendas);
 
 			// when
-			agendaService.findCurrentAgendaList();
+			agendaService.findOpenAgendaList();
 
 			// then
 			verify(agendaRepository, times(1)).findAllByStatusIs(any());
@@ -191,8 +189,7 @@ class AgendaServiceTest {
 				.build()
 			));
 			Page<Agenda> agendaPage = new PageImpl<>(agendas.subList(0, 10), pageable, size);
-			when(agendaRepository.findAllByStatusIs(
-				eq(AgendaStatus.FINISH), eq(AgendaStatus.CONFIRM), any(Pageable.class)))
+			when(agendaRepository.findAllByStatusIs(eq(AgendaStatus.FINISH), any(Pageable.class)))
 				.thenReturn(agendaPage);
 
 			// when
@@ -201,7 +198,7 @@ class AgendaServiceTest {
 
 			// then
 			verify(agendaRepository, times(1))
-				.findAllByStatusIs(AgendaStatus.FINISH, AgendaStatus.CONFIRM, pageable);
+				.findAllByStatusIs(AgendaStatus.FINISH, pageable);
 			assertThat(result.size()).isEqualTo(size);
 			for (int i = 1; i < result.size(); i++) {
 				assertThat(result.get(i).getStartTime())

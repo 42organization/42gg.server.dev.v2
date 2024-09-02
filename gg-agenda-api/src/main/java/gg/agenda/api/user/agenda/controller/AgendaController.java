@@ -61,27 +61,33 @@ public class AgendaController {
 		return ResponseEntity.ok(agendaResDto);
 	}
 
-	@GetMapping("/confirm")
-	public ResponseEntity<List<AgendaSimpleResDto>> agendaListConfirm() {
-		List<Agenda> agendaList = agendaService.findCurrentAgendaList();
+	/**
+	 * OPEN인데 deadline이 지나지 않은 대회 반환
+	 */
+	@GetMapping("/open")
+	public ResponseEntity<List<AgendaSimpleResDto>> agendaListOpen() {
+		List<Agenda> agendaList = agendaService.findOpenAgendaList();
 		List<AgendaSimpleResDto> agendaSimpleResDtoList = agendaList.stream()
 			.map(AgendaSimpleResDto.MapStruct.INSTANCE::toDto)
 			.collect(Collectors.toList());
 		return ResponseEntity.ok(agendaSimpleResDtoList);
 	}
 
-	@PostMapping("/request")
-	public ResponseEntity<AgendaKeyResDto> agendaAdd(@Login @Parameter(hidden = true) UserDto user,
-		@ModelAttribute @Valid AgendaCreateReqDto agendaCreateReqDto,
-		@RequestParam(required = false) MultipartFile agendaPoster) {
-		if (Objects.nonNull(agendaPoster) && agendaPoster.getSize() > 1024 * 1024) {    // 1MB
-			throw new InvalidParameterException(AGENDA_POSTER_SIZE_TOO_LARGE);
-		}
-		UUID agendaKey = agendaService.addAgenda(agendaCreateReqDto, agendaPoster, user).getAgendaKey();
-		AgendaKeyResDto responseDto = AgendaKeyResDto.builder().agendaKey(agendaKey).build();
-		return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
+	/**
+	 * OPEN인데 deadline이 지난 대회와 CONFIRM인 대회 반환
+	 */
+	@GetMapping("/confirm")
+	public ResponseEntity<List<AgendaSimpleResDto>> agendaListConfirm() {
+		List<Agenda> agendaList = agendaService.findConfirmAgendaList();
+		List<AgendaSimpleResDto> agendaSimpleResDtoList = agendaList.stream()
+			.map(AgendaSimpleResDto.MapStruct.INSTANCE::toDto)
+			.collect(Collectors.toList());
+		return ResponseEntity.ok(agendaSimpleResDtoList);
 	}
 
+	/**
+	 * FINISH 상태인 대회 반환, 페이지네이션
+	 */
 	@GetMapping("/history")
 	public ResponseEntity<PageResponseDto<AgendaSimpleResDto>> agendaListHistory(
 		@ModelAttribute @Valid PageRequestDto pageRequest) {
@@ -97,6 +103,18 @@ public class AgendaController {
 		PageResponseDto<AgendaSimpleResDto> pageResponseDto = PageResponseDto.of(
 			agendas.getTotalElements(), agendaSimpleResDtoList);
 		return ResponseEntity.ok(pageResponseDto);
+	}
+
+	@PostMapping("/request")
+	public ResponseEntity<AgendaKeyResDto> agendaAdd(@Login @Parameter(hidden = true) UserDto user,
+		@ModelAttribute @Valid AgendaCreateReqDto agendaCreateReqDto,
+		@RequestParam(required = false) MultipartFile agendaPoster) {
+		if (Objects.nonNull(agendaPoster) && agendaPoster.getSize() > 1024 * 1024) {    // 1MB
+			throw new InvalidParameterException(AGENDA_POSTER_SIZE_TOO_LARGE);
+		}
+		UUID agendaKey = agendaService.addAgenda(agendaCreateReqDto, agendaPoster, user).getAgendaKey();
+		AgendaKeyResDto responseDto = AgendaKeyResDto.builder().agendaKey(agendaKey).build();
+		return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
 	}
 
 	@PatchMapping("/finish")

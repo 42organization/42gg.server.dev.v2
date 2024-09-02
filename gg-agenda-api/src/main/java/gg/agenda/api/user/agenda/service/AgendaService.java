@@ -4,6 +4,7 @@ import static gg.utils.exception.ErrorCode.*;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -67,9 +68,13 @@ public class AgendaService {
 			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
 	}
 
+	/**
+	 * OPEN인데 deadline이 지나지 않은 대회 반환
+	 */
 	@Transactional(readOnly = true)
-	public List<Agenda> findCurrentAgendaList() {
+	public List<Agenda> findOpenAgendaList() {
 		return agendaRepository.findAllByStatusIs(AgendaStatus.OPEN).stream()
+			.filter(agenda -> agenda.getDeadline().isAfter(LocalDateTime.now()))
 			.sorted(agendaComparatorWithIsOfficialThenDeadline())
 			.collect(Collectors.toList());
 	}
@@ -77,6 +82,23 @@ public class AgendaService {
 	private Comparator<Agenda> agendaComparatorWithIsOfficialThenDeadline() {
 		return Comparator.comparing(Agenda::getIsOfficial, Comparator.reverseOrder())
 			.thenComparing(Agenda::getDeadline, Comparator.reverseOrder());
+	}
+
+	/**
+	 * OPEN인데 deadline이 지난 대회와 CONFIRM인 대회 반환
+	 */
+	@Transactional(readOnly = true)
+	public List<Agenda> findConfirmAgendaList() {
+		return agendaRepository.findAllByStatusIs(AgendaStatus.OPEN, AgendaStatus.CONFIRM).stream()
+			.filter(agenda -> agenda.getDeadline().isBefore(LocalDateTime.now())
+				|| agenda.getStatus() == AgendaStatus.CONFIRM)
+			.sorted(agendaComparatorWithIsOfficialThenStartTime())
+			.collect(Collectors.toList());
+	}
+
+	private Comparator<Agenda> agendaComparatorWithIsOfficialThenStartTime() {
+		return Comparator.comparing(Agenda::getIsOfficial, Comparator.reverseOrder())
+			.thenComparing(Agenda::getStartTime, Comparator.reverseOrder());
 	}
 
 	@Transactional
@@ -94,9 +116,12 @@ public class AgendaService {
 		}
 	}
 
+	/**
+	 * FINISH 상태인 대회 반환, 페이지네이션
+	 */
 	@Transactional(readOnly = true)
 	public Page<Agenda> findHistoryAgendaList(Pageable pageable) {
-		return agendaRepository.findAllByStatusIs(AgendaStatus.FINISH, AgendaStatus.CONFIRM, pageable);
+		return agendaRepository.findAllByStatusIs(AgendaStatus.FINISH, pageable);
 	}
 
 	@Transactional
