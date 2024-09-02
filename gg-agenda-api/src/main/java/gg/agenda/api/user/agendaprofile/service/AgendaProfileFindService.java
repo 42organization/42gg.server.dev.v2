@@ -48,8 +48,8 @@ public class AgendaProfileFindService {
 		AgendaProfile agendaProfile = agendaProfileRepository.findByIntraId(intraId)
 			.orElseThrow(() -> new NotExistException(AGENDA_PROFILE_NOT_FOUND));
 
-		List<AgendaTeamProfile> agendaTeamProfiles = agendaTeamProfileRepository.findByProfileAndIsExistTrue(
-			agendaProfile);
+		List<AgendaTeamProfile> agendaTeamProfiles = agendaTeamProfileRepository
+			.findByProfileAndIsExistTrue(agendaProfile);
 
 		return agendaTeamProfiles.stream()
 			.filter(agendaTeamProfile -> {

@@ -187,7 +187,7 @@ public class AgendaTeamService {
 	 */
 	@Transactional(readOnly = true)
 	public AgendaTeam getAgendaTeam(UUID teamKey) {
-		return agendaTeamRepository.findByTeamKeyFetchJoin(teamKey)
+		return agendaTeamRepository.findByTeamKey(teamKey)
 			.orElseThrow(() -> new NotExistException(AGENDA_TEAM_NOT_FOUND));
 	}
 
@@ -286,7 +286,8 @@ public class AgendaTeamService {
 			throw new ForbiddenException(TEAM_LEADER_FORBIDDEN);
 		}
 
-		List<AgendaTeamProfile> profiles = agendaTeamProfileRepository.findAllByAgendaTeam(agendaTeam);
+		List<AgendaTeamProfile> profiles = agendaTeamProfileRepository
+			.findAllByAgendaTeamAndIsExistTrue(agendaTeam);
 
 		agenda.updateTeam(Location.valueOfLocation(teamUpdateReqDto.getTeamLocation()), LocalDateTime.now());
 		agendaTeam.updateTeam(teamUpdateReqDto.getTeamName(), teamUpdateReqDto.getTeamContent(),
