@@ -213,7 +213,7 @@ public enum ErrorCode {
 	NOT_TEAM_MATE(403, "AG204", "팀원이 아닙니다."),
 	CONFIRM_FORBIDDEN(403, "AG205", "개최자만 일정을 종료할 수 있습니다."),
 	TICKET_FORBIDDEN(403, "AG206", "티켓 신청은 1분의 대기시간이 있습니다."),
-	TEAM_LEADER_FORBIDDEN(403, "AG207", "팀장만 팀을 확정할 수 있습니다."),
+	TEAM_LEADER_FORBIDDEN(403, "AG207", "팀장이 아닙니다."),
 	AGENDA_TEAM_FORBIDDEN(403, "AG208", "일정에 참여한 팀이 있습니다."),
 	AGENDA_MODIFICATION_FORBIDDEN(403, "AG209", "개최자만 일정을 수정할 수 있습니다."),
 	AUTH_NOT_FOUND(404, "AG301", "42 정보가 만료되었습니다."),
