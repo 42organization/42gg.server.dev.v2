@@ -50,6 +50,7 @@ import gg.data.agenda.type.AgendaStatus;
 import gg.data.agenda.type.AgendaTeamStatus;
 import gg.data.agenda.type.Location;
 import gg.data.user.User;
+import gg.repo.agenda.AgendaPosterImageRepository;
 import gg.repo.agenda.AgendaRepository;
 import gg.repo.agenda.AgendaTeamRepository;
 import gg.utils.AgendaTestDataUtils;
@@ -62,9 +63,7 @@ import gg.utils.exception.custom.BusinessException;
 import gg.utils.exception.custom.NotExistException;
 import gg.utils.file.handler.AwsImageHandler;
 import gg.utils.fixture.agenda.AgendaFixture;
-import gg.utils.fixture.agenda.AgendaProfileFixture;
 import gg.utils.fixture.agenda.AgendaTeamFixture;
-import gg.utils.fixture.agenda.AgendaTeamProfileFixture;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -92,12 +91,6 @@ public class AgendaControllerTest {
 	private AgendaTeamFixture agendaTeamFixture;
 
 	@Autowired
-	private AgendaProfileFixture agendaProfileFixture;
-
-	@Autowired
-	private AgendaTeamProfileFixture agendaTeamProfileFixture;
-
-	@Autowired
 	private AgendaTestDataUtils agendaTestDataUtils;
 
 	@MockBean
@@ -111,6 +104,9 @@ public class AgendaControllerTest {
 
 	@Autowired
 	AgendaTeamRepository agendaTeamRepository;
+
+	@Autowired
+	AgendaPosterImageRepository agendaPosterImageRepository;
 
 	@Value("${info.image.defaultUrl}")
 	private String defaultUri;
@@ -410,6 +406,8 @@ public class AgendaControllerTest {
 			assertThat(agenda.getMinPeople()).isEqualTo(dto.getAgendaMinPeople());
 			assertThat(agenda.getPosterUri()).isNotEqualTo(defaultUri);
 			assertThat(agenda.getPosterUri()).isEqualTo(mockS3Path.toString());
+			agendaPosterImageRepository.findByAgendaIdAndIsCurrentTrue(agenda.getId())
+				.orElseThrow(() -> new NotExistException("Agenda poster image not found"));
 		}
 
 		@Test
