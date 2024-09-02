@@ -17,6 +17,7 @@ public class AgendaPosterImageFixture {
 
 	public AgendaPosterImage createAgendaPosterImage(Agenda agenda, String posterUri) {
 		AgendaPosterImage posterImage = new AgendaPosterImage(agenda.getId(), "posterUri");
-		return em.merge(posterImage);
+		em.persist(posterImage);
+		return posterImage;
 	}
 }
