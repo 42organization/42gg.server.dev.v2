@@ -234,7 +234,7 @@ public class AgendaControllerTest {
 				.createNonOfficialAgendaList(6, AgendaStatus.OPEN);
 
 			// when
-			String response = mockMvc.perform(get("/agenda/list")
+			String response = mockMvc.perform(get("/agenda/confirm")
 					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
@@ -259,7 +259,7 @@ public class AgendaControllerTest {
 			agendaMockData.createNonOfficialAgendaList(6, AgendaStatus.CANCEL);
 
 			// when
-			String response = mockMvc.perform(get("/agenda/list")
+			String response = mockMvc.perform(get("/agenda/confirm")
 					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();

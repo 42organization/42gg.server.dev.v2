@@ -61,8 +61,8 @@ public class AgendaController {
 		return ResponseEntity.ok(agendaResDto);
 	}
 
-	@GetMapping("/list")
-	public ResponseEntity<List<AgendaSimpleResDto>> agendaListCurrent() {
+	@GetMapping("/confirm")
+	public ResponseEntity<List<AgendaSimpleResDto>> agendaListConfirm() {
 		List<Agenda> agendaList = agendaService.findCurrentAgendaList();
 		List<AgendaSimpleResDto> agendaSimpleResDtoList = agendaList.stream()
 			.map(AgendaSimpleResDto.MapStruct.INSTANCE::toDto)
