@@ -59,7 +59,7 @@ public class AgendaAdminService {
 		List<AgendaTeam> teams = agendaTeamAdminRepository.findAllByAgenda(agenda);
 
 		try {
-			if (Objects.nonNull(agendaPoster)) {
+			if (Objects.nonNull(agendaPoster) && agendaPoster.getSize() > 0) {
 				URL storedUrl = imageHandler.uploadImageOrDefault(agendaPoster, agenda.getTitle(), defaultUri);
 				agenda.updatePosterUri(storedUrl.toString());
 				Optional<AgendaPosterImage> posterImage = agendaPosterImageRepository.findByAgendaIdAndIsCurrentTrue(
