@@ -280,7 +280,7 @@ public class AgendaControllerTest {
 			// given
 			List<Agenda> officialAgendaList = agendaMockData
 				.createOfficialAgendaList(3, AgendaStatus.OPEN);
-			for(Agenda agenda : officialAgendaList) {
+			for (Agenda agenda : officialAgendaList) {
 				agenda.updateSchedule(LocalDateTime.now().minusDays(1), LocalDateTime.now().plusDays(1),
 					LocalDateTime.now().plusDays(2));
 			}
