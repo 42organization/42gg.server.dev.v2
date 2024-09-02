@@ -106,7 +106,7 @@ public class AgendaTeamController {
 	}
 
 	/**
-	 * 아젠다 팀 나가기
+	 * 아젠다 팀장 나가기
 	 * @param user 사용자 정보, teamKeyReqDto 팀 KEY 요청 정보, agendaId 아젠다 아이디
 	 */
 	@PatchMapping("/cancel")
@@ -114,15 +114,24 @@ public class AgendaTeamController {
 		@ModelAttribute @Valid TeamKeyReqDto teamKeyReqDto) {
 		AgendaTeam agendaTeam = agendaTeamService.getAgendaTeam(teamKeyReqDto.getTeamKey());
 		agendaTeam.getAgenda().agendaStatusMustBeOpen();
-		if (agendaTeam.getLeaderIntraId().equals(user.getIntraId())) {
-			agendaTeam.agendaTeamStatusMustBeOpenAndConfirm();
-			agendaTeamService.leaveTeamAll(agendaTeam);
-			agendaSlackService.slackCancelAgendaTeam(agendaTeam.getAgenda(), agendaTeam);
-		} else {
-			agendaTeam.agendaTeamStatusMustBeOpen();
-			agendaTeamService.leaveTeamMate(agendaTeam, user);
-			agendaSlackService.slackLeaveTeamMate(agendaTeam.getAgenda(), agendaTeam, user.getIntraId());
-		}
+		agendaTeam.agendaTeamStatusMustBeOpenAndConfirm();
+		agendaTeamService.leaveTeamAll(agendaTeam);
+		agendaSlackService.slackCancelAgendaTeam(agendaTeam.getAgenda(), agendaTeam);
+		return ResponseEntity.noContent().build();
+	}
+
+	/**
+	 * 아젠다 팀원 나가기
+	 * @param user 사용자 정보, teamKeyReqDto 팀 KEY 요청 정보, agendaId 아젠다 아이디
+	 */
+	@PatchMapping("/drop")
+	public ResponseEntity<Void> dropAgendaTeamMate(@Parameter(hidden = true) @Login UserDto user,
+		@ModelAttribute @Valid TeamKeyReqDto teamKeyReqDto) {
+		AgendaTeam agendaTeam = agendaTeamService.getAgendaTeam(teamKeyReqDto.getTeamKey());
+		agendaTeam.getAgenda().agendaStatusMustBeOpen();
+		agendaTeam.agendaTeamStatusMustBeOpen();
+		agendaTeamService.leaveTeamMate(agendaTeam, user);
+		agendaSlackService.slackLeaveTeamMate(agendaTeam.getAgenda(), agendaTeam, user.getIntraId());
 		return ResponseEntity.noContent().build();
 	}
 
