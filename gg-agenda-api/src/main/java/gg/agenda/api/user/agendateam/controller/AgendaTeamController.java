@@ -1,6 +1,7 @@
 package gg.agenda.api.user.agendateam.controller;
 
 import static gg.data.agenda.type.AgendaTeamStatus.*;
+import static gg.utils.exception.ErrorCode.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -42,6 +43,7 @@ import gg.data.agenda.AgendaTeam;
 import gg.data.agenda.type.Coalition;
 import gg.utils.dto.PageRequestDto;
 import gg.utils.dto.PageResponseDto;
+import gg.utils.exception.custom.ForbiddenException;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 
@@ -115,6 +117,9 @@ public class AgendaTeamController {
 		AgendaTeam agendaTeam = agendaTeamService.getAgendaTeam(teamKeyReqDto.getTeamKey());
 		agendaTeam.getAgenda().agendaStatusMustBeOpen();
 		agendaTeam.agendaTeamStatusMustBeOpenAndConfirm();
+		if (!agendaTeam.getLeaderIntraId().equals(user.getIntraId())) {
+			throw new ForbiddenException(TEAM_LEADER_FORBIDDEN);
+		}
 		agendaTeamService.leaveTeamAll(agendaTeam);
 		agendaSlackService.slackCancelAgendaTeam(agendaTeam.getAgenda(), agendaTeam);
 		return ResponseEntity.noContent().build();
@@ -130,6 +135,9 @@ public class AgendaTeamController {
 		AgendaTeam agendaTeam = agendaTeamService.getAgendaTeam(teamKeyReqDto.getTeamKey());
 		agendaTeam.getAgenda().agendaStatusMustBeOpen();
 		agendaTeam.agendaTeamStatusMustBeOpen();
+		if (agendaTeam.getLeaderIntraId().equals(user.getIntraId())) {
+			throw new ForbiddenException(NOT_TEAM_MATE);
+		}
 		agendaTeamService.leaveTeamMate(agendaTeam, user);
 		agendaSlackService.slackLeaveTeamMate(agendaTeam.getAgenda(), agendaTeam, user.getIntraId());
 		return ResponseEntity.noContent().build();

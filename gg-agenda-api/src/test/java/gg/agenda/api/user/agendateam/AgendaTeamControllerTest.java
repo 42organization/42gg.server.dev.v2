@@ -827,7 +827,7 @@ public class AgendaTeamControllerTest {
 	}
 
 	@Nested
-	@DisplayName("팀 Leave 테스트")
+	@DisplayName("팀장 Leave 테스트")
 	class LeaveTeamTest {
 		@BeforeEach
 		void beforeEach() {
@@ -843,13 +843,13 @@ public class AgendaTeamControllerTest {
 		}
 
 		@Test
-		@DisplayName("200 팀원 팀 나가기 성공")
+		@DisplayName("403 팀원 팀 나가기 실패")
 		public void leaveTeamMateSuccess() throws Exception {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(SEOUL);
 			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser, 2);
 			agendaMockData.createAgendaTeamProfile(team, seoulUserAgendaProfile);
-			AgendaTeamProfile atp = agendaMockData.createAgendaTeamProfile(team, anotherSeoulUserAgendaProfile);
+			agendaMockData.createAgendaTeamProfile(team, anotherSeoulUserAgendaProfile);
 			// when
 			mockMvc.perform(
 					patch("/agenda/team/cancel")
@@ -857,20 +857,8 @@ public class AgendaTeamControllerTest {
 						.param("agenda_key", agenda.getAgendaKey().toString())
 						.param("teamKey", team.getTeamKey().toString())
 						.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isNoContent());
+				.andExpect(status().isForbidden());
 			// then
-			AgendaTeam updatedTeam = agendaTeamRepository.findByTeamKey(team.getTeamKey()).orElse(null);
-			assert updatedTeam != null;
-			assertThat(updatedTeam.getMateCount()).isEqualTo(1);
-			assertThat(agenda.getCurrentTeam()).isEqualTo(1);
-			AgendaTeamProfile updatedAtp = agendaTeamProfileRepository.findById(atp.getId()).orElse(null);
-			assert updatedAtp != null;
-			assertThat(updatedAtp.getIsExist()).isFalse();
-			ticketRepository.findFirstByAgendaProfileAndIsApprovedTrueAndIsUsedFalseOrderByCreatedAtAsc(
-					updatedAtp.getProfile())
-				.ifPresent(ticket -> {
-					assertThat(ticket.getUsedTo()).isNull();
-				});
 		}
 
 		@Test
@@ -1000,46 +988,6 @@ public class AgendaTeamControllerTest {
 		}
 
 		@Test
-		@DisplayName("400 탈퇴 불가능한 AgendaTeam Status로 인한 팀원의 나가기 실패")
-		public void notValidAgendaTeamStatusConfirmWhenTeamMate() throws Exception {
-			//given
-			Agenda agenda = agendaMockData.createAgenda(SEOUL);
-			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser, SEOUL, AgendaTeamStatus.CONFIRM);
-			agendaMockData.createAgendaTeamProfile(team, seoulUserAgendaProfile);
-			AgendaTeamProfile atp = agendaMockData.createAgendaTeamProfile(team, anotherSeoulUserAgendaProfile);
-			TeamKeyReqDto req = new TeamKeyReqDto(team.getTeamKey());
-			String content = objectMapper.writeValueAsString(req);
-			// when && then
-			mockMvc.perform(
-					patch("/agenda/team/cancel")
-						.header("Authorization", "Bearer " + anotherSeoulUserAccessToken)
-						.param("agenda_key", agenda.getAgendaKey().toString())
-						.content(content)
-						.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isBadRequest());
-		}
-
-		@Test
-		@DisplayName("400 탈퇴 불가능한 AgendaTeam Status로 인한 팀원의 나가기 실패")
-		public void notValidAgendaTeamStatusCoiWhenTeamMate() throws Exception {
-			//given
-			Agenda agenda = agendaMockData.createAgenda(SEOUL);
-			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser, SEOUL, AgendaTeamStatus.CONFIRM);
-			agendaMockData.createAgendaTeamProfile(team, seoulUserAgendaProfile);
-			AgendaTeamProfile atp = agendaMockData.createAgendaTeamProfile(team, anotherSeoulUserAgendaProfile);
-			TeamKeyReqDto req = new TeamKeyReqDto(team.getTeamKey());
-			String content = objectMapper.writeValueAsString(req);
-			// when && then
-			mockMvc.perform(
-					patch("/agenda/team/cancel")
-						.header("Authorization", "Bearer " + anotherSeoulUserAccessToken)
-						.param("agenda_key", agenda.getAgendaKey().toString())
-						.content(content)
-						.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isBadRequest());
-		}
-
-		@Test
 		@DisplayName("400 탈퇴 불가능한 Agenda 시간으로 인한 실패")
 		public void notValidAgendaDeadline() throws Exception {
 			//given
@@ -1078,7 +1026,7 @@ public class AgendaTeamControllerTest {
 		}
 
 		@Test
-		@DisplayName("403 팀원이 아님으로 인한 실패")
+		@DisplayName("403 팀장이 아님으로 인한 실패")
 		public void notTeamMateFail() throws Exception {
 			//given
 			Agenda agenda = agendaMockData.createAgenda(SEOUL);
@@ -1087,6 +1035,216 @@ public class AgendaTeamControllerTest {
 			// when && then
 			mockMvc.perform(
 					patch("/agenda/team/cancel")
+						.header("Authorization", "Bearer " + gyeongsanUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.param("teamKey", team.getTeamKey().toString())
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isForbidden());
+		}
+	}
+
+	@Nested
+	@DisplayName("팀원 Drop 테스트")
+	class DropTeamTest {
+		@BeforeEach
+		void beforeEach() {
+			seoulUser = testDataUtils.createNewUser();
+			seoulUserAccessToken = testDataUtils.getLoginAccessTokenFromUser(seoulUser);
+			seoulUserAgendaProfile = agendaMockData.createAgendaProfile(seoulUser, SEOUL);
+			anotherSeoulUser = testDataUtils.createNewUser();
+			anotherSeoulUserAccessToken = testDataUtils.getLoginAccessTokenFromUser(anotherSeoulUser);
+			anotherSeoulUserAgendaProfile = agendaMockData.createAgendaProfile(anotherSeoulUser, SEOUL);
+			gyeongsanUser = testDataUtils.createNewUser();
+			gyeongsanUserAccessToken = testDataUtils.getLoginAccessTokenFromUser(gyeongsanUser);
+			gyeongsanUserAgendaProfile = agendaMockData.createAgendaProfile(gyeongsanUser, GYEONGSAN);
+		}
+
+		@Test
+		@DisplayName("200 팀원 팀 나가기 성공")
+		public void leaveTeamMateSuccess() throws Exception {
+			//given
+			Agenda agenda = agendaMockData.createAgenda(SEOUL);
+			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser, 2);
+			agendaMockData.createAgendaTeamProfile(team, seoulUserAgendaProfile);
+			AgendaTeamProfile atp = agendaMockData.createAgendaTeamProfile(team, anotherSeoulUserAgendaProfile);
+			// when
+			mockMvc.perform(
+					patch("/agenda/team/drop")
+						.header("Authorization", "Bearer " + anotherSeoulUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.param("teamKey", team.getTeamKey().toString())
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNoContent());
+			// then
+			AgendaTeam updatedTeam = agendaTeamRepository.findByTeamKey(team.getTeamKey()).orElse(null);
+			assert updatedTeam != null;
+			assertThat(updatedTeam.getMateCount()).isEqualTo(1);
+			assertThat(agenda.getCurrentTeam()).isEqualTo(1);
+			AgendaTeamProfile updatedAtp = agendaTeamProfileRepository.findById(atp.getId()).orElse(null);
+			assert updatedAtp != null;
+			assertThat(updatedAtp.getIsExist()).isFalse();
+			ticketRepository.findFirstByAgendaProfileAndIsApprovedTrueAndIsUsedFalseOrderByCreatedAtAsc(
+					updatedAtp.getProfile())
+				.ifPresent(ticket -> {
+					assertThat(ticket.getUsedTo()).isNull();
+				});
+		}
+
+		@Test
+		@DisplayName("403 팀리더 팀 나가기 실패")
+		public void leaveTeamLeaderSuccess() throws Exception {
+			//given
+			Agenda agenda = agendaMockData.createAgenda(SEOUL);
+			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser, 2);
+			AgendaTeamProfile atpLeader = agendaMockData.createAgendaTeamProfile(team, seoulUserAgendaProfile);
+			AgendaTeamProfile atp = agendaMockData.createAgendaTeamProfile(team, anotherSeoulUserAgendaProfile);
+			// when
+			mockMvc.perform(
+					patch("/agenda/team/drop")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.param("teamKey", team.getTeamKey().toString())
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isForbidden());
+		}
+
+		@Test
+		@DisplayName("403 Confirm 팀 리더 팀 나가기 실패")
+		public void leaveTeamLeaderTeamStatusConfirmSuccess() throws Exception {
+			//given
+			Agenda agenda = agendaMockData.createAgenda(SEOUL);
+			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser, SEOUL, AgendaTeamStatus.CONFIRM);
+			agendaMockData.createAgendaTeamProfile(team, seoulUserAgendaProfile);
+			agendaMockData.createAgendaTeamProfile(team, anotherSeoulUserAgendaProfile);
+			// when
+			mockMvc.perform(
+					patch("/agenda/team/drop")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.param("teamKey", team.getTeamKey().toString())
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("404 agenda 없음으로 인한 실패")
+		public void noAgendaFail() throws Exception {
+			//given
+			UUID noAgendaKey = UUID.randomUUID();
+			UUID noTeamKey = UUID.randomUUID();
+			// when && then
+			mockMvc.perform(
+					patch("/agenda/team/drop")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.param("agenda_key", noAgendaKey.toString())
+						.param("teamKey", noTeamKey.toString())
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+		}
+
+		@Test
+		@DisplayName("404 team 없음으로 인한 실패")
+		public void noTeamFail() throws Exception {
+			//given
+			Agenda agenda = agendaMockData.createAgenda(SEOUL);
+			// when && then
+			mockMvc.perform(
+					patch("/agenda/team/drop")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.param("teamKey", UUID.randomUUID().toString())
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+		}
+
+		@Test
+		@DisplayName("400 탈퇴 불가능한 AgendaTeam Status로 인한 팀원의 나가기 실패")
+		public void notValidAgendaTeamStatusConfirmWhenTeamMate() throws Exception {
+			//given
+			Agenda agenda = agendaMockData.createAgenda(SEOUL);
+			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser, SEOUL, AgendaTeamStatus.CONFIRM);
+			agendaMockData.createAgendaTeamProfile(team, seoulUserAgendaProfile);
+			AgendaTeamProfile atp = agendaMockData.createAgendaTeamProfile(team, anotherSeoulUserAgendaProfile);
+			TeamKeyReqDto req = new TeamKeyReqDto(team.getTeamKey());
+			String content = objectMapper.writeValueAsString(req);
+			// when && then
+			mockMvc.perform(
+					patch("/agenda/team/drop")
+						.header("Authorization", "Bearer " + anotherSeoulUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("400 탈퇴 불가능한 AgendaTeam Status로 인한 팀원의 나가기 실패")
+		public void notValidAgendaTeamStatusCoiWhenTeamMate() throws Exception {
+			//given
+			Agenda agenda = agendaMockData.createAgenda(SEOUL);
+			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser, SEOUL, AgendaTeamStatus.CONFIRM);
+			agendaMockData.createAgendaTeamProfile(team, seoulUserAgendaProfile);
+			AgendaTeamProfile atp = agendaMockData.createAgendaTeamProfile(team, anotherSeoulUserAgendaProfile);
+			TeamKeyReqDto req = new TeamKeyReqDto(team.getTeamKey());
+			String content = objectMapper.writeValueAsString(req);
+			// when && then
+			mockMvc.perform(
+					patch("/agenda/team/drop")
+						.header("Authorization", "Bearer " + anotherSeoulUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("400 탈퇴 불가능한 Agenda 시간으로 인한 실패")
+		public void notValidAgendaDeadline() throws Exception {
+			//given
+			Agenda agenda = agendaMockData.createAgenda(LocalDateTime.now().minusHours(1));
+			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser, SEOUL);
+			agendaMockData.createAgendaTeamProfile(team, seoulUserAgendaProfile);
+			TeamKeyReqDto req = new TeamKeyReqDto(team.getTeamKey());
+			String content = objectMapper.writeValueAsString(req);
+			// when && then
+			mockMvc.perform(
+					patch("/agenda/team/drop")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("403 탈퇴 불가능한 Agenda Status 으로 인한 실패")
+		public void notValidAgendaStatus() throws Exception {
+			//given
+			Agenda agenda = agendaMockData.createAgenda(FINISH);
+			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser, SEOUL);
+			agendaMockData.createAgendaTeamProfile(team, seoulUserAgendaProfile);
+			TeamKeyReqDto req = new TeamKeyReqDto(team.getTeamKey());
+			String content = objectMapper.writeValueAsString(req);
+			// when && then
+			mockMvc.perform(
+					patch("/agenda/team/drop")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.param("agenda_key", agenda.getAgendaKey().toString())
+						.content(content)
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isBadRequest());
+		}
+
+		@Test
+		@DisplayName("403 팀원이 아님으로 인한 실패")
+		public void notTeamMateFail() throws Exception {
+			//given
+			Agenda agenda = agendaMockData.createAgenda(SEOUL);
+			AgendaTeam team = agendaMockData.createAgendaTeam(agenda, seoulUser, 2);
+			agendaMockData.createAgendaTeamProfile(team, seoulUserAgendaProfile);
+			// when && then
+			mockMvc.perform(
+					patch("/agenda/team/drop")
 						.header("Authorization", "Bearer " + gyeongsanUserAccessToken)
 						.param("agenda_key", agenda.getAgendaKey().toString())
 						.param("teamKey", team.getTeamKey().toString())
