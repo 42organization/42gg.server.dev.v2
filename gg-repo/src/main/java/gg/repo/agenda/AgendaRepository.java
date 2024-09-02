@@ -23,7 +23,7 @@ public interface AgendaRepository extends JpaRepository<Agenda, Long> {
 	List<Agenda> findAllByStatusIs(AgendaStatus status1, AgendaStatus status2);
 
 	@Query("SELECT a FROM Agenda a WHERE a.status = :status")
-	Page<Agenda> findAllByStatusIs(AgendaStatus status1, Pageable pageable);
+	Page<Agenda> findAllByStatusIs(AgendaStatus status, Pageable pageable);
 
 	@Query("SELECT a FROM Agenda a WHERE a.hostIntraId = :intraId AND (a.status = :status1 OR a.status = :status2)")
 	Page<Agenda> findAllByHostIntraIdAndStatus(
