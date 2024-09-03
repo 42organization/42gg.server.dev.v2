@@ -93,7 +93,7 @@ public class AgendaController {
 		@ModelAttribute @Valid PageRequestDto pageRequest) {
 		int page = pageRequest.getPage();
 		int size = pageRequest.getSize();
-		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("startTime").descending());
+		Pageable pageable = PageRequest.of(page - 1, size, Sort.by("startTime").ascending());
 
 		Page<Agenda> agendas = agendaService.findHistoryAgendaList(pageable);
 

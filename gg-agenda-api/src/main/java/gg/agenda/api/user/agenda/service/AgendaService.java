@@ -70,13 +70,13 @@ public class AgendaService {
 	public List<Agenda> findOpenAgendaList() {
 		return agendaRepository.findAllByStatusIs(AgendaStatus.OPEN).stream()
 			.filter(agenda -> agenda.getDeadline().isAfter(LocalDateTime.now()))
-			.sorted(agendaComparatorWithIsOfficialThenDeadline())
+			.sorted(agendaComparatorWithDeadlineThenIsOfficial())
 			.collect(Collectors.toList());
 	}
 
-	private Comparator<Agenda> agendaComparatorWithIsOfficialThenDeadline() {
-		return Comparator.comparing(Agenda::getIsOfficial, Comparator.reverseOrder())
-			.thenComparing(Agenda::getDeadline, Comparator.reverseOrder());
+	private Comparator<Agenda> agendaComparatorWithDeadlineThenIsOfficial() {
+		return Comparator.comparing(Agenda::getDeadline)
+			.thenComparing(Agenda::getIsOfficial);
 	}
 
 	/**
@@ -87,13 +87,13 @@ public class AgendaService {
 		return agendaRepository.findAllByStatusIs(AgendaStatus.OPEN, AgendaStatus.CONFIRM).stream()
 			.filter(agenda -> agenda.getDeadline().isBefore(LocalDateTime.now())
 				|| agenda.getStatus() == AgendaStatus.CONFIRM)
-			.sorted(agendaComparatorWithIsOfficialThenStartTime())
+			.sorted(agendaComparatorWithStartTimeThenIsOfficial())
 			.collect(Collectors.toList());
 	}
 
-	private Comparator<Agenda> agendaComparatorWithIsOfficialThenStartTime() {
-		return Comparator.comparing(Agenda::getIsOfficial, Comparator.reverseOrder())
-			.thenComparing(Agenda::getStartTime, Comparator.reverseOrder());
+	private Comparator<Agenda> agendaComparatorWithStartTimeThenIsOfficial() {
+		return Comparator.comparing(Agenda::getDeadline)
+			.thenComparing(Agenda::getIsOfficial);
 	}
 
 	@Transactional
