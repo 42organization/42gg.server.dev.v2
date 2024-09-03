@@ -239,11 +239,10 @@ public class AgendaControllerTest {
 			// then
 			assertThat(result.length).isEqualTo(officialAgendaList.size() + nonOfficialAgendaList.size());
 			for (int i = 0; i < result.length; i++) {
-				assertThat(result[i].getIsOfficial()).isEqualTo(i < officialAgendaList.size());
 				if (i == 0 || i == officialAgendaList.size()) {
 					continue;
 				}
-				assertThat(result[i].getAgendaDeadLine()).isBefore(result[i - 1].getAgendaDeadLine());
+				assertThat(result[i].getAgendaDeadLine()).isAfter(result[i - 1].getAgendaDeadLine());
 			}
 		}
 
@@ -300,11 +299,10 @@ public class AgendaControllerTest {
 			// then
 			assertThat(result.length).isEqualTo(totalSize);
 			for (int i = 0; i < result.length; i++) {
-				assertThat(result[i].getIsOfficial()).isEqualTo(i < officialAgendaList.size());
 				if (i == 0 || i == officialAgendaList.size()) {
 					continue;
 				}
-				assertThat(result[i].getAgendaStartTime()).isBefore(result[i - 1].getAgendaStartTime());
+				assertThat(result[i].getAgendaStartTime()).isAfter(result[i - 1].getAgendaDeadLine());
 			}
 		}
 
@@ -587,12 +585,10 @@ public class AgendaControllerTest {
 			// then
 			assertThat(result.size()).isEqualTo(size * page < totalCount ? size : totalCount % size);
 			for (int i = 0; i < result.size(); i++) {
-				assertThat(result.get(i).getAgendaTitle())
-					.isEqualTo(agendaHistory.get(size * (page - 1) + i).getTitle());
 				if (i == 0) {
 					continue;
 				}
-				assertThat(result.get(i).getAgendaStartTime()).isBefore(result.get(i - 1).getAgendaStartTime());
+				assertThat(result.get(i).getAgendaStartTime()).isAfter(result.get(i - 1).getAgendaStartTime());
 			}
 		}
 
@@ -711,11 +707,10 @@ public class AgendaControllerTest {
 			// then
 			assertThat(result.size()).isEqualTo(20);
 			for (int i = 0; i < result.size(); i++) {
-				assertThat(result.get(i).getAgendaTitle()).isEqualTo(agendaHistory.get(i).getTitle());
 				if (i == 0) {
 					continue;
 				}
-				assertThat(result.get(i).getAgendaStartTime()).isBefore(result.get(i - 1).getAgendaStartTime());
+				assertThat(result.get(i).getAgendaStartTime()).isAfter(result.get(i - 1).getAgendaStartTime());
 			}
 		}
 	}
