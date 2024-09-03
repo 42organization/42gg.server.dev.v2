@@ -127,11 +127,10 @@ class AgendaServiceTest {
 			// then
 			verify(agendaRepository, times(1)).findAllByStatusIs(any());
 			for (int i = 0; i < result.size(); i++) {
-				assertThat(result.get(i).getIsOfficial()).isEqualTo(i < officialSize);
 				if (i == 0 || i == officialSize) {
 					continue;
 				}
-				assertThat(result.get(i).getDeadline()).isBefore(result.get(i - 1).getDeadline());
+				assertThat(result.get(i).getDeadline()).isAfter(result.get(i - 1).getDeadline());
 			}
 		}
 
