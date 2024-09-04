@@ -235,7 +235,7 @@ public class AgendaTeamService {
 	public Page<AgendaTeam> findAgendaTeamWithStatus(UUID agendaKey, AgendaTeamStatus status, Pageable pageable) {
 		Agenda agenda = agendaRepository.findByAgendaKey(agendaKey)
 			.orElseThrow(() -> new NotExistException(AGENDA_NOT_FOUND));
-		return agendaTeamRepository.findByAgendaAndStatusAndIsPrivateFalse(agenda, status, pageable);
+		return agendaTeamRepository.findByAgendaAndStatus(agenda, status, pageable);
 	}
 
 	@Transactional(readOnly = true)
