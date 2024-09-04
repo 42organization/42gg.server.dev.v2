@@ -34,5 +34,5 @@ public interface AgendaTeamRepository extends JpaRepository<AgendaTeam, Long> {
 	List<AgendaTeam> findAllByAgendaAndStatus(Agenda agenda, AgendaTeamStatus status1, AgendaTeamStatus status2);
 
 	@Query("SELECT a FROM AgendaTeam a WHERE a.agenda = :agenda AND a.status = :status AND a.isPrivate = false")
-	Page<AgendaTeam> findByAgendaAndStatusAndIsPrivateFalse(Agenda agenda, AgendaTeamStatus status, Pageable pageable);
+	Page<AgendaTeam> findByAgendaAndStatus(Agenda agenda, AgendaTeamStatus status, Pageable pageable);
 }
