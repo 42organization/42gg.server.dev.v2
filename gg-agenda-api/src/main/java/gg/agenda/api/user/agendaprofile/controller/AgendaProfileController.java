@@ -25,6 +25,7 @@ import gg.agenda.api.user.agendaprofile.controller.response.AgendaProfileDetails
 import gg.agenda.api.user.agendaprofile.controller.response.AgendaProfileInfoDetailsResDto;
 import gg.agenda.api.user.agendaprofile.controller.response.AttendedAgendaListResDto;
 import gg.agenda.api.user.agendaprofile.controller.response.CurrentAttendAgendaListResDto;
+import gg.agenda.api.user.agendaprofile.controller.response.IntraProfileResDto;
 import gg.agenda.api.user.agendaprofile.controller.response.MyAgendaProfileDetailsResDto;
 import gg.agenda.api.user.agendaprofile.service.AgendaProfileFindService;
 import gg.agenda.api.user.agendaprofile.service.AgendaProfileService;
@@ -109,12 +110,18 @@ public class AgendaProfileController {
 		return ResponseEntity.ok(currentAttendAgendaList);
 	}
 
-	@GetMapping("/{intraId}")
-	public ResponseEntity<AgendaProfileDetailsResDto> agendaProfileDetails(@PathVariable String intraId,
-		HttpServletResponse response) {
+	@GetMapping("{intraId}")
+	public ResponseEntity<AgendaProfileDetailsResDto> agendaProfileDetails(@PathVariable String intraId) {
 		AgendaProfile profile = agendaProfileFindService.findAgendaProfileByIntraId(intraId);
+		AgendaProfileDetailsResDto resDto = AgendaProfileDetailsResDto.toDto(profile);
+		return ResponseEntity.ok(resDto);
+	}
+
+	@GetMapping("/intra/{intraId}")
+	public ResponseEntity<IntraProfileResDto> intraProfileDetails(@PathVariable String intraId,
+		HttpServletResponse response) {
 		IntraProfile intraProfile = intraProfileUtils.getIntraProfile(intraId, response);
-		AgendaProfileDetailsResDto resDto = AgendaProfileDetailsResDto.toDto(profile, intraProfile);
+		IntraProfileResDto resDto = IntraProfileResDto.toDto(intraProfile);
 		return ResponseEntity.ok(resDto);
 	}
 
