@@ -86,6 +86,7 @@ public class FortyTwoAuthUtil {
 		params.add("refresh_token", client.getRefreshToken().getTokenValue());
 		params.add("client_id", registration.getClientId());
 		params.add("client_secret", registration.getClientSecret());
+		params.add("redirect_uri", registration.getRedirectUri());
 
 		List<Map<String, Object>> responseBody = apiUtil.apiCall(
 			registration.getProviderDetails().getTokenUri(),
