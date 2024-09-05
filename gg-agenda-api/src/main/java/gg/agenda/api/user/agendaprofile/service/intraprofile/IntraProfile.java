@@ -11,13 +11,15 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class IntraProfile {
+	private String intraId;
 
 	private URL imageUrl;
 
 	private List<IntraAchievement> achievements;
 
 	@Builder
-	public IntraProfile(URL imageUrl, List<IntraAchievement> achievements) {
+	public IntraProfile(String intraId, URL imageUrl, List<IntraAchievement> achievements) {
+		this.intraId = intraId;
 		this.imageUrl = imageUrl;
 		this.achievements = achievements;
 	}

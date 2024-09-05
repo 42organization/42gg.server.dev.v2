@@ -9,7 +9,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 
 import gg.agenda.api.user.agendaprofile.service.intraprofile.IntraAchievement;
 import gg.agenda.api.user.agendaprofile.service.intraprofile.IntraImage;
@@ -18,6 +20,7 @@ import gg.agenda.api.user.agendaprofile.service.intraprofile.IntraProfileRespons
 import gg.auth.FortyTwoAuthUtil;
 import gg.utils.cookie.CookieUtil;
 import gg.utils.exception.custom.AuthenticationException;
+import gg.utils.exception.custom.NotExistException;
 import gg.utils.external.ApiUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +45,7 @@ public class IntraProfileUtils {
 			intraProfileResponseValidation(intraProfileResponse);
 			IntraImage intraImage = intraProfileResponse.getImage();
 			List<IntraAchievement> intraAchievements = intraProfileResponse.getAchievements();
-			return new IntraProfile(intraImage.getLink(), intraAchievements);
+			return new IntraProfile(intraProfileResponse.getLogin(), intraImage.getLink(), intraAchievements);
 		} catch (Exception e) {
 			log.error("42 Intra Profile API 호출 실패", e);
 			cookieUtil.deleteCookie(response, "refresh_token");
@@ -56,11 +59,14 @@ public class IntraProfileUtils {
 			intraProfileResponseValidation(intraProfileResponse);
 			IntraImage intraImage = intraProfileResponse.getImage();
 			List<IntraAchievement> intraAchievements = intraProfileResponse.getAchievements();
-			return new IntraProfile(intraImage.getLink(), intraAchievements);
+			return new IntraProfile(intraProfileResponse.getLogin(), intraImage.getLink(), intraAchievements);
 		} catch (Exception e) {
+			if (e instanceof NotExistException) {
+				throw new NotExistException(AUTH_NOT_FOUND);
+			}
 			log.error("42 Intra Profile API 호출 실패", e);
 			cookieUtil.deleteCookie(response, "refresh_token");
-			throw new AuthenticationException(AUTH_NOT_FOUND);
+			throw new AuthenticationException(AUTH_NOT_VALID);
 		}
 	}
 
@@ -70,7 +76,10 @@ public class IntraProfileUtils {
 			HttpHeaders headers = new HttpHeaders();
 			headers.setBearerAuth(accessToken);
 			return apiUtil.apiCall(requestUrl, IntraProfileResponse.class, headers, HttpMethod.GET);
-		} catch (Exception e) {
+		} catch (HttpClientErrorException e) {
+			if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+				throw new NotExistException(AUTH_NOT_FOUND);
+			}
 			String accessToken = fortyTwoAuthUtil.refreshAccessToken();
 			HttpHeaders headers = new HttpHeaders();
 			headers.setBearerAuth(accessToken);
@@ -80,6 +89,9 @@ public class IntraProfileUtils {
 
 	private void intraProfileResponseValidation(IntraProfileResponse intraProfileResponse) {
 		if (Objects.isNull(intraProfileResponse)) {
+			throw new AuthenticationException(AUTH_NOT_FOUND);
+		}
+		if (Objects.isNull(intraProfileResponse.getLogin())) {
 			throw new AuthenticationException(AUTH_NOT_FOUND);
 		}
 		if (Objects.isNull(intraProfileResponse.getImage())) {

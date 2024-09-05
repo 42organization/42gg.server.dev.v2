@@ -90,7 +90,7 @@ public class AgendaProfileControllerTest {
 		void test() throws Exception {
 			//given
 			URL url = new URL("http://localhost:8080");
-			IntraProfile intraProfile = new IntraProfile(url, List.of());
+			IntraProfile intraProfile = new IntraProfile(user.getIntraId(), url, List.of());
 			Mockito.when(intraProfileUtils.getIntraProfile(any(HttpServletResponse.class)))
 				.thenReturn(intraProfile);
 			AgendaProfile agendaProfile = agendaMockData.createAgendaProfile(user, SEOUL);
@@ -148,7 +148,7 @@ public class AgendaProfileControllerTest {
 		void getAgendaProfileSuccess() throws Exception {
 			//given
 			URL url = new URL("http://localhost:8080");
-			IntraProfile intraProfile = new IntraProfile(url, List.of());
+			IntraProfile intraProfile = new IntraProfile(user.getIntraId(), url, List.of());
 			AgendaProfile agendaProfile = agendaMockData.createAgendaProfile(user, SEOUL);
 			agendaMockData.createTicket(agendaProfile);
 			Mockito.when(intraProfileUtils.getIntraProfile(any(String.class), any(HttpServletResponse.class)))
@@ -174,7 +174,7 @@ public class AgendaProfileControllerTest {
 		void getAgendaProfileFailedWithInvalidIntraId() throws Exception {
 			//given
 			URL url = new URL("http://localhost:8080");
-			IntraProfile intraProfile = new IntraProfile(url, List.of());
+			IntraProfile intraProfile = new IntraProfile(user.getIntraId(), url, List.of());
 			HttpServletResponse res = Mockito.mock(HttpServletResponse.class);
 			Mockito.when(intraProfileUtils.getIntraProfile(res)).thenReturn(intraProfile);
 			AgendaProfile agendaProfile = agendaMockData.createAgendaProfile(user, SEOUL);
