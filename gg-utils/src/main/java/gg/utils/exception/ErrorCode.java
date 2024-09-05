@@ -193,6 +193,7 @@ public enum ErrorCode {
 	INVALID_CHECKLIST(400, "RE001", "잘못된 요청 데이터입니다."),
 
 	// agenda
+	AUTH_NOT_VALID(401, "AG001", "인증이 유효하지 않습니다."),
 	AGENDA_TEAM_FULL(400, "AG101", "팀이 꽉 찼습니다."),
 	LOCATION_NOT_VALID(400, "AG102", "유효하지 않은 지역입니다."),
 	AGENDA_AWARD_EMPTY(400, "AG103", "시상 정보가 없습니다."),
@@ -216,7 +217,7 @@ public enum ErrorCode {
 	TEAM_LEADER_FORBIDDEN(403, "AG207", "팀장이 아닙니다."),
 	AGENDA_TEAM_FORBIDDEN(403, "AG208", "일정에 참여한 팀이 있습니다."),
 	AGENDA_MODIFICATION_FORBIDDEN(403, "AG209", "개최자만 일정을 수정할 수 있습니다."),
-	AUTH_NOT_FOUND(404, "AG301", "42 정보가 만료되었습니다."),
+	AUTH_NOT_FOUND(404, "AG301", "42 정보를 찾을 수 없습니다."),
 	TICKET_NOT_FOUND(404, "AG302", "해당 티켓이 존재하지 않습니다."),
 	AGENDA_NOT_FOUND(404, "AG303", "해당 일정이 존재하지 않습니다."),
 	NOT_SETUP_TICKET(404, "AG304", "티켓 신청이 되어있지 않습니다."),
