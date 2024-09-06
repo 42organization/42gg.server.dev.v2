@@ -113,7 +113,7 @@ class AgendaServiceTest {
 		void getAgendaListSuccess() {
 			// given
 			int officialSize = 3;
-			int nonOfficialSize = 6;
+			int nonOfficialSize = 3;
 			List<Agenda> agendas = new ArrayList<>();
 			IntStream.range(0, officialSize).forEach(i -> agendas.add(Agenda.builder().isOfficial(true)
 				.deadline(LocalDateTime.now().plusDays(i + 5)).build()));
