@@ -71,6 +71,7 @@ public class AgendaTeamAdminService {
 		// AgendaTeam 정보 변경
 		team.updateTeamAdmin(agendaTeamUpdateDto.getTeamName(), agendaTeamUpdateDto.getTeamContent(),
 			agendaTeamUpdateDto.getTeamIsPrivate(), agendaTeamUpdateDto.getTeamStatus());
+		team.getAgenda().adminConfirmTeam(team.getStatus());
 		team.updateLocation(agendaTeamUpdateDto.getTeamLocation(), profiles);
 		team.acceptAward(agendaTeamUpdateDto.getTeamAward(), agendaTeamUpdateDto.getTeamAwardPriority());
 
@@ -95,6 +96,11 @@ public class AgendaTeamAdminService {
 				AgendaTeamProfile agendaTeamProfile = new AgendaTeamProfile(team, team.getAgenda(), profile);
 				agendaTeamProfileAdminRepository.save(agendaTeamProfile);
 			});
+
+		// 팀장이 없는지 확인하는 로직
+		if (profiles.stream().noneMatch(profile -> profile.getProfile().getIntraId().equals(team.getLeaderIntraId()))) {
+			throw new NotExistException(TEAM_LEADER_NOT_FOUND);
+		}
 	}
 
 	@Transactional
@@ -102,6 +108,8 @@ public class AgendaTeamAdminService {
 		List<AgendaTeamProfile> agendaTeamProfiles = agendaTeamProfileAdminRepository
 			.findAllByAgendaTeamAndIsExistIsTrue(agendaTeam);
 		agendaTeamProfiles.forEach(AgendaTeamProfile::changeExistFalse);
+		Agenda agenda = agendaTeam.getAgenda();
+		agenda.adminCancelTeam(agendaTeam.getStatus());
 		agendaTeam.adminCancelTeam();
 	}
 }

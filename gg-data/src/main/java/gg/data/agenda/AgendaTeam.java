@@ -23,7 +23,6 @@ import gg.data.BaseTimeEntity;
 import gg.data.agenda.type.AgendaTeamStatus;
 import gg.data.agenda.type.Location;
 import gg.utils.exception.custom.BusinessException;
-import gg.utils.exception.custom.ForbiddenException;
 import gg.utils.exception.custom.InvalidParameterException;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -125,9 +124,6 @@ public class AgendaTeam extends BaseTimeEntity {
 	}
 
 	public void leaveTeamMateAdmin(String intraId) {
-		if (intraId.equals(this.leaderIntraId)) {
-			throw new ForbiddenException(NOT_TEAM_MATE);
-		}
 		this.mateCount--;
 	}
 

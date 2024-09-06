@@ -28,7 +28,7 @@ public class AgendaFixture {
 			.endTime(LocalDateTime.now().plusDays(6))
 			.minTeam(2)
 			.maxTeam(5)
-			.currentTeam(0)
+			.currentTeam(1)
 			.minPeople(1)
 			.maxPeople(6)
 			.status(OPEN)
