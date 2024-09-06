@@ -23,6 +23,7 @@ import gg.data.BaseTimeEntity;
 import gg.data.agenda.type.AgendaStatus;
 import gg.data.agenda.type.AgendaTeamStatus;
 import gg.data.agenda.type.Location;
+import gg.utils.exception.custom.BusinessException;
 import gg.utils.exception.custom.ForbiddenException;
 import gg.utils.exception.custom.InvalidParameterException;
 import lombok.AccessLevel;
@@ -324,6 +325,15 @@ public class Agenda extends BaseTimeEntity {
 	public void adminCancelTeam(AgendaTeamStatus status) {
 		if (status == AgendaTeamStatus.CONFIRM) {
 			this.currentTeam--;
+		}
+	}
+
+	public void adminConfirmTeam(AgendaTeamStatus status) {
+		if (status == AgendaTeamStatus.CANCEL) {
+			throw new BusinessException(AGENDA_TEAM_CANCEL_FAIL);
+		}
+		if (status == AgendaTeamStatus.CONFIRM) {
+			this.currentTeam++;
 		}
 	}
 }
