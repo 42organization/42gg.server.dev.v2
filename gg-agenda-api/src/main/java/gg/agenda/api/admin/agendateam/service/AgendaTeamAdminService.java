@@ -103,5 +103,7 @@ public class AgendaTeamAdminService {
 			.findAllByAgendaTeamAndIsExistIsTrue(agendaTeam);
 		agendaTeamProfiles.forEach(AgendaTeamProfile::changeExistFalse);
 		agendaTeam.adminCancelTeam();
+		Agenda agenda = agendaTeam.getAgenda();
+		agenda.adminCancelTeam(agendaTeam.getStatus());
 	}
 }

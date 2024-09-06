@@ -320,4 +320,10 @@ public class Agenda extends BaseTimeEntity {
 			throw new InvalidParameterException(AGENDA_ALREADY_FINISHED);
 		}
 	}
+
+	public void adminCancelTeam(AgendaTeamStatus status) {
+		if (status == AgendaTeamStatus.CONFIRM) {
+			this.currentTeam--;
+		}
+	}
 }
