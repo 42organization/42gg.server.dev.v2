@@ -237,10 +237,12 @@ public class AgendaTeamAdminControllerTest {
 		void updateAgendaTeamAdminSuccess() throws Exception {
 			// given
 			Agenda agenda = agendaFixture.createAgenda();
-			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda);
+			AgendaProfile seoulUserAgendaProfile = agendaProfileFixture.createAgendaProfile();
+			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda, seoulUserAgendaProfile);
 			List<AgendaProfile> profiles = agendaProfileFixture.createAgendaProfileList(5);
 			profiles.forEach(profile -> agendaTeamProfileFixture
 				.createAgendaTeamProfile(agenda, team, profile));
+			agendaTeamProfileFixture.createAgendaTeamProfile(team, seoulUserAgendaProfile);
 
 			List<AgendaTeamMateReqDto> updateTeamMates = profiles.stream()
 				.map(profile -> new AgendaTeamMateReqDto(profile.getIntraId()))
@@ -315,11 +317,13 @@ public class AgendaTeamAdminControllerTest {
 		void updateAgendaTeamAdminSuccessWithAddTeammate() throws Exception {
 			// given
 			Agenda agenda = agendaFixture.createAgenda();
-			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda);
+			AgendaProfile seoulUserAgendaProfile = agendaProfileFixture.createAgendaProfile();
+			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda, seoulUserAgendaProfile);
 			List<AgendaProfile> profiles = agendaProfileFixture.createAgendaProfileList(3);
 			profiles.forEach(profile -> agendaTeamProfileFixture
 				.createAgendaTeamProfile(agenda, team, profile));
 			AgendaProfile newProfile = agendaProfileFixture.createAgendaProfile();
+			agendaTeamProfileFixture.createAgendaTeamProfile(team, seoulUserAgendaProfile);
 
 			List<AgendaTeamMateReqDto> updateTeamMates = profiles.stream()
 				.map(profile -> new AgendaTeamMateReqDto(profile.getIntraId()))
@@ -421,12 +425,14 @@ public class AgendaTeamAdminControllerTest {
 		void updateAgendaTeamAdminSuccessWithRemoveTeammate() throws Exception {
 			// given
 			Agenda agenda = agendaFixture.createAgenda();
-			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda);
+			AgendaProfile seoulUserAgendaProfile = agendaProfileFixture.createAgendaProfile();
+			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda, seoulUserAgendaProfile);
 			List<AgendaProfile> profiles = agendaProfileFixture.createAgendaProfileList(3);
 			profiles.forEach(profile -> agendaTeamProfileFixture
 				.createAgendaTeamProfile(agenda, team, profile));
 			AgendaProfile wrongProfile = agendaProfileFixture.createAgendaProfile();
 			agendaTeamProfileFixture.createAgendaTeamProfile(agenda, team, wrongProfile);
+			agendaTeamProfileFixture.createAgendaTeamProfile(team, seoulUserAgendaProfile);
 
 			List<AgendaTeamMateReqDto> updateTeamMates = profiles.stream()
 				.map(profile -> new AgendaTeamMateReqDto(profile.getIntraId()))
@@ -469,10 +475,8 @@ public class AgendaTeamAdminControllerTest {
 		void updateAgendaTeamAdminFailedWithRemoveLeader() throws Exception {
 			// given
 			Agenda agenda = agendaFixture.createAgenda();
-			User user = testDataUtils.createNewUser();
-			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda, user);
-			AgendaProfile leaderProfile = agendaProfileFixture.createAgendaProfile(user, SEOUL);
-			agendaTeamProfileFixture.createAgendaTeamProfile(agenda, team, leaderProfile);
+			AgendaProfile seoulUserAgendaProfile = agendaProfileFixture.createAgendaProfile();
+			AgendaTeam team = agendaTeamFixture.createAgendaTeam(agenda, seoulUserAgendaProfile);
 			List<AgendaProfile> profiles = agendaProfileFixture.createAgendaProfileList(3);
 			profiles.forEach(profile -> agendaTeamProfileFixture
 				.createAgendaTeamProfile(agenda, team, profile));
@@ -520,7 +524,7 @@ public class AgendaTeamAdminControllerTest {
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(request))
-				.andExpect(status().isForbidden());
+				.andExpect(status().isNotFound());
 		}
 
 		@Test
