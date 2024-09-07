@@ -98,7 +98,7 @@ public class AgendaTeamAdminService {
 			});
 
 		// 팀장이 없는지 확인하는 로직
-		if (profiles.stream().noneMatch(profile -> profile.getProfile().getIntraId().equals(team.getLeaderIntraId()))) {
+		if (!updatedTeamMates.contains(team.getLeaderIntraId())) {
 			throw new NotExistException(TEAM_LEADER_NOT_FOUND);
 		}
 	}

@@ -247,6 +247,7 @@ public class AgendaTeamAdminControllerTest {
 			List<AgendaTeamMateReqDto> updateTeamMates = profiles.stream()
 				.map(profile -> new AgendaTeamMateReqDto(profile.getIntraId()))
 				.collect(Collectors.toList());
+			updateTeamMates.add(new AgendaTeamMateReqDto(seoulUserAgendaProfile.getIntraId()));
 			AgendaTeamUpdateDto updateDto = AgendaTeamUpdateDto.builder()
 				.teamKey(team.getTeamKey()).teamMates(updateTeamMates)
 				.teamStatus(AgendaTeamStatus.CONFIRM).teamLocation(Location.MIX)
@@ -328,6 +329,7 @@ public class AgendaTeamAdminControllerTest {
 			List<AgendaTeamMateReqDto> updateTeamMates = profiles.stream()
 				.map(profile -> new AgendaTeamMateReqDto(profile.getIntraId()))
 				.collect(Collectors.toList());
+			updateTeamMates.add(new AgendaTeamMateReqDto(seoulUserAgendaProfile.getIntraId()));
 			updateTeamMates.add(new AgendaTeamMateReqDto(newProfile.getIntraId()));
 			AgendaTeamUpdateDto updateDto = AgendaTeamUpdateDto.builder()
 				.teamKey(team.getTeamKey()).teamMates(updateTeamMates)
@@ -437,6 +439,7 @@ public class AgendaTeamAdminControllerTest {
 			List<AgendaTeamMateReqDto> updateTeamMates = profiles.stream()
 				.map(profile -> new AgendaTeamMateReqDto(profile.getIntraId()))
 				.collect(Collectors.toList());
+			updateTeamMates.add(new AgendaTeamMateReqDto(seoulUserAgendaProfile.getIntraId()));
 			AgendaTeamUpdateDto updateDto = AgendaTeamUpdateDto.builder()
 				.teamKey(team.getTeamKey()).teamMates(updateTeamMates)
 				.teamStatus(AgendaTeamStatus.CONFIRM).teamLocation(Location.MIX)
