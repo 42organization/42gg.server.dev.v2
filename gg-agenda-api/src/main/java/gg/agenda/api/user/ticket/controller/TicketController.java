@@ -66,13 +66,13 @@ public class TicketController {
 	@GetMapping
 	public ResponseEntity<TicketCountResDto> ticketCountFind(@Parameter(hidden = true) @Login UserDto user) {
 		AgendaProfile profile = agendaProfileFindService.findAgendaProfileByIntraId(user.getIntraId());
-		List<Ticket> tickets = ticketService.findTicketList(profile);
+		List<Ticket> tickets = ticketService.findUsedFalseTicketList(profile);
 		long approvedCount = tickets.stream()
 			.filter(Ticket::getIsApproved)
 			.count();
 		boolean setupTicket = tickets.size() > approvedCount;
 
-		return ResponseEntity.ok(new TicketCountResDto(tickets.size(), setupTicket));
+		return ResponseEntity.ok(new TicketCountResDto(approvedCount, setupTicket));
 	}
 
 	/**
