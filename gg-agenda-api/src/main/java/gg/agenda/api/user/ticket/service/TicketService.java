@@ -17,14 +17,12 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 
-import gg.agenda.api.user.agendaprofile.service.AgendaProfileFindService;
 import gg.auth.FortyTwoAuthUtil;
 import gg.auth.UserDto;
 import gg.data.agenda.AgendaProfile;
 import gg.data.agenda.AgendaTeamProfile;
 import gg.data.agenda.Ticket;
 import gg.repo.agenda.AgendaProfileRepository;
-import gg.repo.agenda.AgendaRepository;
 import gg.repo.agenda.TicketRepository;
 import gg.utils.DateTimeUtil;
 import gg.utils.exception.custom.DuplicationException;
@@ -38,8 +36,6 @@ public class TicketService {
 	private final ApiUtil apiUtil;
 	private final FortyTwoAuthUtil fortyTwoAuthUtil;
 	private final TicketRepository ticketRepository;
-	private final AgendaRepository agendaRepository;
-	private final AgendaProfileFindService agendaProfileFindService;
 	private final AgendaProfileRepository agendaProfileRepository;
 
 	@Value("https://api.intra.42.fr/v2/users/{id}/correction_point_historics?sort=-id")
@@ -74,8 +70,13 @@ public class TicketService {
 	 * @return 티켓 수
 	 */
 	@Transactional(readOnly = true)
-	public List<Ticket> findTicketList(AgendaProfile profile) {
+	public List<Ticket> findUsedTrueApproveTrueTicketList(AgendaProfile profile) {
 		return ticketRepository.findByAgendaProfileAndIsUsedFalseAndIsApprovedTrue(profile);
+	}
+
+	@Transactional(readOnly = true)
+	public List<Ticket> findUsedFalseTicketList(AgendaProfile profile) {
+		return ticketRepository.findByAgendaProfileAndIsUsedFalse(profile);
 	}
 
 	/**

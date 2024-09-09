@@ -141,8 +141,8 @@ public class TicketControllerTest {
 		}
 
 		@Test
-		@DisplayName("200 티켓 개수 확인 성공")
-		void findTicketCountSuccess() throws Exception {
+		@DisplayName("200 티켓 개수 확인 성공 및 setupTicket 확인")
+		void findTicketCountSetupTrueSuccess() throws Exception {
 			//given
 			ticketFixture.createTicket(seoulUserAgendaProfile);
 			ticketFixture.createTicket(seoulUserAgendaProfile);
@@ -158,6 +158,27 @@ public class TicketControllerTest {
 			TicketCountResDto result = objectMapper.readValue(res, TicketCountResDto.class);
 			//then
 			assertThat(result.getTicketCount()).isEqualTo(2);
+			assertThat(result.isSetupTicket()).isTrue();
+		}
+
+		@Test
+		@DisplayName("200 티켓 개수 확인 성공 및 setupTicket 확인")
+		void findTicketCountSetupFalseSuccess() throws Exception {
+			//given
+			ticketFixture.createTicket(seoulUserAgendaProfile);
+			ticketFixture.createTicket(seoulUserAgendaProfile);
+
+			//when
+			String res = mockMvc.perform(
+					get("/agenda/ticket")
+						.header("Authorization", "Bearer " + seoulUserAccessToken)
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+			TicketCountResDto result = objectMapper.readValue(res, TicketCountResDto.class);
+			//then
+			assertThat(result.getTicketCount()).isEqualTo(2);
+			assertThat(result.isSetupTicket()).isFalse();
 		}
 
 		@Test
@@ -269,7 +290,7 @@ public class TicketControllerTest {
 						.param("size", String.valueOf(req.getSize())))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 			PageResponseDto<TicketHistoryResDto> pageResponseDto = objectMapper.readValue(res, new TypeReference<>() {
-				});
+			});
 			List<TicketHistoryResDto> result = pageResponseDto.getContent();
 
 			//then

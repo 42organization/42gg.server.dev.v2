@@ -6,10 +6,10 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class TicketCountResDto {
-	private int ticketCount;
+	private long ticketCount;
 	private boolean setupTicket;
 
-	public TicketCountResDto(int ticketCount, boolean setupTicket) {
+	public TicketCountResDto(long ticketCount, boolean setupTicket) {
 		this.ticketCount = ticketCount;
 		this.setupTicket = setupTicket;
 	}

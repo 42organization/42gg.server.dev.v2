@@ -77,7 +77,7 @@ public class AgendaProfileController {
 	public ResponseEntity<MyAgendaProfileDetailsResDto> myAgendaProfileDetails(
 		@Login @Parameter(hidden = true) UserDto user, HttpServletResponse response) {
 		AgendaProfile profile = agendaProfileFindService.findAgendaProfileByIntraId(user.getIntraId());
-		int ticketCount = ticketService.findTicketList(profile).size();
+		int ticketCount = ticketService.findUsedTrueApproveTrueTicketList(profile).size();
 		IntraProfile intraProfile = intraProfileUtils.getIntraProfile(response);
 		MyAgendaProfileDetailsResDto agendaProfileDetails = MyAgendaProfileDetailsResDto.toDto(
 			profile, ticketCount, intraProfile);
