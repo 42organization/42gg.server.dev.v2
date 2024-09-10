@@ -1,7 +1,5 @@
 package gg.pingpong.api.user.noti.service.sns;
 
-import static gg.pingpong.api.user.noti.service.sns.SlackbotUtils.*;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,13 +15,15 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import gg.data.user.User;
-import gg.pingpong.api.global.utils.external.ApiUtil;
+import gg.utils.external.ApiUtil;
+import gg.utils.sns.slack.constant.SlackConstant;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Component
 @Slf4j
+@Deprecated
+@Component
 @RequiredArgsConstructor
 public class SlackPartybotService {
 	@Value("${slack.xoxbToken}")
@@ -32,15 +32,17 @@ public class SlackPartybotService {
 	private final ApiUtil apiUtil;
 
 	private String getSlackUserId(String intraId) {
-		String userEmail = intraId + intraEmailSuffix;
+		String userEmail = intraId + SlackConstant.INTRA_EMAIL_SUFFIX;
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-		headers.add(HttpHeaders.AUTHORIZATION, authenticationPrefix + authenticationToken);
+		headers.setBearerAuth(authenticationToken);
 
 		MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
 		parameters.add("email", userEmail);
 
-		SlackUserInfoRes res = apiUtil.apiCall(userIdGetUrl, SlackUserInfoRes.class,
+		SlackUserInfoRes res = apiUtil.apiCall(
+			SlackConstant.GET_USER_ID_URL.getValue(),
+			SlackUserInfoRes.class,
 			headers, parameters, HttpMethod.POST);
 
 		if (res == null || res.getUser() == null) {
@@ -52,13 +54,15 @@ public class SlackPartybotService {
 
 	private String createGroupChannelId(List<String> slackUserIds) {
 		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.add(HttpHeaders.AUTHORIZATION, authenticationPrefix + authenticationToken);
+		httpHeaders.setBearerAuth(authenticationToken);
 		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
 		Map<String, String> bodyMap = new HashMap<>();
 		bodyMap.put("users", String.join(",", slackUserIds));
 
-		ConversationRes res = apiUtil.apiCall(conversationsUrl, ConversationRes.class,
+		ConversationRes res = apiUtil.apiCall(
+			SlackConstant.CONVERSATION_URL.getValue(),
+			ConversationRes.class,
 			httpHeaders, bodyMap, HttpMethod.POST);
 
 		return res.channel.id;
@@ -79,14 +83,16 @@ public class SlackPartybotService {
 
 	private void sendGroupMessage(String channelId, String message) {
 		HttpHeaders headers = new HttpHeaders();
-		headers.add(HttpHeaders.AUTHORIZATION, authenticationPrefix + authenticationToken);
+		headers.setBearerAuth(authenticationToken);
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
 		Map<String, String> bodyMap = new HashMap<>();
 		bodyMap.put("channel", channelId);
 		bodyMap.put("text", message);
 
-		apiUtil.apiCall(sendMessageUrl, String.class, headers, bodyMap, HttpMethod.POST);
+		apiUtil.apiCall(
+			SlackConstant.SEND_MESSAGE_URL.getValue(),
+			String.class, headers, bodyMap, HttpMethod.POST);
 	}
 
 	@Getter

@@ -49,7 +49,7 @@ public class Application extends BaseTimeEntity {
 	private Boolean isDeleted;
 
 	@Enumerated(EnumType.STRING)
-	@Column(length = 15, nullable = false)
+	@Column(length = 30, nullable = false)
 	private ApplicationStatus status;
 
 	@OneToMany(mappedBy = "application", fetch = FetchType.LAZY)

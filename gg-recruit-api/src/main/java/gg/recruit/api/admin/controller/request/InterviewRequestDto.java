@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @Getter
 public class InterviewRequestDto {
-	public static final String MUST_DOCS_RESULT_STATUS = "PROGRESS_INTERVIEW or FAIL 중 하나를 선택해주세요.";
+	public static final String MUST_DOCS_RESULT_STATUS = "PROGRESS_INTERVIEW or INTERVIEW_FAIL 중 하나를 선택해주세요.";
 
 	@NotNull(message = MUST_DOCS_RESULT_STATUS)
 	private ApplicationStatus status;

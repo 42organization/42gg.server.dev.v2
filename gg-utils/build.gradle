@@ -73,6 +73,10 @@ unitTestCoverageReport {
 
 
 dependencies {
+    implementation "com.amazonaws:aws-java-sdk-s3:1.12.281"
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 
@@ -84,6 +88,7 @@ dependencies {
     testFixturesImplementation("org.testcontainers:junit-jupiter:1.19.3")
     testFixturesImplementation("org.testcontainers:mysql:1.19.3")
     testFixturesImplementation("com.redis:testcontainers-redis:2.0.1")
+    testFixturesImplementation("com.fasterxml.jackson.core:jackson-databind")
 
     testFixturesImplementation("org.projectlombok:lombok:1.18.26")
     testFixturesCompileOnly("org.projectlombok:lombok")

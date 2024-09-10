@@ -129,6 +129,7 @@ public enum ErrorCode {
 	UNREADABLE_HTTP_MESSAGE(400, "CM008", "유효하지 않은 HTTP 메시지입니다."),
 	CONFLICT(409, "CM009", "CONFLICT"),
 	FORBIDDEN(403, "CM010", "접근이 금지된 요청입니다."),
+	REFRESH_TOKEN_EXPIRED(401, "CM011", "토큰이 만료되었습니다. 다시 로그인해주세요."),
 
 	//Feedback
 	FEEDBACK_NOT_FOUND(404, "FB100", "FB NOT FOUND"),
@@ -180,7 +181,8 @@ public enum ErrorCode {
 	ROOM_NOT_OPEN(400, "PT204", "모집중인 방이 아닙니다."),
 	ROOM_NOT_PARTICIPANT(400, "PT205", "참여하지 않은 방 입니다."),
 	ROOM_MIN_MAX_PEOPLE(400, "PT206", "최소인원이 최대인원보다 큽니다."),
-	SELF_REPORT(400, "PT207", "자신을 신고할 수 없습니다."),
+	ROOM_MIN_MAX_TIME(400, "PT207", "최소시간이 최대시간보다 큽니다."),
+	SELF_REPORT(400, "PT208", "자신을 신고할 수 없습니다."),
 	USER_ALREADY_IN_ROOM(409, "PT301", "이미 참여한 방 입니다."),
 	ALREADY_REPORTED(409, "PT302", "이미 신고한 요청입니다."),
 	CATEGORY_DUPLICATE(409, "PT304", "중복된 카테고리 입니다."),
@@ -188,7 +190,51 @@ public enum ErrorCode {
 	ON_PENALTY(403, "PT501", "패널티 상태입니다."),
 
 	// recruitment
-	INVALID_CHECKLIST(400, "RE001", "잘못된 요청 데이터입니다.");
+	INVALID_CHECKLIST(400, "RE001", "잘못된 요청 데이터입니다."),
+
+	// agenda
+	AUTH_NOT_VALID(401, "AG001", "인증이 유효하지 않습니다."),
+	AGENDA_TEAM_FULL(400, "AG101", "팀이 꽉 찼습니다."),
+	LOCATION_NOT_VALID(400, "AG102", "유효하지 않은 지역입니다."),
+	AGENDA_AWARD_EMPTY(400, "AG103", "시상 정보가 없습니다."),
+	AGENDA_INVALID_PARAM(400, "AG104", "유효하지 않은 파라미터입니다."),
+	AGENDA_NOT_OPEN(400, "AG105", "마감된 일정에는 팀을 생성할 수 없습니다."),
+	AGENDA_CREATE_FAILED(400, "AG106", "일정 생성에 실패했습니다."),
+	AGENDA_UPDATE_FAILED(400, "AG107", "일정 수정에 실패했습니다."),
+	AGENDA_INVALID_SCHEDULE(400, "AG108", "유효하지 않은 일정입니다."),
+	NOT_ENOUGH_TEAM_MEMBER(400, "AG109", "팀원이 부족합니다."),
+	UPDATE_LOCATION_NOT_VALID(400, "AG110", "지역을 변경할 수 없습니다."),
+	AGENDA_TEAM_ALREADY_CANCEL(400, "AG111", "이미 취소된 팀입니다."),
+	AGENDA_TEAM_ALREADY_CONFIRM(400, "AG112", "이미 확정된 팀입니다."),
+	AGENDA_POSTER_SIZE_TOO_LARGE(400, "AG113", "포스터 사이즈가 너무 큽니다."),
+	AGENDA_AWARD_PRIORITY_DUPLICATE(400, "AG114", "시상 우선순위가 중복됩니다."),
+	AGENDA_TEAM_CANCEL_FAIL(400, "AG115", "팀 취소를 이용해주세요."),
+	AGENDA_NO_CAPACITY(403, "AG201", "해당 일정에 참여할 수 있는 팀이 꽉 찼습니다."),
+	HOST_FORBIDDEN(403, "AG202", "개최자는 팀을 생성할 수 없습니다."),
+	TICKET_NOT_EXIST(403, "AG203", "보유한 티켓이 부족합니다."),
+	NOT_TEAM_MATE(403, "AG204", "팀원이 아닙니다."),
+	CONFIRM_FORBIDDEN(403, "AG205", "개최자만 일정을 종료할 수 있습니다."),
+	TICKET_FORBIDDEN(403, "AG206", "티켓 신청은 1분의 대기시간이 있습니다."),
+	TEAM_LEADER_FORBIDDEN(403, "AG207", "팀장이 아닙니다."),
+	AGENDA_TEAM_FORBIDDEN(403, "AG208", "일정에 참여한 팀이 있습니다."),
+	AGENDA_MODIFICATION_FORBIDDEN(403, "AG209", "개최자만 일정을 수정할 수 있습니다."),
+	AUTH_NOT_FOUND(404, "AG301", "42 정보를 찾을 수 없습니다."),
+	TICKET_NOT_FOUND(404, "AG302", "해당 티켓이 존재하지 않습니다."),
+	AGENDA_NOT_FOUND(404, "AG303", "해당 일정이 존재하지 않습니다."),
+	NOT_SETUP_TICKET(404, "AG304", "티켓 신청이 되어있지 않습니다."),
+	AGENDA_TEAM_NOT_FOUND(404, "AG305", "팀이 존재하지 않습니다."),
+	AGENDA_PROFILE_NOT_FOUND(404, "AG306", "프로필이 존재하지 않습니다."),
+	POINT_HISTORY_NOT_FOUND(404, "AG307", "기부 내역이 존재하지 않습니다."),
+	AGENDA_ANNOUNCEMENT_NOT_FOUND(404, "AG308", "공지사항이 존재하지 않습니다."),
+	TEAM_LEADER_NOT_FOUND(404, "AG309", "팀장이 존재하지 않습니다."),
+	TEAM_NAME_EXIST(409, "AG401", "이미 존재하는 팀 이름입니다."),
+	ALREADY_TICKET_SETUP(409, "AG402", "이미 티켓 신청이 되어있습니다."),
+	AGENDA_DOES_NOT_CONFIRM(409, "AG403", "확정되지 않은 일정입니다."),
+	AGENDA_ALREADY_FINISHED(409, "AG404", "이미 종료된 일정입니다."),
+	AGENDA_ALREADY_CANCELED(409, "AG405", "이미 취소된 일정입니다."),
+	AGENDA_ALREADY_CONFIRMED(409, "AG406", "이미 확정된 일정입니다."),
+	AGENDA_CAPACITY_CONFLICT(409, "AG407", "팀 제한을 변경할 수 없습니다."),
+	AGENDA_TEAM_CAPACITY_CONFLICT(409, "AG408", "팀 인원 제한을 변경할 수 없습니다.");
 
 	private final int status;
 	private final String errCode;

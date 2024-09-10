@@ -12,6 +12,7 @@ import gg.repo.party.TemplateRepository;
 import gg.utils.exception.ErrorCode;
 import gg.utils.exception.party.CategoryNotFoundException;
 import gg.utils.exception.party.RoomMinMaxPeople;
+import gg.utils.exception.party.RoomMinMaxTime;
 import gg.utils.exception.party.TemplateNotFoundException;
 import lombok.RequiredArgsConstructor;
 
@@ -23,9 +24,17 @@ public class TemplateAdminService {
 
 	/**
 	 * 템플릿 추가
-	 * @exception CategoryNotFoundException 존재하지 않는 카테고리 입력 - 404
+	 * @throws RoomMinMaxPeople 최소인원이 최대인원보다 큰 경우 - 400
+	 * @throws gg.utils.exception.party.RoomMinMaxTime 최소시간이 최대시간보다 큰 경우 - 400
+	 * @throws CategoryNotFoundException 존재하지 않는 카테고리 입력 - 404
 	 */
 	public void addTemplate(TemplateAdminCreateReqDto request) {
+		if (request.getMaxGamePeople() < request.getMinGamePeople()) {
+			throw new RoomMinMaxPeople(ErrorCode.ROOM_MIN_MAX_PEOPLE);
+		}
+		if (request.getMinGameTime() > request.getMaxGameTime()) {
+			throw new RoomMinMaxPeople(ErrorCode.ROOM_MIN_MAX_TIME);
+		}
 		Category category = categoryRepository.findByName(request.getCategoryName())
 			.orElseThrow(CategoryNotFoundException::new);
 		GameTemplate gameTemplate = TemplateAdminCreateReqDto.toEntity(request, category);
@@ -36,6 +45,7 @@ public class TemplateAdminService {
 	 * 템플릿 수정
 	 * @throws TemplateNotFoundException 존재하지 않는 템플릿 입력 - 404
 	 * @throws RoomMinMaxPeople 최소인원이 최대인원보다 큰 경우 - 400
+	 * @throws RoomMinMaxTime 최소시간이 최대시간보다 큰 경우 - 400
 	 * @throws CategoryNotFoundException 존재하지 않는 카테고리 입력 - 404
 	 */
 	@Transactional
@@ -45,6 +55,10 @@ public class TemplateAdminService {
 		if (request.getMaxGamePeople() < request.getMinGamePeople()) {
 			throw new RoomMinMaxPeople(ErrorCode.ROOM_MIN_MAX_PEOPLE);
 		}
+		if (request.getMinGameTime() > request.getMaxGameTime()) {
+			throw new RoomMinMaxPeople(ErrorCode.ROOM_MIN_MAX_TIME);
+		}
+
 		request.updateEntity(template);
 
 		if (request.getCategoryName() != null) {

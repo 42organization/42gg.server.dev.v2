@@ -6,4 +6,4 @@ include 'gg-pingpong-api'
 include 'gg-utils'
 include 'gg-auth'
 include 'gg-recruit-api'
-
+include 'gg-agenda-api'

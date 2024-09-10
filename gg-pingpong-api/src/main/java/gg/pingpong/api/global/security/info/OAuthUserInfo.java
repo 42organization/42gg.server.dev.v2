@@ -2,6 +2,7 @@ package gg.pingpong.api.global.security.info;
 
 import java.util.Map;
 
+import gg.data.agenda.type.Location;
 import gg.data.user.type.RoleType;
 
 public abstract class OAuthUserInfo {
@@ -24,4 +25,8 @@ public abstract class OAuthUserInfo {
 	public abstract RoleType getRoleType();
 
 	public abstract Long getKakaoId();
+
+	public abstract String getUserId();
+
+	public abstract Location getLocation();
 }

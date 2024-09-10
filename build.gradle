@@ -107,10 +107,14 @@ subprojects {
             '*Application*',
             "**/config/*",
             "**/security/*",
+            "**/external/*",
             "**/dto/*",
             "**/aws/*",
             "*NotiMailSender*",
             '*SlackbotService*',
+            "**/file/*",
+            "*AwsImageHandler*",
+            "*SlackbotApiUtils*"
     ]
 
 //커버리지 리포트 생성
@@ -252,10 +256,23 @@ project(':gg-pingpong-api') {
         implementation project(':gg-utils')
         implementation project(':gg-auth')
         implementation project(':gg-recruit-api')
+        implementation project(':gg-agenda-api')
     }
 }
 
 project(':gg-recruit-api') {
+    bootJar { enabled = false }
+    jar { enabled = true }
+    dependencies {
+        implementation project(':gg-data')
+        implementation project(':gg-repo')
+        implementation project(':gg-admin-repo')
+        implementation project(':gg-utils')
+        implementation project(':gg-auth')
+    }
+}
+
+project(':gg-agenda-api') {
     bootJar { enabled = false }
     jar { enabled = true }
     dependencies {
@@ -309,4 +326,3 @@ project(':gg-utils') {
     dependencies {
     }
 }
-

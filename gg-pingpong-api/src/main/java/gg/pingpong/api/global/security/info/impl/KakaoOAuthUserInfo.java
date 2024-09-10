@@ -1,9 +1,12 @@
 package gg.pingpong.api.global.security.info.impl;
 
+import static gg.data.agenda.type.Location.*;
+
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 
+import gg.data.agenda.type.Location;
 import gg.data.user.type.RoleType;
 import gg.pingpong.api.global.security.info.OAuthUserInfo;
 
@@ -44,5 +47,15 @@ public class KakaoOAuthUserInfo extends OAuthUserInfo {
 	@Override
 	public Long getKakaoId() {
 		return (Long)attributes.get("id");
+	}
+
+	@Override
+	public String getUserId() {
+		return "OTHER";
+	}
+
+	@Override
+	public Location getLocation() {
+		return MIX;
 	}
 }

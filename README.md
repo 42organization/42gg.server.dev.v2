@@ -1,9 +1,9 @@
 # 42arcade.gg.server.v2
 
-https://42gg.kr/
-
+https://gg.42seoul.kr/
 
 ## ⚡️ 프로젝트 소개
+
 42 서울 내에서 탁구 경기 매칭, 전적, 상점 서비스를 제공하는 프로젝트 입니다.
 <br>
 향후 추가 서비스 확장 예정
@@ -27,44 +27,85 @@ https://42gg.kr/
 <img src="https://img.shields.io/badge/grafana-F46800?style=for-the-badge&logo=grafana&logoColor=white">
 <img src="https://img.shields.io/badge/prometheus-E6522C?style=for-the-badge&logo=prometheus&logoColor=white">
 
-
 ## ⚡️ 프로젝트 관리
+
 <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white"></a>
 <img src="https://img.shields.io/badge/JIRA-0052CC?style=for-the-badge&logo=jirasoftware&logoColor=white">
 
 ## ⚡️ 프로젝트 개발기간
+
 - 3기: 2023.04.16 ~ 2023.06.23
 
 - 4기: 2023.08.01 ~ 2023.09.21
 
 - 5기 : 2023.11.01 ~ 2024.01.31
 
+- 6기 : 2023.02.01 ~ 2024.05.10
+
+- 7기 : 2024.06.03 ~ 2024.09.10
+
 ## ⚡️ 프로젝트 아키텍처
-![gg-5th-architecture](https://github.com/42organization/42gg.server.dev.v2/assets/33301153/f801e7b5-d579-467b-9ad0-2bfec506dcaa)
 
+![AwsArchitecture](https://github.com/user-attachments/assets/54da941b-a8c4-4586-9489-5e1d1085d7b8)
 
+## ⚡️ ERD 및 모듈 구조
+
+<details>
+<summary> 모듈 구조도</summary>
+  
+<img width="927" alt="모듈 구조도" src="https://github.com/user-attachments/assets/0012ada6-77eb-42d1-bb0a-ffbbc010ef36">
+</details>
+
+<details>
+<summary> 5기</summary>
+  
+![5기ERD](https://github.com/user-attachments/assets/0f889aaa-a39d-4062-8063-a495d6cd8863)
+</details>
+<details>
+<summary> 6기</summary>
+  
+![6기ERD](https://github.com/user-attachments/assets/4719ec57-64b3-42f8-8ada-a745f91c6444)
+</details>
+<details>
+<summary> Recurit</summary>
+  
+![RecuritERD](https://github.com/user-attachments/assets/ad07f23e-2c99-4d21-b0b5-a5d47c28dcb1)
+</details>
+<details>
+<summary> 7기</summary>
+  
+![7기ERD](https://github.com/user-attachments/assets/c5a147b6-107c-4524-b656-6183dc04ccf6)
+</details>
 
 ## ⚡️ 팀소개
+
 ### 3기
+
 <details>
 <summary> 3기 진행 사항</summary>
 <div markdown="1">
 
 ### ⚡️⚡ 로그인 연동 추가
-- v1에서 지원하지 않던 카카오계정 연동 기능 추가(좌 : v1, 우: v2) </br></br>
-  <img width=25% alt="loginv1" src="https://user-images.githubusercontent.com/58678617/177508304-6d7d2e49-5b07-4d6a-a5b9-59c5f3ddb6ce.png" >&nbsp;&nbsp;&nbsp;&nbsp;
-  <img width=50% alt="loginv2" src="https://github.com/42organization/42gg.server.dev.v2/assets/67796301/f63aa7ae-4c60-4fbc-a192-037bf880a03f" >&nbsp;&nbsp;&nbsp;&nbsp;
 
+- v1에서 지원하지 않던 카카오계정 연동 기능 추가(좌 : v1, 우: v2) </br></br>
+  <img width=25% alt="loginv1" src="https://user-images.githubusercontent.com/58678617/177508304-6d7d2e49-5b07-4d6a-a5b9-59c5f3ddb6ce.png" >
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img width=50% alt="loginv2" src="https://github.com/42organization/42gg.server.dev.v2/assets/67796301/f63aa7ae-4c60-4fbc-a192-037bf880a03f" >
+  &nbsp;&nbsp;&nbsp;&nbsp;
 
 ### ⚡️⚡ DB table 구조 변경
+
 - v1에서 확장을 위해 열어둔 구조나 테이블마다 여러 곳에 있던 중복된 속성 제거
 - v1 -> v2 테이블 수 감소 :  14 -> 12
 
-<img width=90% alt="erdv1" src="https://github.com/42organization/42gg.server.dev.v2/assets/67796301/4570fa91-1311-4d6f-a5ee-b356bcd95fbc" >&nbsp;&nbsp;&nbsp;&nbsp;
+<img width=90% alt="erdv1" src="https://github.com/42organization/42gg.server.dev.v2/assets/67796301/4570fa91-1311-4d6f-a5ee-b356bcd95fbc" >
+&nbsp;&nbsp;&nbsp;&nbsp;
 </br>
-<img width=90% alt="erdv2" src="https://github.com/42organization/42gg.server.dev.v2/assets/67796301/b698ec11-ad81-4504-8a52-2c3d2c8e63b1" >&nbsp;&nbsp;&nbsp;&nbsp;
+<img width=90% alt="erdv2" src="https://github.com/42organization/42gg.server.dev.v2/assets/67796301/b698ec11-ad81-4504-8a52-2c3d2c8e63b1" >
+&nbsp;&nbsp;&nbsp;&nbsp;
 
 ### ⚡️⚡ 게임추가 기능
+
 - v1에서 1개의 예약만 되던 것에서 최대 3개까지 예약을 잡을 수 있도록 변경
   </br></br>
   <div style="text-align : center;">
@@ -72,15 +113,19 @@ https://42gg.kr/
   </div>
 
 ### ⚡️⚡ 도커 도입
+
 - v2에서 도커 도입을 통해 컨테이너를 통한 서버 관리 도입
-</br>
+  </br>
+
 <div style="text-align : center;">
 <img width=80% alt="dockerPs" src="https://github.com/42organization/42gg.server.dev.v2/assets/67796301/cd4d2d37-4082-4bd1-99a6-bb1728be1700" >&nbsp;&nbsp;&nbsp;&nbsp;
  </div>
 
 ### ⚡️⚡ 모니터링 도입
+
 - grafana를 통한 서버 모니터링 도입
-</br>
+  </br>
+
 <div style="text-align : center;">
 <img width=80% alt="dockerPs" src="https://github.com/42organization/42gg.server.dev.v2/assets/67796301/7da03342-14ed-47c7-9183-a68ad663109c" >&nbsp;&nbsp;&nbsp;&nbsp;
  </div>
@@ -116,33 +161,37 @@ https://42gg.kr/
 
 </table>
 
-
-
 ### 4기
+
 <details>
 <summary> 4기 진행 사항</summary>
 <div markdown="1">
 
 ### ⚡️⚡ DB table 구조 변경
+
 - 상점, 티어 등 서비스 확장을 위한 DB 재설계
-<img width="1103" alt="ERD V3" src="https://github.com/8luerose/42GG_Server/assets/105616046/a1eb2c31-53cc-4c12-94ff-5ca51ec2d522">
+  <img width="1103" alt="ERD V3" src="https://github.com/8luerose/42GG_Server/assets/105616046/a1eb2c31-53cc-4c12-94ff-5ca51ec2d522">
 
 ### ⚡️⚡ 재화 시스템 추가
+
 - 출석, 게임 승패에 연관해 재화 시스템 추가
-<img width="400" alt="attendance" src="https://github.com/42organization/42gg.server.dev.v2/assets/95139402/caa564c8-cb1b-45eb-975c-9e685911e764">
+  <img width="400" alt="attendance" src="https://github.com/42organization/42gg.server.dev.v2/assets/95139402/caa564c8-cb1b-45eb-975c-9e685911e764">
 
 ### ⚡️⚡ 상점, 아이템 서비스 추가
+
 - 유저 요구사항을 반영한 기능 확장
-<img width="629" alt="스크린샷 2023-09-23 오후 11 48 01" src="https://github.com/8luerose/42GG_Server/assets/105616046/77ce958b-5901-4638-9833-ab27cc182e88">
-<img width="689" alt="스크린샷 2023-09-23 오후 11 48 18" src="https://github.com/8luerose/42GG_Server/assets/105616046/f953cbc4-9d97-4485-b318-4fe73e3e3222">
+  <img width="629" alt="스크린샷 2023-09-23 오후 11 48 01" src="https://github.com/8luerose/42GG_Server/assets/105616046/77ce958b-5901-4638-9833-ab27cc182e88">
+  <img width="689" alt="스크린샷 2023-09-23 오후 11 48 18" src="https://github.com/8luerose/42GG_Server/assets/105616046/f953cbc4-9d97-4485-b318-4fe73e3e3222">
 
 ### ⚡️⚡ 티어 시스템 추가
+
 - 랭킹전 활성화를 위한 티어 시스템 추가
-<img width="400" alt="tier" src="https://github.com/42organization/42gg.server.dev.v2/assets/95139402/342e0013-13e0-4482-84b5-4381df0498cf">
+  <img width="400" alt="tier" src="https://github.com/42organization/42gg.server.dev.v2/assets/95139402/342e0013-13e0-4482-84b5-4381df0498cf">
 
 ### ⚡️⚡ 관리자 페이지 구현
+
 - 원활한 운영을 위한 관리자 기능 추가
-<img width="400" alt="admin" src="https://github.com/42organization/42gg.server.dev.v2/assets/95139402/59756773-48f3-463a-91e4-6bb263aac2f5">
+  <img width="400" alt="admin" src="https://github.com/42organization/42gg.server.dev.v2/assets/95139402/59756773-48f3-463a-91e4-6bb263aac2f5">
 
 </div>
 </details>
@@ -175,28 +224,38 @@ https://42gg.kr/
 </table>
 
 ### 5기
+
 <details>
 <summary> 5기 진행 사항</summary>
 <div markdown="1">
 
 ### ⚡️⚡ 토너먼트 개발
+
 <img width="437" alt="5th-tournament" src="https://github.com/42organization/42gg.server.dev.v2/assets/33301153/edae9ab7-b871-4c33-9d2a-d571615b9a6f">
 
 ### ⚡️⚡ 테스트 커버리지 개선 (2024-03-19 기준)
+
 ### 전체 68% -> 74%
+
 <img width="878" alt="5th-test-coverage-total" src="https://github.com/42organization/42gg.server.dev.v2/assets/33301153/a479b541-c93c-45bb-a75f-ecaa2332ab16">
 
 ### 단위 테스트 0% -> 30%
+
 <img width="1312" alt="5th-test-coverage-unit" src="https://github.com/42organization/42gg.server.dev.v2/assets/33301153/1eeb1495-d500-4345-b1d2-ba1cfe4ec6c4">
 
-
 ### ⚡️⚡ 아키텍처 변경
+
 ### BEFORE
-  <img alt="systemArchitecture" src="https://github.com/42organization/42gg.server.dev.v2/assets/67796301/c51e8d73-d8f2-4f5e-935c-325ec263857e" >&nbsp;&nbsp;&nbsp;&nbsp;
+
+<img alt="systemArchitecture" src="https://github.com/42organization/42gg.server.dev.v2/assets/67796301/c51e8d73-d8f2-4f5e-935c-325ec263857e" >
+&nbsp;&nbsp;&nbsp;&nbsp;
+
 ### AFTER
-  ![gg-5th-architecture](https://github.com/42organization/42gg.server.dev.v2/assets/33301153/f801e7b5-d579-467b-9ad0-2bfec506dcaa)
+
+![gg-5th-architecture](https://github.com/42organization/42gg.server.dev.v2/assets/33301153/f801e7b5-d579-467b-9ad0-2bfec506dcaa)
 
 ### ⚡️⚡ DB table 구조 변경
+
 ![image](https://github.com/42organization/42gg.server.dev.v2/assets/33301153/d4c68d74-590c-41db-9c47-0bdd4f249bc3)
 
 
@@ -229,12 +288,122 @@ https://42gg.kr/
     </tr>
 </table>
 
+### 6기
+
+<details>
+<summary> 6기 진행 사항</summary>
+<div markdown="1">
+
+### ⚡️⚡ 파티 서비스 개발
+
+<img width="677" alt="42party" src="https://github.com/42organization/42gg.server.dev.v2/assets/79272189/1d2f114a-0d8e-401a-a45b-9419881f86f2">
+
+### ⚡️⚡ 테스트 커버리지 개선 (2024-04-16 기준)
+
+### 전체 74% -> 75.9%
+
+![integrationTest](https://github.com/42organization/42gg.server.dev.v2/assets/79272189/79731062-a8f4-4575-a683-61fa5dd60a15)
+
+### 단위 테스트 30% -> 36.7%
+
+![unitTest](https://github.com/42organization/42gg.server.dev.v2/assets/79272189/b0e5055b-9008-40d8-b93a-3b05fdffc710)
+
+### ⚡️⚡ DB table 구조 변경
+
+![image](https://github.com/42organization/42gg.server.dev.v2/assets/79272189/c9c47670-b955-4e34-a589-c498008446f0)
+
+
+</div>
+</details>
+
+<table>
+  <thead>
+    <tr>
+        <td align=center>🏓</td>
+        <td align=center>🏓</td>
+        <td align=center>🏓</td>
+        <td align=center>🏓</td>
+    </tr>
+  </thead>
+    <tr>
+        <td align=center><a href="https://github.com/ghyen">권기현 @ghyen</a></td> 
+        <td align=center><a href="https://github.com/AreSain">정승수 @AreSain</a></td>
+        <td align=center><a href="https://github.com/JayJay-Kay">김정주 @JayJay-Kay</a></td>
+        <td align=center><a href="https://github.com/yes-ee"> 이예슬 @yes-ee</a></td>
+    </tr>
+    <tr>
+        <td align=center>파티 서비스 개발, <br> 테스트 커버리지 개선</td>
+        <td align=center>팀장, 파티 서비스 개발, <br> 테스트 커버리지 개선</td>
+        <td align=center>파티 서비스 개발, <br> 테스트 커버리지 개선</td>
+        <td align=center>파티 서비스 개발, <br> 테스트 커버리지 개선</td>
+    </tr>
+</table>
+
+### 7기
+
+<details>
+<summary> 7기 진행 사항</summary>
+<div markdown="1">
+
+### ⚡️⚡ 행사 서비스 개발
+
+- 42서울 내 행사를 진행할 수 있는 서비스 개발
+![인덱스](https://github.com/user-attachments/assets/48966d80-337f-42d9-9024-b1f5392a81ab)
+
+- 행사 개최, 참가, 결과 확인, 개인 프로필 등의 기능을 제공
+![대회목록](https://github.com/user-attachments/assets/cf5fb4b3-bcad-4e89-ab8b-3f798f3cba9f)
+![상세보기](https://github.com/user-attachments/assets/f6109e2c-3a93-462c-a899-cfc35989dc20)
+![대회 참가](https://github.com/user-attachments/assets/f11b5c89-ebc2-4d2d-91c7-25317d33ad2d)
+![프로필](https://github.com/user-attachments/assets/f9b31b71-76f6-4bf0-9b5c-d56446e292a0)
+
+- 평가 포인트를 티켓으로 환전해 사용해 공식 대회를 참가해 칭호와 업적 등의 보상을 받을 수 있음(현재는 기부만 가능)
+![티켓 페이지](https://github.com/user-attachments/assets/fd76a962-1254-4354-a1ff-be93950d75a3)
+
+### ⚡️⚡ DataFlow
+
+![AgendaDataFlow](https://github.com/user-attachments/assets/f9fd25ee-d275-41a3-be78-501eba88df5f)
+
+### ⚡️⚡ DB table 구조 변경
+
+![7기ERD](https://github.com/user-attachments/assets/e3d2e431-1154-43d6-8a48-dd2ac2e510a5)
+
+### ⚡️⚡ 테스트 커버리지
+
+### 전체 75.9% -> 76.5%
+![테스트 전체](https://github.com/user-attachments/assets/3c567a75-a897-483c-ba89-8c5e9caff210)
+
+</div>
+</details>
+
+<table>
+  <thead>
+    <tr>
+        <td align=center>🏓</td>
+        <td align=center>🏓</td>
+        <td align=center>🏓</td>
+    </tr>
+  </thead>
+    <tr>
+        <td align=center><a href="https://github.com/AreSain">정승수 @AreSain</a></td>
+        <td align=center><a href="https://github.com/yhames">박정우 @yhames</a></td> 
+        <td align=center><a href="https://github.com/kimjieun0301">김지은 @kimjieun0301</a></td>
+    </tr>
+    <tr>
+        <td align=center>팀장, 아젠다 서비스 개발, <br> 테스트 커버리지 개선</td>
+        <td align=center>아젠다 서비스 개발, <br> 테스트 커버리지 개선</td>
+        <td align=center>아젠다 서비스 개발, <br> 테스트 커버리지 개선</td>
+    </tr>
+</table>
+
+
 ## ⚡️ 필요 파일
+
 <details>
 <summary> application.yml </summary>
 <div markdown="1">
 
 다음과 같은 양식의 "application.yml"파일이 "src/main/resources/"경로에 필요합니다.
+
 ```
 spring:
   profiles:

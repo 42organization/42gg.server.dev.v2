@@ -16,12 +16,12 @@ import gg.auth.properties.AppProperties;
 import gg.auth.utils.AuthTokenProvider;
 import gg.data.user.User;
 import gg.data.user.type.RoleType;
+import gg.pingpong.api.global.jwt.utils.TokenHeaders;
 import gg.pingpong.api.global.security.UserPrincipal;
-import gg.pingpong.api.global.security.cookie.CookieUtil;
-import gg.pingpong.api.global.security.jwt.repository.JwtRedisRepository;
-import gg.pingpong.api.global.security.jwt.utils.TokenHeaders;
-import gg.pingpong.api.global.utils.ApplicationYmlRead;
+import gg.repo.user.JwtRedisRepository;
 import gg.repo.user.UserRepository;
+import gg.utils.ApplicationYmlRead;
+import gg.utils.cookie.CookieUtil;
 import gg.utils.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 
