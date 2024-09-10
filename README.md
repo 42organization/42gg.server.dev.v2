@@ -367,6 +367,11 @@ https://gg.42seoul.kr/
 
 ![7기ERD](https://github.com/user-attachments/assets/e3d2e431-1154-43d6-8a48-dd2ac2e510a5)
 
+### ⚡️⚡ 테스트 커버리지
+
+### 전체 75.9% -> 76.5%
+![테스트 전체](https://github.com/user-attachments/assets/3c567a75-a897-483c-ba89-8c5e9caff210)
+
 </div>
 </details>
 
@@ -389,6 +394,7 @@ https://gg.42seoul.kr/
         <td align=center>아젠다 서비스 개발, <br> 테스트 커버리지 개선</td>
     </tr>
 </table>
+
 
 ## ⚡️ 필요 파일
 
