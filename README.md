@@ -77,7 +77,6 @@ https://gg.42seoul.kr/
 ![7기ERD](https://github.com/user-attachments/assets/c5a147b6-107c-4524-b656-6183dc04ccf6)
 </details>
 
-
 ## ⚡️ 팀소개
 
 ### 3기
