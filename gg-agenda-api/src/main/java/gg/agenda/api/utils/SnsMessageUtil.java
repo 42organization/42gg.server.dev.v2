@@ -12,11 +12,10 @@ public class SnsMessageUtil {
 	private static final String SUBJECT = "행사요정🧚으로부터 도착한 편지";
 
 	public String addAgendaAnnouncementMessage(Agenda agenda, AgendaAnnouncement newAnnounce) {
-		String link = URL + "agenda_key=" + agenda.getAgendaKey() + "/announcement/" + newAnnounce.getId();
 		return SUBJECT
 			+ "\n" + agenda.getTitle() + "의 새로운 공지사항이 도착했습니다."
 			+ "\n" + newAnnounce.getTitle()
-			+ "\n" + "$$" + link + "$$";
+			+ "\n" + URL + "detail?" + "agenda_key=" + agenda.getAgendaKey();
 	}
 
 	public String confirmAgendaMessage(Agenda agenda) {
@@ -24,7 +23,7 @@ public class SnsMessageUtil {
 		return SUBJECT
 			+ "\n" + agenda.getTitle() + "이 확정되었습니다."
 			+ "\n" + "행사가 확정되었습니다. 시작일자와 장소를 확인해주세요!"
-			+ "\n" + "$$" + link + "$$";
+			+ "\n" + URL + "detail?" + "agenda_key=" + agenda.getAgendaKey();
 	}
 
 	public String cancelAgendaMessage(Agenda agenda) {
@@ -34,12 +33,12 @@ public class SnsMessageUtil {
 	}
 
 	public String finishAgendaMessage(Agenda agenda) {
-		String link = URL + "agenda_key=" + agenda.getAgendaKey();
+		String link = URL + "detail?" + "agenda_key=" + agenda.getAgendaKey();
 		if (agenda.getIsRanking()) {
 			return SUBJECT
 				+ "\n" + agenda.getTitle() + "이 종료되었습니다."
 				+ "\n" + "행사가 성공적으로 종료되었습니다. 수고하셨습니다!"
-				+ "\n" + "결과 확인 $$" + link + "$$";
+				+ "\n" + "결과 확인 :" + link;
 		} else {
 			return SUBJECT
 				+ "\n" + agenda.getTitle() + "이 종료되었습니다."
@@ -79,13 +78,13 @@ public class SnsMessageUtil {
 			+ "\n" + agenda.getTitle() + "행사가 최소 팀 개수를 충족했습니다."
 			+ "\n" + "행사를 확정할 수 있습니다."
 			+ "\n" + "확정시엔 다른 팀들이 참가 할 수 없으니, 주의하세요!"
-			+ "\n" + "$$" + URL + "agenda_key=" + agenda.getAgendaKey() + "$$";
+			+ "\n" + URL + "detail?" + "agenda_key=" + agenda.getAgendaKey();
 	}
 
 	public String agendaHostMaxTeamSatisfiedMessage(Agenda agenda) {
 		return SUBJECT
 			+ "\n" + agenda.getTitle() + "행사가 최대 팀 개수를 충족했습니다."
 			+ "\n" + "행사를 확정하고 진행 시간과 장소를 공지사항으로 전달해주세요."
-			+ "\n" + "$$" + URL + "agenda_key=" + agenda.getAgendaKey() + "$$";
+			+ "\n" + URL + "detail?" + "agenda_key=" + agenda.getAgendaKey();
 	}
 }
