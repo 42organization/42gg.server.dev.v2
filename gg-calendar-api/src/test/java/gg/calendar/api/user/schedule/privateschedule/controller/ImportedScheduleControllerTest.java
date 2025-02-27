@@ -83,7 +83,7 @@ public class ImportedScheduleControllerTest {
 			//then
 			PrivateSchedule updated = privateScheduleRepository.findById(privateSchedule.getId()).orElseThrow();
 			Assertions.assertThat(privateSchedule.getGroupId()).isEqualTo(updated.getGroupId());
-			Assertions.assertThat(privateSchedule.isAlarm()).isEqualTo(updated.isAlarm());
+			Assertions.assertThat(privateSchedule.getAlarm()).isEqualTo(updated.getAlarm());
 		}
 
 		@Test
