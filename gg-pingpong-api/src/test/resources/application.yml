@@ -75,7 +75,7 @@ info:
   web:
     coalitionUrl: 'https://api.intra.42.fr/v2/users/{id}/coalitions'
     pointHistoryUrl: 'https://api.intra.42.fr/v2/users/{id}/correction_point_historics?sort=-id'
-    
+
 constant:
   allowedMinimalStartDays: 2
   tournamentSchedule: "0 0 0 * * *"

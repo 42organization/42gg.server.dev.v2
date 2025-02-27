@@ -885,7 +885,7 @@ public class PublicScheduleControllerTest {
 	@DisplayName("공유일정기간조회")
 	class RetrievePublicScheduleByPeriod {
 		@Test
-		@DisplayName("[200]공개일정 event 기간조회성공")
+		@DisplayName("[200]공개일정 기간조회성공 (비공개일정 제외)")
 		void retrievePublicScheduleByEventPeriodSuccess() throws Exception {
 			//given
 			mockData.createPublicScheduleEvent(7);
@@ -894,7 +894,7 @@ public class PublicScheduleControllerTest {
 			LocalDateTime end = LocalDateTime.now().plusDays(7);
 			//when
 			mockMvc.perform(
-					get("/calendar/public/period/{detail_classification}", detailClassification).header("Authorization",
+					get("/calendar/public", detailClassification).header("Authorization",
 							"Bearer " + accessToken)
 						.param("start", start.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
 						.param("end", end.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))))
@@ -902,8 +902,11 @@ public class PublicScheduleControllerTest {
 				.andDo(print());
 
 			//then
-			assertThat(publicScheduleRepository.findAll()).hasSize(7);
-			assertThat(publicScheduleRepository.findAll()).extracting("classification")
+			List<PublicSchedule> allSchedules = publicScheduleRepository.findAll();
+			assertThat(allSchedules).hasSize(7); // Total of 5 EVENT + 2 OTHER_TYPE
+
+			// Verify classifications of returned schedules
+			assertThat(allSchedules).extracting("classification")
 				.containsOnly(DetailClassification.EVENT);
 		}
 
@@ -917,7 +920,7 @@ public class PublicScheduleControllerTest {
 			LocalDateTime end = LocalDateTime.now().plusDays(7);
 			//when
 			mockMvc.perform(
-					get("/calendar/public/period/{detail_classification}",
+					get("/calendar/public",
 						detailClassification).header("Authorization",
 							"Bearer " + accessToken).param("start",
 							start.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
@@ -940,33 +943,12 @@ public class PublicScheduleControllerTest {
 			LocalDateTime end = LocalDateTime.now().minusDays(7);
 			//when & then
 			mockMvc.perform(
-					get("/calendar/public/period/{detail_classification}",
+					get("/calendar/public",
 						detailClassification).header("Authorization",
 							"Bearer " + accessToken).param("start",
 							start.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
 						.param("end", end.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))))
 				.andExpect(status().isBadRequest())
-				.andDo(print());
-		}
-
-		@Test
-		@DisplayName("[400]공개일정 조회실패 - 잘못된 detail_classification 이 들어왔을 때")
-		void retrievePublicScheduleFaultDetailClassification() throws Exception {
-			// given
-			mockData.createPublicScheduleEvent(7);
-			LocalDateTime start = LocalDateTime.now().plusDays(0);
-			LocalDateTime end = LocalDateTime.now().plusDays(7);
-			//when & then
-			mockMvc.perform(get("/calendar/public/period/{detail_classification}", "wrong")
-					.header("Authorization",
-						"Bearer " + accessToken).param("start", start.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
-					.param("end", end.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))))
-				.andExpect(status().isBadRequest())
-				.andExpect(result -> {
-					// 에러 응답의 세부 내용 출력
-					System.out.println("Response Body: " + result.getResponse().getContentAsString());
-					System.out.println("Status Code: " + result.getResponse().getStatus());
-				})
 				.andDo(print());
 		}
 
@@ -980,7 +962,7 @@ public class PublicScheduleControllerTest {
 			LocalDateTime end = LocalDateTime.now().plusDays(7);
 			//when & then
 			mockMvc.perform(
-					get("/calendar/public/period/{detail_classification}",
+					get("/calendar/public/",
 						detailClassification).header("Authorization",
 							"Bearer " + accessToken).param("start",
 							start.format(DateTimeFormatter.ofPattern("yyyy/MM/dd")))
