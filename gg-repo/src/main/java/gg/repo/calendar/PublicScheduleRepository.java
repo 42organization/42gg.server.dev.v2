@@ -23,10 +23,10 @@ public interface PublicScheduleRepository extends JpaRepository<PublicSchedule, 
 	List<PublicSchedule> findByEndTimeGreaterThanEqualAndStartTimeLessThanEqual(LocalDateTime startTime,
 		LocalDateTime endTime);
 
+	boolean existsByTitleAndStartTime(String title, LocalDateTime beginAt);
+
 	@Query("SELECT p FROM PublicSchedule p WHERE p.id = :id AND p.status != :status")
 	Optional<PublicSchedule> findByIdAndStatusNot(@Param("id") Long id, @Param("status") ScheduleStatus status);
-
-	boolean existsByTitleAndStartTime(String title, LocalDateTime beginAt);
 
 	@Query("SELECT p FROM PublicSchedule p WHERE p.endTime >= :start AND p.startTime <= :end "
 		+ "AND p.classification != :classification AND p.status != :scheduleStatus")
