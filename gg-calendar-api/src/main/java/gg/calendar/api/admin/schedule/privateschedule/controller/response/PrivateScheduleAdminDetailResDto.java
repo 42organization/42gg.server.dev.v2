@@ -58,7 +58,7 @@ public class PrivateScheduleAdminDetailResDto {
 		this.link = privateSchedule.getPublicSchedule().getLink();
 		this.groupTitle = scheduleGroup.getTitle();
 		this.groupBackgroundColor = scheduleGroup.getBackgroundColor();
-		this.isAlarm = privateSchedule.isAlarm();
+		this.isAlarm = privateSchedule.getAlarm();
 		this.startTime = privateSchedule.getPublicSchedule().getStartTime();
 		this.endTime = privateSchedule.getPublicSchedule().getEndTime();
 

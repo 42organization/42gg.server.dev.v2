@@ -98,7 +98,7 @@ public class PrivateScheduleControllerTest {
 			assertThat(schedules.size()).isEqualTo(1);
 			PrivateSchedule privateSchedule = schedules.get(0);
 			Assertions.assertThat(privateSchedule.getGroupId()).isEqualTo(scheduleGroup.getId());
-			Assertions.assertThat(privateSchedule.isAlarm()).isEqualTo(reqDto.isAlarm());
+			Assertions.assertThat(privateSchedule.getAlarm()).isEqualTo(reqDto.isAlarm());
 		}
 
 		@Test
@@ -176,7 +176,7 @@ public class PrivateScheduleControllerTest {
 			//then
 			PrivateSchedule updated = privateScheduleRepository.findById(privateSchedule.getId()).orElseThrow();
 			Assertions.assertThat(privateSchedule.getGroupId()).isEqualTo(updated.getGroupId());
-			Assertions.assertThat(privateSchedule.isAlarm()).isEqualTo(updated.isAlarm());
+			Assertions.assertThat(privateSchedule.getAlarm()).isEqualTo(updated.getAlarm());
 			Assertions.assertThat(privateSchedule.getGroupId()).isEqualTo(updated.getGroupId());
 			Assertions.assertThat(privateSchedule.getPublicSchedule()).isEqualTo(updated.getPublicSchedule());
 		}
@@ -386,7 +386,7 @@ public class PrivateScheduleControllerTest {
 			PrivateScheduleDetailResDto dto = objectMapper.readValue(response, PrivateScheduleDetailResDto.class);
 			//then
 			Assertions.assertThat(privateSchedule.getId()).isEqualTo(dto.getId());
-			Assertions.assertThat(privateSchedule.isAlarm()).isEqualTo(dto.isAlarm());
+			Assertions.assertThat(privateSchedule.getAlarm()).isEqualTo(dto.isAlarm());
 			Assertions.assertThat(scheduleGroup.getTitle()).isEqualTo(dto.getGroupTitle());
 			Assertions.assertThat(scheduleGroup.getBackgroundColor()).isEqualTo(dto.getGroupColor());
 			Assertions.assertThat(publicSchedule.getClassification()).isEqualTo(dto.getClassification());
