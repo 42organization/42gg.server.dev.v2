@@ -2,6 +2,7 @@ package gg.repo.calendar;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -27,6 +28,8 @@ public interface PublicScheduleRepository extends JpaRepository<PublicSchedule, 
 
 	List<PublicSchedule> findByEndTimeGreaterThanEqualAndStartTimeLessThanEqualAndClassificationNot(
 		LocalDateTime start, LocalDateTime end, DetailClassification classification);
+
+	Optional<PublicSchedule> findByIdAndStatusNot(Long id, ScheduleStatus status);
 
 	boolean existsByTitleAndStartTime(String title, LocalDateTime beginAt);
 
