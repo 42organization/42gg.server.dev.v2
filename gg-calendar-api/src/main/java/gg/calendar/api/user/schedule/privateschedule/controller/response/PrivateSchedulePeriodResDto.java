@@ -47,10 +47,13 @@ public class PrivateSchedulePeriodResDto {
 
 	private String groupColor;
 
+	private Long groupId;
+
 	@Builder
 	private PrivateSchedulePeriodResDto(Long id, DetailClassification classification, EventTag eventTag, JobTag jobTag,
 		TechTag techTag, String author, String title, String content, String link, ScheduleStatus status,
-		LocalDateTime startTime, LocalDateTime endTime, boolean alarm, String groupTitle, String groupColor) {
+		LocalDateTime startTime, LocalDateTime endTime, boolean alarm, String groupTitle, String groupColor,
+		Long groupId) {
 		this.id = id;
 		this.classification = classification;
 		this.eventTag = eventTag;
@@ -66,6 +69,7 @@ public class PrivateSchedulePeriodResDto {
 		this.alarm = alarm;
 		this.groupTitle = groupTitle;
 		this.groupColor = groupColor;
+		this.groupId = groupId;
 	}
 
 	public static PrivateSchedulePeriodResDto toDto(PrivateSchedule privateSchedule, ScheduleGroup scheduleGroup) {
@@ -85,6 +89,7 @@ public class PrivateSchedulePeriodResDto {
 			.alarm(privateSchedule.isAlarm())
 			.groupTitle(scheduleGroup.getTitle())
 			.groupColor(scheduleGroup.getBackgroundColor())
+			.groupId(scheduleGroup.getId())
 			.build();
 	}
 }
