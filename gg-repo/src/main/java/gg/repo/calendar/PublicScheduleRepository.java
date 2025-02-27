@@ -30,6 +30,7 @@ public interface PublicScheduleRepository extends JpaRepository<PublicSchedule, 
 	List<PublicSchedule> findByEndTimeGreaterThanEqualAndStartTimeLessThanEqualAndClassificationNotAndStatusNot(
 		LocalDateTime start, LocalDateTime end, DetailClassification classification, ScheduleStatus status);
 
+
 	@Modifying(clearAutomatically = true)
 	@Transactional
 	@Query("UPDATE PublicSchedule ps SET ps.status = :status WHERE ps.status = :currentStatus AND ps.endTime < :time")
