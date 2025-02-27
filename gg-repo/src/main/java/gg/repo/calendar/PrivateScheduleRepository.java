@@ -21,7 +21,7 @@ import gg.data.user.User;
 public interface PrivateScheduleRepository extends JpaRepository<PrivateSchedule, Long> {
 	Optional<PrivateSchedule> findByIdAndStatusNot(Long id, ScheduleStatus status);
 
-	List<PrivateSchedule> findByPublicScheduleAndStatusNot(PublicSchedule publicSchedule, ScheduleStatus status);
+	List<PrivateSchedule> findByPublicSchedule(PublicSchedule publicSchedule);
 
 	@Query("SELECT pr FROM PrivateSchedule pr "
 		+ "JOIN pr.publicSchedule pu "
