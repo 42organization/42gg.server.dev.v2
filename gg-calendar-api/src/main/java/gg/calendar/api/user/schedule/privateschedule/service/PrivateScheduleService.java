@@ -20,6 +20,7 @@ import gg.data.calendar.PrivateSchedule;
 import gg.data.calendar.PublicSchedule;
 import gg.data.calendar.ScheduleGroup;
 import gg.data.calendar.type.DetailClassification;
+import gg.data.calendar.type.ScheduleStatus;
 import gg.data.user.User;
 import gg.repo.calendar.PrivateScheduleRepository;
 import gg.repo.calendar.PublicScheduleRepository;
@@ -57,8 +58,7 @@ public class PrivateScheduleService {
 
 	@Transactional
 	public PrivateScheduleUpdateResDto updatePrivateSchedule(UserDto userDto,
-		PrivateScheduleUpdateReqDto privateScheduleUpdateReqDto,
-		Long privateScheduleId) {
+		PrivateScheduleUpdateReqDto privateScheduleUpdateReqDto, Long privateScheduleId) {
 		validateTimeRange(privateScheduleUpdateReqDto.getStartTime(), privateScheduleUpdateReqDto.getEndTime());
 		PrivateSchedule privateSchedule = privateScheduleRepository.findById(privateScheduleId)
 			.orElseThrow(() -> new NotExistException(ErrorCode.PRIVATE_SCHEDULE_NOT_FOUND));
@@ -83,8 +83,8 @@ public class PrivateScheduleService {
 	}
 
 	public PrivateScheduleDetailResDto getPrivateScheduleDetail(UserDto userDto, Long privateScheduleId) {
-		PrivateSchedule privateSchedule = privateScheduleRepository.findById(privateScheduleId)
-			.orElseThrow(() -> new NotExistException(ErrorCode.PRIVATE_SCHEDULE_NOT_FOUND));
+		PrivateSchedule privateSchedule = privateScheduleRepository.findByIdAndStatusNot(privateScheduleId,
+			ScheduleStatus.DELETE).orElseThrow(() -> new NotExistException(ErrorCode.PRIVATE_SCHEDULE_NOT_FOUND));
 		ScheduleGroup scheduleGroup = scheduleGroupRepository.findById(privateSchedule.getGroupId())
 			.orElseThrow(() -> new NotExistException(ErrorCode.SCHEDULE_GROUP_NOT_FOUND));
 		validateAuthor(userDto.getIntraId(), privateSchedule.getUser().getIntraId());

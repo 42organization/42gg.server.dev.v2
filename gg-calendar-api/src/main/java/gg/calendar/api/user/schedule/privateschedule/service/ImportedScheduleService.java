@@ -9,6 +9,7 @@ import gg.calendar.api.user.schedule.privateschedule.controller.response.Importe
 import gg.data.calendar.PrivateSchedule;
 import gg.data.calendar.ScheduleGroup;
 import gg.data.calendar.type.DetailClassification;
+import gg.data.calendar.type.ScheduleStatus;
 import gg.repo.calendar.PrivateScheduleRepository;
 import gg.repo.calendar.ScheduleGroupRepository;
 import gg.utils.exception.ErrorCode;
@@ -26,8 +27,8 @@ public class ImportedScheduleService {
 	@Transactional
 	public ImportedScheduleUpdateResDto updateImportedSchedule(UserDto userDto,
 		ImportedScheduleUpdateReqDto importedScheduleUpdateReqDto, Long privateScheduleId) {
-		PrivateSchedule privateSchedule = privateScheduleRepository.findById(privateScheduleId)
-			.orElseThrow(() -> new NotExistException(ErrorCode.PRIVATE_SCHEDULE_NOT_FOUND));
+		PrivateSchedule privateSchedule = privateScheduleRepository.findByIdAndStatusNot(privateScheduleId,
+			ScheduleStatus.DELETE).orElseThrow(() -> new NotExistException(ErrorCode.PRIVATE_SCHEDULE_NOT_FOUND));
 		validateAuthor(userDto.getIntraId(), privateSchedule.getUser().getIntraId());
 		ScheduleGroup scheduleGroup = scheduleGroupRepository.findById(importedScheduleUpdateReqDto.getGroupId())
 			.orElseThrow(() -> new NotExistException(ErrorCode.SCHEDULE_GROUP_NOT_FOUND));
