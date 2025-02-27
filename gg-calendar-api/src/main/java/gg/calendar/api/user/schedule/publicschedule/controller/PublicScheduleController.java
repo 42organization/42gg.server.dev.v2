@@ -30,7 +30,7 @@ import gg.calendar.api.user.schedule.publicschedule.controller.response.PublicSc
 import gg.calendar.api.user.schedule.publicschedule.controller.response.PublicScheduleUpdateResDto;
 import gg.calendar.api.user.schedule.publicschedule.service.PublicScheduleService;
 import gg.data.calendar.PublicSchedule;
-import gg.data.calendar.type.DetailClassification;
+
 import gg.utils.dto.ListResponseDto;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
@@ -76,15 +76,14 @@ public class PublicScheduleController {
 		return ResponseEntity.ok(PublicScheduleDetailRetrieveResDto.toDto(publicSchedule));
 	}
 
-	@GetMapping("/period/{detailClassification}")
+	@GetMapping
 	public ResponseEntity<ListResponseDto<PublicSchedulePeriodRetrieveResDto>> publicSchedulePeriodRetrieveGet(
-		@PathVariable DetailClassification detailClassification,
 		@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate start,
 		@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end) {
 		LocalDateTime startTime = start.atStartOfDay();
 		LocalDateTime endTime = end.atTime(LocalTime.MAX);
-		List<PublicSchedulePeriodRetrieveResDto> res = publicScheduleService.retrievePublicSchedulePeriod(
-			startTime, endTime, detailClassification);
+		List<PublicSchedulePeriodRetrieveResDto> res = publicScheduleService.retrieveNonPrivateSchedulePeriod(
+			startTime, endTime);
 		return ResponseEntity.ok(ListResponseDto.toDto(res));
 	}
 
