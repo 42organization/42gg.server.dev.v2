@@ -17,6 +17,7 @@ import gg.data.calendar.PublicSchedule;
 import gg.data.calendar.type.DetailClassification;
 import gg.data.calendar.type.EventTag;
 import gg.data.calendar.type.JobTag;
+import gg.data.calendar.type.ScheduleStatus;
 import gg.data.calendar.type.TechTag;
 import gg.data.user.User;
 import gg.repo.calendar.PrivateScheduleRepository;
@@ -60,7 +61,8 @@ public class PublicScheduleService {
 	public PublicSchedule updatePublicSchedule(Long scheduleId, PublicScheduleUpdateReqDto req, Long userId) {
 		tagErrorCheck(req.getClassification(), req.getEventTag(), req.getJobTag(), req.getTechTag());
 		User user = userRepository.getById(userId);
-		PublicSchedule existingSchedule = publicScheduleRepository.findById(scheduleId)
+		PublicSchedule existingSchedule = publicScheduleRepository.findByIdAndStatusNot(scheduleId,
+				ScheduleStatus.DELETE)
 			.orElseThrow(() -> new NotExistException(ErrorCode.PUBLIC_SCHEDULE_NOT_FOUND));
 		checkAuthor(existingSchedule.getAuthor(), user);
 		checkAuthor(req.getAuthor(), user);
@@ -73,7 +75,8 @@ public class PublicScheduleService {
 	@Transactional
 	public void deletePublicSchedule(Long scheduleId, Long userId) {
 		User user = userRepository.getById(userId);
-		PublicSchedule existingSchedule = publicScheduleRepository.findById(scheduleId)
+		PublicSchedule existingSchedule = publicScheduleRepository.findByIdAndStatusNot(scheduleId,
+				ScheduleStatus.DELETE)
 			.orElseThrow(() -> new NotExistException(ErrorCode.PUBLIC_SCHEDULE_NOT_FOUND));
 		checkAuthor(existingSchedule.getAuthor(), user);
 
@@ -88,9 +91,9 @@ public class PublicScheduleService {
 
 	public PublicSchedule getPublicScheduleDetailRetrieve(Long scheduleId, Long userId) {
 		User user = userRepository.getById(userId);
-		PublicSchedule publicRetrieveSchedule = publicScheduleRepository.findById(scheduleId)
+		PublicSchedule publicRetrieveSchedule = publicScheduleRepository.findByIdAndStatusNot(scheduleId,
+				ScheduleStatus.DELETE)
 			.orElseThrow(() -> new NotExistException(ErrorCode.PUBLIC_SCHEDULE_NOT_FOUND));
-		// checkAuthor(publicRetrieveSchedule.getAuthor(), user);
 		return publicRetrieveSchedule;
 	}
 
@@ -107,7 +110,8 @@ public class PublicScheduleService {
 	public void addPublicScheduleToPrivateSchedule(Long scheduleId, Long groupId, UserDto userDto) {
 		User user = userRepository.getById(userDto.getId());
 		Long userId = userDto.getId();
-		PublicSchedule publicSchedule = publicScheduleRepository.findById(scheduleId)
+		PublicSchedule publicSchedule = publicScheduleRepository.findByIdAndStatusNot(scheduleId,
+				ScheduleStatus.DELETE)
 			.orElseThrow(() -> new NotExistException(ErrorCode.PUBLIC_SCHEDULE_NOT_FOUND));
 		scheduleGroupRepository.findByIdAndUserId(groupId, userId)
 			.orElseThrow(() -> new NotExistException(ErrorCode.SCHEDULE_GROUP_NOT_FOUND));
