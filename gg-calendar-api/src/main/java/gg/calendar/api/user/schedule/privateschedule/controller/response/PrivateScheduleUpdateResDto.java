@@ -78,7 +78,7 @@ public class PrivateScheduleUpdateResDto {
 			.status(privateSchedule.getStatus())
 			.startTime(privateSchedule.getPublicSchedule().getStartTime())
 			.endTime(privateSchedule.getPublicSchedule().getEndTime())
-			.alarm(privateSchedule.isAlarm())
+			.alarm(privateSchedule.getAlarm())
 			.groupId(privateSchedule.getGroupId())
 			.build();
 	}

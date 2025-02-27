@@ -38,7 +38,7 @@ public class PrivateSchedule extends BaseTimeEntity {
 	private PublicSchedule publicSchedule;
 
 	@Column(nullable = false)
-	private boolean alarm;
+	private Boolean alarm;
 
 	@Column(nullable = false)
 	private Long groupId;
@@ -47,7 +47,7 @@ public class PrivateSchedule extends BaseTimeEntity {
 	@Column(nullable = false, columnDefinition = "VARCHAR(50)")
 	private ScheduleStatus status;
 
-	public PrivateSchedule(User user, PublicSchedule publicSchedule, boolean alarm, Long groupId) {
+	public PrivateSchedule(User user, PublicSchedule publicSchedule, Boolean alarm, Long groupId) {
 		this.user = user;
 		this.publicSchedule = publicSchedule;
 		this.alarm = alarm;
@@ -55,7 +55,7 @@ public class PrivateSchedule extends BaseTimeEntity {
 		this.status = ScheduleStatus.ACTIVATE;
 	}
 
-	public void update(boolean alarm, Long groupId) {
+	public void update(Boolean alarm, Long groupId) {
 		this.alarm = alarm;
 		this.groupId = groupId;
 	}

@@ -86,7 +86,7 @@ public class PrivateSchedulePeriodResDto {
 			.status(privateSchedule.getStatus())
 			.startTime(privateSchedule.getPublicSchedule().getStartTime())
 			.endTime(privateSchedule.getPublicSchedule().getEndTime())
-			.alarm(privateSchedule.isAlarm())
+			.alarm(privateSchedule.getAlarm())
 			.groupTitle(scheduleGroup.getTitle())
 			.groupColor(scheduleGroup.getBackgroundColor())
 			.groupId(scheduleGroup.getId())
