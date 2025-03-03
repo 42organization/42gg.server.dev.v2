@@ -103,8 +103,8 @@ public class PublicSchedule extends BaseTimeEntity {
 		this.status = ScheduleStatus.DELETE;
 	}
 
-	public void incrementSharedCount() {
-		this.sharedCount++;
-	}
+	// public void incrementSharedCount() {
+	// 	this.sharedCount++;
+	// }
 }
 

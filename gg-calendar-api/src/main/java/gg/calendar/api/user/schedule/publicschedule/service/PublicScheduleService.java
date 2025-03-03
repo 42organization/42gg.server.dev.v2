@@ -117,7 +117,7 @@ public class PublicScheduleService {
 			.orElseThrow(() -> new NotExistException(ErrorCode.SCHEDULE_GROUP_NOT_FOUND));
 		PrivateSchedule privateSchedule = new PrivateSchedule(user, publicSchedule, false, groupId);
 		privateScheduleRepository.save(privateSchedule);
-		publicSchedule.incrementSharedCount();
+		publicScheduleRepository.incrementSharedCount(publicSchedule.getId());
 	}
 
 	private void checkAuthor(String author, User user) {
