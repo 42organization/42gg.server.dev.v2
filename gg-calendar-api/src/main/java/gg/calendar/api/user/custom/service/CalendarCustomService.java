@@ -65,7 +65,7 @@ public class CalendarCustomService {
 			} else {
 				privateSchedule.delete();
 			}
-			scheduleGroupRepository.delete(scheduleGroup);
 		}
+		scheduleGroupRepository.delete(scheduleGroup);
 	}
 }

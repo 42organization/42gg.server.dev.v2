@@ -23,7 +23,7 @@ public interface PrivateScheduleRepository extends JpaRepository<PrivateSchedule
 
 	List<PrivateSchedule> findByPublicSchedule(PublicSchedule publicSchedule);
 
-	List<PrivateSchedule> findByGroupId(Long GroupId);
+	List<PrivateSchedule> findByGroupId(Long groupId);
 
 	@Query("SELECT pr FROM PrivateSchedule pr "
 		+ "JOIN pr.publicSchedule pu "
