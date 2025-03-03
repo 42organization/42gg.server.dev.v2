@@ -103,8 +103,9 @@ public class PublicScheduleService {
 	public List<PublicSchedulePeriodRetrieveResDto> retrieveNonPrivateSchedulePeriod(LocalDateTime start,
 		LocalDateTime end) {
 		validateTimeRange(start, end);
-		List<PublicSchedule> nonPrivateSchedules = publicScheduleRepository.findByEndTimeGreaterThanEqualAndStartTimeLessThanEqualAndClassificationNotAndStatusNot(
-			start, end, DetailClassification.PRIVATE_SCHEDULE, ScheduleStatus.DELETE);
+		List<PublicSchedule> nonPrivateSchedules = publicScheduleRepository
+			.findByEndTimeGreaterThanEqualAndStartTimeLessThanEqualAndClassificationNotAndStatusNot(
+				start, end, DetailClassification.PRIVATE_SCHEDULE, ScheduleStatus.DELETE);
 		return nonPrivateSchedules.stream().map(PublicSchedulePeriodRetrieveResDto::toDto).collect(Collectors.toList());
 	}
 
