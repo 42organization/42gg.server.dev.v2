@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +42,9 @@ public class PublicScheduleService {
 	private final PrivateScheduleRepository privateScheduleRepository;
 	private final ScheduleGroupRepository scheduleGroupRepository;
 
+	@PersistenceContext
+	private EntityManager entityManager;
+
 	@Transactional
 	public void createEventPublicSchedule(PublicScheduleCreateEventReqDto req, Long userId) {
 		User user = userRepository.getById(userId);
@@ -62,8 +68,7 @@ public class PublicScheduleService {
 		tagErrorCheck(req.getClassification(), req.getEventTag(), req.getJobTag(), req.getTechTag());
 		User user = userRepository.getById(userId);
 		PublicSchedule existingSchedule = publicScheduleRepository.findByIdAndStatusNot(scheduleId,
-				ScheduleStatus.DELETE)
-			.orElseThrow(() -> new NotExistException(ErrorCode.PUBLIC_SCHEDULE_NOT_FOUND));
+			ScheduleStatus.DELETE).orElseThrow(() -> new NotExistException(ErrorCode.PUBLIC_SCHEDULE_NOT_FOUND));
 		checkAuthor(existingSchedule.getAuthor(), user);
 		checkAuthor(req.getAuthor(), user);
 		validateTimeRange(req.getStartTime(), req.getEndTime());
@@ -76,8 +81,7 @@ public class PublicScheduleService {
 	public void deletePublicSchedule(Long scheduleId, Long userId) {
 		User user = userRepository.getById(userId);
 		PublicSchedule existingSchedule = publicScheduleRepository.findByIdAndStatusNot(scheduleId,
-				ScheduleStatus.DELETE)
-			.orElseThrow(() -> new NotExistException(ErrorCode.PUBLIC_SCHEDULE_NOT_FOUND));
+			ScheduleStatus.DELETE).orElseThrow(() -> new NotExistException(ErrorCode.PUBLIC_SCHEDULE_NOT_FOUND));
 		checkAuthor(existingSchedule.getAuthor(), user);
 
 		List<PrivateSchedule> privateSchedules = privateScheduleRepository.findByPublicSchedule(existingSchedule);
@@ -92,17 +96,15 @@ public class PublicScheduleService {
 	public PublicSchedule getPublicScheduleDetailRetrieve(Long scheduleId, Long userId) {
 		User user = userRepository.getById(userId);
 		PublicSchedule publicRetrieveSchedule = publicScheduleRepository.findByIdAndStatusNot(scheduleId,
-				ScheduleStatus.DELETE)
-			.orElseThrow(() -> new NotExistException(ErrorCode.PUBLIC_SCHEDULE_NOT_FOUND));
+			ScheduleStatus.DELETE).orElseThrow(() -> new NotExistException(ErrorCode.PUBLIC_SCHEDULE_NOT_FOUND));
 		return publicRetrieveSchedule;
 	}
 
 	public List<PublicSchedulePeriodRetrieveResDto> retrieveNonPrivateSchedulePeriod(LocalDateTime start,
 		LocalDateTime end) {
 		validateTimeRange(start, end);
-		List<PublicSchedule> nonPrivateSchedules = publicScheduleRepository
-			.findByEndTimeGreaterThanEqualAndStartTimeLessThanEqualAndClassificationNotAndStatusNot(
-				start, end, DetailClassification.PRIVATE_SCHEDULE, ScheduleStatus.DELETE);
+		List<PublicSchedule> nonPrivateSchedules = publicScheduleRepository.findByEndTimeGreaterThanEqualAndStartTimeLessThanEqualAndClassificationNotAndStatusNot(
+			start, end, DetailClassification.PRIVATE_SCHEDULE, ScheduleStatus.DELETE);
 		return nonPrivateSchedules.stream().map(PublicSchedulePeriodRetrieveResDto::toDto).collect(Collectors.toList());
 	}
 
@@ -110,13 +112,14 @@ public class PublicScheduleService {
 	public void addPublicScheduleToPrivateSchedule(Long scheduleId, Long groupId, UserDto userDto) {
 		User user = userRepository.getById(userDto.getId());
 		Long userId = userDto.getId();
-		PublicSchedule publicSchedule = publicScheduleRepository.findByIdAndStatusNot(scheduleId,
-				ScheduleStatus.DELETE)
+		PublicSchedule publicSchedule = publicScheduleRepository.findByIdAndStatusNot(scheduleId, ScheduleStatus.DELETE)
 			.orElseThrow(() -> new NotExistException(ErrorCode.PUBLIC_SCHEDULE_NOT_FOUND));
 		scheduleGroupRepository.findByIdAndUserId(groupId, userId)
 			.orElseThrow(() -> new NotExistException(ErrorCode.SCHEDULE_GROUP_NOT_FOUND));
 		PrivateSchedule privateSchedule = new PrivateSchedule(user, publicSchedule, false, groupId);
 		privateScheduleRepository.save(privateSchedule);
+		entityManager.flush();
+		entityManager.clear();
 		publicScheduleRepository.incrementSharedCount(publicSchedule.getId());
 	}
 
