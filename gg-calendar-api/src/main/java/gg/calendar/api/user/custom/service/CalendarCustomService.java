@@ -11,8 +11,11 @@ import gg.calendar.api.user.custom.controller.request.CalendarCustomCreateReqDto
 import gg.calendar.api.user.custom.controller.request.CalendarCustomUpdateReqDto;
 import gg.calendar.api.user.custom.controller.response.CalendarCustomUpdateResDto;
 import gg.calendar.api.user.custom.controller.response.CalendarCustomViewResDto;
+import gg.data.calendar.PrivateSchedule;
 import gg.data.calendar.ScheduleGroup;
+import gg.data.calendar.type.DetailClassification;
 import gg.data.user.User;
+import gg.repo.calendar.PrivateScheduleRepository;
 import gg.repo.calendar.ScheduleGroupRepository;
 import gg.repo.user.UserRepository;
 import gg.utils.exception.ErrorCode;
@@ -25,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 public class CalendarCustomService {
 	private final ScheduleGroupRepository scheduleGroupRepository;
 	private final UserRepository userRepository;
+	private final PrivateScheduleRepository privateScheduleRepository;
 
 	@Transactional
 	public void createScheduleGroup(UserDto userDto, CalendarCustomCreateReqDto calendarCustomCreateReqDto) {
@@ -53,6 +57,15 @@ public class CalendarCustomService {
 	public void deleteScheduleGroup(UserDto userDto, Long scheduleGroupId) {
 		ScheduleGroup scheduleGroup = scheduleGroupRepository.findByIdAndUserId(scheduleGroupId, userDto.getId())
 			.orElseThrow(() -> new NotExistException(ErrorCode.SCHEDULE_GROUP_NOT_FOUND));
+
+		List<PrivateSchedule> privateSchedules = privateScheduleRepository.findByGroupId(scheduleGroupId);
+		for (PrivateSchedule privateSchedule : privateSchedules) {
+			if (privateSchedule.getPublicSchedule().getClassification().equals(DetailClassification.PRIVATE_SCHEDULE)) {
+				privateSchedule.deleteCascade();
+			} else {
+				privateSchedule.delete();
+			}
+		}
 		scheduleGroupRepository.delete(scheduleGroup);
 	}
 }

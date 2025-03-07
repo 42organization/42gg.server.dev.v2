@@ -23,6 +23,8 @@ public interface PrivateScheduleRepository extends JpaRepository<PrivateSchedule
 
 	List<PrivateSchedule> findByPublicSchedule(PublicSchedule publicSchedule);
 
+	List<PrivateSchedule> findByGroupId(Long groupId);
+
 	@Query("SELECT pr FROM PrivateSchedule pr "
 		+ "JOIN pr.publicSchedule pu "
 		+ "WHERE NOT (pu.startTime > :endTime OR pu.endTime < :startTime) "
