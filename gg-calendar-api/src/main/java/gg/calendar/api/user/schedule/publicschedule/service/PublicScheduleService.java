@@ -120,7 +120,6 @@ public class PublicScheduleService {
 		PrivateSchedule privateSchedule = new PrivateSchedule(user, publicSchedule, false, groupId);
 		privateScheduleRepository.save(privateSchedule);
 		entityManager.flush();
-		entityManager.clear();
 		publicScheduleRepository.incrementSharedCount(publicSchedule.getId());
 	}
 

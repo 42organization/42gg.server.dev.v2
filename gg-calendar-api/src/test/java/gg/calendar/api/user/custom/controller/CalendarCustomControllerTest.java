@@ -23,8 +23,14 @@ import gg.calendar.api.user.custom.CalendarCustomMockData;
 import gg.calendar.api.user.custom.controller.request.CalendarCustomCreateReqDto;
 import gg.calendar.api.user.custom.controller.request.CalendarCustomUpdateReqDto;
 import gg.calendar.api.user.custom.controller.response.CalendarCustomViewResDto;
+import gg.calendar.api.user.schedule.privateschedule.PrivateScheduleMockData;
+import gg.data.calendar.PrivateSchedule;
+import gg.data.calendar.PublicSchedule;
 import gg.data.calendar.ScheduleGroup;
+import gg.data.calendar.type.DetailClassification;
+import gg.data.calendar.type.ScheduleStatus;
 import gg.data.user.User;
+import gg.repo.calendar.PrivateScheduleRepository;
 import gg.repo.calendar.ScheduleGroupRepository;
 import gg.utils.TestDataUtils;
 import gg.utils.annotation.IntegrationTest;
@@ -46,7 +52,13 @@ public class CalendarCustomControllerTest {
 	private ScheduleGroupRepository scheduleGroupRepository;
 
 	@Autowired
+	private PrivateScheduleRepository privateScheduleRepository;
+
+	@Autowired
 	private CalendarCustomMockData calendarCustomMockData;
+
+	@Autowired
+	private PrivateScheduleMockData privateScheduleMockData;
 
 	@Autowired
 	private TestDataUtils testDataUtils;
@@ -236,6 +248,52 @@ public class CalendarCustomControllerTest {
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound());
+		}
+
+		@Test
+		@DisplayName("스케줄 그룹을 삭제했을 때, 연관된 PrivateSchedule이 삭제되는 경우 204")
+		void deleteCascade() throws Exception {
+			//given
+			ScheduleGroup scheduleGroup = calendarCustomMockData.createScheduleGroup(user);
+			PublicSchedule publicSchedule = privateScheduleMockData.createPublicSchedule(user.getIntraId(),
+				DetailClassification.PRIVATE_SCHEDULE);
+			PrivateSchedule privateSchedule = privateScheduleMockData.createPrivateSchedule(user, publicSchedule,
+				scheduleGroup.getId());
+			//when
+			mockMvc.perform(delete("/calendar/custom/" + scheduleGroup.getId())
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNoContent());
+			List<ScheduleGroup> empty = scheduleGroupRepository.findAll();
+			//then
+			Assertions.assertThat(empty.size()).isEqualTo(0);
+			privateScheduleRepository.findById(privateSchedule.getId()).ifPresent(ps -> {
+				Assertions.assertThat(ps.getStatus()).isEqualTo(ScheduleStatus.DELETE);
+				Assertions.assertThat(ps.getPublicSchedule().getStatus()).isEqualTo(ScheduleStatus.DELETE);
+			});
+		}
+
+		@Test
+		@DisplayName("스케줄 그룹을 삭제했을 때, 연관된 PublicSchedule은 삭제되지 않는 경우 204")
+		void deleteNotCascade() throws Exception {
+			//given
+			ScheduleGroup scheduleGroup = calendarCustomMockData.createScheduleGroup(user);
+			PublicSchedule publicSchedule = privateScheduleMockData.createPublicSchedule(user.getIntraId(),
+				DetailClassification.JOB_NOTICE);
+			PrivateSchedule privateSchedule = privateScheduleMockData.createPrivateSchedule(user, publicSchedule,
+				scheduleGroup.getId());
+			//when
+			mockMvc.perform(delete("/calendar/custom/" + scheduleGroup.getId())
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNoContent());
+			List<ScheduleGroup> empty = scheduleGroupRepository.findAll();
+			//then
+			Assertions.assertThat(empty.size()).isEqualTo(0);
+			privateScheduleRepository.findById(privateSchedule.getId()).ifPresent(ps -> {
+				Assertions.assertThat(ps.getStatus()).isEqualTo(ScheduleStatus.DELETE);
+				Assertions.assertThat(ps.getPublicSchedule().getStatus()).isEqualTo(ScheduleStatus.ACTIVATE);
+			});
 		}
 	}
 }
