@@ -73,7 +73,8 @@ public class PublicScheduleService {
 		checkAuthor(req.getAuthor(), user);
 		validateTimeRange(req.getStartTime(), req.getEndTime());
 		existingSchedule.update(req.getClassification(), req.getEventTag(), req.getJobTag(), req.getTechTag(),
-			req.getTitle(), req.getContent(), req.getLink(), req.getStartTime(), req.getEndTime());
+			req.getTitle(), req.getContent(), req.getLink(), req.getStartTime(), req.getEndTime(),
+			checkStatus(req.getEndTime()));
 		return existingSchedule;
 	}
 
@@ -139,5 +140,9 @@ public class PublicScheduleService {
 		if (!classification.isValid(eventTag, jobTag, techTag)) {
 			throw new InvalidParameterException(ErrorCode.CLASSIFICATION_NOT_MATCH);
 		}
+	}
+
+	private ScheduleStatus checkStatus(LocalDateTime endTime) {
+		return endTime.isBefore(LocalDateTime.now()) ? ScheduleStatus.DEACTIVATE : ScheduleStatus.ACTIVATE;
 	}
 }

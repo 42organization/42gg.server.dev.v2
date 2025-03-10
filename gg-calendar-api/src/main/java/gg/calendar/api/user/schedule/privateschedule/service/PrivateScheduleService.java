@@ -68,7 +68,8 @@ public class PrivateScheduleService {
 
 		privateSchedule.updateCascade(privateScheduleUpdateReqDto.getTitle(), privateScheduleUpdateReqDto.getContent(),
 			privateScheduleUpdateReqDto.getLink(), privateScheduleUpdateReqDto.getStartTime(),
-			privateScheduleUpdateReqDto.getEndTime(), privateScheduleUpdateReqDto.isAlarm(), scheduleGroup.getId());
+			privateScheduleUpdateReqDto.getEndTime(), privateScheduleUpdateReqDto.isAlarm(), scheduleGroup.getId(),
+			checkStatus(privateScheduleUpdateReqDto.getEndTime()));
 		return PrivateScheduleUpdateResDto.toDto(privateSchedule);
 	}
 
@@ -127,5 +128,9 @@ public class PrivateScheduleService {
 		if (!intraId.equals(author)) {
 			throw new ForbiddenException(ErrorCode.CALENDAR_AUTHOR_NOT_MATCH);
 		}
+	}
+
+	private ScheduleStatus checkStatus(LocalDateTime endTime) {
+		return endTime.isBefore(LocalDateTime.now()) ? ScheduleStatus.DEACTIVATE : ScheduleStatus.ACTIVATE;
 	}
 }
