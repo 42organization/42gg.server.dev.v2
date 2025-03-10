@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import gg.auth.UserDto;
 import gg.data.calendar.PublicSchedule;
 import gg.data.calendar.type.JobTag;
+import gg.data.calendar.type.ScheduleStatus;
 import gg.data.calendar.type.TechTag;
 import gg.utils.annotation.UnitTest;
 
@@ -30,7 +31,8 @@ public class PublicScheduleCreateJobReqDtoTest {
 			.endTime(LocalDateTime.now().plusDays(2))
 			.build();
 
-		PublicSchedule schedule = PublicScheduleCreateJobReqDto.toEntity(user.getIntraId(), dto);
+		PublicSchedule schedule = PublicScheduleCreateJobReqDto.toEntity(user.getIntraId(), dto,
+			ScheduleStatus.ACTIVATE);
 		assertAll(() -> assertNotNull(schedule), () -> assertEquals(dto.getJobTag(), schedule.getJobTag()),
 			() -> assertEquals(user.getIntraId(), schedule.getAuthor()),
 			() -> assertEquals(dto.getTitle(), schedule.getTitle()),
@@ -56,7 +58,8 @@ public class PublicScheduleCreateJobReqDtoTest {
 			.endTime(LocalDateTime.now().plusDays(2))
 			.build();
 
-		PublicSchedule schedule = PublicScheduleCreateJobReqDto.toEntity(user.getIntraId(), dto);
+		PublicSchedule schedule = PublicScheduleCreateJobReqDto.toEntity(user.getIntraId(), dto,
+			ScheduleStatus.ACTIVATE);
 		assertAll(() -> assertNotNull(schedule), () -> assertEquals(dto.getJobTag(), schedule.getJobTag()),
 			() -> assertEquals(dto.getTechTag(), schedule.getTechTag()),
 			() -> assertEquals(user.getIntraId(), schedule.getAuthor()),

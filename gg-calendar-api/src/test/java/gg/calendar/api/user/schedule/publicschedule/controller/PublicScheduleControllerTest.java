@@ -249,7 +249,7 @@ public class PublicScheduleControllerTest {
 					.link("https://test.com")
 					.startTime(LocalDateTime.now())
 					.endTime(LocalDateTime.now().plusDays(1))
-					.build());
+					.build(), ScheduleStatus.ACTIVATE);
 			publicScheduleRepository.save(eventPublicSchedule);
 
 			PublicScheduleUpdateReqDto updateDto = PublicScheduleUpdateReqDto.builder()
@@ -277,6 +277,90 @@ public class PublicScheduleControllerTest {
 		}
 
 		@Test
+		@DisplayName("[200]공개일정업데이트성공시-42event : DEACTIVATE -> ACTIVATE")
+		void updateEventPublicScheduleSuccessActivate() throws Exception {
+			// given
+			PublicSchedule eventPublicSchedule = PublicSchedule.builder()
+				.classification(DetailClassification.EVENT)
+				.eventTag(EventTag.INSTRUCTION)
+				.author(user.getIntraId())
+				.title("42EventTag")
+				.content("42EventTagTest")
+				.link("https://test.com")
+				.status(ScheduleStatus.DEACTIVATE)
+				.startTime(LocalDateTime.now().minusDays(3))
+				.endTime(LocalDateTime.now().minusDays(1))
+				.build();
+			publicScheduleRepository.save(eventPublicSchedule);
+
+			PublicScheduleUpdateReqDto updateDto = PublicScheduleUpdateReqDto.builder()
+				.classification(DetailClassification.EVENT)
+				.eventTag(EventTag.INSTRUCTION)
+				.author(user.getIntraId())
+				.title("Updated Title")
+				.content("Updated Content")
+				.link("https://updated.com")
+				.startTime(LocalDateTime.now())
+				.endTime(LocalDateTime.now().plusDays(2))
+				.build();
+
+			// when
+			mockMvc.perform(
+				put("/calendar/public/" + eventPublicSchedule.getId()).header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(objectMapper.writeValueAsString(updateDto))).andExpect(status().isOk());
+
+			// then
+			List<PublicSchedule> schedules = publicScheduleRepository.findByAuthor(user.getIntraId());
+			assertThat(schedules).hasSize(1);
+			assertThat(schedules.get(0).getTitle()).isEqualTo("Updated Title");
+			assertThat(schedules.get(0).getContent()).isEqualTo("Updated Content");
+			assertThat(schedules.get(0).getStatus()).isEqualTo(ScheduleStatus.ACTIVATE);
+		}
+
+		@Test
+		@DisplayName("[200]공개일정업데이트성공시-42event : ACTIVATE -> DEACTIVATE")
+		void updateEventPublicScheduleSuccessDeactivate() throws Exception {
+			// given
+			PublicSchedule eventPublicSchedule = PublicSchedule.builder()
+				.classification(DetailClassification.EVENT)
+				.eventTag(EventTag.INSTRUCTION)
+				.author(user.getIntraId())
+				.title("42EventTag")
+				.content("42EventTagTest")
+				.link("https://test.com")
+				.status(ScheduleStatus.ACTIVATE)
+				.startTime(LocalDateTime.now())
+				.endTime(LocalDateTime.now().plusDays(2))
+				.build();
+			publicScheduleRepository.save(eventPublicSchedule);
+
+			PublicScheduleUpdateReqDto updateDto = PublicScheduleUpdateReqDto.builder()
+				.classification(DetailClassification.EVENT)
+				.eventTag(EventTag.INSTRUCTION)
+				.author(user.getIntraId())
+				.title("Updated Title")
+				.content("Updated Content")
+				.link("https://updated.com")
+				.startTime(LocalDateTime.now().minusDays(3))
+				.endTime(LocalDateTime.now().minusDays(1))
+				.build();
+
+			// when
+			mockMvc.perform(
+				put("/calendar/public/" + eventPublicSchedule.getId()).header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(objectMapper.writeValueAsString(updateDto))).andExpect(status().isOk());
+
+			// then
+			List<PublicSchedule> schedules = publicScheduleRepository.findByAuthor(user.getIntraId());
+			assertThat(schedules).hasSize(1);
+			assertThat(schedules.get(0).getTitle()).isEqualTo("Updated Title");
+			assertThat(schedules.get(0).getContent()).isEqualTo("Updated Content");
+			assertThat(schedules.get(0).getStatus()).isEqualTo(ScheduleStatus.DEACTIVATE);
+		}
+
+		@Test
 		@DisplayName("[200]공개일정업데이트성공시-Job")
 		void updateJobPublicScheduleSuccess() throws Exception {
 			// given
@@ -290,7 +374,7 @@ public class PublicScheduleControllerTest {
 					.link("https://test.com")
 					.startTime(LocalDateTime.now())
 					.endTime(LocalDateTime.now().plusDays(1))
-					.build());
+					.build(), ScheduleStatus.ACTIVATE);
 			publicScheduleRepository.save(jobPublicSchedule);
 
 			PublicScheduleUpdateReqDto updateDto = PublicScheduleUpdateReqDto.builder()
@@ -332,7 +416,7 @@ public class PublicScheduleControllerTest {
 					.link("https://test.com")
 					.startTime(LocalDateTime.now())
 					.endTime(LocalDateTime.now().plusDays(1))
-					.build());
+					.build(), ScheduleStatus.ACTIVATE);
 			publicScheduleRepository.save(jobPublicSchedule);
 
 			PublicScheduleUpdateReqDto updateDto = PublicScheduleUpdateReqDto.builder()
@@ -375,7 +459,7 @@ public class PublicScheduleControllerTest {
 					.link("https://test.com")
 					.startTime(LocalDateTime.now())
 					.endTime(LocalDateTime.now().plusDays(1))
-					.build());
+					.build(), ScheduleStatus.ACTIVATE);
 			publicScheduleRepository.save(jobPublicSchedule);
 
 			PublicScheduleUpdateReqDto updateDto = PublicScheduleUpdateReqDto.builder()
@@ -417,7 +501,7 @@ public class PublicScheduleControllerTest {
 					.link("https://test.com")
 					.startTime(LocalDateTime.now())
 					.endTime(LocalDateTime.now().plusDays(1))
-					.build());
+					.build(), ScheduleStatus.ACTIVATE);
 			publicScheduleRepository.save(jobPublicSchedule);
 
 			PublicScheduleUpdateReqDto updateDto = PublicScheduleUpdateReqDto.builder()
@@ -484,7 +568,7 @@ public class PublicScheduleControllerTest {
 					.link("https://original.com")
 					.startTime(LocalDateTime.now())
 					.endTime(LocalDateTime.now().plusDays(1))
-					.build());
+					.build(), ScheduleStatus.ACTIVATE);
 			publicScheduleRepository.save(publicSchedule);
 
 			String longTitle = "publicScheduleTest".repeat(20);
@@ -525,7 +609,7 @@ public class PublicScheduleControllerTest {
 					.link("https://original.com")
 					.startTime(LocalDateTime.now())
 					.endTime(LocalDateTime.now().plusDays(1))
-					.build());
+					.build(), ScheduleStatus.ACTIVATE);
 			publicScheduleRepository.save(publicSchedule);
 
 			String longContent = "publicScheduleTest".repeat(200);
@@ -566,7 +650,7 @@ public class PublicScheduleControllerTest {
 					.link("https://original.com")
 					.startTime(LocalDateTime.now())
 					.endTime(LocalDateTime.now().plusDays(1))
-					.build());
+					.build(), ScheduleStatus.ACTIVATE);
 			publicScheduleRepository.save(publicSchedule);
 
 			PublicScheduleUpdateReqDto updateDto = PublicScheduleUpdateReqDto.builder()
@@ -603,7 +687,7 @@ public class PublicScheduleControllerTest {
 					.link("https://original.com")
 					.startTime(LocalDateTime.now())
 					.endTime(LocalDateTime.now().plusDays(1))
-					.build());
+					.build(), ScheduleStatus.ACTIVATE);
 			publicScheduleRepository.save(publicSchedule);
 
 			PublicScheduleUpdateReqDto updatePublicSchedule = PublicScheduleUpdateReqDto.builder()
@@ -645,7 +729,7 @@ public class PublicScheduleControllerTest {
 					.link("https://original.com")
 					.startTime(LocalDateTime.now())
 					.endTime(LocalDateTime.now().plusDays(1))
-					.build());
+					.build(), ScheduleStatus.ACTIVATE);
 			publicScheduleRepository.save(publicSchedule);
 
 			PublicScheduleUpdateReqDto updatePublicSchedule = PublicScheduleUpdateReqDto.builder()
@@ -688,7 +772,7 @@ public class PublicScheduleControllerTest {
 						.link("https://original.com")
 						.startTime(LocalDateTime.now())
 						.endTime(LocalDateTime.now().plusDays(1))
-						.build());
+						.build(), ScheduleStatus.ACTIVATE);
 				publicScheduleRepository.save(publicSchedule);
 				// when
 				mockMvc.perform(patch("/calendar/public/" + publicSchedule.getId()).header("Authorization",
@@ -712,7 +796,7 @@ public class PublicScheduleControllerTest {
 						.link("https://original.com")
 						.startTime(LocalDateTime.now())
 						.endTime(LocalDateTime.now().plusDays(1))
-						.build());
+						.build(), ScheduleStatus.ACTIVATE);
 				publicScheduleRepository.save(publicSchedule);
 
 				//when
@@ -737,7 +821,7 @@ public class PublicScheduleControllerTest {
 						.link("https://original.com")
 						.startTime(LocalDateTime.now())
 						.endTime(LocalDateTime.now().plusDays(1))
-						.build());
+						.build(), ScheduleStatus.ACTIVATE);
 				publicScheduleRepository.save(publicSchedule);
 				// when
 				mockMvc.perform(patch("/calendar/public/9999").header("Authorization", "Bearer " + accessToken))
@@ -763,7 +847,7 @@ public class PublicScheduleControllerTest {
 						.link("https://original.com")
 						.startTime(LocalDateTime.now())
 						.endTime(LocalDateTime.now().plusDays(1))
-						.build());
+						.build(), ScheduleStatus.ACTIVATE);
 				publicScheduleRepository.save(publicSchedule);
 
 				// when
@@ -790,12 +874,14 @@ public class PublicScheduleControllerTest {
 						.link("https://original.com")
 						.startTime(LocalDateTime.now())
 						.endTime(LocalDateTime.now().plusDays(1))
-						.build());
+						.build(), ScheduleStatus.ACTIVATE);
 
 				publicScheduleRepository.save(publicSchedule);
 
-				PrivateSchedule privateSchedule1 = new PrivateSchedule(user, publicSchedule, false, 1L);
-				PrivateSchedule privateSchedule2 = new PrivateSchedule(otherUser, publicSchedule, true, 2L);
+				PrivateSchedule privateSchedule1 = new PrivateSchedule(user, publicSchedule, false, 1L,
+					ScheduleStatus.ACTIVATE);
+				PrivateSchedule privateSchedule2 = new PrivateSchedule(otherUser, publicSchedule, true, 2L,
+					ScheduleStatus.ACTIVATE);
 				privateScheduleRepository.saveAll(Arrays.asList(privateSchedule1, privateSchedule2));
 
 				// when
@@ -823,7 +909,7 @@ public class PublicScheduleControllerTest {
 						.link("https://original.com")
 						.startTime(LocalDateTime.now())
 						.endTime(LocalDateTime.now().plusDays(1))
-						.build());
+						.build(), ScheduleStatus.ACTIVATE);
 				publicScheduleRepository.save(publicSchedule);
 				// when
 				mockMvc.perform(
@@ -848,7 +934,7 @@ public class PublicScheduleControllerTest {
 						.link("https://original.com")
 						.startTime(LocalDateTime.now())
 						.endTime(LocalDateTime.now().plusDays(1))
-						.build());
+						.build(), ScheduleStatus.ACTIVATE);
 				publicScheduleRepository.save(publicSchedule);
 
 				// when & then
@@ -870,7 +956,7 @@ public class PublicScheduleControllerTest {
 						.link("https://original.com")
 						.startTime(LocalDateTime.now())
 						.endTime(LocalDateTime.now().plusDays(1))
-						.build());
+						.build(), ScheduleStatus.ACTIVATE);
 				publicScheduleRepository.save(publicSchedule);
 
 				//when & then
@@ -996,7 +1082,7 @@ public class PublicScheduleControllerTest {
 					.link("https://original.com")
 					.startTime(LocalDateTime.now())
 					.endTime(LocalDateTime.now().plusDays(1))
-					.build());
+					.build(), ScheduleStatus.ACTIVATE);
 			publicSchedule = publicScheduleRepository.save(publicSchedule);
 			// when
 			mockMvc.perform(
@@ -1041,7 +1127,7 @@ public class PublicScheduleControllerTest {
 					.link("https://original.com")
 					.startTime(LocalDateTime.now())
 					.endTime(LocalDateTime.now().plusDays(1))
-					.build());
+					.build(), ScheduleStatus.ACTIVATE);
 			publicSchedule = publicScheduleRepository.save(publicSchedule);
 			// when
 			mockMvc.perform(

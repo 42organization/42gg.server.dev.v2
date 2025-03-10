@@ -47,17 +47,22 @@ public class PrivateSchedule extends BaseTimeEntity {
 	@Column(nullable = false, columnDefinition = "VARCHAR(50)")
 	private ScheduleStatus status;
 
-	public PrivateSchedule(User user, PublicSchedule publicSchedule, Boolean alarm, Long groupId) {
+	public PrivateSchedule(User user, PublicSchedule publicSchedule, Boolean alarm, Long groupId,
+		ScheduleStatus status) {
 		this.user = user;
 		this.publicSchedule = publicSchedule;
 		this.alarm = alarm;
 		this.groupId = groupId;
-		this.status = ScheduleStatus.ACTIVATE;
+		this.status = status;
 	}
 
 	public void update(Boolean alarm, Long groupId) {
 		this.alarm = alarm;
 		this.groupId = groupId;
+	}
+
+	public void updateSchedule(ScheduleStatus status) {
+		this.status = status;
 	}
 
 	public void updateCascade(String title, String content, String link, LocalDateTime startTime, LocalDateTime endTime,

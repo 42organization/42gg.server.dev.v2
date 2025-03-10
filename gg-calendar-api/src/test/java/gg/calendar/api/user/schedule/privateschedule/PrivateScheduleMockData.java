@@ -39,6 +39,23 @@ public class PrivateScheduleMockData {
 		return publicScheduleRepository.save(publicSchedule);
 	}
 
+	public PublicSchedule createPublicScheduleDeactivate(String author, DetailClassification classification) {
+		PublicSchedule publicSchedule = PublicSchedule.builder()
+			.classification(classification)
+			.eventTag(null)
+			.jobTag(null)
+			.techTag(null)
+			.title("Test Schedule")
+			.author(author)
+			.content("Test Content")
+			.link("http://test.com")
+			.status(ScheduleStatus.DEACTIVATE)
+			.startTime(LocalDateTime.now().minusDays(3))
+			.endTime(LocalDateTime.now().minusDays(1))
+			.build();
+		return publicScheduleRepository.save(publicSchedule);
+	}
+
 	public ScheduleGroup createScheduleGroup(User user) {
 		ScheduleGroup scheduleGroup = ScheduleGroup.builder()
 			.user(user)
@@ -49,7 +66,15 @@ public class PrivateScheduleMockData {
 	}
 
 	public PrivateSchedule createPrivateSchedule(User user, PublicSchedule publicSchedule, Long scheduleGroupId) {
-		PrivateSchedule privateSchedule = new PrivateSchedule(user, publicSchedule, false, scheduleGroupId);
+		PrivateSchedule privateSchedule = new PrivateSchedule(user, publicSchedule, false, scheduleGroupId,
+			ScheduleStatus.ACTIVATE);
+		return privateScheduleRepository.save(privateSchedule);
+	}
+
+	public PrivateSchedule createPrivateScheduleDeactivate(User user, PublicSchedule publicSchedule,
+		Long scheduleGroupId) {
+		PrivateSchedule privateSchedule = new PrivateSchedule(user, publicSchedule, false, scheduleGroupId,
+			ScheduleStatus.DEACTIVATE);
 		return privateScheduleRepository.save(privateSchedule);
 	}
 }

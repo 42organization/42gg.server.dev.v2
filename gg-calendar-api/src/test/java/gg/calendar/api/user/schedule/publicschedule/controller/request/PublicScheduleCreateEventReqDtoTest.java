@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import gg.auth.UserDto;
 import gg.data.calendar.PublicSchedule;
 import gg.data.calendar.type.EventTag;
+import gg.data.calendar.type.ScheduleStatus;
 import gg.utils.annotation.UnitTest;
 
 @UnitTest
@@ -29,7 +30,8 @@ public class PublicScheduleCreateEventReqDtoTest {
 			.endTime(LocalDateTime.now().plusDays(2))
 			.build();
 
-		PublicSchedule schedule = PublicScheduleCreateEventReqDto.toEntity(user.getIntraId(), dto);
+		PublicSchedule schedule = PublicScheduleCreateEventReqDto.toEntity(user.getIntraId(), dto,
+			ScheduleStatus.ACTIVATE);
 		assertAll(() -> assertNotNull(schedule), () -> assertEquals(dto.getEventTag(), schedule.getEventTag()),
 			() -> assertEquals(user.getIntraId(), schedule.getAuthor()),
 			() -> assertEquals(dto.getTitle(), schedule.getTitle()),

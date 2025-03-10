@@ -23,6 +23,9 @@ public interface PrivateScheduleRepository extends JpaRepository<PrivateSchedule
 
 	List<PrivateSchedule> findByPublicSchedule(PublicSchedule publicSchedule);
 
+	@Query("SELECT ps FROM PrivateSchedule ps JOIN FETCH ps.publicSchedule WHERE ps.publicSchedule = :publicSchedule")
+	List<PrivateSchedule> findWithFetchJoinByPublicSchedule(@Param("publicSchedule") PublicSchedule publicSchedule);
+
 	List<PrivateSchedule> findByGroupId(Long groupId);
 
 	@Query("SELECT pr FROM PrivateSchedule pr "
@@ -50,4 +53,11 @@ public interface PrivateScheduleRepository extends JpaRepository<PrivateSchedule
 		@Param("nextStartOfDay") LocalDateTime nextStartOfDay,
 		@Param("nextEndOfDay") LocalDateTime nextEndOfDay,
 		@Param("status") ScheduleStatus status);
+
+	@Transactional
+	@Modifying
+	@Query("UPDATE PrivateSchedule ps SET ps.status = :status WHERE ps.publicSchedule = :publicSchedule")
+	void bulkUpdateScheduleStatus(@Param("publicSchedule") PublicSchedule publicSchedule,
+		@Param("status") ScheduleStatus status);
+
 }

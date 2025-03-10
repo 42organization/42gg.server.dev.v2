@@ -56,7 +56,7 @@ public class PublicScheduleCreateJobReqDto {
 		this.endTime = endTime;
 	}
 
-	public static PublicSchedule toEntity(String intraId, PublicScheduleCreateJobReqDto dto) {
+	public static PublicSchedule toEntity(String intraId, PublicScheduleCreateJobReqDto dto, ScheduleStatus status) {
 		return PublicSchedule.builder()
 			.classification(DetailClassification.JOB_NOTICE)
 			.jobTag(dto.jobTag)
@@ -67,7 +67,7 @@ public class PublicScheduleCreateJobReqDto {
 			.link(dto.link)
 			.startTime(dto.startTime)
 			.endTime(dto.endTime)
-			.status(ScheduleStatus.ACTIVATE)
+			.status(status)
 			.build();
 	}
 

@@ -51,7 +51,8 @@ public class PrivateScheduleService {
 			.orElseThrow(() -> new NotExistException(ErrorCode.SCHEDULE_GROUP_NOT_FOUND));
 		User user = userRepository.getById(userDto.getId());
 		PrivateSchedule privateSchedule = new PrivateSchedule(user, publicSchedule,
-			privateScheduleCreateReqDto.isAlarm(), scheduleGroup.getId());
+			privateScheduleCreateReqDto.isAlarm(), scheduleGroup.getId(),
+			publicSchedule.getStatus());
 
 		privateScheduleRepository.save(privateSchedule);
 	}
