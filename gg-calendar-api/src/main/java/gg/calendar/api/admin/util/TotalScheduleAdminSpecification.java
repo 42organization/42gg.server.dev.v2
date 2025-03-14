@@ -25,15 +25,9 @@ public class TotalScheduleAdminSpecification {
 			LocalDateTime endDateTime = endTime.atTime(LocalTime.MAX);
 
 			predicates.add(
-				criteriaBuilder.or(
-					criteriaBuilder.and(
-						criteriaBuilder.lessThanOrEqualTo(root.get("startTime"), endDateTime),
-						criteriaBuilder.greaterThanOrEqualTo(root.get("endTime"), startDateTime)
-					),
-					criteriaBuilder.and(
-						criteriaBuilder.greaterThanOrEqualTo(root.get("startTime"), startDateTime),
-						criteriaBuilder.lessThanOrEqualTo(root.get("endTime"), endDateTime)
-					)
+				criteriaBuilder.and(
+					criteriaBuilder.lessThanOrEqualTo(root.get("startTime"), endDateTime),  // <= 검색 종료일
+					criteriaBuilder.greaterThanOrEqualTo(root.get("endTime"), startDateTime)  // >= 검색 시작일
 				)
 			);
 
