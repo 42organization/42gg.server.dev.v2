@@ -754,8 +754,10 @@ public class PublicScheduleAdminControllerTest {
 				.build();
 			scheduleGroupAdminRepository.save(scheduleGroup);
 			scheduleGroupAdminRepository.save(scheduleGroup2);
-			PrivateSchedule privateSchedule1 = new PrivateSchedule(other, publicSchedule, false, scheduleGroup.getId());
-			PrivateSchedule privateSchedule2 = new PrivateSchedule(user, publicSchedule, false, scheduleGroup2.getId());
+			PrivateSchedule privateSchedule1 = new PrivateSchedule(other, publicSchedule, false, scheduleGroup.getId(),
+				ScheduleStatus.ACTIVATE);
+			PrivateSchedule privateSchedule2 = new PrivateSchedule(user, publicSchedule, false, scheduleGroup2.getId(),
+				ScheduleStatus.ACTIVATE);
 			privateScheduleAdminRepository.save(privateSchedule1);
 			privateScheduleAdminRepository.save(privateSchedule2);
 			mockMvc.perform(patch("/admin/calendar/public/{id}", publicSchedule.getId()).header("Authorization",

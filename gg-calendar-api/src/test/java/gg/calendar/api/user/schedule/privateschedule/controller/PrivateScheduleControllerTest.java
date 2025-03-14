@@ -182,6 +182,75 @@ public class PrivateScheduleControllerTest {
 		}
 
 		@Test
+		@DisplayName("성공 200 : DEACTIVATE -> ACTIVATE")
+		void successActivate() throws Exception {
+			//given
+			ScheduleGroup scheduleGroup = privateScheduleMockData.createScheduleGroup(user);
+			PublicSchedule publicSchedule = privateScheduleMockData.createPublicScheduleDeactivate(user.getIntraId(),
+				DetailClassification.PRIVATE_SCHEDULE);
+			PrivateSchedule privateSchedule = privateScheduleMockData.createPrivateScheduleDeactivate(user,
+				publicSchedule,
+				scheduleGroup.getId());
+			PrivateScheduleUpdateReqDto reqDto = PrivateScheduleUpdateReqDto.builder()
+				.alarm(false)
+				.title("123")
+				.content("")
+				.link(null)
+				.startTime(LocalDateTime.now())
+				.endTime(LocalDateTime.now().plusDays(1))
+				.groupId(scheduleGroup.getId())
+				.build();
+			//when
+			mockMvc.perform(put("/calendar/private/" + privateSchedule.getId())
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(objectMapper.writeValueAsString(reqDto)))
+				.andExpect(status().isOk());
+			//then
+			PrivateSchedule updated = privateScheduleRepository.findById(privateSchedule.getId()).orElseThrow();
+			Assertions.assertThat(privateSchedule.getGroupId()).isEqualTo(updated.getGroupId());
+			Assertions.assertThat(privateSchedule.getAlarm()).isEqualTo(updated.getAlarm());
+			Assertions.assertThat(privateSchedule.getGroupId()).isEqualTo(updated.getGroupId());
+			Assertions.assertThat(privateSchedule.getPublicSchedule()).isEqualTo(updated.getPublicSchedule());
+			Assertions.assertThat(privateSchedule.getPublicSchedule().getStatus()).isEqualTo(ScheduleStatus.ACTIVATE);
+			Assertions.assertThat(privateSchedule.getStatus()).isEqualTo(ScheduleStatus.ACTIVATE);
+		}
+
+		@Test
+		@DisplayName("성공 200 : ACTIVATE -> DEACTIVATE")
+		void successDeactivate() throws Exception {
+			//given
+			ScheduleGroup scheduleGroup = privateScheduleMockData.createScheduleGroup(user);
+			PublicSchedule publicSchedule = privateScheduleMockData.createPublicSchedule(user.getIntraId(),
+				DetailClassification.PRIVATE_SCHEDULE);
+			PrivateSchedule privateSchedule = privateScheduleMockData.createPrivateSchedule(user, publicSchedule,
+				scheduleGroup.getId());
+			PrivateScheduleUpdateReqDto reqDto = PrivateScheduleUpdateReqDto.builder()
+				.alarm(false)
+				.title("123")
+				.content("")
+				.link(null)
+				.startTime(LocalDateTime.now().minusDays(3))
+				.endTime(LocalDateTime.now().minusDays(1))
+				.groupId(scheduleGroup.getId())
+				.build();
+			//when
+			mockMvc.perform(put("/calendar/private/" + privateSchedule.getId())
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(objectMapper.writeValueAsString(reqDto)))
+				.andExpect(status().isOk());
+			//then
+			PrivateSchedule updated = privateScheduleRepository.findById(privateSchedule.getId()).orElseThrow();
+			Assertions.assertThat(privateSchedule.getGroupId()).isEqualTo(updated.getGroupId());
+			Assertions.assertThat(privateSchedule.getAlarm()).isEqualTo(updated.getAlarm());
+			Assertions.assertThat(privateSchedule.getGroupId()).isEqualTo(updated.getGroupId());
+			Assertions.assertThat(privateSchedule.getPublicSchedule()).isEqualTo(updated.getPublicSchedule());
+			Assertions.assertThat(privateSchedule.getPublicSchedule().getStatus()).isEqualTo(ScheduleStatus.DEACTIVATE);
+			Assertions.assertThat(privateSchedule.getStatus()).isEqualTo(ScheduleStatus.DEACTIVATE);
+		}
+
+		@Test
 		@DisplayName("종료 날짜가 시작 날짜보다 빠른 경우 400")
 		void endTimeBeforeStartTime() throws Exception {
 			//given

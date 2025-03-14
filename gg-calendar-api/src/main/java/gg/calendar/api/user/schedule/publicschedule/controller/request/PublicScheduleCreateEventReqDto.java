@@ -51,7 +51,7 @@ public class PublicScheduleCreateEventReqDto {
 		this.endTime = endTime;
 	}
 
-	public static PublicSchedule toEntity(String intraId, PublicScheduleCreateEventReqDto dto) {
+	public static PublicSchedule toEntity(String intraId, PublicScheduleCreateEventReqDto dto, ScheduleStatus status) {
 		return PublicSchedule.builder()
 			.classification(DetailClassification.EVENT)
 			.eventTag(dto.eventTag)
@@ -61,7 +61,7 @@ public class PublicScheduleCreateEventReqDto {
 			.link(dto.link)
 			.startTime(dto.startTime)
 			.endTime(dto.endTime)
-			.status(ScheduleStatus.ACTIVATE)
+			.status(status)
 			.build();
 	}
 }

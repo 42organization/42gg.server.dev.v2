@@ -51,7 +51,8 @@ public class PrivateScheduleService {
 			.orElseThrow(() -> new NotExistException(ErrorCode.SCHEDULE_GROUP_NOT_FOUND));
 		User user = userRepository.getById(userDto.getId());
 		PrivateSchedule privateSchedule = new PrivateSchedule(user, publicSchedule,
-			privateScheduleCreateReqDto.isAlarm(), scheduleGroup.getId());
+			privateScheduleCreateReqDto.isAlarm(), scheduleGroup.getId(),
+			publicSchedule.getStatus());
 
 		privateScheduleRepository.save(privateSchedule);
 	}
@@ -68,7 +69,8 @@ public class PrivateScheduleService {
 
 		privateSchedule.updateCascade(privateScheduleUpdateReqDto.getTitle(), privateScheduleUpdateReqDto.getContent(),
 			privateScheduleUpdateReqDto.getLink(), privateScheduleUpdateReqDto.getStartTime(),
-			privateScheduleUpdateReqDto.getEndTime(), privateScheduleUpdateReqDto.isAlarm(), scheduleGroup.getId());
+			privateScheduleUpdateReqDto.getEndTime(), privateScheduleUpdateReqDto.isAlarm(), scheduleGroup.getId(),
+			checkStatus(privateScheduleUpdateReqDto.getEndTime()));
 		return PrivateScheduleUpdateResDto.toDto(privateSchedule);
 	}
 
@@ -127,5 +129,9 @@ public class PrivateScheduleService {
 		if (!intraId.equals(author)) {
 			throw new ForbiddenException(ErrorCode.CALENDAR_AUTHOR_NOT_MATCH);
 		}
+	}
+
+	private ScheduleStatus checkStatus(LocalDateTime endTime) {
+		return endTime.isBefore(LocalDateTime.now()) ? ScheduleStatus.DEACTIVATE : ScheduleStatus.ACTIVATE;
 	}
 }

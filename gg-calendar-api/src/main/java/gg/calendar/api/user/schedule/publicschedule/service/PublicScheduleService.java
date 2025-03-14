@@ -50,7 +50,8 @@ public class PublicScheduleService {
 		User user = userRepository.getById(userId);
 		checkAuthor(req.getAuthor(), user);
 		validateTimeRange(req.getStartTime(), req.getEndTime());
-		PublicSchedule eventPublicSchedule = PublicScheduleCreateEventReqDto.toEntity(user.getIntraId(), req);
+		PublicSchedule eventPublicSchedule = PublicScheduleCreateEventReqDto.toEntity(user.getIntraId(), req,
+			checkStatus(req.getEndTime()));
 		publicScheduleRepository.save(eventPublicSchedule);
 	}
 
@@ -59,7 +60,8 @@ public class PublicScheduleService {
 		User user = userRepository.getById(userId);
 		checkAuthor(req.getAuthor(), user);
 		validateTimeRange(req.getStartTime(), req.getEndTime());
-		PublicSchedule jobPublicSchedule = PublicScheduleCreateJobReqDto.toEntity(user.getIntraId(), req);
+		PublicSchedule jobPublicSchedule = PublicScheduleCreateJobReqDto.toEntity(user.getIntraId(), req,
+			checkStatus(req.getEndTime()));
 		publicScheduleRepository.save(jobPublicSchedule);
 	}
 
@@ -68,12 +70,21 @@ public class PublicScheduleService {
 		tagErrorCheck(req.getClassification(), req.getEventTag(), req.getJobTag(), req.getTechTag());
 		User user = userRepository.getById(userId);
 		PublicSchedule existingSchedule = publicScheduleRepository.findByIdAndStatusNot(scheduleId,
-			ScheduleStatus.DELETE).orElseThrow(() -> new NotExistException(ErrorCode.PUBLIC_SCHEDULE_NOT_FOUND));
+				ScheduleStatus.DELETE)
+			.orElseThrow(() -> new NotExistException(ErrorCode.PUBLIC_SCHEDULE_NOT_FOUND));
 		checkAuthor(existingSchedule.getAuthor(), user);
 		checkAuthor(req.getAuthor(), user);
 		validateTimeRange(req.getStartTime(), req.getEndTime());
+
+		// PublicSchedule 업데이트
 		existingSchedule.update(req.getClassification(), req.getEventTag(), req.getJobTag(), req.getTechTag(),
-			req.getTitle(), req.getContent(), req.getLink(), req.getStartTime(), req.getEndTime());
+			req.getTitle(), req.getContent(), req.getLink(), req.getStartTime(), req.getEndTime(),
+			checkStatus(req.getEndTime()));
+
+		// 벌크 업데이트 적용 (SELECT 없이 바로 UPDATE 실행)
+		ScheduleStatus status = checkStatus(req.getEndTime());
+		privateScheduleRepository.bulkUpdateScheduleStatus(existingSchedule, status);
+
 		return existingSchedule;
 	}
 
@@ -117,7 +128,8 @@ public class PublicScheduleService {
 			.orElseThrow(() -> new NotExistException(ErrorCode.PUBLIC_SCHEDULE_NOT_FOUND));
 		scheduleGroupRepository.findByIdAndUserId(groupId, userId)
 			.orElseThrow(() -> new NotExistException(ErrorCode.SCHEDULE_GROUP_NOT_FOUND));
-		PrivateSchedule privateSchedule = new PrivateSchedule(user, publicSchedule, false, groupId);
+		PrivateSchedule privateSchedule = new PrivateSchedule(user, publicSchedule, false, groupId,
+			publicSchedule.getStatus());
 		privateScheduleRepository.save(privateSchedule);
 		entityManager.flush();
 		publicScheduleRepository.incrementSharedCount(publicSchedule.getId());
@@ -139,5 +151,9 @@ public class PublicScheduleService {
 		if (!classification.isValid(eventTag, jobTag, techTag)) {
 			throw new InvalidParameterException(ErrorCode.CLASSIFICATION_NOT_MATCH);
 		}
+	}
+
+	private ScheduleStatus checkStatus(LocalDateTime endTime) {
+		return endTime.isBefore(LocalDateTime.now()) ? ScheduleStatus.DEACTIVATE : ScheduleStatus.ACTIVATE;
 	}
 }

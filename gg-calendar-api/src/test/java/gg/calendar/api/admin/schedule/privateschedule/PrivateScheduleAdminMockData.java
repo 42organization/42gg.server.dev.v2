@@ -68,13 +68,13 @@ public class PrivateScheduleAdminMockData {
 
 	public PrivateSchedule createPrivateSchedule(PublicSchedule publicSchedule, ScheduleGroup scheduleGroup) {
 		PrivateSchedule privateSchedule = new PrivateSchedule(scheduleGroup.getUser(), publicSchedule, false,
-			scheduleGroup.getId());
+			scheduleGroup.getId(), ScheduleStatus.ACTIVATE);
 		return privateScheduleRepository.save(privateSchedule);
 	}
 
 	public PrivateSchedule createPrivateScheduleNoGroup(PublicSchedule publicSchedule, User user) {
 		PrivateSchedule privateSchedule = new PrivateSchedule(user, publicSchedule, false,
-			500L);
+			500L, ScheduleStatus.ACTIVATE);
 		return privateScheduleRepository.save(privateSchedule);
 	}
 
@@ -100,7 +100,7 @@ public class PrivateScheduleAdminMockData {
 			scheduleGroupRepository.save(scheduleGroup);
 
 			PrivateSchedule privateSchedule = new PrivateSchedule(user, publicSchedule, false,
-				scheduleGroup.getId());
+				scheduleGroup.getId(), ScheduleStatus.ACTIVATE);
 		}
 	}
 }

@@ -18,6 +18,7 @@ import gg.data.calendar.PublicSchedule;
 import gg.data.calendar.type.DetailClassification;
 import gg.data.calendar.type.EventTag;
 import gg.data.calendar.type.JobTag;
+import gg.data.calendar.type.ScheduleStatus;
 import gg.data.calendar.type.TechTag;
 import gg.utils.exception.ErrorCode;
 import gg.utils.exception.custom.InvalidParameterException;
@@ -69,7 +70,8 @@ public class PublicScheduleAdminService {
 			publicScheduleAdminUpdateReqDto.getEventTag(), publicScheduleAdminUpdateReqDto.getJobTag(),
 			publicScheduleAdminUpdateReqDto.getTechTag(), publicScheduleAdminUpdateReqDto.getTitle(),
 			publicScheduleAdminUpdateReqDto.getContent(), publicScheduleAdminUpdateReqDto.getLink(),
-			publicScheduleAdminUpdateReqDto.getStartTime(), publicScheduleAdminUpdateReqDto.getEndTime());
+			publicScheduleAdminUpdateReqDto.getStartTime(), publicScheduleAdminUpdateReqDto.getEndTime(),
+			checkStatus(publicScheduleAdminUpdateReqDto.getEndTime()));
 
 		return PublicScheduleAdminUpdateResDto.toDto(publicSchedule);
 	}
@@ -104,6 +106,10 @@ public class PublicScheduleAdminService {
 		if (!classification.isValid(eventTag, jobTag, techTag)) {
 			throw new InvalidParameterException(ErrorCode.CLASSIFICATION_NOT_MATCH);
 		}
+	}
+
+	private ScheduleStatus checkStatus(LocalDateTime endTime) {
+		return endTime.isBefore(LocalDateTime.now()) ? ScheduleStatus.DEACTIVATE : ScheduleStatus.ACTIVATE;
 	}
 
 }
