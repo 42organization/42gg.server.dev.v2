@@ -2,7 +2,6 @@ package gg.calendar.api.user.schedule.publicschedule.controller;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -80,7 +79,7 @@ public class PublicScheduleController {
 		@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate start,
 		@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end) {
 		LocalDateTime startTime = start.atStartOfDay();
-		LocalDateTime endTime = end.atTime(LocalTime.MAX);
+		LocalDateTime endTime = end.plusDays(1).atStartOfDay();
 		List<PublicSchedulePeriodRetrieveResDto> res = publicScheduleService.retrieveNonPrivateSchedulePeriod(
 			startTime, endTime);
 		return ResponseEntity.ok(ListResponseDto.toDto(res));

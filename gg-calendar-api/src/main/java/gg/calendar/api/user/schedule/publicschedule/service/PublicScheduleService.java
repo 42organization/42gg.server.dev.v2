@@ -115,7 +115,7 @@ public class PublicScheduleService {
 		LocalDateTime end) {
 		validateTimeRange(start, end);
 		List<PublicSchedule> nonPrivateSchedules = publicScheduleRepository
-			.findByEndTimeGreaterThanEqualAndStartTimeLessThanEqualAndClassificationNotAndStatusNot(
+			.findByStartTimeGreaterThanEqualAndStartTimeLessThanAndClassificationNotAndStatusNot(
 				start, end, DetailClassification.PRIVATE_SCHEDULE, ScheduleStatus.DELETE);
 		return nonPrivateSchedules.stream().map(PublicSchedulePeriodRetrieveResDto::toDto).collect(Collectors.toList());
 	}
