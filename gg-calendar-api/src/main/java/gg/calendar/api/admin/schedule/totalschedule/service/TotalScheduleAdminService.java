@@ -46,8 +46,7 @@ public class TotalScheduleAdminService {
 	}
 
 	public PageResponseDto<TotalScheduleAdminResDto> findAll(int page, int size) {
-		Pageable pageable = PageRequest.of(page - 1, size,
-			Sort.by(Sort.Order.asc("status"), Sort.Order.asc("startTime")));
+		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Order.desc("id")));
 
 		Page<PublicSchedule> publicSchedules = publicScheduleAdminRepository.findAll(pageable);
 
@@ -79,7 +78,8 @@ public class TotalScheduleAdminService {
 			reqDto.getType()
 		);
 
-		List<PublicSchedule> schedules = publicScheduleAdminRepository.findAll(specification);
+		List<PublicSchedule> schedules = publicScheduleAdminRepository.findAll(specification,
+			Sort.by(Sort.Order.desc("id")));
 		return TotalScheduleAdminSearchListResDto.builder()
 			.schedules(schedules.stream()
 				.map(TotalScheduleAdminResDto::new)

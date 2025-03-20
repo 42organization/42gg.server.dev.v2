@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.stream.Stream;
 
 import javax.transaction.Transactional;
@@ -75,8 +76,7 @@ class TotalScheduleAdminControllerTest {
 	class GetTotalScheduleAdminTest {
 
 		private Stream<Arguments> inputParams() {
-			return Stream.of(Arguments.of("EVENT"), Arguments.of("JOB_NOTICE"),
-				Arguments.of("PRIVATE_SCHEDULE"));
+			return Stream.of(Arguments.of("EVENT"), Arguments.of("JOB_NOTICE"), Arguments.of("PRIVATE_SCHEDULE"));
 		}
 
 		private Stream<Arguments> inputPageReqDto() {
@@ -98,7 +98,7 @@ class TotalScheduleAdminControllerTest {
 					new TotalScheduleAdminSearchReqDto("classification", "EVENT", LocalDate.now(),
 						LocalDate.now().plusDays(5))), Arguments.of(
 					new TotalScheduleAdminSearchReqDto("classification", "JOB_NOTICE", LocalDate.now(),
-						LocalDate.now().plusDays(5))));
+						LocalDate.now())));
 		}
 
 		private Stream<Arguments> inputSearchParamEndBeforeStart() {
@@ -170,6 +170,9 @@ class TotalScheduleAdminControllerTest {
 			publicScheduleAdminMockData.cratePublicScheduleArgumentsJob(10, "TEST", "test");
 			privateScheduleAdminMockData.createPrivateSchedules(5, user);
 
+			LocalDate startDate = reqDto.getStartTime();
+			LocalDate endDate = reqDto.getEndTime();
+
 			MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 			params.add("type", String.valueOf(reqDto.getType()));
 			params.add("content", String.valueOf(reqDto.getContent()));
@@ -186,10 +189,86 @@ class TotalScheduleAdminControllerTest {
 				.getContentAsString();
 
 			// then
+			TotalScheduleAdminSearchListResDto result = objectMapper.readValue(response,
+				TotalScheduleAdminSearchListResDto.class);
+
+			for (TotalScheduleAdminResDto dto : result.getTotalScheduleAdminResDtoList()) {
+				LocalDateTime dtoStartTime = dto.getStartTime();
+				LocalDateTime dtoEndTime = dto.getEndTime();
+
+				assertThat(dtoStartTime.toLocalDate()).isBeforeOrEqualTo(endDate);
+				assertThat(dtoEndTime.toLocalDate()).isAfterOrEqualTo(startDate);
+			}
+
+			System.out.println("param.getStartDate() = " + params.get("startTime"));
+			System.out.println("param.getEndDate() = " + params.get("endTime"));
+			System.out.println("reqDto.getType() = " + reqDto.getType());
+			System.out.println("reqDto.getContent() = " + reqDto.getContent());
+			for (TotalScheduleAdminResDto dto : result.getTotalScheduleAdminResDtoList()) {
+				System.out.println("asdf : " + dto.toString());
+			}
+		}
+
+		private Stream<Arguments> inputSearchParamDays() {
+			return Stream.of(
+				Arguments.of(new TotalScheduleAdminSearchReqDto("title", "meet", LocalDate.now(), LocalDate.now())),
+				Arguments.of(new TotalScheduleAdminSearchReqDto("title", "meet", LocalDate.now(),
+					LocalDate.now().plusDays(1))),
+				Arguments.of(
+					new TotalScheduleAdminSearchReqDto("title", "meet", LocalDate.now().minusDays(1),
+						LocalDate.now())),
+				Arguments.of(
+					new TotalScheduleAdminSearchReqDto("title", "meet", LocalDate.now().plusDays(1),
+						LocalDate.now().plusDays(2))),
+				Arguments.of(
+					new TotalScheduleAdminSearchReqDto("title", "meet", LocalDate.now().minusDays(2),
+						LocalDate.now().minusDays(1))),
+				Arguments.of(
+					new TotalScheduleAdminSearchReqDto("title", "meet", LocalDate.now().minusDays(2),
+						LocalDate.now().plusDays(2))));
+		}
+
+		@ParameterizedTest
+		@MethodSource("inputSearchParamDays")
+		@DisplayName("Admin TotalSchedule 상세 검색 테스트 - 성공")
+		void getTotalAdminSearchTestDays(TotalScheduleAdminSearchReqDto reqDto) throws Exception {
+			// given
+			publicScheduleAdminMockData.cratePublicScheduleArgumentsEventTime(5, "42GG", "meet");
+
+			MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+			params.add("type", String.valueOf(reqDto.getType()));
+			params.add("content", String.valueOf(reqDto.getContent()));
+			params.add("startTime", reqDto.getStartTime().toString());
+			params.add("endTime", reqDto.getEndTime().toString());
+
+			LocalDate startDate = reqDto.getStartTime();
+			LocalDate endDate = reqDto.getEndTime();
+
+			// when
+			String response = mockMvc.perform(
+					get("/admin/calendar/search/").header("Authorization", "Bearer " + accessToken).params(params))
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andReturn()
+				.getResponse()
+				.getContentAsString();
+
+			// then
 			log.info("response :{}", response);
 
 			TotalScheduleAdminSearchListResDto result = objectMapper.readValue(response,
 				TotalScheduleAdminSearchListResDto.class);
+
+			for (TotalScheduleAdminResDto dto : result.getTotalScheduleAdminResDtoList()) {
+				LocalDateTime dtoStartTime = dto.getStartTime();
+				LocalDateTime dtoEndTime = dto.getEndTime();
+
+				assertThat(dtoStartTime.toLocalDate()).isBeforeOrEqualTo(endDate);
+				assertThat(dtoEndTime.toLocalDate()).isAfterOrEqualTo(startDate);
+			}
+
+			System.out.println("param.getStartDate() = " + params.get("startTime"));
+			System.out.println("param.getEndDate() = " + params.get("endTime"));
 			System.out.println("reqDto.getType() = " + reqDto.getType());
 			System.out.println("reqDto.getContent() = " + reqDto.getContent());
 			for (TotalScheduleAdminResDto dto : result.getTotalScheduleAdminResDtoList()) {
@@ -238,22 +317,12 @@ class TotalScheduleAdminControllerTest {
 			publicScheduleAdminMockData.createPublicSchedulePrivate(5);
 
 			// when
-			String response = mockMvc.perform(
-					get("/admin/calendar/total").header("Authorization", "Bearer " + accessToken))
+			mockMvc.perform(get("/admin/calendar/total?page=1&size=30")
+					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isOk())
-				.andReturn()
-				.getResponse()
-				.getContentAsString();
-
-			// then
-			log.info("response :{}", response);
-
-			TotalScheduleAdminSearchListResDto result = objectMapper.readValue(response,
-				TotalScheduleAdminSearchListResDto.class);
-			for (TotalScheduleAdminResDto dto : result.getTotalScheduleAdminResDtoList()) {
-				System.out.println(dto.toString());
-			}
-			assertThat(result.getTotalScheduleAdminResDtoList().size()).isEqualTo(35);
+				.andDo(print()) // 응답 출력
+				.andExpect(jsonPath("$.totalSize").value(35))
+				.andExpect(jsonPath("$.content.length()").value(10));
 		}
 
 	}

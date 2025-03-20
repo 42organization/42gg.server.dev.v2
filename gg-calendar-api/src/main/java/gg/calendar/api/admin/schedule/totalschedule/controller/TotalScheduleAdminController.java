@@ -10,9 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import gg.calendar.api.admin.schedule.totalschedule.controller.request.TotalScheduleAdminSearchReqDto;
+import gg.calendar.api.admin.schedule.totalschedule.controller.response.TotalScheduleAdminResDto;
 import gg.calendar.api.admin.schedule.totalschedule.controller.response.TotalScheduleAdminSearchListResDto;
 import gg.calendar.api.admin.schedule.totalschedule.service.TotalScheduleAdminService;
 import gg.data.calendar.type.DetailClassification;
+import gg.utils.dto.PageRequestDto;
+import gg.utils.dto.PageResponseDto;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -41,11 +44,21 @@ public class TotalScheduleAdminController {
 		return ResponseEntity.ok(scheduleList);
 	}
 
-	@GetMapping("/total")
-	public ResponseEntity<TotalScheduleAdminSearchListResDto> totalScheduleAdminList() {
-		TotalScheduleAdminSearchListResDto scheduleList = totalScheduleAdminService.totalScheduleAdminList();
+	// @GetMapping("/total")
+	// public ResponseEntity<TotalScheduleAdminSearchListResDto> totalScheduleAdminList() {
+	// 	TotalScheduleAdminSearchListResDto scheduleList = totalScheduleAdminService.totalScheduleAdminList();
+	//
+	// 	return ResponseEntity.ok(scheduleList);
+	// }
 
-		return ResponseEntity.ok(scheduleList);
+	@GetMapping("/total")
+	public PageResponseDto<TotalScheduleAdminResDto> totalScheduleAdminList(
+		@ModelAttribute @Valid PageRequestDto pageRequest) {
+		int page = pageRequest.getPage();
+		int size = 10;
+		PageResponseDto<TotalScheduleAdminResDto> scheduleList = totalScheduleAdminService.findAll(page, size);
+
+		return scheduleList;
 	}
 
 }
