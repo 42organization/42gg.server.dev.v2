@@ -51,8 +51,7 @@ public class PrivateScheduleService {
 			.orElseThrow(() -> new NotExistException(ErrorCode.SCHEDULE_GROUP_NOT_FOUND));
 		User user = userRepository.getById(userDto.getId());
 		PrivateSchedule privateSchedule = new PrivateSchedule(user, publicSchedule,
-			privateScheduleCreateReqDto.isAlarm(), scheduleGroup.getId(),
-			publicSchedule.getStatus());
+			privateScheduleCreateReqDto.isAlarm(), scheduleGroup.getId(), publicSchedule.getStatus());
 
 		privateScheduleRepository.save(privateSchedule);
 	}
@@ -99,8 +98,10 @@ public class PrivateScheduleService {
 		User user = userRepository.getById(userDto.getId());
 		List<PrivateSchedule> privateSchedules = privateScheduleRepository.findOverlappingSchedulesByUser(startTime,
 			endTime, user);
-		Map<Long, ScheduleGroup> scheduleGroups = scheduleGroupRepository.findByUserId(userDto.getId()).stream()
+		Map<Long, ScheduleGroup> scheduleGroups = scheduleGroupRepository.findByUserId(userDto.getId())
+			.stream()
 			.collect(Collectors.toMap(ScheduleGroup::getId, Function.identity()));
+
 		List<PrivateSchedulePeriodResDto> response = new ArrayList<>();
 
 		for (PrivateSchedule privateSchedule : privateSchedules) {
