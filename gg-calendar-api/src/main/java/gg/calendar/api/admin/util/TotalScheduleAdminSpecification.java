@@ -2,7 +2,6 @@ package gg.calendar.api.admin.util;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,12 +21,12 @@ public class TotalScheduleAdminSpecification {
 			List<Predicate> predicates = new ArrayList<>();
 
 			LocalDateTime startDateTime = startTime.atStartOfDay();
-			LocalDateTime endDateTime = endTime.atTime(LocalTime.MAX);
+			LocalDateTime endDateTime = endTime.plusDays(1).atStartOfDay();
 
 			predicates.add(
 				criteriaBuilder.and(
-					criteriaBuilder.lessThanOrEqualTo(root.get("startTime"), endDateTime),  // <= 검색 종료일
-					criteriaBuilder.greaterThanOrEqualTo(root.get("endTime"), startDateTime)  // >= 검색 시작일
+					criteriaBuilder.greaterThanOrEqualTo(root.get("startTime"), startDateTime),
+					criteriaBuilder.lessThan(root.get("startTime"), endDateTime)
 				)
 			);
 
