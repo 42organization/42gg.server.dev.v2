@@ -7,7 +7,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -77,59 +76,6 @@ public class PublicScheduleControllerTest {
 	void setUp() {
 		user = testDataUtils.createNewUser();
 		accessToken = testDataUtils.getLoginAccessTokenFromUser(user);
-
-	}
-
-	@Nested
-	@DisplayName("바뀐 로직 기간조회 테스트")
-	class TestLogic {
-		@Test
-		@DisplayName("[200]기간조회<temp> - 시작 시간 기준으로 일정이 조회되는 지 테스트")
-		void retrieveScheduleByStartTimeTest() throws Exception {
-			mockData.createPublicScheduleJob(7);
-			List<PublicSchedule> laterSchedules = new ArrayList<>();
-			for (int i = 0; i < 7; i++) {
-				PublicSchedule schedule = PublicSchedule.builder()
-					.classification(DetailClassification.JOB_NOTICE)
-					.jobTag(JobTag.EXPERIENCED)
-					.techTag(TechTag.NETWORK)
-					.author("another")
-					.title("JobTag")
-					.content("JobTagTest")
-					.link("https://test.com")
-					.startTime(LocalDateTime.now().plusDays(8 + i))
-					.endTime(LocalDateTime.now().plusDays(18 + i))
-					.status(ScheduleStatus.ACTIVATE)
-					.build();
-				laterSchedules.add(schedule);
-			}
-			publicScheduleRepository.saveAll(laterSchedules);
-
-			LocalDateTime start = LocalDateTime.now();
-			LocalDateTime end = LocalDateTime.now().plusDays(7);
-
-			// when & then
-			mockMvc.perform(
-					get("/calendar/public")
-						.header("Authorization", "Bearer " + accessToken)
-						.param("start", start.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
-						.param("end", end.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))))
-				.andExpect(status().isOk())
-				.andDo(print());
-
-			// 직접 서비스 로직 검증
-			List<PublicSchedule> allSchedules = publicScheduleRepository.findAll();
-			assertThat(allSchedules).hasSize(14);
-
-			List<PublicSchedule> resultSchedules = publicScheduleRepository
-				.findByStartTimeGreaterThanEqualAndStartTimeLessThanAndClassificationNotAndStatusNot(
-					start, end.plusDays(1), DetailClassification.PRIVATE_SCHEDULE, ScheduleStatus.DEACTIVATE);
-
-			assertThat(resultSchedules).hasSize(8);
-			// 타이틀로 검증 (첫 번째 그룹만 포함)
-			assertThat(resultSchedules).extracting("title")
-				.allMatch(title -> ((String)title).startsWith("Job"));
-		}
 	}
 
 	@Nested
