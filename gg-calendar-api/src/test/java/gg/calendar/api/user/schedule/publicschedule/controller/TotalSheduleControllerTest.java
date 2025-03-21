@@ -118,7 +118,7 @@ class TotalSheduleControllerTest {
 			// given
 			mockData.createPublicScheduleEvent(7);
 			LocalDateTime start = LocalDateTime.now().plusDays(0);
-			LocalDateTime end = LocalDateTime.now().plusDays(7);
+			LocalDateTime end = LocalDateTime.now().minusDays(7);
 
 			// when & then
 			mockMvc.perform(get("/calendar").header("Authorization", "Bearer " + accessToken)
@@ -136,8 +136,8 @@ class TotalSheduleControllerTest {
 			LocalDateTime end = LocalDateTime.now().plusDays(7);
 			// when & then
 			mockMvc.perform(get("/calendar").header("Authorization", "Bearer " + accessToken)
-					.param("start", start.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
-					.param("end", end.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))))
+					.param("start", start.format(DateTimeFormatter.ofPattern("yyyy/MM/dd")))
+					.param("end", end.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"))))
 				.andExpect(status().isBadRequest());
 		}
 	}
