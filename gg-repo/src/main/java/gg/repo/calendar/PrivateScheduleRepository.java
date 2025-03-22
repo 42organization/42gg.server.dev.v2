@@ -30,7 +30,9 @@ public interface PrivateScheduleRepository extends JpaRepository<PrivateSchedule
 
 	@Query("SELECT pr FROM PrivateSchedule pr "
 		+ "JOIN pr.publicSchedule pu "
-		+ "WHERE pu.startTime >= :startTime And pu.startTime < :endTime "
+		+ "WHERE ((pu.startTime >= :startTime AND pu.startTime < :endTime) OR "
+		+ "(pu.endTime >= :startTime AND pu.endTime < :endTime) OR "
+		+ "(pu.startTime <= :startTime AND pu.endTime >= :endTime)) "
 		+ "AND pr.user = :user "
 		+ "AND pr.status <> gg.data.calendar.type.ScheduleStatus.DELETE")
 	List<PrivateSchedule> findOverlappingSchedulesByUser(LocalDateTime startTime, LocalDateTime endTime, User user);

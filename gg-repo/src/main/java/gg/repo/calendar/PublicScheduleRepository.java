@@ -20,13 +20,26 @@ import gg.data.calendar.type.ScheduleStatus;
 public interface PublicScheduleRepository extends JpaRepository<PublicSchedule, Long> {
 	List<PublicSchedule> findByAuthor(String author);
 
-	List<PublicSchedule> findByEndTimeGreaterThanEqualAndStartTimeLessThanEqual(LocalDateTime startTime,
-		LocalDateTime endTime);
+	@Query("SELECT e FROM PublicSchedule e WHERE "
+		+ "((e.startTime >= :start AND e.startTime < :end) OR "
+		+ "(e.endTime >= :start AND e.endTime < :end) OR "
+		+ "(e.startTime <= :start AND e.endTime >= :end))")
+	List<PublicSchedule> findByEndTimeGreaterThanEqualAndStartTimeLessThanEqual(
+		@Param("start") LocalDateTime startTime,
+		@Param("end") LocalDateTime endTime);
+
+	// List<PublicSchedule> findByEndTimeGreaterThanEqualAndStartTimeLessThanEqual(LocalDateTime startTime,
+	// 	LocalDateTime endTime);
 
 	boolean existsByTitleAndStartTime(String title, LocalDateTime beginAt);
 
 	Optional<PublicSchedule> findByIdAndStatusNot(Long id, ScheduleStatus status);
 
+	@Query("SELECT e FROM PublicSchedule e WHERE "
+		+ "((e.startTime >= :start AND e.startTime < :end) OR "
+		+ "(e.endTime >= :start AND e.endTime < :end) OR "
+		+ "(e.startTime <= :start AND e.endTime >= :end)) AND "
+		+ "e.classification != :classification AND e.status != :status")
 	List<PublicSchedule> findByStartTimeGreaterThanEqualAndStartTimeLessThanAndClassificationNotAndStatusNot(
 		LocalDateTime start, LocalDateTime end, DetailClassification classification, ScheduleStatus status);
 

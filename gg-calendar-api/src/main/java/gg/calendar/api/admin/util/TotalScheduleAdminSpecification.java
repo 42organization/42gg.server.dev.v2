@@ -23,12 +23,22 @@ public class TotalScheduleAdminSpecification {
 			LocalDateTime startDateTime = startTime.atStartOfDay();
 			LocalDateTime endDateTime = endTime.plusDays(1).atStartOfDay();
 
-			predicates.add(
-				criteriaBuilder.and(
-					criteriaBuilder.greaterThanOrEqualTo(root.get("startTime"), startDateTime),
-					criteriaBuilder.lessThan(root.get("startTime"), endDateTime)
-				)
+			Predicate startInRange = criteriaBuilder.and(
+				criteriaBuilder.greaterThanOrEqualTo(root.get("startTime"), startDateTime),
+				criteriaBuilder.lessThan(root.get("startTime"), endDateTime)
 			);
+
+			Predicate endInRange = criteriaBuilder.and(
+				criteriaBuilder.greaterThanOrEqualTo(root.get("endTime"), startDateTime),
+				criteriaBuilder.lessThan(root.get("endTime"), endDateTime)
+			);
+
+			Predicate spanningRange = criteriaBuilder.and(
+				criteriaBuilder.lessThanOrEqualTo(root.get("startTime"), startDateTime),
+				criteriaBuilder.greaterThanOrEqualTo(root.get("endTime"), endDateTime)
+			);
+
+			predicates.add(criteriaBuilder.or(startInRange, endInRange, spanningRange));
 
 			if (content != null && field != null) {
 				if ("classification".equals(field)) {

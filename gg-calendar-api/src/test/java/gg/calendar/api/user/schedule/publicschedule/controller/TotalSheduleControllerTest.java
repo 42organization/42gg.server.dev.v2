@@ -4,6 +4,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import javax.persistence.EntityManager;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -68,10 +71,13 @@ class TotalSheduleControllerTest {
 		void retrieveTotalScheduleSuccess() throws Exception {
 			// given
 			mockData.createPublicScheduleEvent(7);
+			LocalDateTime start = LocalDateTime.now().plusDays(0);
+			LocalDateTime end = LocalDateTime.now().plusDays(7);
+
 			// when
 			mockMvc.perform(get("/calendar").header("Authorization", "Bearer " + accessToken)
-				.param("start", "2024-12-01")
-				.param("end", "2025-01-20")).andExpect(status().isOk());
+				.param("start", start.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+				.param("end", end.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))).andExpect(status().isOk());
 			// then
 			assertAll(() -> assertEquals(7, publicScheduleRepository.findAll().size()),
 				() -> assertEquals("42GG", publicScheduleRepository.findAll().get(0).getAuthor()),
@@ -88,10 +94,13 @@ class TotalSheduleControllerTest {
 		void retrieveJobTagTotalScheduleSuccess() throws Exception {
 			// given
 			mockData.createPublicScheduleJob(7);
+			LocalDateTime start = LocalDateTime.now().plusDays(0);
+			LocalDateTime end = LocalDateTime.now().plusDays(7);
+
 			// when
 			mockMvc.perform(get("/calendar").header("Authorization", "Bearer " + accessToken)
-				.param("start", "2024-12-01")
-				.param("end", "2025-01-20")).andExpect(status().isOk());
+				.param("start", start.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+				.param("end", end.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))).andExpect(status().isOk());
 			// then
 			assertAll(() -> assertEquals(7, publicScheduleRepository.findAll().size()),
 				() -> assertEquals("42GG", publicScheduleRepository.findAll().get(0).getAuthor()),
@@ -108,10 +117,14 @@ class TotalSheduleControllerTest {
 		void retrieveTotalScheduleFailFaultPeriod() throws Exception {
 			// given
 			mockData.createPublicScheduleEvent(7);
+			LocalDateTime start = LocalDateTime.now().plusDays(0);
+			LocalDateTime end = LocalDateTime.now().minusDays(7);
+
 			// when & then
 			mockMvc.perform(get("/calendar").header("Authorization", "Bearer " + accessToken)
-				.param("start", "2025-12-01")
-				.param("end", "2025-01-20")).andExpect(status().isBadRequest());
+					.param("start", start.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+					.param("end", end.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))))
+				.andExpect(status().isBadRequest());
 		}
 
 		@Test
@@ -119,10 +132,13 @@ class TotalSheduleControllerTest {
 		void retrieveTotalScheduleFailFault() throws Exception {
 			// given
 			mockData.createPublicScheduleEvent(7);
+			LocalDateTime start = LocalDateTime.now().plusDays(0);
+			LocalDateTime end = LocalDateTime.now().plusDays(7);
 			// when & then
 			mockMvc.perform(get("/calendar").header("Authorization", "Bearer " + accessToken)
-				.param("start", "2025/12/01")
-				.param("end", "2025/12/20")).andExpect(status().isBadRequest());
+					.param("start", start.format(DateTimeFormatter.ofPattern("yyyy/MM/dd")))
+					.param("end", end.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"))))
+				.andExpect(status().isBadRequest());
 		}
 	}
 }
