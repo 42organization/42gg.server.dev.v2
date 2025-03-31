@@ -35,7 +35,7 @@ public class TotalScheduleAdminService {
 
 	public TotalScheduleAdminSearchListResDto findAllByClassification(DetailClassification detailClassification) {
 
-		List<PublicSchedule> scheduleList = publicScheduleAdminRepository.findAllByClassification(
+		List<PublicSchedule> scheduleList = publicScheduleAdminRepository.findAllByClassificationOrderByIdDesc(
 			detailClassification);
 
 		return TotalScheduleAdminSearchListResDto.builder()
