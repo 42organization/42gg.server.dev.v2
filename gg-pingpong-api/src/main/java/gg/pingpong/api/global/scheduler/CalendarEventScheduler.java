@@ -19,9 +19,7 @@ public class CalendarEventScheduler extends AbstractScheduler {
 		this.fortyTwoEventService = fortyTwoEventService;
 		this.scheduleCheckService = scheduleCheckService;
 		this.scheduleNotiService = scheduleNotiService;
-		// this.setCron("0 0 0 * * *");
-		this.setCron("0 */5 * * * *");
-
+		this.setCron("0 0 0 * * *");
 	}
 
 	@Override
