@@ -7,7 +7,7 @@ CREATE TABLE public_schedule (
                                  tech_tag VARCHAR(50),
                                  author VARCHAR(255) NOT NULL,
                                  title VARCHAR(255) NOT NULL,
-                                 content VARCHAR(255),
+                                 content TEXT,
                                  link VARCHAR(255),
                                  status VARCHAR(50) NOT NULL,
                                  shared_count INT NOT NULL,
