@@ -23,7 +23,6 @@ public class SwaggerConfig {
 			.build();
 	}
 
-
 	@Bean
 	public GroupedOpenApi agendaAdminGroup() {
 		return GroupedOpenApi.builder()
@@ -46,7 +45,7 @@ public class SwaggerConfig {
 	public GroupedOpenApi calendarAdmin() {
 		return GroupedOpenApi.builder()
 			.group("calendar admin")
-			.pathsToMatch("/admin/calendar/**")
+			.pathsToMatch("/calendar/admin/**")
 			.packagesToScan("gg.calendar.api.admin")
 			.build();
 	}

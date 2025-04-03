@@ -115,7 +115,7 @@ public class PublicScheduleAdminControllerTest {
 				.build();
 
 			// when
-			mockMvc.perform(post("/admin/calendar/public/event").header("Authorization", "Bearer " + accessToken)
+			mockMvc.perform(post("/calendar/admin/public/event").header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(publicScheduleReqDto)))
 				.andDo(print())
@@ -160,7 +160,7 @@ public class PublicScheduleAdminControllerTest {
 				.endTime(LocalDateTime.now().plusDays(10))
 				.build();
 
-			mockMvc.perform(post("/admin/calendar/public/event").header("Authorization", "Bearer " + accessToken)
+			mockMvc.perform(post("/calendar/admin/public/event").header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(requestDto)))
 				.andDo(print())
@@ -181,7 +181,7 @@ public class PublicScheduleAdminControllerTest {
 				.endTime(LocalDateTime.now().plusDays(10))
 				.build();
 
-			mockMvc.perform(post("/admin/calendar/public/event").header("Authorization", "Bearer " + accessToken)
+			mockMvc.perform(post("/calendar/admin/public/event").header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(requestDto)))
 				.andDo(print())
@@ -201,7 +201,7 @@ public class PublicScheduleAdminControllerTest {
 				.endTime(LocalDateTime.now().plusDays(10))
 				.build();
 
-			mockMvc.perform(post("/admin/calendar/public/event").header("Authorization", "Bearer " + accessToken)
+			mockMvc.perform(post("/calendar/admin/public/event").header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(requestDto)))
 				.andDo(print())
@@ -224,7 +224,7 @@ public class PublicScheduleAdminControllerTest {
 				.build();
 
 			// when
-			mockMvc.perform(post("/admin/calendar/public/job").header("Authorization", "Bearer " + accessToken)
+			mockMvc.perform(post("/calendar/admin/public/job").header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(publicScheduleAdminReqDto)))
 				.andDo(print())
@@ -271,7 +271,7 @@ public class PublicScheduleAdminControllerTest {
 				.endTime(LocalDateTime.now().plusDays(10))
 				.build();
 
-			mockMvc.perform(post("/admin/calendar/public/job").header("Authorization", "Bearer " + accessToken)
+			mockMvc.perform(post("/calendar/admin/public/job").header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(requestDto)))
 				.andDo(print())
@@ -293,7 +293,7 @@ public class PublicScheduleAdminControllerTest {
 				.endTime(LocalDateTime.now().plusDays(10))
 				.build();
 
-			mockMvc.perform(post("/admin/calendar/public/job").header("Authorization", "Bearer " + accessToken)
+			mockMvc.perform(post("/calendar/admin/public/job").header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(requestDto)))
 				.andDo(print())
@@ -314,7 +314,7 @@ public class PublicScheduleAdminControllerTest {
 				.endTime(LocalDateTime.now().plusDays(10))
 				.build();
 
-			mockMvc.perform(post("/admin/calendar/public/job").header("Authorization", "Bearer " + accessToken)
+			mockMvc.perform(post("/calendar/admin/public/job").header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(requestDto)))
 				.andDo(print())
@@ -335,7 +335,7 @@ public class PublicScheduleAdminControllerTest {
 				.endTime(LocalDateTime.now().plusDays(10))
 				.build();
 
-			mockMvc.perform(post("/admin/calendar/public/job").header("Authorization", "Bearer " + accessToken)
+			mockMvc.perform(post("/calendar/admin/public/job").header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(requestDto)))
 				.andDo(print())
@@ -355,7 +355,7 @@ public class PublicScheduleAdminControllerTest {
 
 			// when
 			String response = mockMvc.perform(
-					get("/admin/calendar/public/{id}", publicSchedule.getId()).header("Authorization",
+					get("/calendar/admin/public/{id}", publicSchedule.getId()).header("Authorization",
 						"Bearer " + accessToken))
 				.andDo(print())
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
@@ -385,7 +385,7 @@ public class PublicScheduleAdminControllerTest {
 
 			// when
 			String response = mockMvc.perform(
-					get("/admin/calendar/public/qweksd").header("Authorization",
+					get("/calendar/admin/public/qweksd").header("Authorization",
 						"Bearer " + accessToken))
 				.andDo(print())
 				.andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
@@ -402,7 +402,7 @@ public class PublicScheduleAdminControllerTest {
 
 			// when
 			String response = mockMvc.perform(
-					get("/admin/calendar/public/500123").header("Authorization",
+					get("/calendar/admin/public/500123").header("Authorization",
 						"Bearer " + accessToken))
 				.andDo(print())
 				.andExpect(status().isNotFound()).andReturn().getResponse().getContentAsString();
@@ -448,7 +448,7 @@ public class PublicScheduleAdminControllerTest {
 
 			// when
 			String response = mockMvc.perform(
-					put("/admin/calendar/public/{id}", publicSchedule.getId()).header("Authorization",
+					put("/calendar/admin/public/{id}", publicSchedule.getId()).header("Authorization",
 							"Bearer " + accessToken)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(publicScheduleAdminUpdateReqDto)))
@@ -494,7 +494,7 @@ public class PublicScheduleAdminControllerTest {
 
 			// when
 			String response = mockMvc.perform(
-					put("/admin/calendar/public/{id}", publicSchedule.getId()).header("Authorization",
+					put("/calendar/admin/public/{id}", publicSchedule.getId()).header("Authorization",
 							"Bearer " + accessToken)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(publicScheduleAdminUpdateReqDto)))
@@ -534,7 +534,7 @@ public class PublicScheduleAdminControllerTest {
 
 			// when
 			String response = mockMvc.perform(
-					put("/admin/calendar/public/{id}", publicSchedule.getId()).header("Authorization",
+					put("/calendar/admin/public/{id}", publicSchedule.getId()).header("Authorization",
 							"Bearer " + accessToken)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(publicScheduleAdminUpdateReqDto)))
@@ -574,7 +574,7 @@ public class PublicScheduleAdminControllerTest {
 
 			// when
 			String response = mockMvc.perform(
-					put("/admin/calendar/public/{id}", publicSchedule.getId()).header("Authorization",
+					put("/calendar/admin/public/{id}", publicSchedule.getId()).header("Authorization",
 							"Bearer " + accessToken)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(publicScheduleAdminUpdateReqDto)))
@@ -614,7 +614,7 @@ public class PublicScheduleAdminControllerTest {
 
 			// when
 			String response = mockMvc.perform(
-					put("/admin/calendar/public/100").header("Authorization", "Bearer " + accessToken)
+					put("/calendar/admin/public/100").header("Authorization", "Bearer " + accessToken)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(publicScheduleAdminUpdateReqDto)))
 				.andDo(print())
@@ -653,7 +653,7 @@ public class PublicScheduleAdminControllerTest {
 
 			// when
 			String response = mockMvc.perform(
-					put("/admin/calendar/public/asdasdasd").header("Authorization", "Bearer " + accessToken)
+					put("/calendar/admin/public/asdasdasd").header("Authorization", "Bearer " + accessToken)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(publicScheduleAdminUpdateReqDto)))
 				.andDo(print())
@@ -695,7 +695,7 @@ public class PublicScheduleAdminControllerTest {
 
 			// when & then
 			String response = mockMvc.perform(
-					put("/admin/calendar/public/{id}", publicSchedule.getId())
+					put("/calendar/admin/public/{id}", publicSchedule.getId())
 						.header("Authorization", "Bearer " + accessToken)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(publicScheduleAdminUpdateReqDto))
@@ -726,7 +726,7 @@ public class PublicScheduleAdminControllerTest {
 			PublicSchedule publicSchedule = publicScheduleAdminMockData.createPublicSchedule();
 
 			// when
-			mockMvc.perform(patch("/admin/calendar/public/{id}", publicSchedule.getId()).header("Authorization",
+			mockMvc.perform(patch("/calendar/admin/public/{id}", publicSchedule.getId()).header("Authorization",
 						"Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON))
 				.andDo(print())
@@ -760,7 +760,7 @@ public class PublicScheduleAdminControllerTest {
 				ScheduleStatus.ACTIVATE);
 			privateScheduleAdminRepository.save(privateSchedule1);
 			privateScheduleAdminRepository.save(privateSchedule2);
-			mockMvc.perform(patch("/admin/calendar/public/{id}", publicSchedule.getId()).header("Authorization",
+			mockMvc.perform(patch("/calendar/admin/public/{id}", publicSchedule.getId()).header("Authorization",
 						"Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON))
 				.andDo(print())
@@ -782,7 +782,7 @@ public class PublicScheduleAdminControllerTest {
 			PublicSchedule publicSchedule = publicScheduleAdminMockData.createPublicSchedule();
 
 			// when
-			mockMvc.perform(patch("/admin/calendar/public/qwe1asdv").header("Authorization",
+			mockMvc.perform(patch("/calendar/admin/public/qwe1asdv").header("Authorization",
 						"Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON))
 				.andDo(print())
@@ -800,7 +800,7 @@ public class PublicScheduleAdminControllerTest {
 			PublicSchedule publicSchedule = publicScheduleAdminMockData.createPublicSchedule();
 
 			// when
-			mockMvc.perform(patch("/admin/calendar/public/50123125").header("Authorization",
+			mockMvc.perform(patch("/calendar/admin/public/50123125").header("Authorization",
 						"Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON))
 				.andDo(print())

@@ -81,7 +81,7 @@ public class PrivateScheduleAdminControllerTest {
 
 			// when
 			String response = mockMvc.perform(
-					get("/admin/calendar/private/{id}", privateSchedule.getId()).header("Authorization",
+					get("/calendar/admin/private/{id}", privateSchedule.getId()).header("Authorization",
 						"Bearer " + accessToken))
 				.andDo(print())
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
@@ -111,7 +111,7 @@ public class PrivateScheduleAdminControllerTest {
 
 			// when
 			String response = mockMvc.perform(
-					get("/admin/calendar/private/qweksd").header("Authorization",
+					get("/calendar/admin/private/qweksd").header("Authorization",
 						"Bearer " + accessToken))
 				.andDo(print())
 				.andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
@@ -130,7 +130,7 @@ public class PrivateScheduleAdminControllerTest {
 
 			// when
 			String response = mockMvc.perform(
-					get("/admin/calendar/private/500123").header("Authorization",
+					get("/calendar/admin/private/500123").header("Authorization",
 						"Bearer " + accessToken))
 				.andDo(print())
 				.andExpect(status().isNotFound()).andReturn().getResponse().getContentAsString();
@@ -149,7 +149,7 @@ public class PrivateScheduleAdminControllerTest {
 
 			// when
 			String response = mockMvc.perform(
-					get("/admin/calendar/private/{id}", privateSchedule.getId()).header("Authorization",
+					get("/calendar/admin/private/{id}", privateSchedule.getId()).header("Authorization",
 						"Bearer " + accessToken))
 				.andDo(print())
 				.andExpect(status().isNotFound()).andReturn().getResponse().getContentAsString();
@@ -173,7 +173,7 @@ public class PrivateScheduleAdminControllerTest {
 
 			// when
 			mockMvc.perform(
-					patch("/admin/calendar/private/{id}", privateSchedule.getId()).header("Authorization",
+					patch("/calendar/admin/private/{id}", privateSchedule.getId()).header("Authorization",
 						"Bearer " + accessToken))
 				.andDo(print())
 				.andExpect(status().isOk());
@@ -193,7 +193,7 @@ public class PrivateScheduleAdminControllerTest {
 
 			// when
 			String response = mockMvc.perform(
-					patch("/admin/calendar/private/qweksd").header("Authorization",
+					patch("/calendar/admin/private/qweksd").header("Authorization",
 						"Bearer " + accessToken))
 				.andDo(print())
 				.andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
@@ -212,7 +212,7 @@ public class PrivateScheduleAdminControllerTest {
 
 			// when
 			String response = mockMvc.perform(
-					patch("/admin/calendar/private/500123").header("Authorization",
+					patch("/calendar/admin/private/500123").header("Authorization",
 						"Bearer " + accessToken))
 				.andDo(print())
 				.andExpect(status().isNotFound()).andReturn().getResponse().getContentAsString();
@@ -232,7 +232,7 @@ public class PrivateScheduleAdminControllerTest {
 
 			// when
 			String response = mockMvc.perform(
-					patch("/admin/calendar/private/{id}", privateSchedule.getId()).header("Authorization",
+					patch("/calendar/admin/private/{id}", privateSchedule.getId()).header("Authorization",
 						"Bearer " + accessToken))
 				.andDo(print())
 				.andExpect(status().isForbidden()).andReturn().getResponse().getContentAsString();
