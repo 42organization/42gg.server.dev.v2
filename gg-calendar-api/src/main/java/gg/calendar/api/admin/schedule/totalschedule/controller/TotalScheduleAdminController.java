@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/admin/calendar")
+@RequestMapping("/calendar/admin")
 public class TotalScheduleAdminController {
 
 	private final TotalScheduleAdminService totalScheduleAdminService;
