@@ -37,6 +37,7 @@ public class PublicScheduleAdminUpdateReqDto {
 	@Size(max = 2000, message = "내용은 2000자이하로 입력해주세요.")
 	private String content;
 
+	@Size(max = 255, message = "링크는 255자 이하로 입력해주세요.")
 	private String link;
 
 	@NotNull
