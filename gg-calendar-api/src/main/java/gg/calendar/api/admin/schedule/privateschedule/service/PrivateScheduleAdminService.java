@@ -34,7 +34,6 @@ public class PrivateScheduleAdminService {
 
 	@Transactional
 	public void deletePrivateSchedule(Long id) {
-
 		PrivateSchedule privateSchedule = privateScheduleAdminRepository.findById(id)
 			.orElseThrow(() -> new NotExistException(ErrorCode.PRIVATE_SCHEDULE_NOT_FOUND));
 		validateDetailClassification(privateSchedule.getPublicSchedule().getClassification());
