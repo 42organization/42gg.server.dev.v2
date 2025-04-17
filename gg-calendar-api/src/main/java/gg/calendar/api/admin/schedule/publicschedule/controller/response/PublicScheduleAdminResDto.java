@@ -31,6 +31,8 @@ public class PublicScheduleAdminResDto {
 
 	private String title;
 
+	private String content;
+
 	private LocalDateTime startTime;
 
 	private LocalDateTime endTime;
@@ -55,5 +57,6 @@ public class PublicScheduleAdminResDto {
 		this.link = publicSchedule.getLink();
 		this.sharedCount = publicSchedule.getSharedCount();
 		this.status = publicSchedule.getStatus();
+		this.content = publicSchedule.getContent();
 	}
 }
