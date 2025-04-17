@@ -122,7 +122,7 @@ class TotalScheduleAdminControllerTest {
 			// when
 			// multivalue map 을 통해서 값이 넘어옴
 			String response = mockMvc.perform(
-					get("/admin/calendar/list/{detailClassification}", tags).header("Authorization",
+					get("/calendar/admin/list/{detailClassification}", tags).header("Authorization",
 						"Bearer " + accessToken))
 				.andDo(print())
 				.andExpect(status().isOk())
@@ -149,7 +149,7 @@ class TotalScheduleAdminControllerTest {
 
 			// when
 			String response = mockMvc.perform(
-					get("/admin/calendar/list/{detailClassification}", "qweksd").header("Authorization",
+					get("/calendar/admin/list/{detailClassification}", "qweksd").header("Authorization",
 						"Bearer " + accessToken))
 				.andDo(print())
 				.andExpect(status().isBadRequest())
@@ -181,7 +181,7 @@ class TotalScheduleAdminControllerTest {
 
 			// when
 			String response = mockMvc.perform(
-					get("/admin/calendar/search/").header("Authorization", "Bearer " + accessToken).params(params))
+					get("/calendar/admin/search/").header("Authorization", "Bearer " + accessToken).params(params))
 				.andDo(print())
 				.andExpect(status().isOk())
 				.andReturn()
@@ -246,7 +246,7 @@ class TotalScheduleAdminControllerTest {
 
 			// when
 			String response = mockMvc.perform(
-					get("/admin/calendar/search/").header("Authorization", "Bearer " + accessToken).params(params))
+					get("/calendar/admin/search/").header("Authorization", "Bearer " + accessToken).params(params))
 				.andDo(print())
 				.andExpect(status().isOk())
 				.andReturn()
@@ -293,7 +293,7 @@ class TotalScheduleAdminControllerTest {
 
 			// when
 			String response = mockMvc.perform(
-					get("/admin/calendar/search/").header("Authorization", "Bearer " + accessToken).params(params))
+					get("/calendar/admin/search/").header("Authorization", "Bearer " + accessToken).params(params))
 				.andDo(print())
 				.andExpect(status().isBadRequest())
 				.andReturn()
@@ -317,7 +317,7 @@ class TotalScheduleAdminControllerTest {
 			publicScheduleAdminMockData.createPublicSchedulePrivate(5);
 
 			// when
-			mockMvc.perform(get("/admin/calendar/total?page=1&size=30")
+			mockMvc.perform(get("/calendar/admin/total?page=1&size=30")
 					.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isOk())
 				.andDo(print()) // 응답 출력

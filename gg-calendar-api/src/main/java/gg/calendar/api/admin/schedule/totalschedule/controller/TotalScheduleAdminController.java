@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/admin/calendar")
+@RequestMapping("/calendar/admin")
 public class TotalScheduleAdminController {
 
 	private final TotalScheduleAdminService totalScheduleAdminService;
@@ -28,18 +28,16 @@ public class TotalScheduleAdminController {
 	@GetMapping("/list/{detailClassification}")
 	public ResponseEntity<TotalScheduleAdminSearchListResDto> totalScheduleAdminClassificationList(
 		@PathVariable DetailClassification detailClassification) {
-
 		TotalScheduleAdminSearchListResDto scheduleList = totalScheduleAdminService.findAllByClassification(
 			detailClassification);
-
 		return ResponseEntity.ok(scheduleList);
 	}
 
 	@GetMapping("/search")
 	public ResponseEntity<TotalScheduleAdminSearchListResDto> totalScheduleAdminSearchList(
 		@ModelAttribute @Valid TotalScheduleAdminSearchReqDto totalScheduleAdminSearchReqDto) {
-		TotalScheduleAdminSearchListResDto scheduleList = totalScheduleAdminService
-			.searchTotalScheduleAdminList(totalScheduleAdminSearchReqDto);
+		TotalScheduleAdminSearchListResDto scheduleList = totalScheduleAdminService.searchTotalScheduleAdminList(
+			totalScheduleAdminSearchReqDto);
 
 		return ResponseEntity.ok(scheduleList);
 	}

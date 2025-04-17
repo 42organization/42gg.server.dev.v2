@@ -9,6 +9,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 
 import gg.data.BaseTimeEntity;
 import gg.data.calendar.type.DetailClassification;
@@ -51,6 +52,8 @@ public class PublicSchedule extends BaseTimeEntity {
 	@Column(nullable = false)
 	private String title;
 
+	@Lob
+	@Column(columnDefinition = "TEXT")
 	private String content;
 
 	private String link;

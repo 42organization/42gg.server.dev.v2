@@ -40,9 +40,6 @@ public class FortyTwoEventService {
 
 	private void convertAndSaveEvent(FortyTwoEventResponse event) {
 		String description = event.getDescription();
-		if (description != null && description.length() > 255) {
-			description = description.substring(0, 255);
-		}
 		PublicSchedule publicSchedule = PublicSchedule.builder()
 			.classification(DetailClassification.EVENT)
 			.eventTag(determineEventTag(event))

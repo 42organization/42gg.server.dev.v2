@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/admin/calendar/private")
+@RequestMapping("/calendar/admin/private")
 public class PrivateScheduleAdminController {
 
 	private final PrivateScheduleAdminService privateScheduleAdminService;
