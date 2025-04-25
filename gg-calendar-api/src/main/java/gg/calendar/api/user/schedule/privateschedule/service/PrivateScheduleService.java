@@ -107,7 +107,7 @@ public class PrivateScheduleService {
 		for (PrivateSchedule privateSchedule : privateSchedules) {
 			ScheduleGroup scheduleGroup = scheduleGroups.get(privateSchedule.getGroupId());
 			if (scheduleGroup == null) {
-				throw new NotExistException(ErrorCode.SCHEDULE_GROUP_NOT_FOUND);
+				continue;
 			}
 			response.add(PrivateSchedulePeriodResDto.toDto(privateSchedule, scheduleGroup));
 		}
