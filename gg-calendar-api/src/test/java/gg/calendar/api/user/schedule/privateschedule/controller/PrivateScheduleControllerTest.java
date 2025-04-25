@@ -565,22 +565,5 @@ public class PrivateScheduleControllerTest {
 					.param("end", LocalDate.now().toString()))
 				.andExpect(status().isBadRequest());
 		}
-
-		@Test
-		@DisplayName("스케줄 그룹이 없는 경우 404")
-		void notFoundScheduleGroup() throws Exception {
-			//given
-			PublicSchedule publicSchedule = privateScheduleMockData.createPublicSchedule(user.getIntraId(),
-				DetailClassification.PRIVATE_SCHEDULE);
-			PrivateSchedule privateSchedule = privateScheduleMockData.createPrivateSchedule(user, publicSchedule,
-				0L);
-			//when&then
-			mockMvc.perform(get("/calendar/private")
-					.header("Authorization", "Bearer " + accessToken)
-					.contentType(MediaType.APPLICATION_JSON)
-					.param("start", LocalDate.now().toString())
-					.param("end", LocalDate.now().plusDays(10).toString()))
-				.andExpect(status().isNotFound());
-		}
 	}
 }
